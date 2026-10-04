@@ -1,4 +1,4 @@
-# Матрица поддержки 0.9.0
+# Матрица поддержки 0.9.1
 
 Пункт 005. Машиночитаемый снимок — [support-matrix.json](../catalog/support-matrix.json). «Заявлено» означает dependency/runtime constraint; «проверено» — конкретный прошедший сценарий. Весь declared range не считается проверенным одной комбинацией. API пока experimental.
 
@@ -16,7 +16,7 @@
 
 Node >=20 — текущий технический минимум manifests, а не рекомендация выбирать Node 20 для production. По [официальной таблице Node.js](https://nodejs.org/en/about/previous-releases) ветка 20 уже EOL; использовать поддерживаемую LTS и затем проверять точную версию приложения. Наш снимок проверен на 24.19.0, что не означает «самая свежая версия».
 
-Evidence: [008.json](v1-checks/008.json), `output/pattern-library-0.9.0/distribution-report.json` и соответствующие logs, привязанные к hashes wheel/tarball. Telegram/live/sandbox evidence сейчас отсутствует, версии клиентов поэтому не выдумываются. Расширение исполняемой OS/runtime matrix относится к 081, device acceptance — к 067; публикация таблицы не закрывает эти пункты.
+Evidence: [009.json](v1-checks/009.json), `output/pattern-library-0.9.1/distribution-report.json` и соответствующие logs, привязанные к hashes wheel/tarball. Telegram/live/sandbox evidence сейчас отсутствует, версии клиентов поэтому не выдумываются. Расширение исполняемой OS/runtime matrix относится к 081, device acceptance — к 067; публикация таблицы не закрывает эти пункты.
 
 Для другого SDK/runtime сохраняйте выбранный стек и выполните relevant consumer/tests перед обещанием совместимости. `doctor` предупреждает об aiogram, отличном от проверенного 3.31.0; проверка формата token не проверяет Telegram identity. Обновление support matrix следует за новым evidence, а не только за изменением диапазона зависимости.
 
@@ -25,3 +25,5 @@ Evidence: [008.json](v1-checks/008.json), `output/pattern-library-0.9.0/distribu
 В 0.8.0 дополнительно проверены категории/recovery, unknown outcome после HTTP/отмены/некорректного feedback, сверка SQLite effect и переносимый error reference.
 
 В 0.9.0 дополнительно: structural protocols, copied custom adapter type/runtime consumer и собственные TS storage/transport. Provider fixture не подтверждает работу реальной платежки.
+
+В 0.9.1 дополнительно: source/resources/RECORD и полный JS/declarations/CSS archive contract; 7 negative archive cases. Из 452 browser checks 386 workspace/example/gallery и 66 installed starter; эти scope не смешиваются.

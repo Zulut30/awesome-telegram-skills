@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "library_version": "0.9.0",
+  "library_version": "0.9.1",
   "distribution": "local; not published to package registries",
   "packages": {
     "python": {

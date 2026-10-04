@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "library_version": "0.9.0",
+  "library_version": "0.9.1",
   "checked_date": "2026-10-04",
   "maturity": "experimental",
   "declared": {
@@ -23,17 +23,17 @@
     "browser_checks": 452,
     "mypy": "2.4.0"
   },
-  "evidence": "docs/v1-checks/008.json",
+  "evidence": "docs/v1-checks/009.json",
   "artifacts": [
     {
-      "name": "awesome_telegram_patterns-0.9.0-py3-none-any.whl",
-      "bytes": 91463,
-      "sha256": "8464983f91a44a2e2de654238efa6f40733b33009a6f5a481a38088270dcc353"
+      "name": "awesome_telegram_patterns-0.9.1-py3-none-any.whl",
+      "bytes": 91515,
+      "sha256": "f30e5a94077e4f6b1c841446e8e352aed0e3e8eedbefed4c36ed742c4c88eae4"
     },
     {
-      "name": "awesome-telegram-patterns-0.9.0.tgz",
-      "bytes": 19299,
-      "sha256": "5e05a21d5c2129a541a0e85a9ebade594e6ae8c34ecc5c9675f84a7363724718"
+      "name": "awesome-telegram-patterns-0.9.1.tgz",
+      "bytes": 19350,
+      "sha256": "129cbd58dd903970106fd213a586a1918b9b61ece458ff0b613e1a7f21e84156"
     }
   ],
   "unverified": [

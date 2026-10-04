@@ -143,10 +143,19 @@
       "id": 9,
       "title": "Завершить контракты поставки",
       "requirement": "Проверить exports, типы, CSS, ресурсы Python и состав wheel/tarball; установленные пакеты должны работать без дерева исходного репозитория.",
-      "status": "pending",
-      "commit_subject": null,
-      "artifacts": [],
-      "evidence": []
+      "status": "done",
+      "commit_subject": "roadmap(009): verify standalone distribution contracts",
+      "artifacts": [
+        "scripts/verify_distribution_contract.py",
+        "tests/test_distribution_contract.py",
+        "docs/distribution-contract.md",
+        "docs/v1-checks/009.json"
+      ],
+      "evidence": [
+        "docs/v1-checks/009.json",
+        "44 distribution stages passed; 96 Python passed + 1 skip; 26 TypeScript passed; 452 Chrome checks",
+        "7 negative archive cases + 23 root tests; source/resources/RECORD, all 9 JS/declaration pairs, CSS and export map verified; installed wheel/tarball consumers passed"
+      ]
     },
     {
       "id": 10,

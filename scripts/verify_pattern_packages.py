@@ -77,6 +77,7 @@ def main() -> int:
         tarball = artifacts / f'awesome-telegram-patterns-{version}.tgz'
         if not wheel.is_file() or not tarball.is_file():
             raise RuntimeError('Expected wheel/tarball was not built')
+        report['distribution_contract'] = json.loads(run('distribution-contract', [sys.executable, str(ROOT / 'scripts/verify_distribution_contract.py'), '--wheel', str(wheel), '--tarball', str(tarball)], consumers))
 
         core = consumers / 'core'
         run('core-environment', [uv, 'venv', '--python', sys.executable, str(core)])
