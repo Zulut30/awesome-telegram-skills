@@ -1,4 +1,4 @@
-# Публичные контракты библиотеки 0.7.0
+# Публичные контракты библиотеки 0.8.0
 
 Пункт 003 плана 1.0. Все API ниже пока experimental; статус их группы указан в `components.json`, правила — в [maturity](v1-maturity.md). Контракт описывает реально реализованные границы, а не будущую полноту сценария. Аргументы с Python/TypeScript type annotations должны соответствовать типам; наличие типа не заменяет runtime validation внешних данных.
 
@@ -87,3 +87,5 @@ CLI `recipes [query] [--show ID] [--category ...] [--language ...] [--verificati
 При добавлении публичного API обновляются этот контракт, группа в components.json, exports/types, пример, существенные tests и changelog. Контракт helpers не отменяет [границы сценариев](v1-scope.md).
 
 Новые именованные Literal aliases Maturity/VerificationLevel/ButtonStyle/ChatType/UpdatePhase и TextFieldControl описаны в [структуре API](api-structure.md); Responder экспортируется явно. Прежние function/DTO имена сохранены.
+
+В 0.8.0 добавлены ErrorCode/ErrorCategory/ErrorOutcome/RecoveryAction/OperationKind/ErrorReport, нормализаторы и исключения. Все параметры, результаты, наследование, владение ресурсами, recovery и migration существующих ошибок описаны в [контракте ошибок](error-model.md). Собственные ValueError/TypeError preflight сохранены через совместимые подклассы; ошибка feedback после effect не считается input rejection.

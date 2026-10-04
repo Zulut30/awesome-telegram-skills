@@ -1,5 +1,6 @@
 """Create a NEW starter, preserving all existing paths. No install/process/network."""
 from __future__ import annotations
+from .errors import ValidationFailure, InvalidCompletion
 from dataclasses import dataclass
 from email.parser import Parser
 from importlib.resources import files
@@ -33,13 +34,13 @@ def library_source(path: str | Path) -> tuple[Path, str]:
     elif source.suffix == '.whl':
         with zipfile.ZipFile(source) as archive:
             members = [name for name in archive.namelist() if name.endswith('.dist-info/METADATA')]
-            if len(members) != 1 or archive.getinfo(members[0]).file_size > 65536: raise ValueError('Invalid local wheel metadata')
+            if len(members) != 1 or archive.getinfo(members[0]).file_size > 65536: raise ValidationFailure('Invalid local wheel metadata')
             metadata = Parser().parsestr(archive.read(members[0]).decode('utf-8'))
             name, version = metadata['Name'], metadata['Version']
-    else: raise ValueError('Provide a local library source directory or wheel')
+    else: raise ValidationFailure('Provide a local library source directory or wheel')
     if name != 'awesome-telegram-patterns' or not isinstance(version, str) or not re.fullmatch(r'\d+\.\d+\.\d+', version):
-        raise ValueError('Local source is not an awesome-telegram-patterns release')
-    if tuple(map(int, version.split('.'))) < (0, 4, 0): raise ValueError('Starter requires library >=0.4.0')
+        raise ValidationFailure('Local source is not an awesome-telegram-patterns release')
+    if tuple(map(int, version.split('.'))) < (0, 4, 0): raise ValidationFailure('Starter requires library >=0.4.0')
     return source, version
 
 
@@ -47,30 +48,30 @@ def typescript_source(path: str | Path) -> tuple[Path, str]:
     source = Path(path).expanduser().resolve(strict=True)
     with tarfile.open(source, 'r:gz') as archive:
         member = archive.getmember('package/package.json')
-        if not member.isfile() or member.size > 65536: raise ValueError('Invalid TypeScript tarball metadata')
+        if not member.isfile() or member.size > 65536: raise ValidationFailure('Invalid TypeScript tarball metadata')
         stream = archive.extractfile(member)
-        if stream is None: raise ValueError('Missing TypeScript tarball metadata')
+        if stream is None: raise ValidationFailure('Missing TypeScript tarball metadata')
         with stream: metadata = json.load(stream)
     if metadata.get('name') != '@awesome-telegram/patterns' or not re.fullmatch(r'\d+\.\d+\.\d+', metadata.get('version', '')):
-        raise ValueError('Provide an @awesome-telegram/patterns tarball')
+        raise ValidationFailure('Provide an @awesome-telegram/patterns tarball')
     return source, metadata['version']
 
 
 def create_starter(target: str | Path, *, library: str | Path, template: str = 'bot',
                    typescript: str | Path | None = None, dry_run: bool = False) -> StarterPlan:
-    if template not in {'bot', 'bot-mini-app'} or type(dry_run) is not bool: raise ValueError('Use a supported starter template')
+    if template not in {'bot', 'bot-mini-app'} or type(dry_run) is not bool: raise ValidationFailure('Use a supported starter template')
     requested = Path(target).expanduser().absolute()
     if requested.exists() or _linked(requested): raise FileExistsError('Target already exists; no files replaced')
-    if not requested.parent.is_dir() or _linked(requested.parent): raise ValueError('Use an existing ordinary parent directory')
+    if not requested.parent.is_dir() or _linked(requested.parent): raise ValidationFailure('Use an existing ordinary parent directory')
     source, version = library_source(library)
     ts_source = None
     if template == 'bot-mini-app':
-        if typescript is None: raise ValueError('Mini App starter requires a local --typescript tarball')
+        if typescript is None: raise ValidationFailure('Mini App starter requires a local --typescript tarball')
         ts_source, ts_version = typescript_source(typescript)
-        if ts_version != version: raise ValueError('Use matching Python and TypeScript release versions')
-    elif typescript is not None: raise ValueError('--typescript is only used by bot-mini-app')
+        if ts_version != version: raise ValidationFailure('Use matching Python and TypeScript release versions')
+    elif typescript is not None: raise ValidationFailure('--typescript is only used by bot-mini-app')
     name = re.sub(r'[^a-z0-9]+', '-', requested.name.lower()).strip('-') or 'telegram-starter'
-    if len(name) > 64: raise ValueError('Use a shorter project directory name')
+    if len(name) > 64: raise ValidationFailure('Use a shorter project directory name')
     root = files('telegram_patterns').joinpath('resources/starter')
     output = {}
     for filename in ('app.py', 'offline.py', 'README.md', '.env.example', '.gitignore', 'pyproject.toml'):
@@ -93,6 +94,6 @@ def create_starter(target: str | Path, *, library: str | Path, template: str = '
         path.parent.mkdir(parents=True, exist_ok=True)
         # Refuse links introduced concurrently; never overwrite an existing file.
         if any(_linked(parent) for parent in (path, *path.parents) if parent.is_relative_to(requested)):
-            raise ValueError('Output path contains a link; starter interrupted')
+            raise InvalidCompletion('Output path contains a link; starter interrupted')
         with path.open('x', encoding='utf-8', newline='\n') as stream: stream.write(content)
     return planned

@@ -12,6 +12,7 @@ import tarfile
 import tomllib
 import zipfile
 
+from .errors import PatternError, ValidationFailure, safe_error_report
 from .recipes import RecipeCatalog
 from .settings import BotSettings
 from .starter import create_starter
@@ -19,7 +20,7 @@ from .starter import create_starter
 
 def doctor(target: str | Path = '.', *, require_token: bool = False) -> dict:
     root = Path(target).expanduser().resolve(strict=True)
-    if not root.is_dir(): raise ValueError('Doctor expects a project directory')
+    if not root.is_dir(): raise ValidationFailure('Doctor expects a project directory')
     checks = []
     def check(name, status, detail): checks.append({'name': name, 'status': status, 'detail': detail})
     check('python', 'pass' if sys.version_info >= (3, 11) else 'fail', '.'.join(map(str, sys.version_info[:3])))
@@ -97,9 +98,9 @@ def main(argv: list[str] | None = None) -> int:
         else:
             report = doctor(args.target, require_token=args.require_token)
             print(json.dumps(report)); return 0 if report['passed'] else 1
-    except (ValueError, OSError, KeyError, TypeError, zipfile.BadZipFile, tarfile.TarError) as error:
+    except (PatternError, ValueError, OSError, KeyError, TypeError, zipfile.BadZipFile, tarfile.TarError) as error:
         # Do not expose config/env payloads or arbitrary exception text.
-        print(json.dumps({'passed': False, 'error': type(error).__name__, 'detail': 'Invalid input, existing target or unavailable local artifact. No existing files replaced; failed new project creation may leave partial files.'}), file=sys.stderr)
+        print(json.dumps({'passed': False, 'error': type(error).__name__, 'failure': safe_error_report(error, operation='write' if args.command == 'init' and not args.dry_run else 'read').as_dict(), 'detail': 'Invalid input, existing target or unavailable local artifact. No existing files replaced; failed new project creation may leave partial files.'}), file=sys.stderr)
         return 2
     return 0
 

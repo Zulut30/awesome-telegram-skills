@@ -1,3 +1,4 @@
+import {ValidationFailure} from './errors.js';
 export interface Insets { readonly top: number; readonly right: number; readonly bottom: number; readonly left: number }
 export interface TelegramWebApp {
   readonly platform?: string;
@@ -54,14 +55,14 @@ export class TelegramBridge {
     });
   }
   subscribe(listener: (snapshot: BridgeSnapshot) => void): () => void {
-    if (this.disposed) throw new Error('Bridge already disposed');
+    if (this.disposed) throw new ValidationFailure('Bridge already disposed');
     this.listeners.add(listener);
     try { listener(this.snapshot()); }
     catch (error) { this.listeners.delete(listener); throw error; }
     return () => { this.listeners.delete(listener); };
   }
   start(): void {
-    if (this.disposed) throw new Error('Bridge already disposed');
+    if (this.disposed) throw new ValidationFailure('Bridge already disposed');
     if (this.started) return;
     this.started = true;
     try {

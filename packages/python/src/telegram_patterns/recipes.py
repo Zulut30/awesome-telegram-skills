@@ -1,5 +1,6 @@
 """Search packaged recipes without SDK imports, execution, secrets or network."""
 from __future__ import annotations
+from .errors import ValidationFailure
 from dataclasses import dataclass
 from importlib.resources import files
 import json
@@ -43,29 +44,29 @@ class RecipeCatalog:
         if data is None:
             data = json.loads(files('telegram_patterns').joinpath('resources/recipes.json').read_text(encoding='utf-8'))
         if not isinstance(data, dict) or data.get('schema_version') != 1 or not isinstance(data.get('recipes'), list):
-            raise ValueError('Unsupported recipe catalog')
-        if not isinstance(data.get('library_version'), str): raise ValueError('Missing catalog version')
+            raise ValidationFailure('Unsupported recipe catalog')
+        if not isinstance(data.get('library_version'), str): raise ValidationFailure('Missing catalog version')
         self._version = data['library_version']
         records, seen = [], set()
         for item in data['recipes']:
-            if not isinstance(item, dict): raise ValueError('Invalid recipe record')
+            if not isinstance(item, dict): raise ValidationFailure('Invalid recipe record')
             fields = ('id', 'title', 'summary', 'category', 'language', 'code', 'verification', 'scope')
             if any(not isinstance(item.get(key), str) or not item[key].strip() for key in fields):
-                raise ValueError('Invalid recipe fields')
+                raise ValidationFailure('Invalid recipe fields')
             if not re.fullmatch(r'[A-Za-z0-9_.:-]{1,120}', item['id']) or item['id'] in seen:
-                raise ValueError('Invalid or duplicate recipe ID')
-            if item['verification'] not in {'sdk', 'mock', 'browser', 'live', 'not_run'}: raise ValueError('Unknown verification level')
+                raise ValidationFailure('Invalid or duplicate recipe ID')
+            if item['verification'] not in {'sdk', 'mock', 'browser', 'live', 'not_run'}: raise ValidationFailure('Unknown verification level')
             # Never infer stable status from an SDK/mock/browser/live check.
             maturity = item.get('maturity', 'reference' if item['verification'] == 'not_run' or item['category'] == 'bot-api' else 'experimental')
             if not isinstance(maturity, str) or maturity not in {'stable', 'experimental', 'reference'}:
-                raise ValueError('Unknown recipe maturity')
-            if item['language'] not in {'python', 'typescript'}: raise ValueError('Unknown recipe language')
+                raise ValidationFailure('Unknown recipe maturity')
+            if item['language'] not in {'python', 'typescript'}: raise ValidationFailure('Unknown recipe language')
             if any(not isinstance(item.get(key), list) or any(not isinstance(value, str) for value in item[key]) for key in ('keywords', 'sources')):
-                raise ValueError('Use string lists for keywords and sources')
+                raise ValidationFailure('Use string lists for keywords and sources')
             if any(urlsplit(url).scheme != 'https' or not urlsplit(url).hostname or urlsplit(url).username for url in item['sources']):
-                raise ValueError('Recipe sources must be HTTPS URLs without credentials')
+                raise ValidationFailure('Recipe sources must be HTTPS URLs without credentials')
             preview = item.get('preview')
-            if preview is not None and not isinstance(preview, dict): raise ValueError('Invalid recipe preview')
+            if preview is not None and not isinstance(preview, dict): raise ValidationFailure('Invalid recipe preview')
             records.append(Recipe(**{key: item[key] for key in fields}, keywords=tuple(item['keywords']), sources=tuple(item['sources']),
                                   preview_json=json.dumps(preview, ensure_ascii=False) if preview is not None else None, maturity=cast(Maturity, maturity)))
             seen.add(item['id'])
@@ -85,11 +86,11 @@ class RecipeCatalog:
     def search(self, query: str = '', *, category: str | None = None, language: str | None = None,
                verification: VerificationLevel | None = None, maturity: Maturity | None = None, limit: int = 20) -> tuple[Recipe, ...]:
         if not isinstance(query, str) or len(query) > 512 or type(limit) is not int or not 1 <= limit <= 1000:
-            raise ValueError('Use a query up to 512 characters and a limit of 1..1000')
+            raise ValidationFailure('Use a query up to 512 characters and a limit of 1..1000')
         if any(value is not None and not isinstance(value, str) for value in (category, language, verification, maturity)):
-            raise ValueError('Recipe filters must be strings')
+            raise ValidationFailure('Recipe filters must be strings')
         if maturity is not None and maturity not in {'stable', 'experimental', 'reference'}:
-            raise ValueError('Unknown recipe maturity')
+            raise ValidationFailure('Unknown recipe maturity')
         terms, found = normalize(query).split(), []
         for order, recipe in enumerate(self._records):
             if any(value is not None and getattr(recipe, key) != value for key, value in

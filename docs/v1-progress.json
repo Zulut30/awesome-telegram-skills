@@ -103,10 +103,21 @@
       "id": 7,
       "title": "Стандартизировать ошибки",
       "requirement": "Сделать различимыми validation, permission, unsupported capability, timeout и unknown outcome; потребитель должен понимать, можно ли исправить ввод, повторить чтение или сверить операцию.",
-      "status": "pending",
-      "commit_subject": null,
-      "artifacts": [],
-      "evidence": []
+      "status": "done",
+      "commit_subject": "roadmap(007): standardize safe errors and recovery outcomes",
+      "artifacts": [
+        "packages/python/src/telegram_patterns/errors.py",
+        "packages/typescript/src/errors.ts",
+        "docs/error-model.md",
+        "examples/python/error_recovery.py",
+        ".agents/skills/telegram-code-patterns/references/errors.md",
+        "docs/v1-checks/007.json"
+      ],
+      "evidence": [
+        "docs/v1-checks/007.json",
+        "41 distribution stages passed; 94 Python passed + 1 skip; 25 TypeScript passed; 452 Chrome checks",
+        "Installed wheel/tarball types and core lost-response reconciliation passed; same form operation identity preserved; portable skill example executed; wheel files match source bytes"
+      ]
     },
     {
       "id": 8,

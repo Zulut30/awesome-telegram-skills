@@ -1,5 +1,6 @@
 """Optional aiogram 3 adapters; no SDK import in the core package."""
 from __future__ import annotations
+from .errors import ValidationFailure, InvalidType
 
 import asyncio
 from dataclasses import dataclass
@@ -92,25 +93,25 @@ class CommandReply:
 
     def __post_init__(self) -> None:
         if not isinstance(self.command, str) or not re.fullmatch(r"[a-z0-9_]{1,32}", self.command):
-            raise ValueError("Command must contain 1..32 lowercase ASCII letters/digits/underscores, without '/'")
+            raise ValidationFailure("Command must contain 1..32 lowercase ASCII letters/digits/underscores, without '/'")
         if not isinstance(self.description, str) or not self.description.strip() or len(self.description) > 256:
-            raise ValueError("Command description must contain 1..256 characters")
+            raise ValidationFailure("Command description must contain 1..256 characters")
         try:
             valid_text = isinstance(self.text, str) and bool(self.text.strip()) and len(self.text.encode('utf-16-le')) // 2 <= 4096
         except UnicodeError:
             valid_text = False
         if not valid_text:
-            raise ValueError("Command reply must contain nonempty plain text up to 4096 UTF-16 units")
+            raise ValidationFailure("Command reply must contain nonempty plain text up to 4096 UTF-16 units")
         if self.keyboard is not None and not isinstance(self.keyboard, InlineKeyboardMarkup):
-            raise TypeError("Use InlineKeyboardMarkup for command keyboard")
+            raise InvalidType("Use InlineKeyboardMarkup for command keyboard")
 
 
 def _commands(commands: Sequence[CommandReply]) -> tuple[CommandReply, ...]:
     replies = tuple(commands)
     if not replies or len(replies) > 100 or any(not isinstance(item, CommandReply) for item in replies):
-        raise ValueError("Use 1..100 CommandReply items")
+        raise ValidationFailure("Use 1..100 CommandReply items")
     if len({item.command for item in replies}) != len(replies):
-        raise ValueError("Command names must be unique")
+        raise ValidationFailure("Command names must be unique")
     return replies
 
 
@@ -151,23 +152,23 @@ async def run_bot(dispatcher: Dispatcher, settings: BotSettings, *,
     SDK polling ACK is not a durable acceptance/transaction guarantee.
     """
     if not isinstance(dispatcher, Dispatcher) or not isinstance(settings, BotSettings):
-        raise TypeError("Use the existing Dispatcher and BotSettings")
+        raise InvalidType("Use the existing Dispatcher and BotSettings")
     if type(polling_timeout) is not int or polling_timeout <= 0:
-        raise ValueError("Polling timeout must be a positive integer")
+        raise ValidationFailure("Polling timeout must be a positive integer")
     if type(handle_signals) is not bool or type(handle_as_tasks) is not bool:
-        raise ValueError("Polling flags must be bool")
+        raise ValidationFailure("Polling flags must be bool")
     if tasks_concurrency_limit is not None and (type(tasks_concurrency_limit) is not int or tasks_concurrency_limit <= 0):
-        raise ValueError("Concurrency limit must be a positive integer")
+        raise ValidationFailure("Concurrency limit must be a positive integer")
     if type(shutdown_timeout) not in {int, float} or not math.isfinite(shutdown_timeout) or shutdown_timeout <= 0:
-        raise ValueError("Shutdown timeout must be positive and finite")
+        raise ValidationFailure("Shutdown timeout must be positive and finite")
     data = dict(workflow_data or {})
     reserved = {'bot', 'bots', 'dispatcher', 'close_bot_session', 'handle_signals', 'handle_as_tasks',
                 'polling_timeout', 'tasks_concurrency_limit', 'backoff_config', 'allowed_updates'}
     if reserved.intersection(data):
-        raise ValueError("Workflow data must not override SDK polling parameters")
+        raise ValidationFailure("Workflow data must not override SDK polling parameters")
     menu = list(commands) if commands is not None else None
     if menu is not None and (len(menu) > 100 or any(not isinstance(item, BotCommand) for item in menu)):
-        raise ValueError("Use up to 100 BotCommand items")
+        raise ValidationFailure("Use up to 100 BotCommand items")
     bot = Bot(token=settings.token, session=session)
     try:
         if menu is not None:
@@ -200,13 +201,13 @@ def stars_invoice(title: str, description: str, payload: str, stars: int,
                   *, monthly_subscription: bool = False) -> CreateInvoiceLink:
     """Construct a request; consent, order validation and grant are server duties."""
     if not isinstance(title, str) or not 1 <= len(title) <= 32:
-        raise ValueError("Title must contain 1..32 characters")
+        raise ValidationFailure("Title must contain 1..32 characters")
     if not isinstance(description, str) or not 1 <= len(description) <= 255:
-        raise ValueError("Description must contain 1..255 characters")
+        raise ValidationFailure("Description must contain 1..255 characters")
     if not isinstance(payload, str) or not 1 <= len(payload.encode("utf-8")) <= 128:
-        raise ValueError("Payload must contain 1..128 bytes")
+        raise ValidationFailure("Payload must contain 1..128 bytes")
     if type(stars) is not int or stars <= 0 or (monthly_subscription and stars > 10000):
-        raise ValueError("Invalid Stars amount")
+        raise ValidationFailure("Invalid Stars amount")
     return CreateInvoiceLink(
         title=title, description=description, payload=payload, currency="XTR",
         provider_token="", prices=[LabeledPrice(label=title, amount=stars)],

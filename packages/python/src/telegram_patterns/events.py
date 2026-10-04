@@ -1,5 +1,6 @@
 """Observe received Bot API updates without copying their contents into logs."""
 from __future__ import annotations
+from .errors import ValidationFailure, InvalidType
 
 import asyncio
 from dataclasses import dataclass
@@ -56,7 +57,7 @@ class UpdateObserver(BaseMiddleware):
     """
     def __init__(self, record: Callable[[UpdateTrace], Awaitable[None]], *, include_ids: bool = False) -> None:
         if not callable(record) or type(include_ids) is not bool:
-            raise TypeError('Use an async recorder and a bool include_ids flag')
+            raise InvalidType('Use an async recorder and a bool include_ids flag')
         self.record, self.include_ids = record, include_ids
 
     async def emit(self, trace: UpdateTrace) -> None:
@@ -67,7 +68,7 @@ class UpdateObserver(BaseMiddleware):
 
     async def __call__(self, handler: Callable[..., Awaitable[Any]], event: TelegramObject, data: dict[str, Any]) -> Any:
         if not isinstance(event, Update):
-            raise TypeError('Register UpdateObserver on dispatcher.update, not a message observer')
+            raise InvalidType('Register UpdateObserver on dispatcher.update, not a message observer')
         await self.emit(_trace(event, 'received', self.include_ids))
         try:
             result = await handler(event, data)
@@ -89,9 +90,9 @@ def event_router(handlers: Mapping[str, Callable[..., Awaitable[Any]]]) -> Route
     """
     router = Router()
     if not isinstance(handlers, Mapping) or not handlers:
-        raise ValueError('Provide at least one native update handler')
+        raise ValidationFailure('Provide at least one native update handler')
     for kind, handler in handlers.items():
         if kind not in Update.model_fields or kind == 'update_id' or kind not in router.observers or not callable(handler):
-            raise ValueError('Use a supported Update kind and a callable handler')
+            raise ValidationFailure('Use a supported Update kind and a callable handler')
         router.observers[kind].register(handler)
     return router

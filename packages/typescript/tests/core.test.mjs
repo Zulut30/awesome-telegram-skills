@@ -2,7 +2,73 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import http from 'node:http';
 import { ApiClient, ApiError, TelegramBridge, SelectionDraftStore, TelegramNativeAPI, UnsupportedTelegramCapability,
-         TELEGRAM_NATIVE_METHODS, TELEGRAM_NATIVE_EVENTS } from '../dist/index.js';
+         TELEGRAM_NATIVE_METHODS, TELEGRAM_NATIVE_EVENTS, PatternError, ValidationFailure,
+         InvalidType, PermissionDenied, AuthenticationRequired, UnsupportedCapability,
+         UnknownOutcome, safeErrorReport } from '../dist/index.js';
+
+test('safe error reports preserve recovery decisions without exception or payload secrets', () => {
+  const secret = 'BOT_TOKEN=100:PRIVATE initData=SIGNED_BODY';
+  for (const error of [new Error(secret), new ValidationFailure(secret), new PermissionDenied(secret),
+    new UnknownOutcome(secret), new InvalidType(secret), {code:'validation-failed',outcome:'rejected',message:secret}]) {
+    const value=safeErrorReport(error,'write');
+    assert.equal(JSON.stringify(value).includes(secret),false);
+    assert.deepEqual(Object.keys(value).sort(), ['category','code','message','outcome','recovery']);
+    assert.throws(()=>{value.message=secret;},TypeError);
+  }
+  assert.equal(safeErrorReport({code:'validation-failed',outcome:'rejected'},'write').outcome,'unknown');
+  const error=new PatternError('internal','unknown',secret);
+  error.report=()=>{throw Error('Overridden report must not run');};
+  assert.equal(safeErrorReport(error).recovery,'reconcile');
+});
+
+test('local rejection, unsupported capability, cancellation and timeout give different recovery', () => {
+  for (const [error,category,recovery] of [
+    [new ValidationFailure(),'validation','fix-input'], [new InvalidType(),'validation','fix-input'],
+    [new PermissionDenied(),'permission','check-permissions'], [new AuthenticationRequired(),'permission','authenticate'],
+    [new UnsupportedCapability(),'unsupported','use-fallback']]) {
+    const value=safeErrorReport(error,'write');
+    assert.deepEqual([value.category,value.recovery,value.outcome],[category,recovery,'rejected']);
+  }
+  assert.equal(new InvalidType() instanceof TypeError,true);
+  assert.throws(()=>new TelegramNativeAPI().call('ready'),error=>{
+    assert.equal(safeErrorReport(error).recovery,'use-fallback');return true;
+  });
+  assert.deepEqual([safeErrorReport(new DOMException('private','TimeoutError')).outcome,
+    safeErrorReport(new DOMException('private','TimeoutError')).recovery],['read-failed','retry-read']);
+  assert.equal(safeErrorReport(new DOMException('private','AbortError'),'write').recovery,'reconcile');
+  assert.equal(safeErrorReport(new UnknownOutcome()).outcome,'unknown');
+});
+
+test('HTTP denial and invalid response after write keep unknown result and a single transport call', async () => {
+  for (const status of [400,401,403,422,500]) {
+    let calls=0;
+    const api=new ApiClient({baseUrl:'https://example.test',fetch:async()=>{calls++;return new Response('private',{status});}});
+    await assert.rejects(api.request('/orders',x=>x,{method:'POST',body:{id:'stable-operation'}}),error=>{
+      assert.equal(error instanceof ApiError,true);
+      const report=safeErrorReport(error,'write');
+      assert.equal(report.outcome,'unknown');assert.equal(report.recovery,'reconcile');
+      assert.equal(JSON.stringify(report).includes('private'),false);
+      return true;
+    });
+    assert.equal(calls,1);
+  }
+  let calls=0;
+  const api=new ApiClient({baseUrl:'https://example.test',fetch:async()=>{calls++;return Response.json({saved:true});}});
+  await assert.rejects(api.request('/orders',()=>{throw Error('decoder secret');},{method:'POST'}),error=>{
+    assert.equal(safeErrorReport(error,'write').recovery,'reconcile');return true;
+  });
+  assert.equal(calls,1);
+});
+
+test('API preflight rejection is actionable and happens before transport', async () => {
+  let calls=0;
+  const api=new ApiClient({baseUrl:'https://example.test',fetch:async()=>{calls++;return Response.json({});}});
+  await assert.rejects(api.request('https://other.test',x=>x,{method:'POST'}),error=>{
+    assert.equal(safeErrorReport(error,'write').recovery,'fix-input');
+    assert.equal(safeErrorReport(error,'write').outcome,'rejected');return true;
+  });
+  assert.equal(calls,0);
+});
 
 class FakeApp {
   colorScheme = 'light'; themeParams = { bg_color: '#ffffff', text_color: '#000000' };

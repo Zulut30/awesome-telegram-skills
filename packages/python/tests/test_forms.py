@@ -12,7 +12,7 @@ from aiogram.methods import AnswerCallbackQuery, GetMe, SendMessage
 from aiogram.types import CallbackQuery, Chat, InaccessibleMessage, Message, Update, User
 from aiogram.fsm.storage.memory import SimpleEventIsolation
 
-from telegram_patterns import SQLiteOnce
+from telegram_patterns import SQLiteOnce, InvalidCompletion, safe_error_report
 from telegram_patterns.aiogram import (CommandReply, FormSubmission, InvalidField, TextField,
                                       command_router, text_form_router)
 from telegram_patterns.testing import StubSession
@@ -237,6 +237,25 @@ class FormTests(unittest.IsolatedAsyncioTestCase):
             self.assertEqual(attempts[0], attempts[1])
             with closing(sqlite3.connect(database)) as db: self.assertEqual(db.execute('SELECT COUNT(*) FROM requests').fetchone()[0], 1)
             self.assertIsNone(await (await self.context()).get_state())
+
+    async def test_invalid_feedback_after_effect_preserves_identity_for_reconciliation(self):
+        identities = []
+        async def persisted(submission):
+            identities.append(submission.operation_id)
+            return '' if len(identities) == 1 else 'Состояние существующей заявки подтверждено.'
+        await self.dp.fsm.close()
+        self.dp = self.app(persisted)
+        update = await self.ready()
+        with self.assertRaises(InvalidCompletion) as caught:
+            await self.dp.feed_update(self.bot, update)
+        self.assertEqual(safe_error_report(caught.exception, operation='write').recovery, 'reconcile')
+        context = await self.context()
+        self.assertEqual((await context.get_data())['__telegram_patterns_form']['operation_id'], identities[0])
+        await self.feed('/apply')
+        self.assertIn('Отправка уже началась', self.sent[-1][0].text)
+        await self.dp.feed_update(self.bot, self.button())
+        self.assertEqual(identities, [identities[0], identities[0]])
+        self.assertIsNone(await context.get_state())
 
     async def test_feedback_failure_after_success_does_not_resubmit(self):
         update = await self.ready()

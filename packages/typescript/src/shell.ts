@@ -1,3 +1,4 @@
+import {ValidationFailure} from './errors.js';
 import type { BridgeSnapshot, Insets } from './bridge.js';
 
 export interface TextFieldControl {
@@ -47,7 +48,7 @@ export function createAppShell(host: HTMLElement, title: string): AppShell {
     },
     setInsets(resolved) {
       for (const key of ['top', 'right', 'bottom', 'left'] as const) {
-        if (!Number.isFinite(resolved[key]) || resolved[key] < 0) throw new Error('Invalid resolved inset');
+        if (!Number.isFinite(resolved[key]) || resolved[key] < 0) throw new ValidationFailure('Invalid resolved inset');
       }
       for (const key of ['top', 'right', 'bottom', 'left'] as const) element.style.setProperty(`--tp-inset-${key}`, `${resolved[key]}px`);
     },

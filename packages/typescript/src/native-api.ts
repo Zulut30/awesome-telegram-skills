@@ -1,11 +1,12 @@
 /** Native calls keep their documented callbacks/return values; no implicit auth or retry. */
 import { TELEGRAM_NATIVE_EVENTS, TELEGRAM_NATIVE_EVENT_DETAILS, TELEGRAM_NATIVE_METHODS, type TelegramNativeEvent, type TelegramNativeMethod } from './native-catalog.js';
+import {UnsupportedCapability, InvalidType} from './errors.js';
 
 type ObjectLike = Record<string, unknown>;
 type Listener = (...args: unknown[]) => void;
 const object = (value: unknown): value is ObjectLike => value !== null && typeof value === 'object';
 
-export class UnsupportedTelegramCapability extends Error {
+export class UnsupportedTelegramCapability extends UnsupportedCapability {
   constructor() { super('Telegram capability unavailable in the current client or disposed adapter'); this.name = 'UnsupportedTelegramCapability'; }
 }
 
@@ -53,7 +54,7 @@ export class TelegramNativeAPI {
 
   /** Each registration gets its own callback, even when consumers reuse a function. */
   listen(event: TelegramNativeEvent, listener: Listener): () => void {
-    if (!(TELEGRAM_NATIVE_EVENTS as readonly string[]).includes(event) || typeof listener !== 'function') throw new TypeError('Use a documented Telegram event and a callable listener');
+    if (!(TELEGRAM_NATIVE_EVENTS as readonly string[]).includes(event) || typeof listener !== 'function') throw new InvalidType('Use a documented Telegram event and a callable listener');
     const on = this.resolve('onEvent'), off = this.resolve('offEvent');
     if (!on || !off || !this.atLeast(TELEGRAM_NATIVE_EVENT_DETAILS[event].minVersion)) throw new UnsupportedTelegramCapability();
     let active = true, removed = false;

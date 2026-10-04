@@ -1,5 +1,7 @@
 """Atomic SQLite-local effect and replay result, across process restarts."""
 from __future__ import annotations
+from .errors import ConflictFailure
+from .errors import ValidationFailure
 
 from dataclasses import dataclass
 import hashlib
@@ -9,7 +11,7 @@ import sqlite3
 from typing import Callable, Any
 
 
-class OperationConflict(ValueError):
+class OperationConflict(ConflictFailure):
     """The scoped operation key was already used for a different payload."""
 
 
@@ -39,7 +41,7 @@ class SQLiteOnce:
     """
     def __init__(self, database: str | Path, *, timeout: float = 5.0):
         if not str(database) or str(database) == ":memory:" or timeout <= 0:
-            raise ValueError("Use a file database and a positive timeout")
+            raise ValidationFailure("Use a file database and a positive timeout")
         self.database = str(database)
         self.timeout = timeout
 
@@ -62,7 +64,7 @@ class SQLiteOnce:
             apply: Callable[[sqlite3.Connection], Any]) -> OnceResult:
         for value in (scope, operation_key):
             if not isinstance(value, str) or not value or len(value.encode("utf-8")) > 256:
-                raise ValueError("Scope and operation key must be nonempty bounded strings")
+                raise ValidationFailure("Scope and operation key must be nonempty bounded strings")
         digest = hashlib.sha256(_json(payload).encode("utf-8")).hexdigest()
         connection = self._connect()
         try:

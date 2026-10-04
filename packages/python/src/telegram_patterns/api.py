@@ -1,5 +1,6 @@
 """Discover and construct ALL methods supported by the installed aiogram SDK."""
 from __future__ import annotations
+from .errors import ErrorCode, ValidationFailure
 
 from dataclasses import dataclass
 from functools import lru_cache
@@ -10,8 +11,9 @@ from aiogram.methods.base import TelegramMethod
 from pydantic import ValidationError
 
 
-class InvalidAPIRequest(ValueError):
+class InvalidAPIRequest(ValidationFailure):
     """Controlled failure with no payload values, secrets or SDK error dump."""
+    code: ErrorCode = 'invalid-api-request'
 
 
 @dataclass(frozen=True, slots=True)

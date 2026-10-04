@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "library_version": "0.7.0",
+  "library_version": "0.8.0",
   "distribution": "local; not published to package registries",
   "packages": {
     "python": {
@@ -365,6 +365,36 @@
         "private ordinary bot chats only; not groups/Business",
         "service owns durable ACL/idempotence using stable operation_id",
         "failed submit freezes edits; host owns recovery retention/storage"
+      ],
+      "maturity": "experimental",
+      "maturity_scope": "All public API symbols in this component; local verification is not a stable 1.0 promise"
+    },
+    {
+      "id": "python-error-model",
+      "language": "python",
+      "import": "telegram_patterns.PatternError, ValidationFailure, InvalidType, PermissionDenied, AuthenticationRequired, UnsupportedCapability, TimeoutFailure, TransportFailure, ConflictFailure, UnknownOutcome, InvalidCompletion, ErrorReport, safe_error_report",
+      "intent": "Различить validation/permission/unsupported/timeout/unknown outcome и выбрать восстановление без потери operation_id",
+      "source": "packages/python/src/telegram_patterns/errors.py",
+      "example": "examples/python/error_recovery.py",
+      "boundaries": [
+        "classification performs no I/O or automatic retry",
+        "raw write failures require reconciliation; caller supplies actual operation kind",
+        "public report never copies developer exception text; arbitrary remote payload is not trusted outcome evidence"
+      ],
+      "maturity": "experimental",
+      "maturity_scope": "All public API symbols in this component; local verification is not a stable 1.0 promise"
+    },
+    {
+      "id": "typescript-error-model",
+      "language": "typescript",
+      "import": "@awesome-telegram/patterns: PatternError, ValidationFailure, InvalidType, PermissionDenied, AuthenticationRequired, UnsupportedCapability, UnknownOutcome, ErrorReport, safeErrorReport",
+      "intent": "Различить validation/permission/unsupported/timeout/unknown outcome и выбрать восстановление без потери operation_id",
+      "source": "packages/typescript/src/errors.ts",
+      "example": "docs/error-model.md",
+      "boundaries": [
+        "classification performs no I/O or automatic retry",
+        "raw write failures require reconciliation; caller supplies actual operation kind",
+        "public report never copies developer exception text; arbitrary remote payload is not trusted outcome evidence"
       ],
       "maturity": "experimental",
       "maturity_scope": "All public API symbols in this component; local verification is not a stable 1.0 promise"

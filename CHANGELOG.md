@@ -2,6 +2,8 @@
 
 ## Unreleased — подготовка 1.0
 
+- Пункт 007 / исходники 0.8.0: единые ErrorReport/code/category/outcome/recovery в Python/TypeScript; безопасные сообщения, совместимые исключения и различимые preflight/permission/unsupported/timeout. Неизвестный результат записи требует сверки того же ключа; HTTP/отмена/ошибка feedback не запускают retry. Добавлены installed-core пример и проверки сохранения pending identity формы.
+
 - Пункт 001: определены сценарии и границы 1.0, пользовательские задачи, точки входа и критерии приемки; добавлен регистр выполнения всех 100 пунктов.
 - Пункт 002 / исходники 0.6.0: maturity групп и recipes, независимый фильтр RecipeCatalog/CLI/галереи, совместимое чтение старых records и переносимые инструкции. SDK/mock/browser evidence не повышает статус до stable автоматически.
 - Пункт 003: полные семантические контракты root/aiogram/testing/CLI и TypeScript exports, включая DTO/types, ошибки, ресурсы и обязанности host.

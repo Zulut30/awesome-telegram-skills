@@ -1,5 +1,6 @@
 """Small private-chat text forms using the host's aiogram FSM and isolation."""
 from __future__ import annotations
+from .errors import ErrorCode, ValidationFailure, InvalidType, InvalidCompletion
 
 from dataclasses import dataclass, field
 import re
@@ -22,12 +23,13 @@ def _plain(text: str, limit: int) -> bool:
         return False
 
 
-class InvalidField(ValueError):
+class InvalidField(ValidationFailure):
     """A bounded, user-facing validation message; never include secrets here."""
+    code: ErrorCode = 'invalid-field'
 
     def __init__(self, message: str = "Проверьте значение и попробуйте ещё раз.") -> None:
         if not _plain(message, 256):
-            raise ValueError("Validation message must be nonempty plain text up to 256 UTF-16 units")
+            raise ValidationFailure("Validation message must be nonempty plain text up to 256 UTF-16 units")
         super().__init__(message)
 
 
@@ -55,14 +57,14 @@ class TextField:
 
     def __post_init__(self) -> None:
         if not isinstance(self.name, str) or not re.fullmatch(r"[a-z][a-z0-9_]{0,31}", self.name):
-            raise ValueError("Field name must be 1..32 lowercase ASCII characters")
+            raise ValidationFailure("Field name must be 1..32 lowercase ASCII characters")
         if not _plain(self.label, 64) or not _plain(self.prompt, 512):
-            raise ValueError("Use a label up to 64 and a prompt up to 512 UTF-16 units")
+            raise ValidationFailure("Use a label up to 64 and a prompt up to 512 UTF-16 units")
         if type(self.max_length) is not int or not 1 <= self.max_length <= 256:
-            raise ValueError("Field max_length must be 1..256 UTF-16 units")
+            raise ValidationFailure("Field max_length must be 1..256 UTF-16 units")
         if self.validate is not None and (not callable(self.validate) or inspect.iscoroutinefunction(self.validate)
                                          or inspect.iscoroutinefunction(getattr(self.validate, '__call__', None))):
-            raise TypeError("Field validator must be a synchronous callable")
+            raise InvalidType("Field validator must be a synchronous callable")
 
     def read(self, text: str) -> str:
         value = text.strip() if isinstance(text, str) else ""
@@ -71,7 +73,7 @@ class TextField:
         if self.validate is not None:
             value = self.validate(value)
             if not _plain(value, self.max_length):
-                raise ValueError("Validator must return a bounded nonempty string")
+                raise ValidationFailure("Validator must return a bounded nonempty string")
         return value
 
 
@@ -103,15 +105,15 @@ def text_form_router(
     """
     steps = tuple(fields)
     if not 1 <= len(steps) <= 10 or any(not isinstance(item, TextField) for item in steps):
-        raise ValueError("Use 1..10 TextField items")
+        raise ValidationFailure("Use 1..10 TextField items")
     if len({item.name for item in steps}) != len(steps):
-        raise ValueError("Field names must be unique")
+        raise ValidationFailure("Field names must be unique")
     if not isinstance(name, str) or not re.fullmatch(r"[a-z][a-z0-9_]{0,15}", name):
-        raise ValueError("Form name must be 1..16 lowercase ASCII characters")
+        raise ValidationFailure("Form name must be 1..16 lowercase ASCII characters")
     if not isinstance(command, str) or not re.fullmatch(r"[a-z0-9_]{1,32}", command) or command in {"back", "cancel"}:
-        raise ValueError("Use an ASCII command distinct from back/cancel, without '/'")
+        raise ValidationFailure("Use an ASCII command distinct from back/cancel, without '/'")
     if not callable(on_submit):
-        raise TypeError("on_submit must be an async callable")
+        raise InvalidType("on_submit must be an async callable")
 
     router = Router(name=f"text-form:{name}")
     namespace = f"telegram_patterns:form:{name}"
@@ -269,7 +271,7 @@ def text_form_router(
         try:
             text = await on_submit(submission)
             if not _plain(text, 4096):
-                raise ValueError("on_submit must return nonempty plain text up to 4096 UTF-16 units")
+                raise InvalidCompletion("on_submit must return nonempty plain text up to 4096 UTF-16 units")
         except Exception:
             await message.answer("Результат отправки пока не подтверждён. Нажмите «Отправить» ещё раз для проверки той же заявки.", parse_mode=None)
             raise  # Host error handling/observability, never raw errors in chat.

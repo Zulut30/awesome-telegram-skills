@@ -100,6 +100,10 @@ assert validate_init_data(raw,'42:TEST',now=1650385342).user_id==42
 print(json.dumps({'core_without_sdk':True,'python':sys.version.split()[0]}))
 ''', encoding='utf-8')
         run('core-smoke', [str(python_in(core)), str(smoke), str(core)], consumers)
+        recovery = json.loads(run('error-recovery', [str(python_in(core)), str(ROOT / 'examples/python/error_recovery.py')], consumers))
+        if not recovery['passed'] or recovery['network'] or recovery['effect_count'] != 1 or not recovery['replayed']:
+            raise RuntimeError('Installed core error reconciliation example failed')
+        report['error_recovery'] = recovery
         core_console = core / ('Scripts/telegram-patterns.exe' if os.name == 'nt' else 'bin/telegram-patterns')
         report['core_cli'] = json.loads(run('core-cli', [str(core_console), 'recipes', 'две кнопки'], consumers))
         if report['core_cli']['recipes'][0]['id'] != 'two-columns':
@@ -148,6 +152,12 @@ print(json.dumps({'core_without_sdk':True,'python':sys.version.split()[0]}))
         run('starter-build', [npm, 'run', 'build'], mini_starter)
         copied_skill = consumers / 'portable-skill/telegram-code-patterns'
         shutil.copytree(ROOT / '.agents/skills/telegram-code-patterns', copied_skill)
+        blocks = re.findall(r'```python\r?\n(.*?)```', (copied_skill / 'references/errors.md').read_text(encoding='utf-8'), re.S)
+        if len(blocks) != 1:
+            raise RuntimeError('Expected one standalone error handling example')
+        error_example = consumers / 'portable_error_example.py'
+        error_example.write_text(blocks[0], encoding='utf-8')
+        run('portable-error-recipe', [str(python_in(core)), str(error_example)], consumers)
         report['portable_keyboard_recipe'] = json.loads(run('portable-keyboard-recipe', [str(python_in(sdk)), str(ROOT / 'scripts/verify_keyboard_recipe.py'), str(copied_skill)], consumers))
         report['portable_developer_recipe'] = json.loads(run('portable-developer-recipe', [str(python_in(core)), str(ROOT / 'scripts/verify_developer_recipe.py'), str(copied_skill)], consumers))
 

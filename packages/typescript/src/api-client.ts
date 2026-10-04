@@ -1,8 +1,13 @@
+import {PatternError, ValidationFailure, type ErrorCode} from './errors.js';
+
 export type FailureKind = 'http' | 'network' | 'timeout' | 'aborted' | 'invalid-response';
-export class ApiError extends Error {
+export class ApiError extends PatternError {
+  declare readonly outcome: 'unknown' | 'read-failed';
   constructor(readonly kind: FailureKind, readonly status: number | undefined,
-              readonly outcome: 'unknown' | 'read-failed') {
-    super(`API request failed: ${kind}`);
+              outcome: 'unknown' | 'read-failed') {
+    const code: ErrorCode = kind === 'aborted' ? 'cancelled'
+      : kind === 'http' ? (status === 401 ? 'authentication-required' : status === 403 ? 'permission-denied' : status === 400 || status === 422 ? 'validation-failed' : 'network') : kind;
+    super(code, outcome, `API request failed: ${kind}`);
     this.name = 'ApiError';
   }
 }
@@ -25,24 +30,27 @@ export class ApiClient {
   private readonly base: URL;
   private readonly transport: typeof fetch;
   constructor(private readonly options: ClientOptions) {
-    this.base = new URL(options.baseUrl);
+    try { this.base = new URL(options.baseUrl); }
+    catch { throw new ValidationFailure('Configure a valid absolute HTTP(S) base URL'); }
     if (!['http:', 'https:'].includes(this.base.protocol) || this.base.username || this.base.password) {
-      throw new Error('Configure an HTTP(S) base URL without credentials');
+      throw new ValidationFailure('Configure an HTTP(S) base URL without credentials');
     }
     this.transport = options.fetch ?? globalThis.fetch.bind(globalThis);
   }
   async request<T>(path: string, decode: (value: unknown) => T, options: RequestOptions = {}): Promise<T> {
-    const url = new URL(path, this.base);
-    if (url.origin !== this.base.origin) throw new Error('Cross-origin API path rejected');
+    let url: URL;
+    try { url = new URL(path, this.base); }
+    catch { throw new ValidationFailure('Configure a valid API path'); }
+    if (url.origin !== this.base.origin) throw new ValidationFailure('Cross-origin API path rejected');
     const method = options.method ?? 'GET';
     const outcome = method === 'GET' || method === 'HEAD' ? 'read-failed' : 'unknown';
     const timeout = options.timeoutMs ?? 10000;
-    if (!Number.isFinite(timeout) || timeout <= 0) throw new Error('Positive timeout required');
+    if (!Number.isFinite(timeout) || timeout <= 0) throw new ValidationFailure('Positive timeout required');
     const headers = new Headers(this.options.headers?.());
     headers.set('Accept', 'application/json');
     let body: string | undefined;
     if (options.body !== undefined) {
-      if (method === 'GET' || method === 'HEAD') throw new Error('Read method cannot have a body');
+      if (method === 'GET' || method === 'HEAD') throw new ValidationFailure('Read method cannot have a body');
       body = JSON.stringify(options.body);
       headers.set('Content-Type', 'application/json');
     }

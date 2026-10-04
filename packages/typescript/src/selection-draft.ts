@@ -1,3 +1,4 @@
+import {ValidationFailure} from './errors.js';
 export interface SelectionDraft { readonly serviceId: string | null; readonly slotId: string | null }
 type StorageLike = Pick<Storage, 'getItem' | 'setItem' | 'removeItem'>;
 export type DraftRead =
@@ -5,11 +6,11 @@ export type DraftRead =
   | {status: 'missing' | 'expired' | 'corrupt' | 'unavailable'};
 export interface DraftOptions { namespace: string; scope: string; ttlMs: number; now?: () => number }
 function draft(value: unknown): SelectionDraft {
-  if (!value || typeof value !== 'object') throw new Error('Invalid selection');
+  if (!value || typeof value !== 'object') throw new ValidationFailure('Invalid selection');
   const object = value as Record<string, unknown>;
   for (const key of ['serviceId', 'slotId']) {
     const item = object[key];
-    if (item !== null && (typeof item !== 'string' || item.length > 128)) throw new Error('Invalid selection ID');
+    if (item !== null && (typeof item !== 'string' || item.length > 128)) throw new ValidationFailure('Invalid selection ID');
   }
   // Explicit allowlist: no names, contacts, auth, prices or pending operation IDs.
   return { serviceId: object.serviceId as string | null, slotId: object.slotId as string | null };
@@ -23,7 +24,7 @@ export class SelectionDraftStore {
   private readonly ttlMs: number;
   constructor(private readonly storage: () => StorageLike, options: DraftOptions) {
     if (typeof options.scope !== 'string' || typeof options.namespace !== 'string' || !options.scope || !options.namespace || options.scope.length > 256 || options.namespace.length > 128 || !Number.isFinite(options.ttlMs) || options.ttlMs <= 0) {
-      throw new Error('Configure namespace, verified scope and positive draft TTL');
+      throw new ValidationFailure('Configure namespace, verified scope and positive draft TTL');
     }
     this.key = `tg-selection:${encodeURIComponent(options.namespace)}:${encodeURIComponent(options.scope)}:v1`;
     this.scope = options.scope;
@@ -43,7 +44,7 @@ export class SelectionDraftStore {
     if (raw === null) return {status: 'missing'};
     try {
       const saved = JSON.parse(raw) as Record<string, unknown>;
-      if (!saved || saved.schema !== 1 || saved.scope !== this.scope || typeof saved.expires !== 'number' || !Number.isFinite(saved.expires)) throw new Error('Invalid envelope');
+      if (!saved || saved.schema !== 1 || saved.scope !== this.scope || typeof saved.expires !== 'number' || !Number.isFinite(saved.expires)) throw new ValidationFailure('Invalid envelope');
       if (saved.expires <= this.now()) { this.clear(); return {status: 'expired'}; }
       return {status: 'restored', value: draft(saved.value)};
     } catch { this.clear(); return {status: 'corrupt'}; }

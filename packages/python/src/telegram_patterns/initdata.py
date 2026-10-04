@@ -1,5 +1,6 @@
 """Bot-owner HMAC validation. Does not implement OIDC or Ed25519 validation."""
 from __future__ import annotations
+from .errors import ErrorCode, ValidationFailure
 
 from dataclasses import dataclass
 import hmac
@@ -11,8 +12,9 @@ from typing import Mapping
 from urllib.parse import parse_qsl
 
 
-class InvalidInitData(ValueError):
+class InvalidInitData(ValidationFailure):
     """Untrusted launch data; messages do not include raw input or secrets."""
+    code: ErrorCode = 'invalid-init-data'
 
 
 @dataclass(frozen=True)
@@ -33,14 +35,14 @@ def validate_init_data(
     session creation and replay-sensitive operations belong to the service.
     """
     if not isinstance(bot_token, str) or not bot_token:
-        raise ValueError("bot_token must be configured on the server")
+        raise ValidationFailure("bot_token must be configured on the server")
     for name, value, minimum in [("max_age_seconds", max_age_seconds, 1),
                                  ("future_tolerance_seconds", future_tolerance_seconds, 0),
                                  ("max_length", max_length, 1)]:
         if type(value) is not int or value < minimum:
-            raise ValueError(f"Invalid {name}")
+            raise ValidationFailure(f"Invalid {name}")
     if now is not None and (type(now) is not int or now < 0):
-        raise ValueError("now must be a nonnegative Unix timestamp")
+        raise ValidationFailure("now must be a nonnegative Unix timestamp")
     if not isinstance(raw, str) or not raw or len(raw) > max_length:
         raise InvalidInitData("Invalid launch data size")
     if re.search(r"%(?![0-9a-fA-F]{2})", raw):

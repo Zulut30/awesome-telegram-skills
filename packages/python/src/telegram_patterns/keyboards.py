@@ -1,5 +1,6 @@
 """Optional aiogram action keyboards and local pagination builders."""
 from __future__ import annotations
+from .errors import ValidationFailure, InvalidType
 
 from dataclasses import dataclass
 import re
@@ -12,12 +13,12 @@ ButtonStyle = Literal["primary", "success", "danger"]
 
 def _callback_data(key: str, prefix: str) -> str:
     if not isinstance(prefix, str) or not prefix or not re.fullmatch(r"[a-zA-Z0-9_-]+:", prefix):
-        raise ValueError("Use a bounded ASCII prefix ending in ':'")
+        raise ValidationFailure("Use a bounded ASCII prefix ending in ':'")
     if not isinstance(key, str) or not re.fullmatch(r"[a-zA-Z0-9_-]{1,48}", key):
-        raise ValueError("Use an opaque ASCII action key")
+        raise ValidationFailure("Use an opaque ASCII action key")
     result = prefix + key
     if len(result.encode("utf-8")) > 64:
-        raise ValueError("Callback data exceeds 64 bytes")
+        raise ValidationFailure("Callback data exceeds 64 bytes")
     return result
 
 
@@ -30,11 +31,11 @@ class ActionButton:
 
     def __post_init__(self) -> None:
         if not isinstance(self.text, str) or not self.text.strip():
-            raise ValueError("Button label required")
+            raise ValidationFailure("Button label required")
         if self.style not in {None, "primary", "success", "danger"}:
-            raise ValueError("Unknown button style")
+            raise ValidationFailure("Unknown button style")
         if self.custom_emoji_id is not None and (not isinstance(self.custom_emoji_id, str) or not re.fullmatch(r"[0-9]+", self.custom_emoji_id)):
-            raise ValueError("Custom emoji ID must be a decimal string")
+            raise ValidationFailure("Custom emoji ID must be a decimal string")
         _callback_data(self.key, "act:")
 
 
@@ -54,15 +55,15 @@ def action_keyboard(text: str, key: str, *, prefix: str = "act:",
 
 def _columns(columns: int) -> None:
     if type(columns) is not int or not 1 <= columns <= 8:
-        raise ValueError("Use 1..8 columns")
+        raise ValidationFailure("Use 1..8 columns")
 
 
 def _items(buttons: Sequence[ActionButton]) -> tuple[ActionButton, ...]:
     items = tuple(buttons)
     if any(not isinstance(item, ActionButton) for item in items):
-        raise TypeError("Use ActionButton items")
+        raise InvalidType("Use ActionButton items")
     if len({item.key for item in items}) != len(items):
-        raise ValueError("Action keys must be unique within a menu")
+        raise ValidationFailure("Action keys must be unique within a menu")
     return items
 
 
@@ -73,7 +74,7 @@ def action_menu(buttons: Sequence[ActionButton], *, columns: int = 2, prefix: st
     _callback_data("k", prefix)
     items = _items(buttons)
     if len(items) > 100:
-        raise ValueError("Use pagination for more than 100 buttons")
+        raise ValidationFailure("Use pagination for more than 100 buttons")
     rows = [[_button(item, prefix, emoji_entitlement_verified) for item in items[offset:offset + columns]]
             for offset in range(0, len(items), columns)]
     return InlineKeyboardMarkup(inline_keyboard=rows)
@@ -95,11 +96,11 @@ def paginated_menu(buttons: Sequence[ActionButton], *, page: int = 0, page_size:
     _callback_data("k", action_prefix)
     _callback_data("0", page_prefix)
     if action_prefix == page_prefix:
-        raise ValueError("Action and pagination prefixes must differ")
+        raise ValidationFailure("Action and pagination prefixes must differ")
     if type(page) is not int or page < 0:
-        raise ValueError("Page must be a nonnegative integer")
+        raise ValidationFailure("Page must be a nonnegative integer")
     if type(page_size) is not int or not 1 <= page_size <= 98:
-        raise ValueError("Use page_size 1..98, leaving room for navigation")
+        raise ValidationFailure("Use page_size 1..98, leaving room for navigation")
     items = _items(buttons)
     # Validate the entire data set before producing any partially usable page.
     for item in items:
