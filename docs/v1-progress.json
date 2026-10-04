@@ -69,10 +69,16 @@
       "id": 5,
       "title": "Опубликовать матрицу поддержки",
       "requirement": "Указать реально проверяемые версии Python, aiogram, Node.js, TypeScript и Telegram-клиентов; отделить проверенный диапазон от предположительно совместимого.",
-      "status": "pending",
-      "commit_subject": null,
-      "artifacts": [],
-      "evidence": []
+      "status": "done",
+      "commit_subject": "roadmap(005): publish evidence-based support matrix",
+      "artifacts": [
+        "docs/support-matrix.md",
+        "catalog/support-matrix.json"
+      ],
+      "evidence": [
+        "Exact versions collected from installed consumer/workspace/report; manifests compared to declared constraints",
+        "Explicit separation of declared/tested/unverified ranges; real Telegram clients absent; Windows skip retained; Node EOL official source inspected"
+      ]
     },
     {
       "id": 6,

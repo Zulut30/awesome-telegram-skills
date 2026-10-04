@@ -1,0 +1,57 @@
+{
+  "schema_version": 1,
+  "library_version": "0.6.0",
+  "checked_date": "2026-10-04",
+  "maturity": "experimental",
+  "declared": {
+    "python": ">=3.11",
+    "aiogram": "aiogram>=3.31,<4",
+    "node": ">=20",
+    "module": "ESM",
+    "runtime_typescript_dependencies": []
+  },
+  "verified": {
+    "python": "3.13.12",
+    "aiogram": "3.31.0",
+    "node": "24.19.0",
+    "npm": "12.0.2",
+    "typescript": "7.0.2",
+    "playwright": "1.63.0",
+    "os": "Windows 11",
+    "arch": "AMD64",
+    "browser": "154.0.8037.97",
+    "browser_checks": 452
+  },
+  "evidence": "docs/v1-checks/002.json",
+  "artifacts": [
+    {
+      "name": "awesome_telegram_patterns-0.6.0-py3-none-any.whl",
+      "bytes": 86832,
+      "sha256": "3089c329e8ea9d2cd933da8783b3eac8df64464e7d842da174c037129322f2b9"
+    },
+    {
+      "name": "awesome-telegram-patterns-0.6.0.tgz",
+      "bytes": 16638,
+      "sha256": "3ee6edc053abc6714c28ca3e7bc0718c4b79db2cbd4a4a4bf97260491067a15e"
+    }
+  ],
+  "unverified": [
+    "other declared Python/aiogram/Node/TypeScript versions",
+    "Linux/macOS",
+    "real Telegram iOS/Android/Desktop/tablet client versions",
+    "screen readers",
+    "provider sandboxes and production payment workflows",
+    "durable FSM/multiworker restart"
+  ],
+  "skip": {
+    "python_tests": 1,
+    "reason": "Windows directory symlink unavailable"
+  },
+  "sources": [
+    {
+      "url": "https://nodejs.org/en/about/previous-releases",
+      "scope": "Node 20 EOL; supported LTS recommendation",
+      "checked_date": "2026-10-04"
+    }
+  ]
+}
