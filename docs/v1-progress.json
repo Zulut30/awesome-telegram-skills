@@ -55,10 +55,15 @@
       "id": 4,
       "title": "Ввести правила совместимости",
       "requirement": "Определить SemVer, период предупреждения о deprecation, миграции и допустимые изменения; выпуск 1.0 должен иметь явный стабильный контракт.",
-      "status": "pending",
-      "commit_subject": null,
-      "artifacts": [],
-      "evidence": []
+      "status": "done",
+      "commit_subject": "roadmap(004): define versioning and deprecation policy",
+      "artifacts": [
+        "docs/versioning.md"
+      ],
+      "evidence": [
+        "Reviewed compatibility scope, all change classes, pre-1.0/stable distinction, two-minor AND 90-day deprecation window, migrations and release immutability",
+        "Official SemVer/PyPA versioning inspected 2026-10-04; RC implementation explicitly remains item 099; no deprecated API exists"
+      ]
     },
     {
       "id": 5,
