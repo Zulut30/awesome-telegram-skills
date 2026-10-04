@@ -42,6 +42,7 @@ def build(root: Path = ROOT) -> dict:
     records = []
     def add(recipe_id, title, summary, category, language, keywords, code, verification, scope, sources, preview=None):
         records.append({'id': recipe_id, 'title': title, 'summary': summary, 'category': category, 'language': language,
+            'maturity': 'reference' if category == 'bot-api' or verification == 'not_run' else 'experimental',
             'keywords': keywords, 'code': code, 'verification': verification, 'scope': scope, 'sources': sources, 'preview': preview,
             'code_sha256': hashlib.sha256(code.encode('utf-8')).hexdigest()})
     for key, title, tags, body in MANUAL:

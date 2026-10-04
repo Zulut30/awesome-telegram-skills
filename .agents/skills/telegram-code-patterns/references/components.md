@@ -1,4 +1,6 @@
-# API библиотеки 0.5.0
+# API библиотеки 0.6.0
+
+Все группы пока experimental. [Maturity](maturity.md) наследуется их публичными символами; SDK/mock/browser/live — отдельный уровень доказательств. `RecipeCatalog.search` дополнительно принимает `maturity`, а `Recipe` содержит этот immutable field.
 
 Локальный репозиторий/wheel/tarball; публикация в реестрах не подтверждена. Python >=3.11. TypeScript ESM с declarations; Node >=20 для tooling. Core Python/browser runtime без сторонних dependencies; aiogram extra >=3.31,<4 испытан на 3.31.0. Другую версию SDK проверяй отдельно.
 

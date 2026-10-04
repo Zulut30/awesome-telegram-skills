@@ -1,0 +1,54 @@
+{
+  "roadmap_item": 2,
+  "version": "0.6.0",
+  "passed": true,
+  "distribution_report": "output/pattern-library-0.6.0/distribution-report.json",
+  "report_sha256": "5e8716ad9496727af067b0a220089803e0c4aabba86c420409f67e9be7f07d0b",
+  "stages": 36,
+  "python_tests": {
+    "run": 85,
+    "passed": 84,
+    "skipped": 1,
+    "skip_reason": "Windows directory symlink unavailable"
+  },
+  "typescript_tests": 21,
+  "browser": {
+    "engine": "154.0.8037.97",
+    "example": 141,
+    "gallery": 245,
+    "starter": 66,
+    "limits": "Chrome, not physical Telegram clients"
+  },
+  "artifacts": [
+    {
+      "name": "awesome_telegram_patterns-0.6.0-py3-none-any.whl",
+      "bytes": 86832,
+      "sha256": "3089c329e8ea9d2cd933da8783b3eac8df64464e7d842da174c037129322f2b9"
+    },
+    {
+      "name": "awesome-telegram-patterns-0.6.0.tgz",
+      "bytes": 16638,
+      "sha256": "3ee6edc053abc6714c28ca3e7bc0718c4b79db2cbd4a4a4bf97260491067a15e"
+    }
+  ],
+  "portable_core_examples": {
+    "passed": true,
+    "blocks": 2,
+    "network": false,
+    "public_api": "telegram_patterns.RecipeCatalog"
+  },
+  "temporary_generator": "write/check preserved owned file; experimental count 14",
+  "root_tests": 16,
+  "skill_validator": 41,
+  "maturity": {
+    "component_groups": {
+      "experimental": 24
+    },
+    "recipes": {
+      "experimental": 14,
+      "reference": 284,
+      "stable": 0
+    }
+  },
+  "decision_evaluation": "Relevant scenarios added in docs/evaluation.md; portable examples checked; independent blind agent evaluation remains item 088"
+}

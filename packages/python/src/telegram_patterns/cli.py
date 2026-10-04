@@ -74,6 +74,7 @@ def main(argv: list[str] | None = None) -> int:
     recipes = commands.add_parser('recipes', help='Search bundled recipes; never executes them')
     recipes.add_argument('query', nargs='?', default=''); recipes.add_argument('--category'); recipes.add_argument('--language')
     recipes.add_argument('--verification'); recipes.add_argument('--limit', type=int, default=20); recipes.add_argument('--show')
+    recipes.add_argument('--maturity', choices=('stable', 'experimental', 'reference'))
     init = commands.add_parser('init', help='Create a NEW project; no install/network/overwrite')
     init.add_argument('target'); init.add_argument('--library', required=True); init.add_argument('--template', choices=('bot', 'bot-mini-app'), default='bot')
     init.add_argument('--typescript'); init.add_argument('--dry-run', action='store_true')
@@ -85,11 +86,11 @@ def main(argv: list[str] | None = None) -> int:
             catalog = RecipeCatalog()
             if args.show:
                 recipe = catalog.get(args.show)
-                print(f'{recipe.title}\n{recipe.verification}: {recipe.scope}\n\n{recipe.code}')
+                print(f'{recipe.title}\n{recipe.maturity} / {recipe.verification}: {recipe.scope}\n\n{recipe.code}')
             else:
-                found = catalog.search(args.query, category=args.category, language=args.language, verification=args.verification, limit=args.limit)
+                found = catalog.search(args.query, category=args.category, language=args.language, verification=args.verification, maturity=args.maturity, limit=args.limit)
                 print(json.dumps({'version': catalog.library_version, 'matches': len(found), 'recipes': [
-                    {'id': item.id, 'title': item.title, 'category': item.category, 'verification': item.verification, 'scope': item.scope} for item in found]}, ensure_ascii=False))
+                    {'id': item.id, 'title': item.title, 'category': item.category, 'maturity': item.maturity, 'verification': item.verification, 'scope': item.scope} for item in found]}, ensure_ascii=False))
         elif args.command == 'init':
             plan = create_starter(args.target, library=args.library, template=args.template, typescript=args.typescript, dry_run=args.dry_run)
             print(json.dumps({'created': plan.created, 'target': str(plan.target), 'template': plan.template, 'library_version': plan.library_version, 'files': plan.files, 'network': False}))

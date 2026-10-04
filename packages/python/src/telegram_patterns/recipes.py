@@ -26,6 +26,7 @@ class Recipe:
     scope: str
     sources: tuple[str, ...]
     preview_json: str | None = None
+    maturity: str = 'experimental'
 
     @property
     def preview(self) -> dict[str, Any] | None:
@@ -34,7 +35,7 @@ class Recipe:
 
 
 class RecipeCatalog:
-    """Read-only recipe records; SDK/mock/live levels have distinct scopes."""
+    """Read-only records; maturity is independent of verification evidence."""
     def __init__(self, data: dict[str, Any] | None = None) -> None:
         if data is None:
             data = json.loads(files('telegram_patterns').joinpath('resources/recipes.json').read_text(encoding='utf-8'))
@@ -50,7 +51,11 @@ class RecipeCatalog:
                 raise ValueError('Invalid recipe fields')
             if not re.fullmatch(r'[A-Za-z0-9_.:-]{1,120}', item['id']) or item['id'] in seen:
                 raise ValueError('Invalid or duplicate recipe ID')
-            if item['verification'] not in {'sdk', 'mock', 'live', 'not_run'}: raise ValueError('Unknown verification level')
+            if item['verification'] not in {'sdk', 'mock', 'browser', 'live', 'not_run'}: raise ValueError('Unknown verification level')
+            # Never infer stable status from an SDK/mock/browser/live check.
+            maturity = item.get('maturity', 'reference' if item['verification'] == 'not_run' or item['category'] == 'bot-api' else 'experimental')
+            if not isinstance(maturity, str) or maturity not in {'stable', 'experimental', 'reference'}:
+                raise ValueError('Unknown recipe maturity')
             if item['language'] not in {'python', 'typescript'}: raise ValueError('Unknown recipe language')
             if any(not isinstance(item.get(key), list) or any(not isinstance(value, str) for value in item[key]) for key in ('keywords', 'sources')):
                 raise ValueError('Use string lists for keywords and sources')
@@ -59,7 +64,7 @@ class RecipeCatalog:
             preview = item.get('preview')
             if preview is not None and not isinstance(preview, dict): raise ValueError('Invalid recipe preview')
             records.append(Recipe(**{key: item[key] for key in fields}, keywords=tuple(item['keywords']), sources=tuple(item['sources']),
-                                  preview_json=json.dumps(preview, ensure_ascii=False) if preview is not None else None))
+                                  preview_json=json.dumps(preview, ensure_ascii=False) if preview is not None else None, maturity=maturity))
             seen.add(item['id'])
         self._records = tuple(records)
 
@@ -75,15 +80,17 @@ class RecipeCatalog:
         raise KeyError('Unknown recipe ID')
 
     def search(self, query: str = '', *, category: str | None = None, language: str | None = None,
-               verification: str | None = None, limit: int = 20) -> tuple[Recipe, ...]:
+               verification: str | None = None, maturity: str | None = None, limit: int = 20) -> tuple[Recipe, ...]:
         if not isinstance(query, str) or len(query) > 512 or type(limit) is not int or not 1 <= limit <= 1000:
             raise ValueError('Use a query up to 512 characters and a limit of 1..1000')
-        if any(value is not None and not isinstance(value, str) for value in (category, language, verification)):
+        if any(value is not None and not isinstance(value, str) for value in (category, language, verification, maturity)):
             raise ValueError('Recipe filters must be strings')
+        if maturity is not None and maturity not in {'stable', 'experimental', 'reference'}:
+            raise ValueError('Unknown recipe maturity')
         terms, found = normalize(query).split(), []
         for order, recipe in enumerate(self._records):
             if any(value is not None and getattr(recipe, key) != value for key, value in
-                   (('category', category), ('language', language), ('verification', verification))): continue
+                   (('category', category), ('language', language), ('verification', verification), ('maturity', maturity))): continue
             title, keywords = normalize(recipe.title), normalize(' '.join(recipe.keywords))
             text = normalize(' '.join((recipe.id, recipe.title, recipe.summary, recipe.category, recipe.language, keywords)))
             if not all(term in text for term in terms): continue

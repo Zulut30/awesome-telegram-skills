@@ -91,6 +91,9 @@ assert Path(telegram_patterns.__file__).is_relative_to(Path(sys.argv[1]))
 assert BotSettings.from_env(environ={'BOT_TOKEN':'100:CORE_FIXTURE'}).token=='100:CORE_FIXTURE'
 assert len(RecipeCatalog().recipes)==298
 assert RecipeCatalog().search('две кнопки')[0].id=='two-columns'
+assert RecipeCatalog().get('two-columns').maturity=='experimental'
+assert RecipeCatalog().get('api.sendPhoto').maturity=='reference'
+assert not RecipeCatalog().search(maturity='stable')
 assert callable(create_starter)
 raw='auth_date=1650385342&user=%7B%22id%22%3A42%2C%22first_name%22%3A%22Test%22%7D&query_id=test&hash=46d2ea5e32911ec8d30999b56247654460c0d20949b6277af519e76271182803'
 assert validate_init_data(raw,'42:TEST',now=1650385342).user_id==42
@@ -101,6 +104,9 @@ print(json.dumps({'core_without_sdk':True,'python':sys.version.split()[0]}))
         report['core_cli'] = json.loads(run('core-cli', [str(core_console), 'recipes', 'две кнопки'], consumers))
         if report['core_cli']['recipes'][0]['id'] != 'two-columns':
             raise RuntimeError('Core console recipe search failed')
+        report['maturity_cli'] = json.loads(run('maturity-cli', [str(core_console), 'recipes', '--maturity', 'experimental'], consumers))
+        if len(report['maturity_cli']['recipes']) != 14 or any(item['maturity'] != 'experimental' for item in report['maturity_cli']['recipes']):
+            raise RuntimeError('Installed maturity CLI filter failed')
         database = consumers / 'booking.sqlite'
         first = json.loads(run('booking-first', [str(python_in(core)), str(ROOT / 'examples/python/booking.py'), str(database)], consumers))
         repeated = json.loads(run('booking-replay', [str(python_in(core)), str(ROOT / 'examples/python/booking.py'), str(database)], consumers))

@@ -17,6 +17,30 @@ ROOT = Path(__file__).resolve().parents[3]
 
 
 class RecipeTests(unittest.TestCase):
+    def test_maturity_does_not_promote_evidence_to_stable(self):
+        catalog = RecipeCatalog()
+        self.assertEqual(len(catalog.search(maturity='experimental', limit=1000)), 14)
+        self.assertEqual(len(catalog.search(maturity='reference', limit=1000)), 284)
+        self.assertEqual(catalog.search(maturity='stable'), ())
+        self.assertEqual(catalog.get('api.sendPhoto').maturity, 'reference')
+        self.assertEqual(catalog.get('two-columns').maturity, 'experimental')
+        self.assertEqual(catalog.search(verification='sdk', maturity='experimental')[0].id, 'two-columns')
+        self.assertEqual(catalog.search(verification='mock', maturity='reference'), ())
+        self.assertRaises(ValueError, catalog.search, maturity='production')
+
+    def test_legacy_and_explicit_maturity_are_independent_of_verification(self):
+        data={'schema_version':1,'library_version':'fixture','recipes':[{
+            'id':'fixture','title':'Fixture','summary':'fixture','category':'keyboards','language':'python','keywords':[],
+            'code':'pass','verification':'live','scope':'fixture','sources':['https://core.telegram.org/bots/api']}]}
+        self.assertEqual(RecipeCatalog(data).get('fixture').maturity, 'experimental')
+        data['recipes'][0]['verification']='not_run'
+        self.assertEqual(RecipeCatalog(data).get('fixture').maturity, 'reference')
+        data['recipes'][0].update(verification='browser', maturity='experimental')
+        self.assertEqual(RecipeCatalog(data).search(verification='browser')[0].maturity, 'experimental')
+        for invalid in ('production', None, [], True):
+            data['recipes'][0]['maturity']=invalid
+            with self.subTest(invalid=invalid), self.assertRaises(ValueError): RecipeCatalog(data)
+
     def test_packaged_catalog_search_ranking_filters_and_scopes(self):
         catalog = RecipeCatalog()
         self.assertEqual(len(catalog.recipes), 298)
@@ -107,6 +131,17 @@ class StarterTests(unittest.TestCase):
 
 
 class CLITests(unittest.TestCase):
+    def test_maturity_filter_and_show_are_visible_to_consumer(self):
+        with redirect_stdout(io.StringIO()) as output:
+            self.assertEqual(main(['recipes','--maturity','reference','--verification','mock']),0)
+        self.assertEqual(json.loads(output.getvalue())['recipes'],[])
+        with redirect_stdout(io.StringIO()) as output:
+            self.assertEqual(main(['recipes','две кнопки','--maturity','experimental']),0)
+        self.assertEqual(json.loads(output.getvalue())['recipes'][0]['maturity'],'experimental')
+        with redirect_stdout(io.StringIO()) as output:
+            self.assertEqual(main(['recipes','--show','api.sendPhoto']),0)
+        self.assertIn('reference / sdk',output.getvalue())
+
     def test_search_show_and_controlled_invalid_artifact(self):
         with redirect_stdout(io.StringIO()) as output:self.assertEqual(main(['recipes','две кнопки']),0)
         self.assertEqual(json.loads(output.getvalue())['recipes'][0]['id'],'two-columns')

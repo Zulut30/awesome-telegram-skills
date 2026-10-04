@@ -22,10 +22,21 @@
       "id": 2,
       "title": "Разделить уровни зрелости компонентов",
       "requirement": "Присвоить каждому API статус `stable`, `experimental` или `reference`; отдельно сохранить уровни `sdk`, `mock`, `browser`, `live`, поскольку зрелость и способ проверки — разные свойства.",
-      "status": "pending",
-      "commit_subject": null,
-      "artifacts": [],
-      "evidence": []
+      "status": "done",
+      "commit_subject": "roadmap(002): separate API maturity from execution evidence",
+      "artifacts": [
+        "components.json",
+        "docs/v1-maturity.md",
+        "packages/python/src/telegram_patterns/recipes.py",
+        "gallery/index.html",
+        ".agents/skills/telegram-code-patterns/references/maturity.md",
+        "docs/v1-checks/002.json"
+      ],
+      "evidence": [
+        "docs/v1-checks/002.json",
+        "36 distribution stages passed; 84 Python passed + 1 skip; 21 TypeScript passed; 452 Chrome checks",
+        "Installed core maturity CLI and portable skill recipes passed; generator write/check in temporary directory preserved owned file"
+      ]
     },
     {
       "id": 3,

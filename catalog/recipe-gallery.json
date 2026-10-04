@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "library_version": "0.5.0",
+  "library_version": "0.6.0",
   "source_snapshot": "2026-10-04",
   "source_hashes": {
     "bot_api": "29f5f25caa18d303f14ce83af5a4df784eb3094c3076cb040a1ad950c157ad44",
@@ -13,6 +13,7 @@
       "summary": "Готовая разметка; обработку и права проверяет ваш handler.",
       "category": "keyboards",
       "language": "python",
+      "maturity": "experimental",
       "keywords": [
         "кнопки",
         "2",
@@ -59,6 +60,7 @@
       "summary": "Готовая разметка; обработку и права проверяет ваш handler.",
       "category": "keyboards",
       "language": "python",
+      "maturity": "experimental",
       "keywords": [
         "кнопки",
         "3",
@@ -113,6 +115,7 @@
       "summary": "Готовая разметка; обработку и права проверяет ваш handler.",
       "category": "keyboards",
       "language": "python",
+      "maturity": "experimental",
       "keywords": [
         "кнопки",
         "смешанная",
@@ -167,6 +170,7 @@
       "summary": "Готовая разметка; обработку и права проверяет ваш handler.",
       "category": "keyboards",
       "language": "python",
+      "maturity": "experimental",
       "keywords": [
         "цвета",
         "покрасить",
@@ -211,6 +215,7 @@
       "summary": "Готовая разметка; обработку и права проверяет ваш handler.",
       "category": "keyboards",
       "language": "python",
+      "maturity": "experimental",
       "keywords": [
         "premium",
         "emoji",
@@ -242,6 +247,7 @@
       "summary": "Готовая разметка; обработку и права проверяет ваш handler.",
       "category": "keyboards",
       "language": "python",
+      "maturity": "experimental",
       "keywords": [
         "reply",
         "keyboard",
@@ -286,6 +292,7 @@
       "summary": "Готовая разметка; обработку и права проверяет ваш handler.",
       "category": "keyboards",
       "language": "python",
+      "maturity": "experimental",
       "keywords": [
         "контакт",
         "телефон",
@@ -326,6 +333,7 @@
       "summary": "Готовая разметка; обработку и права проверяет ваш handler.",
       "category": "keyboards",
       "language": "python",
+      "maturity": "experimental",
       "keywords": [
         "force",
         "reply",
@@ -354,6 +362,7 @@
       "summary": "Готовая разметка; обработку и права проверяет ваш handler.",
       "category": "keyboards",
       "language": "python",
+      "maturity": "experimental",
       "keywords": [
         "убрать",
         "скрыть",
@@ -379,6 +388,7 @@
       "summary": "Готовая разметка; обработку и права проверяет ваш handler.",
       "category": "keyboards",
       "language": "python",
+      "maturity": "experimental",
       "keywords": [
         "copy",
         "disabled",
@@ -416,6 +426,7 @@
       "summary": "Готовая разметка; обработку и права проверяет ваш handler.",
       "category": "keyboards",
       "language": "python",
+      "maturity": "experimental",
       "keywords": [
         "url",
         "web_app",
@@ -455,6 +466,7 @@
       "summary": "Искусственные ID/данные: заменить перед отправкой. Проверить права и ограничения.",
       "category": "bot-api",
       "language": "python",
+      "maturity": "reference",
       "keywords": [
         "addStickerToSet",
         "user_id",
@@ -478,6 +490,7 @@
       "summary": "Искусственные ID/данные: заменить перед отправкой. Проверить права и ограничения.",
       "category": "bot-api",
       "language": "python",
+      "maturity": "reference",
       "keywords": [
         "answerCallbackQuery",
         "callback_query_id",
@@ -503,6 +516,7 @@
       "summary": "Искусственные ID/данные: заменить перед отправкой. Проверить права и ограничения.",
       "category": "bot-api",
       "language": "python",
+      "maturity": "reference",
       "keywords": [
         "answerChatJoinRequestQuery",
         "chat_join_request_query_id",
@@ -525,6 +539,7 @@
       "summary": "Искусственные ID/данные: заменить перед отправкой. Проверить права и ограничения.",
       "category": "bot-api",
       "language": "python",
+      "maturity": "reference",
       "keywords": [
         "answerGuestQuery",
         "guest_query_id",
@@ -547,6 +562,7 @@
       "summary": "Искусственные ID/данные: заменить перед отправкой. Проверить права и ограничения.",
       "category": "bot-api",
       "language": "python",
+      "maturity": "reference",
       "keywords": [
         "answerInlineQuery",
         "inline_query_id",
@@ -573,6 +589,7 @@
       "summary": "Искусственные ID/данные: заменить перед отправкой. Проверить права и ограничения.",
       "category": "bot-api",
       "language": "python",
+      "maturity": "reference",
       "keywords": [
         "answerPreCheckoutQuery",
         "pre_checkout_query_id",
@@ -596,6 +613,7 @@
       "summary": "Искусственные ID/данные: заменить перед отправкой. Проверить права и ограничения.",
       "category": "bot-api",
       "language": "python",
+      "maturity": "reference",
       "keywords": [
         "answerShippingQuery",
         "shipping_query_id",
@@ -620,6 +638,7 @@
       "summary": "Искусственные ID/данные: заменить перед отправкой. Проверить права и ограничения.",
       "category": "bot-api",
       "language": "python",
+      "maturity": "reference",
       "keywords": [
         "answerWebAppQuery",
         "web_app_query_id",
@@ -642,6 +661,7 @@
       "summary": "Искусственные ID/данные: заменить перед отправкой. Проверить права и ограничения.",
       "category": "bot-api",
       "language": "python",
+      "maturity": "reference",
       "keywords": [
         "approveChatJoinRequest",
         "chat_id",
@@ -664,6 +684,7 @@
       "summary": "Искусственные ID/данные: заменить перед отправкой. Проверить права и ограничения.",
       "category": "bot-api",
       "language": "python",
+      "maturity": "reference",
       "keywords": [
         "approveSuggestedPost",
         "chat_id",
@@ -687,6 +708,7 @@
       "summary": "Искусственные ID/данные: заменить перед отправкой. Проверить права и ограничения.",
       "category": "bot-api",
       "language": "python",
+      "maturity": "reference",
       "keywords": [
         "banChatMember",
         "chat_id",
@@ -711,6 +733,7 @@
       "summary": "Искусственные ID/данные: заменить перед отправкой. Проверить права и ограничения.",
       "category": "bot-api",
       "language": "python",
+      "maturity": "reference",
       "keywords": [
         "banChatSenderChat",
         "chat_id",
@@ -733,6 +756,7 @@
       "summary": "Искусственные ID/данные: заменить перед отправкой. Проверить права и ограничения.",
       "category": "bot-api",
       "language": "python",
+      "maturity": "reference",
       "keywords": [
         "close",
         "api",
@@ -753,6 +777,7 @@
       "summary": "Искусственные ID/данные: заменить перед отправкой. Проверить права и ограничения.",
       "category": "bot-api",
       "language": "python",
+      "maturity": "reference",
       "keywords": [
         "closeForumTopic",
         "chat_id",
@@ -775,6 +800,7 @@
       "summary": "Искусственные ID/данные: заменить перед отправкой. Проверить права и ограничения.",
       "category": "bot-api",
       "language": "python",
+      "maturity": "reference",
       "keywords": [
         "closeGeneralForumTopic",
         "chat_id",
@@ -796,6 +822,7 @@
       "summary": "Искусственные ID/данные: заменить перед отправкой. Проверить права и ограничения.",
       "category": "bot-api",
       "language": "python",
+      "maturity": "reference",
       "keywords": [
         "convertGiftToStars",
         "business_connection_id",
@@ -818,6 +845,7 @@
       "summary": "Искусственные ID/данные: заменить перед отправкой. Проверить права и ограничения.",
       "category": "bot-api",
       "language": "python",
+      "maturity": "reference",
       "keywords": [
         "copyMessage",
         "chat_id",
@@ -855,6 +883,7 @@
       "summary": "Искусственные ID/данные: заменить перед отправкой. Проверить права и ограничения.",
       "category": "bot-api",
       "language": "python",
+      "maturity": "reference",
       "keywords": [
         "copyMessages",
         "chat_id",
@@ -883,6 +912,7 @@
       "summary": "Искусственные ID/данные: заменить перед отправкой. Проверить права и ограничения.",
       "category": "bot-api",
       "language": "python",
+      "maturity": "reference",
       "keywords": [
         "createChatInviteLink",
         "chat_id",
@@ -908,6 +938,7 @@
       "summary": "Искусственные ID/данные: заменить перед отправкой. Проверить права и ограничения.",
       "category": "bot-api",
       "language": "python",
+      "maturity": "reference",
       "keywords": [
         "createChatSubscriptionInviteLink",
         "chat_id",
@@ -932,6 +963,7 @@
       "summary": "Искусственные ID/данные: заменить перед отправкой. Проверить права и ограничения.",
       "category": "bot-api",
       "language": "python",
+      "maturity": "reference",
       "keywords": [
         "createForumTopic",
         "chat_id",
@@ -956,6 +988,7 @@
       "summary": "Искусственные ID/данные: заменить перед отправкой. Проверить права и ограничения.",
       "category": "bot-api",
       "language": "python",
+      "maturity": "reference",
       "keywords": [
         "createInvoiceLink",
         "business_connection_id",
@@ -998,6 +1031,7 @@
       "summary": "Искусственные ID/данные: заменить перед отправкой. Проверить права и ограничения.",
       "category": "bot-api",
       "language": "python",
+      "maturity": "reference",
       "keywords": [
         "createNewStickerSet",
         "user_id",
@@ -1024,6 +1058,7 @@
       "summary": "Искусственные ID/данные: заменить перед отправкой. Проверить права и ограничения.",
       "category": "bot-api",
       "language": "python",
+      "maturity": "reference",
       "keywords": [
         "declineChatJoinRequest",
         "chat_id",
@@ -1046,6 +1081,7 @@
       "summary": "Искусственные ID/данные: заменить перед отправкой. Проверить права и ограничения.",
       "category": "bot-api",
       "language": "python",
+      "maturity": "reference",
       "keywords": [
         "declineSuggestedPost",
         "chat_id",
@@ -1069,6 +1105,7 @@
       "summary": "Искусственные ID/данные: заменить перед отправкой. Проверить права и ограничения.",
       "category": "bot-api",
       "language": "python",
+      "maturity": "reference",
       "keywords": [
         "deleteAllMessageReactions",
         "chat_id",
@@ -1092,6 +1129,7 @@
       "summary": "Искусственные ID/данные: заменить перед отправкой. Проверить права и ограничения.",
       "category": "bot-api",
       "language": "python",
+      "maturity": "reference",
       "keywords": [
         "deleteBusinessMessages",
         "business_connection_id",
@@ -1114,6 +1152,7 @@
       "summary": "Искусственные ID/данные: заменить перед отправкой. Проверить права и ограничения.",
       "category": "bot-api",
       "language": "python",
+      "maturity": "reference",
       "keywords": [
         "deleteChatPhoto",
         "chat_id",
@@ -1135,6 +1174,7 @@
       "summary": "Искусственные ID/данные: заменить перед отправкой. Проверить права и ограничения.",
       "category": "bot-api",
       "language": "python",
+      "maturity": "reference",
       "keywords": [
         "deleteChatStickerSet",
         "chat_id",
@@ -1156,6 +1196,7 @@
       "summary": "Искусственные ID/данные: заменить перед отправкой. Проверить права и ограничения.",
       "category": "bot-api",
       "language": "python",
+      "maturity": "reference",
       "keywords": [
         "deleteEphemeralMessage",
         "chat_id",
@@ -1179,6 +1220,7 @@
       "summary": "Искусственные ID/данные: заменить перед отправкой. Проверить права и ограничения.",
       "category": "bot-api",
       "language": "python",
+      "maturity": "reference",
       "keywords": [
         "deleteForumTopic",
         "chat_id",
@@ -1201,6 +1243,7 @@
       "summary": "Искусственные ID/данные: заменить перед отправкой. Проверить права и ограничения.",
       "category": "bot-api",
       "language": "python",
+      "maturity": "reference",
       "keywords": [
         "deleteMessage",
         "chat_id",
@@ -1223,6 +1266,7 @@
       "summary": "Искусственные ID/данные: заменить перед отправкой. Проверить права и ограничения.",
       "category": "bot-api",
       "language": "python",
+      "maturity": "reference",
       "keywords": [
         "deleteMessageReaction",
         "chat_id",
@@ -1247,6 +1291,7 @@
       "summary": "Искусственные ID/данные: заменить перед отправкой. Проверить права и ограничения.",
       "category": "bot-api",
       "language": "python",
+      "maturity": "reference",
       "keywords": [
         "deleteMessages",
         "chat_id",
@@ -1269,6 +1314,7 @@
       "summary": "Искусственные ID/данные: заменить перед отправкой. Проверить права и ограничения.",
       "category": "bot-api",
       "language": "python",
+      "maturity": "reference",
       "keywords": [
         "deleteMyCommands",
         "scope",
@@ -1291,6 +1337,7 @@
       "summary": "Искусственные ID/данные: заменить перед отправкой. Проверить права и ограничения.",
       "category": "bot-api",
       "language": "python",
+      "maturity": "reference",
       "keywords": [
         "deleteStickerFromSet",
         "sticker",
@@ -1312,6 +1359,7 @@
       "summary": "Искусственные ID/данные: заменить перед отправкой. Проверить права и ограничения.",
       "category": "bot-api",
       "language": "python",
+      "maturity": "reference",
       "keywords": [
         "deleteStickerSet",
         "name",
@@ -1333,6 +1381,7 @@
       "summary": "Искусственные ID/данные: заменить перед отправкой. Проверить права и ограничения.",
       "category": "bot-api",
       "language": "python",
+      "maturity": "reference",
       "keywords": [
         "deleteStory",
         "business_connection_id",
@@ -1355,6 +1404,7 @@
       "summary": "Искусственные ID/данные: заменить перед отправкой. Проверить права и ограничения.",
       "category": "bot-api",
       "language": "python",
+      "maturity": "reference",
       "keywords": [
         "deleteWebhook",
         "drop_pending_updates",
@@ -1376,6 +1426,7 @@
       "summary": "Искусственные ID/данные: заменить перед отправкой. Проверить права и ограничения.",
       "category": "bot-api",
       "language": "python",
+      "maturity": "reference",
       "keywords": [
         "editChatInviteLink",
         "chat_id",
@@ -1402,6 +1453,7 @@
       "summary": "Искусственные ID/данные: заменить перед отправкой. Проверить права и ограничения.",
       "category": "bot-api",
       "language": "python",
+      "maturity": "reference",
       "keywords": [
         "editChatSubscriptionInviteLink",
         "chat_id",
@@ -1425,6 +1477,7 @@
       "summary": "Искусственные ID/данные: заменить перед отправкой. Проверить права и ограничения.",
       "category": "bot-api",
       "language": "python",
+      "maturity": "reference",
       "keywords": [
         "editEphemeralMessageCaption",
         "chat_id",
@@ -1453,6 +1506,7 @@
       "summary": "Искусственные ID/данные: заменить перед отправкой. Проверить права и ограничения.",
       "category": "bot-api",
       "language": "python",
+      "maturity": "reference",
       "keywords": [
         "editEphemeralMessageMedia",
         "chat_id",
@@ -1478,6 +1532,7 @@
       "summary": "Искусственные ID/данные: заменить перед отправкой. Проверить права и ограничения.",
       "category": "bot-api",
       "language": "python",
+      "maturity": "reference",
       "keywords": [
         "editEphemeralMessageReplyMarkup",
         "chat_id",
@@ -1502,6 +1557,7 @@
       "summary": "Искусственные ID/данные: заменить перед отправкой. Проверить права и ограничения.",
       "category": "bot-api",
       "language": "python",
+      "maturity": "reference",
       "keywords": [
         "editEphemeralMessageText",
         "chat_id",
@@ -1531,6 +1587,7 @@
       "summary": "Искусственные ID/данные: заменить перед отправкой. Проверить права и ограничения.",
       "category": "bot-api",
       "language": "python",
+      "maturity": "reference",
       "keywords": [
         "editForumTopic",
         "chat_id",
@@ -1555,6 +1612,7 @@
       "summary": "Искусственные ID/данные: заменить перед отправкой. Проверить права и ограничения.",
       "category": "bot-api",
       "language": "python",
+      "maturity": "reference",
       "keywords": [
         "editGeneralForumTopic",
         "chat_id",
@@ -1577,6 +1635,7 @@
       "summary": "Искусственные ID/данные: заменить перед отправкой. Проверить права и ограничения.",
       "category": "bot-api",
       "language": "python",
+      "maturity": "reference",
       "keywords": [
         "editMessageCaption",
         "business_connection_id",
@@ -1606,6 +1665,7 @@
       "summary": "Искусственные ID/данные: заменить перед отправкой. Проверить права и ограничения.",
       "category": "bot-api",
       "language": "python",
+      "maturity": "reference",
       "keywords": [
         "editMessageChecklist",
         "business_connection_id",
@@ -1631,6 +1691,7 @@
       "summary": "Искусственные ID/данные: заменить перед отправкой. Проверить права и ограничения.",
       "category": "bot-api",
       "language": "python",
+      "maturity": "reference",
       "keywords": [
         "editMessageLiveLocation",
         "business_connection_id",
@@ -1662,6 +1723,7 @@
       "summary": "Искусственные ID/данные: заменить перед отправкой. Проверить права и ограничения.",
       "category": "bot-api",
       "language": "python",
+      "maturity": "reference",
       "keywords": [
         "editMessageMedia",
         "business_connection_id",
@@ -1688,6 +1750,7 @@
       "summary": "Искусственные ID/данные: заменить перед отправкой. Проверить права и ограничения.",
       "category": "bot-api",
       "language": "python",
+      "maturity": "reference",
       "keywords": [
         "editMessageReplyMarkup",
         "business_connection_id",
@@ -1713,6 +1776,7 @@
       "summary": "Искусственные ID/данные: заменить перед отправкой. Проверить права и ограничения.",
       "category": "bot-api",
       "language": "python",
+      "maturity": "reference",
       "keywords": [
         "editMessageText",
         "business_connection_id",
@@ -1743,6 +1807,7 @@
       "summary": "Искусственные ID/данные: заменить перед отправкой. Проверить права и ограничения.",
       "category": "bot-api",
       "language": "python",
+      "maturity": "reference",
       "keywords": [
         "editStory",
         "business_connection_id",
@@ -1770,6 +1835,7 @@
       "summary": "Искусственные ID/данные: заменить перед отправкой. Проверить права и ограничения.",
       "category": "bot-api",
       "language": "python",
+      "maturity": "reference",
       "keywords": [
         "editUserStarSubscription",
         "user_id",
@@ -1793,6 +1859,7 @@
       "summary": "Искусственные ID/данные: заменить перед отправкой. Проверить права и ограничения.",
       "category": "bot-api",
       "language": "python",
+      "maturity": "reference",
       "keywords": [
         "exportChatInviteLink",
         "chat_id",
@@ -1814,6 +1881,7 @@
       "summary": "Искусственные ID/данные: заменить перед отправкой. Проверить права и ограничения.",
       "category": "bot-api",
       "language": "python",
+      "maturity": "reference",
       "keywords": [
         "forwardMessage",
         "chat_id",
@@ -1844,6 +1912,7 @@
       "summary": "Искусственные ID/данные: заменить перед отправкой. Проверить права и ограничения.",
       "category": "bot-api",
       "language": "python",
+      "maturity": "reference",
       "keywords": [
         "forwardMessages",
         "chat_id",
@@ -1871,6 +1940,7 @@
       "summary": "Искусственные ID/данные: заменить перед отправкой. Проверить права и ограничения.",
       "category": "bot-api",
       "language": "python",
+      "maturity": "reference",
       "keywords": [
         "getAvailableGifts",
         "api",
@@ -1891,6 +1961,7 @@
       "summary": "Искусственные ID/данные: заменить перед отправкой. Проверить права и ограничения.",
       "category": "bot-api",
       "language": "python",
+      "maturity": "reference",
       "keywords": [
         "getBusinessAccountGifts",
         "business_connection_id",
@@ -1922,6 +1993,7 @@
       "summary": "Искусственные ID/данные: заменить перед отправкой. Проверить права и ограничения.",
       "category": "bot-api",
       "language": "python",
+      "maturity": "reference",
       "keywords": [
         "getBusinessAccountStarBalance",
         "business_connection_id",
@@ -1943,6 +2015,7 @@
       "summary": "Искусственные ID/данные: заменить перед отправкой. Проверить права и ограничения.",
       "category": "bot-api",
       "language": "python",
+      "maturity": "reference",
       "keywords": [
         "getBusinessConnection",
         "business_connection_id",
@@ -1964,6 +2037,7 @@
       "summary": "Искусственные ID/данные: заменить перед отправкой. Проверить права и ограничения.",
       "category": "bot-api",
       "language": "python",
+      "maturity": "reference",
       "keywords": [
         "getChat",
         "chat_id",
@@ -1985,6 +2059,7 @@
       "summary": "Искусственные ID/данные: заменить перед отправкой. Проверить права и ограничения.",
       "category": "bot-api",
       "language": "python",
+      "maturity": "reference",
       "keywords": [
         "getChatAdministrators",
         "chat_id",
@@ -2007,6 +2082,7 @@
       "summary": "Искусственные ID/данные: заменить перед отправкой. Проверить права и ограничения.",
       "category": "bot-api",
       "language": "python",
+      "maturity": "reference",
       "keywords": [
         "getChatGifts",
         "chat_id",
@@ -2038,6 +2114,7 @@
       "summary": "Искусственные ID/данные: заменить перед отправкой. Проверить права и ограничения.",
       "category": "bot-api",
       "language": "python",
+      "maturity": "reference",
       "keywords": [
         "getChatMember",
         "chat_id",
@@ -2060,6 +2137,7 @@
       "summary": "Искусственные ID/данные: заменить перед отправкой. Проверить права и ограничения.",
       "category": "bot-api",
       "language": "python",
+      "maturity": "reference",
       "keywords": [
         "getChatMemberCount",
         "chat_id",
@@ -2081,6 +2159,7 @@
       "summary": "Искусственные ID/данные: заменить перед отправкой. Проверить права и ограничения.",
       "category": "bot-api",
       "language": "python",
+      "maturity": "reference",
       "keywords": [
         "getChatMenuButton",
         "chat_id",
@@ -2102,6 +2181,7 @@
       "summary": "Искусственные ID/данные: заменить перед отправкой. Проверить права и ограничения.",
       "category": "bot-api",
       "language": "python",
+      "maturity": "reference",
       "keywords": [
         "getCustomEmojiStickers",
         "custom_emoji_ids",
@@ -2123,6 +2203,7 @@
       "summary": "Искусственные ID/данные: заменить перед отправкой. Проверить права и ограничения.",
       "category": "bot-api",
       "language": "python",
+      "maturity": "reference",
       "keywords": [
         "getFile",
         "file_id",
@@ -2144,6 +2225,7 @@
       "summary": "Искусственные ID/данные: заменить перед отправкой. Проверить права и ограничения.",
       "category": "bot-api",
       "language": "python",
+      "maturity": "reference",
       "keywords": [
         "getForumTopicIconStickers",
         "api",
@@ -2164,6 +2246,7 @@
       "summary": "Искусственные ID/данные: заменить перед отправкой. Проверить права и ограничения.",
       "category": "bot-api",
       "language": "python",
+      "maturity": "reference",
       "keywords": [
         "getGameHighScores",
         "user_id",
@@ -2188,6 +2271,7 @@
       "summary": "Искусственные ID/данные: заменить перед отправкой. Проверить права и ограничения.",
       "category": "bot-api",
       "language": "python",
+      "maturity": "reference",
       "keywords": [
         "getManagedBotAccessSettings",
         "user_id",
@@ -2209,6 +2293,7 @@
       "summary": "Искусственные ID/данные: заменить перед отправкой. Проверить права и ограничения.",
       "category": "bot-api",
       "language": "python",
+      "maturity": "reference",
       "keywords": [
         "getManagedBotToken",
         "user_id",
@@ -2230,6 +2315,7 @@
       "summary": "Искусственные ID/данные: заменить перед отправкой. Проверить права и ограничения.",
       "category": "bot-api",
       "language": "python",
+      "maturity": "reference",
       "keywords": [
         "getMe",
         "api",
@@ -2250,6 +2336,7 @@
       "summary": "Искусственные ID/данные: заменить перед отправкой. Проверить права и ограничения.",
       "category": "bot-api",
       "language": "python",
+      "maturity": "reference",
       "keywords": [
         "getMyCommands",
         "scope",
@@ -2272,6 +2359,7 @@
       "summary": "Искусственные ID/данные: заменить перед отправкой. Проверить права и ограничения.",
       "category": "bot-api",
       "language": "python",
+      "maturity": "reference",
       "keywords": [
         "getMyDefaultAdministratorRights",
         "for_channels",
@@ -2293,6 +2381,7 @@
       "summary": "Искусственные ID/данные: заменить перед отправкой. Проверить права и ограничения.",
       "category": "bot-api",
       "language": "python",
+      "maturity": "reference",
       "keywords": [
         "getMyDescription",
         "language_code",
@@ -2314,6 +2403,7 @@
       "summary": "Искусственные ID/данные: заменить перед отправкой. Проверить права и ограничения.",
       "category": "bot-api",
       "language": "python",
+      "maturity": "reference",
       "keywords": [
         "getMyName",
         "language_code",
@@ -2335,6 +2425,7 @@
       "summary": "Искусственные ID/данные: заменить перед отправкой. Проверить права и ограничения.",
       "category": "bot-api",
       "language": "python",
+      "maturity": "reference",
       "keywords": [
         "getMyShortDescription",
         "language_code",
@@ -2356,6 +2447,7 @@
       "summary": "Искусственные ID/данные: заменить перед отправкой. Проверить права и ограничения.",
       "category": "bot-api",
       "language": "python",
+      "maturity": "reference",
       "keywords": [
         "getMyStarBalance",
         "api",
@@ -2376,6 +2468,7 @@
       "summary": "Искусственные ID/данные: заменить перед отправкой. Проверить права и ограничения.",
       "category": "bot-api",
       "language": "python",
+      "maturity": "reference",
       "keywords": [
         "getStarTransactions",
         "offset",
@@ -2398,6 +2491,7 @@
       "summary": "Искусственные ID/данные: заменить перед отправкой. Проверить права и ограничения.",
       "category": "bot-api",
       "language": "python",
+      "maturity": "reference",
       "keywords": [
         "getStickerSet",
         "name",
@@ -2419,6 +2513,7 @@
       "summary": "Искусственные ID/данные: заменить перед отправкой. Проверить права и ограничения.",
       "category": "bot-api",
       "language": "python",
+      "maturity": "reference",
       "keywords": [
         "getUpdates",
         "offset",
@@ -2443,6 +2538,7 @@
       "summary": "Искусственные ID/данные: заменить перед отправкой. Проверить права и ограничения.",
       "category": "bot-api",
       "language": "python",
+      "maturity": "reference",
       "keywords": [
         "getUserChatBoosts",
         "chat_id",
@@ -2465,6 +2561,7 @@
       "summary": "Искусственные ID/данные: заменить перед отправкой. Проверить права и ограничения.",
       "category": "bot-api",
       "language": "python",
+      "maturity": "reference",
       "keywords": [
         "getUserGifts",
         "user_id",
@@ -2494,6 +2591,7 @@
       "summary": "Искусственные ID/данные: заменить перед отправкой. Проверить права и ограничения.",
       "category": "bot-api",
       "language": "python",
+      "maturity": "reference",
       "keywords": [
         "getUserPersonalChatMessages",
         "user_id",
@@ -2516,6 +2614,7 @@
       "summary": "Искусственные ID/данные: заменить перед отправкой. Проверить права и ограничения.",
       "category": "bot-api",
       "language": "python",
+      "maturity": "reference",
       "keywords": [
         "getUserProfileAudios",
         "user_id",
@@ -2539,6 +2638,7 @@
       "summary": "Искусственные ID/данные: заменить перед отправкой. Проверить права и ограничения.",
       "category": "bot-api",
       "language": "python",
+      "maturity": "reference",
       "keywords": [
         "getUserProfilePhotos",
         "user_id",
@@ -2562,6 +2662,7 @@
       "summary": "Искусственные ID/данные: заменить перед отправкой. Проверить права и ограничения.",
       "category": "bot-api",
       "language": "python",
+      "maturity": "reference",
       "keywords": [
         "getWebhookInfo",
         "api",
@@ -2582,6 +2683,7 @@
       "summary": "Искусственные ID/данные: заменить перед отправкой. Проверить права и ограничения.",
       "category": "bot-api",
       "language": "python",
+      "maturity": "reference",
       "keywords": [
         "giftPremiumSubscription",
         "user_id",
@@ -2608,6 +2710,7 @@
       "summary": "Искусственные ID/данные: заменить перед отправкой. Проверить права и ограничения.",
       "category": "bot-api",
       "language": "python",
+      "maturity": "reference",
       "keywords": [
         "hideGeneralForumTopic",
         "chat_id",
@@ -2629,6 +2732,7 @@
       "summary": "Искусственные ID/данные: заменить перед отправкой. Проверить права и ограничения.",
       "category": "bot-api",
       "language": "python",
+      "maturity": "reference",
       "keywords": [
         "leaveChat",
         "chat_id",
@@ -2650,6 +2754,7 @@
       "summary": "Искусственные ID/данные: заменить перед отправкой. Проверить права и ограничения.",
       "category": "bot-api",
       "language": "python",
+      "maturity": "reference",
       "keywords": [
         "logOut",
         "api",
@@ -2670,6 +2775,7 @@
       "summary": "Искусственные ID/данные: заменить перед отправкой. Проверить права и ограничения.",
       "category": "bot-api",
       "language": "python",
+      "maturity": "reference",
       "keywords": [
         "pinChatMessage",
         "business_connection_id",
@@ -2694,6 +2800,7 @@
       "summary": "Искусственные ID/данные: заменить перед отправкой. Проверить права и ограничения.",
       "category": "bot-api",
       "language": "python",
+      "maturity": "reference",
       "keywords": [
         "postStory",
         "business_connection_id",
@@ -2723,6 +2830,7 @@
       "summary": "Искусственные ID/данные: заменить перед отправкой. Проверить права и ограничения.",
       "category": "bot-api",
       "language": "python",
+      "maturity": "reference",
       "keywords": [
         "promoteChatMember",
         "chat_id",
@@ -2763,6 +2871,7 @@
       "summary": "Искусственные ID/данные: заменить перед отправкой. Проверить права и ограничения.",
       "category": "bot-api",
       "language": "python",
+      "maturity": "reference",
       "keywords": [
         "readBusinessMessage",
         "business_connection_id",
@@ -2786,6 +2895,7 @@
       "summary": "Искусственные ID/данные: заменить перед отправкой. Проверить права и ограничения.",
       "category": "bot-api",
       "language": "python",
+      "maturity": "reference",
       "keywords": [
         "refundStarPayment",
         "user_id",
@@ -2808,6 +2918,7 @@
       "summary": "Искусственные ID/данные: заменить перед отправкой. Проверить права и ограничения.",
       "category": "bot-api",
       "language": "python",
+      "maturity": "reference",
       "keywords": [
         "removeBusinessAccountProfilePhoto",
         "business_connection_id",
@@ -2830,6 +2941,7 @@
       "summary": "Искусственные ID/данные: заменить перед отправкой. Проверить права и ограничения.",
       "category": "bot-api",
       "language": "python",
+      "maturity": "reference",
       "keywords": [
         "removeChatVerification",
         "chat_id",
@@ -2851,6 +2963,7 @@
       "summary": "Искусственные ID/данные: заменить перед отправкой. Проверить права и ограничения.",
       "category": "bot-api",
       "language": "python",
+      "maturity": "reference",
       "keywords": [
         "removeMyProfilePhoto",
         "api",
@@ -2871,6 +2984,7 @@
       "summary": "Искусственные ID/данные: заменить перед отправкой. Проверить права и ограничения.",
       "category": "bot-api",
       "language": "python",
+      "maturity": "reference",
       "keywords": [
         "removeUserVerification",
         "user_id",
@@ -2892,6 +3006,7 @@
       "summary": "Искусственные ID/данные: заменить перед отправкой. Проверить права и ограничения.",
       "category": "bot-api",
       "language": "python",
+      "maturity": "reference",
       "keywords": [
         "reopenForumTopic",
         "chat_id",
@@ -2914,6 +3029,7 @@
       "summary": "Искусственные ID/данные: заменить перед отправкой. Проверить права и ограничения.",
       "category": "bot-api",
       "language": "python",
+      "maturity": "reference",
       "keywords": [
         "reopenGeneralForumTopic",
         "chat_id",
@@ -2935,6 +3051,7 @@
       "summary": "Искусственные ID/данные: заменить перед отправкой. Проверить права и ограничения.",
       "category": "bot-api",
       "language": "python",
+      "maturity": "reference",
       "keywords": [
         "replaceManagedBotToken",
         "user_id",
@@ -2956,6 +3073,7 @@
       "summary": "Искусственные ID/данные: заменить перед отправкой. Проверить права и ограничения.",
       "category": "bot-api",
       "language": "python",
+      "maturity": "reference",
       "keywords": [
         "replaceStickerInSet",
         "user_id",
@@ -2980,6 +3098,7 @@
       "summary": "Искусственные ID/данные: заменить перед отправкой. Проверить права и ограничения.",
       "category": "bot-api",
       "language": "python",
+      "maturity": "reference",
       "keywords": [
         "repostStory",
         "business_connection_id",
@@ -3006,6 +3125,7 @@
       "summary": "Искусственные ID/данные: заменить перед отправкой. Проверить права и ограничения.",
       "category": "bot-api",
       "language": "python",
+      "maturity": "reference",
       "keywords": [
         "restrictChatMember",
         "chat_id",
@@ -3031,6 +3151,7 @@
       "summary": "Искусственные ID/данные: заменить перед отправкой. Проверить права и ограничения.",
       "category": "bot-api",
       "language": "python",
+      "maturity": "reference",
       "keywords": [
         "revokeChatInviteLink",
         "chat_id",
@@ -3053,6 +3174,7 @@
       "summary": "Искусственные ID/данные: заменить перед отправкой. Проверить права и ограничения.",
       "category": "bot-api",
       "language": "python",
+      "maturity": "reference",
       "keywords": [
         "savePreparedInlineMessage",
         "user_id",
@@ -3079,6 +3201,7 @@
       "summary": "Искусственные ID/данные: заменить перед отправкой. Проверить права и ограничения.",
       "category": "bot-api",
       "language": "python",
+      "maturity": "reference",
       "keywords": [
         "savePreparedKeyboardButton",
         "user_id",
@@ -3101,6 +3224,7 @@
       "summary": "Искусственные ID/данные: заменить перед отправкой. Проверить права и ограничения.",
       "category": "bot-api",
       "language": "python",
+      "maturity": "reference",
       "keywords": [
         "sendAnimation",
         "business_connection_id",
@@ -3143,6 +3267,7 @@
       "summary": "Искусственные ID/данные: заменить перед отправкой. Проверить права и ограничения.",
       "category": "bot-api",
       "language": "python",
+      "maturity": "reference",
       "keywords": [
         "sendAudio",
         "business_connection_id",
@@ -3183,6 +3308,7 @@
       "summary": "Искусственные ID/данные: заменить перед отправкой. Проверить права и ограничения.",
       "category": "bot-api",
       "language": "python",
+      "maturity": "reference",
       "keywords": [
         "sendChatAction",
         "business_connection_id",
@@ -3207,6 +3333,7 @@
       "summary": "Искусственные ID/данные: заменить перед отправкой. Проверить права и ограничения.",
       "category": "bot-api",
       "language": "python",
+      "maturity": "reference",
       "keywords": [
         "sendChatJoinRequestWebApp",
         "chat_join_request_query_id",
@@ -3229,6 +3356,7 @@
       "summary": "Искусственные ID/данные: заменить перед отправкой. Проверить права и ограничения.",
       "category": "bot-api",
       "language": "python",
+      "maturity": "reference",
       "keywords": [
         "sendChecklist",
         "business_connection_id",
@@ -3257,6 +3385,7 @@
       "summary": "Искусственные ID/данные: заменить перед отправкой. Проверить права и ограничения.",
       "category": "bot-api",
       "language": "python",
+      "maturity": "reference",
       "keywords": [
         "sendContact",
         "business_connection_id",
@@ -3293,6 +3422,7 @@
       "summary": "Искусственные ID/данные: заменить перед отправкой. Проверить права и ограничения.",
       "category": "bot-api",
       "language": "python",
+      "maturity": "reference",
       "keywords": [
         "sendDice",
         "business_connection_id",
@@ -3325,6 +3455,7 @@
       "summary": "Искусственные ID/данные: заменить перед отправкой. Проверить права и ограничения.",
       "category": "bot-api",
       "language": "python",
+      "maturity": "reference",
       "keywords": [
         "sendDocument",
         "business_connection_id",
@@ -3363,6 +3494,7 @@
       "summary": "Искусственные ID/данные: заменить перед отправкой. Проверить права и ограничения.",
       "category": "bot-api",
       "language": "python",
+      "maturity": "reference",
       "keywords": [
         "sendGame",
         "business_connection_id",
@@ -3393,6 +3525,7 @@
       "summary": "Искусственные ID/данные: заменить перед отправкой. Проверить права и ограничения.",
       "category": "bot-api",
       "language": "python",
+      "maturity": "reference",
       "keywords": [
         "sendGift",
         "user_id",
@@ -3420,6 +3553,7 @@
       "summary": "Искусственные ID/данные: заменить перед отправкой. Проверить права и ограничения.",
       "category": "bot-api",
       "language": "python",
+      "maturity": "reference",
       "keywords": [
         "sendInvoice",
         "chat_id",
@@ -3471,6 +3605,7 @@
       "summary": "Искусственные ID/данные: заменить перед отправкой. Проверить права и ограничения.",
       "category": "bot-api",
       "language": "python",
+      "maturity": "reference",
       "keywords": [
         "sendLivePhoto",
         "business_connection_id",
@@ -3510,6 +3645,7 @@
       "summary": "Искусственные ID/данные: заменить перед отправкой. Проверить права и ограничения.",
       "category": "bot-api",
       "language": "python",
+      "maturity": "reference",
       "keywords": [
         "sendLocation",
         "business_connection_id",
@@ -3548,6 +3684,7 @@
       "summary": "Искусственные ID/данные: заменить перед отправкой. Проверить права и ограничения.",
       "category": "bot-api",
       "language": "python",
+      "maturity": "reference",
       "keywords": [
         "sendMediaGroup",
         "business_connection_id",
@@ -3578,6 +3715,7 @@
       "summary": "Искусственные ID/данные: заменить перед отправкой. Проверить права и ограничения.",
       "category": "bot-api",
       "language": "python",
+      "maturity": "reference",
       "keywords": [
         "sendMessage",
         "business_connection_id",
@@ -3614,6 +3752,7 @@
       "summary": "Искусственные ID/данные: заменить перед отправкой. Проверить права и ограничения.",
       "category": "bot-api",
       "language": "python",
+      "maturity": "reference",
       "keywords": [
         "sendMessageDraft",
         "chat_id",
@@ -3642,6 +3781,7 @@
       "summary": "Искусственные ID/данные: заменить перед отправкой. Проверить права и ограничения.",
       "category": "bot-api",
       "language": "python",
+      "maturity": "reference",
       "keywords": [
         "sendPaidMedia",
         "business_connection_id",
@@ -3679,6 +3819,7 @@
       "summary": "Искусственные ID/данные: заменить перед отправкой. Проверить права и ограничения.",
       "category": "bot-api",
       "language": "python",
+      "maturity": "reference",
       "keywords": [
         "sendPhoto",
         "business_connection_id",
@@ -3717,6 +3858,7 @@
       "summary": "Искусственные ID/данные: заменить перед отправкой. Проверить права и ограничения.",
       "category": "bot-api",
       "language": "python",
+      "maturity": "reference",
       "keywords": [
         "sendPoll",
         "business_connection_id",
@@ -3771,6 +3913,7 @@
       "summary": "Искусственные ID/данные: заменить перед отправкой. Проверить права и ограничения.",
       "category": "bot-api",
       "language": "python",
+      "maturity": "reference",
       "keywords": [
         "sendRichMessage",
         "business_connection_id",
@@ -3804,6 +3947,7 @@
       "summary": "Искусственные ID/данные: заменить перед отправкой. Проверить права и ограничения.",
       "category": "bot-api",
       "language": "python",
+      "maturity": "reference",
       "keywords": [
         "sendRichMessageDraft",
         "chat_id",
@@ -3830,6 +3974,7 @@
       "summary": "Искусственные ID/данные: заменить перед отправкой. Проверить права и ограничения.",
       "category": "bot-api",
       "language": "python",
+      "maturity": "reference",
       "keywords": [
         "sendSticker",
         "business_connection_id",
@@ -3864,6 +4009,7 @@
       "summary": "Искусственные ID/данные: заменить перед отправкой. Проверить права и ограничения.",
       "category": "bot-api",
       "language": "python",
+      "maturity": "reference",
       "keywords": [
         "sendVenue",
         "business_connection_id",
@@ -3904,6 +4050,7 @@
       "summary": "Искусственные ID/данные: заменить перед отправкой. Проверить права и ограничения.",
       "category": "bot-api",
       "language": "python",
+      "maturity": "reference",
       "keywords": [
         "sendVideo",
         "business_connection_id",
@@ -3949,6 +4096,7 @@
       "summary": "Искусственные ID/данные: заменить перед отправкой. Проверить права и ограничения.",
       "category": "bot-api",
       "language": "python",
+      "maturity": "reference",
       "keywords": [
         "sendVideoNote",
         "business_connection_id",
@@ -3985,6 +4133,7 @@
       "summary": "Искусственные ID/данные: заменить перед отправкой. Проверить права и ограничения.",
       "category": "bot-api",
       "language": "python",
+      "maturity": "reference",
       "keywords": [
         "sendVoice",
         "business_connection_id",
@@ -4022,6 +4171,7 @@
       "summary": "Искусственные ID/данные: заменить перед отправкой. Проверить права и ограничения.",
       "category": "bot-api",
       "language": "python",
+      "maturity": "reference",
       "keywords": [
         "setBusinessAccountBio",
         "business_connection_id",
@@ -4044,6 +4194,7 @@
       "summary": "Искусственные ID/данные: заменить перед отправкой. Проверить права и ограничения.",
       "category": "bot-api",
       "language": "python",
+      "maturity": "reference",
       "keywords": [
         "setBusinessAccountGiftSettings",
         "business_connection_id",
@@ -4067,6 +4218,7 @@
       "summary": "Искусственные ID/данные: заменить перед отправкой. Проверить права и ограничения.",
       "category": "bot-api",
       "language": "python",
+      "maturity": "reference",
       "keywords": [
         "setBusinessAccountName",
         "business_connection_id",
@@ -4090,6 +4242,7 @@
       "summary": "Искусственные ID/данные: заменить перед отправкой. Проверить права и ограничения.",
       "category": "bot-api",
       "language": "python",
+      "maturity": "reference",
       "keywords": [
         "setBusinessAccountProfilePhoto",
         "business_connection_id",
@@ -4113,6 +4266,7 @@
       "summary": "Искусственные ID/данные: заменить перед отправкой. Проверить права и ограничения.",
       "category": "bot-api",
       "language": "python",
+      "maturity": "reference",
       "keywords": [
         "setBusinessAccountUsername",
         "business_connection_id",
@@ -4135,6 +4289,7 @@
       "summary": "Искусственные ID/данные: заменить перед отправкой. Проверить права и ограничения.",
       "category": "bot-api",
       "language": "python",
+      "maturity": "reference",
       "keywords": [
         "setChatAdministratorCustomTitle",
         "chat_id",
@@ -4158,6 +4313,7 @@
       "summary": "Искусственные ID/данные: заменить перед отправкой. Проверить права и ограничения.",
       "category": "bot-api",
       "language": "python",
+      "maturity": "reference",
       "keywords": [
         "setChatDescription",
         "chat_id",
@@ -4180,6 +4336,7 @@
       "summary": "Искусственные ID/данные: заменить перед отправкой. Проверить права и ограничения.",
       "category": "bot-api",
       "language": "python",
+      "maturity": "reference",
       "keywords": [
         "setChatMemberTag",
         "chat_id",
@@ -4203,6 +4360,7 @@
       "summary": "Искусственные ID/данные: заменить перед отправкой. Проверить права и ограничения.",
       "category": "bot-api",
       "language": "python",
+      "maturity": "reference",
       "keywords": [
         "setChatMenuButton",
         "chat_id",
@@ -4225,6 +4383,7 @@
       "summary": "Искусственные ID/данные: заменить перед отправкой. Проверить права и ограничения.",
       "category": "bot-api",
       "language": "python",
+      "maturity": "reference",
       "keywords": [
         "setChatPermissions",
         "chat_id",
@@ -4248,6 +4407,7 @@
       "summary": "Искусственные ID/данные: заменить перед отправкой. Проверить права и ограничения.",
       "category": "bot-api",
       "language": "python",
+      "maturity": "reference",
       "keywords": [
         "setChatPhoto",
         "chat_id",
@@ -4270,6 +4430,7 @@
       "summary": "Искусственные ID/данные: заменить перед отправкой. Проверить права и ограничения.",
       "category": "bot-api",
       "language": "python",
+      "maturity": "reference",
       "keywords": [
         "setChatStickerSet",
         "chat_id",
@@ -4292,6 +4453,7 @@
       "summary": "Искусственные ID/данные: заменить перед отправкой. Проверить права и ограничения.",
       "category": "bot-api",
       "language": "python",
+      "maturity": "reference",
       "keywords": [
         "setChatTitle",
         "chat_id",
@@ -4314,6 +4476,7 @@
       "summary": "Искусственные ID/данные: заменить перед отправкой. Проверить права и ограничения.",
       "category": "bot-api",
       "language": "python",
+      "maturity": "reference",
       "keywords": [
         "setCustomEmojiStickerSetThumbnail",
         "name",
@@ -4336,6 +4499,7 @@
       "summary": "Искусственные ID/данные: заменить перед отправкой. Проверить права и ограничения.",
       "category": "bot-api",
       "language": "python",
+      "maturity": "reference",
       "keywords": [
         "setGameScore",
         "user_id",
@@ -4363,6 +4527,7 @@
       "summary": "Искусственные ID/данные: заменить перед отправкой. Проверить права и ограничения.",
       "category": "bot-api",
       "language": "python",
+      "maturity": "reference",
       "keywords": [
         "setManagedBotAccessSettings",
         "user_id",
@@ -4386,6 +4551,7 @@
       "summary": "Искусственные ID/данные: заменить перед отправкой. Проверить права и ограничения.",
       "category": "bot-api",
       "language": "python",
+      "maturity": "reference",
       "keywords": [
         "setMessageReaction",
         "chat_id",
@@ -4410,6 +4576,7 @@
       "summary": "Искусственные ID/данные: заменить перед отправкой. Проверить права и ограничения.",
       "category": "bot-api",
       "language": "python",
+      "maturity": "reference",
       "keywords": [
         "setMyCommands",
         "commands",
@@ -4433,6 +4600,7 @@
       "summary": "Искусственные ID/данные: заменить перед отправкой. Проверить права и ограничения.",
       "category": "bot-api",
       "language": "python",
+      "maturity": "reference",
       "keywords": [
         "setMyDefaultAdministratorRights",
         "rights",
@@ -4455,6 +4623,7 @@
       "summary": "Искусственные ID/данные: заменить перед отправкой. Проверить права и ограничения.",
       "category": "bot-api",
       "language": "python",
+      "maturity": "reference",
       "keywords": [
         "setMyDescription",
         "description",
@@ -4477,6 +4646,7 @@
       "summary": "Искусственные ID/данные: заменить перед отправкой. Проверить права и ограничения.",
       "category": "bot-api",
       "language": "python",
+      "maturity": "reference",
       "keywords": [
         "setMyName",
         "name",
@@ -4499,6 +4669,7 @@
       "summary": "Искусственные ID/данные: заменить перед отправкой. Проверить права и ограничения.",
       "category": "bot-api",
       "language": "python",
+      "maturity": "reference",
       "keywords": [
         "setMyProfilePhoto",
         "photo",
@@ -4520,6 +4691,7 @@
       "summary": "Искусственные ID/данные: заменить перед отправкой. Проверить права и ограничения.",
       "category": "bot-api",
       "language": "python",
+      "maturity": "reference",
       "keywords": [
         "setMyShortDescription",
         "short_description",
@@ -4542,6 +4714,7 @@
       "summary": "Искусственные ID/данные: заменить перед отправкой. Проверить права и ограничения.",
       "category": "bot-api",
       "language": "python",
+      "maturity": "reference",
       "keywords": [
         "setPassportDataErrors",
         "user_id",
@@ -4564,6 +4737,7 @@
       "summary": "Искусственные ID/данные: заменить перед отправкой. Проверить права и ограничения.",
       "category": "bot-api",
       "language": "python",
+      "maturity": "reference",
       "keywords": [
         "setStickerEmojiList",
         "sticker",
@@ -4586,6 +4760,7 @@
       "summary": "Искусственные ID/данные: заменить перед отправкой. Проверить права и ограничения.",
       "category": "bot-api",
       "language": "python",
+      "maturity": "reference",
       "keywords": [
         "setStickerKeywords",
         "sticker",
@@ -4608,6 +4783,7 @@
       "summary": "Искусственные ID/данные: заменить перед отправкой. Проверить права и ограничения.",
       "category": "bot-api",
       "language": "python",
+      "maturity": "reference",
       "keywords": [
         "setStickerMaskPosition",
         "sticker",
@@ -4630,6 +4806,7 @@
       "summary": "Искусственные ID/данные: заменить перед отправкой. Проверить права и ограничения.",
       "category": "bot-api",
       "language": "python",
+      "maturity": "reference",
       "keywords": [
         "setStickerPositionInSet",
         "sticker",
@@ -4652,6 +4829,7 @@
       "summary": "Искусственные ID/данные: заменить перед отправкой. Проверить права и ограничения.",
       "category": "bot-api",
       "language": "python",
+      "maturity": "reference",
       "keywords": [
         "setStickerSetThumbnail",
         "name",
@@ -4676,6 +4854,7 @@
       "summary": "Искусственные ID/данные: заменить перед отправкой. Проверить права и ограничения.",
       "category": "bot-api",
       "language": "python",
+      "maturity": "reference",
       "keywords": [
         "setStickerSetTitle",
         "name",
@@ -4698,6 +4877,7 @@
       "summary": "Искусственные ID/данные: заменить перед отправкой. Проверить права и ограничения.",
       "category": "bot-api",
       "language": "python",
+      "maturity": "reference",
       "keywords": [
         "setUserEmojiStatus",
         "user_id",
@@ -4721,6 +4901,7 @@
       "summary": "Искусственные ID/данные: заменить перед отправкой. Проверить права и ограничения.",
       "category": "bot-api",
       "language": "python",
+      "maturity": "reference",
       "keywords": [
         "setWebhook",
         "url",
@@ -4748,6 +4929,7 @@
       "summary": "Искусственные ID/данные: заменить перед отправкой. Проверить права и ограничения.",
       "category": "bot-api",
       "language": "python",
+      "maturity": "reference",
       "keywords": [
         "stopMessageLiveLocation",
         "business_connection_id",
@@ -4773,6 +4955,7 @@
       "summary": "Искусственные ID/данные: заменить перед отправкой. Проверить права и ограничения.",
       "category": "bot-api",
       "language": "python",
+      "maturity": "reference",
       "keywords": [
         "stopPoll",
         "business_connection_id",
@@ -4797,6 +4980,7 @@
       "summary": "Искусственные ID/данные: заменить перед отправкой. Проверить права и ограничения.",
       "category": "bot-api",
       "language": "python",
+      "maturity": "reference",
       "keywords": [
         "transferBusinessAccountStars",
         "business_connection_id",
@@ -4819,6 +5003,7 @@
       "summary": "Искусственные ID/данные: заменить перед отправкой. Проверить права и ограничения.",
       "category": "bot-api",
       "language": "python",
+      "maturity": "reference",
       "keywords": [
         "transferGift",
         "business_connection_id",
@@ -4843,6 +5028,7 @@
       "summary": "Искусственные ID/данные: заменить перед отправкой. Проверить права и ограничения.",
       "category": "bot-api",
       "language": "python",
+      "maturity": "reference",
       "keywords": [
         "unbanChatMember",
         "chat_id",
@@ -4866,6 +5052,7 @@
       "summary": "Искусственные ID/данные: заменить перед отправкой. Проверить права и ограничения.",
       "category": "bot-api",
       "language": "python",
+      "maturity": "reference",
       "keywords": [
         "unbanChatSenderChat",
         "chat_id",
@@ -4888,6 +5075,7 @@
       "summary": "Искусственные ID/данные: заменить перед отправкой. Проверить права и ограничения.",
       "category": "bot-api",
       "language": "python",
+      "maturity": "reference",
       "keywords": [
         "unhideGeneralForumTopic",
         "chat_id",
@@ -4909,6 +5097,7 @@
       "summary": "Искусственные ID/данные: заменить перед отправкой. Проверить права и ограничения.",
       "category": "bot-api",
       "language": "python",
+      "maturity": "reference",
       "keywords": [
         "unpinAllChatMessages",
         "chat_id",
@@ -4930,6 +5119,7 @@
       "summary": "Искусственные ID/данные: заменить перед отправкой. Проверить права и ограничения.",
       "category": "bot-api",
       "language": "python",
+      "maturity": "reference",
       "keywords": [
         "unpinAllForumTopicMessages",
         "chat_id",
@@ -4952,6 +5142,7 @@
       "summary": "Искусственные ID/данные: заменить перед отправкой. Проверить права и ограничения.",
       "category": "bot-api",
       "language": "python",
+      "maturity": "reference",
       "keywords": [
         "unpinAllGeneralForumTopicMessages",
         "chat_id",
@@ -4973,6 +5164,7 @@
       "summary": "Искусственные ID/данные: заменить перед отправкой. Проверить права и ограничения.",
       "category": "bot-api",
       "language": "python",
+      "maturity": "reference",
       "keywords": [
         "unpinChatMessage",
         "business_connection_id",
@@ -4996,6 +5188,7 @@
       "summary": "Искусственные ID/данные: заменить перед отправкой. Проверить права и ограничения.",
       "category": "bot-api",
       "language": "python",
+      "maturity": "reference",
       "keywords": [
         "upgradeGift",
         "business_connection_id",
@@ -5020,6 +5213,7 @@
       "summary": "Искусственные ID/данные: заменить перед отправкой. Проверить права и ограничения.",
       "category": "bot-api",
       "language": "python",
+      "maturity": "reference",
       "keywords": [
         "uploadStickerFile",
         "user_id",
@@ -5043,6 +5237,7 @@
       "summary": "Искусственные ID/данные: заменить перед отправкой. Проверить права и ограничения.",
       "category": "bot-api",
       "language": "python",
+      "maturity": "reference",
       "keywords": [
         "verifyChat",
         "chat_id",
@@ -5065,6 +5260,7 @@
       "summary": "Искусственные ID/данные: заменить перед отправкой. Проверить права и ограничения.",
       "category": "bot-api",
       "language": "python",
+      "maturity": "reference",
       "keywords": [
         "verifyUser",
         "user_id",
@@ -5087,6 +5283,7 @@
       "summary": "Native сигнатура: start(params[, callback]). Минимальная версия 8.0",
       "category": "mini-app",
       "language": "typescript",
+      "maturity": "reference",
       "keywords": [
         "Accelerometer.start",
         "native",
@@ -5109,6 +5306,7 @@
       "summary": "Native сигнатура: stop([callback]). Минимальная версия 8.0",
       "category": "mini-app",
       "language": "typescript",
+      "maturity": "reference",
       "keywords": [
         "Accelerometer.stop",
         "native",
@@ -5131,6 +5329,7 @@
       "summary": "Native сигнатура: hide(). Минимальная версия 6.1",
       "category": "mini-app",
       "language": "typescript",
+      "maturity": "reference",
       "keywords": [
         "BackButton.hide",
         "native",
@@ -5153,6 +5352,7 @@
       "summary": "Native сигнатура: offClick(callback). Минимальная версия 6.1",
       "category": "mini-app",
       "language": "typescript",
+      "maturity": "reference",
       "keywords": [
         "BackButton.offClick",
         "native",
@@ -5175,6 +5375,7 @@
       "summary": "Native сигнатура: onClick(callback). Минимальная версия 6.1",
       "category": "mini-app",
       "language": "typescript",
+      "maturity": "reference",
       "keywords": [
         "BackButton.onClick",
         "native",
@@ -5197,6 +5398,7 @@
       "summary": "Native сигнатура: show(). Минимальная версия 6.1",
       "category": "mini-app",
       "language": "typescript",
+      "maturity": "reference",
       "keywords": [
         "BackButton.show",
         "native",
@@ -5219,6 +5421,7 @@
       "summary": "Native сигнатура: authenticate(params[, callback]). Минимальная версия 7.2",
       "category": "mini-app",
       "language": "typescript",
+      "maturity": "reference",
       "keywords": [
         "BiometricManager.authenticate",
         "native",
@@ -5241,6 +5444,7 @@
       "summary": "Native сигнатура: init([callback]). Минимальная версия 7.2",
       "category": "mini-app",
       "language": "typescript",
+      "maturity": "reference",
       "keywords": [
         "BiometricManager.init",
         "native",
@@ -5263,6 +5467,7 @@
       "summary": "Native сигнатура: openSettings(). Минимальная версия 7.2",
       "category": "mini-app",
       "language": "typescript",
+      "maturity": "reference",
       "keywords": [
         "BiometricManager.openSettings",
         "native",
@@ -5285,6 +5490,7 @@
       "summary": "Native сигнатура: requestAccess(params[, callback]). Минимальная версия 7.2",
       "category": "mini-app",
       "language": "typescript",
+      "maturity": "reference",
       "keywords": [
         "BiometricManager.requestAccess",
         "native",
@@ -5307,6 +5513,7 @@
       "summary": "Native сигнатура: updateBiometricToken(token, [callback]). Минимальная версия 7.2",
       "category": "mini-app",
       "language": "typescript",
+      "maturity": "reference",
       "keywords": [
         "BiometricManager.updateBiometricToken",
         "native",
@@ -5329,6 +5536,7 @@
       "summary": "Native сигнатура: getItem(key, callback). Минимальная версия 6.9",
       "category": "mini-app",
       "language": "typescript",
+      "maturity": "reference",
       "keywords": [
         "CloudStorage.getItem",
         "native",
@@ -5351,6 +5559,7 @@
       "summary": "Native сигнатура: getItems(keys, callback). Минимальная версия 6.9",
       "category": "mini-app",
       "language": "typescript",
+      "maturity": "reference",
       "keywords": [
         "CloudStorage.getItems",
         "native",
@@ -5373,6 +5582,7 @@
       "summary": "Native сигнатура: getKeys(callback). Минимальная версия 6.9",
       "category": "mini-app",
       "language": "typescript",
+      "maturity": "reference",
       "keywords": [
         "CloudStorage.getKeys",
         "native",
@@ -5395,6 +5605,7 @@
       "summary": "Native сигнатура: removeItem(key[, callback]). Минимальная версия 6.9",
       "category": "mini-app",
       "language": "typescript",
+      "maturity": "reference",
       "keywords": [
         "CloudStorage.removeItem",
         "native",
@@ -5417,6 +5628,7 @@
       "summary": "Native сигнатура: removeItems(keys[, callback]). Минимальная версия 6.9",
       "category": "mini-app",
       "language": "typescript",
+      "maturity": "reference",
       "keywords": [
         "CloudStorage.removeItems",
         "native",
@@ -5439,6 +5651,7 @@
       "summary": "Native сигнатура: setItem(key, value[, callback]). Минимальная версия 6.9",
       "category": "mini-app",
       "language": "typescript",
+      "maturity": "reference",
       "keywords": [
         "CloudStorage.setItem",
         "native",
@@ -5461,6 +5674,7 @@
       "summary": "Native сигнатура: start(params[, callback]). Минимальная версия 8.0",
       "category": "mini-app",
       "language": "typescript",
+      "maturity": "reference",
       "keywords": [
         "DeviceOrientation.start",
         "native",
@@ -5483,6 +5697,7 @@
       "summary": "Native сигнатура: stop([callback]). Минимальная версия 8.0",
       "category": "mini-app",
       "language": "typescript",
+      "maturity": "reference",
       "keywords": [
         "DeviceOrientation.stop",
         "native",
@@ -5505,6 +5720,7 @@
       "summary": "Native сигнатура: clear([callback]). Минимальная версия 9.0",
       "category": "mini-app",
       "language": "typescript",
+      "maturity": "reference",
       "keywords": [
         "DeviceStorage.clear",
         "native",
@@ -5527,6 +5743,7 @@
       "summary": "Native сигнатура: getItem(key, callback). Минимальная версия 9.0",
       "category": "mini-app",
       "language": "typescript",
+      "maturity": "reference",
       "keywords": [
         "DeviceStorage.getItem",
         "native",
@@ -5549,6 +5766,7 @@
       "summary": "Native сигнатура: removeItem(key[, callback]). Минимальная версия 9.0",
       "category": "mini-app",
       "language": "typescript",
+      "maturity": "reference",
       "keywords": [
         "DeviceStorage.removeItem",
         "native",
@@ -5571,6 +5789,7 @@
       "summary": "Native сигнатура: setItem(key, value[, callback]). Минимальная версия 9.0",
       "category": "mini-app",
       "language": "typescript",
+      "maturity": "reference",
       "keywords": [
         "DeviceStorage.setItem",
         "native",
@@ -5593,6 +5812,7 @@
       "summary": "Native сигнатура: start(params[, callback]). Минимальная версия 8.0",
       "category": "mini-app",
       "language": "typescript",
+      "maturity": "reference",
       "keywords": [
         "Gyroscope.start",
         "native",
@@ -5615,6 +5835,7 @@
       "summary": "Native сигнатура: stop([callback]). Минимальная версия 8.0",
       "category": "mini-app",
       "language": "typescript",
+      "maturity": "reference",
       "keywords": [
         "Gyroscope.stop",
         "native",
@@ -5637,6 +5858,7 @@
       "summary": "Native сигнатура: impactOccurred(style). Минимальная версия 6.1",
       "category": "mini-app",
       "language": "typescript",
+      "maturity": "reference",
       "keywords": [
         "HapticFeedback.impactOccurred",
         "native",
@@ -5659,6 +5881,7 @@
       "summary": "Native сигнатура: notificationOccurred(type). Минимальная версия 6.1",
       "category": "mini-app",
       "language": "typescript",
+      "maturity": "reference",
       "keywords": [
         "HapticFeedback.notificationOccurred",
         "native",
@@ -5681,6 +5904,7 @@
       "summary": "Native сигнатура: selectionChanged(). Минимальная версия 6.1",
       "category": "mini-app",
       "language": "typescript",
+      "maturity": "reference",
       "keywords": [
         "HapticFeedback.selectionChanged",
         "native",
@@ -5703,6 +5927,7 @@
       "summary": "Native сигнатура: getLocation(callback). Минимальная версия 8.0",
       "category": "mini-app",
       "language": "typescript",
+      "maturity": "reference",
       "keywords": [
         "LocationManager.getLocation",
         "native",
@@ -5725,6 +5950,7 @@
       "summary": "Native сигнатура: init([callback]). Минимальная версия 8.0",
       "category": "mini-app",
       "language": "typescript",
+      "maturity": "reference",
       "keywords": [
         "LocationManager.init",
         "native",
@@ -5747,6 +5973,7 @@
       "summary": "Native сигнатура: openSettings(). Минимальная версия 8.0",
       "category": "mini-app",
       "language": "typescript",
+      "maturity": "reference",
       "keywords": [
         "LocationManager.openSettings",
         "native",
@@ -5769,6 +5996,7 @@
       "summary": "Native сигнатура: disable(). Минимальная версия 6.1",
       "category": "mini-app",
       "language": "typescript",
+      "maturity": "reference",
       "keywords": [
         "MainButton.disable",
         "native",
@@ -5791,6 +6019,7 @@
       "summary": "Native сигнатура: enable(). Минимальная версия 6.1",
       "category": "mini-app",
       "language": "typescript",
+      "maturity": "reference",
       "keywords": [
         "MainButton.enable",
         "native",
@@ -5813,6 +6042,7 @@
       "summary": "Native сигнатура: hide(). Минимальная версия 6.1",
       "category": "mini-app",
       "language": "typescript",
+      "maturity": "reference",
       "keywords": [
         "MainButton.hide",
         "native",
@@ -5835,6 +6065,7 @@
       "summary": "Native сигнатура: hideProgress(). Минимальная версия 6.1",
       "category": "mini-app",
       "language": "typescript",
+      "maturity": "reference",
       "keywords": [
         "MainButton.hideProgress",
         "native",
@@ -5857,6 +6088,7 @@
       "summary": "Native сигнатура: offClick(callback). Минимальная версия 6.1",
       "category": "mini-app",
       "language": "typescript",
+      "maturity": "reference",
       "keywords": [
         "MainButton.offClick",
         "native",
@@ -5879,6 +6111,7 @@
       "summary": "Native сигнатура: onClick(callback). Минимальная версия 6.1",
       "category": "mini-app",
       "language": "typescript",
+      "maturity": "reference",
       "keywords": [
         "MainButton.onClick",
         "native",
@@ -5901,6 +6134,7 @@
       "summary": "Native сигнатура: setParams(params). Минимальная версия 9.5",
       "category": "mini-app",
       "language": "typescript",
+      "maturity": "reference",
       "keywords": [
         "MainButton.setParams",
         "native",
@@ -5923,6 +6157,7 @@
       "summary": "Native сигнатура: setText(text). Минимальная версия 6.1",
       "category": "mini-app",
       "language": "typescript",
+      "maturity": "reference",
       "keywords": [
         "MainButton.setText",
         "native",
@@ -5945,6 +6180,7 @@
       "summary": "Native сигнатура: show(). Минимальная версия 6.1",
       "category": "mini-app",
       "language": "typescript",
+      "maturity": "reference",
       "keywords": [
         "MainButton.show",
         "native",
@@ -5967,6 +6203,7 @@
       "summary": "Native сигнатура: showProgress(leaveActive). Минимальная версия 6.1",
       "category": "mini-app",
       "language": "typescript",
+      "maturity": "reference",
       "keywords": [
         "MainButton.showProgress",
         "native",
@@ -5989,6 +6226,7 @@
       "summary": "Native сигнатура: disable(). Минимальная версия 7.10",
       "category": "mini-app",
       "language": "typescript",
+      "maturity": "reference",
       "keywords": [
         "SecondaryButton.disable",
         "native",
@@ -6011,6 +6249,7 @@
       "summary": "Native сигнатура: enable(). Минимальная версия 7.10",
       "category": "mini-app",
       "language": "typescript",
+      "maturity": "reference",
       "keywords": [
         "SecondaryButton.enable",
         "native",
@@ -6033,6 +6272,7 @@
       "summary": "Native сигнатура: hide(). Минимальная версия 7.10",
       "category": "mini-app",
       "language": "typescript",
+      "maturity": "reference",
       "keywords": [
         "SecondaryButton.hide",
         "native",
@@ -6055,6 +6295,7 @@
       "summary": "Native сигнатура: hideProgress(). Минимальная версия 7.10",
       "category": "mini-app",
       "language": "typescript",
+      "maturity": "reference",
       "keywords": [
         "SecondaryButton.hideProgress",
         "native",
@@ -6077,6 +6318,7 @@
       "summary": "Native сигнатура: offClick(callback). Минимальная версия 7.10",
       "category": "mini-app",
       "language": "typescript",
+      "maturity": "reference",
       "keywords": [
         "SecondaryButton.offClick",
         "native",
@@ -6099,6 +6341,7 @@
       "summary": "Native сигнатура: onClick(callback). Минимальная версия 7.10",
       "category": "mini-app",
       "language": "typescript",
+      "maturity": "reference",
       "keywords": [
         "SecondaryButton.onClick",
         "native",
@@ -6121,6 +6364,7 @@
       "summary": "Native сигнатура: setParams(params). Минимальная версия 9.5",
       "category": "mini-app",
       "language": "typescript",
+      "maturity": "reference",
       "keywords": [
         "SecondaryButton.setParams",
         "native",
@@ -6143,6 +6387,7 @@
       "summary": "Native сигнатура: setText(text). Минимальная версия 7.10",
       "category": "mini-app",
       "language": "typescript",
+      "maturity": "reference",
       "keywords": [
         "SecondaryButton.setText",
         "native",
@@ -6165,6 +6410,7 @@
       "summary": "Native сигнатура: show(). Минимальная версия 7.10",
       "category": "mini-app",
       "language": "typescript",
+      "maturity": "reference",
       "keywords": [
         "SecondaryButton.show",
         "native",
@@ -6187,6 +6433,7 @@
       "summary": "Native сигнатура: showProgress(leaveActive). Минимальная версия 7.10",
       "category": "mini-app",
       "language": "typescript",
+      "maturity": "reference",
       "keywords": [
         "SecondaryButton.showProgress",
         "native",
@@ -6209,6 +6456,7 @@
       "summary": "Native сигнатура: clear([callback]). Минимальная версия 9.0",
       "category": "mini-app",
       "language": "typescript",
+      "maturity": "reference",
       "keywords": [
         "SecureStorage.clear",
         "native",
@@ -6231,6 +6479,7 @@
       "summary": "Native сигнатура: getItem(key, callback). Минимальная версия 9.0",
       "category": "mini-app",
       "language": "typescript",
+      "maturity": "reference",
       "keywords": [
         "SecureStorage.getItem",
         "native",
@@ -6253,6 +6502,7 @@
       "summary": "Native сигнатура: removeItem(key[, callback]). Минимальная версия 9.0",
       "category": "mini-app",
       "language": "typescript",
+      "maturity": "reference",
       "keywords": [
         "SecureStorage.removeItem",
         "native",
@@ -6275,6 +6525,7 @@
       "summary": "Native сигнатура: restoreItem(key[, callback]). Минимальная версия 9.0",
       "category": "mini-app",
       "language": "typescript",
+      "maturity": "reference",
       "keywords": [
         "SecureStorage.restoreItem",
         "native",
@@ -6297,6 +6548,7 @@
       "summary": "Native сигнатура: setItem(key, value[, callback]). Минимальная версия 9.0",
       "category": "mini-app",
       "language": "typescript",
+      "maturity": "reference",
       "keywords": [
         "SecureStorage.setItem",
         "native",
@@ -6319,6 +6571,7 @@
       "summary": "Native сигнатура: hide(). Минимальная версия 7.0",
       "category": "mini-app",
       "language": "typescript",
+      "maturity": "reference",
       "keywords": [
         "SettingsButton.hide",
         "native",
@@ -6341,6 +6594,7 @@
       "summary": "Native сигнатура: offClick(callback). Минимальная версия 7.0",
       "category": "mini-app",
       "language": "typescript",
+      "maturity": "reference",
       "keywords": [
         "SettingsButton.offClick",
         "native",
@@ -6363,6 +6617,7 @@
       "summary": "Native сигнатура: onClick(callback). Минимальная версия 7.0",
       "category": "mini-app",
       "language": "typescript",
+      "maturity": "reference",
       "keywords": [
         "SettingsButton.onClick",
         "native",
@@ -6385,6 +6640,7 @@
       "summary": "Native сигнатура: show(). Минимальная версия 7.0",
       "category": "mini-app",
       "language": "typescript",
+      "maturity": "reference",
       "keywords": [
         "SettingsButton.show",
         "native",
@@ -6407,6 +6663,7 @@
       "summary": "Native сигнатура: addToHomeScreen(). Минимальная версия 8.0",
       "category": "mini-app",
       "language": "typescript",
+      "maturity": "reference",
       "keywords": [
         "addToHomeScreen",
         "native",
@@ -6429,6 +6686,7 @@
       "summary": "Native сигнатура: checkHomeScreenStatus([callback]). Минимальная версия 8.0",
       "category": "mini-app",
       "language": "typescript",
+      "maturity": "reference",
       "keywords": [
         "checkHomeScreenStatus",
         "native",
@@ -6451,6 +6709,7 @@
       "summary": "Native сигнатура: close(). Минимальная версия 6.0",
       "category": "mini-app",
       "language": "typescript",
+      "maturity": "reference",
       "keywords": [
         "close",
         "native",
@@ -6473,6 +6732,7 @@
       "summary": "Native сигнатура: closeScanQrPopup(). Минимальная версия 6.4",
       "category": "mini-app",
       "language": "typescript",
+      "maturity": "reference",
       "keywords": [
         "closeScanQrPopup",
         "native",
@@ -6495,6 +6755,7 @@
       "summary": "Native сигнатура: disableClosingConfirmation(). Минимальная версия 6.2",
       "category": "mini-app",
       "language": "typescript",
+      "maturity": "reference",
       "keywords": [
         "disableClosingConfirmation",
         "native",
@@ -6517,6 +6778,7 @@
       "summary": "Native сигнатура: disableVerticalSwipes(). Минимальная версия 7.7",
       "category": "mini-app",
       "language": "typescript",
+      "maturity": "reference",
       "keywords": [
         "disableVerticalSwipes",
         "native",
@@ -6539,6 +6801,7 @@
       "summary": "Native сигнатура: downloadFile(params[, callback]). Минимальная версия 8.0",
       "category": "mini-app",
       "language": "typescript",
+      "maturity": "reference",
       "keywords": [
         "downloadFile",
         "native",
@@ -6561,6 +6824,7 @@
       "summary": "Native сигнатура: enableClosingConfirmation(). Минимальная версия 6.2",
       "category": "mini-app",
       "language": "typescript",
+      "maturity": "reference",
       "keywords": [
         "enableClosingConfirmation",
         "native",
@@ -6583,6 +6847,7 @@
       "summary": "Native сигнатура: enableVerticalSwipes(). Минимальная версия 7.7",
       "category": "mini-app",
       "language": "typescript",
+      "maturity": "reference",
       "keywords": [
         "enableVerticalSwipes",
         "native",
@@ -6605,6 +6870,7 @@
       "summary": "Native сигнатура: exitFullscreen(). Минимальная версия 8.0",
       "category": "mini-app",
       "language": "typescript",
+      "maturity": "reference",
       "keywords": [
         "exitFullscreen",
         "native",
@@ -6627,6 +6893,7 @@
       "summary": "Native сигнатура: expand(). Минимальная версия 6.0",
       "category": "mini-app",
       "language": "typescript",
+      "maturity": "reference",
       "keywords": [
         "expand",
         "native",
@@ -6649,6 +6916,7 @@
       "summary": "Native сигнатура: hideKeyboard(). Минимальная версия 9.1",
       "category": "mini-app",
       "language": "typescript",
+      "maturity": "reference",
       "keywords": [
         "hideKeyboard",
         "native",
@@ -6671,6 +6939,7 @@
       "summary": "Native сигнатура: isVersionAtLeast(version). Минимальная версия 6.0",
       "category": "mini-app",
       "language": "typescript",
+      "maturity": "reference",
       "keywords": [
         "isVersionAtLeast",
         "native",
@@ -6693,6 +6962,7 @@
       "summary": "Native сигнатура: lockOrientation(). Минимальная версия 8.0",
       "category": "mini-app",
       "language": "typescript",
+      "maturity": "reference",
       "keywords": [
         "lockOrientation",
         "native",
@@ -6715,6 +6985,7 @@
       "summary": "Native сигнатура: offEvent(eventType, eventHandler). Минимальная версия 6.0",
       "category": "mini-app",
       "language": "typescript",
+      "maturity": "reference",
       "keywords": [
         "offEvent",
         "native",
@@ -6737,6 +7008,7 @@
       "summary": "Native сигнатура: onEvent(eventType, eventHandler). Минимальная версия 6.0",
       "category": "mini-app",
       "language": "typescript",
+      "maturity": "reference",
       "keywords": [
         "onEvent",
         "native",
@@ -6759,6 +7031,7 @@
       "summary": "Native сигнатура: openInvoice(url[, callback]). Минимальная версия 6.1",
       "category": "mini-app",
       "language": "typescript",
+      "maturity": "reference",
       "keywords": [
         "openInvoice",
         "native",
@@ -6781,6 +7054,7 @@
       "summary": "Native сигнатура: openLink(url[, options]). Минимальная версия 6.4",
       "category": "mini-app",
       "language": "typescript",
+      "maturity": "reference",
       "keywords": [
         "openLink",
         "native",
@@ -6803,6 +7077,7 @@
       "summary": "Native сигнатура: openTelegramLink(url). Минимальная версия 6.0",
       "category": "mini-app",
       "language": "typescript",
+      "maturity": "reference",
       "keywords": [
         "openTelegramLink",
         "native",
@@ -6825,6 +7100,7 @@
       "summary": "Native сигнатура: readTextFromClipboard([callback]). Минимальная версия 6.4",
       "category": "mini-app",
       "language": "typescript",
+      "maturity": "reference",
       "keywords": [
         "readTextFromClipboard",
         "native",
@@ -6847,6 +7123,7 @@
       "summary": "Native сигнатура: ready(). Минимальная версия 6.0",
       "category": "mini-app",
       "language": "typescript",
+      "maturity": "reference",
       "keywords": [
         "ready",
         "native",
@@ -6869,6 +7146,7 @@
       "summary": "Native сигнатура: requestChat(req_id[, callback]). Минимальная версия 9.6",
       "category": "mini-app",
       "language": "typescript",
+      "maturity": "reference",
       "keywords": [
         "requestChat",
         "native",
@@ -6891,6 +7169,7 @@
       "summary": "Native сигнатура: requestContact([callback]). Минимальная версия 6.9",
       "category": "mini-app",
       "language": "typescript",
+      "maturity": "reference",
       "keywords": [
         "requestContact",
         "native",
@@ -6913,6 +7192,7 @@
       "summary": "Native сигнатура: requestEmojiStatusAccess([callback]). Минимальная версия 8.0",
       "category": "mini-app",
       "language": "typescript",
+      "maturity": "reference",
       "keywords": [
         "requestEmojiStatusAccess",
         "native",
@@ -6935,6 +7215,7 @@
       "summary": "Native сигнатура: requestFullscreen(). Минимальная версия 8.0",
       "category": "mini-app",
       "language": "typescript",
+      "maturity": "reference",
       "keywords": [
         "requestFullscreen",
         "native",
@@ -6957,6 +7238,7 @@
       "summary": "Native сигнатура: requestWriteAccess([callback]). Минимальная версия 6.9",
       "category": "mini-app",
       "language": "typescript",
+      "maturity": "reference",
       "keywords": [
         "requestWriteAccess",
         "native",
@@ -6979,6 +7261,7 @@
       "summary": "Native сигнатура: sendData(data). Минимальная версия 6.0",
       "category": "mini-app",
       "language": "typescript",
+      "maturity": "reference",
       "keywords": [
         "sendData",
         "native",
@@ -7001,6 +7284,7 @@
       "summary": "Native сигнатура: setBackgroundColor(color). Минимальная версия 6.1",
       "category": "mini-app",
       "language": "typescript",
+      "maturity": "reference",
       "keywords": [
         "setBackgroundColor",
         "native",
@@ -7023,6 +7307,7 @@
       "summary": "Native сигнатура: setBottomBarColor(color). Минимальная версия 7.10",
       "category": "mini-app",
       "language": "typescript",
+      "maturity": "reference",
       "keywords": [
         "setBottomBarColor",
         "native",
@@ -7045,6 +7330,7 @@
       "summary": "Native сигнатура: setEmojiStatus(custom_emoji_id[, params, callback]). Минимальная версия 8.0",
       "category": "mini-app",
       "language": "typescript",
+      "maturity": "reference",
       "keywords": [
         "setEmojiStatus",
         "native",
@@ -7067,6 +7353,7 @@
       "summary": "Native сигнатура: setHeaderColor(color). Минимальная версия 6.1",
       "category": "mini-app",
       "language": "typescript",
+      "maturity": "reference",
       "keywords": [
         "setHeaderColor",
         "native",
@@ -7089,6 +7376,7 @@
       "summary": "Native сигнатура: shareMessage(msg_id[, callback]). Минимальная версия 8.0",
       "category": "mini-app",
       "language": "typescript",
+      "maturity": "reference",
       "keywords": [
         "shareMessage",
         "native",
@@ -7111,6 +7399,7 @@
       "summary": "Native сигнатура: shareToStory(media_url[, params]). Минимальная версия 7.8",
       "category": "mini-app",
       "language": "typescript",
+      "maturity": "reference",
       "keywords": [
         "shareToStory",
         "native",
@@ -7133,6 +7422,7 @@
       "summary": "Native сигнатура: showAlert(message[, callback]). Минимальная версия 6.2",
       "category": "mini-app",
       "language": "typescript",
+      "maturity": "reference",
       "keywords": [
         "showAlert",
         "native",
@@ -7155,6 +7445,7 @@
       "summary": "Native сигнатура: showConfirm(message[, callback]). Минимальная версия 6.2",
       "category": "mini-app",
       "language": "typescript",
+      "maturity": "reference",
       "keywords": [
         "showConfirm",
         "native",
@@ -7177,6 +7468,7 @@
       "summary": "Native сигнатура: showPopup(params[, callback]). Минимальная версия 6.2",
       "category": "mini-app",
       "language": "typescript",
+      "maturity": "reference",
       "keywords": [
         "showPopup",
         "native",
@@ -7199,6 +7491,7 @@
       "summary": "Native сигнатура: showScanQrPopup(params[, callback]). Минимальная версия 6.4",
       "category": "mini-app",
       "language": "typescript",
+      "maturity": "reference",
       "keywords": [
         "showScanQrPopup",
         "native",
@@ -7221,6 +7514,7 @@
       "summary": "Native сигнатура: switchInlineQuery(query[, choose_chat_types]). Минимальная версия 6.7",
       "category": "mini-app",
       "language": "typescript",
+      "maturity": "reference",
       "keywords": [
         "switchInlineQuery",
         "native",
@@ -7243,6 +7537,7 @@
       "summary": "Native сигнатура: unlockOrientation(). Минимальная версия 8.0",
       "category": "mini-app",
       "language": "typescript",
+      "maturity": "reference",
       "keywords": [
         "unlockOrientation",
         "native",
@@ -7265,6 +7560,7 @@
       "summary": "Полная композиция с тем же Dispatcher для offline и polling.",
       "category": "scenarios",
       "language": "python",
+      "maturity": "experimental",
       "keywords": [
         "бот",
         "пример",
@@ -7287,6 +7583,7 @@
       "summary": "Полная композиция с тем же Dispatcher для offline и polling.",
       "category": "scenarios",
       "language": "python",
+      "maturity": "experimental",
       "keywords": [
         "бот",
         "пример",
@@ -7309,6 +7606,7 @@
       "summary": "Полная композиция с тем же Dispatcher для offline и polling.",
       "category": "scenarios",
       "language": "python",
+      "maturity": "experimental",
       "keywords": [
         "бот",
         "пример",

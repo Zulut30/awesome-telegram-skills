@@ -1,6 +1,8 @@
 # awesome-telegram-patterns — Python
 
-Общие компоненты для бота и backend, версия 0.5.0. Пакет пока поставляется из этого репозитория/локального wheel; публикации на PyPI нет. Python >=3.11. Core использует стандартную библиотеку; адаптер aiogram и тестовый транспорт — отдельный extra.
+Все текущие группы experimental, request-only/native fragments reference. [Политика зрелости](../../docs/v1-maturity.md) не зависит от проверки: `Recipe.maturity`, `RecipeCatalog.search(maturity=...)`, CLI `recipes --maturity ...`. Старые schema-1 records читаются с conservative default.
+
+Общие компоненты для бота и backend, версия 0.6.0. Пакет пока поставляется из этого репозитория/локального wheel; публикации на PyPI нет. Python >=3.11. Core использует стандартную библиотеку; адаптер aiogram и тестовый транспорт — отдельный extra.
 
 [Галерея 298 рецептов](../../gallery/index.html) работает без токенов и сети. В wheel входят `RecipeCatalog`, шаблоны новых проектов и CLI `telegram-patterns recipes/init/doctor`. [Использование и границы](../../docs/developer-tools-review.md).
 

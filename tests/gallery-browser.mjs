@@ -26,6 +26,17 @@ try{
       page.on('pageerror',error=>errors.push(error.message));page.on('request',request=>{if(!request.url().startsWith(base))outside.push(request.url());});
       await page.goto(base);await page.getByRole('heading',{name:'Найти рецепт. Собрать бота.'}).waitFor();
       verify(await page.locator('#recipes .recipe-card').count()===298,`${name}/${theme}: catalog count`);
+      await page.getByLabel('Зрелость',{exact:true}).selectOption('experimental');
+      verify(await page.locator('#recipes .recipe-card').count()===14,`${name}/${theme}: experimental count`);
+      await page.getByLabel('Проверка',{exact:true}).selectOption('mock');
+      verify(await page.locator('#recipes .recipe-card').count()===3,`${name}/${theme}: independent evidence filter`);
+      await page.getByLabel('Зрелость',{exact:true}).selectOption('reference');
+      verify(await page.locator('#recipes .recipe-card').count()===0,`${name}/${theme}: mock does not imply reference or stable`);
+      await page.getByRole('button',{name:'Сбросить',exact:true}).click();
+      await page.getByLabel('Зрелость',{exact:true}).selectOption('stable');
+      verify(await page.locator('#recipes .recipe-card').count()===0,`${name}/${theme}: no fabricated stable claim`);
+      await page.getByRole('button',{name:'Сбросить',exact:true}).click();
+      verify(await page.locator('#recipes .recipe-card').count()===298,`${name}/${theme}: reset clears maturity`);
       await page.getByLabel('Что хотите сделать?').fill('две кнопки');
       await page.getByRole('button',{name:'Две кнопки в ряд',exact:true}).click();
       verify((await page.locator('#preview .keyboard-row').evaluateAll(rows=>rows.map(row=>row.children.length))).join(',')==='2,2',`${name}/${theme}: two rows`);
