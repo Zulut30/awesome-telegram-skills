@@ -1,0 +1,4 @@
+interface:
+  display_name: "Telegram: безопасность"
+  short_description: "Проверка прав, секретов, initData и платежей"
+  default_prompt: "Используй $telegram-security-review. Проверь безопасность указанной части Telegram-проекта."

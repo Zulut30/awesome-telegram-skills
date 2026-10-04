@@ -1,0 +1,20 @@
+{
+  "name": "@awesome-telegram/patterns",
+  "version": "0.5.0",
+  "description": "Reusable TypeScript components for Telegram Mini Apps",
+  "type": "module",
+  "sideEffects": ["**/*.css"],
+  "exports": {
+    ".": {"types": "./dist/index.d.ts", "import": "./dist/index.js"},
+    "./styles.css": "./src/styles.css"
+  },
+  "files": ["dist", "src/styles.css", "README.md"],
+  "engines": {"node": ">=20"},
+  "scripts": {
+    "build": "tsc -p tsconfig.json",
+    "typecheck": "tsc -p tsconfig.json --noEmit",
+    "test": "npm run build && node --test tests/*.test.mjs",
+    "prepack": "npm run build"
+  },
+  "devDependencies": {"typescript": "7.0.2"}
+}

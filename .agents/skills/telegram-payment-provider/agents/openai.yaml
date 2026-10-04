@@ -1,0 +1,4 @@
+interface:
+  display_name: "Telegram: другие платежки"
+  short_description: "Adapters платежек, checkout, webhooks и сверка"
+  default_prompt: "Используй $telegram-payment-provider. Подключи указанный платежный провайдер к проекту."

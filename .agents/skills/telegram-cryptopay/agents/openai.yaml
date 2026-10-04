@@ -1,0 +1,4 @@
+interface:
+  display_name: "Telegram: Crypto Pay"
+  short_description: "CryptoBot invoices, подписи webhook и сверка оплаты"
+  default_prompt: "Используй $telegram-cryptopay. Добавь Crypto Pay в Python backend проекта."

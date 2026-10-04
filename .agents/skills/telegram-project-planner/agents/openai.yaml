@@ -1,0 +1,4 @@
+interface:
+  display_name: "Telegram: архитектура"
+  short_description: "Архитектура и MVP для Telegram-ботов и Mini Apps"
+  default_prompt: "Используй $telegram-project-planner. Спроектируй Telegram-проект с проверяемым MVP."

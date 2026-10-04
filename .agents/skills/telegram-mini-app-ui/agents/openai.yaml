@@ -1,0 +1,4 @@
+interface:
+  display_name: "Telegram: Mini App UI"
+  short_description: "Удобный UI Mini App для телефона, планшета и ПК"
+  default_prompt: "Используй $telegram-mini-app-ui. Создай удобный интерфейс Telegram Mini App."

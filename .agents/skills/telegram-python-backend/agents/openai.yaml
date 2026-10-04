@@ -1,0 +1,4 @@
+interface:
+  display_name: "Telegram: Python Backend"
+  short_description: "Python API, БД и надежные операции бота и Mini App"
+  default_prompt: "Используй $telegram-python-backend. Реализуй серверную операцию для бота и Mini App с проверкой прав и повторных запросов."

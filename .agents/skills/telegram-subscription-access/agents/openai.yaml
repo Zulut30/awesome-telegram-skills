@@ -1,0 +1,4 @@
+interface:
+  display_name: "Telegram: Subscription Access"
+  short_description: "Периоды подписки, продление и права доступа"
+  default_prompt: "Используй $telegram-subscription-access. Реализуй выдачу и истечение оплаченных периодов доступа."

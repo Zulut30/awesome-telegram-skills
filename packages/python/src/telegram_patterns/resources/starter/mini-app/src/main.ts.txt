@@ -1,0 +1,32 @@
+import {createAppShell,createTextField,TelegramBridge,type TelegramWebApp,type BridgeSnapshot} from '@awesome-telegram/patterns';
+declare global {interface Window {Telegram?: {WebApp?: TelegramWebApp}}}
+const host = document.querySelector<HTMLElement>('#app');
+if (!host) throw new Error('App host missing');
+const shell = createAppShell(host, 'Мой Mini App');
+const note = document.createElement('p');
+note.textContent = 'Пример интерфейса. Данные не отправляются; серверная авторизация ещё не подключена.';
+shell.content.append(note);
+const field = createTextField(document, 'Ваше имя', 'Введите имя для примера');
+shell.content.append(field.root);
+const button = document.createElement('button');button.type='button';button.textContent='Проверить форму';
+shell.actions.append(button);
+const result = document.createElement('p');result.setAttribute('role','status');shell.summary.append(result);
+button.addEventListener('click',()=>{
+  const valid = field.input.value.trim().length > 0;
+  field.setError(valid ? null : 'Введите имя.');
+  if (!valid) field.input.focus();
+  result.textContent=valid ? 'Поле заполнено. Отправка на сервер не подключена.' : '';
+});
+const bridge=new TelegramBridge(window.Telegram?.WebApp,window);
+const systemTheme=window.matchMedia('(prefers-color-scheme: dark)');
+function applyTheme(snapshot: BridgeSnapshot) {
+  const visible=snapshot.insideTelegram ? snapshot : {...snapshot,colorScheme:systemTheme.matches ? 'dark' as const : 'light' as const,theme:{}};
+  shell.applyTheme(visible);document.documentElement.style.colorScheme=visible.colorScheme;
+}
+const unsubscribe=bridge.subscribe(applyTheme);
+const systemChanged=()=>applyTheme(bridge.snapshot());
+systemTheme.addEventListener('change',systemChanged);bridge.start();
+// pagehide/pageshow handled by bridge; SPA hosts call this before unmount.
+export function disposeApp() {
+  unsubscribe();systemTheme.removeEventListener('change',systemChanged);bridge.dispose();shell.dispose();
+}

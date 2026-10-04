@@ -1,0 +1,4 @@
+interface:
+  display_name: "Telegram: запуск"
+  short_description: "Деплой ботов и Mini Apps, webhook и эксплуатация"
+  default_prompt: "Используй $telegram-deploy. Подготовь и проверь запуск Telegram-проекта."

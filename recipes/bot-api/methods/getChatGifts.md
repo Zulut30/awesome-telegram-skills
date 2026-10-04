@@ -1,0 +1,19 @@
+# getChatGifts
+
+[Официальные ограничения](https://core.telegram.org/bots/api#getchatgifts). SDK: aiogram 3.31.0 / GetChatGifts.
+
+Это готовый пример **построения запроса** с искусственными данными. Замените FIXTURE значения, идентификаторы и файлы; проверьте права, контекст и ограничения метода перед отправкой. SDK validation не подтверждает прием запроса Telegram.
+
+```python
+from aiogram.types import BufferedInputFile
+from telegram_patterns.aiogram import build_request
+
+parameters = {'chat_id': 1}
+request = build_request("getChatGifts", parameters)
+# В async handler текущего проекта после проверки контекста/прав:
+# result = await bot(request)
+```
+
+Обязательные параметры SDK: `chat_id`.
+
+Все параметры официального снимка: `chat_id`, `exclude_unsaved`, `exclude_saved`, `exclude_unlimited`, `exclude_limited_upgradable`, `exclude_limited_non_upgradable`, `exclude_from_blockchain`, `exclude_unique`, `sort_by_price`, `offset`, `limit`.

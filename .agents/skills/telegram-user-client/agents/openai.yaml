@@ -1,0 +1,4 @@
+interface:
+  display_name: "Telegram: Telethon и MTProto"
+  short_description: "Пользовательский клиент, история и события чатов"
+  default_prompt: "Используй $telegram-user-client. Разработай клиент выбранных чатов через Telethon."

@@ -1,0 +1,4 @@
+interface:
+  display_name: "Telegram: Web Login"
+  short_description: "Telegram Login OIDC и безопасная привязка аккаунта"
+  default_prompt: "Используй $telegram-web-login. Подключи вход через Telegram к сайту с Python backend."

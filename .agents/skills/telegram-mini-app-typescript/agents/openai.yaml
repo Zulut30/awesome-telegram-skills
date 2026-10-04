@@ -1,0 +1,4 @@
+interface:
+  display_name: "Telegram: TypeScript Mini Apps"
+  short_description: "TypeScript, bridge, API-клиент и сборка Mini App"
+  default_prompt: "Используй $telegram-mini-app-typescript. Подключи TypeScript Mini App к Telegram и Python backend."

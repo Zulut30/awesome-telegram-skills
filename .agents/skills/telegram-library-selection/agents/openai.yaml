@@ -1,0 +1,4 @@
+interface:
+  display_name: "Telegram: выбор библиотек"
+  short_description: "Выбор SDK и проверка поддержки функций Telegram"
+  default_prompt: "Используй $telegram-library-selection. Выбери библиотеки под функции Telegram-проекта."

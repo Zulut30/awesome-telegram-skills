@@ -1,0 +1,4 @@
+interface:
+  display_name: "Telegram: Mini App Performance"
+  short_description: "Измерение и улучшение скорости Telegram Mini App"
+  default_prompt: "Используй $telegram-mini-app-performance. Найди причину тормозов Mini App и сравни результат до и после исправления."

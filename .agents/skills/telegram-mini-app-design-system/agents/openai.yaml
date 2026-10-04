@@ -1,0 +1,4 @@
+interface:
+  display_name: "Telegram: Mini App Design System"
+  short_description: "Компоненты и темы для согласованного UI Mini Apps"
+  default_prompt: "Используй $telegram-mini-app-design-system. Создай переиспользуемые компоненты Mini App и проверь их в реальных экранах."

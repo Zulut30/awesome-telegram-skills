@@ -1,0 +1,4 @@
+interface:
+  display_name: "Telegram: Mini App UX"
+  short_description: "Понятные пути, формы и checkout Telegram Mini App"
+  default_prompt: "Используй $telegram-mini-app-ux. Улучши пользовательский путь записи без потери формы."

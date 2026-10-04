@@ -1,0 +1,4 @@
+interface:
+  display_name: "Telegram: группы и каналы"
+  short_description: "Права, модерация, membership и темы Telegram"
+  default_prompt: "Используй $telegram-groups. Реализуй функцию бота для групп или каналов."

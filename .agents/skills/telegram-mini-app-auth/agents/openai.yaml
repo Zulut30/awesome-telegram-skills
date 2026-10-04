@@ -1,0 +1,4 @@
+interface:
+  display_name: "Telegram: Mini App auth"
+  short_description: "Серверная проверка initData и выдача сессии"
+  default_prompt: "Используй $telegram-mini-app-auth. Добавь серверную аутентификацию Telegram Mini App."

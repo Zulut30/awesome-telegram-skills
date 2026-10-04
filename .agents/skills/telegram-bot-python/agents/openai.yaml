@@ -1,0 +1,4 @@
+interface:
+  display_name: "Telegram: Python-боты"
+  short_description: "Python-боты: aiogram, PTB и pyTelegramBotAPI"
+  default_prompt: "Используй $telegram-bot-python. Создай или измени Telegram-бота на Python."

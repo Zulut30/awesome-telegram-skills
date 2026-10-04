@@ -1,0 +1,4 @@
+interface:
+  display_name: "Telegram: платежи"
+  short_description: "Stars, invoices, подписки и обработка возвратов"
+  default_prompt: "Используй $telegram-payments. Добавь платежи Telegram для указанного товара."

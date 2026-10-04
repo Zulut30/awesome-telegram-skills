@@ -1,0 +1,13 @@
+{
+  "name": "awesome-telegram-skills-workspace",
+  "private": true,
+  "type": "module",
+  "workspaces": ["packages/typescript", "examples/mini-app"],
+  "scripts": {
+    "build": "npm run build -w @awesome-telegram/patterns && npm run build -w @awesome-telegram/mini-app-example",
+    "test": "npm test -w @awesome-telegram/patterns",
+    "demo": "npm run build && node examples/mini-app/server.mjs",
+    "test:browser": "npm run build && node tests/patterns-browser.mjs"
+  },
+  "devDependencies": {"playwright": "1.63.0"}
+}

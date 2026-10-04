@@ -1,0 +1,4 @@
+interface:
+  display_name: "Telegram: Localization"
+  short_description: "Языки, даты и суммы бота и Mini App без расхождений"
+  default_prompt: "Используй $telegram-localization. Добавь согласованную локализацию бота и Mini App с проверкой длинных строк и timezone."

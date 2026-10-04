@@ -1,0 +1,23 @@
+[build-system]
+requires = ["setuptools>=75,<83"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "awesome-telegram-patterns"
+version = "0.5.0"
+description = "Reusable Telegram bot and backend components"
+readme = "README.md"
+requires-python = ">=3.11"
+dependencies = []
+
+[project.scripts]
+telegram-patterns = "telegram_patterns.cli:main"
+
+[project.optional-dependencies]
+aiogram = ["aiogram>=3.31,<4"]
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.setuptools.package-data]
+telegram_patterns = ["py.typed", "resources/*.json", "resources/starter/*.txt", "resources/starter/mini-app/*.txt", "resources/starter/mini-app/src/*.txt", "resources/starter/.*.txt"]

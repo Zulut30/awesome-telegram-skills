@@ -1,0 +1,4 @@
+interface:
+  display_name: "Telegram: интеграция Mini App"
+  short_description: "Запуск Mini App, deep links и связь с ботом"
+  default_prompt: "Используй $telegram-mini-app-integration. Свяжи Telegram-бот, Mini App и backend."

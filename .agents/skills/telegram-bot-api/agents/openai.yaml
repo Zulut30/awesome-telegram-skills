@@ -1,0 +1,4 @@
+interface:
+  display_name: "Telegram: Bot API"
+  short_description: "Сообщения, медиа, клавиатуры и методы Bot API"
+  default_prompt: "Используй $telegram-bot-api. Реализуй нужную функцию Telegram Bot API."

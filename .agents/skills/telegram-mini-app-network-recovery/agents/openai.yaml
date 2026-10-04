@@ -1,0 +1,4 @@
+interface:
+  display_name: "Telegram: Network Recovery"
+  short_description: "Восстановление сети, запросов и черновиков Mini App"
+  default_prompt: "Используй $telegram-mini-app-network-recovery. Сохрани допустимый черновик и обработай потерянный ответ записи."

@@ -1,0 +1,4 @@
+interface:
+  display_name: "Telegram: диагностика"
+  short_description: "Диагностика updates, ошибок API и Mini App"
+  default_prompt: "Используй $telegram-debugging. Найди и исправь причину сбоя Telegram-интеграции."

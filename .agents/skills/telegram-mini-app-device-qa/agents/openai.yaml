@@ -1,0 +1,4 @@
+interface:
+  display_name: "Telegram: Device QA"
+  short_description: "Приемка Mini App в Telegram на реальных устройствах"
+  default_prompt: "Используй $telegram-mini-app-device-qa. Проверь основной путь Mini App на доступных целевых клиентах Telegram и сохрани доказательства."

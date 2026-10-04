@@ -1,0 +1,4 @@
+interface:
+  display_name: "Telegram: Admin Panel"
+  short_description: "Админка сервиса с ролями, scope и журналом действий"
+  default_prompt: "Используй $telegram-admin-panel. Добавь операторский путь поиска и отмены заказа."

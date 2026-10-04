@@ -1,0 +1,17 @@
+<!doctype html>
+<html lang="ru"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="color-scheme" content="light dark"><title>Telegram — библиотека рецептов</title><link rel="icon" href="data:,"><link rel="stylesheet" href="gallery.css">
+<script id="recipe-data" type="application/json">__CATALOG_JSON__</script><script src="gallery.js" defer></script></head>
+<body><header><div class="brand"><span class="logo" aria-hidden="true">↗</span><div><p class="eyebrow">AWESOME TELEGRAM · <span id="version"></span></p><h1>Найти рецепт. Собрать бота.</h1></div></div>
+<p class="intro">Готовый код для Python-ботов и TypeScript Mini Apps. Выберите задачу, посмотрите пример и границы его проверки.</p></header>
+<main><section class="toolbar" aria-label="Поиск рецептов"><label>Что хотите сделать?<input id="search" type="search" maxlength="512" placeholder="Например: три кнопки, контакт, sendPhoto" autocomplete="off"></label>
+<label>Раздел<select id="category" aria-label="Раздел"><option value="">Все разделы</option><option value="keyboards">Клавиатуры и ввод</option><option value="scenarios">Полные сценарии ботов</option><option value="bot-api">Bot API</option><option value="mini-app">Mini Apps</option></select></label>
+<label>Проверка<select id="verification" aria-label="Проверка"><option value="">Все уровни</option><option value="sdk">SDK: построение запроса</option><option value="mock">Mock: локальный сценарий</option><option value="not_run">Справочный фрагмент</option><option value="live">Настоящий Telegram</option></select></label>
+<button id="reset" class="quiet" type="button">Сбросить</button></section>
+<p class="legend">SDK проверяет построение объектов. Mock исполняет сценарий без Telegram. Справочный фрагмент требует доработки. Веб-превью показывает раскладку; настоящие клиенты здесь не проверяются.</p>
+<div class="workspace"><section class="catalog"><div class="section-label"><h2>Рецепты</h2><span id="count" role="status" aria-live="polite"></span></div><div id="recipes"></div></section>
+<section class="detail" id="detail" aria-label="Выбранный рецепт"><p class="eyebrow" id="detail-category"></p><h2 id="detail-title"></h2><p id="detail-summary"></p><p class="scope" id="detail-scope"></p>
+<div id="preview" class="preview" aria-label="Веб-превью результата"></div><p id="preview-status" role="status"></p>
+<div class="section-label"><h3>Код</h3><button id="copy" type="button">Копировать</button></div><p id="copy-status" role="status"></p><pre tabindex="0" aria-label="Код рецепта"><code id="code"></code></pre>
+<div id="sources" class="sources"></div></section></div></main>
+<footer>Локальная галерея · без токенов, авторизации и вызовов Telegram API</footer></body></html>

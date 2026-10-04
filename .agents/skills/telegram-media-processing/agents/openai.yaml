@@ -1,0 +1,4 @@
+interface:
+  display_name: "Telegram: Media Processing"
+  short_description: "Обработка медиа, превью и фоновые задачи Telegram"
+  default_prompt: "Используй $telegram-media-processing. Добавь безопасную обработку видео и повторное использование результата."

@@ -1,0 +1,4 @@
+interface:
+  display_name: "Telegram: готовые компоненты"
+  short_description: "Общая библиотека компонентов Python и TypeScript"
+  default_prompt: "Используй $telegram-code-patterns. Подключи подходящие готовые компоненты к моему боту или Mini App и проверь их работу."

@@ -1,0 +1,4 @@
+interface:
+  display_name: "Telegram: диалоги"
+  short_description: "Многошаговые формы, FSM и состояние диалогов"
+  default_prompt: "Используй $telegram-dialogs. Реализуй диалог с отменой и восстановлением."

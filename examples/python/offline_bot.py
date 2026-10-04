@@ -1,0 +1,51 @@
+"""Run the real demo Dispatcher through local SDK transport; no credentials/network."""
+from __future__ import annotations
+
+import asyncio
+from datetime import datetime, timezone
+import json
+
+from aiogram import Bot
+from aiogram.methods import AnswerCallbackQuery, EditMessageText, SendMessage, SetMyCommands
+from aiogram.types import CallbackQuery, Chat, Message, Update, User
+
+from telegram_patterns.testing import StubSession
+from bot import create_app
+
+
+DATE = datetime(2026, 10, 3, tzinfo=timezone.utc)
+
+
+async def main() -> None:
+    def response(method):
+        return Message(message_id=10, date=DATE, chat=Chat(id=method.chat_id, type="private"), text=method.text)
+
+    session = (StubSession().respond(SetMyCommands, True).respond(SendMessage, response)
+               .respond(EditMessageText, response).respond(AnswerCallbackQuery, True))
+    dispatcher, commands = create_app()
+    actor = User(id=42, is_bot=False, first_name="Offline fixture")
+    incoming = Message(message_id=1, date=DATE, chat=Chat(id=42, type="private"), from_user=actor, text="/start")
+    async with Bot("100:OFFLINE_FIXTURE", session=session) as bot:
+        await bot.set_my_commands(commands)
+        await dispatcher.feed_update(bot, Update(update_id=1, message=incoming))
+        start = next(method for method in session.calls if isinstance(method, SendMessage))
+        next_page = start.reply_markup.inline_keyboard[-1][0].callback_data
+        await dispatcher.feed_update(bot, Update(update_id=2, callback_query=CallbackQuery(
+            id="page-fixture", from_user=actor, chat_instance="fixture", message=incoming, data=next_page)))
+        edited = next(method for method in session.calls if isinstance(method, EditMessageText))
+        selected = edited.reply_markup.inline_keyboard[0][0].callback_data
+        await dispatcher.feed_update(bot, Update(update_id=3, callback_query=CallbackQuery(
+            id="select-fixture", from_user=actor, chat_instance="fixture", message=incoming, data=selected)))
+    methods = [type(method).__name__ for method in session.calls]
+    assert methods == ['SetMyCommands', 'SendMessage', 'AnswerCallbackQuery', 'EditMessageText',
+                       'AnswerCallbackQuery', 'SendMessage']
+    assert 'страница 2/3' in edited.text
+    assert session.calls[-1].chat_id == 42 and 'Компонент 4' in session.calls[-1].text
+    assert session.closed
+    print(json.dumps({'passed': True, 'network': False, 'methods': methods,
+                      'page_callback': next_page, 'selected_callback': selected,
+                      'reply': session.calls[-1].text, 'session_closed': session.closed}))
+
+
+if __name__ == '__main__':
+    asyncio.run(main())

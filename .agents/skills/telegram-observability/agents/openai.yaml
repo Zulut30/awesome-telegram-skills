@@ -1,0 +1,4 @@
+interface:
+  display_name: "Telegram: Observability"
+  short_description: "Связанные события, метрики и безопасные логи Telegram"
+  default_prompt: "Используй $telegram-observability. Добавь диагностику пути Mini App, Python API и worker без утечки секретов."

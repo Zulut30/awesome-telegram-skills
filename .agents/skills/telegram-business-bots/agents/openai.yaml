@@ -1,0 +1,4 @@
+interface:
+  display_name: "Telegram: Business и Secretary"
+  short_description: "Подключенные аккаунты, business chats и права бота"
+  default_prompt: "Используй $telegram-business-bots. Добавь интеграцию Telegram Business/Secretary Bot."

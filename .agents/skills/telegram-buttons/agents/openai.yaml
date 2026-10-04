@@ -1,0 +1,4 @@
+interface:
+  display_name: "Telegram: кнопки и emoji"
+  short_description: "Цветные кнопки, custom emoji и действия клавиатур"
+  default_prompt: "Используй $telegram-buttons. Реализуй кнопки Telegram с нужными стилями и иконками."

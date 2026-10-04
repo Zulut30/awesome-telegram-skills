@@ -1,0 +1,4 @@
+interface:
+  display_name: "Telegram: профили"
+  short_description: "Данные профиля и разрешенное изменение имени, bio, фото"
+  default_prompt: "Используй $telegram-profiles. Реализуй запрошенную работу с Telegram-профилем и проверь доступность полей и права."

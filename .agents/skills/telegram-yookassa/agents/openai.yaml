@@ -1,0 +1,4 @@
+interface:
+  display_name: "Telegram: ЮKassa"
+  short_description: "ЮKassa, идемпотентность, уведомления и возвраты"
+  default_prompt: "Используй $telegram-yookassa. Добавь интеграцию ЮKassa с проверкой оплаты."

@@ -1,0 +1,4 @@
+interface:
+  display_name: "Telegram: архитектура Mini App"
+  short_description: "Архитектура Mini App для телефона, планшета и ПК"
+  default_prompt: "Используй $telegram-mini-app-architecture. Спроектируй и реализуй надежную Mini App с адаптивными экранами и понятными границами компонентов."

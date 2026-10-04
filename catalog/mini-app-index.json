@@ -1,0 +1,1234 @@
+{
+  "source": "https://core.telegram.org/bots/webapps",
+  "source_sha256": "c31a075a5e843b0336ae2a5ed053e3a57bb32848077a2e15ab454a64ff8ff487",
+  "checked_date": "2026-10-04",
+  "scope": "WebApp functions, named native modules, events and properties; not MTProto",
+  "methods": [
+    {
+      "path": "Accelerometer.start",
+      "signature": "start(params[, callback])",
+      "min_version": "8.0",
+      "url": "https://core.telegram.org/bots/webapps#accelerometer"
+    },
+    {
+      "path": "Accelerometer.stop",
+      "signature": "stop([callback])",
+      "min_version": "8.0",
+      "url": "https://core.telegram.org/bots/webapps#accelerometer"
+    },
+    {
+      "path": "BackButton.hide",
+      "signature": "hide()",
+      "min_version": "6.1",
+      "url": "https://core.telegram.org/bots/webapps#backbutton"
+    },
+    {
+      "path": "BackButton.offClick",
+      "signature": "offClick(callback)",
+      "min_version": "6.1",
+      "url": "https://core.telegram.org/bots/webapps#backbutton"
+    },
+    {
+      "path": "BackButton.onClick",
+      "signature": "onClick(callback)",
+      "min_version": "6.1",
+      "url": "https://core.telegram.org/bots/webapps#backbutton"
+    },
+    {
+      "path": "BackButton.show",
+      "signature": "show()",
+      "min_version": "6.1",
+      "url": "https://core.telegram.org/bots/webapps#backbutton"
+    },
+    {
+      "path": "BiometricManager.authenticate",
+      "signature": "authenticate(params[, callback])",
+      "min_version": "7.2",
+      "url": "https://core.telegram.org/bots/webapps#biometricmanager"
+    },
+    {
+      "path": "BiometricManager.init",
+      "signature": "init([callback])",
+      "min_version": "7.2",
+      "url": "https://core.telegram.org/bots/webapps#biometricmanager"
+    },
+    {
+      "path": "BiometricManager.openSettings",
+      "signature": "openSettings()",
+      "min_version": "7.2",
+      "url": "https://core.telegram.org/bots/webapps#biometricmanager"
+    },
+    {
+      "path": "BiometricManager.requestAccess",
+      "signature": "requestAccess(params[, callback])",
+      "min_version": "7.2",
+      "url": "https://core.telegram.org/bots/webapps#biometricmanager"
+    },
+    {
+      "path": "BiometricManager.updateBiometricToken",
+      "signature": "updateBiometricToken(token, [callback])",
+      "min_version": "7.2",
+      "url": "https://core.telegram.org/bots/webapps#biometricmanager"
+    },
+    {
+      "path": "CloudStorage.getItem",
+      "signature": "getItem(key, callback)",
+      "min_version": "6.9",
+      "url": "https://core.telegram.org/bots/webapps#cloudstorage"
+    },
+    {
+      "path": "CloudStorage.getItems",
+      "signature": "getItems(keys, callback)",
+      "min_version": "6.9",
+      "url": "https://core.telegram.org/bots/webapps#cloudstorage"
+    },
+    {
+      "path": "CloudStorage.getKeys",
+      "signature": "getKeys(callback)",
+      "min_version": "6.9",
+      "url": "https://core.telegram.org/bots/webapps#cloudstorage"
+    },
+    {
+      "path": "CloudStorage.removeItem",
+      "signature": "removeItem(key[, callback])",
+      "min_version": "6.9",
+      "url": "https://core.telegram.org/bots/webapps#cloudstorage"
+    },
+    {
+      "path": "CloudStorage.removeItems",
+      "signature": "removeItems(keys[, callback])",
+      "min_version": "6.9",
+      "url": "https://core.telegram.org/bots/webapps#cloudstorage"
+    },
+    {
+      "path": "CloudStorage.setItem",
+      "signature": "setItem(key, value[, callback])",
+      "min_version": "6.9",
+      "url": "https://core.telegram.org/bots/webapps#cloudstorage"
+    },
+    {
+      "path": "DeviceOrientation.start",
+      "signature": "start(params[, callback])",
+      "min_version": "8.0",
+      "url": "https://core.telegram.org/bots/webapps#deviceorientation"
+    },
+    {
+      "path": "DeviceOrientation.stop",
+      "signature": "stop([callback])",
+      "min_version": "8.0",
+      "url": "https://core.telegram.org/bots/webapps#deviceorientation"
+    },
+    {
+      "path": "DeviceStorage.clear",
+      "signature": "clear([callback])",
+      "min_version": "9.0",
+      "url": "https://core.telegram.org/bots/webapps#devicestorage"
+    },
+    {
+      "path": "DeviceStorage.getItem",
+      "signature": "getItem(key, callback)",
+      "min_version": "9.0",
+      "url": "https://core.telegram.org/bots/webapps#devicestorage"
+    },
+    {
+      "path": "DeviceStorage.removeItem",
+      "signature": "removeItem(key[, callback])",
+      "min_version": "9.0",
+      "url": "https://core.telegram.org/bots/webapps#devicestorage"
+    },
+    {
+      "path": "DeviceStorage.setItem",
+      "signature": "setItem(key, value[, callback])",
+      "min_version": "9.0",
+      "url": "https://core.telegram.org/bots/webapps#devicestorage"
+    },
+    {
+      "path": "Gyroscope.start",
+      "signature": "start(params[, callback])",
+      "min_version": "8.0",
+      "url": "https://core.telegram.org/bots/webapps#gyroscope"
+    },
+    {
+      "path": "Gyroscope.stop",
+      "signature": "stop([callback])",
+      "min_version": "8.0",
+      "url": "https://core.telegram.org/bots/webapps#gyroscope"
+    },
+    {
+      "path": "HapticFeedback.impactOccurred",
+      "signature": "impactOccurred(style)",
+      "min_version": "6.1",
+      "url": "https://core.telegram.org/bots/webapps#hapticfeedback"
+    },
+    {
+      "path": "HapticFeedback.notificationOccurred",
+      "signature": "notificationOccurred(type)",
+      "min_version": "6.1",
+      "url": "https://core.telegram.org/bots/webapps#hapticfeedback"
+    },
+    {
+      "path": "HapticFeedback.selectionChanged",
+      "signature": "selectionChanged()",
+      "min_version": "6.1",
+      "url": "https://core.telegram.org/bots/webapps#hapticfeedback"
+    },
+    {
+      "path": "LocationManager.getLocation",
+      "signature": "getLocation(callback)",
+      "min_version": "8.0",
+      "url": "https://core.telegram.org/bots/webapps#locationmanager"
+    },
+    {
+      "path": "LocationManager.init",
+      "signature": "init([callback])",
+      "min_version": "8.0",
+      "url": "https://core.telegram.org/bots/webapps#locationmanager"
+    },
+    {
+      "path": "LocationManager.openSettings",
+      "signature": "openSettings()",
+      "min_version": "8.0",
+      "url": "https://core.telegram.org/bots/webapps#locationmanager"
+    },
+    {
+      "path": "MainButton.disable",
+      "signature": "disable()",
+      "min_version": "6.1",
+      "url": "https://core.telegram.org/bots/webapps#bottombutton"
+    },
+    {
+      "path": "MainButton.enable",
+      "signature": "enable()",
+      "min_version": "6.1",
+      "url": "https://core.telegram.org/bots/webapps#bottombutton"
+    },
+    {
+      "path": "MainButton.hide",
+      "signature": "hide()",
+      "min_version": "6.1",
+      "url": "https://core.telegram.org/bots/webapps#bottombutton"
+    },
+    {
+      "path": "MainButton.hideProgress",
+      "signature": "hideProgress()",
+      "min_version": "6.1",
+      "url": "https://core.telegram.org/bots/webapps#bottombutton"
+    },
+    {
+      "path": "MainButton.offClick",
+      "signature": "offClick(callback)",
+      "min_version": "6.1",
+      "url": "https://core.telegram.org/bots/webapps#bottombutton"
+    },
+    {
+      "path": "MainButton.onClick",
+      "signature": "onClick(callback)",
+      "min_version": "6.1",
+      "url": "https://core.telegram.org/bots/webapps#bottombutton"
+    },
+    {
+      "path": "MainButton.setParams",
+      "signature": "setParams(params)",
+      "min_version": "9.5",
+      "url": "https://core.telegram.org/bots/webapps#bottombutton"
+    },
+    {
+      "path": "MainButton.setText",
+      "signature": "setText(text)",
+      "min_version": "6.1",
+      "url": "https://core.telegram.org/bots/webapps#bottombutton"
+    },
+    {
+      "path": "MainButton.show",
+      "signature": "show()",
+      "min_version": "6.1",
+      "url": "https://core.telegram.org/bots/webapps#bottombutton"
+    },
+    {
+      "path": "MainButton.showProgress",
+      "signature": "showProgress(leaveActive)",
+      "min_version": "6.1",
+      "url": "https://core.telegram.org/bots/webapps#bottombutton"
+    },
+    {
+      "path": "SecondaryButton.disable",
+      "signature": "disable()",
+      "min_version": "7.10",
+      "url": "https://core.telegram.org/bots/webapps#bottombutton"
+    },
+    {
+      "path": "SecondaryButton.enable",
+      "signature": "enable()",
+      "min_version": "7.10",
+      "url": "https://core.telegram.org/bots/webapps#bottombutton"
+    },
+    {
+      "path": "SecondaryButton.hide",
+      "signature": "hide()",
+      "min_version": "7.10",
+      "url": "https://core.telegram.org/bots/webapps#bottombutton"
+    },
+    {
+      "path": "SecondaryButton.hideProgress",
+      "signature": "hideProgress()",
+      "min_version": "7.10",
+      "url": "https://core.telegram.org/bots/webapps#bottombutton"
+    },
+    {
+      "path": "SecondaryButton.offClick",
+      "signature": "offClick(callback)",
+      "min_version": "7.10",
+      "url": "https://core.telegram.org/bots/webapps#bottombutton"
+    },
+    {
+      "path": "SecondaryButton.onClick",
+      "signature": "onClick(callback)",
+      "min_version": "7.10",
+      "url": "https://core.telegram.org/bots/webapps#bottombutton"
+    },
+    {
+      "path": "SecondaryButton.setParams",
+      "signature": "setParams(params)",
+      "min_version": "9.5",
+      "url": "https://core.telegram.org/bots/webapps#bottombutton"
+    },
+    {
+      "path": "SecondaryButton.setText",
+      "signature": "setText(text)",
+      "min_version": "7.10",
+      "url": "https://core.telegram.org/bots/webapps#bottombutton"
+    },
+    {
+      "path": "SecondaryButton.show",
+      "signature": "show()",
+      "min_version": "7.10",
+      "url": "https://core.telegram.org/bots/webapps#bottombutton"
+    },
+    {
+      "path": "SecondaryButton.showProgress",
+      "signature": "showProgress(leaveActive)",
+      "min_version": "7.10",
+      "url": "https://core.telegram.org/bots/webapps#bottombutton"
+    },
+    {
+      "path": "SecureStorage.clear",
+      "signature": "clear([callback])",
+      "min_version": "9.0",
+      "url": "https://core.telegram.org/bots/webapps#securestorage"
+    },
+    {
+      "path": "SecureStorage.getItem",
+      "signature": "getItem(key, callback)",
+      "min_version": "9.0",
+      "url": "https://core.telegram.org/bots/webapps#securestorage"
+    },
+    {
+      "path": "SecureStorage.removeItem",
+      "signature": "removeItem(key[, callback])",
+      "min_version": "9.0",
+      "url": "https://core.telegram.org/bots/webapps#securestorage"
+    },
+    {
+      "path": "SecureStorage.restoreItem",
+      "signature": "restoreItem(key[, callback])",
+      "min_version": "9.0",
+      "url": "https://core.telegram.org/bots/webapps#securestorage"
+    },
+    {
+      "path": "SecureStorage.setItem",
+      "signature": "setItem(key, value[, callback])",
+      "min_version": "9.0",
+      "url": "https://core.telegram.org/bots/webapps#securestorage"
+    },
+    {
+      "path": "SettingsButton.hide",
+      "signature": "hide()",
+      "min_version": "7.0",
+      "url": "https://core.telegram.org/bots/webapps#settingsbutton"
+    },
+    {
+      "path": "SettingsButton.offClick",
+      "signature": "offClick(callback)",
+      "min_version": "7.0",
+      "url": "https://core.telegram.org/bots/webapps#settingsbutton"
+    },
+    {
+      "path": "SettingsButton.onClick",
+      "signature": "onClick(callback)",
+      "min_version": "7.0",
+      "url": "https://core.telegram.org/bots/webapps#settingsbutton"
+    },
+    {
+      "path": "SettingsButton.show",
+      "signature": "show()",
+      "min_version": "7.0",
+      "url": "https://core.telegram.org/bots/webapps#settingsbutton"
+    },
+    {
+      "path": "addToHomeScreen",
+      "signature": "addToHomeScreen()",
+      "min_version": "8.0",
+      "url": "https://core.telegram.org/bots/webapps#initializing-mini-apps"
+    },
+    {
+      "path": "checkHomeScreenStatus",
+      "signature": "checkHomeScreenStatus([callback])",
+      "min_version": "8.0",
+      "url": "https://core.telegram.org/bots/webapps#initializing-mini-apps"
+    },
+    {
+      "path": "close",
+      "signature": "close()",
+      "min_version": "6.0",
+      "url": "https://core.telegram.org/bots/webapps#initializing-mini-apps"
+    },
+    {
+      "path": "closeScanQrPopup",
+      "signature": "closeScanQrPopup()",
+      "min_version": "6.4",
+      "url": "https://core.telegram.org/bots/webapps#initializing-mini-apps"
+    },
+    {
+      "path": "disableClosingConfirmation",
+      "signature": "disableClosingConfirmation()",
+      "min_version": "6.2",
+      "url": "https://core.telegram.org/bots/webapps#initializing-mini-apps"
+    },
+    {
+      "path": "disableVerticalSwipes",
+      "signature": "disableVerticalSwipes()",
+      "min_version": "7.7",
+      "url": "https://core.telegram.org/bots/webapps#initializing-mini-apps"
+    },
+    {
+      "path": "downloadFile",
+      "signature": "downloadFile(params[, callback])",
+      "min_version": "8.0",
+      "url": "https://core.telegram.org/bots/webapps#initializing-mini-apps"
+    },
+    {
+      "path": "enableClosingConfirmation",
+      "signature": "enableClosingConfirmation()",
+      "min_version": "6.2",
+      "url": "https://core.telegram.org/bots/webapps#initializing-mini-apps"
+    },
+    {
+      "path": "enableVerticalSwipes",
+      "signature": "enableVerticalSwipes()",
+      "min_version": "7.7",
+      "url": "https://core.telegram.org/bots/webapps#initializing-mini-apps"
+    },
+    {
+      "path": "exitFullscreen",
+      "signature": "exitFullscreen()",
+      "min_version": "8.0",
+      "url": "https://core.telegram.org/bots/webapps#initializing-mini-apps"
+    },
+    {
+      "path": "expand",
+      "signature": "expand()",
+      "min_version": "6.0",
+      "url": "https://core.telegram.org/bots/webapps#initializing-mini-apps"
+    },
+    {
+      "path": "hideKeyboard",
+      "signature": "hideKeyboard()",
+      "min_version": "9.1",
+      "url": "https://core.telegram.org/bots/webapps#initializing-mini-apps"
+    },
+    {
+      "path": "isVersionAtLeast",
+      "signature": "isVersionAtLeast(version)",
+      "min_version": "6.0",
+      "url": "https://core.telegram.org/bots/webapps#initializing-mini-apps"
+    },
+    {
+      "path": "lockOrientation",
+      "signature": "lockOrientation()",
+      "min_version": "8.0",
+      "url": "https://core.telegram.org/bots/webapps#initializing-mini-apps"
+    },
+    {
+      "path": "offEvent",
+      "signature": "offEvent(eventType, eventHandler)",
+      "min_version": "6.0",
+      "url": "https://core.telegram.org/bots/webapps#initializing-mini-apps"
+    },
+    {
+      "path": "onEvent",
+      "signature": "onEvent(eventType, eventHandler)",
+      "min_version": "6.0",
+      "url": "https://core.telegram.org/bots/webapps#initializing-mini-apps"
+    },
+    {
+      "path": "openInvoice",
+      "signature": "openInvoice(url[, callback])",
+      "min_version": "6.1",
+      "url": "https://core.telegram.org/bots/webapps#initializing-mini-apps"
+    },
+    {
+      "path": "openLink",
+      "signature": "openLink(url[, options])",
+      "min_version": "6.4",
+      "url": "https://core.telegram.org/bots/webapps#initializing-mini-apps"
+    },
+    {
+      "path": "openTelegramLink",
+      "signature": "openTelegramLink(url)",
+      "min_version": "6.0",
+      "url": "https://core.telegram.org/bots/webapps#initializing-mini-apps"
+    },
+    {
+      "path": "readTextFromClipboard",
+      "signature": "readTextFromClipboard([callback])",
+      "min_version": "6.4",
+      "url": "https://core.telegram.org/bots/webapps#initializing-mini-apps"
+    },
+    {
+      "path": "ready",
+      "signature": "ready()",
+      "min_version": "6.0",
+      "url": "https://core.telegram.org/bots/webapps#initializing-mini-apps"
+    },
+    {
+      "path": "requestChat",
+      "signature": "requestChat(req_id[, callback])",
+      "min_version": "9.6",
+      "url": "https://core.telegram.org/bots/webapps#initializing-mini-apps"
+    },
+    {
+      "path": "requestContact",
+      "signature": "requestContact([callback])",
+      "min_version": "6.9",
+      "url": "https://core.telegram.org/bots/webapps#initializing-mini-apps"
+    },
+    {
+      "path": "requestEmojiStatusAccess",
+      "signature": "requestEmojiStatusAccess([callback])",
+      "min_version": "8.0",
+      "url": "https://core.telegram.org/bots/webapps#initializing-mini-apps"
+    },
+    {
+      "path": "requestFullscreen",
+      "signature": "requestFullscreen()",
+      "min_version": "8.0",
+      "url": "https://core.telegram.org/bots/webapps#initializing-mini-apps"
+    },
+    {
+      "path": "requestWriteAccess",
+      "signature": "requestWriteAccess([callback])",
+      "min_version": "6.9",
+      "url": "https://core.telegram.org/bots/webapps#initializing-mini-apps"
+    },
+    {
+      "path": "sendData",
+      "signature": "sendData(data)",
+      "min_version": "6.0",
+      "url": "https://core.telegram.org/bots/webapps#initializing-mini-apps"
+    },
+    {
+      "path": "setBackgroundColor",
+      "signature": "setBackgroundColor(color)",
+      "min_version": "6.1",
+      "url": "https://core.telegram.org/bots/webapps#initializing-mini-apps"
+    },
+    {
+      "path": "setBottomBarColor",
+      "signature": "setBottomBarColor(color)",
+      "min_version": "7.10",
+      "url": "https://core.telegram.org/bots/webapps#initializing-mini-apps"
+    },
+    {
+      "path": "setEmojiStatus",
+      "signature": "setEmojiStatus(custom_emoji_id[, params, callback])",
+      "min_version": "8.0",
+      "url": "https://core.telegram.org/bots/webapps#initializing-mini-apps"
+    },
+    {
+      "path": "setHeaderColor",
+      "signature": "setHeaderColor(color)",
+      "min_version": "6.1",
+      "url": "https://core.telegram.org/bots/webapps#initializing-mini-apps"
+    },
+    {
+      "path": "shareMessage",
+      "signature": "shareMessage(msg_id[, callback])",
+      "min_version": "8.0",
+      "url": "https://core.telegram.org/bots/webapps#initializing-mini-apps"
+    },
+    {
+      "path": "shareToStory",
+      "signature": "shareToStory(media_url[, params])",
+      "min_version": "7.8",
+      "url": "https://core.telegram.org/bots/webapps#initializing-mini-apps"
+    },
+    {
+      "path": "showAlert",
+      "signature": "showAlert(message[, callback])",
+      "min_version": "6.2",
+      "url": "https://core.telegram.org/bots/webapps#initializing-mini-apps"
+    },
+    {
+      "path": "showConfirm",
+      "signature": "showConfirm(message[, callback])",
+      "min_version": "6.2",
+      "url": "https://core.telegram.org/bots/webapps#initializing-mini-apps"
+    },
+    {
+      "path": "showPopup",
+      "signature": "showPopup(params[, callback])",
+      "min_version": "6.2",
+      "url": "https://core.telegram.org/bots/webapps#initializing-mini-apps"
+    },
+    {
+      "path": "showScanQrPopup",
+      "signature": "showScanQrPopup(params[, callback])",
+      "min_version": "6.4",
+      "url": "https://core.telegram.org/bots/webapps#initializing-mini-apps"
+    },
+    {
+      "path": "switchInlineQuery",
+      "signature": "switchInlineQuery(query[, choose_chat_types])",
+      "min_version": "6.7",
+      "url": "https://core.telegram.org/bots/webapps#initializing-mini-apps"
+    },
+    {
+      "path": "unlockOrientation",
+      "signature": "unlockOrientation()",
+      "min_version": "8.0",
+      "url": "https://core.telegram.org/bots/webapps#initializing-mini-apps"
+    }
+  ],
+  "events": [
+    {
+      "name": "accelerometerChanged",
+      "min_version": "8.0",
+      "url": "https://core.telegram.org/bots/webapps#events-available-for-mini-apps"
+    },
+    {
+      "name": "accelerometerFailed",
+      "min_version": "8.0",
+      "url": "https://core.telegram.org/bots/webapps#events-available-for-mini-apps"
+    },
+    {
+      "name": "accelerometerStarted",
+      "min_version": "8.0",
+      "url": "https://core.telegram.org/bots/webapps#events-available-for-mini-apps"
+    },
+    {
+      "name": "accelerometerStopped",
+      "min_version": "8.0",
+      "url": "https://core.telegram.org/bots/webapps#events-available-for-mini-apps"
+    },
+    {
+      "name": "activated",
+      "min_version": "8.0",
+      "url": "https://core.telegram.org/bots/webapps#events-available-for-mini-apps"
+    },
+    {
+      "name": "backButtonClicked",
+      "min_version": "6.1",
+      "url": "https://core.telegram.org/bots/webapps#events-available-for-mini-apps"
+    },
+    {
+      "name": "biometricAuthRequested",
+      "min_version": "7.2",
+      "url": "https://core.telegram.org/bots/webapps#events-available-for-mini-apps"
+    },
+    {
+      "name": "biometricManagerUpdated",
+      "min_version": "7.2",
+      "url": "https://core.telegram.org/bots/webapps#events-available-for-mini-apps"
+    },
+    {
+      "name": "biometricTokenUpdated",
+      "min_version": "7.2",
+      "url": "https://core.telegram.org/bots/webapps#events-available-for-mini-apps"
+    },
+    {
+      "name": "clipboardTextReceived",
+      "min_version": "6.4",
+      "url": "https://core.telegram.org/bots/webapps#events-available-for-mini-apps"
+    },
+    {
+      "name": "contactRequested",
+      "min_version": "6.9",
+      "url": "https://core.telegram.org/bots/webapps#events-available-for-mini-apps"
+    },
+    {
+      "name": "contentSafeAreaChanged",
+      "min_version": "8.0",
+      "url": "https://core.telegram.org/bots/webapps#events-available-for-mini-apps"
+    },
+    {
+      "name": "deactivated",
+      "min_version": "8.0",
+      "url": "https://core.telegram.org/bots/webapps#events-available-for-mini-apps"
+    },
+    {
+      "name": "deviceOrientationChanged",
+      "min_version": "8.0",
+      "url": "https://core.telegram.org/bots/webapps#events-available-for-mini-apps"
+    },
+    {
+      "name": "deviceOrientationFailed",
+      "min_version": "8.0",
+      "url": "https://core.telegram.org/bots/webapps#events-available-for-mini-apps"
+    },
+    {
+      "name": "deviceOrientationStarted",
+      "min_version": "8.0",
+      "url": "https://core.telegram.org/bots/webapps#events-available-for-mini-apps"
+    },
+    {
+      "name": "deviceOrientationStopped",
+      "min_version": "8.0",
+      "url": "https://core.telegram.org/bots/webapps#events-available-for-mini-apps"
+    },
+    {
+      "name": "emojiStatusAccessRequested",
+      "min_version": "8.0",
+      "url": "https://core.telegram.org/bots/webapps#events-available-for-mini-apps"
+    },
+    {
+      "name": "emojiStatusFailed",
+      "min_version": "8.0",
+      "url": "https://core.telegram.org/bots/webapps#events-available-for-mini-apps"
+    },
+    {
+      "name": "emojiStatusSet",
+      "min_version": "8.0",
+      "url": "https://core.telegram.org/bots/webapps#events-available-for-mini-apps"
+    },
+    {
+      "name": "fileDownloadRequested",
+      "min_version": "8.0",
+      "url": "https://core.telegram.org/bots/webapps#events-available-for-mini-apps"
+    },
+    {
+      "name": "fullscreenChanged",
+      "min_version": "8.0",
+      "url": "https://core.telegram.org/bots/webapps#events-available-for-mini-apps"
+    },
+    {
+      "name": "fullscreenFailed",
+      "min_version": "8.0",
+      "url": "https://core.telegram.org/bots/webapps#events-available-for-mini-apps"
+    },
+    {
+      "name": "gyroscopeChanged",
+      "min_version": "8.0",
+      "url": "https://core.telegram.org/bots/webapps#events-available-for-mini-apps"
+    },
+    {
+      "name": "gyroscopeFailed",
+      "min_version": "8.0",
+      "url": "https://core.telegram.org/bots/webapps#events-available-for-mini-apps"
+    },
+    {
+      "name": "gyroscopeStarted",
+      "min_version": "8.0",
+      "url": "https://core.telegram.org/bots/webapps#events-available-for-mini-apps"
+    },
+    {
+      "name": "gyroscopeStopped",
+      "min_version": "8.0",
+      "url": "https://core.telegram.org/bots/webapps#events-available-for-mini-apps"
+    },
+    {
+      "name": "homeScreenAdded",
+      "min_version": "8.0",
+      "url": "https://core.telegram.org/bots/webapps#events-available-for-mini-apps"
+    },
+    {
+      "name": "homeScreenChecked",
+      "min_version": "8.0",
+      "url": "https://core.telegram.org/bots/webapps#events-available-for-mini-apps"
+    },
+    {
+      "name": "invoiceClosed",
+      "min_version": "6.1",
+      "url": "https://core.telegram.org/bots/webapps#events-available-for-mini-apps"
+    },
+    {
+      "name": "locationManagerUpdated",
+      "min_version": "8.0",
+      "url": "https://core.telegram.org/bots/webapps#events-available-for-mini-apps"
+    },
+    {
+      "name": "locationRequested",
+      "min_version": "8.0",
+      "url": "https://core.telegram.org/bots/webapps#events-available-for-mini-apps"
+    },
+    {
+      "name": "mainButtonClicked",
+      "min_version": "6.0",
+      "url": "https://core.telegram.org/bots/webapps#events-available-for-mini-apps"
+    },
+    {
+      "name": "popupClosed",
+      "min_version": "6.2",
+      "url": "https://core.telegram.org/bots/webapps#events-available-for-mini-apps"
+    },
+    {
+      "name": "qrTextReceived",
+      "min_version": "6.4",
+      "url": "https://core.telegram.org/bots/webapps#events-available-for-mini-apps"
+    },
+    {
+      "name": "safeAreaChanged",
+      "min_version": "8.0",
+      "url": "https://core.telegram.org/bots/webapps#events-available-for-mini-apps"
+    },
+    {
+      "name": "scanQrPopupClosed",
+      "min_version": "7.7",
+      "url": "https://core.telegram.org/bots/webapps#events-available-for-mini-apps"
+    },
+    {
+      "name": "secondaryButtonClicked",
+      "min_version": "7.10",
+      "url": "https://core.telegram.org/bots/webapps#events-available-for-mini-apps"
+    },
+    {
+      "name": "settingsButtonClicked",
+      "min_version": "6.1",
+      "url": "https://core.telegram.org/bots/webapps#events-available-for-mini-apps"
+    },
+    {
+      "name": "shareMessageFailed",
+      "min_version": "8.0",
+      "url": "https://core.telegram.org/bots/webapps#events-available-for-mini-apps"
+    },
+    {
+      "name": "shareMessageSent",
+      "min_version": "8.0",
+      "url": "https://core.telegram.org/bots/webapps#events-available-for-mini-apps"
+    },
+    {
+      "name": "themeChanged",
+      "min_version": "6.0",
+      "url": "https://core.telegram.org/bots/webapps#events-available-for-mini-apps"
+    },
+    {
+      "name": "viewportChanged",
+      "min_version": "6.0",
+      "url": "https://core.telegram.org/bots/webapps#events-available-for-mini-apps"
+    },
+    {
+      "name": "writeAccessRequested",
+      "min_version": "6.9",
+      "url": "https://core.telegram.org/bots/webapps#events-available-for-mini-apps"
+    }
+  ],
+  "properties": [
+    {
+      "owner": "WebApp",
+      "name": "initData",
+      "type": "String",
+      "url": "https://core.telegram.org/bots/webapps#initializing-mini-apps"
+    },
+    {
+      "owner": "WebApp",
+      "name": "initDataUnsafe",
+      "type": "WebAppInitData",
+      "url": "https://core.telegram.org/bots/webapps#initializing-mini-apps"
+    },
+    {
+      "owner": "WebApp",
+      "name": "version",
+      "type": "String",
+      "url": "https://core.telegram.org/bots/webapps#initializing-mini-apps"
+    },
+    {
+      "owner": "WebApp",
+      "name": "platform",
+      "type": "String",
+      "url": "https://core.telegram.org/bots/webapps#initializing-mini-apps"
+    },
+    {
+      "owner": "WebApp",
+      "name": "colorScheme",
+      "type": "String",
+      "url": "https://core.telegram.org/bots/webapps#initializing-mini-apps"
+    },
+    {
+      "owner": "WebApp",
+      "name": "themeParams",
+      "type": "ThemeParams",
+      "url": "https://core.telegram.org/bots/webapps#initializing-mini-apps"
+    },
+    {
+      "owner": "WebApp",
+      "name": "isActive",
+      "type": "Boolean",
+      "url": "https://core.telegram.org/bots/webapps#initializing-mini-apps"
+    },
+    {
+      "owner": "WebApp",
+      "name": "isExpanded",
+      "type": "Boolean",
+      "url": "https://core.telegram.org/bots/webapps#initializing-mini-apps"
+    },
+    {
+      "owner": "WebApp",
+      "name": "viewportHeight",
+      "type": "Float",
+      "url": "https://core.telegram.org/bots/webapps#initializing-mini-apps"
+    },
+    {
+      "owner": "WebApp",
+      "name": "viewportStableHeight",
+      "type": "Float",
+      "url": "https://core.telegram.org/bots/webapps#initializing-mini-apps"
+    },
+    {
+      "owner": "WebApp",
+      "name": "headerColor",
+      "type": "String",
+      "url": "https://core.telegram.org/bots/webapps#initializing-mini-apps"
+    },
+    {
+      "owner": "WebApp",
+      "name": "backgroundColor",
+      "type": "String",
+      "url": "https://core.telegram.org/bots/webapps#initializing-mini-apps"
+    },
+    {
+      "owner": "WebApp",
+      "name": "bottomBarColor",
+      "type": "String",
+      "url": "https://core.telegram.org/bots/webapps#initializing-mini-apps"
+    },
+    {
+      "owner": "WebApp",
+      "name": "isClosingConfirmationEnabled",
+      "type": "Boolean",
+      "url": "https://core.telegram.org/bots/webapps#initializing-mini-apps"
+    },
+    {
+      "owner": "WebApp",
+      "name": "isVerticalSwipesEnabled",
+      "type": "Boolean",
+      "url": "https://core.telegram.org/bots/webapps#initializing-mini-apps"
+    },
+    {
+      "owner": "WebApp",
+      "name": "isFullscreen",
+      "type": "Boolean",
+      "url": "https://core.telegram.org/bots/webapps#initializing-mini-apps"
+    },
+    {
+      "owner": "WebApp",
+      "name": "isOrientationLocked",
+      "type": "Boolean",
+      "url": "https://core.telegram.org/bots/webapps#initializing-mini-apps"
+    },
+    {
+      "owner": "WebApp",
+      "name": "safeAreaInset",
+      "type": "SafeAreaInset",
+      "url": "https://core.telegram.org/bots/webapps#initializing-mini-apps"
+    },
+    {
+      "owner": "WebApp",
+      "name": "contentSafeAreaInset",
+      "type": "ContentSafeAreaInset",
+      "url": "https://core.telegram.org/bots/webapps#initializing-mini-apps"
+    },
+    {
+      "owner": "WebApp",
+      "name": "BackButton",
+      "type": "BackButton",
+      "url": "https://core.telegram.org/bots/webapps#initializing-mini-apps"
+    },
+    {
+      "owner": "WebApp",
+      "name": "MainButton",
+      "type": "BottomButton",
+      "url": "https://core.telegram.org/bots/webapps#initializing-mini-apps"
+    },
+    {
+      "owner": "WebApp",
+      "name": "SecondaryButton",
+      "type": "BottomButton",
+      "url": "https://core.telegram.org/bots/webapps#initializing-mini-apps"
+    },
+    {
+      "owner": "WebApp",
+      "name": "SettingsButton",
+      "type": "SettingsButton",
+      "url": "https://core.telegram.org/bots/webapps#initializing-mini-apps"
+    },
+    {
+      "owner": "WebApp",
+      "name": "HapticFeedback",
+      "type": "HapticFeedback",
+      "url": "https://core.telegram.org/bots/webapps#initializing-mini-apps"
+    },
+    {
+      "owner": "WebApp",
+      "name": "CloudStorage",
+      "type": "CloudStorage",
+      "url": "https://core.telegram.org/bots/webapps#initializing-mini-apps"
+    },
+    {
+      "owner": "WebApp",
+      "name": "BiometricManager",
+      "type": "BiometricManager",
+      "url": "https://core.telegram.org/bots/webapps#initializing-mini-apps"
+    },
+    {
+      "owner": "WebApp",
+      "name": "Accelerometer",
+      "type": "Accelerometer",
+      "url": "https://core.telegram.org/bots/webapps#initializing-mini-apps"
+    },
+    {
+      "owner": "WebApp",
+      "name": "DeviceOrientation",
+      "type": "DeviceOrientation",
+      "url": "https://core.telegram.org/bots/webapps#initializing-mini-apps"
+    },
+    {
+      "owner": "WebApp",
+      "name": "Gyroscope",
+      "type": "Gyroscope",
+      "url": "https://core.telegram.org/bots/webapps#initializing-mini-apps"
+    },
+    {
+      "owner": "WebApp",
+      "name": "LocationManager",
+      "type": "LocationManager",
+      "url": "https://core.telegram.org/bots/webapps#initializing-mini-apps"
+    },
+    {
+      "owner": "WebApp",
+      "name": "DeviceStorage",
+      "type": "DeviceStorage",
+      "url": "https://core.telegram.org/bots/webapps#initializing-mini-apps"
+    },
+    {
+      "owner": "WebApp",
+      "name": "SecureStorage",
+      "type": "SecureStorage",
+      "url": "https://core.telegram.org/bots/webapps#initializing-mini-apps"
+    },
+    {
+      "owner": "BackButton",
+      "name": "isVisible",
+      "type": "Boolean",
+      "url": "https://core.telegram.org/bots/webapps#backbutton"
+    },
+    {
+      "owner": "BottomButton",
+      "name": "type",
+      "type": "String",
+      "url": "https://core.telegram.org/bots/webapps#bottombutton"
+    },
+    {
+      "owner": "BottomButton",
+      "name": "iconCustomEmojiId",
+      "type": "String",
+      "url": "https://core.telegram.org/bots/webapps#bottombutton"
+    },
+    {
+      "owner": "BottomButton",
+      "name": "text",
+      "type": "String",
+      "url": "https://core.telegram.org/bots/webapps#bottombutton"
+    },
+    {
+      "owner": "BottomButton",
+      "name": "color",
+      "type": "String",
+      "url": "https://core.telegram.org/bots/webapps#bottombutton"
+    },
+    {
+      "owner": "BottomButton",
+      "name": "textColor",
+      "type": "String",
+      "url": "https://core.telegram.org/bots/webapps#bottombutton"
+    },
+    {
+      "owner": "BottomButton",
+      "name": "isVisible",
+      "type": "Boolean",
+      "url": "https://core.telegram.org/bots/webapps#bottombutton"
+    },
+    {
+      "owner": "BottomButton",
+      "name": "isActive",
+      "type": "Boolean",
+      "url": "https://core.telegram.org/bots/webapps#bottombutton"
+    },
+    {
+      "owner": "BottomButton",
+      "name": "hasShineEffect",
+      "type": "Boolean",
+      "url": "https://core.telegram.org/bots/webapps#bottombutton"
+    },
+    {
+      "owner": "BottomButton",
+      "name": "position",
+      "type": "String",
+      "url": "https://core.telegram.org/bots/webapps#bottombutton"
+    },
+    {
+      "owner": "BottomButton",
+      "name": "isProgressVisible",
+      "type": "Boolean",
+      "url": "https://core.telegram.org/bots/webapps#bottombutton"
+    },
+    {
+      "owner": "SettingsButton",
+      "name": "isVisible",
+      "type": "Boolean",
+      "url": "https://core.telegram.org/bots/webapps#settingsbutton"
+    },
+    {
+      "owner": "BiometricManager",
+      "name": "isInited",
+      "type": "Boolean",
+      "url": "https://core.telegram.org/bots/webapps#biometricmanager"
+    },
+    {
+      "owner": "BiometricManager",
+      "name": "isBiometricAvailable",
+      "type": "Boolean",
+      "url": "https://core.telegram.org/bots/webapps#biometricmanager"
+    },
+    {
+      "owner": "BiometricManager",
+      "name": "biometricType",
+      "type": "String",
+      "url": "https://core.telegram.org/bots/webapps#biometricmanager"
+    },
+    {
+      "owner": "BiometricManager",
+      "name": "isAccessRequested",
+      "type": "Boolean",
+      "url": "https://core.telegram.org/bots/webapps#biometricmanager"
+    },
+    {
+      "owner": "BiometricManager",
+      "name": "isAccessGranted",
+      "type": "Boolean",
+      "url": "https://core.telegram.org/bots/webapps#biometricmanager"
+    },
+    {
+      "owner": "BiometricManager",
+      "name": "isBiometricTokenSaved",
+      "type": "Boolean",
+      "url": "https://core.telegram.org/bots/webapps#biometricmanager"
+    },
+    {
+      "owner": "BiometricManager",
+      "name": "deviceId",
+      "type": "String",
+      "url": "https://core.telegram.org/bots/webapps#biometricmanager"
+    },
+    {
+      "owner": "Accelerometer",
+      "name": "isStarted",
+      "type": "Boolean",
+      "url": "https://core.telegram.org/bots/webapps#accelerometer"
+    },
+    {
+      "owner": "Accelerometer",
+      "name": "x",
+      "type": "Float",
+      "url": "https://core.telegram.org/bots/webapps#accelerometer"
+    },
+    {
+      "owner": "Accelerometer",
+      "name": "y",
+      "type": "Float",
+      "url": "https://core.telegram.org/bots/webapps#accelerometer"
+    },
+    {
+      "owner": "Accelerometer",
+      "name": "z",
+      "type": "Float",
+      "url": "https://core.telegram.org/bots/webapps#accelerometer"
+    },
+    {
+      "owner": "DeviceOrientation",
+      "name": "isStarted",
+      "type": "Boolean",
+      "url": "https://core.telegram.org/bots/webapps#deviceorientation"
+    },
+    {
+      "owner": "DeviceOrientation",
+      "name": "absolute",
+      "type": "Boolean",
+      "url": "https://core.telegram.org/bots/webapps#deviceorientation"
+    },
+    {
+      "owner": "DeviceOrientation",
+      "name": "alpha",
+      "type": "Float",
+      "url": "https://core.telegram.org/bots/webapps#deviceorientation"
+    },
+    {
+      "owner": "DeviceOrientation",
+      "name": "beta",
+      "type": "Float",
+      "url": "https://core.telegram.org/bots/webapps#deviceorientation"
+    },
+    {
+      "owner": "DeviceOrientation",
+      "name": "gamma",
+      "type": "Float",
+      "url": "https://core.telegram.org/bots/webapps#deviceorientation"
+    },
+    {
+      "owner": "Gyroscope",
+      "name": "isStarted",
+      "type": "Boolean",
+      "url": "https://core.telegram.org/bots/webapps#gyroscope"
+    },
+    {
+      "owner": "Gyroscope",
+      "name": "x",
+      "type": "Float",
+      "url": "https://core.telegram.org/bots/webapps#gyroscope"
+    },
+    {
+      "owner": "Gyroscope",
+      "name": "y",
+      "type": "Float",
+      "url": "https://core.telegram.org/bots/webapps#gyroscope"
+    },
+    {
+      "owner": "Gyroscope",
+      "name": "z",
+      "type": "Float",
+      "url": "https://core.telegram.org/bots/webapps#gyroscope"
+    },
+    {
+      "owner": "LocationManager",
+      "name": "isInited",
+      "type": "Boolean",
+      "url": "https://core.telegram.org/bots/webapps#locationmanager"
+    },
+    {
+      "owner": "LocationManager",
+      "name": "isLocationAvailable",
+      "type": "Boolean",
+      "url": "https://core.telegram.org/bots/webapps#locationmanager"
+    },
+    {
+      "owner": "LocationManager",
+      "name": "isAccessRequested",
+      "type": "Boolean",
+      "url": "https://core.telegram.org/bots/webapps#locationmanager"
+    },
+    {
+      "owner": "LocationManager",
+      "name": "isAccessGranted",
+      "type": "Boolean",
+      "url": "https://core.telegram.org/bots/webapps#locationmanager"
+    }
+  ]
+}

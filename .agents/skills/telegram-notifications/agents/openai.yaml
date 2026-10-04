@@ -1,0 +1,4 @@
+interface:
+  display_name: "Telegram: Notifications"
+  short_description: "Напоминания, очереди и управляемые рассылки бота"
+  default_prompt: "Используй $telegram-notifications. Добавь напоминания с отпиской, расписанием и проверкой повторов через тестовый transport."

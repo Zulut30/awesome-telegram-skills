@@ -1,0 +1,4 @@
+interface:
+  display_name: "Telegram: Native Capabilities"
+  short_description: "Native API Mini App, разрешения и полезные fallback"
+  default_prompt: "Используй $telegram-mini-app-native-capabilities. Подключи выбранную native-функцию Mini App с обработкой отказа и отсутствия поддержки."

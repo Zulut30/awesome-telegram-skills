@@ -1,0 +1,4 @@
+interface:
+  display_name: "Telegram: тестирование"
+  short_description: "Тесты updates, auth, платежей и реальных сценариев"
+  default_prompt: "Используй $telegram-testing. Проверь измененное поведение Telegram-проекта."

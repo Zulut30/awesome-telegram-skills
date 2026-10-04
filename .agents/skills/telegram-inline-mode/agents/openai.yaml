@@ -1,0 +1,4 @@
+interface:
+  display_name: "Telegram: inline mode"
+  short_description: "Поиск и отправка результатов через @bot query"
+  default_prompt: "Используй $telegram-inline-mode. Добавь inline-поиск с безопасным кешированием."

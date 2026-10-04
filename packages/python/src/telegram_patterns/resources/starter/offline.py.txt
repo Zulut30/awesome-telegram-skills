@@ -1,0 +1,31 @@
+"""Настоящий Dispatcher через StubSession: без токена и сети."""
+import asyncio
+from datetime import datetime, timezone
+import json
+from aiogram import Bot
+from aiogram.methods import AnswerCallbackQuery, SendMessage
+from aiogram.types import CallbackQuery, Chat, Message, Update, User
+from telegram_patterns.testing import StubSession
+from app import create_app
+
+
+async def main():
+    date = datetime(2026, 10, 4, tzinfo=timezone.utc)
+    def response(method):
+        return Message(message_id=10, date=date, chat=Chat(id=method.chat_id, type='private'), text=method.text, reply_markup=method.reply_markup)
+    session = StubSession().respond(SendMessage, response).respond(AnswerCallbackQuery, True)
+    dispatcher, _ = create_app()
+    actor = User(id=42, first_name='Fixture', is_bot=False)
+    incoming = Message(message_id=1, date=date, chat=Chat(id=42, type='private'), from_user=actor, text='/start')
+    async with Bot('100:OFFLINE_FIXTURE', session=session) as bot:
+        await dispatcher.feed_update(bot, Update(update_id=1, message=incoming))
+        menu = session.calls[-1].reply_markup
+        await dispatcher.feed_update(bot, Update(update_id=2, callback_query=CallbackQuery(id='fixture', from_user=actor,
+            chat_instance='fixture', message=incoming, data=menu.inline_keyboard[0][0].callback_data)))
+    methods = [type(call).__name__ for call in session.calls]
+    assert methods == ['SendMessage', 'AnswerCallbackQuery', 'SendMessage']
+    assert session.closed
+    print(json.dumps({'passed': True, 'network': False, 'methods': methods, 'session_closed': session.closed}))
+
+
+if __name__ == '__main__': asyncio.run(main())

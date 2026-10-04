@@ -1,0 +1,799 @@
+{
+  "scope": "SDK-only synthetic requests; never send unchanged",
+  "methods": {
+    "addStickerToSet": {
+      "user_id": 1,
+      "name": "fixture_name",
+      "sticker": {
+        "sticker": "FIXTURE_FILE_ID_REPLACE",
+        "format": "static",
+        "emoji_list": [
+          "FIXTURE_REPLACE"
+        ]
+      }
+    },
+    "answerCallbackQuery": {
+      "callback_query_id": "FIXTURE_REPLACE"
+    },
+    "answerChatJoinRequestQuery": {
+      "chat_join_request_query_id": "FIXTURE_REPLACE",
+      "result": "FIXTURE_REPLACE"
+    },
+    "answerGuestQuery": {
+      "guest_query_id": "FIXTURE_REPLACE",
+      "result": {
+        "id": "FIXTURE_REPLACE",
+        "audio_file_id": "FIXTURE_REPLACE",
+        "type": "audio"
+      }
+    },
+    "answerInlineQuery": {
+      "inline_query_id": "FIXTURE_REPLACE",
+      "results": [
+        {
+          "id": "FIXTURE_REPLACE",
+          "audio_file_id": "FIXTURE_REPLACE",
+          "type": "audio"
+        }
+      ]
+    },
+    "answerPreCheckoutQuery": {
+      "pre_checkout_query_id": "FIXTURE_REPLACE",
+      "ok": true
+    },
+    "answerShippingQuery": {
+      "shipping_query_id": "FIXTURE_REPLACE",
+      "ok": true
+    },
+    "answerWebAppQuery": {
+      "web_app_query_id": "FIXTURE_REPLACE",
+      "result": {
+        "id": "FIXTURE_REPLACE",
+        "audio_file_id": "FIXTURE_REPLACE",
+        "type": "audio"
+      }
+    },
+    "approveChatJoinRequest": {
+      "chat_id": 1,
+      "user_id": 1
+    },
+    "approveSuggestedPost": {
+      "chat_id": 1,
+      "message_id": 1
+    },
+    "banChatMember": {
+      "chat_id": 1,
+      "user_id": 1
+    },
+    "banChatSenderChat": {
+      "chat_id": 1,
+      "sender_chat_id": 1
+    },
+    "close": {},
+    "closeForumTopic": {
+      "chat_id": 1,
+      "message_thread_id": 1
+    },
+    "closeGeneralForumTopic": {
+      "chat_id": 1
+    },
+    "convertGiftToStars": {
+      "business_connection_id": "FIXTURE_REPLACE",
+      "owned_gift_id": "FIXTURE_REPLACE"
+    },
+    "copyMessage": {
+      "chat_id": 1,
+      "from_chat_id": 1,
+      "message_id": 1
+    },
+    "copyMessages": {
+      "chat_id": 1,
+      "from_chat_id": 1,
+      "message_ids": [
+        1
+      ]
+    },
+    "createChatInviteLink": {
+      "chat_id": 1
+    },
+    "createChatSubscriptionInviteLink": {
+      "chat_id": 1,
+      "subscription_period": "2026-10-04T12:00:00Z",
+      "subscription_price": 1
+    },
+    "createForumTopic": {
+      "chat_id": 1,
+      "name": "fixture_name"
+    },
+    "createInvoiceLink": {
+      "title": "FIXTURE_REPLACE",
+      "description": "FIXTURE_REPLACE",
+      "payload": "FIXTURE_REPLACE",
+      "currency": "XTR",
+      "prices": [
+        {
+          "label": "FIXTURE_REPLACE",
+          "amount": 1
+        }
+      ]
+    },
+    "createNewStickerSet": {
+      "user_id": 1,
+      "name": "fixture_name",
+      "title": "FIXTURE_REPLACE",
+      "stickers": [
+        {
+          "sticker": "FIXTURE_FILE_ID_REPLACE",
+          "format": "static",
+          "emoji_list": [
+            "FIXTURE_REPLACE"
+          ]
+        }
+      ]
+    },
+    "declineChatJoinRequest": {
+      "chat_id": 1,
+      "user_id": 1
+    },
+    "declineSuggestedPost": {
+      "chat_id": 1,
+      "message_id": 1
+    },
+    "deleteAllMessageReactions": {
+      "chat_id": 1
+    },
+    "deleteBusinessMessages": {
+      "business_connection_id": "FIXTURE_REPLACE",
+      "message_ids": [
+        1
+      ]
+    },
+    "deleteChatPhoto": {
+      "chat_id": 1
+    },
+    "deleteChatStickerSet": {
+      "chat_id": 1
+    },
+    "deleteEphemeralMessage": {
+      "chat_id": 1,
+      "receiver_user_id": 1,
+      "ephemeral_message_id": 1
+    },
+    "deleteForumTopic": {
+      "chat_id": 1,
+      "message_thread_id": 1
+    },
+    "deleteMessage": {
+      "chat_id": 1,
+      "message_id": 1
+    },
+    "deleteMessageReaction": {
+      "chat_id": 1,
+      "message_id": 1
+    },
+    "deleteMessages": {
+      "chat_id": 1,
+      "message_ids": [
+        1
+      ]
+    },
+    "deleteMyCommands": {},
+    "deleteStickerFromSet": {
+      "sticker": "FIXTURE_FILE_ID_REPLACE"
+    },
+    "deleteStickerSet": {
+      "name": "fixture_name"
+    },
+    "deleteStory": {
+      "business_connection_id": "FIXTURE_REPLACE",
+      "story_id": 1
+    },
+    "deleteWebhook": {},
+    "editChatInviteLink": {
+      "chat_id": 1,
+      "invite_link": "FIXTURE_REPLACE"
+    },
+    "editChatSubscriptionInviteLink": {
+      "chat_id": 1,
+      "invite_link": "FIXTURE_REPLACE"
+    },
+    "editEphemeralMessageCaption": {
+      "chat_id": 1,
+      "receiver_user_id": 1,
+      "ephemeral_message_id": 1
+    },
+    "editEphemeralMessageMedia": {
+      "chat_id": 1,
+      "receiver_user_id": 1,
+      "ephemeral_message_id": 1,
+      "media": {
+        "media": "FIXTURE_REPLACE",
+        "type": "animation"
+      }
+    },
+    "editEphemeralMessageReplyMarkup": {
+      "chat_id": 1,
+      "receiver_user_id": 1,
+      "ephemeral_message_id": 1
+    },
+    "editEphemeralMessageText": {
+      "chat_id": 1,
+      "receiver_user_id": 1,
+      "ephemeral_message_id": 1
+    },
+    "editForumTopic": {
+      "chat_id": 1,
+      "message_thread_id": 1
+    },
+    "editGeneralForumTopic": {
+      "chat_id": 1,
+      "name": "fixture_name"
+    },
+    "editMessageCaption": {},
+    "editMessageChecklist": {
+      "business_connection_id": "FIXTURE_REPLACE",
+      "chat_id": 1,
+      "message_id": 1,
+      "checklist": {
+        "title": "FIXTURE_REPLACE",
+        "tasks": [
+          {
+            "id": 1,
+            "text": "FIXTURE_REPLACE"
+          }
+        ]
+      }
+    },
+    "editMessageLiveLocation": {
+      "latitude": 1,
+      "longitude": 1
+    },
+    "editMessageMedia": {
+      "media": {
+        "media": "FIXTURE_REPLACE",
+        "type": "animation"
+      }
+    },
+    "editMessageReplyMarkup": {},
+    "editMessageText": {},
+    "editStory": {
+      "business_connection_id": "FIXTURE_REPLACE",
+      "story_id": 1,
+      "content": {
+        "photo": "FIXTURE_FILE_ID_REPLACE",
+        "type": "photo"
+      }
+    },
+    "editUserStarSubscription": {
+      "user_id": 1,
+      "telegram_payment_charge_id": "FIXTURE_REPLACE",
+      "is_canceled": true
+    },
+    "exportChatInviteLink": {
+      "chat_id": 1
+    },
+    "forwardMessage": {
+      "chat_id": 1,
+      "from_chat_id": 1,
+      "message_id": 1
+    },
+    "forwardMessages": {
+      "chat_id": 1,
+      "from_chat_id": 1,
+      "message_ids": [
+        1
+      ]
+    },
+    "getAvailableGifts": {},
+    "getBusinessAccountGifts": {
+      "business_connection_id": "FIXTURE_REPLACE"
+    },
+    "getBusinessAccountStarBalance": {
+      "business_connection_id": "FIXTURE_REPLACE"
+    },
+    "getBusinessConnection": {
+      "business_connection_id": "FIXTURE_REPLACE"
+    },
+    "getChat": {
+      "chat_id": 1
+    },
+    "getChatAdministrators": {
+      "chat_id": 1
+    },
+    "getChatGifts": {
+      "chat_id": 1
+    },
+    "getChatMember": {
+      "chat_id": 1,
+      "user_id": 1
+    },
+    "getChatMemberCount": {
+      "chat_id": 1
+    },
+    "getChatMenuButton": {},
+    "getCustomEmojiStickers": {
+      "custom_emoji_ids": [
+        "FIXTURE_REPLACE"
+      ]
+    },
+    "getFile": {
+      "file_id": "FIXTURE_REPLACE"
+    },
+    "getForumTopicIconStickers": {},
+    "getGameHighScores": {
+      "user_id": 1
+    },
+    "getManagedBotAccessSettings": {
+      "user_id": 1
+    },
+    "getManagedBotToken": {
+      "user_id": 1
+    },
+    "getMe": {},
+    "getMyCommands": {},
+    "getMyDefaultAdministratorRights": {},
+    "getMyDescription": {},
+    "getMyName": {},
+    "getMyShortDescription": {},
+    "getMyStarBalance": {},
+    "getStarTransactions": {},
+    "getStickerSet": {
+      "name": "fixture_name"
+    },
+    "getUpdates": {},
+    "getUserChatBoosts": {
+      "chat_id": 1,
+      "user_id": 1
+    },
+    "getUserGifts": {
+      "user_id": 1
+    },
+    "getUserPersonalChatMessages": {
+      "user_id": 1,
+      "limit": 1
+    },
+    "getUserProfileAudios": {
+      "user_id": 1
+    },
+    "getUserProfilePhotos": {
+      "user_id": 1
+    },
+    "getWebhookInfo": {},
+    "giftPremiumSubscription": {
+      "user_id": 1,
+      "month_count": 1,
+      "star_count": 1
+    },
+    "hideGeneralForumTopic": {
+      "chat_id": 1
+    },
+    "leaveChat": {
+      "chat_id": 1
+    },
+    "logOut": {},
+    "pinChatMessage": {
+      "chat_id": 1,
+      "message_id": 1
+    },
+    "postStory": {
+      "business_connection_id": "FIXTURE_REPLACE",
+      "content": {
+        "photo": "FIXTURE_FILE_ID_REPLACE",
+        "type": "photo"
+      },
+      "active_period": 1
+    },
+    "promoteChatMember": {
+      "chat_id": 1,
+      "user_id": 1
+    },
+    "readBusinessMessage": {
+      "business_connection_id": "FIXTURE_REPLACE",
+      "chat_id": 1,
+      "message_id": 1
+    },
+    "refundStarPayment": {
+      "user_id": 1,
+      "telegram_payment_charge_id": "FIXTURE_REPLACE"
+    },
+    "removeBusinessAccountProfilePhoto": {
+      "business_connection_id": "FIXTURE_REPLACE"
+    },
+    "removeChatVerification": {
+      "chat_id": 1
+    },
+    "removeMyProfilePhoto": {},
+    "removeUserVerification": {
+      "user_id": 1
+    },
+    "reopenForumTopic": {
+      "chat_id": 1,
+      "message_thread_id": 1
+    },
+    "reopenGeneralForumTopic": {
+      "chat_id": 1
+    },
+    "replaceManagedBotToken": {
+      "user_id": 1
+    },
+    "replaceStickerInSet": {
+      "user_id": 1,
+      "name": "fixture_name",
+      "old_sticker": "FIXTURE_REPLACE",
+      "sticker": {
+        "sticker": "FIXTURE_FILE_ID_REPLACE",
+        "format": "static",
+        "emoji_list": [
+          "FIXTURE_REPLACE"
+        ]
+      }
+    },
+    "repostStory": {
+      "business_connection_id": "FIXTURE_REPLACE",
+      "from_chat_id": 1,
+      "from_story_id": 1,
+      "active_period": 1
+    },
+    "restrictChatMember": {
+      "chat_id": 1,
+      "user_id": 1,
+      "permissions": {}
+    },
+    "revokeChatInviteLink": {
+      "chat_id": 1,
+      "invite_link": "FIXTURE_REPLACE"
+    },
+    "savePreparedInlineMessage": {
+      "user_id": 1,
+      "result": {
+        "id": "FIXTURE_REPLACE",
+        "audio_file_id": "FIXTURE_REPLACE",
+        "type": "audio"
+      }
+    },
+    "savePreparedKeyboardButton": {
+      "user_id": 1,
+      "button": {
+        "text": "FIXTURE_REPLACE"
+      }
+    },
+    "sendAnimation": {
+      "chat_id": 1,
+      "animation": "FIXTURE_FILE_ID_REPLACE"
+    },
+    "sendAudio": {
+      "chat_id": 1,
+      "audio": "FIXTURE_FILE_ID_REPLACE"
+    },
+    "sendChatAction": {
+      "chat_id": 1,
+      "action": "typing"
+    },
+    "sendChatJoinRequestWebApp": {
+      "chat_join_request_query_id": "FIXTURE_REPLACE",
+      "web_app_url": "FIXTURE_REPLACE"
+    },
+    "sendChecklist": {
+      "business_connection_id": "FIXTURE_REPLACE",
+      "chat_id": 1,
+      "checklist": {
+        "title": "FIXTURE_REPLACE",
+        "tasks": [
+          {
+            "id": 1,
+            "text": "FIXTURE_REPLACE"
+          }
+        ]
+      }
+    },
+    "sendContact": {
+      "chat_id": 1,
+      "phone_number": "FIXTURE_REPLACE",
+      "first_name": "FIXTURE_REPLACE"
+    },
+    "sendDice": {
+      "chat_id": 1
+    },
+    "sendDocument": {
+      "chat_id": 1,
+      "document": "FIXTURE_FILE_ID_REPLACE"
+    },
+    "sendGame": {
+      "chat_id": 1,
+      "game_short_name": "FIXTURE_REPLACE"
+    },
+    "sendGift": {
+      "gift_id": "FIXTURE_REPLACE"
+    },
+    "sendInvoice": {
+      "chat_id": 1,
+      "title": "FIXTURE_REPLACE",
+      "description": "FIXTURE_REPLACE",
+      "payload": "FIXTURE_REPLACE",
+      "currency": "XTR",
+      "prices": [
+        {
+          "label": "FIXTURE_REPLACE",
+          "amount": 1
+        }
+      ]
+    },
+    "sendLivePhoto": {
+      "chat_id": 1,
+      "live_photo": "FIXTURE_REPLACE",
+      "photo": "FIXTURE_FILE_ID_REPLACE"
+    },
+    "sendLocation": {
+      "chat_id": 1,
+      "latitude": 1,
+      "longitude": 1
+    },
+    "sendMediaGroup": {
+      "chat_id": 1,
+      "media": [
+        {
+          "media": "FIXTURE_REPLACE",
+          "type": "audio"
+        }
+      ]
+    },
+    "sendMessage": {
+      "chat_id": 1,
+      "text": "FIXTURE_REPLACE"
+    },
+    "sendMessageDraft": {
+      "chat_id": 1,
+      "draft_id": 1
+    },
+    "sendPaidMedia": {
+      "chat_id": 1,
+      "star_count": 1,
+      "media": [
+        {
+          "media": "FIXTURE_REPLACE",
+          "photo": "FIXTURE_FILE_ID_REPLACE",
+          "type": "live_photo"
+        }
+      ]
+    },
+    "sendPhoto": {
+      "chat_id": 1,
+      "photo": "FIXTURE_FILE_ID_REPLACE"
+    },
+    "sendPoll": {
+      "chat_id": 1,
+      "question": "FIXTURE_REPLACE",
+      "options": [
+        {
+          "text": "FIXTURE_REPLACE"
+        }
+      ]
+    },
+    "sendRichMessage": {
+      "chat_id": 1,
+      "rich_message": {
+        "html": "<b>Пример</b>"
+      }
+    },
+    "sendRichMessageDraft": {
+      "chat_id": 1,
+      "draft_id": 1,
+      "rich_message": {
+        "html": "<b>Пример</b>"
+      }
+    },
+    "sendSticker": {
+      "chat_id": 1,
+      "sticker": "FIXTURE_FILE_ID_REPLACE"
+    },
+    "sendVenue": {
+      "chat_id": 1,
+      "latitude": 1,
+      "longitude": 1,
+      "title": "FIXTURE_REPLACE",
+      "address": "FIXTURE_REPLACE"
+    },
+    "sendVideo": {
+      "chat_id": 1,
+      "video": "FIXTURE_FILE_ID_REPLACE"
+    },
+    "sendVideoNote": {
+      "chat_id": 1,
+      "video_note": "FIXTURE_FILE_ID_REPLACE"
+    },
+    "sendVoice": {
+      "chat_id": 1,
+      "voice": "FIXTURE_FILE_ID_REPLACE"
+    },
+    "setBusinessAccountBio": {
+      "business_connection_id": "FIXTURE_REPLACE"
+    },
+    "setBusinessAccountGiftSettings": {
+      "business_connection_id": "FIXTURE_REPLACE",
+      "show_gift_button": true,
+      "accepted_gift_types": {
+        "unlimited_gifts": true,
+        "limited_gifts": true,
+        "unique_gifts": true,
+        "premium_subscription": true,
+        "gifts_from_channels": true
+      }
+    },
+    "setBusinessAccountName": {
+      "business_connection_id": "FIXTURE_REPLACE",
+      "first_name": "FIXTURE_REPLACE"
+    },
+    "setBusinessAccountProfilePhoto": {
+      "business_connection_id": "FIXTURE_REPLACE",
+      "photo": {
+        "photo": "FIXTURE_FILE_ID_REPLACE",
+        "type": "static"
+      }
+    },
+    "setBusinessAccountUsername": {
+      "business_connection_id": "FIXTURE_REPLACE"
+    },
+    "setChatAdministratorCustomTitle": {
+      "chat_id": 1,
+      "user_id": 1,
+      "custom_title": "FIXTURE_REPLACE"
+    },
+    "setChatDescription": {
+      "chat_id": 1
+    },
+    "setChatMemberTag": {
+      "chat_id": 1,
+      "user_id": 1
+    },
+    "setChatMenuButton": {},
+    "setChatPermissions": {
+      "chat_id": 1,
+      "permissions": {}
+    },
+    "setChatPhoto": {
+      "chat_id": 1,
+      "photo": {
+        "__fixture_file__": "fixture.bin"
+      }
+    },
+    "setChatStickerSet": {
+      "chat_id": 1,
+      "sticker_set_name": "FIXTURE_REPLACE"
+    },
+    "setChatTitle": {
+      "chat_id": 1,
+      "title": "FIXTURE_REPLACE"
+    },
+    "setCustomEmojiStickerSetThumbnail": {
+      "name": "fixture_name"
+    },
+    "setGameScore": {
+      "user_id": 1,
+      "score": 1
+    },
+    "setManagedBotAccessSettings": {
+      "user_id": 1,
+      "is_access_restricted": true
+    },
+    "setMessageReaction": {
+      "chat_id": 1,
+      "message_id": 1
+    },
+    "setMyCommands": {
+      "commands": [
+        {
+          "command": "FIXTURE_REPLACE",
+          "description": "FIXTURE_REPLACE"
+        }
+      ]
+    },
+    "setMyDefaultAdministratorRights": {},
+    "setMyDescription": {},
+    "setMyName": {},
+    "setMyProfilePhoto": {
+      "photo": {
+        "photo": "FIXTURE_FILE_ID_REPLACE",
+        "type": "static"
+      }
+    },
+    "setMyShortDescription": {},
+    "setPassportDataErrors": {
+      "user_id": 1,
+      "errors": [
+        {
+          "type": "FIXTURE_REPLACE",
+          "field_name": "FIXTURE_REPLACE",
+          "data_hash": "FIXTURE_REPLACE",
+          "message": "FIXTURE_REPLACE",
+          "source": "data"
+        }
+      ]
+    },
+    "setStickerEmojiList": {
+      "sticker": "FIXTURE_FILE_ID_REPLACE",
+      "emoji_list": [
+        "FIXTURE_REPLACE"
+      ]
+    },
+    "setStickerKeywords": {
+      "sticker": "FIXTURE_FILE_ID_REPLACE"
+    },
+    "setStickerMaskPosition": {
+      "sticker": "FIXTURE_FILE_ID_REPLACE"
+    },
+    "setStickerPositionInSet": {
+      "sticker": "FIXTURE_FILE_ID_REPLACE",
+      "position": 1
+    },
+    "setStickerSetThumbnail": {
+      "name": "fixture_name",
+      "user_id": 1,
+      "format": "static"
+    },
+    "setStickerSetTitle": {
+      "name": "fixture_name",
+      "title": "FIXTURE_REPLACE"
+    },
+    "setUserEmojiStatus": {
+      "user_id": 1
+    },
+    "setWebhook": {
+      "url": "https://example.invalid/replace-before-use"
+    },
+    "stopMessageLiveLocation": {},
+    "stopPoll": {
+      "chat_id": 1,
+      "message_id": 1
+    },
+    "transferBusinessAccountStars": {
+      "business_connection_id": "FIXTURE_REPLACE",
+      "star_count": 1
+    },
+    "transferGift": {
+      "business_connection_id": "FIXTURE_REPLACE",
+      "owned_gift_id": "FIXTURE_REPLACE",
+      "new_owner_chat_id": 1
+    },
+    "unbanChatMember": {
+      "chat_id": 1,
+      "user_id": 1
+    },
+    "unbanChatSenderChat": {
+      "chat_id": 1,
+      "sender_chat_id": 1
+    },
+    "unhideGeneralForumTopic": {
+      "chat_id": 1
+    },
+    "unpinAllChatMessages": {
+      "chat_id": 1
+    },
+    "unpinAllForumTopicMessages": {
+      "chat_id": 1,
+      "message_thread_id": 1
+    },
+    "unpinAllGeneralForumTopicMessages": {
+      "chat_id": 1
+    },
+    "unpinChatMessage": {
+      "chat_id": 1
+    },
+    "upgradeGift": {
+      "business_connection_id": "FIXTURE_REPLACE",
+      "owned_gift_id": "FIXTURE_REPLACE"
+    },
+    "uploadStickerFile": {
+      "user_id": 1,
+      "sticker": {
+        "__fixture_file__": "fixture.bin"
+      },
+      "sticker_format": "FIXTURE_REPLACE"
+    },
+    "verifyChat": {
+      "chat_id": 1
+    },
+    "verifyUser": {
+      "user_id": 1
+    }
+  }
+}

@@ -1,0 +1,4 @@
+interface:
+  display_name: "Telegram: Visual Regression"
+  short_description: "Визуальные регрессии Mini App по скриншотам"
+  default_prompt: "Используй $telegram-mini-app-visual-regression. Добавь воспроизводимое сравнение экранов в двух темах."

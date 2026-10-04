@@ -1,0 +1,4 @@
+interface:
+  display_name: "Telegram: Platega.io"
+  short_description: "Платежи Platega, callbacks, статусы и возвраты"
+  default_prompt: "Используй $telegram-platega. Добавь интеграцию Platega.io в Python backend."

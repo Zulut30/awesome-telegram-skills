@@ -1,0 +1,35 @@
+"""Тестовый бот: текущий Dispatcher и публичные компоненты библиотеки."""
+import asyncio
+from aiogram import Dispatcher
+from aiogram.types import Message
+from telegram_patterns import BotSettings
+from telegram_patterns.aiogram import (ActionButton, ActionResult, CommandReply, action_menu,
+    callback_router, command_menu, command_router, run_bot)
+
+
+def create_app():
+    menu = action_menu([ActionButton('Помощь', 'help', style='primary')])
+    commands = [CommandReply('start', 'Начать', 'Привет! Выберите действие.', menu),
+                CommandReply('help', 'Помощь', 'Это начальный пример. Добавьте логику проекта.')]
+    dispatcher = Dispatcher()
+    dispatcher.include_router(command_router(commands))
+    async def execute(action):
+        # Только публичная подсказка. Частные операции требуют service ACL/idempotence.
+        return ActionResult('accepted' if action.key == 'help' else 'stale',
+                            'Компоненты библиотеки подключены.' if action.key == 'help' else 'Откройте новое меню.')
+    async def notify(query, result):
+        if isinstance(query.message, Message):
+            await query.message.answer(result.text, parse_mode=None)
+    dispatcher.include_router(callback_router(execute, notify))
+    return dispatcher, command_menu(commands)
+
+
+async def main():
+    try: settings = BotSettings.from_env()
+    except ValueError as error: raise SystemExit(str(error)) from None
+    dispatcher, commands = create_app()
+    # Явно устанавливается default command menu тестового бота.
+    await run_bot(dispatcher, settings, commands=commands)
+
+
+if __name__ == '__main__': asyncio.run(main())
