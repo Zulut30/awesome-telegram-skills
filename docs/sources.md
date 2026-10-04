@@ -120,3 +120,5 @@ Crypto Pay: старая официальная страница указыва�
 Обновлять общую дату можно после повторной проверки всего указанного набора. Для частичного обновления укажи отдельно источник, дату и измененный инвариант в соответствующей reference.
 
 Для пункта 010 2026-10-04 отдельно сверены Bot API Update/Business rights/profile chat, Mini App launch/auth, Bot Features guest/bot-to-bot и MTProto auth/history; конкретные положения и расхождения источников — в [API boundaries](telegram-api-boundaries.md). Это не обновляет дату всего каталога; SDK/model probes находятся в docs/v1-checks/010.json.
+
+Для пункта 011 отдельно 2026-10-04 проверены [npm local paths](https://docs.npmjs.com/cli/v12/configuring-npm/package-json/#local-paths) и [tarball specs](https://docs.npmjs.com/cli/v12/using-npm/package-spec/#tarballs). CLI 0.9.2 записывает npm dependency как file filesystem path; URI для Python сохраняется. Путь с пробелами проверяется настоящей установкой npm 12.0.2 в новом external consumer, отдельно от общего support range.

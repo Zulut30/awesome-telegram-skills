@@ -8,7 +8,7 @@
 
 Есть [общая библиотека готовых компонентов](docs/component-library.md): два импортируемых пакета Python/TypeScript, 28 групп компонентов и работающие примеры. ИИ подключает нужный API через `telegram-code-patterns`; пакеты пока распространяются локально.
 
-В исходниках готовится 0.9.1: [статус зрелости API](docs/v1-maturity.md) отдельно от SDK/mock/browser/live evidence. Каталог, Python API, CLI и галерея различают experimental/reference; стабильные сценарии 1.0 пока не заявлены.
+В исходниках готовится 0.9.2: [статус зрелости API](docs/v1-maturity.md) отдельно от SDK/mock/browser/live evidence. Каталог, Python API, CLI и галерея различают experimental/reference; стабильные сценарии 1.0 пока не заявлены.
 
 [Публичные контракты Python/TypeScript](docs/public-api.md) описывают параметры, результаты, ошибки, побочные эффекты и владение ресурсами для всех документированных API.
 
@@ -17,6 +17,8 @@
 [Матрица поддержки](docs/support-matrix.md) отделяет dependency constraints от проверенных версий SDK, runtime, браузера и устройств.
 
 [Границы Telegram API](docs/telegram-api-boundaries.md): Bot API, Mini App, Business и user-client, launch/rights и специальные guest/bot-to-bot режимы.
+
+[Первый запуск](docs/quickstart.md): локальная установка, offline-бот и экран Mini App без настоящего токена.
 
 [Контракт поставки](docs/distribution-contract.md): проверенный состав wheel/tarball, exports, typing, CSS и bundled resources.
 

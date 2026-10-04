@@ -10,14 +10,14 @@ Root имеет явные value/type exports; `TextFieldControl` именует
 
 Все текущие публичные API experimental. [Зрелость и evidence](../../docs/v1-maturity.md) задаются отдельно: browser/mock проверка не дает обещание стабильности 1.0.
 
-ESM-пакет 0.9.1 с declarations, без runtime dependencies и привязки к React/Vue. Каталог и facade native Mini App API: 99 функций, 44 события официального снимка. Пока поставляется локально из этого репозитория/npm tarball; публикации в npm нет. Node >=20 нужен для tooling/tests. Runtime предназначен для браузера Mini App.
+ESM-пакет 0.9.2 с declarations, без runtime dependencies и привязки к React/Vue. Каталог и facade native Mini App API: 99 функций, 44 события официального снимка. Пока поставляется локально из этого репозитория/npm tarball; публикации в npm нет. Node >=20 нужен для tooling/tests. Runtime предназначен для браузера Mini App.
 
 Runtime API сохранен относительно 0.4.0; версия согласована с Python CLI. Новый `bot-mini-app` starter подключает этот tarball, bridge, shell/поле и CSS; backend auth отсутствует. [Галерея и подготовка проекта](../../docs/developer-tools-review.md).
 
 После сборки и npm pack в исходном репозитории, из каталога consumer-проекта:
 
 ```powershell
-npm.cmd install "C:/path/to/library/output/pattern-library-0.9.1/dist/awesome-telegram-patterns-0.9.1.tgz"
+npm.cmd install "C:/path/to/library/output/pattern-library-0.9.2/dist/awesome-telegram-patterns-0.9.2.tgz"
 ```
 
 В проекте с существующим bundler:

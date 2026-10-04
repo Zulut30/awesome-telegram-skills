@@ -181,10 +181,23 @@
       "id": 11,
       "title": "Написать короткий первый запуск",
       "requirement": "Провести разработчика от установки локального артефакта до работающего offline-бота и экрана Mini App; заранее обозначить шаги, которым требуется Telegram.",
-      "status": "pending",
-      "commit_subject": null,
-      "artifacts": [],
-      "evidence": []
+      "status": "done",
+      "commit_subject": "roadmap(011): verify the documented first run and fix local npm paths",
+      "artifacts": [
+        "docs/quickstart.md",
+        ".agents/skills/telegram-code-patterns/references/quickstart.md",
+        "scripts/verify_quickstart.py",
+        "scripts/check_quickstart_browser.mjs",
+        "packages/python/src/telegram_patterns/starter.py",
+        "docs/v1-checks/011.json"
+      ],
+      "evidence": [
+        "docs/v1-checks/011.json",
+        "docs/v1-checks/011-first-run.json",
+        "0.9.1 npm encoded-path regression fixed in 0.9.2; all documented commands executed in a new external Windows consumer with spaces",
+        "44 distribution stages; 97 Python passed + 1 skip; 26 TypeScript; 452 distribution Chrome checks plus 60 documented-first-run checks; 23 root tests and 41 skills",
+        "Installed origins, offline Dispatcher, doctor, build, six screen/theme combinations and repeat-setup preservation passed; no live Telegram or usability study claimed"
+      ]
     },
     {
       "id": 12,

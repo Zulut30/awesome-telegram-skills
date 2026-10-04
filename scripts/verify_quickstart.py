@@ -1,0 +1,159 @@
+"""Execute the documented Windows quickstart in a fresh external consumer.
+
+Explicit verification installs dependencies (may use package registries), but
+never supplies a Telegram token or starts the live app. It owns only its new
+temporary project, log directory and preview process tree.
+"""
+from __future__ import annotations
+
+import argparse
+import hashlib
+import json
+import os
+from pathlib import Path
+import re
+import shutil
+import socket
+import subprocess
+import tempfile
+import time
+import urllib.request
+
+ROOT = Path(__file__).resolve().parents[1]
+BLOCKS = ('parameters', 'setup', 'init', 'offline', 'frontend', 'preview')
+
+
+def quote(value: str | Path) -> str:
+    return "'" + str(value).replace("'", "''") + "'"
+
+
+def main() -> int:
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument('--wheel', type=Path, required=True)
+    parser.add_argument('--tarball', type=Path, required=True)
+    parser.add_argument('--output', type=Path, required=True, help='New proof directory')
+    args = parser.parse_args()
+    if os.name != 'nt':
+        parser.error('This guide verifies Windows PowerShell commands; other OS remain separate evidence')
+    shell = shutil.which('pwsh') or shutil.which('powershell')
+    node = shutil.which('node')
+    if not shell or not node:
+        parser.error('PowerShell and Node are required')
+    document = (ROOT / 'docs/quickstart.md').read_text(encoding='utf-8')
+    portable = (ROOT / '.agents/skills/telegram-code-patterns/references/quickstart.md').read_text(encoding='utf-8')
+    if document != portable:
+        raise RuntimeError('Portable first-run guide differs from canonical guide')
+    found = re.findall(r'<!-- quickstart:([\w-]+) -->\s*```powershell\n(.*?)\n```', document, re.S)
+    if tuple(name for name, _ in found) != BLOCKS:
+        raise RuntimeError('Missing, reordered or duplicate documented command blocks')
+    blocks = dict(found)
+    sources = [supplied.resolve(strict=True) for supplied in (args.wheel, args.tarball)]
+    if any(not source.is_file() for source in sources):
+        raise RuntimeError('Provide existing local artifact files')
+    output = args.output.resolve()
+    output.mkdir(parents=True, exist_ok=False)
+    consumer = Path(tempfile.mkdtemp(prefix='telegram first run ')).resolve()
+    artifacts = consumer / 'supplied artifacts with spaces'
+    artifacts.mkdir()
+    artifact_proof = []
+    for source in sources:
+        target = artifacts / source.name
+        shutil.copyfile(source, target)
+        artifact_proof.append({'name': target.name, 'sha256': hashlib.sha256(target.read_bytes()).hexdigest()})
+    workspace = consumer / 'first project with spaces'
+    with socket.socket() as reserve:
+        reserve.bind(('127.0.0.1', 0))
+        port = reserve.getsockname()[1]
+    parameters = '\n'.join((f'$tgArtifacts = {quote(artifacts)}', f'$tgWorkspace = {quote(workspace)}', f'$tgPreviewPort = {port}'))
+    environment = dict(os.environ)
+    for name in ('BOT_TOKEN', 'PYTHONPATH', 'PYTHONHOME', 'NODE_OPTIONS'):
+        environment.pop(name, None)
+    environment['PYTHONUTF8'] = '1'
+    commands = parameters + '\n' + '\n'.join(blocks[name] for name in BLOCKS[1:-1]) + '\n'
+    script = output / 'documented-commands.ps1'
+    script.write_text(commands, encoding='utf-8-sig', newline='\n')
+
+    def stop_owned(process: subprocess.Popen) -> None:
+        if process.poll() is None:
+            subprocess.run(['taskkill', '/PID', str(process.pid), '/T', '/F'], capture_output=True, timeout=20)
+            process.wait(timeout=20)
+
+    def run(name: str, argv: list[str], *, cwd: Path, expected: int = 0) -> str:
+        process = subprocess.Popen(argv, cwd=cwd, env=environment, stdout=subprocess.PIPE,
+                                   stderr=subprocess.PIPE, text=True, encoding='utf-8', errors='replace')
+        try:
+            stdout, stderr = process.communicate(timeout=600)
+        except subprocess.TimeoutExpired:
+            stop_owned(process)
+            stdout, stderr = process.communicate()
+            (output / f'{name}.log').write_text(stdout + stderr, encoding='utf-8', newline='\n')
+            raise RuntimeError(f'{name}: timeout; stopped the owned process tree') from None
+        (output / f'{name}.log').write_text(stdout + stderr, encoding='utf-8', newline='\n')
+        if process.returncode != expected:
+            raise RuntimeError(f'{name}: unexpected status; inspect the owned proof log')
+        return stdout
+
+    run('guide-install-and-build', [shell, '-NoProfile', '-NonInteractive', '-File', str(script)], cwd=consumer)
+    project = workspace / 'my-bot'
+    python = project / '.venv/Scripts/python.exe'
+    origins = json.loads(run('installed-origin', [str(python), '-c',
+        "import json,sys,telegram_patterns,importlib.metadata as m; print(json.dumps({'prefix':sys.prefix,'module':telegram_patterns.__file__,'version':m.version('awesome-telegram-patterns'),'aiogram':m.version('aiogram')}))"], cwd=project))
+    if origins['version'] != '0.9.2' or not Path(origins['module']).resolve().is_relative_to(project / '.venv'):
+        raise RuntimeError('Bot does not use the newly installed local wheel')
+    offline = json.loads(run('offline', [str(python), 'offline.py'], cwd=project))
+    if not offline['passed'] or offline['network'] or not offline['session_closed'] or offline['methods'] != ['SendMessage', 'AnswerCallbackQuery', 'SendMessage']:
+        raise RuntimeError('Offline bot behavior differs from the documented result')
+    doctor = json.loads(run('doctor', [str(python), '-m', 'telegram_patterns', 'doctor', '.'], cwd=project))
+    if not doctor['passed'] or doctor['network']:
+        raise RuntimeError('Local doctor did not pass without a token')
+    manifest = json.loads((project / 'mini-app/node_modules/@awesome-telegram/patterns/package.json').read_text(encoding='utf-8'))
+    if manifest['version'] != '0.9.2':
+        raise RuntimeError('Mini App did not install the provided tarball')
+    marker = workspace / 'user-owned-marker.txt'
+    marker.write_bytes(b'keep this first run')
+    before = {str(file.relative_to(workspace)): hashlib.sha256(file.read_bytes()).hexdigest()
+              for file in workspace.rglob('*') if file.is_file()}
+    repeat = output / 'repeat-setup.ps1'
+    repeat.write_text(parameters + '\n' + blocks['setup'] + '\n', encoding='utf-8-sig', newline='\n')
+    run('existing-workspace-refused', [shell, '-NoProfile', '-NonInteractive', '-File', str(repeat)], cwd=consumer, expected=1)
+    after = {str(file.relative_to(workspace)): hashlib.sha256(file.read_bytes()).hexdigest()
+             for file in workspace.rglob('*') if file.is_file()}
+    if before != after:
+        raise RuntimeError('Repeated first-run setup changed an existing workspace')
+    preview = output / 'documented-preview.ps1'
+    preview.write_text(parameters + '\n' + blocks['preview'] + '\n', encoding='utf-8-sig', newline='\n')
+    base = f'http://127.0.0.1:{port}'
+    with (output / 'preview.log').open('w', encoding='utf-8') as log:
+        process = subprocess.Popen([shell, '-NoProfile', '-NonInteractive', '-File', str(preview)],
+                                   cwd=project / 'mini-app', env=environment, stdout=log, stderr=log)
+        try:
+            opener = urllib.request.build_opener(urllib.request.ProxyHandler({}))
+            for _ in range(100):
+                if process.poll() is not None:
+                    raise RuntimeError('Owned preview process stopped before readiness')
+                try:
+                    with opener.open(base, timeout=1) as response:
+                        if response.status == 200:
+                            break
+                except OSError:
+                    time.sleep(0.1)
+            else:
+                raise RuntimeError('Owned loopback preview did not become ready')
+            run('browser', [node, str(ROOT / 'scripts/check_quickstart_browser.mjs'), base, str(output / 'browser')], cwd=ROOT)
+        finally:
+            stop_owned(process)
+    browser = json.loads((output / 'browser/report.json').read_text(encoding='utf-8'))
+    if not browser['passed']:
+        raise RuntimeError('First-run screen did not pass')
+    report = {'passed': True, 'version': '0.9.2', 'consumer': str(consumer), 'guide_blocks': list(BLOCKS),
+              'guide_sha256': hashlib.sha256(document.encode()).hexdigest(), 'artifact_hashes': artifact_proof,
+              'origins': origins, 'offline': offline, 'doctor_passed': doctor['passed'],
+              'existing_workspace_unchanged': True, 'browser': browser, 'telegram_requests': False,
+              'limits': 'Windows commands and Chrome viewport preview; installers may use registries; no real Telegram client, live bot, backend auth or usability study'}
+    (output / 'report.json').write_text(json.dumps(report, ensure_ascii=False, indent=2) + '\n', encoding='utf-8', newline='\n')
+    print(json.dumps(report, ensure_ascii=False))
+    return 0
+
+
+if __name__ == '__main__':
+    raise SystemExit(main())

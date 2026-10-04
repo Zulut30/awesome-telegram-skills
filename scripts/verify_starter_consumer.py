@@ -59,7 +59,7 @@ def main() -> int:
         assert cli('doctor', str(target), '--require-token', expected=1)['passed'] is False
         if template == 'bot-mini-app':
             mini = json.loads((target / 'mini-app/package.json').read_text(encoding='utf-8'))
-            assert mini['dependencies']['@awesome-telegram/patterns'] == args.tarball.resolve().as_uri()
+            assert mini['dependencies']['@awesome-telegram/patterns'] == 'file:' + args.tarball.resolve().as_posix()
         results.append({'template': template, 'files': len(files), 'offline': proof, 'doctor': diagnostics})
     report = {'passed': True, 'network': False, 'installed_console': True, 'starters': results}
     (args.output / 'report.json').write_text(json.dumps(report, indent=2), encoding='utf-8')

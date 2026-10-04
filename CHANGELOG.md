@@ -2,6 +2,8 @@
 
 ## Unreleased — подготовка 1.0
 
+- Пункт 011 / поставка 0.9.2: короткий первый запуск из локальных wheel/tarball 0.9.2 с offline-ботом и адаптивной формой. Команды руководства проверяются в новом внешнем consumer с пробелами в путях; переносимая копия навыка совпадает с руководством. Исправлен npm file spec для путей с пробелами: прежний percent-encoded URI приводил к ENOENT; Python URI и config URI сохранены. Browser preview и установка dependencies отделены от реального Telegram и backend auth.
+
 - Пункт 010: фиксированы identity/launch/rights границы Bot API, Mini App, Business/Secretary и user-client; добавлена переносимая инструкция и SDK/native probes. Учтены современные guest/bot-to-bot исключения и расхождения FAQ/rights naming; пользовательская session не подключается автоматически. Runtime API и артефакты 0.9.1 сохранены.
 
 - Пункт 009 / поставка 0.9.1: обязательный read-only archive contract — source/resources/RECORD, extra/CLI и полный набор JS/declarations/CSS/export map. Проверки подмены/пропуска/лишних файлов и небезопасных archive entries выполняются в настоящих temporary archives; installed consumers остаются отдельным runtime evidence. API 0.9.0 сохранен.

@@ -1,4 +1,4 @@
-# Поставка локальных пакетов — 0.9.1
+# Поставка локальных пакетов — 0.9.2
 
 Пункт 009. Публичная Python поверхность — core `telegram_patterns`, optional `telegram_patterns.aiogram`/`testing` и console `telegram-patterns`. TypeScript — ESM root с declarations и отдельный `@awesome-telegram/patterns/styles.css`. Пакеты поставляются локально, не опубликованы в PyPI/npm. Интерфейсы и имена см. в [публичных контрактах](public-api.md), [структуре API](api-structure.md) и [адаптерах](extension-model.md).
 
@@ -27,3 +27,5 @@ Temporary consumers запускаются вне repository cwd; PYTHONPATH/PYT
 Archive hash согласованности не подтверждает авторство или доверенный registry source. Supply chain/provenance относится к 095; этот helper не запускает sandbox malware analysis и не заменяет release review. Одна проверенная Windows/Python/Node/Chrome комбинация не доказывает все environments; [support matrix](support-matrix.md) сохраняет пределы. `--skip-browser` оставляет UI непроверенным явно. Telegram/live/provider/device evidence здесь не появляется.
 
 Accepted artifact hashes фиксируются в docs/v1-checks и сохраняются с отдельной версией. Изменения этой проверки выпускаются как 0.9.1: существующие runtime API 0.9.0 сохранены, предыдущие артефакты не перезаписываются. Rebuild/release reproducibility и multi-version CI остаются собственными пунктами плана, а не закрываются проверкой имени архива.
+
+В поставке 0.9.2 тот же archive contract применяется к исправлению starter npm path. Первый запуск из локальных артефактов дополнительно проверяется по командам [quickstart](quickstart.md), включая пути с пробелами; соответствующий evidence — docs/v1-checks/011.json. Поставка 0.9.1 и ее hashes остаются сохраненными отдельно.

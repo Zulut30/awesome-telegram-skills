@@ -1,0 +1,90 @@
+{
+  "roadmap_item": 11,
+  "version": "0.9.2",
+  "passed": true,
+  "report": "output/pattern-library-0.9.2/distribution-report.json",
+  "report_sha256": "e6c237a927f20b1d2ac0770fc28733dba0ac91b00896b765442d6ed6771814d4",
+  "first_run_report": "output/v1-quickstart-011-092/report.json",
+  "first_run_report_sha256": "c7a0c9399b96b1acae7934ad65ce811ac8fe182e47c5c596230df3bcbfeb8e21",
+  "first_run_snapshot": "docs/v1-checks/011-first-run.json",
+  "distribution_stages": 44,
+  "python_tests": {
+    "run": 98,
+    "passed": 97,
+    "skipped": 1
+  },
+  "typescript_tests": 26,
+  "browser_scope": {
+    "workspace_example": 141,
+    "workspace_gallery": 245,
+    "installed_starter": 66,
+    "documented_first_run": 60
+  },
+  "root_tests": 23,
+  "skills_checked": 41,
+  "artifacts": [
+    {
+      "name": "awesome_telegram_patterns-0.9.2-py3-none-any.whl",
+      "bytes": 91646,
+      "sha256": "984569029bd9019963611a202ce73ec5a5159e13314794f14f5986257a4e917e"
+    },
+    {
+      "name": "awesome-telegram-patterns-0.9.2.tgz",
+      "bytes": 19351,
+      "sha256": "1548d8d05dc9f9b4072a66352b0b395c041c73637dc0ba2b6fb510573a74c1f4"
+    }
+  ],
+  "first_run": {
+    "guide_blocks": [
+      "parameters",
+      "setup",
+      "init",
+      "offline",
+      "frontend",
+      "preview"
+    ],
+    "guide_sha256": "2466bc1c071e530ac21a0180332c1b862d0a256856e0b2a2b2bf15fbcab68d43",
+    "origin": {
+      "prefix": "C:\\Users\\zulut\\AppData\\Local\\Temp\\telegram first run 3r26dtx0\\first project with spaces\\my-bot\\.venv",
+      "module": "C:\\Users\\zulut\\AppData\\Local\\Temp\\telegram first run 3r26dtx0\\first project with spaces\\my-bot\\.venv\\Lib\\site-packages\\telegram_patterns\\__init__.py",
+      "version": "0.9.2",
+      "aiogram": "3.31.0"
+    },
+    "offline": {
+      "passed": true,
+      "network": false,
+      "methods": [
+        "SendMessage",
+        "AnswerCallbackQuery",
+        "SendMessage"
+      ],
+      "session_closed": true
+    },
+    "doctor_passed": true,
+    "existing_workspace_unchanged": true,
+    "viewport_theme_cases": 6,
+    "external_browser_requests": 0
+  },
+  "regression": {
+    "previous_version": "0.9.1",
+    "cause": "Percent-encoded npm file URI treated as literal %20 filesystem path by npm 12.0.2; generated project failed with ENOENT",
+    "fixed_format": "file: plus absolute as_posix filesystem path; Python and metadata URIs remain encoded",
+    "construction_test": "spaces, Unicode and literal percent; executable consumer uses spaces"
+  },
+  "sources": [
+    {
+      "url": "https://docs.npmjs.com/cli/v12/configuring-npm/package-json/#local-paths",
+      "checked_date": "2026-10-04"
+    },
+    {
+      "url": "https://docs.npmjs.com/cli/v12/using-npm/package-spec/#tarballs",
+      "checked_date": "2026-10-04"
+    }
+  ],
+  "limits": [
+    "Windows PowerShell first run; other OS are unverified",
+    "dependency installers may use registries",
+    "no live Telegram, physical device, backend auth, payment or human/blind agent usability proof",
+    "one directory symlink test skipped on Windows"
+  ]
+}

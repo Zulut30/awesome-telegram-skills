@@ -85,7 +85,9 @@ def create_starter(target: str | Path, *, library: str | Path, template: str = '
             output['mini-app/' + filename] = root.joinpath('mini-app/' + filename + '.txt').read_text(encoding='utf-8')
         output['mini-app/package.json'] = json.dumps({'name': name + '-mini-app', 'private': True, 'type': 'module',
             'scripts': {'build': 'tsc -p tsconfig.json', 'typecheck': 'tsc -p tsconfig.json --noEmit'},
-            'dependencies': {'@awesome-telegram/patterns': ts_source.as_uri()}, 'devDependencies': {'typescript': '7.0.2'}}, indent=2) + '\n'
+            # npm file specs are filesystem paths, not percent-encoded file URLs.
+            # Keep literal spaces/Unicode/% in the provided local tarball path.
+            'dependencies': {'@awesome-telegram/patterns': 'file:' + ts_source.as_posix()}, 'devDependencies': {'typescript': '7.0.2'}}, indent=2) + '\n'
     planned = StarterPlan(requested, template, version, tuple(sorted(output)), not dry_run)
     if dry_run: return planned
     requested.mkdir()  # Atomic reservation; an existing directory is NEVER adopted.

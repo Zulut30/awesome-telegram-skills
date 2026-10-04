@@ -7,6 +7,7 @@ import os
 from pathlib import Path
 import subprocess
 import sys
+import tarfile
 import tempfile
 import unittest
 from unittest.mock import patch
@@ -83,6 +84,27 @@ class StarterTests(unittest.TestCase):
         source=root/'local library'; source.mkdir()
         (source/'pyproject.toml').write_text('[project]\nname="awesome-telegram-patterns"\nversion="0.5.0"\n',encoding='utf-8')
         return source
+
+    def test_mini_app_local_path_preserves_spaces_unicode_and_literal_percent(self):
+        with tempfile.TemporaryDirectory(prefix='telegram-starter-') as folder:
+            root = Path(folder); source = self.source(root)
+            supplied = root / 'local artifacts %20 Пример'; supplied.mkdir()
+            tarball = supplied / 'patterns.tgz'
+            metadata = json.dumps({'name': '@awesome-telegram/patterns', 'version': '0.5.0'}).encode()
+            with tarfile.open(tarball, 'w:gz') as archive:
+                member = tarfile.TarInfo('package/package.json'); member.size = len(metadata)
+                archive.addfile(member, io.BytesIO(metadata))
+            target = root / 'first project'
+            plan = create_starter(target, library=source, template='bot-mini-app', typescript=tarball, dry_run=True)
+            self.assertFalse(plan.created); self.assertFalse(target.exists())
+            create_starter(target, library=source, template='bot-mini-app', typescript=tarball)
+            package = json.loads((target / 'mini-app/package.json').read_text(encoding='utf-8'))
+            self.assertEqual(package['dependencies']['@awesome-telegram/patterns'], 'file:' + tarball.as_posix())
+            import tomllib
+            python = tomllib.loads((target / 'pyproject.toml').read_text(encoding='utf-8'))
+            self.assertEqual(python['project']['dependencies'], ['awesome-telegram-patterns[aiogram] @ ' + source.as_uri()])
+            config = json.loads((target / '.telegram-patterns.json').read_text(encoding='utf-8'))
+            self.assertEqual(config['typescript_uri'], tarball.as_uri())
 
     def test_dry_run_new_project_and_exclusive_creation(self):
         with tempfile.TemporaryDirectory(prefix='telegram-starter-') as folder:
