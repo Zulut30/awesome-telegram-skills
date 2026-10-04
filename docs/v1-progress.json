@@ -42,10 +42,14 @@
       "id": 3,
       "title": "Описать публичные контракты",
       "requirement": "Зафиксировать параметры, результаты, ошибки, побочные эффекты, владение ресурсами и ограничения всех экспортируемых Python/TypeScript API.",
-      "status": "pending",
-      "commit_subject": null,
-      "artifacts": [],
-      "evidence": []
+      "status": "done",
+      "commit_subject": "roadmap(003): document all public API contracts",
+      "artifacts": [
+        "docs/public-api.md"
+      ],
+      "evidence": [
+        "Source/declaration review: 44 owned Python symbols + 23 TypeScript exports covered; local links resolve; semantic inputs/results/errors/effects/resource ownership reviewed"
+      ]
     },
     {
       "id": 4,
