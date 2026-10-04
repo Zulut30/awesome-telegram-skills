@@ -1,4 +1,6 @@
-# API библиотеки 0.6.0
+# API библиотеки 0.7.0
+
+Именованные типы 0.7.0: core `Maturity`, `VerificationLevel`; aiogram `ButtonStyle`, `ChatType`, `UpdatePhase`; testing `Responder`; TypeScript `TextFieldControl`. SDK `Bot`/`Dispatcher` импортируй из aiogram: wildcard library exports теперь явные, существующие документированные function/DTO imports сохранены.
 
 Все группы пока experimental. [Maturity](maturity.md) наследуется их публичными символами; SDK/mock/browser/live — отдельный уровень доказательств. `RecipeCatalog.search` дополнительно принимает `maturity`, а `Recipe` содержит этот immutable field.
 

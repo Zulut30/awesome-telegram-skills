@@ -4,20 +4,22 @@ from __future__ import annotations
 import asyncio
 from dataclasses import dataclass
 import logging
-from typing import Any, Awaitable, Callable, Literal, Mapping
+from typing import Any, Awaitable, Callable, Literal, Mapping, TypeAlias
 
 from aiogram import BaseMiddleware, Router
 from aiogram.dispatcher.event.bases import UNHANDLED
-from aiogram.types import Message, Update
+from aiogram.types import Message, TelegramObject, Update
 
 log = logging.getLogger(__name__)
+
+UpdatePhase: TypeAlias = Literal['received', 'handled', 'unhandled', 'failed', 'cancelled']
 
 
 @dataclass(frozen=True, slots=True)
 class UpdateTrace:
     update_id: int
     kind: str
-    phase: Literal['received', 'handled', 'unhandled', 'failed', 'cancelled']
+    phase: UpdatePhase
     detail: str | None = None
     actor_id: int | None = None
     chat_id: int | None = None
@@ -27,7 +29,7 @@ def update_kinds(update: Update) -> tuple[str, ...]:
     return tuple(name for name in Update.model_fields if name != 'update_id' and getattr(update, name) is not None)
 
 
-def _trace(update: Update, phase: str, identifiers: bool) -> UpdateTrace:
+def _trace(update: Update, phase: UpdatePhase, identifiers: bool) -> UpdateTrace:
     kinds = update_kinds(update)
     kind = kinds[0] if len(kinds) == 1 else ('ambiguous' if kinds else 'unknown')
     event = getattr(update, kind, None)
@@ -63,7 +65,9 @@ class UpdateObserver(BaseMiddleware):
         except Exception as error:
             log.warning('Update recorder failed (%s)', type(error).__name__)
 
-    async def __call__(self, handler: Callable[..., Awaitable[Any]], event: Update, data: dict[str, Any]) -> Any:
+    async def __call__(self, handler: Callable[..., Awaitable[Any]], event: TelegramObject, data: dict[str, Any]) -> Any:
+        if not isinstance(event, Update):
+            raise TypeError('Register UpdateObserver on dispatcher.update, not a message observer')
         await self.emit(_trace(event, 'received', self.include_ids))
         try:
             result = await handler(event, data)

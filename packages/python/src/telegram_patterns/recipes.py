@@ -5,8 +5,11 @@ from importlib.resources import files
 import json
 import re
 import unicodedata
-from typing import Any
+from typing import Any, Literal, TypeAlias, cast
 from urllib.parse import urlsplit
+
+Maturity: TypeAlias = Literal['stable', 'experimental', 'reference']
+VerificationLevel: TypeAlias = Literal['sdk', 'mock', 'browser', 'live', 'not_run']
 
 
 def normalize(value: str) -> str:
@@ -22,11 +25,11 @@ class Recipe:
     language: str
     keywords: tuple[str, ...]
     code: str
-    verification: str
+    verification: VerificationLevel
     scope: str
     sources: tuple[str, ...]
     preview_json: str | None = None
-    maturity: str = 'experimental'
+    maturity: Maturity = 'experimental'
 
     @property
     def preview(self) -> dict[str, Any] | None:
@@ -64,7 +67,7 @@ class RecipeCatalog:
             preview = item.get('preview')
             if preview is not None and not isinstance(preview, dict): raise ValueError('Invalid recipe preview')
             records.append(Recipe(**{key: item[key] for key in fields}, keywords=tuple(item['keywords']), sources=tuple(item['sources']),
-                                  preview_json=json.dumps(preview, ensure_ascii=False) if preview is not None else None, maturity=maturity))
+                                  preview_json=json.dumps(preview, ensure_ascii=False) if preview is not None else None, maturity=cast(Maturity, maturity)))
             seen.add(item['id'])
         self._records = tuple(records)
 
@@ -80,7 +83,7 @@ class RecipeCatalog:
         raise KeyError('Unknown recipe ID')
 
     def search(self, query: str = '', *, category: str | None = None, language: str | None = None,
-               verification: str | None = None, maturity: str | None = None, limit: int = 20) -> tuple[Recipe, ...]:
+               verification: VerificationLevel | None = None, maturity: Maturity | None = None, limit: int = 20) -> tuple[Recipe, ...]:
         if not isinstance(query, str) or len(query) > 512 or type(limit) is not int or not 1 <= limit <= 1000:
             raise ValueError('Use a query up to 512 characters and a limit of 1..1000')
         if any(value is not None and not isinstance(value, str) for value in (category, language, verification, maturity)):

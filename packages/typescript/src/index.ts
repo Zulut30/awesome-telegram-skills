@@ -1,6 +1,11 @@
-export * from './bridge.js';
-export * from './api-client.js';
-export * from './selection-draft.js';
-export * from './shell.js';
-export * from './native-catalog.js';
-export * from './native-api.js';
+export {TelegramBridge} from './bridge.js';
+export type {Insets, TelegramWebApp, BridgeSnapshot} from './bridge.js';
+export {ApiClient, ApiError} from './api-client.js';
+export type {FailureKind, RequestOptions, ClientOptions} from './api-client.js';
+export {SelectionDraftStore} from './selection-draft.js';
+export type {SelectionDraft, DraftRead, DraftOptions} from './selection-draft.js';
+export {createAppShell, createTextField} from './shell.js';
+export type {AppShell, TextFieldControl} from './shell.js';
+export {TELEGRAM_NATIVE_METHODS, TELEGRAM_NATIVE_EVENTS, TELEGRAM_NATIVE_EVENT_DETAILS} from './native-catalog.js';
+export type {TelegramNativeMethod, TelegramNativeEvent} from './native-catalog.js';
+export {TelegramNativeAPI, UnsupportedTelegramCapability} from './native-api.js';

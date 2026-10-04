@@ -7,6 +7,7 @@
 - Пункт 003: полные семантические контракты root/aiogram/testing/CLI и TypeScript exports, включая DTO/types, ошибки, ресурсы и обязанности host.
 - Пункт 004: правила SemVer, миграций, неизменности релиза и deprecation stable API (два minor и 90 дней); RC identity различает Python/npm форматы.
 - Пункт 005: опубликованы support matrix и JSON snapshot с точными проверенными версиями, пропуском Windows symlink и явно непроверенными OS/Telegram clients.
+- Пункт 006 / исходники 0.7.0: явные Python/TypeScript exports, Literal aliases и TextFieldControl, устранены 19 ошибок Mypy в SDK guards/middleware; consumer type checks проверяют wheel/tarball, migration случайных wildcard SDK imports документирована.
 
 ## 0.5.0 — 4 октября 2026
 

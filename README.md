@@ -8,13 +8,15 @@
 
 Есть [общая библиотека готовых компонентов](docs/component-library.md): два импортируемых пакета Python/TypeScript, 24 группы компонентов и работающие примеры. ИИ подключает нужный API через `telegram-code-patterns`; пакеты пока распространяются локально.
 
-В исходниках готовится 0.6.0: [статус зрелости API](docs/v1-maturity.md) отдельно от SDK/mock/browser/live evidence. Каталог, Python API, CLI и галерея различают experimental/reference; стабильные сценарии 1.0 пока не заявлены.
+В исходниках готовится 0.7.0: [статус зрелости API](docs/v1-maturity.md) отдельно от SDK/mock/browser/live evidence. Каталог, Python API, CLI и галерея различают experimental/reference; стабильные сценарии 1.0 пока не заявлены.
 
 [Публичные контракты Python/TypeScript](docs/public-api.md) описывают параметры, результаты, ошибки, побочные эффекты и владение ресурсами для всех документированных API.
 
 [Версии и совместимость](docs/versioning.md): SemVer, migrations, неизменность принятой поставки и окно deprecation стабильного API.
 
 [Матрица поддержки](docs/support-matrix.md) отделяет dependency constraints от проверенных версий SDK, runtime, браузера и устройств.
+
+[Структура API и именованные типы](docs/api-structure.md): явные exports, migration wildcard imports и статические consumer-проверки Python/TypeScript.
 
 В 0.5.0 появились [галерея с поиском по 298 рецептам](gallery/index.html) и CLI `telegram-patterns recipes/init/doctor`: найти код, создать новый проект и проверить окружение. Галерея работает локально без токенов. [Как использовать и что проверено](docs/developer-tools-review.md). Выполнены первые два пункта [плана развития](docs/library-roadmap-25.md).
 

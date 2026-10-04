@@ -1,4 +1,4 @@
-# Матрица поддержки 0.6.0
+# Матрица поддержки 0.7.0
 
 Пункт 005. Машиночитаемый снимок — [support-matrix.json](../catalog/support-matrix.json). «Заявлено» означает dependency/runtime constraint; «проверено» — конкретный прошедший сценарий. Весь declared range не считается проверенным одной комбинацией. API пока experimental.
 
@@ -12,10 +12,12 @@
 | Telegram Bot API | Runtime возможности установленного SDK | Snapshot Bot API 10.3: 185 request methods / 400 indexed types, construction | Server permissions, real delivery, payment workflows и все SDK versions не доказаны |
 | Mini App native API | 99 paths / 44 events snapshot, version/platform/presence gates | Types/build, mock native callbacks/listeners и browser compositions | Нет live matrix версий Telegram iOS/Android/Desktop; method availability не permission/auth |
 | Storage | SQLiteOnce только file SQLite; host FSM | Local file SQLite/replay; MemoryStorage form example | Durable FSM/restart/multiworker, production storage adapters — последующие пункты |
-| Windows symlink case | Directory symlink проверяется при возможности | 84 Python passed; 1 из 85 skipped из-за недоступных directory symlinks | Пропуск не PASS этого filesystem случая |
+| Windows symlink case | Directory symlink проверяется при возможности | 87 Python passed; 1 из 88 skipped из-за недоступных directory symlinks | Пропуск не PASS этого filesystem случая |
 
 Node >=20 — текущий технический минимум manifests, а не рекомендация выбирать Node 20 для production. По [официальной таблице Node.js](https://nodejs.org/en/about/previous-releases) ветка 20 уже EOL; использовать поддерживаемую LTS и затем проверять точную версию приложения. Наш снимок проверен на 24.19.0, что не означает «самая свежая версия».
 
-Evidence: [002.json](v1-checks/002.json), `output/pattern-library-0.6.0/distribution-report.json` и соответствующие logs, привязанные к hashes wheel/tarball. Telegram/live/sandbox evidence сейчас отсутствует, версии клиентов поэтому не выдумываются. Расширение исполняемой OS/runtime matrix относится к 081, device acceptance — к 067; публикация таблицы не закрывает эти пункты.
+Evidence: [006.json](v1-checks/006.json), `output/pattern-library-0.7.0/distribution-report.json` и соответствующие logs, привязанные к hashes wheel/tarball. Telegram/live/sandbox evidence сейчас отсутствует, версии клиентов поэтому не выдумываются. Расширение исполняемой OS/runtime matrix относится к 081, device acceptance — к 067; публикация таблицы не закрывает эти пункты.
 
 Для другого SDK/runtime сохраняйте выбранный стек и выполните relevant consumer/tests перед обещанием совместимости. `doctor` предупреждает об aiogram, отличном от проверенного 3.31.0; проверка формата token не проверяет Telegram identity. Обновление support matrix следует за новым evidence, а не только за изменением диапазона зависимости.
+
+Дополнительно в 0.7.0: Mypy 2.4.0 по 15 исходным файлам и consumer wheel; TypeScript consumer включает named field type и негативные assertions.

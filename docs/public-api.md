@@ -1,4 +1,4 @@
-# Публичные контракты библиотеки 0.6.0
+# Публичные контракты библиотеки 0.7.0
 
 Пункт 003 плана 1.0. Все API ниже пока experimental; статус их группы указан в `components.json`, правила — в [maturity](v1-maturity.md). Контракт описывает реально реализованные границы, а не будущую полноту сценария. Аргументы с Python/TypeScript type annotations должны соответствовать типам; наличие типа не заменяет runtime validation внешних данных.
 
@@ -85,3 +85,5 @@ CLI `recipes [query] [--show ID] [--category ...] [--language ...] [--verificati
 Поведение таблиц сверено с текущими исходниками и declarations 0.6.0, не с предположениями о Telegram. [Полная поставка пункта 002](v1-checks/002.json) подтверждает существующие package/consumer/browser проверки. Полная поименная API documentation с runnable примером каждого символа относится к пункту 014, compatibility regression suite — к 084; эти работы не объявляются выполненными данным документом.
 
 При добавлении публичного API обновляются этот контракт, группа в components.json, exports/types, пример, существенные tests и changelog. Контракт helpers не отменяет [границы сценариев](v1-scope.md).
+
+Новые именованные Literal aliases Maturity/VerificationLevel/ButtonStyle/ChatType/UpdatePhase и TextFieldControl описаны в [структуре API](api-structure.md); Responder экспортируется явно. Прежние function/DTO имена сохранены.

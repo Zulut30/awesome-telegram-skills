@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "library_version": "0.6.0",
+  "library_version": "0.7.0",
   "distribution": "local; not published to package registries",
   "packages": {
     "python": {
@@ -19,7 +19,7 @@
     {
       "id": "recipe-catalog",
       "language": "python",
-      "import": "telegram_patterns.Recipe, RecipeCatalog",
+      "import": "telegram_patterns.Maturity, VerificationLevel, Recipe, RecipeCatalog",
       "intent": "Найти готовый рецепт, код и точный уровень проверки без SDK или сети",
       "source": "packages/python/src/telegram_patterns/recipes.py",
       "example": "gallery/index.html",
@@ -65,7 +65,7 @@
     {
       "id": "native-keyboards",
       "language": "python",
-      "import": "telegram_patterns.aiogram.inline_keyboard, reply_keyboard, input_prompt, remove_keyboard",
+      "import": "telegram_patterns.aiogram.ChatType, ButtonStyle, inline_keyboard, reply_keyboard, input_prompt, remove_keyboard",
       "extra": "aiogram",
       "intent": "Явные строки inline/reply, native actions, styles и интерфейс ответа",
       "source": "packages/python/src/telegram_patterns/native_keyboards.py",
@@ -97,7 +97,7 @@
     {
       "id": "update-events",
       "language": "python",
-      "import": "telegram_patterns.aiogram.event_router, UpdateObserver, update_kinds",
+      "import": "telegram_patterns.aiogram.UpdatePhase, UpdateTrace, event_router, UpdateObserver, update_kinds",
       "extra": "aiogram",
       "intent": "Обработчики native updates и метаданные фаз без raw payload",
       "source": "packages/python/src/telegram_patterns/events.py",
@@ -285,7 +285,7 @@
     {
       "id": "bot-test-transport",
       "language": "python",
-      "import": "telegram_patterns.testing.StubSession",
+      "import": "telegram_patterns.testing.Responder, StubSession",
       "extra": "aiogram",
       "intent": "Проверить настоящий SDK/Dispatcher локально с явными ответами API",
       "source": "packages/python/src/telegram_patterns/testing.py",
@@ -340,7 +340,7 @@
     {
       "id": "responsive-shell",
       "language": "typescript",
-      "import": "createAppShell, createTextField",
+      "import": "createAppShell, createTextField, AppShell, TextFieldControl",
       "intent": "Адаптивный каркас и доступные поля в двух темах",
       "source": "packages/typescript/src/shell.ts",
       "styles": "@awesome-telegram/patterns/styles.css",

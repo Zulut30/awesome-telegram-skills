@@ -1,5 +1,11 @@
 import type { BridgeSnapshot, Insets } from './bridge.js';
 
+export interface TextFieldControl {
+  root: HTMLDivElement;
+  input: HTMLInputElement;
+  setError(text: string | null): void;
+}
+
 export interface AppShell {
   readonly element: HTMLElement;
   readonly content: HTMLElement;
@@ -50,7 +56,7 @@ export function createAppShell(host: HTMLElement, title: string): AppShell {
 }
 
 let sequence = 0;
-export function createTextField(document: Document, label: string, hint = '') {
+export function createTextField(document: Document, label: string, hint = ''): TextFieldControl {
   const root = document.createElement('div'); root.className = 'tp-field';
   let id: string;
   do { id = `tp-field-${document.defaultView?.crypto?.randomUUID?.() ?? ++sequence}`; }

@@ -11,6 +11,8 @@ from pydantic import TypeAdapter
 
 Responder = object | Callable[[TelegramMethod[Any]], object | Awaitable[object]]
 
+__all__ = ["Responder", "StubSession"]
+
 
 class StubSession(BaseSession):
     """Record methods, require explicit responses and validate SDK return types.

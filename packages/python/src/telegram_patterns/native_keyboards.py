@@ -99,11 +99,16 @@ def inline_keyboard(rows: Sequence[Sequence[InlineKeyboardButton]], *,
             if action == 'pay' and not invoice:
                 raise ValueError('Pay button is only valid on an invoice')
             if action == 'callback_data':
+                if button.callback_data is None:
+                    raise ValueError('Missing callback data')
                 try: length = len(button.callback_data.encode('utf-8'))
                 except UnicodeError: length = 0
                 if not 1 <= length <= 64:
                     raise ValueError('Callback data must contain 1..64 UTF-8 bytes')
-            if action == 'copy_text': _text(button.copy_text.text, limit=256)
+            if action == 'copy_text':
+                if button.copy_text is None:
+                    raise ValueError('Missing copy text action')
+                _text(button.copy_text.text, limit=256)
             if action == 'url':
                 parsed = urlsplit(button.url)
                 if parsed.scheme not in {'http', 'https', 'tg'} or (parsed.scheme != 'tg' and not parsed.hostname):
@@ -111,8 +116,13 @@ def inline_keyboard(rows: Sequence[Sequence[InlineKeyboardButton]], *,
             if action == 'web_app':
                 if chat_type != 'private' or business:
                     raise ValueError('Web App button requires an ordinary private bot chat')
+                if button.web_app is None:
+                    raise ValueError('Missing Web App action')
                 _https(button.web_app.url)
-            if action == 'login_url': _https(button.login_url.url)
+            if action == 'login_url':
+                if button.login_url is None:
+                    raise ValueError('Missing login action')
+                _https(button.login_url.url)
             if action in {'switch_inline_query', 'switch_inline_query_current_chat', 'switch_inline_query_chosen_chat'}:
                 if business or (action == 'switch_inline_query_current_chat' and chat_type == 'channel'):
                     raise ValueError('Inline switch action is unavailable in this context')

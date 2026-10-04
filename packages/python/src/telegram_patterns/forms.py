@@ -31,6 +31,20 @@ class InvalidField(ValueError):
         super().__init__(message)
 
 
+def _bot_id(message: Message) -> int:
+    bot = message.bot
+    if bot is None:
+        raise RuntimeError('Forms require a Message bound to the current Bot')
+    return bot.id
+
+
+def _actor_id(message: Message) -> int:
+    user = message.from_user
+    if user is None:
+        raise RuntimeError('Forms require a user author')
+    return user.id
+
+
 @dataclass(frozen=True, slots=True)
 class TextField:
     name: str
@@ -110,7 +124,7 @@ def text_form_router(
     def require_fsm(dispatcher: Dispatcher, state: FSMContext | None, message: Message, actor: int) -> FSMContext:
         if state is None or isinstance(dispatcher.fsm.events_isolation, DisabledEventIsolation):
             raise RuntimeError("Text forms require enabled FSM and events_isolation on the existing Dispatcher")
-        if (state.key.bot_id, state.key.chat_id, state.key.user_id) != (message.bot.id, message.chat.id, actor):
+        if (state.key.bot_id, state.key.chat_id, state.key.user_id) != (_bot_id(message), message.chat.id, actor):
             raise RuntimeError("Text forms require an actor-scoped FSM key")
         return state
 
@@ -119,7 +133,7 @@ def text_form_router(
             return None
         stored = (await state.get_data()).get(data_key)
         if (not isinstance(stored, dict) or stored.get("schema") != [step.name for step in steps]
-                or stored.get("owner") != [message.bot.id, message.chat.id, actor]
+                or stored.get("owner") != [_bot_id(message), message.chat.id, actor]
                 or type(stored.get("index")) is not int or not 0 <= stored["index"] <= len(steps)
                 or not isinstance(stored.get("values"), dict)
                 or set(stored["values"]) != {step.name for step in steps[:stored["index"]]}
@@ -158,14 +172,14 @@ def text_form_router(
 
     @router.message(private, StateFilter(None, namespace), Command(command))
     async def start(message: Message, dispatcher: Dispatcher, state: FSMContext | None = None) -> None:
-        state = require_fsm(dispatcher, state, message, message.from_user.id)
-        previous = await load(state, message, message.from_user.id)
+        state = require_fsm(dispatcher, state, message, _actor_id(message))
+        previous = await load(state, message, _actor_id(message))
         if previous is not None and previous["submission_started"]:
             await message.answer(frozen_text, parse_mode=None)
             return
         if previous is not None and message.message_id <= previous["last_message_id"]:
             return
-        data = {"owner": [message.bot.id, message.chat.id, message.from_user.id],
+        data = {"owner": [_bot_id(message), message.chat.id, _actor_id(message)],
                 "schema": [step.name for step in steps],
                 "values": {}, "index": 0, "operation_id": secrets.token_hex(8),
                 "submission_started": False, "review_message_id": None,
@@ -176,8 +190,8 @@ def text_form_router(
 
     @router.message(private, StateFilter(namespace), Command("cancel"))
     async def cancel(message: Message, dispatcher: Dispatcher, state: FSMContext | None = None) -> None:
-        state = require_fsm(dispatcher, state, message, message.from_user.id)
-        data = await load(state, message, message.from_user.id)
+        state = require_fsm(dispatcher, state, message, _actor_id(message))
+        data = await load(state, message, _actor_id(message))
         if data is not None and data["submission_started"]:
             await message.answer(frozen_text, parse_mode=None)
             return
@@ -188,8 +202,8 @@ def text_form_router(
 
     @router.message(private, StateFilter(namespace), Command("back"))
     async def back(message: Message, dispatcher: Dispatcher, state: FSMContext | None = None) -> None:
-        state = require_fsm(dispatcher, state, message, message.from_user.id)
-        data = await load(state, message, message.from_user.id)
+        state = require_fsm(dispatcher, state, message, _actor_id(message))
+        data = await load(state, message, _actor_id(message))
         if data is None:
             await message.answer(stale_text, parse_mode=None)
             return
@@ -206,8 +220,8 @@ def text_form_router(
 
     @router.message(private, StateFilter(namespace), lambda event: not event.text or not event.text.startswith("/"))
     async def receive(message: Message, dispatcher: Dispatcher, state: FSMContext | None = None) -> None:
-        state = require_fsm(dispatcher, state, message, message.from_user.id)
-        data = await load(state, message, message.from_user.id)
+        state = require_fsm(dispatcher, state, message, _actor_id(message))
+        data = await load(state, message, _actor_id(message))
         if data is None:
             await message.answer(stale_text, parse_mode=None)
             return
@@ -250,7 +264,7 @@ def text_form_router(
             return
         data["submission_started"] = True
         await save(state, data)  # Keep stable identity even after unknown outcome.
-        submission = FormSubmission(message.bot.id, query.from_user.id, message.chat.id,
+        submission = FormSubmission(_bot_id(message), query.from_user.id, message.chat.id,
                                     data["operation_id"], data["values"])
         try:
             text = await on_submit(submission)

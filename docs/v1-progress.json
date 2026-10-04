@@ -84,10 +84,20 @@
       "id": 6,
       "title": "Согласовать имена и структуру API",
       "requirement": "Убрать случайные различия между похожими операциями, проверить типы и импорты; каждое переименование до 1.0 сопровождать миграционным примером.",
-      "status": "pending",
-      "commit_subject": null,
-      "artifacts": [],
-      "evidence": []
+      "status": "done",
+      "commit_subject": "roadmap(006): define explicit exports and checked public types",
+      "artifacts": [
+        "docs/api-structure.md",
+        "tests/public_types.py",
+        "tests/public-types.ts",
+        "packages/python/tests/test_public_api.py",
+        "docs/v1-checks/006.json"
+      ],
+      "evidence": [
+        "docs/v1-checks/006.json",
+        "19 original Mypy errors fixed without blanket ignores; all public symbols resolve; old explicit SDK import remains accessible",
+        "39 distribution stages, 87 Python passed + 1 skip, 21 TypeScript passed, 452 Chrome checks; source/wheel bytes match"
+      ]
     },
     {
       "id": 7,
