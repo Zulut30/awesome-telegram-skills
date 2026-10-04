@@ -1,4 +1,5 @@
 import {PatternError, ValidationFailure, type ErrorCode} from './errors.js';
+import type {FetchTransport} from './adapters.js';
 
 export type FailureKind = 'http' | 'network' | 'timeout' | 'aborted' | 'invalid-response';
 export class ApiError extends PatternError {
@@ -20,7 +21,7 @@ export interface RequestOptions {
 export interface ClientOptions {
   baseUrl: string;
   headers?: () => HeadersInit;
-  fetch?: typeof fetch;
+  fetch?: FetchTransport;
 }
 
 /** One fetch invocation, runtime decoding, no application retry or token storage.
@@ -28,7 +29,7 @@ export interface ClientOptions {
  */
 export class ApiClient {
   private readonly base: URL;
-  private readonly transport: typeof fetch;
+  private readonly transport: FetchTransport;
   constructor(private readonly options: ClientOptions) {
     try { this.base = new URL(options.baseUrl); }
     catch { throw new ValidationFailure('Configure a valid absolute HTTP(S) base URL'); }

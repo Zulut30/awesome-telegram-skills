@@ -123,10 +123,21 @@
       "id": 8,
       "title": "Описать модель расширения",
       "requirement": "Дать протоколы для storage, transport и provider adapters, сохранив минимальное ядро и выбранный стек потребителя; проверять работу пользовательского адаптера.",
-      "status": "pending",
-      "commit_subject": null,
-      "artifacts": [],
-      "evidence": []
+      "status": "done",
+      "commit_subject": "roadmap(008): add structural extension contracts and consumers",
+      "artifacts": [
+        "packages/python/src/telegram_patterns/extensions.py",
+        "packages/typescript/src/adapters.ts",
+        "docs/extension-model.md",
+        "examples/python/custom_adapters.py",
+        ".agents/skills/telegram-code-patterns/references/extensions.md",
+        "docs/v1-checks/008.json"
+      ],
+      "evidence": [
+        "docs/v1-checks/008.json",
+        "43 distribution stages passed; 96 Python passed + 1 skip; 26 TypeScript passed; 452 Chrome checks",
+        "Installed core custom SQLite/transport/provider fixture passed outside source tree; Mypy structural assignment passed; tarball custom storage/fetch types/runtime passed; wheel source bytes exact"
+      ]
     },
     {
       "id": 9,

@@ -104,6 +104,12 @@ print(json.dumps({'core_without_sdk':True,'python':sys.version.split()[0]}))
         if not recovery['passed'] or recovery['network'] or recovery['effect_count'] != 1 or not recovery['replayed']:
             raise RuntimeError('Installed core error reconciliation example failed')
         report['error_recovery'] = recovery
+        custom_adapters = consumers / 'custom_adapters.py'
+        custom_adapters.write_text((ROOT / 'examples/python/custom_adapters.py').read_text(encoding='utf-8'), encoding='utf-8')
+        extensions = json.loads(run('custom-adapters', [str(python_in(core)), str(custom_adapters)], consumers))
+        if not extensions['passed'] or extensions['network'] or extensions['custom_storage_effects'] != 1 or extensions['remote_effects'] != 1 or extensions['payment_granted']:
+            raise RuntimeError('Installed core custom adapters failed')
+        report['custom_adapters'] = extensions
         core_console = core / ('Scripts/telegram-patterns.exe' if os.name == 'nt' else 'bin/telegram-patterns')
         report['core_cli'] = json.loads(run('core-cli', [str(core_console), 'recipes', 'две кнопки'], consumers))
         if report['core_cli']['recipes'][0]['id'] != 'two-columns':
@@ -125,6 +131,7 @@ print(json.dumps({'core_without_sdk':True,'python':sys.version.split()[0]}))
         public_python_types = consumers / 'public_types.py'
         public_python_types.write_text((ROOT / 'tests/public_types.py').read_text(encoding='utf-8'), encoding='utf-8')
         run('python-consumer-typecheck', [str(python_in(sdk)), '-m', 'mypy', '--follow-imports=silent', '--warn-unused-ignores', '--no-incremental', str(public_python_types)], consumers)
+        run('custom-adapter-typecheck', [str(python_in(sdk)), '-m', 'mypy', '--follow-imports=silent', '--no-incremental', str(custom_adapters)], consumers)
         run('sdk-origin', [str(python_in(sdk)), '-c', 'import sys,telegram_patterns;from pathlib import Path;assert Path(telegram_patterns.__file__).is_relative_to(Path(sys.argv[1]));print(telegram_patterns.__file__)', str(sdk)], consumers)
         python_log = run('python-tests', [str(python_in(sdk)), '-m', 'unittest', 'discover', '-s', str(ROOT / 'packages/python/tests'), '-v'], consumers)
         run('sdk-dependencies', [uv, 'pip', 'check', '--python', str(python_in(sdk))])

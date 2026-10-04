@@ -1,10 +1,11 @@
 /** Type consumer, compiled against the installed tarball by distribution checks. */
 import {
-  ApiClient, TelegramBridge, createTextField, safeErrorReport,
+  ApiClient, TelegramBridge, createTextField, safeErrorReport, SelectionDraftStore,
   type AppShell, type BridgeSnapshot, type ClientOptions, type DraftOptions,
   type DraftRead, type FailureKind, type Insets, type RequestOptions,
   type SelectionDraft, type TelegramNativeEvent, type TelegramNativeMethod,
   type TelegramWebApp, type TextFieldControl, type ErrorReport, type OperationKind,
+  type KeyValueStorage, type StorageFactory, type FetchTransport,
 } from '@awesome-telegram/patterns';
 
 export function connect(app: TelegramWebApp | undefined, document: Document): TextFieldControl {
@@ -41,3 +42,15 @@ export const report: ErrorReport = safeErrorReport(new Error(), operation);
 export const badOperation: OperationKind = 'retry';
 // @ts-expect-error public report is immutable
 report.message = 'Override';
+
+export function projectAdapters(): SelectionDraftStore {
+  const values = new Map<string,string>();
+  const storage: KeyValueStorage = {getItem:key=>values.get(key)??null,
+    setItem:(key,value)=>{values.set(key,value);}, removeItem:key=>{values.delete(key);}};
+  const factory: StorageFactory = ()=>storage;
+  const transport: FetchTransport = async()=>Response.json({fixture:true});
+  new ApiClient({baseUrl:'https://fixture.test',fetch:transport});
+  return new SelectionDraftStore(factory,{namespace:'fixture',scope:'verified-actor:42',ttlMs:1000});
+}
+// @ts-expect-error async CloudStorage is not the synchronous selection storage interface
+export const asyncStorage: KeyValueStorage = {getItem:async()=>null,setItem:()=>{},removeItem:()=>{}};

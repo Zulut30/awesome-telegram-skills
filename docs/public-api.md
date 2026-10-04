@@ -1,4 +1,4 @@
-# Публичные контракты библиотеки 0.8.0
+# Публичные контракты библиотеки 0.9.0
 
 Пункт 003 плана 1.0. Все API ниже пока experimental; статус их группы указан в `components.json`, правила — в [maturity](v1-maturity.md). Контракт описывает реально реализованные границы, а не будущую полноту сценария. Аргументы с Python/TypeScript type annotations должны соответствовать типам; наличие типа не заменяет runtime validation внешних данных.
 
@@ -89,3 +89,5 @@ CLI `recipes [query] [--show ID] [--category ...] [--language ...] [--verificati
 Новые именованные Literal aliases Maturity/VerificationLevel/ButtonStyle/ChatType/UpdatePhase и TextFieldControl описаны в [структуре API](api-structure.md); Responder экспортируется явно. Прежние function/DTO имена сохранены.
 
 В 0.8.0 добавлены ErrorCode/ErrorCategory/ErrorOutcome/RecoveryAction/OperationKind/ErrorReport, нормализаторы и исключения. Все параметры, результаты, наследование, владение ресурсами, recovery и migration существующих ошибок описаны в [контракте ошибок](error-model.md). Собственные ValueError/TypeError preflight сохранены через совместимые подклассы; ошибка feedback после effect не считается input rejection.
+
+В 0.9.0 добавлены OnceStore/AsyncTransport/ProviderAdapter/RefundProvider и KeyValueStorage/StorageFactory/FetchTransport. Полные сигнатуры, результаты, ошибки, I/O и владение ресурсами описаны в [контракте расширения](extension-model.md); прежняя structural assignability storage/fetch сохранена.

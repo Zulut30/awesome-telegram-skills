@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "library_version": "0.8.0",
+  "library_version": "0.9.0",
   "distribution": "local; not published to package registries",
   "packages": {
     "python": {
@@ -395,6 +395,36 @@
         "classification performs no I/O or automatic retry",
         "raw write failures require reconciliation; caller supplies actual operation kind",
         "public report never copies developer exception text; arbitrary remote payload is not trusted outcome evidence"
+      ],
+      "maturity": "experimental",
+      "maturity_scope": "All public API symbols in this component; local verification is not a stable 1.0 promise"
+    },
+    {
+      "id": "python-extensions",
+      "language": "python",
+      "import": "telegram_patterns.OnceStore, AsyncTransport, ProviderAdapter, RefundProvider",
+      "intent": "Подключить пользовательский storage/transport/provider adapter по структурному контракту без смены стека",
+      "source": "packages/python/src/telegram_patterns/extensions.py",
+      "example": "examples/python/custom_adapters.py",
+      "boundaries": [
+        "interfaces do not instantiate resources or guarantee atomicity or external idempotency",
+        "host retains authorization, scope, lifecycle and exact provider wire contract",
+        "provider fixtures are not real payment integration; async CloudStorage is not sync selection storage"
+      ],
+      "maturity": "experimental",
+      "maturity_scope": "All public API symbols in this component; local verification is not a stable 1.0 promise"
+    },
+    {
+      "id": "typescript-extensions",
+      "language": "typescript",
+      "import": "@awesome-telegram/patterns: KeyValueStorage, StorageFactory, FetchTransport",
+      "intent": "Подключить пользовательский storage/transport/provider adapter по структурному контракту без смены стека",
+      "source": "packages/typescript/src/adapters.ts",
+      "example": "tests/public-types.ts",
+      "boundaries": [
+        "interfaces do not instantiate resources or guarantee atomicity or external idempotency",
+        "host retains authorization, scope, lifecycle and exact provider wire contract",
+        "provider fixtures are not real payment integration; async CloudStorage is not sync selection storage"
       ],
       "maturity": "experimental",
       "maturity_scope": "All public API symbols in this component; local verification is not a stable 1.0 promise"

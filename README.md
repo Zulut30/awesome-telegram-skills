@@ -6,15 +6,17 @@
 
 Основной стек проекта: **Python для ботов и backend, TypeScript для Mini Apps**.
 
-Есть [общая библиотека готовых компонентов](docs/component-library.md): два импортируемых пакета Python/TypeScript, 26 групп компонентов и работающие примеры. ИИ подключает нужный API через `telegram-code-patterns`; пакеты пока распространяются локально.
+Есть [общая библиотека готовых компонентов](docs/component-library.md): два импортируемых пакета Python/TypeScript, 28 групп компонентов и работающие примеры. ИИ подключает нужный API через `telegram-code-patterns`; пакеты пока распространяются локально.
 
-В исходниках готовится 0.8.0: [статус зрелости API](docs/v1-maturity.md) отдельно от SDK/mock/browser/live evidence. Каталог, Python API, CLI и галерея различают experimental/reference; стабильные сценарии 1.0 пока не заявлены.
+В исходниках готовится 0.9.0: [статус зрелости API](docs/v1-maturity.md) отдельно от SDK/mock/browser/live evidence. Каталог, Python API, CLI и галерея различают experimental/reference; стабильные сценарии 1.0 пока не заявлены.
 
 [Публичные контракты Python/TypeScript](docs/public-api.md) описывают параметры, результаты, ошибки, побочные эффекты и владение ресурсами для всех документированных API.
 
 [Версии и совместимость](docs/versioning.md): SemVer, migrations, неизменность принятой поставки и окно deprecation стабильного API.
 
 [Матрица поддержки](docs/support-matrix.md) отделяет dependency constraints от проверенных версий SDK, runtime, браузера и устройств.
+
+[Модель расширения](docs/extension-model.md): протоколы storage/transport/provider и проверенный custom adapter без обязательной инфраструктуры.
 
 [Ошибки и восстановление](docs/error-model.md): безопасные категории, unknown outcome и сверка того же operation_id.
 

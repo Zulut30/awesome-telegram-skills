@@ -70,6 +70,24 @@ test('API preflight rejection is actionable and happens before transport', async
   assert.equal(calls,0);
 });
 
+test('consumer adapters preserve existing storage and transport ownership and account isolation', async () => {
+  const values=new Map(),calls=[];
+  const storage={getItem:key=>values.get(key)??null,setItem:(key,value)=>values.set(key,value),removeItem:key=>values.delete(key)};
+  values.set('project-owned','preserve');
+  const a=new SelectionDraftStore(()=>storage,{namespace:'fixture',scope:'verified:42',ttlMs:1000,now:()=>100});
+  const b=new SelectionDraftStore(()=>storage,{namespace:'fixture',scope:'verified:99',ttlMs:1000,now:()=>100});
+  assert.equal(a.write({serviceId:'s1',slotId:null}),true);
+  assert.equal(a.read().status,'restored');assert.equal(b.read().status,'missing');
+  assert.equal(a.clear(),true);assert.equal(storage.getItem('project-owned'),'preserve');
+  const transport=async(input,init)=>{calls.push({input,init});return Response.json({id:'fixture-1'});};
+  const api=new ApiClient({baseUrl:'https://fixture.test',fetch:transport,headers:()=>({'X-Project-Token':'fixture'})});
+  const result=await api.request('/entries',value=>{assert.equal(typeof value.id,'string');return value.id;});
+  assert.equal(result,'fixture-1');assert.equal(calls.length,1);
+  assert.equal(calls[0].input.pathname,'/entries');
+  assert.equal(calls[0].init.headers.get('X-Project-Token'),'fixture');
+  assert.equal(calls[0].init.signal.aborted,false);
+});
+
 class FakeApp {
   colorScheme = 'light'; themeParams = { bg_color: '#ffffff', text_color: '#000000' };
   viewportStableHeight = 600; readyCalls = 0; callbacks = new Map();

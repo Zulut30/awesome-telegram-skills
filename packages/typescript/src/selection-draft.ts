@@ -1,6 +1,6 @@
 import {ValidationFailure} from './errors.js';
+import type {StorageFactory} from './adapters.js';
 export interface SelectionDraft { readonly serviceId: string | null; readonly slotId: string | null }
-type StorageLike = Pick<Storage, 'getItem' | 'setItem' | 'removeItem'>;
 export type DraftRead =
   | {status: 'restored'; value: SelectionDraft}
   | {status: 'missing' | 'expired' | 'corrupt' | 'unavailable'};
@@ -22,7 +22,7 @@ export class SelectionDraftStore {
   private readonly now: () => number;
   private readonly scope: string;
   private readonly ttlMs: number;
-  constructor(private readonly storage: () => StorageLike, options: DraftOptions) {
+  constructor(private readonly storage: StorageFactory, options: DraftOptions) {
     if (typeof options.scope !== 'string' || typeof options.namespace !== 'string' || !options.scope || !options.namespace || options.scope.length > 256 || options.namespace.length > 128 || !Number.isFinite(options.ttlMs) || options.ttlMs <= 0) {
       throw new ValidationFailure('Configure namespace, verified scope and positive draft TTL');
     }

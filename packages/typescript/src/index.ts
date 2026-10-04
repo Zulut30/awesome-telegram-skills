@@ -11,3 +11,4 @@ export type {TelegramNativeMethod, TelegramNativeEvent} from './native-catalog.j
 export {TelegramNativeAPI, UnsupportedTelegramCapability} from './native-api.js';
 export {PatternError, ValidationFailure, InvalidType, AuthenticationRequired, PermissionDenied, UnsupportedCapability, UnknownOutcome, safeErrorReport} from './errors.js';
 export type {ErrorCategory, ErrorOutcome, RecoveryAction, OperationKind, ErrorCode, ErrorReport} from './errors.js';
+export type {KeyValueStorage, StorageFactory, FetchTransport} from './adapters.js';

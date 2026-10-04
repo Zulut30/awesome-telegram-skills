@@ -1,6 +1,6 @@
 {
   "name": "@awesome-telegram/patterns",
-  "version": "0.8.0",
+  "version": "0.9.0",
   "description": "Reusable TypeScript components for Telegram Mini Apps",
   "type": "module",
   "sideEffects": [
