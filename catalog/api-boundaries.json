@@ -1,0 +1,25 @@
+{
+  "schema_version": 1,
+  "checked_date": "2026-10-04",
+  "sdk_verified": "aiogram 3.31.0",
+  "surfaces": ["bot-api", "mini-app", "business-bot", "user-client"],
+  "automatic_user_session": false,
+  "sdk_construction_is_permission": false,
+  "native_presence_is_launch_permission": false,
+  "scenarios": [
+    {"id":"native-keyboard","surface":"bot-api","methods":["sendMessage"],"checks":["actual-chat-context","emoji-owner-entitlement","host-acl"]},
+    {"id":"group-reactions","surface":"bot-api","methods":["setMessageReaction"],"checks":["admin-for-incoming-reaction-updates","explicit-allowed-updates","delivered-update-only"]},
+    {"id":"profile-personal-chat","surface":"bot-api","methods":["getUserPersonalChatMessages"],"checks":["profile-chat-scope","not-private-account-history"]},
+    {"id":"guest-reply","surface":"bot-api","methods":["answerGuestQuery"],"checks":["guest-mode","guest-query-id","no-history-or-membership-grant"]},
+    {"id":"bot-to-bot","surface":"bot-api","methods":["sendMessage"],"checks":["context-mode-settings","loop-depth-ttl-rate-dedup"]},
+    {"id":"business-reply","surface":"business-bot","methods":["sendMessage"],"checks":["active-connection","owner-chat-binding","can_reply","eligible-recent-private-chat"]},
+    {"id":"business-read-mark","surface":"business-bot","methods":["readBusinessMessage"],"checks":["active-connection","can_read_messages","read-mark-not-history"]},
+    {"id":"keyboard-send-data","surface":"mini-app","native_methods":["sendData"],"checks":["keyboard-launch","server-validates-input-and-acl"]},
+    {"id":"inline-result","surface":"mini-app","methods":["answerWebAppQuery"],"checks":["actual-query-id","launch-specific-return-channel"]},
+    {"id":"direct-launch","surface":"mini-app","native_methods":["ready"],"checks":["raw-init-data-server-validation","session-and-acl","not-universal-sendData"]},
+    {"id":"invoice-callback","surface":"mini-app","native_methods":["openInvoice"],"checks":["server-order-and-payment-ledger","callback-not-entitlement"]},
+    {"id":"account-history","surface":"user-client","rpc":"messages.getHistory","checks":["explicit-user-client-task","separate-user-auth","selected-peer-allowlist","no-auto-send-join-read-mark"]}
+  ],
+  "ordinary_update_absent_fields": ["user_typing","message_read","url_button_click","copy_text_click"],
+  "source_discrepancies": ["FAQ absolute bot-to-bot restriction is superseded by current Bot Features/changelog contexts", "BusinessBotRights can_edit_name vs method text can_change_name; do not invent SDK field"]
+}

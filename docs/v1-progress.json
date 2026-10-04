@@ -161,10 +161,21 @@
       "id": 10,
       "title": "Зафиксировать границы Telegram API",
       "requirement": "Показать различия Bot API, Mini Apps, Business и MTProto, требования к правам и невозможные события; доступ пользовательского аккаунта не включать автоматически в бот-сценарий.",
-      "status": "pending",
-      "commit_subject": null,
-      "artifacts": [],
-      "evidence": []
+      "status": "done",
+      "commit_subject": "roadmap(010): document Telegram identity and capability boundaries",
+      "artifacts": [
+        "docs/telegram-api-boundaries.md",
+        "catalog/api-boundaries.json",
+        ".agents/skills/telegram-code-patterns/references/api-boundaries.md",
+        "scripts/check_telegram_boundaries.py",
+        "scripts/check_native_boundaries.mjs",
+        "docs/v1-checks/010.json"
+      ],
+      "evidence": [
+        "docs/v1-checks/010.json",
+        "Four API/identity surfaces and 12 scenario boundaries reviewed against fresh primary docs; bot-to-bot/guest and business right naming discrepancies recorded",
+        "Installed wheel SDK probe and tarball native presence/host launch gate passed outside source tree; wrong history route and Python -O rejected; 23 root tests and 41 standalone skills passed"
+      ]
     },
     {
       "id": 11,

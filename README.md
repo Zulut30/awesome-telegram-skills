@@ -16,6 +16,8 @@
 
 [Матрица поддержки](docs/support-matrix.md) отделяет dependency constraints от проверенных версий SDK, runtime, браузера и устройств.
 
+[Границы Telegram API](docs/telegram-api-boundaries.md): Bot API, Mini App, Business и user-client, launch/rights и специальные guest/bot-to-bot режимы.
+
 [Контракт поставки](docs/distribution-contract.md): проверенный состав wheel/tarball, exports, typing, CSS и bundled resources.
 
 [Модель расширения](docs/extension-model.md): протоколы storage/transport/provider и проверенный custom adapter без обязательной инфраструктуры.

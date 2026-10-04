@@ -2,6 +2,8 @@
 
 ## Unreleased — подготовка 1.0
 
+- Пункт 010: фиксированы identity/launch/rights границы Bot API, Mini App, Business/Secretary и user-client; добавлена переносимая инструкция и SDK/native probes. Учтены современные guest/bot-to-bot исключения и расхождения FAQ/rights naming; пользовательская session не подключается автоматически. Runtime API и артефакты 0.9.1 сохранены.
+
 - Пункт 009 / поставка 0.9.1: обязательный read-only archive contract — source/resources/RECORD, extra/CLI и полный набор JS/declarations/CSS/export map. Проверки подмены/пропуска/лишних файлов и небезопасных archive entries выполняются в настоящих temporary archives; installed consumers остаются отдельным runtime evidence. API 0.9.0 сохранен.
 
 - Пункт 008 / исходники 0.9.0: структурные OnceStore/AsyncTransport/ProviderAdapter и optional RefundProvider; публичные TS KeyValueStorage/StorageFactory/FetchTransport без изменения прежних методов. Рабочий custom adapter проверяет SQLite replay, lost response и tampered fixture event; реальные provider workflows остаются отдельными задачами.
