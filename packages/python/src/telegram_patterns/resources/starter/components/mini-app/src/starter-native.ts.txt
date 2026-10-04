@@ -1,0 +1,14 @@
+import {TelegramNativeAPI} from '@awesome-telegram/patterns';
+export function mount(host:HTMLElement, app:unknown):()=>void {
+  const native=new TelegramNativeAPI(app), section=document.createElement('section');
+  section.dataset.component='mini-app-native-api';
+  const button=document.createElement('button');button.type='button';button.textContent='Отклик Telegram';
+  const status=document.createElement('p');status.setAttribute('role','status');
+  const action=()=>{
+    if(!native.supports('HapticFeedback.impactOccurred')) {status.textContent='Отклик недоступен; интерфейс работает.';return;}
+    try {native.call('HapticFeedback.impactOccurred','light');status.textContent='Вызван native отклик. Это не подтверждает авторизацию.';}
+    catch {status.textContent='Native отклик не выполнен; интерфейс работает.';}
+  };
+  button.addEventListener('click',action);section.append(button,status);host.append(section);
+  return ()=>{button.removeEventListener('click',action);native.dispose();section.remove();};
+}

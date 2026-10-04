@@ -6,10 +6,12 @@ from email.parser import Parser
 from importlib.resources import files
 import json
 from pathlib import Path
+from typing import Sequence
 import re
 import tarfile
 import tomllib
 import zipfile
+from .starter_components import StarterConflict, resolve_components, starter_components
 
 
 @dataclass(frozen=True, slots=True)
@@ -19,6 +21,8 @@ class StarterPlan:
     library_version: str
     files: tuple[str, ...]
     created: bool
+    components: tuple[str, ...] = ()
+    requested_components: tuple[str, ...] = ()
 
 
 def _linked(path: Path) -> bool:
@@ -58,18 +62,24 @@ def typescript_source(path: str | Path) -> tuple[Path, str]:
 
 
 def create_starter(target: str | Path, *, library: str | Path, template: str = 'bot',
-                   typescript: str | Path | None = None, dry_run: bool = False) -> StarterPlan:
-    if template not in {'bot', 'bot-mini-app'} or type(dry_run) is not bool: raise ValidationFailure('Use a supported starter template')
+                   typescript: str | Path | None = None, dry_run: bool = False,
+                   components: Sequence[str] | None = None) -> StarterPlan:
+    explicit, selected = resolve_components(template, components)
+    if type(dry_run) is not bool: raise ValidationFailure('Use a bool dry_run flag')
     requested = Path(target).expanduser().absolute()
     if requested.exists() or _linked(requested): raise FileExistsError('Target already exists; no files replaced')
-    if not requested.parent.is_dir() or _linked(requested.parent): raise ValidationFailure('Use an existing ordinary parent directory')
+    if not requested.parent.is_dir() or any(_linked(parent) for parent in requested.parents):
+        raise ValidationFailure('Use an existing ordinary parent directory without linked ancestors')
     source, version = library_source(library)
+    for component in starter_components(template):
+        if component.id in selected and tuple(map(int, version.split('.'))) < tuple(map(int, component.min_library_version.split('.'))):
+            raise StarterConflict('component-version')
     ts_source = None
     if template == 'bot-mini-app':
-        if typescript is None: raise ValidationFailure('Mini App starter requires a local --typescript tarball')
+        if typescript is None: raise StarterConflict('missing-typescript')
         ts_source, ts_version = typescript_source(typescript)
-        if ts_version != version: raise ValidationFailure('Use matching Python and TypeScript release versions')
-    elif typescript is not None: raise ValidationFailure('--typescript is only used by bot-mini-app')
+        if ts_version != version: raise StarterConflict('artifact-version')
+    elif typescript is not None: raise StarterConflict('unexpected-typescript')
     name = re.sub(r'[^a-z0-9]+', '-', requested.name.lower()).strip('-') or 'telegram-starter'
     if len(name) > 64: raise ValidationFailure('Use a shorter project directory name')
     root = files('telegram_patterns').joinpath('resources/starter')
@@ -77,18 +87,55 @@ def create_starter(target: str | Path, *, library: str | Path, template: str = '
     for filename in ('app.py', 'offline.py', 'README.md', '.env.example', '.gitignore', 'pyproject.toml'):
         content = root.joinpath(filename + '.txt').read_text(encoding='utf-8')
         output[filename] = content.replace('__PROJECT_NAME__', name).replace('__LIBRARY_DEPENDENCY__', json.dumps('awesome-telegram-patterns[aiogram] @ ' + source.as_uri()))
+    imports, setup, dispatcher = [], [], 'Dispatcher()'
+    ts_imports, ts_mounts = [], []
+    feature_files = []
+    for component in starter_components(template):
+        if component.id not in selected or not component.files: continue
+        for filename in component.files:
+            content = root.joinpath('components/' + filename + '.txt').read_text(encoding='utf-8')
+            output[filename] = content
+            feature_files.append(filename)
+            if filename.endswith('.py'):
+                module = Path(filename).stem
+                imports.append(f'from {module} import configure as configure_{module}')
+                setup.append(f'    component_commands += configure_{module}(dispatcher)')
+                if component.id == 'text-form':
+                    imports.append('from aiogram.fsm.storage.memory import SimpleEventIsolation')
+                    dispatcher = 'Dispatcher(events_isolation=SimpleEventIsolation())'
+            else:
+                module = Path(filename).stem
+                alias = module.replace('-', '_')
+                ts_imports.append(f"import {{mount as {alias}}} from './{module}.js';")
+                ts_mounts.append(f'{alias}(shell.content, window.Telegram?.WebApp)')
+    output['app.py'] = output['app.py'].replace('__COMPONENT_IMPORTS__', '\n'.join(imports))
+    output['app.py'] = output['app.py'].replace('__DISPATCHER__', dispatcher)
+    output['app.py'] = output['app.py'].replace('__COMPONENT_SETUP__', '\n'.join(setup))
+    output['pyproject.toml'] = output['pyproject.toml'].replace('__PROJECT_MODULES__',
+        json.dumps(['app', *[Path(name).stem for name in feature_files if name.endswith('.py')]]))
+    output['README.md'] += '\nПодключенные группы: ' + ', '.join(selected) + '.\n'
+    if feature_files:
+        output['README.md'] += ('\nВыбранные модули подключены к app.py/frontend; Python-проверка: '
+                               '`python offline_components.py`. Форма использует transient MemoryStorage; '
+                               'наблюдение не durable audit. Каталог и клавиатуры публичные, без private effect. '
+                               'API client frontend использует fixture transport; backend auth/session не созданы. '
+                               'Черновик хранит только публичный ID под demo scope; реальные учетные записи требуют server-derived scope.\n')
+        output['offline_components.py'] = root.joinpath('components/offline_components.py.txt').read_text(encoding='utf-8')
     config = {'schema_version': 1, 'template': template, 'library_version': version, 'library_uri': source.as_uri(),
-              'typescript_uri': ts_source.as_uri() if ts_source else None}
+              'typescript_uri': ts_source.as_uri() if ts_source else None,
+              'requested_components': explicit, 'components': selected, 'component_files': feature_files}
     output['.telegram-patterns.json'] = json.dumps(config, ensure_ascii=False, indent=2) + '\n'
     if ts_source:
         for filename in ('index.html', 'tsconfig.json', 'src/main.ts'):
             output['mini-app/' + filename] = root.joinpath('mini-app/' + filename + '.txt').read_text(encoding='utf-8')
+        output['mini-app/src/main.ts'] = output['mini-app/src/main.ts'].replace('__COMPONENT_IMPORTS__', '\n'.join(ts_imports))
+        output['mini-app/src/main.ts'] = output['mini-app/src/main.ts'].replace('__COMPONENT_MOUNTS__', ','.join(ts_mounts))
         output['mini-app/package.json'] = json.dumps({'name': name + '-mini-app', 'private': True, 'type': 'module',
             'scripts': {'build': 'tsc -p tsconfig.json', 'typecheck': 'tsc -p tsconfig.json --noEmit'},
             # npm file specs are filesystem paths, not percent-encoded file URLs.
             # Keep literal spaces/Unicode/% in the provided local tarball path.
             'dependencies': {'@awesome-telegram/patterns': 'file:' + ts_source.as_posix()}, 'devDependencies': {'typescript': '7.0.2'}}, indent=2) + '\n'
-    planned = StarterPlan(requested, template, version, tuple(sorted(output)), not dry_run)
+    planned = StarterPlan(requested, template, version, tuple(sorted(output)), not dry_run, selected, explicit)
     if dry_run: return planned
     requested.mkdir()  # Atomic reservation; an existing directory is NEVER adopted.
     for relative, content in output.items():

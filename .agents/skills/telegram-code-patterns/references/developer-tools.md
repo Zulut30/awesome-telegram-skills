@@ -35,4 +35,6 @@ Doctor не запускает проект; fixed `node --version` и импо�
 
 Частично проверенные 4 октября 2026 источники: [PyPA CLI](https://packaging.python.org/en/latest/guides/creating-command-line-tools/) и [direct dependency references](https://packaging.python.org/en/latest/specifications/dependency-specifiers/). API Telegram/SDK не менялся в этом reference; [границы кнопок и событий](keyboard-recipes.md) остаются применимыми.
 
-Для первого запуска предоставленных 0.9.2 wheel/tarball используй [проверенные команды](quickstart.md). Исправление npm path подтверждено настоящим consumer install с пробелами; npm local path/tarball документация сверена 2026-10-04, источники в этом reference.
+Для первого запуска предоставленных 0.10.0 wheel/tarball используй [проверенные команды](quickstart.md). Исправление npm path подтверждено настоящим consumer install с пробелами; npm local path/tarball документация сверена 2026-10-04, источники в этом reference.
+
+В 0.10.0 выбор starter групп через --component и init --list-components описан в [самостоятельном reference](starter-selection.md). Прежние default композиции сохранены; partial I/O failure не разрешает удалять чужие файлы.

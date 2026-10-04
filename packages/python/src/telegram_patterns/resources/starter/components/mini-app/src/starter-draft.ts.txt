@@ -1,0 +1,20 @@
+import {SelectionDraftStore} from '@awesome-telegram/patterns';
+export function mount(host:HTMLElement, _app:unknown):()=>void {
+  // Публичный anonymous preview. В приложении scope берется из server session.
+  const store=new SelectionDraftStore(()=>localStorage,{namespace:'starter-public',scope:'anonymous-demo',ttlMs:3600000});
+  const section=document.createElement('section');section.dataset.component='selection-draft';
+  const save=document.createElement('button');save.type='button';save.textContent='Сохранить публичный выбор';
+  const clear=document.createElement('button');clear.type='button';clear.textContent='Очистить выбор';
+  const status=document.createElement('p');status.setAttribute('role','status');
+  const refresh=()=>{
+    const read=store.read();
+    if(read.status==='restored'&&(read.value.serviceId!=='demo-service'||read.value.slotId!==null)) {
+      store.clear();status.textContent='Черновик не соответствует публичному списку.';
+    }else status.textContent=read.status==='restored'?'Восстановлен публичный выбор demo-service.':`Черновик: ${read.status}.`;
+  };
+  const write=()=>{status.textContent=store.write({serviceId:'demo-service',slotId:null})?'Сохранен публичный выбор.':'Storage недоступен; продолжайте без сохранения.';};
+  const remove=()=>{store.clear();refresh();};
+  save.addEventListener('click',write);clear.addEventListener('click',remove);refresh();
+  section.append(save,clear,status);host.append(section);
+  return ()=>{save.removeEventListener('click',write);clear.removeEventListener('click',remove);section.remove();};
+}

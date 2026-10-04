@@ -10,7 +10,7 @@ Root экспортирует `Maturity`, `VerificationLevel`; aiogram — `Butt
 
 Все текущие группы experimental, request-only/native fragments reference. [Политика зрелости](../../docs/v1-maturity.md) не зависит от проверки: `Recipe.maturity`, `RecipeCatalog.search(maturity=...)`, CLI `recipes --maturity ...`. Старые schema-1 records читаются с conservative default.
 
-Общие компоненты для бота и backend, версия 0.9.2. Пакет пока поставляется из этого репозитория/локального wheel; публикации на PyPI нет. Python >=3.11. Core использует стандартную библиотеку; адаптер aiogram и тестовый транспорт — отдельный extra.
+Общие компоненты для бота и backend, версия 0.10.0. Пакет пока поставляется из этого репозитория/локального wheel; публикации на PyPI нет. Python >=3.11. Core использует стандартную библиотеку; адаптер aiogram и тестовый транспорт — отдельный extra.
 
 [Галерея 298 рецептов](../../gallery/index.html) работает без токенов и сети. В wheel входят `RecipeCatalog`, шаблоны новых проектов и CLI `telegram-patterns recipes/init/doctor`. [Использование и границы](../../docs/developer-tools-review.md).
 
@@ -172,3 +172,5 @@ Auth freshness по умолчанию: 3600 секунд, граница `age <
 Aiogram протестирован на 3.31.0. Кнопочный entitlement передавайте только после проверки возможности для целевого контекста; Premium нажимающего не является доказательством. Условия/согласие перед Stars покупкой, pre-checkout, успешное списание, возврат и выдача доступа реализуются в сервисе. Helper invoice не объявляет покупку оплаченной.
 
 Источники: [BotCommand](https://core.telegram.org/bots/api#botcommand), [Bot API](https://core.telegram.org/bots/api), [Mini App validation](https://core.telegram.org/bots/webapps#validating-data-received-via-the-mini-app), [aiogram Command](https://docs.aiogram.dev/en/latest/dispatcher/filters/command.html), [polling](https://docs.aiogram.dev/en/latest/dispatcher/long_polling.html), [BaseSession](https://docs.aiogram.dev/en/latest/api/session/base.html), [keyboard builder](https://docs.aiogram.dev/en/latest/_modules/aiogram/utils/keyboard.html), [SQLite authorizer в Python 3.13](https://docs.python.org/3.13/library/sqlite3.html#sqlite3.Connection.set_authorizer), [executescript](https://docs.python.org/3.13/library/sqlite3.html#sqlite3.Connection.executescript), [SQLite authorizer](https://www.sqlite.org/c3ref/set_authorizer.html). [Фиксированный initData-вектор upstream](https://github.com/aiogram/aiogram/blob/v3.31.0/tests/test_utils/test_web_app.py) используется как независимая fixture. Перечисленные контракты сверены 3 октября 2026 года; фактически установлен aiogram 3.31.0. Живые Telegram данные/платежи не использовались.
+
+В 0.10.0: `telegram-patterns init --list-components`, повторяемый `--component`, preflight conflicts и точный dry-run. Новые core exports: StarterComponent/StarterConflict/starter_components; компоненты подключаются к созданному app/frontend, существующие проекты не перезаписываются.

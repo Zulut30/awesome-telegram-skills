@@ -1,0 +1,86 @@
+"""Исполнить выбранные маршруты настоящего Dispatcher без токена и сети."""
+import asyncio
+from datetime import datetime, timezone
+import json
+from pathlib import Path
+from aiogram import Bot
+from aiogram.methods import AnswerCallbackQuery, EditMessageText, GetMe, SendMessage
+from aiogram.types import CallbackQuery, Chat, Message, Update, User
+from telegram_patterns.testing import StubSession
+from app import create_app
+
+
+async def main():
+    selected = set(json.loads(Path('.telegram-patterns.json').read_text(encoding='utf-8'))['components'])
+    date = datetime(2026, 10, 4, tzinfo=timezone.utc)
+    actor = User(id=42, first_name='Fixture', is_bot=False)
+    serial = 0
+    sent = []
+    def response(method):
+        reply = Message(message_id=100 + len(session.calls), date=date, chat=Chat(id=method.chat_id, type='private'),
+                        text=method.text, reply_markup=method.reply_markup)
+        sent.append(reply)
+        return reply
+    session = StubSession().respond(SendMessage, response).respond(EditMessageText, response).respond(AnswerCallbackQuery, True)
+    session.respond(GetMe, User(id=100, is_bot=True, first_name='Fixture', username='starter_fixture_bot'))
+    submissions = []
+    if 'text-form' in selected:
+        import starter_form
+        check = starter_form.check_submission
+        async def tracked(submission):
+            submissions.append(submission.actor_id)
+            return await check(submission)
+        starter_form.check_submission = tracked
+    dispatcher, commands = create_app()
+    async with Bot('100:OFFLINE_FIXTURE', session=session) as bot:
+        async def message(text):
+            nonlocal serial
+            serial += 1
+            incoming = Message(message_id=serial, date=date, chat=Chat(id=42, type='private'), from_user=actor, text=text)
+            await dispatcher.feed_update(bot, Update(update_id=serial, message=incoming))
+        async def callback(data, actor_id=42, message=None):
+            nonlocal serial
+            serial += 1
+            incoming = message or Message(message_id=1, date=date, chat=Chat(id=42, type='private'))
+            await dispatcher.feed_update(bot, Update(update_id=serial, callback_query=CallbackQuery(id=f'fixture-{serial}',
+                from_user=actor.model_copy(update={'id':actor_id}), chat_instance='fixture', message=incoming, data=data)))
+        await message('/start')
+        if 'native-keyboards' in selected:
+            await message('/keyboard')
+            assert [len(row) for row in session.calls[-1].reply_markup.inline_keyboard] == [2, 3]
+            await callback('starter-keyboard:1')
+            assert 'проверена' in session.calls[-1].text
+            await callback('starter-keyboard:missing')
+            assert '/keyboard' in session.calls[-1].text
+        if 'paginated-menu' in selected:
+            await message('/catalog'); await callback('starter-page:1')
+            assert isinstance(session.calls[-1], EditMessageText) and session.calls[-1].text == 'Страница 2/3'
+            before = len(session.calls); await callback('starter-page:bad')
+            assert len(session.calls) == before + 1 and isinstance(session.calls[-1], AnswerCallbackQuery)
+            await callback('starter-item:item-1')
+            assert 'Пример 1' in session.calls[-1].text
+        if 'text-form' in selected:
+            await message('/apply'); await message('other')
+            assert 'Python или TypeScript' in session.calls[-1].text
+            await message('Python')
+            review = session.calls[-1].reply_markup.inline_keyboard[0][0].callback_data
+            review_message = sent[-1]
+            before = len(session.calls)
+            await callback(review, actor_id=43, message=review_message)
+            assert isinstance(session.calls[before], AnswerCallbackQuery) and submissions == []
+            await callback(review, message=review_message)
+            assert submissions == [42]
+            assert 'Хранилище заявки не подключено' in session.calls[-1].text
+        if 'update-events' in selected:
+            counts = dispatcher['starter_update_counts']
+            assert counts[('message', 'handled')] > 0 and counts[('message', 'received')] > 0
+        await dispatcher.fsm.close()
+    assert session.closed
+    print(json.dumps({'passed':True,'network':False,'selected':sorted(selected),'commands':[item.command for item in commands],
+                      'methods':[type(call).__name__ for call in session.calls],'session_closed':session.closed,
+                      'checked_submissions':len(submissions)}))
+
+
+if __name__ == '__main__':
+    if not __debug__: raise SystemExit('Offline verification needs assertions enabled')
+    asyncio.run(main())

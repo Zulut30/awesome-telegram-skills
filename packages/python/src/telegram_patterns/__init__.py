@@ -4,6 +4,7 @@ from .sqlite_once import OnceResult, OperationConflict, SQLiteOnce
 from .settings import BotSettings
 from .recipes import Maturity, Recipe, RecipeCatalog, VerificationLevel
 from .starter import StarterPlan, create_starter
+from .starter_components import StarterComponent, StarterConflict, starter_components
 from .extensions import AsyncTransport, OnceStore, ProviderAdapter, RefundProvider
 from .errors import (
     AuthenticationRequired, ConflictFailure, ErrorCategory, ErrorCode, ErrorOutcome, ErrorReport,
@@ -16,6 +17,7 @@ __all__ = [
     "OnceResult", "OperationConflict", "SQLiteOnce",
     "Maturity", "VerificationLevel", "Recipe", "RecipeCatalog",
     "StarterPlan", "create_starter",
+    "StarterComponent", "StarterConflict", "starter_components",
     "AsyncTransport", "OnceStore", "ProviderAdapter", "RefundProvider",
     "AuthenticationRequired", "ConflictFailure", "ErrorCategory", "ErrorCode", "ErrorOutcome", "ErrorReport",
     "InvalidCompletion", "InvalidType", "OperationKind", "PatternError", "PermissionDenied", "RecoveryAction",

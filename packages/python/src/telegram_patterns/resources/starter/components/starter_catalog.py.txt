@@ -1,0 +1,31 @@
+"""Публичный каталог с отдельными namespace для страниц и выбора."""
+from aiogram import Dispatcher, F, Router
+from aiogram.types import BotCommand, CallbackQuery, Message
+from telegram_patterns.aiogram import ActionButton, ActionResult, CommandReply, callback_router, command_router, page_number, paginated_menu
+
+ITEMS = tuple(ActionButton(f'Пример {index}', f'item-{index}') for index in range(1, 8))
+
+
+def catalog(page=0):
+    return paginated_menu(ITEMS, page=page, page_size=3, action_prefix='starter-item:', page_prefix='starter-page:')
+
+
+def configure(dispatcher: Dispatcher) -> list[BotCommand]:
+    first = catalog()
+    dispatcher.include_router(command_router([CommandReply('catalog', 'Каталог', 'Страница 1/3', first.markup)]))
+    router = Router()
+    @router.callback_query(F.data.startswith('starter-page:'))
+    async def navigate(query: CallbackQuery):
+        page = page_number(query.data, prefix='starter-page:')
+        await query.answer()
+        if page is None or not isinstance(query.message, Message): return
+        result = catalog(page)
+        await query.message.edit_text(f'Страница {result.page + 1}/{result.page_count}', reply_markup=result.markup, parse_mode=None)
+    dispatcher.include_router(router)
+    async def execute(action):
+        found = next((item for item in ITEMS if item.key == action.key), None)
+        return ActionResult('accepted' if found else 'stale', f'Выбрано: {found.text}.' if found else 'Откройте /catalog.')
+    async def notify(query: CallbackQuery, result: ActionResult):
+        if isinstance(query.message, Message): await query.message.answer(result.text, parse_mode=None)
+    dispatcher.include_router(callback_router(execute, notify, prefix='starter-item:'))
+    return [BotCommand(command='catalog', description='Публичный каталог')]

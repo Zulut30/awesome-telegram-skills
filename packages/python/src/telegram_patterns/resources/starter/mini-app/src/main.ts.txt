@@ -1,4 +1,5 @@
 import {createAppShell,createTextField,TelegramBridge,type TelegramWebApp,type BridgeSnapshot} from '@awesome-telegram/patterns';
+__COMPONENT_IMPORTS__
 declare global {interface Window {Telegram?: {WebApp?: TelegramWebApp}}}
 const host = document.querySelector<HTMLElement>('#app');
 if (!host) throw new Error('App host missing');
@@ -26,7 +27,9 @@ function applyTheme(snapshot: BridgeSnapshot) {
 const unsubscribe=bridge.subscribe(applyTheme);
 const systemChanged=()=>applyTheme(bridge.snapshot());
 systemTheme.addEventListener('change',systemChanged);bridge.start();
+const componentDisposers: Array<()=>void> = [__COMPONENT_MOUNTS__];
 // pagehide/pageshow handled by bridge; SPA hosts call this before unmount.
 export function disposeApp() {
+  for(const dispose of componentDisposers) dispose();
   unsubscribe();systemTheme.removeEventListener('change',systemChanged);bridge.dispose();shell.dispose();
 }

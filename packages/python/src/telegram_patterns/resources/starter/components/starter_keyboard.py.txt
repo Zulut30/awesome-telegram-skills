@@ -1,0 +1,18 @@
+"""Публичные кнопки; никакого private effect и неподтвержденного emoji ID."""
+from aiogram import Dispatcher
+from aiogram.types import BotCommand, CallbackQuery, InlineKeyboardButton, Message
+from telegram_patterns.aiogram import ActionResult, CommandReply, callback_router, command_router, inline_keyboard
+
+
+def configure(dispatcher: Dispatcher) -> list[BotCommand]:
+    buttons = [InlineKeyboardButton(text=str(index), callback_data=f'starter-keyboard:{index}',
+                                   style='primary' if index % 2 else 'success') for index in range(1, 6)]
+    markup = inline_keyboard([buttons[:2], buttons[2:]])
+    dispatcher.include_router(command_router([CommandReply('keyboard', 'Кнопки 2/3', 'Публичный пример рядов по две и три кнопки.', markup)]))
+    async def execute(action):
+        known = action.key in {'1', '2', '3', '4', '5'}
+        return ActionResult('accepted' if known else 'stale', 'Публичная кнопка проверена.' if known else 'Откройте /keyboard.')
+    async def notify(query: CallbackQuery, result: ActionResult):
+        if isinstance(query.message, Message): await query.message.answer(result.text, parse_mode=None)
+    dispatcher.include_router(callback_router(execute, notify, prefix='starter-keyboard:'))
+    return [BotCommand(command='keyboard', description='Кнопки 2/3')]

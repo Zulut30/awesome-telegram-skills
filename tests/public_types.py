@@ -1,6 +1,7 @@
 """Static consumer of installed wheel: positive and expected negative type cases."""
 from telegram_patterns import Maturity, VerificationLevel, RecipeCatalog, ErrorReport, OperationKind, safe_error_report
 from telegram_patterns import AsyncTransport, OnceStore, ProviderAdapter, RefundProvider, SQLiteOnce
+from telegram_patterns import StarterComponent, StarterPlan, StarterConflict, starter_components, create_starter
 import sqlite3
 from telegram_patterns.aiogram import ActionButton, ButtonStyle, ChatType, UpdatePhase, action_menu
 
@@ -15,6 +16,9 @@ markup = action_menu([ActionButton('Open', 'open', style=style)])
 operation: OperationKind = 'write'
 report: ErrorReport = safe_error_report(TimeoutError(), operation=operation)
 store: OnceStore[sqlite3.Connection] = SQLiteOnce('fixture.sqlite')
+component: StarterComponent = starter_components('bot')[0]
+plan: StarterPlan = create_starter('new-project',library='supplied.whl',components=['text-form'],dry_run=True)
+selected: tuple[str, ...] = plan.components
 
 # warn_unused_ignores ensures these are actually rejected by installed types.
 bad_maturity: Maturity = 'sdk'  # type: ignore[assignment]

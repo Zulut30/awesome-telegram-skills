@@ -5,13 +5,14 @@ from aiogram.types import Message
 from telegram_patterns import BotSettings
 from telegram_patterns.aiogram import (ActionButton, ActionResult, CommandReply, action_menu,
     callback_router, command_menu, command_router, run_bot)
+__COMPONENT_IMPORTS__
 
 
 def create_app():
     menu = action_menu([ActionButton('Помощь', 'help', style='primary')])
     commands = [CommandReply('start', 'Начать', 'Привет! Выберите действие.', menu),
                 CommandReply('help', 'Помощь', 'Это начальный пример. Добавьте логику проекта.')]
-    dispatcher = Dispatcher()
+    dispatcher = __DISPATCHER__
     dispatcher.include_router(command_router(commands))
     async def execute(action):
         # Только публичная подсказка. Частные операции требуют service ACL/idempotence.
@@ -21,7 +22,9 @@ def create_app():
         if isinstance(query.message, Message):
             await query.message.answer(result.text, parse_mode=None)
     dispatcher.include_router(callback_router(execute, notify))
-    return dispatcher, command_menu(commands)
+    component_commands = []
+__COMPONENT_SETUP__
+    return dispatcher, command_menu(commands) + component_commands
 
 
 async def main():

@@ -25,6 +25,7 @@ async def main():
     methods = [type(call).__name__ for call in session.calls]
     assert methods == ['SendMessage', 'AnswerCallbackQuery', 'SendMessage']
     assert session.closed
+    await dispatcher.fsm.close()
     print(json.dumps({'passed': True, 'network': False, 'methods': methods, 'session_closed': session.closed}))
 
 

@@ -1,10 +1,12 @@
-# Поставка локальных пакетов — 0.9.2
+# Поставка локальных пакетов — 0.10.0
 
 Пункт 009. Публичная Python поверхность — core `telegram_patterns`, optional `telegram_patterns.aiogram`/`testing` и console `telegram-patterns`. TypeScript — ESM root с declarations и отдельный `@awesome-telegram/patterns/styles.css`. Пакеты поставляются локально, не опубликованы в PyPI/npm. Интерфейсы и имена см. в [публичных контрактах](public-api.md), [структуре API](api-structure.md) и [адаптерах](extension-model.md).
 
 ## Что входит в артефакт
 
 Wheel содержит Python modules, `py.typed`, bundled recipes JSON и все starter templates, включая `.env.example.txt` и mini-app templates. Это шаблон с искусственным token placeholder, а не конфигурация владельца. В core нет runtime зависимостей; aiogram подключается только extra. Console entry point совпадает с pyproject.scripts. Сейчас поставляется pure Python `py3-none-any`, Python >=3.11; это формат совместимости, а не подтверждение каждого Python/OS из диапазона.
+
+В 0.10.0 wheel содержит 42 файла: 37 точных source/resource файлов и 5 metadata файлов. В resources входят восемь шаблонов выбираемых компонентов; каждый остается доступен установленному генератору без исходного дерева. Tarball содержит 21 файл, включая 9 пар JavaScript/declarations и CSS. Accepted evidence — [012.json](v1-checks/012.json).
 
 Tarball содержит только package.json, README, compiled `dist/*.js` и соответствующие `dist/*.d.ts`, CSS. Каждый текущий source module имеет обе compiled части; private исходный TS, tests, .env, node_modules, старый dist module и дерево репозитория не входят. Export map содержит root `types`/`import` и styles.css; CSS остается declared side effect. CommonJS export сейчас отсутствует.
 
@@ -17,6 +19,8 @@ Dependencies, resource paths, новые export subpaths, compiled maps, license
 Проверяются source/resource bytes, metadata identity/runtime/extra/CLI, полный RECORD со SHA256/size, public TS export map, declarations, CSS bytes и полный список tarball files. Missing/stale/extra files, mismatched versions, duplicate/traversal/backslash/absolute names, links и special members отклоняются. В wheel RECORD формат hashes/size сверялся по [спецификации PyPA](https://packaging.python.org/en/latest/specifications/binary-distribution-format/), checked 2026-10-04; наш verifier использует SHA256 и не является универсальным wheel installer. Npm files/export boundary сверялся с [официальным package.json](https://docs.npmjs.com/cli/v12/configuring-npm/package-json/), checked 2026-10-04; наш allowlist строже общего npm pack behavior.
 
 Проверка состава отдельно от runtime acceptance. Full verifier устанавливает wheel в два свежих venv: core без aiogram и SDK extra. Console/core/resources/starter, все owned root/adapter exports, Python typing consumers и runnable examples работают через installed package. Пример custom adapter копируется за пределы source tree. TypeScript tarball устанавливается в отдельный npm consumer; strict types, direct ESM imports, native compositions и CSS resolution проверяются без workspace package imports. Browser acceptance с installed tarball отдельно выполняется на generated starter. Основной example и gallery проверяются в workspace; их screenshots не выдаются за запуск вне source tree.
+
+Для выбираемых компонентов дополнительно создается новый SDK consumer: generated app устанавливается как пакет, импортируется из site-packages вне каталога проекта и проверяется с семью командами. CLI dry-run сравнивается с фактическими 19 файлами, повторный init сохраняет пользовательские изменения, конфликт отклоняется до записи. Выбранный Mini App проходит отдельные build/typecheck и 76 browser checks из installed tarball; это синтетические native callbacks и offline response fixture, без реального backend или Telegram-клиента.
 
 Temporary consumers запускаются вне repository cwd; PYTHONPATH/PYTHONHOME и BOT_TOKEN удалены из их окружения. Примеры и тестовые drivers могут читаться из репозитория как входные файлы, но их runtime imports должны разрешаться в установленный wheel/tarball; отдельный origin check подтверждает Python site-packages. Это доказывает независимость пакетов от исходного дерева, а не физическое удаление репозитория. Скомпилированные UI fixtures и copied starter позволяют проверить browser delivery отдельно.
 

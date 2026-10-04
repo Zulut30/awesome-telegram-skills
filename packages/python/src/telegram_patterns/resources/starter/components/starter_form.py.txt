@@ -1,0 +1,26 @@
+"""Локальная проверка формы. Service не сохраняет данные и не отправляет заявку."""
+from aiogram import Dispatcher
+from aiogram.types import BotCommand
+from telegram_patterns import PermissionDenied
+from telegram_patterns.aiogram import FormSubmission, InvalidField, TextField, text_form_router
+
+
+def topic(value):
+    result = value.casefold()
+    if result not in {'python', 'typescript'}: raise InvalidField('Введите Python или TypeScript.')
+    return result
+
+
+async def check_submission(submission: FormSubmission) -> str:
+    if submission.actor_id != submission.chat_id or set(submission.values) != {'topic'}:
+        raise PermissionDenied()
+    topic(submission.values['topic'])
+    # Это validation-only пример; реальные side effects требуют durable operation ID/ACL.
+    return 'Ввод проверен локально. Хранилище заявки не подключено.'
+
+
+def configure(dispatcher: Dispatcher) -> list[BotCommand]:
+    dispatcher.include_router(text_form_router([TextField('topic', 'Стек', 'Python или TypeScript?', validate=topic)],
+                                               check_submission, name='starter'))
+    return [BotCommand(command=command, description=description) for command, description in
+            [('apply', 'Проверить ввод'), ('back', 'Предыдущий шаг'), ('cancel', 'Отменить форму')]]

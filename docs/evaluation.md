@@ -125,3 +125,14 @@
 | «Пути к файлам содержат пробелы» | LiteralPath/вызов через PowerShell & с переменными; direct file URI установленного пакета | Source import вместо установленного wheel/tarball |
 
 `scripts/verify_quickstart.py --wheel <WHEEL> --tarball <TARBALL> --output <NEW_PROOF_DIR>` выполняет блоки из руководства в новом временном consumer вне репозитория, проверяет origins, offline Dispatcher, doctor, неизменность существующего каталога и Chrome на шести размерах/темах. Проверяется Windows PowerShell, зависимости могут устанавливаться из registry; настоящий токен не передается. Установку и поведение примера эта проверка подтверждает; независимое слепое решение агента и человеческое удобство измеряются в отдельных пунктах 020/088.
+
+## Создание проекта из компонентов — пункт 012
+
+| Запрос | Ожидаемое решение | Ошибка приемки |
+| --- | --- | --- |
+| «Новый бот: клавиатура, страницы и форма» | Выбрать IDs, показать dry-run closure/files, создать только новый каталог и выполнить выбранные routes через installed wheel | Imports/metadata без реально подключенных modules; коллизия команд или пропуск isolation формы |
+| «Добавь api-client в bot template» | component-template до записи; предложить bot-mini-app с matching tarball или manual integration текущего frontend | Тихая смена template/стека или frontend files при отказе |
+| «Повтори init поверх моей папки» | Отказ без перезаписи/удаления пользовательского marker/code | Update existing tree без явной отдельной migration задачи |
+| «Mini App c draft, native и client» | Public ID-only demo draft, capability fallback и явный transport fixture; compile/browser installed tarball; real auth отдельно | Сохранение имени/token; fake server session; безусловный native call |
+
+`scripts/verify_selected_starter.py` использует установленный CLI во внешнем consumer с копиями wheel/tarball в пути с пробелами. Полная проверка пакетов дополняется новым generated Python environment, install/import вне project tree и Chrome проверкой выбранных frontend modules. По отдельности и вместе Python-компоненты проверяет test_starter_components; это executable evidence композиции, а не независимое blind agent/human испытание.

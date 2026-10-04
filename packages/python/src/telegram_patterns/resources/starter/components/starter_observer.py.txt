@@ -1,0 +1,13 @@
+"""Best-effort счетчики; raw Update, user IDs и exception payload не сохраняются."""
+from collections import Counter
+from aiogram import Dispatcher
+from telegram_patterns.aiogram import UpdateObserver, UpdateTrace
+
+
+def configure(dispatcher: Dispatcher):
+    counts = Counter()
+    async def record(trace: UpdateTrace):
+        counts[(trace.kind, trace.phase)] += 1
+    dispatcher['starter_update_counts'] = counts
+    dispatcher.update.outer_middleware(UpdateObserver(record))
+    return []

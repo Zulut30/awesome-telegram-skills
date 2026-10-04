@@ -86,7 +86,7 @@ def main() -> int:
         smoke.write_text('''import importlib.util, json, sys
 from pathlib import Path
 import telegram_patterns
-from telegram_patterns import BotSettings, validate_init_data, RecipeCatalog, create_starter
+from telegram_patterns import BotSettings, validate_init_data, RecipeCatalog, create_starter, starter_components, StarterComponent
 assert importlib.util.find_spec('aiogram') is None
 assert Path(telegram_patterns.__file__).is_relative_to(Path(sys.argv[1]))
 assert BotSettings.from_env(environ={'BOT_TOKEN':'100:CORE_FIXTURE'}).token=='100:CORE_FIXTURE'
@@ -96,6 +96,7 @@ assert RecipeCatalog().get('two-columns').maturity=='experimental'
 assert RecipeCatalog().get('api.sendPhoto').maturity=='reference'
 assert not RecipeCatalog().search(maturity='stable')
 assert callable(create_starter)
+assert len(starter_components())==15 and isinstance(starter_components()[0],StarterComponent)
 raw='auth_date=1650385342&user=%7B%22id%22%3A42%2C%22first_name%22%3A%22Test%22%7D&query_id=test&hash=46d2ea5e32911ec8d30999b56247654460c0d20949b6277af519e76271182803'
 assert validate_init_data(raw,'42:TEST',now=1650385342).user_id==42
 print(json.dumps({'core_without_sdk':True,'python':sys.version.split()[0]}))
@@ -158,6 +159,17 @@ print(json.dumps({'core_without_sdk':True,'python':sys.version.split()[0]}))
         run('starter-typescript-install', [npm, 'install', '--ignore-scripts', '--no-audit', '--no-fund'], mini_starter)
         run('starter-typecheck', [npm, 'run', 'typecheck'], mini_starter)
         run('starter-build', [npm, 'run', 'build'], mini_starter)
+        selected_root = consumers / 'selected-starters'
+        report['selected_starter'] = json.loads(run('selected-starter-cli', [str(python_in(sdk)), str(ROOT / 'scripts/verify_selected_starter.py'), '--wheel', str(wheel), '--tarball', str(tarball), '--output', str(selected_root)], consumers))
+        selected_project = selected_root / 'all selected'
+        selected_sdk = consumers / 'selected-sdk'
+        run('selected-starter-environment', [uv, 'venv', '--python', sys.executable, str(selected_sdk)])
+        run('selected-starter-python-install', [uv, 'pip', 'install', '--python', str(python_in(selected_sdk)), str(selected_project), 'aiogram==3.31.0'], consumers)
+        run('selected-starter-python-origin', [str(python_in(selected_sdk)), '-c', 'import app,sys,asyncio;from pathlib import Path;assert Path(app.__file__).is_relative_to(Path(sys.prefix));dp,commands=app.create_app();assert len(commands)==7;asyncio.run(dp.fsm.close());print("Installed generated app and all selected modules compose outside the project tree")'], consumers)
+        selected_mini = selected_project / 'mini-app'
+        run('selected-starter-typescript-install', [npm, 'install', '--ignore-scripts', '--no-audit', '--no-fund'], selected_mini)
+        run('selected-starter-typecheck', [npm, 'run', 'typecheck'], selected_mini)
+        run('selected-starter-build', [npm, 'run', 'build'], selected_mini)
         copied_skill = consumers / 'portable-skill/telegram-code-patterns'
         shutil.copytree(ROOT / '.agents/skills/telegram-code-patterns', copied_skill)
         blocks = re.findall(r'```python\r?\n(.*?)```', (copied_skill / 'references/errors.md').read_text(encoding='utf-8'), re.S)
@@ -198,6 +210,8 @@ print(json.dumps({'core_without_sdk':True,'python':sys.version.split()[0]}))
             report['gallery_browser'] = json.loads((output / 'gallery-browser/report.json').read_text(encoding='utf-8'))
             run('starter-browser', [node, str(ROOT / 'tests/starter-browser.mjs'), str(mini_starter)])
             report['starter_browser'] = json.loads((output / 'starter-browser/report.json').read_text(encoding='utf-8'))
+            run('selected-starter-browser', [node, str(ROOT / 'tests/selected-starter-browser.mjs'), str(selected_mini)])
+            report['selected_starter_browser'] = json.loads((output / 'selected-starter-browser/report.json').read_text(encoding='utf-8'))
         report['python_tests'] = int(re.search(r'Ran (\d+) tests?', python_log).group(1))
         report['typescript_tests'] = int(re.search(r'# tests (\d+)', ts_log).group(1))
         report['artifacts'] = [{'name': file.name, 'bytes': file.stat().st_size, 'sha256': hashlib.sha256(file.read_bytes()).hexdigest()} for file in (wheel, tarball)]

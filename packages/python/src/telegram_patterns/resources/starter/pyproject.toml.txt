@@ -9,4 +9,4 @@ requires-python = ">=3.11"
 dependencies = [__LIBRARY_DEPENDENCY__]
 
 [tool.setuptools]
-py-modules = ["app"]
+py-modules = __PROJECT_MODULES__

@@ -43,6 +43,10 @@ def main() -> int:
     portable = (ROOT / '.agents/skills/telegram-code-patterns/references/quickstart.md').read_text(encoding='utf-8')
     if document != portable:
         raise RuntimeError('Portable first-run guide differs from canonical guide')
+    matched = re.search(r'локальной поставкой \*\*(\d+\.\d+\.\d+)\*\*', document)
+    if not matched:
+        raise RuntimeError('Guide must identify its supplied local version')
+    version = matched.group(1)
     found = re.findall(r'<!-- quickstart:([\w-]+) -->\s*```powershell\n(.*?)\n```', document, re.S)
     if tuple(name for name, _ in found) != BLOCKS:
         raise RuntimeError('Missing, reordered or duplicate documented command blocks')
@@ -98,7 +102,7 @@ def main() -> int:
     python = project / '.venv/Scripts/python.exe'
     origins = json.loads(run('installed-origin', [str(python), '-c',
         "import json,sys,telegram_patterns,importlib.metadata as m; print(json.dumps({'prefix':sys.prefix,'module':telegram_patterns.__file__,'version':m.version('awesome-telegram-patterns'),'aiogram':m.version('aiogram')}))"], cwd=project))
-    if origins['version'] != '0.9.2' or not Path(origins['module']).resolve().is_relative_to(project / '.venv'):
+    if origins['version'] != version or not Path(origins['module']).resolve().is_relative_to(project / '.venv'):
         raise RuntimeError('Bot does not use the newly installed local wheel')
     offline = json.loads(run('offline', [str(python), 'offline.py'], cwd=project))
     if not offline['passed'] or offline['network'] or not offline['session_closed'] or offline['methods'] != ['SendMessage', 'AnswerCallbackQuery', 'SendMessage']:
@@ -107,7 +111,7 @@ def main() -> int:
     if not doctor['passed'] or doctor['network']:
         raise RuntimeError('Local doctor did not pass without a token')
     manifest = json.loads((project / 'mini-app/node_modules/@awesome-telegram/patterns/package.json').read_text(encoding='utf-8'))
-    if manifest['version'] != '0.9.2':
+    if manifest['version'] != version:
         raise RuntimeError('Mini App did not install the provided tarball')
     marker = workspace / 'user-owned-marker.txt'
     marker.write_bytes(b'keep this first run')
@@ -145,7 +149,7 @@ def main() -> int:
     browser = json.loads((output / 'browser/report.json').read_text(encoding='utf-8'))
     if not browser['passed']:
         raise RuntimeError('First-run screen did not pass')
-    report = {'passed': True, 'version': '0.9.2', 'consumer': str(consumer), 'guide_blocks': list(BLOCKS),
+    report = {'passed': True, 'version': version, 'consumer': str(consumer), 'guide_blocks': list(BLOCKS),
               'guide_sha256': hashlib.sha256(document.encode()).hexdigest(), 'artifact_hashes': artifact_proof,
               'origins': origins, 'offline': offline, 'doctor_passed': doctor['passed'],
               'existing_workspace_unchanged': True, 'browser': browser, 'telegram_requests': False,

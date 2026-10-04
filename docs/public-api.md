@@ -1,4 +1,4 @@
-# Публичные контракты библиотеки 0.9.0
+# Публичные контракты библиотеки 0.10.0
 
 Пункт 003 плана 1.0. Все API ниже пока experimental; статус их группы указан в `components.json`, правила — в [maturity](v1-maturity.md). Контракт описывает реально реализованные границы, а не будущую полноту сценария. Аргументы с Python/TypeScript type annotations должны соответствовать типам; наличие типа не заменяет runtime validation внешних данных.
 
@@ -18,8 +18,8 @@
 | `Recipe(id,title,summary,category,language,keywords,code,verification,scope,sources,preview_json=None,maturity='experimental')`; `.preview` → dict/None | Прямой DTO constructor не валидирует весь schema; неверный preview JSON дает JSON error | Frozen record; preview каждый раз независимая копия. Code — текст, никогда автоматически не исполняется |
 | `RecipeCatalog(data=None)`; `.library_version`, `.recipes` → str/tuple | `ValueError` для schema/records, иных maturity/evidence и unsafe source URLs; resource/JSON errors | Читает bundled snapshot или явно переданный dict. Не импортирует SDK и не делает HTTP. Legacy records без maturity получают conservative default, не stable |
 | `RecipeCatalog.get(recipe_id)` → Recipe; `.search(query='', category=None, language=None, verification=None, maturity=None, limit=20)` → tuple | Unknown ID → `KeyError`; query/filters/limit → `ValueError` | NFKC/casefold/ё, все слова запроса, ranking и стабильный исходный порядок; query ≤512, limit 1..1000, bool не limit. Не найдено → пустой tuple. Maturity независим от verification |
-| `create_starter(target, *, library, template='bot', typescript=None, dry_run=False)` → `StarterPlan` | `FileExistsError`, validation/metadata/archive/FS errors | Только новый target с существующим обычным parent, source/root/wheel и matching TS tarball. Dry-run не создает target; real run exclusive create без install/exec/network. I/O failure может оставить частичный новый каталог; неизвестные ошибки не удаляют пользовательские файлы |
-| `StarterPlan(target,template,library_version,files,created)` | Frozen DTO | Target Path, относительные запланированные files; created отражает режим, не доказательство установки/запуска. Нельзя повторно применять к существующему каталогу |
+| `create_starter(target, *, library, template='bot', typescript=None, dry_run=False, components=None)` → `StarterPlan` | `FileExistsError`, validation/metadata/archive/FS errors | Только новый target с существующим обычным parent, source/root/wheel и matching TS tarball. Dry-run не создает target; real run exclusive create без install/exec/network. I/O failure может оставить частичный новый каталог; неизвестные ошибки не удаляют пользовательские файлы |
+| `StarterPlan(target,template,library_version,files,created,components=(),requested_components=())` | Frozen DTO | Target Path, относительные запланированные files; created отражает режим, не доказательство установки/запуска. Нельзя повторно применять к существующему каталогу |
 
 ## Python: документированные aiogram adapters
 
@@ -93,3 +93,11 @@ CLI `recipes [query] [--show ID] [--category ...] [--language ...] [--verificati
 В 0.8.0 добавлены ErrorCode/ErrorCategory/ErrorOutcome/RecoveryAction/OperationKind/ErrorReport, нормализаторы и исключения. Все параметры, результаты, наследование, владение ресурсами, recovery и migration существующих ошибок описаны в [контракте ошибок](error-model.md). Собственные ValueError/TypeError preflight сохранены через совместимые подклассы; ошибка feedback после effect не считается input rejection.
 
 В 0.9.0 добавлены OnceStore/AsyncTransport/ProviderAdapter/RefundProvider и KeyValueStorage/StorageFactory/FetchTransport. Полные сигнатуры, результаты, ошибки, I/O и владение ресурсами описаны в [контракте расширения](extension-model.md); прежняя structural assignability storage/fetch сохранена.
+
+## Выбор компонентов starter — 0.10.0
+
+`starter_components(template=None)` возвращает tuple[StarterComponent,...] без SDK, файлов и сети. None — весь закрытый набор; bot/bot-mini-app — совместимые группы. Неверный template дает StarterConflict(template). Frozen StarterComponent содержит id/intent/language/templates, requires/files/commands/callback_prefixes tuple и min_library_version; DTO constructor сам не регистрирует новые blueprint и не проверяет произвольный пользовательский DTO. Runtime registry фиксирован поставкой.
+
+`StarterConflict(reason)` — ValidationFailure subtype для известной причины из закрытого набора; `.reason` и сообщение фиксированы, без raw выбранного input. Неверная причина дает ValidationFailure. ErrorReport остается validation-failed/rejected/fix-input; preflight не делает install/exec/Telegram. CLI возвращает exit 2, reason/detail/supported IDs для такого конфликта.
+
+Новый `components: Sequence[str] | None` у create_starter выбирает дополнительные blueprint к обязательной базе. None/пустой список сохраняют прежние default файлы; IDs повторов нормализуются. Не более 60 строковых IDs (регистр важен); строка целиком, нестроковые IDs, unknown/incompatible группы и слишком старая версия API отклоняются. Resolver проверяет closure и file/command/prefix collision до записи. StarterPlan.components содержит canonical closure, requested_components — canonical explicit selection; первые пять positional fields совместимы. Изменения ресурса App/TS подключают выбранные modules и lifecycle; dry files == фактически созданные files. Side effects, ограничения partial FS failure и сохранения существующих путей прежние. [Композиции и источники](starter-selection.md).

@@ -1,0 +1,25 @@
+import {ApiClient,type FetchTransport} from '@awesome-telegram/patterns';
+// Host предоставляет действительный endpoint/session headers; функция не отправляет запрос.
+export function createClient(baseUrl:string, headers:()=>HeadersInit, transport?:FetchTransport):ApiClient {
+  return new ApiClient({baseUrl,headers,...(transport?{fetch:transport}:{})});
+}
+export function mount(host:HTMLElement, _app:unknown):()=>void {
+  const section=document.createElement('section');section.dataset.component='api-client';
+  const button=document.createElement('button');button.type='button';button.textContent='Проверить fixture API';
+  const status=document.createElement('p');status.setAttribute('role','status');let disposed=false;
+  const fixture:FetchTransport=async()=>new Response(JSON.stringify({message:'Fixture прочитан. Backend auth не подключен.'}),{status:200,headers:{'Content-Type':'application/json'}});
+  const client=createClient(location.origin,()=>({}),fixture);
+  const action=async()=>{
+    button.disabled=true;
+    try {
+      const text=await client.request('/fixture',value=>{
+        if(!value||typeof value!=='object'||typeof (value as Record<string,unknown>).message!=='string')throw new Error('Invalid fixture');
+        return (value as {message:string}).message;
+      });
+      if(!disposed)status.textContent=text;
+    }catch {if(!disposed)status.textContent='Fixture не прошел проверку.';}
+    finally {if(!disposed)button.disabled=false;}
+  };
+  button.addEventListener('click',action);section.append(button,status);host.append(section);
+  return ()=>{disposed=true;button.removeEventListener('click',action);section.remove();};
+}

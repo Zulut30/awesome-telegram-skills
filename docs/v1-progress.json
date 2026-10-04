@@ -203,10 +203,28 @@
       "id": 12,
       "title": "Улучшить создание проектов",
       "requirement": "Добавить выбор нужных компонентов и проверки конфликтов в существующий CLI; dry-run показывает все файлы, повторный запуск не портит пользовательский код.",
-      "status": "pending",
-      "commit_subject": null,
-      "artifacts": [],
-      "evidence": []
+      "status": "done",
+      "commit_subject": "roadmap(012): compose selected starter components and reject conflicts",
+      "artifacts": [
+        "packages/python/src/telegram_patterns/starter_components.py",
+        "packages/python/src/telegram_patterns/starter.py",
+        "packages/python/src/telegram_patterns/cli.py",
+        "packages/python/src/telegram_patterns/resources/starter/components",
+        "packages/python/tests/test_starter_components.py",
+        "scripts/verify_selected_starter.py",
+        "tests/selected-starter-browser.mjs",
+        "docs/starter-selection.md",
+        ".agents/skills/telegram-code-patterns/references/starter-selection.md",
+        "docs/v1-checks/012.json"
+      ],
+      "evidence": [
+        "docs/v1-checks/012.json",
+        "docs/v1-checks/012-selection.json",
+        "docs/v1-checks/012-first-run.json",
+        "52 distribution stages; 103 Python passed + 1 skip; 26 TypeScript; 528 distribution Chrome checks plus 60 first-run checks; 23 root tests and 41 skills",
+        "15 selectable starter groups compose real routes/modules; exact 19-file dry-run, version/path/command/callback preflight and repeat preservation",
+        "Installed selected app origin outside generated tree; seven commands, foreign form callback ACK before service, storage/native fallback and disposal checked; no live/device/payment acceptance claimed"
+      ]
     },
     {
       "id": 13,

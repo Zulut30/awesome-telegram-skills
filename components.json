@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "library_version": "0.9.2",
+  "library_version": "0.10.0",
   "distribution": "local; not published to package registries",
   "packages": {
     "python": {
@@ -34,15 +34,18 @@
     {
       "id": "project-starter",
       "language": "python",
-      "import": "telegram_patterns.StarterPlan, create_starter; telegram-patterns init",
+      "import": "telegram_patterns.StarterComponent, StarterConflict, StarterPlan, starter_components, create_starter; telegram-patterns init",
       "intent": "Создать новый минимальный бот или бот с TypeScript frontend из локальных пакетов",
       "source": "packages/python/src/telegram_patterns/starter.py",
-      "example": "docs/developer-tools-review.md",
+      "example": "docs/starter-selection.md",
       "boundaries": [
         "new target only; existing directories are never adopted",
         "no installation, token, Telegram HTTP or webhook changes",
         "Mini App companion has no backend auth; Python/TypeScript artifacts must match",
-        "I/O failure can leave partial files in the new directory"
+        "I/O failure can leave partial files in the new directory",
+        "closed scaffold registry; other public APIs are integrated explicitly in the project",
+        "selection validates template, artifact/API version, file/command/callback collisions before writing",
+        "all selected modules use public installed API; draft and transport are labeled offline fixtures"
       ],
       "maturity": "experimental",
       "maturity_scope": "All public API symbols in this component; local verification is not a stable 1.0 promise"
