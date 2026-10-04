@@ -12,6 +12,8 @@
 
 [План к версии 1.0 — 100 пунктов](docs/library-roadmap-100.md): стабильный API, удобные компоненты ботов, архитектура и интерфейс Mini Apps, надежность, платежи, реальные устройства и выпуск. [Обоснование приоритетов](docs/library-v1-research.md) отделяет проверенные факты и пользовательские отчеты от предлагаемых решений.
 
+[Сценарии и границы 1.0](docs/v1-scope.md) фиксируют целевые примеры и критерии приемки; [регистр выполнения 100 пунктов](docs/v1-progress.json) отражает подтвержденный прогресс. Каждый завершенный пункт оформляется отдельным коммитом.
+
 [Рецепты 0.4.0](recipes/README.md): две/три кнопки в ряд, цвета и emoji fallback, reply-клавиатуры, ввод, callback/редактирование и Update events. [Готовый бот](examples/python/keyboards_bot.py) и [offline-сценарий](examples/python/offline_keyboards.py) исполняют одну композицию. [Каталог возможностей](catalog/telegram-capabilities.json) охватывает 185 методов / 400 типов Bot API и 99 native функций / 44 события Mini Apps: request construction и mock verification отмечены отдельно от live сценариев.
 
 [Инструменты ботов 0.2.0](docs/bot-tools-review.md): меню кнопок, пагинация, общие описания команд, polling lifecycle и тесты без Telegram. Есть готовый [offline-бот](examples/python/offline_bot.py). Повторить проверку поставки и Mini App: `python scripts/verify_pattern_packages.py` после `npm.cmd ci`.

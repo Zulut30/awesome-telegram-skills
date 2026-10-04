@@ -1,0 +1,913 @@
+{
+  "schema_version": 1,
+  "objective": "Реализовать все 100 пунктов плана к 1.0; после каждого завершенного пункта отдельный коммит",
+  "roadmap": "docs/library-roadmap-100.md",
+  "baseline_commit": "73963b2",
+  "completion_rule": "Только полный предусмотренный результат и соответствующие проверки; pending не означает исключение из scope",
+  "items": [
+    {
+      "id": 1,
+      "title": "Закрепить сценарии версии 1.0",
+      "requirement": "Описать поддерживаемые типы ботов, backend и Mini Apps, основные задачи разработчика и границы ответственности библиотеки; для каждого сценария указать пример и критерий готовности.",
+      "status": "done",
+      "commit_subject": "roadmap(001): define v1 scenarios and acceptance",
+      "artifacts": [
+        "docs/v1-scope.md"
+      ],
+      "evidence": [
+        "scope review: all target scenario groups mapped to examples/current limits and acceptance; local links checked; original 100 requirements preserved"
+      ]
+    },
+    {
+      "id": 2,
+      "title": "Разделить уровни зрелости компонентов",
+      "requirement": "Присвоить каждому API статус `stable`, `experimental` или `reference`; отдельно сохранить уровни `sdk`, `mock`, `browser`, `live`, поскольку зрелость и способ проверки — разные свойства.",
+      "status": "pending",
+      "commit_subject": null,
+      "artifacts": [],
+      "evidence": []
+    },
+    {
+      "id": 3,
+      "title": "Описать публичные контракты",
+      "requirement": "Зафиксировать параметры, результаты, ошибки, побочные эффекты, владение ресурсами и ограничения всех экспортируемых Python/TypeScript API.",
+      "status": "pending",
+      "commit_subject": null,
+      "artifacts": [],
+      "evidence": []
+    },
+    {
+      "id": 4,
+      "title": "Ввести правила совместимости",
+      "requirement": "Определить SemVer, период предупреждения о deprecation, миграции и допустимые изменения; выпуск 1.0 должен иметь явный стабильный контракт.",
+      "status": "pending",
+      "commit_subject": null,
+      "artifacts": [],
+      "evidence": []
+    },
+    {
+      "id": 5,
+      "title": "Опубликовать матрицу поддержки",
+      "requirement": "Указать реально проверяемые версии Python, aiogram, Node.js, TypeScript и Telegram-клиентов; отделить проверенный диапазон от предположительно совместимого.",
+      "status": "pending",
+      "commit_subject": null,
+      "artifacts": [],
+      "evidence": []
+    },
+    {
+      "id": 6,
+      "title": "Согласовать имена и структуру API",
+      "requirement": "Убрать случайные различия между похожими операциями, проверить типы и импорты; каждое переименование до 1.0 сопровождать миграционным примером.",
+      "status": "pending",
+      "commit_subject": null,
+      "artifacts": [],
+      "evidence": []
+    },
+    {
+      "id": 7,
+      "title": "Стандартизировать ошибки",
+      "requirement": "Сделать различимыми validation, permission, unsupported capability, timeout и unknown outcome; потребитель должен понимать, можно ли исправить ввод, повторить чтение или сверить операцию.",
+      "status": "pending",
+      "commit_subject": null,
+      "artifacts": [],
+      "evidence": []
+    },
+    {
+      "id": 8,
+      "title": "Описать модель расширения",
+      "requirement": "Дать протоколы для storage, transport и provider adapters, сохранив минимальное ядро и выбранный стек потребителя; проверять работу пользовательского адаптера.",
+      "status": "pending",
+      "commit_subject": null,
+      "artifacts": [],
+      "evidence": []
+    },
+    {
+      "id": 9,
+      "title": "Завершить контракты поставки",
+      "requirement": "Проверить exports, типы, CSS, ресурсы Python и состав wheel/tarball; установленные пакеты должны работать без дерева исходного репозитория.",
+      "status": "pending",
+      "commit_subject": null,
+      "artifacts": [],
+      "evidence": []
+    },
+    {
+      "id": 10,
+      "title": "Зафиксировать границы Telegram API",
+      "requirement": "Показать различия Bot API, Mini Apps, Business и MTProto, требования к правам и невозможные события; доступ пользовательского аккаунта не включать автоматически в бот-сценарий.",
+      "status": "pending",
+      "commit_subject": null,
+      "artifacts": [],
+      "evidence": []
+    },
+    {
+      "id": 11,
+      "title": "Написать короткий первый запуск",
+      "requirement": "Провести разработчика от установки локального артефакта до работающего offline-бота и экрана Mini App; заранее обозначить шаги, которым требуется Telegram.",
+      "status": "pending",
+      "commit_subject": null,
+      "artifacts": [],
+      "evidence": []
+    },
+    {
+      "id": 12,
+      "title": "Улучшить создание проектов",
+      "requirement": "Добавить выбор нужных компонентов и проверки конфликтов в существующий CLI; dry-run показывает все файлы, повторный запуск не портит пользовательский код.",
+      "status": "pending",
+      "commit_subject": null,
+      "artifacts": [],
+      "evidence": []
+    },
+    {
+      "id": 13,
+      "title": "Сделать диагностику полезной для исправлений",
+      "requirement": "Расширить `doctor` понятными причинами и командами исправления; сетевые проверки, если появятся, выполняются только явно и не раскрывают токены.",
+      "status": "pending",
+      "commit_subject": null,
+      "artifacts": [],
+      "evidence": []
+    },
+    {
+      "id": 14,
+      "title": "Создать справочник API с примерами",
+      "requirement": "Для каждого публичного символа показать импорт, минимальную композицию, ограничения и соответствующий рецепт; проверять примеры через установленный пакет.",
+      "status": "pending",
+      "commit_subject": null,
+      "artifacts": [],
+      "evidence": []
+    },
+    {
+      "id": 15,
+      "title": "Улучшить навигацию галереи",
+      "requirement": "Добавить фильтры по задаче, контексту чата, SDK/версии и зрелости, ссылки на исходники и проверку; поиск должен находить «две кнопки», «назад» и «потерянный ответ».",
+      "status": "pending",
+      "commit_subject": null,
+      "artifacts": [],
+      "evidence": []
+    },
+    {
+      "id": 16,
+      "title": "Добавить проверяемые сценарии запуска рецептов",
+      "requirement": "Показывать необходимые права, зависимости и данные окружения до выполнения; локальный offline-режим работает без секретов и Telegram-запросов.",
+      "status": "pending",
+      "commit_subject": null,
+      "artifacts": [],
+      "evidence": []
+    },
+    {
+      "id": 17,
+      "title": "Подготовить пример сервисного бота",
+      "requirement": "Показать запись, меню, диалог и уведомление с реальным storage, авторизацией действий и восстановлением после рестарта.",
+      "status": "pending",
+      "commit_subject": null,
+      "artifacts": [],
+      "evidence": []
+    },
+    {
+      "id": 18,
+      "title": "Подготовить пример магазина с Mini App",
+      "requirement": "Соединить каталог, корзину, заказ, backend и разрешенный платежный маршрут; цена и доступ определяются сервером.",
+      "status": "pending",
+      "commit_subject": null,
+      "artifacts": [],
+      "evidence": []
+    },
+    {
+      "id": 19,
+      "title": "Подготовить пример группового бота",
+      "requirement": "Показать темы, права, заявки и модерацию; отсутствие нужных прав возвращает объяснение и не запускает действие.",
+      "status": "pending",
+      "commit_subject": null,
+      "artifacts": [],
+      "evidence": []
+    },
+    {
+      "id": 20,
+      "title": "Проверить удобство первого использования",
+      "requirement": "Измерить запуск и интеграцию на задачах людей и ИИ; целевое время и допустимое число затруднений задать после исходного замера.",
+      "status": "pending",
+      "commit_subject": null,
+      "artifacts": [],
+      "evidence": []
+    },
+    {
+      "id": 21,
+      "title": "Расширить конструктор клавиатур",
+      "requirement": "Добавить удобные композиции рядов 2/3/смешанной ширины, разрешенные стили и custom emoji с проверкой доступности; сохранить существующие builders и fallback.",
+      "status": "pending",
+      "commit_subject": null,
+      "artifacts": [],
+      "evidence": []
+    },
+    {
+      "id": 22,
+      "title": "Сделать навигацию по сообщениям",
+      "requirement": "Реализовать экраны, возврат и историю с редактированием одного сообщения; чужая или устаревшая кнопка не изменяет состояние пользователя.",
+      "status": "pending",
+      "commit_subject": null,
+      "artifacts": [],
+      "evidence": []
+    },
+    {
+      "id": 23,
+      "title": "Добавить составные элементы выбора",
+      "requirement": "Реализовать toggle, multiselect, количество, фильтры и подтверждение опасного действия; сервер проверяет разрешенные значения и актуальность выбора.",
+      "status": "pending",
+      "commit_subject": null,
+      "artifacts": [],
+      "evidence": []
+    },
+    {
+      "id": 24,
+      "title": "Добавить календарь и слоты времени",
+      "requirement": "Учесть часовые пояса, переходы времени и недоступные даты; конкурентная запись на один слот проверяется транзакционно на сервере.",
+      "status": "pending",
+      "commit_subject": null,
+      "artifacts": [],
+      "evidence": []
+    },
+    {
+      "id": 25,
+      "title": "Расширить поля диалогов",
+      "requirement": "Поддержать числа, email, телефон, даты, файлы, контакты и геопозицию, возврат и отмену; ForceReply/reply keyboard не заменяют проверку автора и ожидаемого шага.",
+      "status": "pending",
+      "commit_subject": null,
+      "artifacts": [],
+      "evidence": []
+    },
+    {
+      "id": 26,
+      "title": "Сделать безопасный конструктор сообщений",
+      "requirement": "Добавить экранирование HTML/MarkdownV2, entities, UTF-16 offsets, custom emoji и разбиение текста без повреждения форматирования.",
+      "status": "pending",
+      "commit_subject": null,
+      "artifacts": [],
+      "evidence": []
+    },
+    {
+      "id": 27,
+      "title": "Собрать компоненты работы с медиа",
+      "requirement": "Показать фото, документы, альбомы, подписи, замену и скачивание; лимиты, неподдерживаемые форматы и ошибки Telegram имеют проверенные сценарии.",
+      "status": "pending",
+      "commit_subject": null,
+      "artifacts": [],
+      "evidence": []
+    },
+    {
+      "id": 28,
+      "title": "Оформить работу с профилями",
+      "requirement": "Реализовать доступные данные пользователя/бота, фото, описание и локализацию; неизвестное поле не превращается в `false`, права на изменение проверяются.",
+      "status": "pending",
+      "commit_subject": null,
+      "artifacts": [],
+      "evidence": []
+    },
+    {
+      "id": 29,
+      "title": "Добавить inline mode и опросы",
+      "requirement": "Реализовать поиск, пагинацию, кеширование, quiz и доступные события голосования; учитывать ограничения приватных результатов и анонимных опросов.",
+      "status": "pending",
+      "commit_subject": null,
+      "artifacts": [],
+      "evidence": []
+    },
+    {
+      "id": 30,
+      "title": "Расширить групповые и специальные сценарии",
+      "requirement": "Добавлять темы, реакции, заявки, Business, stories, gifts и managed bots по приоритетам; каждый рецепт указывает подтвержденный API-контракт, права и уровень проверки.",
+      "status": "pending",
+      "commit_subject": null,
+      "artifacts": [],
+      "evidence": []
+    },
+    {
+      "id": 31,
+      "title": "Сделать восстановление диалога после рестарта",
+      "requirement": "Дать storage-контракт и пример с хранилищем проекта; состояние шага, срок жизни и версия формы сохраняются согласованно, MemoryStorage остается демонстрационным вариантом.",
+      "status": "pending",
+      "commit_subject": null,
+      "artifacts": [],
+      "evidence": []
+    },
+    {
+      "id": 32,
+      "title": "Защитить действия от конкуренции",
+      "requirement": "Проверять автора, scope, revision и operation ID; два worker или повторное нажатие не создают двойную запись бизнес-операции.",
+      "status": "pending",
+      "commit_subject": null,
+      "artifacts": [],
+      "evidence": []
+    },
+    {
+      "id": 33,
+      "title": "Добавить корректный webhook-приемник",
+      "requirement": "Проверять секрет, размер тела и входной Update, быстро отвечать после надежного приема; пример не меняет webhook/polling настройки незаметно.",
+      "status": "pending",
+      "commit_subject": null,
+      "artifacts": [],
+      "evidence": []
+    },
+    {
+      "id": 34,
+      "title": "Реализовать durable inbox",
+      "requirement": "Сохранять входящее событие до подтверждения приема, обрабатывать повторы и версии payload; рестарт между приемом и обработкой не теряет принятое событие.",
+      "status": "pending",
+      "commit_subject": null,
+      "artifacts": [],
+      "evidence": []
+    },
+    {
+      "id": 35,
+      "title": "Реализовать transactional outbox",
+      "requirement": "Связать запись бизнес-состояния и намерение отправки одной транзакцией; явно описать возможность дубля внешней отправки при потерянном ответе.",
+      "status": "pending",
+      "commit_subject": null,
+      "artifacts": [],
+      "evidence": []
+    },
+    {
+      "id": 36,
+      "title": "Описать безопасные повторные попытки",
+      "requirement": "Разделить чтение, идемпотентную запись и запись с неизвестным исходом; денежные и другие опасные операции сначала сверяются по устойчивому ID.",
+      "status": "pending",
+      "commit_subject": null,
+      "artifacts": [],
+      "evidence": []
+    },
+    {
+      "id": 37,
+      "title": "Сделать управляемые уведомления",
+      "requirement": "Добавить rate limits, обработку flood control, отписку и прекращение отправок недоступному пользователю; очередь не бесконечно повторяет постоянные ошибки.",
+      "status": "pending",
+      "commit_subject": null,
+      "artifacts": [],
+      "evidence": []
+    },
+    {
+      "id": 38,
+      "title": "Добавить фоновые задания и расписание",
+      "requirement": "Поддержать сохраненный статус, дедлайны, отмену и восстановление jobs средствами проекта; перезапуск не создает повторное напоминание без проверки.",
+      "status": "pending",
+      "commit_subject": null,
+      "artifacts": [],
+      "evidence": []
+    },
+    {
+      "id": 39,
+      "title": "Проверить жизненный цикл процессов",
+      "requirement": "Обработать graceful shutdown, закрытие сессий, незавершенные операции и ошибки декодирования Updates; восстановление не должно молча пропускать неизвестные входящие события.",
+      "status": "pending",
+      "commit_subject": null,
+      "artifacts": [],
+      "evidence": []
+    },
+    {
+      "id": 40,
+      "title": "Добавить полезную наблюдаемость",
+      "requirement": "Связать Update, действие, операцию и job безопасными идентификаторами; метрики задержек, повторов и отказов доступны без токенов, initData и полного текста сообщений.",
+      "status": "pending",
+      "commit_subject": null,
+      "artifacts": [],
+      "evidence": []
+    },
+    {
+      "id": 41,
+      "title": "Создать пример с настоящим Python backend",
+      "requirement": "Соединить Mini App, бот и API через общие сервисы и storage; оставить loopback mock пример для обучения и тестов.",
+      "status": "pending",
+      "commit_subject": null,
+      "artifacts": [],
+      "evidence": []
+    },
+    {
+      "id": 42,
+      "title": "Расширить контракт проверки initData",
+      "requirement": "Покрыть поврежденную подпись, срок действия, неверный bot context и разбор полей; пользователь определяется только после серверной проверки, `initDataUnsafe` не авторизует запросы.",
+      "status": "pending",
+      "commit_subject": null,
+      "artifacts": [],
+      "evidence": []
+    },
+    {
+      "id": 43,
+      "title": "Реализовать серверную сессию",
+      "requirement": "Показать выдачу, истечение, ротацию и отзыв, а также подходящие защите транспорта CSRF/CORS/cookie правила; клиент не хранит bot token.",
+      "status": "pending",
+      "commit_subject": null,
+      "artifacts": [],
+      "evidence": []
+    },
+    {
+      "id": 44,
+      "title": "Добавить объектные права",
+      "requirement": "Проверять владельца заказа/черновика и роли на каждом действии; подмена ID или Telegram user ID во frontend не дает доступа к чужим данным.",
+      "status": "pending",
+      "commit_subject": null,
+      "artifacts": [],
+      "evidence": []
+    },
+    {
+      "id": 45,
+      "title": "Согласовать запуск и deep links",
+      "requirement": "Проверить Menu Button, Main Mini App, inline/reply launches и `start_param`; входные параметры валидируются и не дают обходить права.",
+      "status": "pending",
+      "commit_subject": null,
+      "artifacts": [],
+      "evidence": []
+    },
+    {
+      "id": 46,
+      "title": "Оформить архитектуру frontend",
+      "requirement": "Разделить доменные модели, состояние, API, Telegram adapters и UI; подключение к React или другому текущему стеку не требует переписывать доменную логику.",
+      "status": "pending",
+      "commit_subject": null,
+      "artifacts": [],
+      "evidence": []
+    },
+    {
+      "id": 47,
+      "title": "Предотвратить гонки запросов",
+      "requirement": "Поддержать отмену чтений, защиту от устаревших ответов и согласованное обновление кеша; смена пользователя очищает принадлежащие ему данные.",
+      "status": "pending",
+      "commit_subject": null,
+      "artifacts": [],
+      "evidence": []
+    },
+    {
+      "id": 48,
+      "title": "Завершить контракт черновиков",
+      "requirement": "Добавить версии, миграции, TTL, scope пользователя и очищение; обычный draft хранит только разрешенные поля, а не секреты и подтверждение оплаты.",
+      "status": "pending",
+      "commit_subject": null,
+      "artifacts": [],
+      "evidence": []
+    },
+    {
+      "id": 49,
+      "title": "Восстанавливать незавершенные операции",
+      "requirement": "Сохранять operation ID отдельно от draft, показывать pending/unknown и сверять серверный статус после reload; новый заказ не создается автоматически.",
+      "status": "pending",
+      "commit_subject": null,
+      "artifacts": [],
+      "evidence": []
+    },
+    {
+      "id": 50,
+      "title": "Согласовать навигацию и жизненный цикл",
+      "requirement": "Обработать BackButton, браузерную историю, подтверждение закрытия, resume и dispose; повторный mount не удваивает listeners и действия.",
+      "status": "pending",
+      "commit_subject": null,
+      "artifacts": [],
+      "evidence": []
+    },
+    {
+      "id": 51,
+      "title": "Создать систему визуальных токенов",
+      "requirement": "Описать типографику, отступы, цвета, радиусы, плотность и движение; светлая/темная темы имеют согласованные состояния без жестко зашитых цветов.",
+      "status": "pending",
+      "commit_subject": null,
+      "artifacts": [],
+      "evidence": []
+    },
+    {
+      "id": 52,
+      "title": "Расширить базовые UI-компоненты",
+      "requirement": "Добавить кнопки, поля, карточки, списки, бейджи, skeleton, empty/error/success; проверить композицию и взаимодействие состояний.",
+      "status": "pending",
+      "commit_subject": null,
+      "artifacts": [],
+      "evidence": []
+    },
+    {
+      "id": 53,
+      "title": "Добавить навигационные и модальные компоненты",
+      "requirement": "Реализовать tabs, dialogs и bottom sheets с возвратом фокуса, Escape на ПК и понятным закрытием на touch-устройствах.",
+      "status": "pending",
+      "commit_subject": null,
+      "artifacts": [],
+      "evidence": []
+    },
+    {
+      "id": 54,
+      "title": "Сделать формы удобными для исправления",
+      "requirement": "Поддержать labels, input modes, inline validation, сохранение ввода и фокус на ошибке; отказ сервера не стирает заполненную форму.",
+      "status": "pending",
+      "commit_subject": null,
+      "artifacts": [],
+      "evidence": []
+    },
+    {
+      "id": 55,
+      "title": "Подготовить шаблоны основных экранов",
+      "requirement": "Каталог, карточка товара, корзина, профиль, настройки и запись используют общие компоненты и содержат нормальные loading/empty/error состояния.",
+      "status": "pending",
+      "commit_subject": null,
+      "artifacts": [],
+      "evidence": []
+    },
+    {
+      "id": 56,
+      "title": "Проверить адаптивные композиции",
+      "requirement": "Протестировать телефон в обеих ориентациях, планшет, узкое окно и ПК; длинные названия, большие шрифты и масштабирование не ломают действия.",
+      "status": "pending",
+      "commit_subject": null,
+      "artifacts": [],
+      "evidence": []
+    },
+    {
+      "id": 57,
+      "title": "Согласовать safe areas и viewport",
+      "requirement": "Использовать одну документированную систему координат для native insets и CSS; не складывать перекрывающиеся inset значения автоматически.",
+      "status": "pending",
+      "commit_subject": null,
+      "artifacts": [],
+      "evidence": []
+    },
+    {
+      "id": 58,
+      "title": "Обработать экранную клавиатуру",
+      "requirement": "Проверить первый focus, холодный старт, resume, стороннюю клавиатуру и нижние действия; доступ к полю/подтверждению сохраняется, клиентские ограничения отмечены явно.",
+      "status": "pending",
+      "commit_subject": null,
+      "artifacts": [],
+      "evidence": []
+    },
+    {
+      "id": 59,
+      "title": "Довести темы и визуальные состояния",
+      "requirement": "Сохранить приоритет Telegram theme, fallback системной темы вне Telegram, disabled/focus/error и reduced motion; смена темы не теряет ввод.",
+      "status": "pending",
+      "commit_subject": null,
+      "artifacts": [],
+      "evidence": []
+    },
+    {
+      "id": 60,
+      "title": "Пройти проверку доступности",
+      "requirement": "Проверить применимые WCAG 2.2 AA: labels, contrast, focus, keyboard navigation, reflow и screen readers; собственные критерии touch targets указать отдельно от стандарта.",
+      "status": "pending",
+      "commit_subject": null,
+      "artifacts": [],
+      "evidence": []
+    },
+    {
+      "id": 61,
+      "title": "Создать capability matrix Mini Apps",
+      "requirement": "Для каждого native-сценария указать версию, платформу, launch context, разрешения и fallback; наличие имени метода в индексе не означает доступность функции.",
+      "status": "pending",
+      "commit_subject": null,
+      "artifacts": [],
+      "evidence": []
+    },
+    {
+      "id": 62,
+      "title": "Сделать типизированные native-кнопки",
+      "requirement": "Добавить адаптеры MainButton, SecondaryButton и BackButton с проверкой возможностей, состоянием загрузки и уборкой обработчиков.",
+      "status": "pending",
+      "commit_subject": null,
+      "artifacts": [],
+      "evidence": []
+    },
+    {
+      "id": 63,
+      "title": "Оформить popup, QR и открытие invoice",
+      "requirement": "Проверять параметры, отмену, ошибки и жизненный цикл callback; закрытие платежного окна само по себе не подтверждает оплату.",
+      "status": "pending",
+      "commit_subject": null,
+      "artifacts": [],
+      "evidence": []
+    },
+    {
+      "id": 64,
+      "title": "Сделать запросы контакта и геолокации понятными",
+      "requirement": "Запрашивать разрешения в контексте пользовательского действия, поддержать отказ и недоступность; полученные данные не использовать как самостоятельную авторизацию.",
+      "status": "pending",
+      "commit_subject": null,
+      "artifacts": [],
+      "evidence": []
+    },
+    {
+      "id": 65,
+      "title": "Оформить biometrics и native storage",
+      "requirement": "Проверить поддерживаемые операции, отказы и смену аккаунта; клиентская биометрия и значения storage не заменяют серверные права.",
+      "status": "pending",
+      "commit_subject": null,
+      "artifacts": [],
+      "evidence": []
+    },
+    {
+      "id": 66,
+      "title": "Добавить адаптеры sharing, файлов и загрузок",
+      "requirement": "Проверять официальную поддержку и реальные клиентские ограничения, включая camera/file picker; при недоступности давать работоспособный альтернативный путь.",
+      "status": "pending",
+      "commit_subject": null,
+      "artifacts": [],
+      "evidence": []
+    },
+    {
+      "id": 67,
+      "title": "Провести реальную device-приемку",
+      "requirement": "Зафиксировать модели и версии Android/iOS/Desktop, хотя бы один планшет и touch/keyboard сценарии; browser emulation хранить как отдельное доказательство.",
+      "status": "pending",
+      "commit_subject": null,
+      "artifacts": [],
+      "evidence": []
+    },
+    {
+      "id": 68,
+      "title": "Ввести visual regression",
+      "requirement": "Сравнивать основные экраны и состояния в темах и размерах; эталоны и изменения просматривает человек, а нестабильные области объяснены.",
+      "status": "pending",
+      "commit_subject": null,
+      "artifacts": [],
+      "evidence": []
+    },
+    {
+      "id": 69,
+      "title": "Измерять пользовательскую скорость",
+      "requirement": "Снять baseline загрузки, взаимодействий, крупных списков и сетевых путей; бюджеты установить по данным и проверять на целевых устройствах.",
+      "status": "pending",
+      "commit_subject": null,
+      "artifacts": [],
+      "evidence": []
+    },
+    {
+      "id": 70,
+      "title": "Проверить слабые устройства и плохую сеть",
+      "requirement": "Измерить память, утечки listeners, повторные входы, background/resume и потерянные ответы; отказ сети не превращается в бесконечный spinner.",
+      "status": "pending",
+      "commit_subject": null,
+      "artifacts": [],
+      "evidence": []
+    },
+    {
+      "id": 71,
+      "title": "Зафиксировать допустимые платежные маршруты",
+      "requirement": "Для цифровых товаров внутри Telegram использовать Stars; внешние провайдеры подключать только для подходящих разрешенных сценариев по актуальным правилам.",
+      "status": "pending",
+      "commit_subject": null,
+      "artifacts": [],
+      "evidence": []
+    },
+    {
+      "id": 72,
+      "title": "Создать общую модель заказа и оплаты",
+      "requirement": "Определить суммы без float, валюты, состояния и журнал переходов; provider-specific состояния сохраняются и не теряются при нормализации.",
+      "status": "pending",
+      "commit_subject": null,
+      "artifacts": [],
+      "evidence": []
+    },
+    {
+      "id": 73,
+      "title": "Обработать платежные события надежно",
+      "requirement": "Проверять подлинность выбранным способом провайдера, получателя, заказ, сумму и повторы; неизвестный ответ создания счета сверять перед новым запросом.",
+      "status": "pending",
+      "commit_subject": null,
+      "artifacts": [],
+      "evidence": []
+    },
+    {
+      "id": 74,
+      "title": "Реализовать полный Stars-сценарий",
+      "requirement": "Invoice, pre-checkout ответ в установленный срок, `successful_payment`, сохраненный charge ID и возврат; доступ выдается после подтвержденной оплаты.",
+      "status": "pending",
+      "commit_subject": null,
+      "artifacts": [],
+      "evidence": []
+    },
+    {
+      "id": 75,
+      "title": "Сделать адаптер Crypto Pay",
+      "requirement": "Проверить действующий первичный контракт, создание счета, webhook, сверку статуса и дубли; документировать sandbox evidence и ограничения отдельно.",
+      "status": "pending",
+      "commit_subject": null,
+      "artifacts": [],
+      "evidence": []
+    },
+    {
+      "id": 76,
+      "title": "Сделать адаптер Platega",
+      "requirement": "Проверить актуальные callbacks, статусы и доступные операции конкретного контракта; обработать неверную сумму, повтор и потерянный ответ без выдуманной подписи.",
+      "status": "pending",
+      "commit_subject": null,
+      "artifacts": [],
+      "evidence": []
+    },
+    {
+      "id": 77,
+      "title": "Сделать адаптер ЮКассы",
+      "requirement": "Реализовать поддерживаемые магазином создание, capture, уведомления, идемпотентность и возвраты; подтвердить поведение в доступном тестовом контуре.",
+      "status": "pending",
+      "commit_subject": null,
+      "artifacts": [],
+      "evidence": []
+    },
+    {
+      "id": 78,
+      "title": "Добавить сверку и возвраты",
+      "requirement": "Обработать полные/частичные возвраты, pending и разрешенные переходы конкретного провайдера; операторские действия защищены правами и записываются в аудит.",
+      "status": "pending",
+      "commit_subject": null,
+      "artifacts": [],
+      "evidence": []
+    },
+    {
+      "id": 79,
+      "title": "Реализовать оплачиваемый доступ",
+      "requirement": "Проверить выдачу, продление, истечение, отмену и последствия возврата; поддерживаемые типы подписок определяются выбранным платежным маршрутом.",
+      "status": "pending",
+      "commit_subject": null,
+      "artifacts": [],
+      "evidence": []
+    },
+    {
+      "id": 80,
+      "title": "Описать подключение других платежек",
+      "requirement": "Дать контракт адаптера и набор проверок на одном дополнительном востребованном провайдере; новый сервис не становится обязательной зависимостью ядра.",
+      "status": "pending",
+      "commit_subject": null,
+      "artifacts": [],
+      "evidence": []
+    },
+    {
+      "id": 81,
+      "title": "Запускать матрицу совместимости",
+      "requirement": "Проверять заявленные версии Python/SDK/Node/TypeScript и целевые Windows/Linux среды; неподдерживаемая комбинация имеет понятное сообщение.",
+      "status": "pending",
+      "commit_subject": null,
+      "artifacts": [],
+      "evidence": []
+    },
+    {
+      "id": 82,
+      "title": "Проверять важные инварианты тестами",
+      "requirement": "Покрыть права, суммы, переходы, UTF-16, время, concurrency и чистоту cleanup; property/fuzz проверки применять к местам, где они находят реальные ошибки.",
+      "status": "pending",
+      "commit_subject": null,
+      "artifacts": [],
+      "evidence": []
+    },
+    {
+      "id": 83,
+      "title": "Ввести интеграционные проверки отказов",
+      "requirement": "Проверить повторы, таймауты, потерянные ответы, падение процесса и восстановление storage; доказать сохранение бизнес-инвариантов.",
+      "status": "pending",
+      "commit_subject": null,
+      "artifacts": [],
+      "evidence": []
+    },
+    {
+      "id": 84,
+      "title": "Проверять публичный API потребителем",
+      "requirement": "Контролировать imports, typing, exports и обратную совместимость; пример потребителя использует публичные символы, без доступа к приватным исходникам.",
+      "status": "pending",
+      "commit_subject": null,
+      "artifacts": [],
+      "evidence": []
+    },
+    {
+      "id": 85,
+      "title": "Проверять точные артефакты выпуска",
+      "requirement": "Установить wheel/tarball в чистые consumer-проекты и выполнить сценарии; привязать результаты к версиям и SHA-256 этих файлов.",
+      "status": "pending",
+      "commit_subject": null,
+      "artifacts": [],
+      "evidence": []
+    },
+    {
+      "id": 86,
+      "title": "Сделать evidence рецептов проверяемым",
+      "requirement": "Для каждого stable рецепта хранить версию, команду, результат и ограничения; устаревшая проверка не маскируется свежей датой источника.",
+      "status": "pending",
+      "commit_subject": null,
+      "artifacts": [],
+      "evidence": []
+    },
+    {
+      "id": 87,
+      "title": "Провести негативные security-сценарии",
+      "requirement": "Проверить чужие IDs, forged initData/callbacks, повторные webhooks, опасные файлы и утечки секретов; внешние сообщения и docs не становятся инструкциями ИИ.",
+      "status": "pending",
+      "commit_subject": null,
+      "artifacts": [],
+      "evidence": []
+    },
+    {
+      "id": 88,
+      "title": "Проверить решения всех 41 навыка",
+      "requirement": "Выполнить слепые задачи выбора и интеграции через публичный API, перенос одного навыка и его references; измерять правильность решения, а не только YAML/ссылки.",
+      "status": "pending",
+      "commit_subject": null,
+      "artifacts": [],
+      "evidence": []
+    },
+    {
+      "id": 89,
+      "title": "Провести usability-проверки",
+      "requirement": "Набрать 5–8 разработчиков разных уровней для первого запуска, поиска рецепта и подключения; проблемы фиксировать по наблюдениям, отдельно от пожеланий и гипотез.",
+      "status": "pending",
+      "commit_subject": null,
+      "artifacts": [],
+      "evidence": []
+    },
+    {
+      "id": 90,
+      "title": "Провести ограниченные production-пилоты",
+      "requirement": "Проверить хотя бы бот и Mini App в реальных проектах с согласованными правами/данными; заранее задать период наблюдения и критерии отказов, восстановления и поддержки.",
+      "status": "pending",
+      "commit_subject": null,
+      "artifacts": [],
+      "evidence": []
+    },
+    {
+      "id": 91,
+      "title": "Организовать репозиторий и CI",
+      "requirement": "Добавить историю изменений и pipeline: навыки, unit/integration, сборка, consumer и browser checks; обязательные проверки нельзя обходить молчаливым `--skip-browser`.",
+      "status": "pending",
+      "commit_subject": null,
+      "artifacts": [],
+      "evidence": []
+    },
+    {
+      "id": 92,
+      "title": "Наладить обновление зависимостей и API",
+      "requirement": "Отслеживать официальные изменения Telegram/SDK, воспроизводить несовместимости и обновлять fixtures; дата проверки относится только к проверенным частям.",
+      "status": "pending",
+      "commit_subject": null,
+      "artifacts": [],
+      "evidence": []
+    },
+    {
+      "id": 93,
+      "title": "Подготовить лицензирование",
+      "requirement": "Собрать авторство, лицензии зависимостей/примеров, правила использования и распространения; выбор лицензии и публикации оставить явным решением владельца проекта.",
+      "status": "pending",
+      "commit_subject": null,
+      "artifacts": [],
+      "evidence": []
+    },
+    {
+      "id": 94,
+      "title": "Создать правила сообщения об уязвимостях",
+      "requirement": "Добавить SECURITY.md, поддерживаемые версии, приватный канал и порядок исправления; проверить, что опубликованный контакт доступен.",
+      "status": "pending",
+      "commit_subject": null,
+      "artifacts": [],
+      "evidence": []
+    },
+    {
+      "id": 95,
+      "title": "Защитить выпуск артефактов",
+      "requirement": "Подготовить dependency inventory/SBOM, checksums и provenance, ограничить права CI; при публикации использовать поддерживаемый registry trusted publishing вместо долгоживущих токенов.",
+      "status": "pending",
+      "commit_subject": null,
+      "artifacts": [],
+      "evidence": []
+    },
+    {
+      "id": 96,
+      "title": "Подготовить эксплуатационные инструкции",
+      "requirement": "Дать варианты запуска на целевой инфраструктуре, секреты, backups, restore, monitoring и rollback; команды проверить в тестовой среде без обязательного нового сервиса.",
+      "status": "pending",
+      "commit_subject": null,
+      "artifacts": [],
+      "evidence": []
+    },
+    {
+      "id": 97,
+      "title": "Определить поддержку после релиза",
+      "requirement": "Указать каналы ошибок, требования к воспроизводимому отчету, поддерживаемые ветки и сроки исправлений по серьезности; не обещать SLA без ресурсов.",
+      "status": "pending",
+      "commit_subject": null,
+      "artifacts": [],
+      "evidence": []
+    },
+    {
+      "id": 98,
+      "title": "Подготовить миграцию с 0.5.0",
+      "requirement": "Синхронизировать changelog, каталог, exports, инструкции ИИ и примеры; каждое несовместимое изменение имеет работающий before/after путь.",
+      "status": "pending",
+      "commit_subject": null,
+      "artifacts": [],
+      "evidence": []
+    },
+    {
+      "id": 99,
+      "title": "Выпустить и проверить 1.0 release candidate",
+      "requirement": "Заморозить стабильный API, пройти обязательную матрицу и пилоты; закрыть известные критические/высокие дефекты в stable scope, остальные явно классифицировать.",
+      "status": "pending",
+      "commit_subject": null,
+      "artifacts": [],
+      "evidence": []
+    },
+    {
+      "id": 100,
+      "title": "Принять и выпустить 1.0",
+      "requirement": "Сопоставить критерии с доказательствами, зафиксировать версии/артефакты и план поддержки; публикация в PyPI/npm или внешнем репозитории выполняется после отдельного решения владельца.",
+      "status": "pending",
+      "commit_subject": null,
+      "artifacts": [],
+      "evidence": []
+    }
+  ]
+}
