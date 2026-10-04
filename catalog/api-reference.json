@@ -1,0 +1,115 @@
+{
+  "schema_version": 1,
+  "library_version": "0.11.1",
+  "scope": "Public library exports; ref.* recipes belong to the API reference, not the Telegram method snapshot",
+  "groups": [
+    {
+      "id": "core_identity", "section": "core", "title": "Конфигурация и проверенный запуск",
+      "example": "examples/api-reference/python/core_identity.py",
+      "limits": "HMAC fixture без Telegram; token только на backend, raw initData проверяется до session/ACL. BotSettings repr скрывает token, сериализация не становится безопасной. VerifiedLaunch — результат проверки, ручной DTO не подтверждает identity.",
+      "api": {"telegram_patterns": {"BotSettings": "Конфигурация из явного environ без dotenv", "InvalidInitData": "Контролируемый отказ подписи/кодировки/freshness", "VerifiedLaunch": "Подписанные user_id/auth_date/user", "validate_init_data": "HMAC и freshness raw initData"}}
+    },
+    {
+      "id": "core_storage", "section": "core", "title": "SQLite effect и повтор",
+      "example": "examples/api-reference/python/core_storage.py",
+      "limits": "Scope/ACL определяет сервер до effect и replay. Atomicity касается только переданного SQLite connection: без HTTP, другого storage, commit/rollback. Файл/миграции/retention принадлежат host.",
+      "api": {"telegram_patterns": {"OnceResult": "Результат эффекта с replay flag", "OperationConflict": "Тот же scoped key с другим payload", "SQLiteOnce": "Инициализация и атомарный run в файле SQLite", "OnceStore": "Структурный контракт initialize/run storage проекта"}}
+    },
+    {
+      "id": "core_errors", "section": "core", "title": "Безопасные ошибки и восстановление",
+      "example": "examples/api-reference/python/core_errors.py",
+      "limits": "Передавайте реальный operation kind. Report не копирует developer text и не делает retry. Timeout/cancel/невалидный feedback после возможной записи оставляют unknown outcome и требуют сверки той же операции; локальный отказ должен произойти до эффекта.",
+      "api": {"telegram_patterns": {"PatternError": "Базовое исключение с безопасным report", "ValidationFailure": "Известный локальный отказ validation", "InvalidType": "Локальный type отказ, совместимый с TypeError", "AuthenticationRequired": "Известный отказ до эффекта из-за отсутствия auth", "PermissionDenied": "Известный отказ до эффекта по правам", "UnsupportedCapability": "Отсутствующая capability и fallback", "ConflictFailure": "Локальный конфликт операции", "TimeoutFailure": "Ожидание истекло, outcome зависит от операции", "TransportFailure": "Ошибка transport без обещания отмены записи", "UnknownOutcome": "Эффект пока не подтвержден", "InvalidCompletion": "Невалидный feedback после возможного эффекта", "safe_error_report": "Классификация без raw exception payload", "ErrorReport": "Неизменяемые code/category/outcome/recovery/message", "ErrorCategory": "Literal категории ошибки", "ErrorCode": "Literal известных кодов", "ErrorOutcome": "Literal rejected/read-failed/unknown", "RecoveryAction": "Literal следующего действия", "OperationKind": "Literal read/write для реальной операции"}}
+    },
+    {
+      "id": "core_extensions", "section": "core", "title": "Transport и provider интерфейсы проекта",
+      "example": "examples/api-reference/python/core_extensions.py",
+      "limits": "Структурные Protocol не создают ресурсы и не обещают provider idempotency. Fixture отвергает все события; реальный adapter проверяет официальный wire/auth contract. Signed event не означает оплату/доступ, refund — отдельная операция.",
+      "api": {"telegram_patterns": {"AsyncTransport": "Типизированный async send транспорта host", "ProviderAdapter": "Контракт create/get/verify_event", "RefundProvider": "Необязательный отдельный refund контракт"}}
+    },
+    {
+      "id": "core_recipes", "section": "core", "title": "Поиск в поставляемом cookbook",
+      "example": "examples/api-reference/python/core_recipes.py",
+      "limits": "Чтение не исполняет recipe code. Maturity отдельно от verification; SDK/mock не доказывают live/device. Preview — независимая копия. Этот пример ищет существующий cookbook recipe two-columns; ref.* — имена справочника API.",
+      "api": {"telegram_patterns": {"Maturity": "Literal stable/experimental/reference", "VerificationLevel": "Literal sdk/mock/browser/live/not_run", "Recipe": "Неизменяемая запись и копия preview", "RecipeCatalog": "Версия, recipes, get/search с фильтрами"}}
+    },
+    {
+      "id": "core_starter", "section": "core", "title": "Новый проект из предоставленного wheel",
+      "example": "examples/api-reference/python/core_starter.py",
+      "limits": "Дополнительный аргумент — путь к предоставленному wheel, не имя в registry. Только новый target и существующий parent; dry-run без записи, repeat сохраняет код. Closed starter registry не заменяет host backend/auth; I/O failure может оставить partial new files.",
+      "api": {"telegram_patterns": {"StarterPlan": "Target/version/files/created и выбранные группы", "StarterComponent": "Описание группы и зависимости/minimum API", "StarterConflict": "Безопасная известная preflight причина", "starter_components": "Каталог closed starter групп для шаблона", "create_starter": "Dry-run и исключительное создание нового проекта"}}
+    },
+    {
+      "id": "core_doctor", "section": "core", "title": "Read-only diagnosis в SDK-free окружении",
+      "example": "examples/api-reference/python/core_doctor.py",
+      "limits": "Пример намеренно запускается без aiogram: readiness fail содержит команды следующего явного действия. Doctor не читает .env/не отправляет token, не выполняет предлагаемые repairs и не подтверждает live identity. SDK probe установленного extra изолирован от проекта.",
+      "api": {"telegram_patterns.cli": {"doctor": "Локальные checks с reason/remediation и exit readiness"}}
+    },
+    {
+      "id": "bot_keyboards", "section": "bot", "title": "Клавиатуры, ввод и страницы",
+      "example": "examples/api-reference/python/bot_keyboards.py",
+      "limits": "Aiogram extra; callbacks до 64 bytes, keys bounded ASCII, prefixes навигации и action различимы. Colors только primary/success/danger, emoji entitlement отдельный. Контекст chat/business/invoice передает host. Reply не вызывает callback_query; appearance в Telegram не проверяется.",
+      "api": {"telegram_patterns.aiogram": {"ActionButton": "Label/key/style/custom emoji descriptor", "ButtonStyle": "Literal Telegram button style", "MenuPage": "Markup и page/page_count/total_items", "action_keyboard": "Одна callback-кнопка", "action_menu": "Равномерные строки по 2/3 и другое число", "paginated_menu": "Локальная страница с отдельной навигацией", "page_number": "Безопасный разбор callback страницы", "ChatType": "Literal настоящего контекста чата", "inline_keyboard": "Явные строки native inline-кнопок", "reply_keyboard": "Reply rows/input placeholder", "input_prompt": "ForceReply для ввода", "remove_keyboard": "Снять reply keyboard"}}
+    },
+    {
+      "id": "bot_actions", "section": "bot", "title": "Команды и callback композиция",
+      "example": "examples/api-reference/python/bot_actions.py",
+      "limits": "Добавляйте Router в существующий Dispatcher. Command menu устанавливается явно с выбранным scope. ACK убирает spinner, service проверяет actor/object/revision/idempotency. Notify выбирает безопасный доступный канал; пример использует только synthetic private message.",
+      "api": {"telegram_patterns.aiogram": {"Action": "Actor/key для авторизованного сервиса", "ActionResult": "Статус и публичный plain ответ сервиса", "callback_router": "ACK перед execute и notify", "start_router": "Небольшой /start без состояния", "CommandReply": "Command/description/plain text/keyboard", "command_menu": "Native BotCommand list без регистрации", "command_router": "Reply handlers с SDK mention filtering"}, "telegram_patterns.testing": {"Responder": "Typed fixture value или sync/async callable", "StubSession": "Явные responses, calls, close без HTTP fallback"}}
+    },
+    {
+      "id": "bot_runner", "section": "bot", "title": "Polling lifecycle и Stars request",
+      "example": "examples/api-reference/python/bot_runner.py",
+      "limits": "SDK polling через StubSession завершается после первого запроса; ни реального token, ни удаления webhook. Live требует отдельного процесса и проверки consumer/webhook. Runner закрывает session после успешного preflight. Stars request не создает оплату, заказ или entitlement; consent и server ledger у host.",
+      "api": {"telegram_patterns.aiogram": {"run_bot": "Owned polling/task/session lifecycle", "stars_invoice": "Native XTR CreateInvoiceLink request"}}
+    },
+    {
+      "id": "bot_form", "section": "bot", "title": "Ввод, review и owner-bound submit",
+      "example": "examples/api-reference/python/bot_form.py",
+      "limits": "Private chat, 1..10 уникальных TextField, включенный actor-scoped FSM isolation. Max_length в UTF-16; validator synchronous. MemoryStorage и list — fixture, не durable заявка. Service проверяет ACL и эффект/replay; unknown outcome сохраняет operation identity до сверки.",
+      "api": {"telegram_patterns.aiogram": {"TextField": "Конфигурация и нормализация/validation read", "InvalidField": "Bounded plain ошибка пользователя без секретов", "FormSubmission": "Server-derived identity и copied values", "text_form_router": "Многошаговый FSM с back/cancel/review"}}
+    },
+    {
+      "id": "bot_events", "section": "bot", "title": "Metadata событий и фаз",
+      "example": "examples/api-reference/python/bot_events.py",
+      "limits": "Observer регистрируется на dispatcher.update. IDs opt-in; без текста/contacts/initData/raw exception. Best-effort не durable inbox/audit. Router subscription/rights/allowed_updates и ACK/auth остаются у host, Bot API не читает историю user account.",
+      "api": {"telegram_patterns.aiogram": {"UpdatePhase": "Literal фаз received/handled/unhandled/failed/cancelled", "UpdateTrace": "Неизменяемая metadata события", "UpdateObserver": "Emit и outer middleware наблюдения", "update_kinds": "Присутствующие native Update kinds", "event_router": "Handlers по точным SDK kind names"}}
+    },
+    {
+      "id": "bot_methods", "section": "bot", "title": "SDK catalog и request construction",
+      "example": "examples/api-reference/python/bot_methods.py",
+      "limits": "Catalog отражает установленный SDK, не server rights. Builder отклоняет неизвестные top-level fields; nested validation принадлежит SDK. InputFile не читается автоматически. HTTP/send/лимиты/доступ и provider workflow не появляются от construction.",
+      "api": {"telegram_patterns.aiogram": {"MethodSpec": "Name/class/fields/required/official URL", "InvalidAPIRequest": "Контролируемый отказ без SDK payload dump", "method_catalog": "Текущие SDK request methods", "build_request": "Native request без HTTP"}}
+    },
+    {
+      "id": "bridge", "section": "typescript", "title": "Theme bridge, shell и поле ввода",
+      "example": "examples/api-reference/typescript/bridge.ts",
+      "limits": "ESM + DOM + явно подключенный styles.css. Native объект synthetic; snapshot не auth. Host разрешает coordinates insets и владеет состоянием/navigation/focus. Shell/field используют textContent; dispose удаляет только own UI/subscriptions. Viewport не physical Telegram QA.",
+      "api": {"@awesome-telegram/patterns": {"TelegramBridge": "Snapshot/subscribe/start/dispose lifecycle", "TelegramWebApp": "Readonly subset SDK для bridge", "Insets": "Readonly top/right/bottom/left coordinates", "BridgeSnapshot": "Неизменяемая theme/geometry metadata", "createAppShell": "Owned content/summary/actions composition", "AppShell": "Typed shell slots/theme/insets/dispose", "createTextField": "Связанные label/hint/error без HTML injection", "TextFieldControl": "Typed root/input/setError"}}
+    },
+    {
+      "id": "client", "section": "typescript", "title": "HTTP client с decoder и unknown write",
+      "example": "examples/api-reference/typescript/client.ts",
+      "limits": "Response/fetch synthetic, реального backend нет. Trusted baseUrl и same-origin paths; runtime decode обязательно. Headers/session/CSRF/ACL/idempotency у host. Один invocation транспорта не исключает wire replay браузером. Unknown POST сверяется с тем же ключом без автоматического retry.",
+      "api": {"@awesome-telegram/patterns": {"ApiClient": "Один request с runtime decoder", "ApiError": "Kind/status/outcome без response body", "FailureKind": "Literal HTTP/network/timeout/abort/response failure", "ClientOptions": "Base/headers/owned fetch transport", "RequestOptions": "Method/body/signal/timeout options", "FetchTransport": "Typed Fetch-compatible adapter host"}}
+    },
+    {
+      "id": "draft", "section": "typescript", "title": "Выбор с TTL и storage fallback",
+      "example": "examples/api-reference/typescript/draft.ts",
+      "limits": "Только serviceId/slotId, без auth/contacts/price/pending operation. Account scope должен поступать от server host; fixture scope не авторизация. Store не меняет scope автоматически при account switch. Storage sync; async CloudStorage требует другого adapter, failure дает unavailable/false.",
+      "api": {"@awesome-telegram/patterns": {"SelectionDraftStore": "Scoped read/write/clear и key", "SelectionDraft": "Readonly nullable identifiers", "DraftRead": "Discriminated status с value только restored", "DraftOptions": "Namespace/scope/TTL/clock", "KeyValueStorage": "Sync storage contract", "StorageFactory": "Lazy owned storage factory"}}
+    },
+    {
+      "id": "native", "section": "typescript", "title": "Native availability и listener cleanup",
+      "example": "examples/api-reference/typescript/native.ts",
+      "limits": "Каталоги и facade не являются полной parameter schema. Presence/platform/version не consent, launch, auth или успешный платеж. Callback и receiver сохраняются; host выбирает arguments/permissions. Listener/dispose подавляют late callbacks, native cleanup failure может требовать повторного dispose.",
+      "api": {"@awesome-telegram/patterns": {"TelegramNativeAPI": "Supports/call/listen/dispose с gates", "UnsupportedTelegramCapability": "Контролируемое отсутствие/disposed native capability", "TELEGRAM_NATIVE_METHODS": "Readonly path/minVersion/source catalog", "TELEGRAM_NATIVE_EVENTS": "Readonly имена native events", "TELEGRAM_NATIVE_EVENT_DETAILS": "Readonly event version/source metadata", "TelegramNativeMethod": "Literal известных native paths", "TelegramNativeEvent": "Literal известных event names"}}
+    },
+    {
+      "id": "errors", "section": "typescript", "title": "Safe errors и typed recovery",
+      "example": "examples/api-reference/typescript/errors.ts",
+      "limits": "Developer messages не сериализуются в safe report. Operation kind отражает реальное действие; unknown write требует reconcile, classification не отменяет effect. InvalidType сохраняет TypeError catch, а не наследование PatternError. Type aliases не валидируют произвольный JSON автоматически.",
+      "api": {"@awesome-telegram/patterns": {"PatternError": "Base code/outcome с report", "ValidationFailure": "Известная local validation rejection", "InvalidType": "TypeError-compatible known local rejection", "AuthenticationRequired": "Известный auth refusal", "PermissionDenied": "Известный permission refusal", "UnsupportedCapability": "Известная unavailable capability", "UnknownOutcome": "Неподтвержденный effect", "safeErrorReport": "Allowlisted error metadata без raw exception", "ErrorReport": "Readonly code/category/outcome/recovery/message", "ErrorCategory": "Literal категории ошибки", "ErrorCode": "Literal известных кодов", "ErrorOutcome": "Literal outcome", "OperationKind": "Literal read/write", "RecoveryAction": "Literal следующего действия"}}
+    }
+  ]
+}

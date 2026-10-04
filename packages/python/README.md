@@ -1,5 +1,7 @@
 # awesome-telegram-patterns — Python
 
+Справочник публичных imports и полные примеры: [Python core](../../docs/api-reference-core.md), [bot и test transport](../../docs/api-reference-bot.md), [индекс API](../../docs/api-reference.md). Эти ссылки доступны в source checkout; при передаче wheel отдельно приложите portable references навыка telegram-code-patterns. Пакет не зависит от документации при выполнении.
+
 [Поставка](../../docs/distribution-contract.md): архивы и установленные consumer-проекты проверяются отдельно; прежние публичные API сохранены.
 
 [Адаптеры проекта](../../docs/extension-model.md): публичные structural interfaces для storage/transport/provider, без новой runtime dependency и смены стека.

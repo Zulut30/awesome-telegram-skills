@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "library_version": "0.11.0",
+  "library_version": "0.11.1",
   "distribution": "local; not published to package registries",
   "packages": {
     "python": {
@@ -436,5 +436,6 @@
       "maturity_scope": "All public API symbols in this component; local verification is not a stable 1.0 promise"
     }
   ],
-  "maturity_policy": "docs/v1-maturity.md"
+  "maturity_policy": "docs/v1-maturity.md",
+  "api_reference": "docs/api-reference.md"
 }

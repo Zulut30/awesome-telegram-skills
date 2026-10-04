@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "library_version": "0.11.0",
+  "library_version": "0.11.1",
   "checked_date": "2026-10-04",
   "maturity": "experimental",
   "declared": {
@@ -20,7 +20,7 @@
     "os": "Windows 11",
     "arch": "AMD64",
     "browser": "154.0.8037.97",
-    "browser_checks": 528,
+    "browser_checks": 564,
     "mypy": "2.4.0",
     "quickstart_browser_checks": 60,
     "selected_starter_browser_checks": 76,
@@ -29,19 +29,24 @@
     "typescript_passed": 26,
     "doctor_consumer_cases": 12,
     "explicit_doctor_repair_commands": 5,
-    "python_source_typing_files": 19
+    "python_source_typing_files": 19,
+    "api_reference_symbols": 116,
+    "api_reference_python_cases": 13,
+    "api_reference_typescript_case_groups": 5,
+    "api_reference_browser_checks": 36,
+    "api_reference_ts_type_exports": 22
   },
-  "evidence": "docs/v1-checks/013.json",
+  "evidence": "docs/v1-checks/014.json",
   "artifacts": [
     {
-      "name": "awesome_telegram_patterns-0.11.0-py3-none-any.whl",
-      "bytes": 109778,
-      "sha256": "c9d2e88b140532b0cb7f6a3a6c8694133f01a0d71568f1b92f284778cea4f795"
+      "name": "awesome_telegram_patterns-0.11.1-py3-none-any.whl",
+      "bytes": 109937,
+      "sha256": "03d0622c7d4094463684c89ac832ca3266dc4e71ddf1486e421d3a386f9d5c01"
     },
     {
-      "name": "awesome-telegram-patterns-0.11.0.tgz",
-      "bytes": 19354,
-      "sha256": "5b2f9927c962e7213e661d549cc08044275c2b19ebe37146650a2ba48b4ffe01"
+      "name": "awesome-telegram-patterns-0.11.1.tgz",
+      "bytes": 19514,
+      "sha256": "973a28ab1f97cd684a4cd534ec6504683e0da4253fc43c02a2033c6cd3c68391"
     }
   ],
   "unverified": [

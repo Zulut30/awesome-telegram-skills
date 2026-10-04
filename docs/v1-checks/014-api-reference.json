@@ -1,0 +1,413 @@
+{
+  "passed": true,
+  "version": "0.11.1",
+  "symbols": 116,
+  "python_symbols": 75,
+  "typescript_symbols": 41,
+  "python_cases": [
+    {
+      "passed": true,
+      "case": "core_identity",
+      "network": false
+    },
+    {
+      "passed": true,
+      "case": "core_storage",
+      "network": false
+    },
+    {
+      "passed": true,
+      "case": "core_errors",
+      "network": false
+    },
+    {
+      "passed": true,
+      "case": "core_extensions",
+      "network": false
+    },
+    {
+      "passed": true,
+      "case": "core_recipes",
+      "network": false
+    },
+    {
+      "passed": true,
+      "case": "core_starter",
+      "network": false
+    },
+    {
+      "passed": true,
+      "case": "core_doctor",
+      "network": false
+    },
+    {
+      "passed": true,
+      "case": "bot_keyboards",
+      "network": false
+    },
+    {
+      "passed": true,
+      "case": "bot_actions",
+      "network": false
+    },
+    {
+      "passed": true,
+      "case": "bot_runner",
+      "network": false
+    },
+    {
+      "passed": true,
+      "case": "bot_form",
+      "network": false
+    },
+    {
+      "passed": true,
+      "case": "bot_events",
+      "network": false
+    },
+    {
+      "passed": true,
+      "case": "bot_methods",
+      "network": false
+    }
+  ],
+  "typescript_audit": {
+    "passed": true,
+    "installedExportSymbols": 41,
+    "referencedSymbols": 41,
+    "typeOnly": 22,
+    "negativeTypeCases": 7,
+    "source": "C:\\Users\\zulut\\AppData\\Local\\Temp\\telegram-patterns-0.11.1-slmhmgmw\\api-reference\\typescript\\node_modules\\@awesome-telegram\\patterns"
+  },
+  "runtime_typescript_exports": 19,
+  "browser": {
+    "passed": true,
+    "checks": 36,
+    "browser": "154.0.8037.97",
+    "results": [
+      {
+        "name": "phone",
+        "width": 320,
+        "height": 568,
+        "theme": "light",
+        "cases": [
+          "bridge",
+          "client",
+          "draft",
+          "native",
+          "errors"
+        ]
+      },
+      {
+        "name": "phone",
+        "width": 320,
+        "height": 568,
+        "theme": "dark",
+        "cases": [
+          "bridge",
+          "client",
+          "draft",
+          "native",
+          "errors"
+        ]
+      },
+      {
+        "name": "tablet",
+        "width": 768,
+        "height": 1024,
+        "theme": "light",
+        "cases": [
+          "bridge",
+          "client",
+          "draft",
+          "native",
+          "errors"
+        ]
+      },
+      {
+        "name": "tablet",
+        "width": 768,
+        "height": 1024,
+        "theme": "dark",
+        "cases": [
+          "bridge",
+          "client",
+          "draft",
+          "native",
+          "errors"
+        ]
+      },
+      {
+        "name": "desktop",
+        "width": 1440,
+        "height": 900,
+        "theme": "light",
+        "cases": [
+          "bridge",
+          "client",
+          "draft",
+          "native",
+          "errors"
+        ]
+      },
+      {
+        "name": "desktop",
+        "width": 1440,
+        "height": 900,
+        "theme": "dark",
+        "cases": [
+          "bridge",
+          "client",
+          "draft",
+          "native",
+          "errors"
+        ]
+      }
+    ],
+    "scope": "Installed tarball; five documented ESM/DOM recipes in six viewport/theme cases, synthetic SDK/HTTP, no physical Telegram or backend auth proof"
+  },
+  "installed_origins": [
+    {
+      "version": "0.11.1",
+      "module": "C:\\Users\\zulut\\AppData\\Local\\Temp\\telegram-patterns-0.11.1-slmhmgmw\\core\\Lib\\site-packages\\telegram_patterns\\__init__.py",
+      "exports": {
+        "telegram_patterns": [
+          "BotSettings",
+          "InvalidInitData",
+          "VerifiedLaunch",
+          "validate_init_data",
+          "OnceResult",
+          "OperationConflict",
+          "SQLiteOnce",
+          "Maturity",
+          "VerificationLevel",
+          "Recipe",
+          "RecipeCatalog",
+          "StarterPlan",
+          "create_starter",
+          "StarterComponent",
+          "StarterConflict",
+          "starter_components",
+          "AsyncTransport",
+          "OnceStore",
+          "ProviderAdapter",
+          "RefundProvider",
+          "AuthenticationRequired",
+          "ConflictFailure",
+          "ErrorCategory",
+          "ErrorCode",
+          "ErrorOutcome",
+          "ErrorReport",
+          "InvalidCompletion",
+          "InvalidType",
+          "OperationKind",
+          "PatternError",
+          "PermissionDenied",
+          "RecoveryAction",
+          "TimeoutFailure",
+          "TransportFailure",
+          "UnknownOutcome",
+          "UnsupportedCapability",
+          "ValidationFailure",
+          "safe_error_report"
+        ],
+        "telegram_patterns.cli": [
+          "doctor"
+        ]
+      }
+    },
+    {
+      "version": "0.11.1",
+      "module": "C:\\Users\\zulut\\AppData\\Local\\Temp\\telegram-patterns-0.11.1-slmhmgmw\\sdk\\Lib\\site-packages\\telegram_patterns\\__init__.py",
+      "exports": {
+        "telegram_patterns": [
+          "BotSettings",
+          "InvalidInitData",
+          "VerifiedLaunch",
+          "validate_init_data",
+          "OnceResult",
+          "OperationConflict",
+          "SQLiteOnce",
+          "Maturity",
+          "VerificationLevel",
+          "Recipe",
+          "RecipeCatalog",
+          "StarterPlan",
+          "create_starter",
+          "StarterComponent",
+          "StarterConflict",
+          "starter_components",
+          "AsyncTransport",
+          "OnceStore",
+          "ProviderAdapter",
+          "RefundProvider",
+          "AuthenticationRequired",
+          "ConflictFailure",
+          "ErrorCategory",
+          "ErrorCode",
+          "ErrorOutcome",
+          "ErrorReport",
+          "InvalidCompletion",
+          "InvalidType",
+          "OperationKind",
+          "PatternError",
+          "PermissionDenied",
+          "RecoveryAction",
+          "TimeoutFailure",
+          "TransportFailure",
+          "UnknownOutcome",
+          "UnsupportedCapability",
+          "ValidationFailure",
+          "safe_error_report"
+        ],
+        "telegram_patterns.cli": [
+          "doctor"
+        ],
+        "telegram_patterns.aiogram": [
+          "Action",
+          "ActionResult",
+          "callback_router",
+          "start_router",
+          "CommandReply",
+          "command_menu",
+          "command_router",
+          "run_bot",
+          "stars_invoice",
+          "ActionButton",
+          "ButtonStyle",
+          "MenuPage",
+          "action_keyboard",
+          "action_menu",
+          "paginated_menu",
+          "page_number",
+          "FormSubmission",
+          "InvalidField",
+          "TextField",
+          "text_form_router",
+          "ChatType",
+          "inline_keyboard",
+          "reply_keyboard",
+          "input_prompt",
+          "remove_keyboard",
+          "MethodSpec",
+          "InvalidAPIRequest",
+          "method_catalog",
+          "build_request",
+          "UpdatePhase",
+          "UpdateTrace",
+          "UpdateObserver",
+          "update_kinds",
+          "event_router"
+        ],
+        "telegram_patterns.testing": [
+          "Responder",
+          "StubSession"
+        ]
+      }
+    }
+  ],
+  "cli_recipes": true,
+  "cli_init_dry_run": true,
+  "cli_doctor": true,
+  "browser_skipped": false,
+  "stages": [
+    {
+      "stage": "core-origin",
+      "exit_code": 0
+    },
+    {
+      "stage": "sdk-origin",
+      "exit_code": 0
+    },
+    {
+      "stage": "core_identity",
+      "exit_code": 0
+    },
+    {
+      "stage": "core_storage",
+      "exit_code": 0
+    },
+    {
+      "stage": "core_errors",
+      "exit_code": 0
+    },
+    {
+      "stage": "core_extensions",
+      "exit_code": 0
+    },
+    {
+      "stage": "core_recipes",
+      "exit_code": 0
+    },
+    {
+      "stage": "core_starter",
+      "exit_code": 0
+    },
+    {
+      "stage": "core_doctor",
+      "exit_code": 0
+    },
+    {
+      "stage": "bot_keyboards",
+      "exit_code": 0
+    },
+    {
+      "stage": "bot_actions",
+      "exit_code": 0
+    },
+    {
+      "stage": "bot_runner",
+      "exit_code": 0
+    },
+    {
+      "stage": "bot_form",
+      "exit_code": 0
+    },
+    {
+      "stage": "bot_events",
+      "exit_code": 0
+    },
+    {
+      "stage": "bot_methods",
+      "exit_code": 0
+    },
+    {
+      "stage": "example-python-types",
+      "exit_code": 0
+    },
+    {
+      "stage": "tarball-install",
+      "exit_code": 0
+    },
+    {
+      "stage": "example-typescript-types",
+      "exit_code": 0
+    },
+    {
+      "stage": "example-import-symbols",
+      "exit_code": 0
+    },
+    {
+      "stage": "example-esm",
+      "exit_code": 0
+    },
+    {
+      "stage": "example-browser",
+      "exit_code": 0
+    },
+    {
+      "stage": "example-cli-recipes",
+      "exit_code": 0
+    },
+    {
+      "stage": "example-cli-init",
+      "exit_code": 0
+    },
+    {
+      "stage": "example-cli-doctor",
+      "exit_code": 1
+    }
+  ],
+  "consumer": "C:\\Users\\zulut\\AppData\\Local\\Temp\\telegram-patterns-0.11.1-slmhmgmw\\api-reference",
+  "scope": "Exact fenced doc code; installed package/type/ESM/DOM evidence, no physical Telegram/live provider/blind agent proof"
+}

@@ -140,3 +140,15 @@
 | «Mini App c draft, native и client» | Public ID-only demo draft, capability fallback и явный transport fixture; compile/browser installed tarball; real auth отдельно | Сохранение имени/token; fake server session; безусловный native call |
 
 `scripts/verify_selected_starter.py` использует установленный CLI во внешнем consumer с копиями wheel/tarball в пути с пробелами. Полная проверка пакетов дополняется новым generated Python environment, install/import вне project tree и Chrome проверкой выбранных frontend modules. По отдельности и вместе Python-компоненты проверяет test_starter_components; это executable evidence композиции, а не независимое blind agent/human испытание.
+
+## Сценарии API-справочника — пункт 014
+
+| Задача | Ожидаемая композиция | Существенный отказ |
+| --- | --- | --- |
+| «Проверь initData без Telegram SDK» | Core раздел; предоставленный wheel без aiogram; signed fixture и tampered input; реальная auth/ACL отдельно | Импорт SDK или выдача server session на основании ручного DTO |
+| «Добавь меню и многошаговую форму» | Bot раздел; общий bot_fixture и installed StubSession; callback ACK, чужой actor, повтор и closed resources | HTTP fallback, ACK вместо результата, отсутствие проверки автора |
+| «Подключи draft и bridge в существующий Mini App» | TypeScript раздел; сохранение ввода, theme/lifecycle cleanup, scoped draft expiry; текущий framework сохраняется | Remount теряет ввод, listeners удваиваются, клиентский draft становится разрешением |
+| «Импортируй тип RequestOptions» | Type-only import; strict consumer compile через declarations tarball | Поиск несуществующего runtime export |
+| «Новый public export» | Генератор требует import, композицию, limits и ref.* recipe | Незадокументированный export или дрейф portable копии проходит --check |
+
+`scripts/verify_api_reference.py` копирует точный код из fenced blocks в consumer вне репозитория: 13 Python scripts, 5 TypeScript групп, Mypy/strict TS, compiler-symbol resolution, installed CLI и настоящий Chrome DOM. Это воспроизводимое executable evidence сценариев, не независимое human/blind agent usability-исследование. Ref.* рецепты справочника отделены от 298 cookbook recipes.

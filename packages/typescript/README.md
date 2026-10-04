@@ -1,5 +1,7 @@
 # @awesome-telegram/patterns — TypeScript
 
+Все публичные value/type imports и полные композиции: [справочник TypeScript](../../docs/api-reference-typescript.md), [индекс API](../../docs/api-reference.md). Эти ссылки доступны в source checkout; при передаче tarball отдельно приложите portable references навыка telegram-code-patterns. Declarations доступны в пакете; type exports не существуют в runtime JavaScript.
+
 [Поставка](../../docs/distribution-contract.md): архивы и установленные consumer-проекты проверяются отдельно; прежние публичные API сохранены.
 
 [Адаптеры проекта](../../docs/extension-model.md): публичные structural interfaces для storage/transport/provider, без новой runtime dependency и смены стека.

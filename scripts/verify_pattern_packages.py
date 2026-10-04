@@ -136,6 +136,13 @@ print(json.dumps({'core_without_sdk':True,'python':sys.version.split()[0]}))
         public_python_types.write_text((ROOT / 'tests/public_types.py').read_text(encoding='utf-8'), encoding='utf-8')
         run('python-consumer-typecheck', [str(python_in(sdk)), '-m', 'mypy', '--follow-imports=silent', '--warn-unused-ignores', '--no-incremental', str(public_python_types)], consumers)
         run('custom-adapter-typecheck', [str(python_in(sdk)), '-m', 'mypy', '--follow-imports=silent', '--no-incremental', str(custom_adapters)], consumers)
+        run('api-reference-build', [sys.executable, str(ROOT / 'scripts/build_api_reference.py'), '--check'])
+        reference_command = [str(python_in(sdk)), str(ROOT / 'scripts/verify_api_reference.py'),
+            '--wheel', str(wheel), '--tarball', str(tarball), '--core-python', str(python_in(core)),
+            '--sdk-python', str(python_in(sdk)), '--output', str(consumers / 'api-reference')]
+        if args.skip_browser:
+            reference_command.append('--skip-browser')
+        report['api_reference'] = json.loads(run('api-reference-consumer', reference_command, consumers))
         run('sdk-origin', [str(python_in(sdk)), '-c', 'import sys,telegram_patterns;from pathlib import Path;assert Path(telegram_patterns.__file__).is_relative_to(Path(sys.argv[1]));print(telegram_patterns.__file__)', str(sdk)], consumers)
         python_log = run('python-tests', [str(python_in(sdk)), '-m', 'unittest', 'discover', '-s', str(ROOT / 'packages/python/tests'), '-v'], consumers)
         run('sdk-dependencies', [uv, 'pip', 'check', '--python', str(python_in(sdk))])

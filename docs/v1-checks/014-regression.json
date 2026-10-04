@@ -1,0 +1,21 @@
+{
+  "passed": true,
+  "case": "unused imported public type rejected despite successful strict compile",
+  "negative_exit": 1,
+  "positive": {
+    "passed": true,
+    "installedExportSymbols": 41,
+    "referencedSymbols": 41,
+    "typeOnly": 22,
+    "negativeTypeCases": 7,
+    "source": "C:\\Users\\zulut\\AppData\\Local\\Temp\\telegram-patterns-0.11.1-ulaxzf5q\\api-reference-fixed\\typescript\\node_modules\\@awesome-telegram\\patterns"
+  },
+  "fixture_restored_byte_exact": true,
+  "consumer": "C:\\Users\\zulut\\AppData\\Local\\Temp\\telegram-patterns-0.11.1-ulaxzf5q\\api-reference-fixed\\typescript",
+  "scope": "Actual TypeScript 7.0.2 compiler-symbol probe against installed tarball; synthetic consumer, not agent usability",
+  "artifact": {
+    "name": "awesome-telegram-patterns-0.11.1.tgz",
+    "sha256": "973a28ab1f97cd684a4cd534ec6504683e0da4253fc43c02a2033c6cd3c68391",
+    "source": "retained candidate1 tarball; standalone negative probe, separate from accepted final distribution"
+  }
+}

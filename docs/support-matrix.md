@@ -1,4 +1,4 @@
-# Матрица поддержки 0.11.0
+# Матрица поддержки 0.11.1
 
 Пункт 005. Машиночитаемый снимок — [support-matrix.json](../catalog/support-matrix.json). «Заявлено» означает dependency/runtime constraint; «проверено» — конкретный прошедший сценарий. Весь declared range не считается проверенным одной комбинацией. API пока experimental.
 
@@ -16,7 +16,7 @@
 
 Node >=20 — текущий технический минимум manifests, а не рекомендация выбирать Node 20 для production. По [официальной таблице Node.js](https://nodejs.org/en/about/previous-releases) ветка 20 уже EOL; использовать поддерживаемую LTS и затем проверять точную версию приложения. Наш снимок проверен на 24.19.0, что не означает «самая свежая версия».
 
-Evidence: [013.json](v1-checks/013.json), `output/pattern-library-0.11.0/distribution-report.json` и соответствующие logs, привязанные к hashes wheel/tarball. Telegram/live/sandbox evidence сейчас отсутствует, версии клиентов поэтому не выдумываются. Расширение исполняемой OS/runtime matrix относится к 081, device acceptance — к 067; публикация таблицы не закрывает эти пункты.
+Evidence: [014.json](v1-checks/014.json), `output/pattern-library-0.11.1/distribution-report.json` и соответствующие logs, привязанные к hashes wheel/tarball. Telegram/live/sandbox evidence сейчас отсутствует, версии клиентов поэтому не выдумываются. Расширение исполняемой OS/runtime matrix относится к 081, device acceptance — к 067; публикация таблицы не закрывает эти пункты.
 
 Для другого SDK/runtime сохраняйте выбранный стек и выполните relevant consumer/tests перед обещанием совместимости. `doctor` предупреждает об aiogram, отличном от проверенного 3.31.0; проверка формата token не проверяет Telegram identity. Обновление support matrix следует за новым evidence, а не только за изменением диапазона зависимости.
 
@@ -33,3 +33,5 @@ Evidence: [013.json](v1-checks/013.json), `output/pattern-library-0.11.0/distrib
 В 0.10.0 проверен выбор 15 групп starter-компонентов: точный dry-run, сохранность при повторном init, отклонение несовместимых версий, команд, callback prefixes и путей до записи. Mypy проверяет 18 исходных файлов и installed consumers. Полная поставка проходит 52 этапа; из 528 browser checks 386 относятся к workspace, 142 — к двум установленным starters. Документированный первый запуск повторен на артефактах 0.10.0 и дает еще 60 checks. Готовая форма использует временный MemoryStorage; ее validation fixture не сохраняет заявку и не заменяет сервис приложения.
 
 В 0.11.0 дополнительно проверены 12 installed doctor cases и 5 явно исполненных repair команд в новом consumer: ensurepip, pip check, предоставленный wheel с extra, npm tarball и повторный doctor после исправления TOML. Прямой SDK import заменен fixed isolated Python -I -B probe; проектные aiogram.py и aiohttp.py с файловым эффектом не исполняются. Mypy проверяет 19 исходных файлов. Первый запуск по документации повторен на 0.11.0 и дает 60 отдельных browser checks; installed doctor не отправляет Telegram-запросы, а установщики test repairs могут использовать registries.
+
+В 0.11.1 проверен [API-справочник](api-reference.md): 75 Python и 41 TypeScript symbol, CLI и CSS, 13 Python и 5 TypeScript композиций из точного кода документации. Compiler-symbol audit подтверждает 41 используемый binding из установленного tarball: 19 runtime values и 22 types; 7 negative typing cases и отдельный отказ unused imported type. Mypy проверяет 14 example files. 36 новых Chrome checks относятся к документации, а не к physical device acceptance: общая поставка проходит 55 этапов и 564 browser checks, документированный первый запуск — еще 60. История 0.11.0 и ее артефакты сохраняются.
