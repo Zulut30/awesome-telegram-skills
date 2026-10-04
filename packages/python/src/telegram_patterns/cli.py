@@ -1,73 +1,21 @@
 """Local CLI: recipe discovery, NEW project scaffolding and read-only diagnostics."""
 from __future__ import annotations
 import argparse
-import importlib.metadata
 import json
-import os
 from pathlib import Path
-import shutil
-import subprocess
 import sys
 import tarfile
-import tomllib
 import zipfile
 
-from .errors import PatternError, ValidationFailure, safe_error_report
+from .diagnostics import diagnose
+from .errors import PatternError, safe_error_report
 from .recipes import RecipeCatalog
-from .settings import BotSettings
 from .starter import create_starter
 from .starter_components import StarterConflict, starter_components
 
 
 def doctor(target: str | Path = '.', *, require_token: bool = False) -> dict:
-    root = Path(target).expanduser().resolve(strict=True)
-    if not root.is_dir(): raise ValidationFailure('Doctor expects a project directory')
-    checks = []
-    def check(name, status, detail): checks.append({'name': name, 'status': status, 'detail': detail})
-    check('python', 'pass' if sys.version_info >= (3, 11) else 'fail', '.'.join(map(str, sys.version_info[:3])))
-    check('library', 'pass', importlib.metadata.version('awesome-telegram-patterns'))
-    try:
-        sdk = importlib.metadata.version('aiogram')
-        major, minor = map(int, sdk.split('.')[:2])
-        check('aiogram', 'pass' if major == 3 and minor >= 31 else 'fail', sdk)
-        if sdk != '3.31.0': check('sdk-tested-version', 'warn', 'This release was tested on aiogram 3.31.0; verify your SDK separately')
-        from . import aiogram as adapter
-        check('python-exports', 'pass' if all(callable(getattr(adapter, name, None)) for name in ('command_router', 'action_menu', 'run_bot')) else 'fail', 'Public library adapters')
-    except importlib.metadata.PackageNotFoundError:
-        check('aiogram', 'fail', 'Install the provided local library with its aiogram extra')
-    except ImportError:
-        check('python-exports', 'fail', 'Library/SDK import failed; inspect dependency compatibility')
-    pyproject = root / 'pyproject.toml'
-    if pyproject.is_file():
-        try: tomllib.loads(pyproject.read_text(encoding='utf-8')); check('pyproject', 'pass', 'TOML parsed; project code not executed')
-        except (ValueError, UnicodeError): check('pyproject', 'fail', 'Invalid TOML')
-    else: check('pyproject', 'warn', 'No pyproject.toml; existing projects may use another dependency format')
-    try:
-        BotSettings.from_env()
-        check('token-format', 'pass', 'Present in environment; only local format checked')
-    except ValueError:
-        check('token-format', 'fail' if require_token else 'warn', 'Missing/invalid BOT_TOKEN; value not displayed; token not sent')
-    mini = root / 'mini-app/package.json'
-    if mini.is_file():
-        try:
-            data = json.loads(mini.read_text(encoding='utf-8'))
-            valid = isinstance(data, dict) and '@awesome-telegram/patterns' in data.get('dependencies', {})
-            check('mini-app-manifest', 'pass' if valid else 'fail', 'TypeScript manifest; no npm installation performed')
-        except (ValueError, UnicodeError): check('mini-app-manifest', 'fail', 'Invalid package.json')
-        node = shutil.which('node')
-        check('npm', 'pass' if shutil.which('npm.cmd' if os.name == 'nt' else 'npm') else 'fail', 'PATH availability; packages are not installed by doctor')
-        if node:
-            environment = dict(os.environ); environment.pop('NODE_OPTIONS', None)
-            try:
-                result = subprocess.run([node, '--version'], capture_output=True, text=True, timeout=10, env=environment)
-                import re
-                match = re.fullmatch(r'v(\d+)\.\d+\.\d+', result.stdout.strip())
-                check('node', 'pass' if result.returncode == 0 and match and int(match.group(1)) >= 20 else 'fail',
-                      match.group(0) if match else 'Cannot identify Node version; requires >=20')
-            except (OSError, subprocess.TimeoutExpired): check('node', 'fail', 'Cannot read Node version')
-        else: check('node', 'fail', 'Node >=20 missing from PATH')
-    return {'passed': not any(item['status'] == 'fail' for item in checks), 'network': False, 'checks': checks,
-            'limits': 'No Telegram token validity/webhook/polling, deployment, project-code execution, backend auth or real-client check'}
+    return diagnose(target, require_token=require_token)
 
 
 def main(argv: list[str] | None = None) -> int:

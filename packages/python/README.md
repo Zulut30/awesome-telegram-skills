@@ -10,7 +10,7 @@ Root экспортирует `Maturity`, `VerificationLevel`; aiogram — `Butt
 
 Все текущие группы experimental, request-only/native fragments reference. [Политика зрелости](../../docs/v1-maturity.md) не зависит от проверки: `Recipe.maturity`, `RecipeCatalog.search(maturity=...)`, CLI `recipes --maturity ...`. Старые schema-1 records читаются с conservative default.
 
-Общие компоненты для бота и backend, версия 0.10.0. Пакет пока поставляется из этого репозитория/локального wheel; публикации на PyPI нет. Python >=3.11. Core использует стандартную библиотеку; адаптер aiogram и тестовый транспорт — отдельный extra.
+Общие компоненты для бота и backend, версия 0.11.0. Пакет пока поставляется из этого репозитория/локального wheel; публикации на PyPI нет. Python >=3.11. Core использует стандартную библиотеку; адаптер aiogram и тестовый транспорт — отдельный extra.
 
 [Галерея 298 рецептов](../../gallery/index.html) работает без токенов и сети. В wheel входят `RecipeCatalog`, шаблоны новых проектов и CLI `telegram-patterns recipes/init/doctor`. [Использование и границы](../../docs/developer-tools-review.md).
 
@@ -25,11 +25,13 @@ python -m pip install "./packages/python[aiogram]"
 
 Первый вариант достаточен для `BotSettings`, `validate_init_data`, `SQLiteOnce`, `RecipeCatalog` и `create_starter`. Второй нужен для импорта `telegram_patterns.aiogram` и `telegram_patterns.testing`, запуска бота и успешной SDK-проверки doctor. Сохраняйте существующий SDK, если бот уже построен на другой библиотеке.
 
+Doctor 0.11.0 проверяет установленный adapter в фиксированном Python `-I -B` probe вне каталога проекта. Он отклоняет подмену aiogram import, сохраняет конфигурацию и показывает reason/remediation с отдельными argv рекомендациями. HTTP-проверки и автоматического исполнения исправлений нет.
+
 | Компонент | API | Контракт |
 | --- | --- | --- |
 | Поиск рецепта | `RecipeCatalog().search(query,category=None,language=None,verification=None,limit=20)`; `.get(id)`; `.recipes` | Bundled snapshot, все слова запроса, SDK/mock/reference/live scope; без исполнения кода и SDK dependency |
 | Новый проект | `create_starter(target,library=local_path,template='bot',typescript=None,dry_run=False)` | Новый каталог, локальные артефакты; StarterPlan и список файлов; без install/network/overwrite |
-| Диагностика | `telegram-patterns doctor [project] [--require-token]`; `telegram_patterns.cli.doctor(path)` | Read-only проверка среды/imports/manifest/формата token; без .env и проверки реального Telegram |
+| Диагностика | `telegram-patterns doctor [project] [--require-token]`; `telegram_patterns.cli.doctor(path)` | Read-only проверки с reason/remediation и argv рекомендациями; target/manifest failures контролируются, .env/token contents не читаются/не отражаются; предлагаемые команды не исполняются |
 | Native клавиатуры | `inline_keyboard(rows,chat_type='private',business=False,invoice=False,force_reply=False,emoji_entitlement_verified=False)`; `reply_keyboard(rows,...,placeholder=None)` | SDK button models / reply strings, копии строк; caller сообщает фактический context и entitlement. Не все права/контекстные ограничения Telegram проверяются локально |
 | Ввод | `input_prompt(placeholder=None,selective=False)`; `remove_keyboard(selective=False)` | ForceReply / ReplyKeyboardRemove без HTTP; host связывает actor/chat/prompt и проверяет ответ |
 | Все SDK методы | `method_catalog()`; `build_request(name,parameters=None)` | MethodSpec / native TelegramMethod; неизвестные top-level fields отклоняются, nested rules — SDK. HTTP только при `await existing_bot(request)` |
@@ -173,4 +175,4 @@ Aiogram протестирован на 3.31.0. Кнопочный entitlement �
 
 Источники: [BotCommand](https://core.telegram.org/bots/api#botcommand), [Bot API](https://core.telegram.org/bots/api), [Mini App validation](https://core.telegram.org/bots/webapps#validating-data-received-via-the-mini-app), [aiogram Command](https://docs.aiogram.dev/en/latest/dispatcher/filters/command.html), [polling](https://docs.aiogram.dev/en/latest/dispatcher/long_polling.html), [BaseSession](https://docs.aiogram.dev/en/latest/api/session/base.html), [keyboard builder](https://docs.aiogram.dev/en/latest/_modules/aiogram/utils/keyboard.html), [SQLite authorizer в Python 3.13](https://docs.python.org/3.13/library/sqlite3.html#sqlite3.Connection.set_authorizer), [executescript](https://docs.python.org/3.13/library/sqlite3.html#sqlite3.Connection.executescript), [SQLite authorizer](https://www.sqlite.org/c3ref/set_authorizer.html). [Фиксированный initData-вектор upstream](https://github.com/aiogram/aiogram/blob/v3.31.0/tests/test_utils/test_web_app.py) используется как независимая fixture. Перечисленные контракты сверены 3 октября 2026 года; фактически установлен aiogram 3.31.0. Живые Telegram данные/платежи не использовались.
 
-В 0.10.0: `telegram-patterns init --list-components`, повторяемый `--component`, preflight conflicts и точный dry-run. Новые core exports: StarterComponent/StarterConflict/starter_components; компоненты подключаются к созданному app/frontend, существующие проекты не перезаписываются.
+В 0.11.0: `telegram-patterns init --list-components`, повторяемый `--component`, preflight conflicts и точный dry-run. Новые core exports: StarterComponent/StarterConflict/starter_components; компоненты подключаются к созданному app/frontend, существующие проекты не перезаписываются.

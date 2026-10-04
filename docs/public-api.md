@@ -1,4 +1,4 @@
-# Публичные контракты библиотеки 0.10.0
+# Публичные контракты библиотеки 0.11.0
 
 Пункт 003 плана 1.0. Все API ниже пока experimental; статус их группы указан в `components.json`, правила — в [maturity](v1-maturity.md). Контракт описывает реально реализованные границы, а не будущую полноту сценария. Аргументы с Python/TypeScript type annotations должны соответствовать типам; наличие типа не заменяет runtime validation внешних данных.
 
@@ -58,7 +58,7 @@
 
 С 0.9.2 npm dependency созданного Mini App записывается как `file:` + абсолютный filesystem path с буквальными пробелами; Python dependency остается percent-encoded file URI. `.telegram-patterns.json.typescript_uri` остается URI для метаданных. Это исправление установки starter, публичная сигнатура не менялась; ранее созданный 0.9.1 проект исправляется обновлением локального dependency path, а не повторным init поверх каталога.
 
-`doctor(target='.',require_token=False)` возвращает `{passed,network:false,checks,limits}`. Читает manifests и import metadata, может импортировать owned SDK adapter и выполнить фиксированное Node --version. Не выполняет код проекта, не читает .env и не проверяет token/webhook/Telegram. Missing token — warn, с require_token — fail; отсутствие SDK мешает readiness бота. Не существующий/не directory target и I/O/config errors пробрасываются; детали token не выводятся.
+`doctor(target='.',require_token=False)` сохраняет `{passed,network:false,checks,limits}` и добавляет `schema_version:1`, `suggestions_executed:false`, `tool_probes_attempted`. Каждый check сохраняет `name/status/detail` и добавляет `reason` и `remediation{summary,commands}`. Command содержит `argv`, `cwd` и `requires_substitution`; это не shell string и не автоматически исполняемая инструкция. Читает manifests до 256 KiB и import metadata, проверяет источник SDK и выполняет фиксированные isolated Python -I -B adapter imports и Node --version с timeout 10s и системным env allowlist. Не выполняет код проекта, не читает .env и не проверяет token/webhook/Telegram. Missing token — warn, с require_token — fail; отсутствие SDK мешает readiness нашего aiogram starter. С 0.11.0 недоступный/не directory target и ожидаемые I/O/config errors становятся failed checks; известные links/junctions отклоняются, payload/exception data не отражаются. [Причины, команды и ограничения](doctor.md).
 
 CLI `recipes [query] [--show ID] [--category ...] [--language ...] [--verification ...] [--maturity ...] [--limit N]`, `init TARGET --library PATH [--template ...] [--typescript ...] [--dry-run]`, `doctor [PROJECT] [--require-token]` маршрутизирует соответствующие API. Exit 0 для успеха, 1 для failed doctor, 2 для контролируемой ошибки аргументов/операции; stdout JSON кроме show, diagnostics stderr без raw secret. CLI не устанавливает dependencies и не исполняет recipe code.
 

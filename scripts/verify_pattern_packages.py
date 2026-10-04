@@ -102,6 +102,8 @@ assert validate_init_data(raw,'42:TEST',now=1650385342).user_id==42
 print(json.dumps({'core_without_sdk':True,'python':sys.version.split()[0]}))
 ''', encoding='utf-8')
         run('core-smoke', [str(python_in(core)), str(smoke), str(core)], consumers)
+        report['doctor_consumer'] = json.loads(run('doctor-consumer', [str(python_in(core)), str(ROOT / 'scripts/verify_doctor_consumer.py'),
+            '--wheel', str(wheel), '--tarball', str(tarball), '--output', str(consumers / 'doctor')], consumers))
         recovery = json.loads(run('error-recovery', [str(python_in(core)), str(ROOT / 'examples/python/error_recovery.py')], consumers))
         if not recovery['passed'] or recovery['network'] or recovery['effect_count'] != 1 or not recovery['replayed']:
             raise RuntimeError('Installed core error reconciliation example failed')

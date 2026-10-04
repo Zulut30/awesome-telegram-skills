@@ -230,10 +230,26 @@
       "id": 13,
       "title": "Сделать диагностику полезной для исправлений",
       "requirement": "Расширить `doctor` понятными причинами и командами исправления; сетевые проверки, если появятся, выполняются только явно и не раскрывают токены.",
-      "status": "pending",
-      "commit_subject": null,
-      "artifacts": [],
-      "evidence": []
+      "status": "done",
+      "commit_subject": "roadmap(013): provide actionable doctor checks and isolate SDK imports",
+      "artifacts": [
+        "packages/python/src/telegram_patterns/diagnostics.py",
+        "packages/python/src/telegram_patterns/cli.py",
+        "packages/python/tests/test_doctor.py",
+        "scripts/verify_doctor_consumer.py",
+        "docs/doctor.md",
+        ".agents/skills/telegram-code-patterns/references/doctor.md",
+        "docs/v1-checks/013.json"
+      ],
+      "evidence": [
+        "docs/v1-checks/013.json",
+        "docs/v1-checks/013-doctor.json",
+        "docs/v1-checks/013-first-run.json",
+        "docs/v1-checks/013-regression.json",
+        "53 distribution stages; 112 Python passed + 1 skip; 26 TypeScript; 528 distribution Chrome checks plus 60 first-run checks; 23 root tests and 41 skills",
+        "12 installed doctor cases and 5 explicit repair commands; configuration preserved, token/config/process payloads not reflected",
+        "Real project SDK shadow regression reproduced and fixed; isolated installed adapter imports prevent aiogram/aiohttp fixture side effects; no network checks or live/device/usability claim"
+      ]
     },
     {
       "id": 14,

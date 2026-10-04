@@ -1,4 +1,4 @@
-# Поставка локальных пакетов — 0.10.0
+# Поставка локальных пакетов — 0.11.0
 
 Пункт 009. Публичная Python поверхность — core `telegram_patterns`, optional `telegram_patterns.aiogram`/`testing` и console `telegram-patterns`. TypeScript — ESM root с declarations и отдельный `@awesome-telegram/patterns/styles.css`. Пакеты поставляются локально, не опубликованы в PyPI/npm. Интерфейсы и имена см. в [публичных контрактах](public-api.md), [структуре API](api-structure.md) и [адаптерах](extension-model.md).
 
@@ -7,6 +7,8 @@
 Wheel содержит Python modules, `py.typed`, bundled recipes JSON и все starter templates, включая `.env.example.txt` и mini-app templates. Это шаблон с искусственным token placeholder, а не конфигурация владельца. В core нет runtime зависимостей; aiogram подключается только extra. Console entry point совпадает с pyproject.scripts. Сейчас поставляется pure Python `py3-none-any`, Python >=3.11; это формат совместимости, а не подтверждение каждого Python/OS из диапазона.
 
 В 0.10.0 wheel содержит 42 файла: 37 точных source/resource файлов и 5 metadata файлов. В resources входят восемь шаблонов выбираемых компонентов; каждый остается доступен установленному генератору без исходного дерева. Tarball содержит 21 файл, включая 9 пар JavaScript/declarations и CSS. Accepted evidence — [012.json](v1-checks/012.json).
+
+В 0.11.0 добавлен private diagnostics module: wheel содержит 43 файла, включая 38 точных source/resources и 5 metadata файлов; состав tarball остается 21 файл. Отдельный doctor consumer проверяет SDK-free импорт, безопасные причины, исправления в новом venv и изоляцию SDK от файлов проекта. Публичный API остается cli.doctor; private module не становится новым public export. Evidence — [013.json](v1-checks/013.json).
 
 Tarball содержит только package.json, README, compiled `dist/*.js` и соответствующие `dist/*.d.ts`, CSS. Каждый текущий source module имеет обе compiled части; private исходный TS, tests, .env, node_modules, старый dist module и дерево репозитория не входят. Export map содержит root `types`/`import` и styles.css; CSS остается declared side effect. CommonJS export сейчас отсутствует.
 
