@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "library_version": "0.14.0",
+  "library_version": "0.15.0",
   "scope": "Public library exports; ref.* recipes belong to the API reference, not the Telegram method snapshot",
   "groups": [
     {
@@ -336,6 +336,22 @@
           "ErrorOutcome": "Literal outcome",
           "OperationKind": "Literal read/write",
           "RecoveryAction": "Literal следующего действия"
+        }
+      }
+    },
+    {
+      "id": "bot_navigation",
+      "section": "bot",
+      "title": "Экраны и история в одном сообщении",
+      "example": "examples/api-reference/python/bot_navigation.py",
+      "limits": "Optional aiogram. Owner/bot/chat/thread/message/revision guards, ACK first, unknown edit freeze and explicit same-message recovery. State lives in one process/event loop; restart leaves old buttons stale. Host owns sessions/tasks and business ACL. No automatic resend after unknown initial send; no live UI proof.",
+      "api": {
+        "telegram_patterns.aiogram": {
+          "NavigationScreen": "Immutable plain screen with declared links/layout",
+          "NavigationState": "Frozen scoped history/revision/phase snapshot",
+          "NavigationResult": "Safe accepted/denied/stale/unavailable/unknown feedback",
+          "MessageNavigation": "Bounded open/get_state/handle/discard lifecycle for one owned message",
+          "navigation_router": "SDK Router with ACK-first guarded navigation and optional feedback"
         }
       }
     }

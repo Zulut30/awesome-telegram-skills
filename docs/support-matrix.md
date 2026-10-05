@@ -1,4 +1,4 @@
-# Матрица поддержки 0.14.0
+# Матрица поддержки 0.15.0
 
 Пункт 005. Машиночитаемый снимок — [support-matrix.json](../catalog/support-matrix.json). «Заявлено» означает dependency/runtime constraint; «проверено» — конкретный прошедший сценарий. Весь declared range не считается проверенным одной комбинацией. API пока experimental.
 
@@ -7,16 +7,16 @@
 | Python core | Python >=3.11, stdlib, без SDK | 3.13.12, Windows 11 AMD64, установленный wheel без aiogram; CLI/core/SQLite consumers | Остальные Python versions и Linux/macOS требуют отдельной матрицы |
 | Python bot adapters | Optional aiogram >=3.31,<4 | aiogram 3.31.0, тот же Python/OS, native SDK construction и synthetic Dispatcher | Другие SDK versions, PTB/TeleBot adapters и live Telegram не подтверждены |
 | TypeScript tooling | Node >=20, ESM; no runtime dependencies | Node 24.19.0, npm 12.0.2, TypeScript 7.0.2, tarball imports/types/build и 26 тест | Другие версии Node/TS и bundlers не объявлены проверенными; CommonJS export отсутствует |
-| Browser UI | DOM/fetch/ESM; Chrome или CHROME_PATH для verification | Chrome 154.0.8037.97, Playwright 1.63.0; 141 example + 470 gallery + 470 export + 66 starter + 76 selected starter + 36 API-reference checks | Другие engines, screen readers и физические устройства отдельно |
+| Browser UI | DOM/fetch/ESM; Chrome или CHROME_PATH для verification | Chrome 154.0.8037.97, Playwright 1.63.0; 141 example + 526 gallery + 526 export + 66 starter + 76 selected starter + 36 API-reference checks | Другие engines, screen readers и физические устройства отдельно |
 | Viewports/themes | Responsive composition | Browser cases: 320–1920 px по ширине, portrait/landscape/tablet/desktop; light/dark | Viewport emulation не настоящие iOS/Android/tablet Telegram clients |
 | Telegram Bot API | Runtime возможности установленного SDK | Snapshot Bot API 10.3: 185 request methods / 400 indexed types, construction | Server permissions, real delivery, payment workflows и все SDK versions не доказаны |
 | Mini App native API | 99 paths / 44 events snapshot, version/platform/presence gates | Types/build, mock native callbacks/listeners и browser compositions | Нет live matrix версий Telegram iOS/Android/Desktop; method availability не permission/auth |
 | Storage | SQLiteOnce только file SQLite; host FSM | Local file SQLite/replay; MemoryStorage form example | Single-process сервисный FSM/restart — отдельный пример 017 ниже; general FSM/multiworker и production adapters — последующие пункты |
-| Windows symlink case | Directory symlink проверяется при возможности | 119 Python passed; 1 из 120 skipped из-за недоступных directory symlinks | Пропуск не PASS этого filesystem случая |
+| Windows symlink case | Directory symlink проверяется при возможности | 143 Python passed; 1 из 144 skipped из-за недоступных directory symlinks | Пропуск не PASS этого filesystem случая |
 
 Node >=20 — текущий технический минимум manifests, а не рекомендация выбирать Node 20 для production. По [официальной таблице Node.js](https://nodejs.org/en/about/previous-releases) ветка 20 уже EOL; использовать поддерживаемую LTS и затем проверять точную версию приложения. Наш снимок проверен на 24.19.0, что не означает «самая свежая версия».
 
-Evidence: [016.json](v1-checks/016.json), `output/pattern-library-0.13.0/distribution-report.json` и соответствующие logs, привязанные к hashes wheel/tarball. Telegram/live/sandbox evidence сейчас отсутствует, версии клиентов поэтому не выдумываются. Расширение исполняемой OS/runtime matrix относится к 081, device acceptance — к 067; публикация таблицы не закрывает эти пункты.
+Текущая приемка: [022.json](v1-checks/022.json), `output/pattern-library-0.15.0/distribution-report.json` и соответствующие logs, привязанные к hashes wheel/tarball. История предыдущих поставок описана ниже. Telegram/live/sandbox evidence сейчас отсутствует, версии клиентов поэтому не выдумываются. Расширение исполняемой OS/runtime matrix относится к 081, device acceptance — к 067; публикация таблицы не закрывает эти пункты.
 
 Для другого SDK/runtime сохраняйте выбранный стек и выполните relevant consumer/tests перед обещанием совместимости. `doctor` предупреждает об aiogram, отличном от проверенного 3.31.0; проверка формата token не проверяет Telegram identity. Обновление support matrix следует за новым evidence, а не только за изменением диапазона зависимости.
 
@@ -55,3 +55,7 @@ Evidence: [016.json](v1-checks/016.json), `output/pattern-library-0.13.0/distrib
 ### Композиции клавиатур — пункт 021
 
 [021.json](v1-checks/021.json) фиксирует новую локальную поставку 0.14.0: 58 этапов, 127 Python tests (126 passed/1 Windows symlink skip), 26 TypeScript, 125 публичных символов и 22 Python source typing files. Семь новых layout tests сравнивают adjust pattern с установленным SDK и проверяют validation/fallback/wire/snapshot. Installed composition отправляет шесть synthetic SendMessage; два точных блока переносимого руководства дополнительно исполняются в скопированном навыке через тот же установленный wheel. Полный distribution report остаётся неизменным; отдельная portable evidence учитывает обновлённый helper после этого прохода. UI matrix: 1259 checks плюс 60 checks команд первого запуска, без physical/live Telegram proof. Source focus на Python 3.12.13 проверяет только семь layout tests; полная матрица относится к 3.13.12. Исторические app examples 017–019 остаются на предоставленных 0.13.0 артефактах и не объявляются повторно принятыми на 0.14.0.
+
+### Навигация по сообщениям — пункт 022
+
+[022.json](v1-checks/022.json) фиксирует локальную поставку 0.15.0: 59 этапов, 144 Python tests (143 passed/1 Windows symlink skip), 26 TypeScript, 130 публичных символов, 20 групп примеров API и 23 Python source typing files. 17 navigation tests проверяют одно сообщение, историю/возврат, owner/bot/chat/thread/message/revision, разрешенные переходы, ACK перед lock, конкурентное нажатие, rejection/timeout/cancel и unknown recovery после TTL. Installed Dispatcher-композиция делает один SendMessage и шесть попыток EditMessageText, включая synthetic timeout; явное восстановление использует прежний message_id. Точный блок скопированного руководства проверен с существующим `/help` Router через тот же wheel в полном прогоне. Галерея содержит 300 рецептов и 201 Python offline fixture; экспорт проверяет 209 файлов. Общая UI matrix — 1371 checks и еще 60 checks точного первого запуска. Навигация хранится в памяти одного процесса/event loop и не заменяет durable FSM или авторизацию бизнес-операции. Unknown initial send автоматически не повторяется. Physical/live Telegram, human/blind usability и production-пилот этим не подтверждены; app examples 017–019 остаются отдельно принятыми на 0.13.0.

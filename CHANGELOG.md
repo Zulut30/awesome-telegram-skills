@@ -1,5 +1,11 @@
 # Изменения библиотеки компонентов
 
+## 0.15.0 — пункт 022
+
+- MessageNavigation, NavigationScreen/State/Result и navigation_router: экраны, history/back и refresh в одном owner/bot/chat/thread/message-bound сообщении. ACK до lock/edit, revision/graph/TTL guards и сериализация одного меню; stale/foreign action не меняет состояние.
+- Unknown edit останавливает переходы; explicit owner /menu перерисовывает тот же message_id с новой revision. Unknown initial send не повторяется автоматически; local discard — отдельное решение host. State одного процесса, restart отклоняет старые tokens; durable FSM/multiworker не обещаются.
+- Runnable composition, closed offline recipe и API reference через публичные exports; обычная локальная поставка Python/TypeScript, без публикации.
+
 ## 0.14.0 — пункт 021
 
 - KeyboardLayout и KeyboardCapabilities, action_layout/inline_layout/reply_layout: flat buttons, mixed widths, last/cycle tail, immutable snapshot и проверка native context/actions до presentation fallback. Default новых helpers убирает непроверенные styles/emoji, сохраняя labels/actions; прежние builders не меняются. Entitlement/client hints передаёт host, live проверка не подменяется.

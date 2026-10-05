@@ -1,4 +1,4 @@
-# Публичные контракты библиотеки 0.13.0
+# Публичные контракты библиотеки 0.15.0
 
 Пункт 003 плана 1.0. Все API ниже пока experimental; статус их группы указан в `components.json`, правила — в [maturity](v1-maturity.md). Контракт описывает реально реализованные границы, а не будущую полноту сценария. Аргументы с Python/TypeScript type annotations должны соответствовать типам; наличие типа не заменяет runtime validation внешних данных.
 
@@ -122,3 +122,13 @@ CLI `run-recipe ID [--offline] [--timeout SECONDS]` сначала flush-ит pl
 ## Композиции клавиатур 0.14.0
 
 [Полные контракты и исполняемые примеры](keyboard-layouts.md): KeyboardLayout, KeyboardCapabilities, action_layout, inline_layout и reply_layout. Immutable width pattern, snapshot native inputs, current context checks и explicit host presentation fallback; старые builders сохранены. DTO flags не доказывают live entitlement, callback ACL остаётся на сервере.
+
+## Навигация сообщений 0.15.0
+
+| API | Ошибки и effects | Владение и ограничения |
+| --- | --- | --- |
+| `NavigationScreen(key,text,buttons=(),layout=KeyboardLayout())` | Frozen descriptor; ключ/текст/links/layout проверяются локально. Target определяется `ActionButton.key`; buttons snapshot копируется в tuple | Plain text, 4096 UTF-16 units, до 98 links; graph проверяет engine. Нет HTTP/ACL |
+| `NavigationState(session_id,bot_id,owner_id,chat_id,message_thread_id,message_id,screen,history,revision,expires_at,phase)` | Frozen DTO; прямой constructor не авторизует scope | Process-monotonic TTL; phase opening/ready/unknown, message_id может быть None после неизвестной initial send. Не durable record |
+| `NavigationResult(status,text,state=None)` | Frozen safe DTO: accepted/denied/stale/unavailable/unknown; denied/foreign scope без state | Не подтверждает бизнес-effect или оплату |
+| `MessageNavigation(screens,prefix='nav:',capabilities=...,ttl_seconds=1800,max_sessions=1000,max_history=50,back_text='Назад',refresh_text='Обновить')` | Graph/prefix/native validation до HTTP; `.open(bot,owner_id,chat_id,screen=None,message_thread_id=None)` first SendMessage / same-message reset; `.handle(query)` ACK, guarded EditMessageText, result; `.get_state(bot_id,owner_id,chat_id,message_thread_id=None)` snapshot; async `.discard(...)` local reset после in-flight edit. SDK/cancellation errors open propagate, edit handler дает safe outcome, cancellation propagate | Один event loop и процесс; host проверяет вызовы open/get_state/discard, владеет Bot/session/Dispatcher/tasks. History bound не обрезает прошлое; TTL/capacity bounded. Unknown edit freeze → explicit owner open с новой revision; unknown initial send не повторяется. Public `.prefix` read-only. Полные эффекты/ошибки/лимиты в [контракте](message-navigation.md) |
+| `navigation_router(navigation,on_result=None)` | Router, async ACK-first handle + optional async hook; hook errors не откатывают edit | Подключить в existing Dispatcher; host выбирает feedback/error channel. SDK/mock не live UI |

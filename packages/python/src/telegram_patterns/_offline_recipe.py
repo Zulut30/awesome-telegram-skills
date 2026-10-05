@@ -18,6 +18,7 @@ _FIXTURES = {
     'demo-catalog': ('bot.py', 'offline_bot.py'),
     'demo-form': ('form_bot.py', 'offline_form.py'),
     'demo-keyboards': ('keyboards_bot.py', 'offline_keyboards.py'),
+    'demo-navigation': ('navigation_bot.py', 'offline_navigation.py'),
     'demo-recovery': ('error_recovery.py',),
 }
 _ATTEMPTS = [0]

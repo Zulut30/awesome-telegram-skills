@@ -186,3 +186,7 @@ Aiogram протестирован на 3.31.0. Кнопочный entitlement �
 ## Flat клавиатуры 0.14.0
 
 `from telegram_patterns.aiogram import KeyboardLayout, KeyboardCapabilities, action_layout, inline_layout, reply_layout`. Передайте список и `KeyboardLayout([2,3,1], repeat=False)`; default capabilities сохраняет обычный текстовый fallback. `styles=True` и подтверждённый emoji entitlement задаёт host для текущего контекста. Native payload/контекст проверяется до fallback, inputs не меняются. Полные сигнатуры и примеры: [keyboard-layouts](../../docs/keyboard-layouts.md). Прежние builders сохраняются.
+
+## Навигация сообщений 0.15.0
+
+`NavigationScreen`, `NavigationState`, `NavigationResult`, `MessageNavigation` и `navigation_router` импортируются из `telegram_patterns.aiogram`. Экраны/history/back/refresh редактируют одно owner/bot/chat/thread/message-bound сообщение с revision и TTL guards. ACK предшествует lock/edit. Unknown edit блокирует переходы до explicit owner `/menu`; unknown initial send не повторяется автоматически. State одного процесса/event loop, не durable FSM; SDK sessions и tasks принадлежат host. Полный [контракт](../../docs/message-navigation.md), [готовый бот](../../examples/python/navigation_bot.py) и [offline проверка](../../examples/python/offline_navigation.py).

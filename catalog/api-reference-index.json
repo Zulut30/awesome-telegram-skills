@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "library_version": "0.14.0",
+  "library_version": "0.15.0",
   "symbols": [
     {
       "module": "telegram_patterns",
@@ -329,7 +329,7 @@
       "example": "examples/api-reference/python/core_recipes.py",
       "limits": "Чтение не исполняет recipe code. Maturity отдельно от verification; SDK/mock не доказывают live/device. Preview — независимая копия. Этот пример ищет существующий cookbook recipe two-columns; ref.* — имена справочника API.",
       "intent": "Literal stable/experimental/reference",
-      "example_sha256": "65cb36c2214a9cb94145ad7622144581d2bdb791617576ee1528ba87565be47d",
+      "example_sha256": "f9af8ef0068a644d767074595d5da596aa5e859425e431a32a32eb8482f22987",
       "kind": "value"
     },
     {
@@ -340,7 +340,7 @@
       "example": "examples/api-reference/python/core_recipes.py",
       "limits": "Чтение не исполняет recipe code. Maturity отдельно от verification; SDK/mock не доказывают live/device. Preview — независимая копия. Этот пример ищет существующий cookbook recipe two-columns; ref.* — имена справочника API.",
       "intent": "Literal sdk/mock/browser/live/not_run",
-      "example_sha256": "65cb36c2214a9cb94145ad7622144581d2bdb791617576ee1528ba87565be47d",
+      "example_sha256": "f9af8ef0068a644d767074595d5da596aa5e859425e431a32a32eb8482f22987",
       "kind": "value"
     },
     {
@@ -351,7 +351,7 @@
       "example": "examples/api-reference/python/core_recipes.py",
       "limits": "Чтение не исполняет recipe code. Maturity отдельно от verification; SDK/mock не доказывают live/device. Preview — независимая копия. Этот пример ищет существующий cookbook recipe two-columns; ref.* — имена справочника API.",
       "intent": "Неизменяемая запись и копия preview",
-      "example_sha256": "65cb36c2214a9cb94145ad7622144581d2bdb791617576ee1528ba87565be47d",
+      "example_sha256": "f9af8ef0068a644d767074595d5da596aa5e859425e431a32a32eb8482f22987",
       "kind": "value"
     },
     {
@@ -362,7 +362,7 @@
       "example": "examples/api-reference/python/core_recipes.py",
       "limits": "Чтение не исполняет recipe code. Maturity отдельно от verification; SDK/mock не доказывают live/device. Preview — независимая копия. Этот пример ищет существующий cookbook recipe two-columns; ref.* — имена справочника API.",
       "intent": "Версия, recipes, get/search с фильтрами",
-      "example_sha256": "65cb36c2214a9cb94145ad7622144581d2bdb791617576ee1528ba87565be47d",
+      "example_sha256": "f9af8ef0068a644d767074595d5da596aa5e859425e431a32a32eb8482f22987",
       "kind": "value"
     },
     {
@@ -1376,11 +1376,66 @@
       "intent": "Literal следующего действия",
       "example_sha256": "4d1b8172353a97d5c44b72e5b32753fc65bfc4e7dc2fcee8f8005a119d5c646e",
       "kind": "type"
+    },
+    {
+      "module": "telegram_patterns.aiogram",
+      "name": "NavigationScreen",
+      "import": "from telegram_patterns.aiogram import NavigationScreen",
+      "recipe": "ref.bot_navigation",
+      "example": "examples/api-reference/python/bot_navigation.py",
+      "limits": "Optional aiogram. Owner/bot/chat/thread/message/revision guards, ACK first, unknown edit freeze and explicit same-message recovery. State lives in one process/event loop; restart leaves old buttons stale. Host owns sessions/tasks and business ACL. No automatic resend after unknown initial send; no live UI proof.",
+      "intent": "Immutable plain screen with declared links/layout",
+      "example_sha256": "2bdd6ebae6d75cd1cea4d8a51b8c7ec87247ccd2d6c88dfa15a56ec5756a5add",
+      "kind": "value"
+    },
+    {
+      "module": "telegram_patterns.aiogram",
+      "name": "NavigationState",
+      "import": "from telegram_patterns.aiogram import NavigationState",
+      "recipe": "ref.bot_navigation",
+      "example": "examples/api-reference/python/bot_navigation.py",
+      "limits": "Optional aiogram. Owner/bot/chat/thread/message/revision guards, ACK first, unknown edit freeze and explicit same-message recovery. State lives in one process/event loop; restart leaves old buttons stale. Host owns sessions/tasks and business ACL. No automatic resend after unknown initial send; no live UI proof.",
+      "intent": "Frozen scoped history/revision/phase snapshot",
+      "example_sha256": "2bdd6ebae6d75cd1cea4d8a51b8c7ec87247ccd2d6c88dfa15a56ec5756a5add",
+      "kind": "value"
+    },
+    {
+      "module": "telegram_patterns.aiogram",
+      "name": "NavigationResult",
+      "import": "from telegram_patterns.aiogram import NavigationResult",
+      "recipe": "ref.bot_navigation",
+      "example": "examples/api-reference/python/bot_navigation.py",
+      "limits": "Optional aiogram. Owner/bot/chat/thread/message/revision guards, ACK first, unknown edit freeze and explicit same-message recovery. State lives in one process/event loop; restart leaves old buttons stale. Host owns sessions/tasks and business ACL. No automatic resend after unknown initial send; no live UI proof.",
+      "intent": "Safe accepted/denied/stale/unavailable/unknown feedback",
+      "example_sha256": "2bdd6ebae6d75cd1cea4d8a51b8c7ec87247ccd2d6c88dfa15a56ec5756a5add",
+      "kind": "value"
+    },
+    {
+      "module": "telegram_patterns.aiogram",
+      "name": "MessageNavigation",
+      "import": "from telegram_patterns.aiogram import MessageNavigation",
+      "recipe": "ref.bot_navigation",
+      "example": "examples/api-reference/python/bot_navigation.py",
+      "limits": "Optional aiogram. Owner/bot/chat/thread/message/revision guards, ACK first, unknown edit freeze and explicit same-message recovery. State lives in one process/event loop; restart leaves old buttons stale. Host owns sessions/tasks and business ACL. No automatic resend after unknown initial send; no live UI proof.",
+      "intent": "Bounded open/get_state/handle/discard lifecycle for one owned message",
+      "example_sha256": "2bdd6ebae6d75cd1cea4d8a51b8c7ec87247ccd2d6c88dfa15a56ec5756a5add",
+      "kind": "value"
+    },
+    {
+      "module": "telegram_patterns.aiogram",
+      "name": "navigation_router",
+      "import": "from telegram_patterns.aiogram import navigation_router",
+      "recipe": "ref.bot_navigation",
+      "example": "examples/api-reference/python/bot_navigation.py",
+      "limits": "Optional aiogram. Owner/bot/chat/thread/message/revision guards, ACK first, unknown edit freeze and explicit same-message recovery. State lives in one process/event loop; restart leaves old buttons stale. Host owns sessions/tasks and business ACL. No automatic resend after unknown initial send; no live UI proof.",
+      "intent": "SDK Router with ACK-first guarded navigation and optional feedback",
+      "example_sha256": "2bdd6ebae6d75cd1cea4d8a51b8c7ec87247ccd2d6c88dfa15a56ec5756a5add",
+      "kind": "value"
     }
   ],
-  "python_symbols": 84,
+  "python_symbols": 89,
   "typescript_symbols": 41,
-  "recipes": 19,
+  "recipes": 20,
   "additional_entries": [
     "CLI recipes",
     "CLI init",

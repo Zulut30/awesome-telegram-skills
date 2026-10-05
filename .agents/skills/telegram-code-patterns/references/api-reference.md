@@ -1,4 +1,4 @@
-# Справочник API 0.14.0
+# Справочник API 0.15.0
 
 Публичные imports, самостоятельные минимальные композиции и границы каждого символа. Все группы experimental. Рецепты ref.* принадлежат этому справочнику; cookbook RecipeCatalog отдельно содержит Telegram requests/layouts. Исполненные fixtures не доказывают live/device/provider acceptance.
 
@@ -135,6 +135,11 @@
 | `ErrorOutcome` | `import type {ErrorOutcome} from "@awesome-telegram/patterns"` | [ref.errors](api-reference-typescript.md#ref-errors) | Literal outcome |
 | `OperationKind` | `import type {OperationKind} from "@awesome-telegram/patterns"` | [ref.errors](api-reference-typescript.md#ref-errors) | Literal read/write |
 | `RecoveryAction` | `import type {RecoveryAction} from "@awesome-telegram/patterns"` | [ref.errors](api-reference-typescript.md#ref-errors) | Literal следующего действия |
+| `NavigationScreen` | `from telegram_patterns.aiogram import NavigationScreen` | [ref.bot_navigation](api-reference-bot.md#ref-bot_navigation) | Immutable plain screen with declared links/layout |
+| `NavigationState` | `from telegram_patterns.aiogram import NavigationState` | [ref.bot_navigation](api-reference-bot.md#ref-bot_navigation) | Frozen scoped history/revision/phase snapshot |
+| `NavigationResult` | `from telegram_patterns.aiogram import NavigationResult` | [ref.bot_navigation](api-reference-bot.md#ref-bot_navigation) | Safe accepted/denied/stale/unavailable/unknown feedback |
+| `MessageNavigation` | `from telegram_patterns.aiogram import MessageNavigation` | [ref.bot_navigation](api-reference-bot.md#ref-bot_navigation) | Bounded open/get_state/handle/discard lifecycle for one owned message |
+| `navigation_router` | `from telegram_patterns.aiogram import navigation_router` | [ref.bot_navigation](api-reference-bot.md#ref-bot_navigation) | SDK Router with ACK-first guarded navigation and optional feedback |
 
 ## CLI и CSS
 

@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "library_version": "0.14.0",
+  "library_version": "0.15.0",
   "source_snapshot": "2026-10-04",
   "source_hashes": {
     "bot_api": "29f5f25caa18d303f14ce83af5a4df784eb3094c3076cb040a1ad950c157ad44",
@@ -20890,6 +20890,88 @@
       }
     },
     {
+      "id": "demo-navigation",
+      "title": "Экраны и история в одном сообщении",
+      "summary": "Полная композиция с тем же Dispatcher для offline и polling.",
+      "category": "scenarios",
+      "language": "python",
+      "maturity": "experimental",
+      "keywords": [
+        "бот",
+        "пример",
+        "callback",
+        "меню",
+        "события",
+        "возврат",
+        "и",
+        "навигация",
+        "восстановление",
+        "операций",
+        "личный",
+        "чат",
+        "назад",
+        "история",
+        "одно",
+        "сообщение",
+        "owner",
+        "stale",
+        "recovery"
+      ],
+      "code": "\"\"\"Attach the menu Router to an existing Dispatcher; polling starts only explicitly.\"\"\"\nfrom aiogram import F, Router\nfrom aiogram.filters import Command\nfrom aiogram.types import CallbackQuery, Message\nfrom telegram_patterns.aiogram import (\n    ActionButton, KeyboardLayout, MessageNavigation, NavigationResult,\n    NavigationScreen, navigation_router,\n)\n\n\ndef build_menu() -> tuple[MessageNavigation, Router]:\n    menu = MessageNavigation([\n        NavigationScreen('home', 'Выберите раздел', [\n            ActionButton('Каталог', 'catalog'), ActionButton('Помощь', 'help'),\n        ], KeyboardLayout((2,))),\n        NavigationScreen('catalog', 'Каталог услуг', [\n            ActionButton('Доставка', 'delivery'), ActionButton('Самовывоз', 'pickup'),\n            ActionButton('Условия', 'terms'),\n        ], KeyboardLayout((3,))),\n        NavigationScreen('delivery', 'Доставка: правила и сроки'),\n        NavigationScreen('pickup', 'Самовывоз: адрес и время'),\n        NavigationScreen('terms', 'Условия обслуживания'),\n        NavigationScreen('help', 'Помощь: /menu восстанавливает экран'),\n    ])\n    router = Router()\n\n    @router.message(F.chat.type == 'private', Command('start', 'menu'))\n    async def open_menu(message: Message) -> None:\n        if message.from_user is not None and not message.from_user.is_bot:\n            bot = message.bot\n            if bot is None:\n                raise ValueError('Bind the native message to a Bot before handling')\n            await menu.open(bot, message.from_user.id, message.chat.id)\n\n    async def notify(query: CallbackQuery, result: NavigationResult) -> None:\n        if result.status != 'accepted':\n            # ACK was already sent before the lock/edit. Additional feedback is\n            # best effort in live Telegram; host may use its existing UI channel.\n            await query.answer(result.text, show_alert=True)\n    router.include_router(navigation_router(menu, on_result=notify))\n    return menu, router\n\n\nif __name__ == '__main__':\n    import asyncio\n    from aiogram import Dispatcher\n    from telegram_patterns.aiogram import BotSettings, run_bot\n\n    async def main() -> None:\n        _, router = build_menu()\n        dispatcher = Dispatcher()\n        dispatcher.include_router(router)\n        try:\n            await run_bot(dispatcher, BotSettings.from_env())\n        finally:\n            await dispatcher.fsm.close()\n    asyncio.run(main())\n",
+      "verification": "mock",
+      "scope": "Synthetic Dispatcher сценарий исполнен при генерации в private fixture. Telegram delivery/physical clients не проверены.",
+      "sources": [
+        "https://core.telegram.org/bots/api"
+      ],
+      "preview": null,
+      "code_sha256": "b250daf77635c7185a32e2d0bc317eb9acba48f7d679e67e5fc8bfd2a972d592",
+      "tasks": [
+        "navigation",
+        "recovery"
+      ],
+      "contexts": [
+        "private"
+      ],
+      "sdk": "aiogram",
+      "sdk_version": "3.31.0",
+      "api_version": "bot:10.3",
+      "source_files": [
+        "examples/python/navigation_bot.py",
+        "packages/python/src/telegram_patterns/navigation.py",
+        "packages/python/src/telegram_patterns/execution.py",
+        "packages/python/src/telegram_patterns/_offline_recipe.py"
+      ],
+      "check_files": [
+        "examples/python/offline_navigation.py",
+        "packages/python/tests/test_navigation.py"
+      ],
+      "execution": {
+        "kind": "dispatcher",
+        "dependencies": [
+          "aiogram==3.31.0"
+        ],
+        "offline_environment": [],
+        "offline_permissions": [],
+        "offline_data": [
+          "Только поставляемые синтетические данные; реальные IDs и secrets не принимаются."
+        ],
+        "live_environment": [
+          "BOT_TOKEN"
+        ],
+        "live_permissions": [
+          "Прикладная авторизация сервиса; fixture actor не доказывает server ACL."
+        ],
+        "live_data": [
+          "Текущий Dispatcher, реальные actor/chat и сервис приложения",
+          "Проверка объекта, автора и состояния до effect/replay"
+        ],
+        "live_review": "Live executor отсутствует. Перед интеграцией проверить источники, ограничения конкретного метода/контекста, auth и ACL; metadata не подтверждает права.",
+        "effects": [
+          "Synthetic Dispatcher + StubSession; временная fixture, без polling"
+        ]
+      }
+    },
+    {
       "id": "demo-recovery",
       "title": "Потерянный ответ: сверка той же операции",
       "summary": "SQLite effect уже сохранен; unknown outcome сверяется тем же scoped ID без второго заказа.",
@@ -20925,7 +21007,7 @@
         "backend"
       ],
       "sdk": "python-core",
-      "sdk_version": "0.14.0",
+      "sdk_version": "0.15.0",
       "api_version": "none",
       "source_files": [
         "examples/python/error_recovery.py",

@@ -430,10 +430,30 @@
       "id": 22,
       "title": "Сделать навигацию по сообщениям",
       "requirement": "Реализовать экраны, возврат и историю с редактированием одного сообщения; чужая или устаревшая кнопка не изменяет состояние пользователя.",
-      "status": "pending",
-      "commit_subject": null,
-      "artifacts": [],
-      "evidence": []
+      "status": "done",
+      "commit_subject": "roadmap(022): navigate owned message screens with revisioned history and recovery",
+      "artifacts": [
+        "packages/python/src/telegram_patterns/navigation.py",
+        "packages/python/src/telegram_patterns/aiogram.py",
+        "packages/python/src/telegram_patterns/_offline_recipe.py",
+        "packages/python/tests/test_navigation.py",
+        "examples/python/navigation_bot.py",
+        "examples/python/offline_navigation.py",
+        "examples/api-reference/python/bot_navigation.py",
+        "docs/message-navigation.md",
+        ".agents/skills/telegram-code-patterns/references/message-navigation.md",
+        "docs/v1-checks/022.json",
+        "docs/v1-checks/022-distribution.json",
+        "docs/v1-checks/022-first-run.json",
+        "docs/v1-checks/022-portable.json"
+      ],
+      "evidence": [
+        "docs/v1-checks/022.json",
+        "0.15.0 synchronized local wheel/tarball; 59 stages, 143 Python passed + 1 Windows skip, 26 TypeScript, 1371 browser checks + 60 first-run checks",
+        "17 navigation tests: same-message history/back/reopen, owner/bot/chat/thread/message/revision guards, ACK before lock, concurrent stale denial, rejection/timeout/cancellation and unknown recovery even after TTL",
+        "Installed one-message Dispatcher composition; 130 public symbols/20 example groups, 300 recipes/201 Python fixtures, 23 source typing files; exact copied guide integrates with existing /help router",
+        "Single-process memory only, no automatic resend of unknown initial send; no live/human/blind/device/payment/production acceptance claim"
+      ]
     },
     {
       "id": 23,

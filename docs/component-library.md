@@ -1,6 +1,6 @@
 # Общая библиотека компонентов
 
-Текущая локальная поставка 0.13.0: 29 групп компонентов, 120 публичных Python/TypeScript-символов и 299 рецептов. [Требования и offline запуск](recipe-execution.md) доступны для всех записей; 200 Python fixtures имеют executor, 99 native references требуют host/аргументов. [Навигация](gallery-navigation.md) добавляет task/context/SDK/version filters, source/check links и самостоятельный export. Исторические обзоры ниже сохраняют свои версии и evidence; они не заменяют текущую support matrix.
+Текущая локальная поставка 0.15.0: 30 групп компонентов, 130 публичных Python/TypeScript-символов и 300 рецептов. [Требования и offline запуск](recipe-execution.md) доступны для всех записей; 201 Python fixtures имеют executor, 99 native references требуют host/аргументов. [Навигация](gallery-navigation.md) добавляет task/context/SDK/version filters, source/check links и самостоятельный export. Исторические обзоры ниже сохраняют свои версии и evidence; они не заменяют текущую support matrix.
 
 [Формы 0.3.0](form-tools-review.md) добавляют поля с проверкой, возврат, отмену и подтверждение со стабильным ID заявки. Готовый [бот формы](../examples/python/form_bot.py) и [offline-проверка](../examples/python/offline_form.py) используют один create_app; backend сохраняет заявку и replay result в SQLite.
 
@@ -18,6 +18,8 @@
 | TypeScript @awesome-telegram/patterns | Bridge, HTTP, черновик выбора, адаптивный shell/поля | [TypeScript README](../packages/typescript/README.md) |
 
 Core не привязан к инфраструктуре. Aiogram — extra; DOM shell подходит для легкого Mini App без frontend-фреймворка. Уже выбранные PTB/PostgreSQL/React сохраняются: подключается подходящий компонент. Python и TypeScript связываются через API конкретного проекта; runtime пакетов независим.
+
+[Навигация сообщений](message-navigation.md): готовые экраны/history/back/refresh с owner/bot/chat/thread/message/revision checks и explicit unknown edit recovery. State локальный для одного процесса; предоставленный пример добавляет Router к существующему Dispatcher.
 
 ## Примеры
 

@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "library_version": "0.14.0",
+  "library_version": "0.15.0",
   "distribution": "local; not published to package registries",
   "packages": {
     "python": {
@@ -451,6 +451,24 @@
       ],
       "maturity": "experimental",
       "maturity_scope": "All public API symbols; offline evidence is not stable/live acceptance"
+    },
+    {
+      "id": "message-navigation",
+      "language": "python",
+      "import": "telegram_patterns.aiogram.NavigationScreen, NavigationState, NavigationResult, MessageNavigation, navigation_router",
+      "extra": "aiogram",
+      "intent": "Экраны, история и возврат в одном owner-bound сообщении с explicit recovery после unknown edit",
+      "source": "packages/python/src/telegram_patterns/navigation.py",
+      "example": "examples/python/navigation_bot.py",
+      "boundaries": [
+        "Single-process, one event loop; no durable business FSM or cross-worker state",
+        "Owner/bot/chat/thread/message/token/revision/expiry/transition guards; ACK before edit lock",
+        "Unknown edit freezes transitions; explicit owner open repaints same known message",
+        "Unknown initial send never resends; host explicitly decides discard/new message",
+        "Bot/session/Dispatcher and handler tasks belong to host; SDK/mock is not live Telegram acceptance"
+      ],
+      "maturity": "experimental",
+      "maturity_scope": "All public API symbols in this component; local verification is not a stable 1.0 promise"
     }
   ],
   "maturity_policy": "docs/v1-maturity.md",
