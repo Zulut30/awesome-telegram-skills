@@ -28,6 +28,8 @@
 
 [Выбор компонентов нового проекта](docs/starter-selection.md): CLI init, dependency closure, preflight conflicts и полный dry-run.
 
+[Магазин с Mini App](docs/shop-example.md): каталог, корзина, серверная цена и доступ после Stars receipt; TypeScript frontend и Python backend в `examples/shop`.
+
 [Сервисный бот](docs/service-bot.md): пример записи и напоминания на реальной SQLite, с проверкой владельца и восстановлением после аварии. Код — `examples/service-bot`, проверка — `scripts/verify_service_bot.py`.
 
 [Первый запуск](docs/quickstart.md): локальная установка, offline-бот и экран Mini App без настоящего токена.

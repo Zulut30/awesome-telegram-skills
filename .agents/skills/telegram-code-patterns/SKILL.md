@@ -21,6 +21,8 @@ description: "Подбирает и подключает готовые комп
 
 Для сервисного бота с записью, меню, диалогом, напоминанием и восстановлением прочитай [сервисный пример](references/service-bot.md). Его приложение поставляется отдельно от библиотеки; используй предоставленный source/wheel, сохраняй текущие SDK и storage. Persistent FSM, owner ACL, replay и неизвестная отправка — прикладная композиция, не новые public exports.
 
+Для каталога, корзины и цифрового заказа с backend прочитай [магазин Mini App](references/shop-example.md). Используй server-owned цены, signed launch → session/CSRF → object ACL и Stars receipt → access; invoice callback не выдаёт товар. Приложение предоставляется отдельно, а сохранение номера заказа и неизвестная invoice-подготовка имеют свои правила сверки.
+
 Для выбора по готовности прочитай [зрелость и доказательства проверки](references/maturity.md): `maturity` отдельно от SDK/mock/browser/live evidence. Reference-запрос не заменяет прикладной workflow; experimental не обещает стабильность 1.0.
 
 1. Прочитай зависимости и точку интеграции целевого проекта. Установлены ли `awesome-telegram-patterns` и/или `@awesome-telegram/patterns`, какая версия? Не заменяй SDK/БД/frontend-фреймворк ради helper.

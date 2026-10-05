@@ -351,10 +351,22 @@
       "id": 18,
       "title": "Подготовить пример магазина с Mini App",
       "requirement": "Соединить каталог, корзину, заказ, backend и разрешенный платежный маршрут; цена и доступ определяются сервером.",
-      "status": "pending",
-      "commit_subject": null,
-      "artifacts": [],
-      "evidence": []
+      "status": "done",
+      "commit_subject": "roadmap(018): connect Mini App shop to server-owned orders and Stars receipts",
+      "artifacts": [
+        "examples/shop",
+        "scripts/verify_shop_example.py",
+        "scripts/check_shop_browser.mjs",
+        "docs/shop-example.md",
+        "catalog/scenarios.json",
+        "docs/v1-checks/018.json"
+      ],
+      "evidence": [
+        "Installed separate application wheel + accepted library 0.13.0 wheel/tarball in external consumer; exact 8 Python source files, RECORD and installed console help; 19 byte-exact vendor files; Mypy 7 source files and strict TypeScript build.",
+        "10 real domain/HTTP tests cover HMAC+independent aiogram validation, hashed session/CSRF, amount/owner ACL, concurrent operation replay, receipt/access rollback and duplicate/late charge handling.",
+        "143 actual Chrome checks across 6 viewport/theme combinations, plus lost POST response/reload and process exits 75/76; no new invoice after unknown, no duplicate grant after receipt crash/replay.",
+        "30 root tests and 41 skill packaging checks; source-exact portable guide; agent inspected phone/desktop screenshots. Synthetic native/launch/SDK transport, no live Telegram Stars/device acceptance."
+      ]
     },
     {
       "id": 19,

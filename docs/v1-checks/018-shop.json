@@ -1,0 +1,202 @@
+{
+  "passed": true,
+  "roadmap_item": 18,
+  "library_version": "0.13.0",
+  "application_version": "0.1.0",
+  "installed_origins": {
+    "prefix": "C:\\Users\\zulut\\AppData\\Local\\Temp\\telegram shop consumer jq0cw9fy\\environment",
+    "library": "C:\\Users\\zulut\\AppData\\Local\\Temp\\telegram shop consumer jq0cw9fy\\environment\\Lib\\site-packages\\telegram_patterns\\__init__.py",
+    "example": "C:\\Users\\zulut\\AppData\\Local\\Temp\\telegram shop consumer jq0cw9fy\\environment\\Lib\\site-packages\\telegram_shop_example\\__init__.py",
+    "library_version": "0.13.0",
+    "aiogram": "3.31.0",
+    "python": "3.13.12",
+    "aiohttp": "3.14.3"
+  },
+  "typescript_consumer": "C:\\Users\\zulut\\AppData\\Local\\Temp\\telegram shop consumer jq0cw9fy\\frontend\\node_modules\\@awesome-telegram\\patterns",
+  "typescript_version": "0.13.0",
+  "vendor_byte_exact_files": 19,
+  "archive_source_exact_files": 8,
+  "wheel_record_verified": true,
+  "installed_entrypoint_help": true,
+  "unit_tests": 10,
+  "stages": [
+    {
+      "stage": "build-example",
+      "exit_code": 0
+    },
+    {
+      "stage": "environment",
+      "exit_code": 0
+    },
+    {
+      "stage": "install",
+      "exit_code": 0
+    },
+    {
+      "stage": "origin",
+      "exit_code": 0
+    },
+    {
+      "stage": "entrypoint-help",
+      "exit_code": 0
+    },
+    {
+      "stage": "typecheck",
+      "exit_code": 0
+    },
+    {
+      "stage": "tests",
+      "exit_code": 0
+    },
+    {
+      "stage": "frontend-install",
+      "exit_code": 0
+    },
+    {
+      "stage": "frontend-build",
+      "exit_code": 0
+    },
+    {
+      "stage": "browser",
+      "exit_code": 0
+    }
+  ],
+  "browser": {
+    "passed": true,
+    "browser": "154.0.8037.97",
+    "checks": 143,
+    "cases": [
+      {
+        "name": "phone",
+        "width": 320,
+        "height": 568,
+        "theme": "light",
+        "stats": {
+          "action": "stats",
+          "passed": true,
+          "orders": 1,
+          "receipts": 1,
+          "access": 2,
+          "invoice_requests": 1,
+          "external_network_attempts": 0,
+          "telegram_requests": false
+        },
+        "contrast": 14.552206551498765
+      },
+      {
+        "name": "phone",
+        "width": 320,
+        "height": 568,
+        "theme": "dark",
+        "stats": {
+          "action": "stats",
+          "passed": true,
+          "orders": 1,
+          "receipts": 1,
+          "access": 2,
+          "invoice_requests": 1,
+          "external_network_attempts": 0,
+          "telegram_requests": false
+        },
+        "contrast": 12.928834362755687
+      },
+      {
+        "name": "tablet",
+        "width": 768,
+        "height": 1024,
+        "theme": "light",
+        "stats": {
+          "action": "stats",
+          "passed": true,
+          "orders": 1,
+          "receipts": 1,
+          "access": 2,
+          "invoice_requests": 1,
+          "external_network_attempts": 0,
+          "telegram_requests": false
+        },
+        "contrast": 14.552206551498765
+      },
+      {
+        "name": "tablet",
+        "width": 768,
+        "height": 1024,
+        "theme": "dark",
+        "stats": {
+          "action": "stats",
+          "passed": true,
+          "orders": 1,
+          "receipts": 1,
+          "access": 2,
+          "invoice_requests": 1,
+          "external_network_attempts": 0,
+          "telegram_requests": false
+        },
+        "contrast": 12.928834362755687
+      },
+      {
+        "name": "desktop",
+        "width": 1440,
+        "height": 900,
+        "theme": "light",
+        "stats": {
+          "action": "stats",
+          "passed": true,
+          "orders": 1,
+          "receipts": 1,
+          "access": 2,
+          "invoice_requests": 1,
+          "external_network_attempts": 0,
+          "telegram_requests": false
+        },
+        "contrast": 14.552206551498765
+      },
+      {
+        "name": "desktop",
+        "width": 1440,
+        "height": 900,
+        "theme": "dark",
+        "stats": {
+          "action": "stats",
+          "passed": true,
+          "orders": 1,
+          "receipts": 1,
+          "access": 2,
+          "invoice_requests": 1,
+          "external_network_attempts": 0,
+          "telegram_requests": false
+        },
+        "contrast": 12.928834362755687
+      }
+    ],
+    "crash_exit_codes": [
+      75,
+      76
+    ],
+    "lost_response_reconciled": true,
+    "invoice_callback_not_proof": true,
+    "receipt_and_access_atomic": true,
+    "external_requests": 0,
+    "telegram_requests": false,
+    "scope": "Six actual Chrome viewport/theme cases and real HTTP/SQLite/backend processes. Native host and payment updates synthetic; no live Telegram/Stars settlement or physical device acceptance."
+  },
+  "caller_files_preserved": true,
+  "artifacts": [
+    {
+      "name": "awesome_telegram_patterns-0.13.0-py3-none-any.whl",
+      "bytes": 145339,
+      "sha256": "3c9ee0fbc10909b97f93bac7fcfe3034f15b72c823eaa9721517ccfc6362fa63"
+    },
+    {
+      "name": "awesome-telegram-patterns-0.13.0.tgz",
+      "bytes": 19517,
+      "sha256": "ea3f71549501290905a895be782cbfa4d9a63749b31ad160da5d00cd20f9ca00"
+    },
+    {
+      "name": "awesome_telegram_shop_example-0.1.0-py3-none-any.whl",
+      "bytes": 19548,
+      "sha256": "be7d262023bd5f8b6e609e28baa45becc8aec8abf418184ccf43dab48601e538"
+    }
+  ],
+  "scope": "Installed Python application and pattern wheel/tarball; real SQLite, HTTP, process restart and Chrome. Synthetic launch/native/SDK transport. No live Telegram/Stars test environment or physical devices."
+}

@@ -1,0 +1,17 @@
+[build-system]
+requires = ["setuptools>=75,<83"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "awesome-telegram-shop-example"
+version = "0.1.0"
+description = "Mini App shop with server-owned orders and Stars receipts"
+readme = "README.md"
+requires-python = ">=3.11"
+dependencies = ["awesome-telegram-patterns[aiogram]>=0.13,<0.14", "aiohttp>=3.9,<4"]
+
+[project.scripts]
+telegram-shop-example = "telegram_shop_example.runtime:main"
+
+[tool.setuptools.packages.find]
+where = ["src"]

@@ -190,3 +190,18 @@ Installed API reference core_recipes и scripts/verify_gallery_export.py про�
 | «Останови во время SQLite claim / запусти второй процесс» | SQLite операция завершается до освобождения lock; второй процесс отказан, после exit lock reacquired | Detached writer после shutdown, stale PID lock, multiworker обещание |
 
 `scripts/verify_service_bot.py` собирает отдельный application wheel, устанавливает его и принятый pattern wheel во внешний consumer, выполняет настоящий SQLite и семь отдельных процессов (включая os._exit 73/74). Восемь тестов проверяют concurrent slot, replay/ACL, consent/expiry, forbidden/flood/unknown, FSM corruption и shutdown ownership. Это executable sample evidence, не независимое human/blind agent исследование или live Telegram delivery. Существующий stack не меняется ради примера; справочник навыка самодостаточен, но исполняемое приложение должно быть предоставлено отдельно.
+
+## Магазин с Mini App — пункт 018
+
+| Задача | Ожидаемый результат | Недопустимая подмена |
+| --- | --- | --- |
+| «Каталог, корзина, заказ и Stars» | Installed wheel/tarball + отдельное приложение; server catalog/amount/XTR/terms, owner order и реальный HTTP | Frontend price/paid/user_id, checkout внешней крипто/карточной оплатой для digital |
+| «Войти по данным запуска» | HMAC/freshness/bot validation, server session/CSRF, точный HTTPS origin; iframe/WebView cookies отдельно | initDataUnsafe/query user как разрешение, secrets в localStorage |
+| «Потерял ответ после POST / перезагрузил» | Pending key до отправки, тот же payload и owner scope, lookup; один order/effect | Новый UUID после unknown; удаление pending по TTL сессии |
+| «Платёжное окно вернуло paid» | Получить server status; выдача лишь после trusted successful_payment | Callback как платёж, публичный HTTP grant endpoint |
+| «Чужой заказ / другая сумма» | ACL до чтения/effect/replay; precheckout сверяет bot/owner/payload/currency/amount | Подмена chat/user/order ID в клиентском payload |
+| «Дубль receipt / ошибка при выдаче» | Один ledger/grant; receipt+paid+access commit/rollback вместе | Полученная оплата потеряна, повторная выдача, ACK за бизнес-успех |
+| «Авария после invoice call / receipt commit» | Real process exit, restart: unknown без auto invoice; paid/grant из той же SQLite | Mock reload без процесса или слепой новый charge |
+| «Телефон, планшет, ПК, темы, back» | Реальный Chrome путь, touch/focus/contrast/overflow, сохранение выбора; native host явно synthetic | CSS как visual proof, viewport как физический Telegram-клиент |
+
+`scripts/verify_shop_example.py` устанавливает отдельный application wheel и неизменные принятые library wheel/tarball во внешний consumer. Domain tests используют настоящие транзакции/HTTP и fault trigger; browser fixture контролирует synthetic SDK events через private stdin. Независимое human/blind agent исследование, реальные Stars test environment/клиенты и production эксплуатация этим не закрываются. Не подключайте иной стек ради приложения-примера.

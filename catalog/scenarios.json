@@ -29,6 +29,38 @@
         "restart-recovery"
       ],
       "scope": "Separate application composition; classes are not library public exports. No live Telegram or multiworker acceptance."
+    },
+    {
+      "id": "shop-mini-app",
+      "project": "examples/shop",
+      "distribution": "awesome-telegram-shop-example",
+      "version": "0.1.0",
+      "library_version": "0.13.0",
+      "guide": "docs/shop-example.md",
+      "portable_guide": ".agents/skills/telegram-code-patterns/references/shop-example.md",
+      "verification_command": "python scripts/verify_shop_example.py --wheel <PROVIDED_PATTERN_WHEEL> --tarball <PROVIDED_PATTERN_TARBALL> --output <NEW_PROOF_DIR>",
+      "evidence": "docs/v1-checks/018.json",
+      "maturity": "experimental",
+      "verification": [
+        "sdk",
+        "mock",
+        "browser",
+        "real-http",
+        "real-sqlite",
+        "process-crash-restart"
+      ],
+      "workflow": [
+        "catalog",
+        "cart",
+        "signed-launch",
+        "server-session",
+        "server-price",
+        "owner-order",
+        "stars-invoice",
+        "trusted-receipt",
+        "protected-content"
+      ],
+      "scope": "Separate application; trusted SDK receipts synthetic in fixture. No public HTTP grant route or live Stars/device acceptance."
     }
   ]
 }
