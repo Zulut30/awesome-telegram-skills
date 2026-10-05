@@ -1,0 +1,165 @@
+{
+  "roadmap_item": 25,
+  "version": "0.18.0",
+  "checked_date": "2026-10-05",
+  "passed": true,
+  "report": "output/pattern-library-0.18.0/distribution-report.json",
+  "report_sha256": "c7cfe956b3054cdbd2e41e3f334bf72c3db49e089036a62250ea7012c6d255ab",
+  "distribution_stages": 63,
+  "python_tests": {
+    "run": 223,
+    "passed": 222,
+    "skipped": 1
+  },
+  "dialog_behavioral_tests": 23,
+  "typescript_tests": 26,
+  "root_tests": 34,
+  "skills_checked": 41,
+  "browser_scope": {
+    "example": 141,
+    "gallery": 694,
+    "export": 694,
+    "starter": 66,
+    "selected_starter": 76,
+    "api_reference": 36
+  },
+  "browser_total": 1707,
+  "first_run_browser_checks": 60,
+  "public_symbols": {
+    "total": 156,
+    "python": 115,
+    "typescript": 41
+  },
+  "component_groups": 36,
+  "recipes": 303,
+  "python_fixtures": 204,
+  "source_check_files": 226,
+  "source_typing_files": 30,
+  "installed_dialog_fields": {
+    "passed": true,
+    "network": false,
+    "session_closed": true,
+    "business_effects": 1,
+    "field_types": 7,
+    "owner_step_guards": true,
+    "native_candidate_confirmation": true,
+    "back_cancel": true,
+    "unknown_receipt_same_intent": true,
+    "existing_dispatcher_preserved": true,
+    "host_data_preserved": true
+  },
+  "first_run_report": "output/v1-quickstart-025-final/report.json",
+  "first_run_report_sha256": "0f8340071d70e1714c22d7bf5e33c2882c384946fe11f3ce06b69d86887b10df",
+  "first_run_guide_hash": {
+    "method": "UTF-8 normalized-LF text executed by verify_quickstart.py",
+    "sha256": "5a55634aef676712792ba583fd6ba0b2ab65e3f9415a6b084d2e1254bf1e3172",
+    "source_bytes_sha256": "4730726c31d0239922582167b00bac77885648e06ae86c9d227229cd350954c6"
+  },
+  "superseded_pass": {
+    "report": "output/pattern-library-0.18.0-attempt-3/distribution-report.json",
+    "passed": true,
+    "reason": "All gates passed before final Decimal configuration, 128-bit intent and private-topic guard refinements; accepted report is the complete rerun against their final bytes."
+  },
+  "verification_helper_regression": {
+    "actual_timed_out_child": true,
+    "partial_stdout_stderr_preserved": true,
+    "failed_stage_exit_code": 124,
+    "python_suite_timeout_seconds": 300,
+    "other_stage_timeout_seconds": 180
+  },
+  "artifacts": [
+    {
+      "name": "awesome_telegram_patterns-0.18.0-py3-none-any.whl",
+      "bytes": 209109,
+      "sha256": "95999f5b6e685619f44dff825263c52a6108e9368c4bc4d89b886b005ea212a2"
+    },
+    {
+      "name": "awesome-telegram-patterns-0.18.0.tgz",
+      "bytes": 19528,
+      "sha256": "2e1f66a6cfcd50c4df1bef3e9089f3e4dfc8830275fb890aeece856d9e858c3d"
+    }
+  ],
+  "evidence": {
+    "distribution": "docs/v1-checks/025-distribution.json",
+    "first_run": "docs/v1-checks/025-first-run.json",
+    "portable": "docs/v1-checks/025-portable.json"
+  },
+  "source_and_guide_hashes": {
+    "packages/python/src/telegram_patterns/dialog_fields.py": "913b050dbd16f00b3041a90f21eb98f764be116213e4272bc7a15e7c441ae9d8",
+    "packages/python/src/telegram_patterns/dialog_forms.py": "dfc1d7120fdcaddce48d85652ab22c03bb15507c7d10e03e619f7a8f4a86f00e",
+    "packages/python/src/telegram_patterns/aiogram.py": "f7eade22637eed0096f983afe438a16b120fcc26943949694c74614aba4b6b5a",
+    "packages/python/src/telegram_patterns/_offline_recipe.py": "00c2b732288eb13e2e32bc4796272a8f93faaef9beaa9fac6437ec3d8b833ff7",
+    "packages/python/tests/test_dialog_forms.py": "4d06986f1f12e7bcbeab28e456e8597e1b4f5519f545ee576287c501234f1f10",
+    "packages/python/tests/test_catalog_cli.py": "8fac27f97b1822c66a9a930947abbc493a19d416c4206272c732b28b4fcf615d",
+    "tests/public_types.py": "30d0688f1cb44a078cd237b09e899926663945a81c52dd184c3870491dfc2081",
+    "examples/python/dialog_fields_bot.py": "01dde379c0b7f2b44c3ad76631b93854f02c0ecd9e68279686b6ec493482b67a",
+    "examples/python/offline_dialog_fields.py": "0fefba310290aa52eb737fcf92a655342c41351e8cab1bcc5223865a51a32dd8",
+    "examples/api-reference/python/bot_dialog_fields.py": "89edee3c0aacd0253018cfed93667b7b4a29127a88fd452fd6bb94ff8be78a48",
+    "docs/dialog-fields.md": "2cd5612a0896d8c3dd388afdec4aa4b2b748cc267cf9eee5278f40745b2961c9",
+    ".agents/skills/telegram-code-patterns/references/dialog-fields.md": "2cd5612a0896d8c3dd388afdec4aa4b2b748cc267cf9eee5278f40745b2961c9",
+    ".agents/skills/telegram-dialogs/references/dialog-fields.md": "2cd5612a0896d8c3dd388afdec4aa4b2b748cc267cf9eee5278f40745b2961c9",
+    ".agents/skills/telegram-dialogs/SKILL.md": "6c4feb9402878724232928a1444283184c3d3f54e1b9fa5c493ab30180d2c504",
+    ".agents/skills/telegram-code-patterns/SKILL.md": "e680138bae530fde24f7ffdbc7ffb7ca0d8e1c2c7ddeb0ac6a3796e1f99a07ae",
+    "scripts/verify_dialog_recipe.py": "d0deaa365a0f45bf407c7d6613cf51c07a65e622d0306a7063d1a431ce1ad1e7",
+    "scripts/build_recipe_gallery.py": "4eede90822216a9636dd8cbaac016184d60de99228a73e2aa6bdfefe2664c54b",
+    "scripts/verify_pattern_packages.py": "12b0eacc26bed28261fd43de85a36610cdf32232f787d29d90e9d0352a339970",
+    "scripts/verify_gallery_export.py": "a7e57a79a0ec615c5830e50c30ff97200ab5765fbc1b0884771c3f4d82e3b348",
+    "scripts/verify_recipe_execution.py": "3048feffc43e39678b1bd310645ff8978d2ebe89c75dd5a8bbe88d9fb46f098d",
+    "tests/gallery-browser.mjs": "a68df2bc897c3e97c83af8098908390cd190482401aebcb69c833ad807eecf86",
+    "docs/quickstart.md": "4730726c31d0239922582167b00bac77885648e06ae86c9d227229cd350954c6",
+    ".agents/skills/telegram-code-patterns/references/quickstart.md": "4730726c31d0239922582167b00bac77885648e06ae86c9d227229cd350954c6",
+    "examples/api-reference/python/core_recipes.py": "7fce0e1e0b1eba39c3411eeeae6397c18e019da9f8960f8b305caecc7edc2cb7",
+    "tests/test_package_verification.py": "0b8bd7e6ebb4c8e4443f4ef457ec4123438711eba1acedafead5d4c028ef7813"
+  },
+  "root_log_sha256": "c042904818845563b5ccd9f70a0781fbadbc1d27edbf10849e1a76bffc4e4471",
+  "skill_log_sha256": "8807a4a6e3207331f403446a458788ef471faa999c4f11c303833c22e58313a2",
+  "requirement_evidence": {
+    "seven_types": [
+      "decimal bounds/precision/no float/exponent/rounding",
+      "ASCII email/international phone explicit policies",
+      "real ISO dates including leap/min/max",
+      "bounded document opaque references, MIME/size; no download",
+      "own-contact actor match/default; explicit third-party option",
+      "finite/range static coordinates; live/forward rejection"
+    ],
+    "author_and_step": [
+      "ordinary private Bot API without Business/forum topics",
+      "current actor-scoped FSM and exact owner/schema/index/value validation",
+      "text/document reply_to_message matches current bot/current prompt/current chat",
+      "native candidate bound to actor/operation/nonce/step/message before acceptance"
+    ],
+    "navigation_and_unknown": [
+      "back discards dependent values and rotates intent; cancel clears only form data and removes reply keyboard",
+      "explicit resume retains accepted answers and intent while invalidating old UI",
+      "submission started stored before host hook; timeout/cancellation freezes edit/cancel/restart",
+      "exact same-intent retry after real SQLite commit makes one business row; success clears before lost feedback",
+      "concurrent duplicate final callbacks serialized by existing event isolation"
+    ],
+    "public_and_portable": [
+      "all ten new public symbols imported/used by exact fenced API consumer",
+      "copied complete one-block guide tested against installed wheel",
+      "156 public symbols, 25 API groups, 303 recipes, 204 Python fixtures, 226 linked export files",
+      "gallery search/code/closed command/source/check links verified in 14 viewport/theme cases",
+      "128-bit intent and longest native candidate callback fit exactly 64 UTF-8 bytes",
+      "normalized Decimal bounds fail at configuration time; coordinate accuracy canonicalizes across integer/float JSON serializers"
+    ]
+  },
+  "repair_history": [
+    {
+      "report": "output/pattern-library-0.18.0-attempt-1/distribution-report.json",
+      "failure": "Existing core_recipes API example still expected 302 catalog entries. Updated to 303 and annotated the new mixed field list for strict consumer typing; exact installed API consumer passed before full rerun."
+    },
+    {
+      "report": "output/pattern-library-0.18.0-attempt-2/distribution-report.json",
+      "failure": "Python suite exceeded 180 seconds before output was persisted. Measured installed run took 181.9 seconds and identified stale mock count 7 versus 8. Fixed count; only Python suite gets 300-second bound, and real timed-out child regression proves partial streams and failed report are retained."
+    }
+  ],
+  "limits": [
+    "Experimental local packages; no PyPI/npm publication or production-ready claim.",
+    "Formats/metadata do not prove email/phone ownership, actual file contents or physical location. Host owns personal-data retention.",
+    "Current ACL, durable business effect/replay and operation_id recovery belong to host. SQLiteOnce covers only its connection effects.",
+    "Host FSM/storage/isolation is retained; MemoryStorage and SimpleEventIsolation do not guarantee restart or multiple workers.",
+    "Synthetic SDK and Chrome acceptance do not prove live Telegram, physical devices, provider settlement or independent usability.",
+    "Original item020 remains pending human/independent AI baseline; applications017–019 retain separate 0.13.0 acceptance."
+  ]
+}

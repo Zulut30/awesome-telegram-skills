@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "library_version": "0.17.0",
+  "library_version": "0.18.0",
   "scope": "Public library exports; ref.* recipes belong to the API reference, not the Telegram method snapshot",
   "groups": [
     {
@@ -412,6 +412,27 @@
         "telegram_patterns.aiogram": {
           "calendar_keyboard": "Available-date fallback or native disabled month grid with explicit navigation",
           "time_slot_keyboard": "Enabled UTC intervals displayed with local offset, native layout/validation"
+        }
+      }
+    },
+    {
+      "id": "bot_dialog_fields",
+      "section": "bot",
+      "title": "Число, email, телефон, дата, файл, контакт и геопозиция",
+      "example": "examples/api-reference/python/bot_dialog_fields.py",
+      "limits": "Optional aiogram. Ordinary private chat; host FSM/event isolation and durable same-intent business transaction. ForceReply author/step correlation; native candidates require confirmation. Metadata and coordinates do not prove content/identity/presence. No live/device acceptance.",
+      "api": {
+        "telegram_patterns.aiogram": {
+          "FieldValue": "JSON-compatible string or flat metadata",
+          "NumberField": "Exact bounded decimal string",
+          "EmailField": "ASCII mailbox format",
+          "PhoneField": "Explicit international number",
+          "DateField": "Existing calendar date with bounds",
+          "FileField": "Bounded opaque document metadata",
+          "ContactField": "Own or explicitly third-party contact candidate",
+          "LocationField": "Finite static coordinate candidate",
+          "DialogSubmission": "Immutable identity and values; fresh as_dict",
+          "dialog_form_router": "Mixed router with owner/step guards, back/cancel and confirmation"
         }
       }
     }

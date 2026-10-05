@@ -54,10 +54,18 @@ def main() -> int:
     environment['PYTHONUTF8'] = '1'
     stages = []
 
-    def run(label: str, command: list[str], cwd: Path = ROOT) -> str:
+    def run(label: str, command: list[str], cwd: Path = ROOT, *, timeout: float = 180) -> str:
         print(f'Checking: {label}', flush=True)
-        result = subprocess.run(command, cwd=cwd, env=environment, capture_output=True,
-                                text=True, encoding='utf-8', errors='replace', timeout=180)
+        try:
+            result = subprocess.run(command, cwd=cwd, env=environment, capture_output=True,
+                                    text=True, encoding='utf-8', errors='replace', timeout=timeout)
+        except subprocess.TimeoutExpired as error:
+            def partial(value: str | bytes | None) -> str:
+                return value.decode('utf-8', errors='replace') if isinstance(value, bytes) else value or ''
+            log = partial(error.stdout) + partial(error.stderr) + f'\nTIMEOUT after {error.timeout} seconds\n'
+            (output / f'{label}.log').write_text(log, encoding='utf-8')
+            stages.append({'stage': label, 'exit_code': 124, 'timed_out': True, 'timeout_seconds': error.timeout})
+            raise RuntimeError(f'{label} timed out; partial output saved to {output / (label + ".log")}') from error
         log = result.stdout + result.stderr
         (output / f'{label}.log').write_text(log, encoding='utf-8')
         stages.append({'stage': label, 'exit_code': result.returncode})
@@ -90,7 +98,7 @@ from telegram_patterns import BotSettings, validate_init_data, RecipeCatalog, cr
 assert importlib.util.find_spec('aiogram') is None
 assert Path(telegram_patterns.__file__).is_relative_to(Path(sys.argv[1]))
 assert BotSettings.from_env(environ={'BOT_TOKEN':'100:CORE_FIXTURE'}).token=='100:CORE_FIXTURE'
-assert len(RecipeCatalog().recipes)==302
+assert len(RecipeCatalog().recipes)==303
 assert RecipeCatalog().search('две кнопки')[0].id=='two-columns'
 assert RecipeCatalog().get('two-columns').maturity=='experimental'
 assert RecipeCatalog().get('api.sendPhoto').maturity=='reference'
@@ -119,7 +127,7 @@ print(json.dumps({'core_without_sdk':True,'python':sys.version.split()[0]}))
         if report['core_cli']['recipes'][0]['id'] != 'two-columns':
             raise RuntimeError('Core console recipe search failed')
         report['maturity_cli'] = json.loads(run('maturity-cli', [str(core_console), 'recipes', '--maturity', 'experimental'], consumers))
-        if len(report['maturity_cli']['recipes']) != 18 or any(item['maturity'] != 'experimental' for item in report['maturity_cli']['recipes']):
+        if len(report['maturity_cli']['recipes']) != 19 or any(item['maturity'] != 'experimental' for item in report['maturity_cli']['recipes']):
             raise RuntimeError('Installed maturity CLI filter failed')
         database = consumers / 'booking.sqlite'
         first = json.loads(run('booking-first', [str(python_in(core)), str(ROOT / 'examples/python/booking.py'), str(database)], consumers))
@@ -145,7 +153,7 @@ print(json.dumps({'core_without_sdk':True,'python':sys.version.split()[0]}))
             reference_command.append('--skip-browser')
         report['api_reference'] = json.loads(run('api-reference-consumer', reference_command, consumers))
         run('sdk-origin', [str(python_in(sdk)), '-c', 'import sys,telegram_patterns;from pathlib import Path;assert Path(telegram_patterns.__file__).is_relative_to(Path(sys.argv[1]));print(telegram_patterns.__file__)', str(sdk)], consumers)
-        python_log = run('python-tests', [str(python_in(sdk)), '-m', 'unittest', 'discover', '-s', str(ROOT / 'packages/python/tests'), '-v'], consumers)
+        python_log = run('python-tests', [str(python_in(sdk)), '-m', 'unittest', 'discover', '-s', str(ROOT / 'packages/python/tests'), '-v'], consumers, timeout=300)
         run('sdk-dependencies', [uv, 'pip', 'check', '--python', str(python_in(sdk))])
         offline = json.loads(run('offline-bot', [str(python_in(sdk)), str(ROOT / 'examples/python/offline_bot.py')], consumers))
         if not offline['passed'] or offline['network'] or not offline['session_closed']:
@@ -175,6 +183,10 @@ print(json.dumps({'core_without_sdk':True,'python':sys.version.split()[0]}))
         if not calendar['passed'] or calendar['network'] or not calendar['session_closed'] or calendar['business_effects'] != 1 or not all(calendar[k] for k in ('date_time_back','unavailable_date','month_navigation','owner_stale_guards','schedule_confirmation_guard','durable_replay','existing_dispatcher_preserved','unknown_edit_recovery','single_message')):
             raise RuntimeError('Installed calendar and transactional booking scenario failed')
         report['calendar_slots'] = calendar
+        dialog = json.loads(run('dialog-fields', [str(python_in(sdk)), str(ROOT / 'examples/python/offline_dialog_fields.py')], consumers))
+        if not dialog['passed'] or dialog['network'] or not dialog['session_closed'] or dialog['field_types'] != 7 or dialog['business_effects'] != 1 or not all(dialog[k] for k in ('owner_step_guards','native_candidate_confirmation','back_cancel','unknown_receipt_same_intent','existing_dispatcher_preserved','host_data_preserved')):
+            raise RuntimeError('Installed seven-field dialog scenario failed')
+        report['dialog_fields'] = dialog
         report['telegram_catalog'] = json.loads(run('telegram-catalog', [str(python_in(sdk)), str(ROOT / 'scripts/build_telegram_catalog.py'), '--check'], consumers))
         report['recipe_gallery'] = json.loads(run('recipe-gallery', [str(python_in(sdk)), str(ROOT / 'scripts/build_recipe_gallery.py'), '--check'], consumers))
         gallery_command = [str(python_in(sdk)), str(ROOT / 'scripts/verify_gallery_export.py'), '--output', str(consumers / 'gallery-export')]
@@ -208,6 +220,7 @@ print(json.dumps({'core_without_sdk':True,'python':sys.version.split()[0]}))
         error_example.write_text(blocks[0], encoding='utf-8')
         run('portable-error-recipe', [str(python_in(core)), str(error_example)], consumers)
         report['portable_keyboard_recipe'] = json.loads(run('portable-keyboard-recipe', [str(python_in(sdk)), str(ROOT / 'scripts/verify_keyboard_recipe.py'), str(copied_skill)], consumers))
+        report['portable_dialog_recipe'] = json.loads(run('portable-dialog-recipe', [str(python_in(sdk)), str(ROOT / 'scripts/verify_dialog_recipe.py'), str(copied_skill)], consumers))
         report['portable_developer_recipe'] = json.loads(run('portable-developer-recipe', [str(python_in(core)), str(ROOT / 'scripts/verify_developer_recipe.py'), str(copied_skill)], consumers))
 
         client = consumers / 'typescript'

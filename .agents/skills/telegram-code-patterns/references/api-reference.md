@@ -1,4 +1,4 @@
-# Справочник API 0.17.0
+# Справочник API 0.18.0
 
 Публичные imports, самостоятельные минимальные композиции и границы каждого символа. Все группы experimental. Рецепты ref.* принадлежат этому справочнику; cookbook RecipeCatalog отдельно содержит Telegram requests/layouts. Исполненные fixtures не доказывают live/device/provider acceptance.
 
@@ -158,6 +158,16 @@
 | `SQLiteSlotStore` | `from telegram_patterns import SQLiteSlotStore` | [ref.core_calendar](api-reference-core.md#ref-core_calendar) | Explicit schema, schedule CAS, current ACL, atomic reserve/cancel and replay |
 | `calendar_keyboard` | `from telegram_patterns.aiogram import calendar_keyboard` | [ref.bot_calendar](api-reference-bot.md#ref-bot_calendar) | Available-date fallback or native disabled month grid with explicit navigation |
 | `time_slot_keyboard` | `from telegram_patterns.aiogram import time_slot_keyboard` | [ref.bot_calendar](api-reference-bot.md#ref-bot_calendar) | Enabled UTC intervals displayed with local offset, native layout/validation |
+| `FieldValue` | `from telegram_patterns.aiogram import FieldValue` | [ref.bot_dialog_fields](api-reference-bot.md#ref-bot_dialog_fields) | JSON-compatible string or flat metadata |
+| `NumberField` | `from telegram_patterns.aiogram import NumberField` | [ref.bot_dialog_fields](api-reference-bot.md#ref-bot_dialog_fields) | Exact bounded decimal string |
+| `EmailField` | `from telegram_patterns.aiogram import EmailField` | [ref.bot_dialog_fields](api-reference-bot.md#ref-bot_dialog_fields) | ASCII mailbox format |
+| `PhoneField` | `from telegram_patterns.aiogram import PhoneField` | [ref.bot_dialog_fields](api-reference-bot.md#ref-bot_dialog_fields) | Explicit international number |
+| `DateField` | `from telegram_patterns.aiogram import DateField` | [ref.bot_dialog_fields](api-reference-bot.md#ref-bot_dialog_fields) | Existing calendar date with bounds |
+| `FileField` | `from telegram_patterns.aiogram import FileField` | [ref.bot_dialog_fields](api-reference-bot.md#ref-bot_dialog_fields) | Bounded opaque document metadata |
+| `ContactField` | `from telegram_patterns.aiogram import ContactField` | [ref.bot_dialog_fields](api-reference-bot.md#ref-bot_dialog_fields) | Own or explicitly third-party contact candidate |
+| `LocationField` | `from telegram_patterns.aiogram import LocationField` | [ref.bot_dialog_fields](api-reference-bot.md#ref-bot_dialog_fields) | Finite static coordinate candidate |
+| `DialogSubmission` | `from telegram_patterns.aiogram import DialogSubmission` | [ref.bot_dialog_fields](api-reference-bot.md#ref-bot_dialog_fields) | Immutable identity and values; fresh as_dict |
+| `dialog_form_router` | `from telegram_patterns.aiogram import dialog_form_router` | [ref.bot_dialog_fields](api-reference-bot.md#ref-bot_dialog_fields) | Mixed router with owner/step guards, back/cancel and confirmation |
 
 ## CLI и CSS
 

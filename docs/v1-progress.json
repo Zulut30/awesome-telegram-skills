@@ -522,10 +522,30 @@
       "id": 25,
       "title": "Расширить поля диалогов",
       "requirement": "Поддержать числа, email, телефон, даты, файлы, контакты и геопозицию, возврат и отмену; ForceReply/reply keyboard не заменяют проверку автора и ожидаемого шага.",
-      "status": "pending",
-      "commit_subject": null,
-      "artifacts": [],
-      "evidence": []
+      "status": "done",
+      "commit_subject": "roadmap(025): add guarded mixed dialog fields and same-intent submission",
+      "artifacts": [
+        "packages/python/src/telegram_patterns/dialog_fields.py",
+        "packages/python/src/telegram_patterns/dialog_forms.py",
+        "examples/python/dialog_fields_bot.py",
+        "examples/python/offline_dialog_fields.py",
+        "examples/api-reference/python/bot_dialog_fields.py",
+        "docs/dialog-fields.md",
+        ".agents/skills/telegram-code-patterns/references/dialog-fields.md",
+        ".agents/skills/telegram-dialogs/references/dialog-fields.md",
+        "docs/v1-checks/025.json",
+        "docs/v1-checks/025-distribution.json",
+        "docs/v1-checks/025-first-run.json",
+        "docs/v1-checks/025-portable.json"
+      ],
+      "evidence": [
+        "docs/v1-checks/025.json",
+        "0.18.0 local wheel/tarball: 63 stages, 222 Python passed + 1 Windows skip, 26 TypeScript, 1707 browser checks + 60 first-run",
+        "23 behavioral tests: seven input types, current owner/question/candidate, stale/foreign/reordered/concurrent guards and preserved host FSM/help",
+        "Actual file SQLite commit then lost receipt; same-intent reconciliation and one effect; lost prompts and success feedback, task cancellation and corruption",
+        "Exact API/portable guide through installed wheel, seven-field closed recipe, 303 recipes/204 Python fixtures and 226 linked files",
+        "Live/device/independent human and AI baseline/production acceptance remain outside this author-local proof"
+      ]
     },
     {
       "id": 26,

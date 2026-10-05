@@ -1,5 +1,12 @@
 # Изменения библиотеки компонентов
 
+## 0.18.0 — пункт 025
+
+- NumberField/EmailField/PhoneField/DateField/FileField/ContactField/LocationField: ограниченный и нормализованный ввод, точные decimal-строки, реальные даты и flat metadata без download/DNS/проверки физического присутствия.
+- FieldValue/DialogSubmission/dialog_form_router: immutable structured submission, current bot/actor/chat/FSM/schema/step guards, ForceReply correlation для текста/документа, отдельное подтверждение native candidate, возврат/отмена/возобновление и очистка reply keyboard.
+- Unknown submission сохраняет operation_id и блокирует редактирование до явной сверки; success очищает форму перед feedback. Старые TextField/FormSubmission/text_form_router не требуют миграции. Host владеет durable FSM/isolation/ACL/эффектом/retention.
+- Семь полей в готовом примере на текущем Dispatcher, one-effect SQLite receipt/replay, переносимый guide, закрытый offline recipe, полное API/каталог/галерея. Проверки SDK/mock/Chrome не заявляют live/device/independent usability либо production-ready.
+
 ## 0.17.0 — пункт 024
 
 - SDK-free CalendarMonth/TimeSlot/resolve_local_time: immutable Monday-first calendar, unavailable dates, UTC intervals и явный fold для DST ambiguity. Gap/imaginary wall time отвергается; optional calendar extra предоставляет IANA data на Windows.

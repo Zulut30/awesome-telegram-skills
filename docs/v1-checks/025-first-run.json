@@ -1,0 +1,113 @@
+{
+  "passed": true,
+  "version": "0.18.0",
+  "consumer": "C:\\Users\\zulut\\AppData\\Local\\Temp\\telegram first run _ae9zqj9",
+  "guide_blocks": [
+    "parameters",
+    "setup",
+    "init",
+    "offline",
+    "frontend",
+    "preview"
+  ],
+  "guide_sha256": "5a55634aef676712792ba583fd6ba0b2ab65e3f9415a6b084d2e1254bf1e3172",
+  "artifact_hashes": [
+    {
+      "name": "awesome_telegram_patterns-0.18.0-py3-none-any.whl",
+      "sha256": "95999f5b6e685619f44dff825263c52a6108e9368c4bc4d89b886b005ea212a2"
+    },
+    {
+      "name": "awesome-telegram-patterns-0.18.0.tgz",
+      "sha256": "2e1f66a6cfcd50c4df1bef3e9089f3e4dfc8830275fb890aeece856d9e858c3d"
+    }
+  ],
+  "origins": {
+    "prefix": "C:\\Users\\zulut\\AppData\\Local\\Temp\\telegram first run _ae9zqj9\\first project with spaces\\my-bot\\.venv",
+    "module": "C:\\Users\\zulut\\AppData\\Local\\Temp\\telegram first run _ae9zqj9\\first project with spaces\\my-bot\\.venv\\Lib\\site-packages\\telegram_patterns\\__init__.py",
+    "version": "0.18.0",
+    "aiogram": "3.31.0"
+  },
+  "offline": {
+    "passed": true,
+    "network": false,
+    "methods": [
+      "SendMessage",
+      "AnswerCallbackQuery",
+      "SendMessage"
+    ],
+    "session_closed": true
+  },
+  "doctor_passed": true,
+  "existing_workspace_unchanged": true,
+  "browser": {
+    "passed": true,
+    "browser": "154.0.8037.97",
+    "checks": 60,
+    "cases": [
+      {
+        "name": "phone",
+        "width": 320,
+        "height": 568,
+        "theme": "light",
+        "appearance": {
+          "theme": "light",
+          "background": "rgb(241, 245, 250)"
+        }
+      },
+      {
+        "name": "phone",
+        "width": 320,
+        "height": 568,
+        "theme": "dark",
+        "appearance": {
+          "theme": "dark",
+          "background": "rgb(16, 29, 39)"
+        }
+      },
+      {
+        "name": "tablet",
+        "width": 768,
+        "height": 1024,
+        "theme": "light",
+        "appearance": {
+          "theme": "light",
+          "background": "rgb(241, 245, 250)"
+        }
+      },
+      {
+        "name": "tablet",
+        "width": 768,
+        "height": 1024,
+        "theme": "dark",
+        "appearance": {
+          "theme": "dark",
+          "background": "rgb(16, 29, 39)"
+        }
+      },
+      {
+        "name": "desktop",
+        "width": 1440,
+        "height": 900,
+        "theme": "light",
+        "appearance": {
+          "theme": "light",
+          "background": "rgb(241, 245, 250)"
+        }
+      },
+      {
+        "name": "desktop",
+        "width": 1440,
+        "height": 900,
+        "theme": "dark",
+        "appearance": {
+          "theme": "dark",
+          "background": "rgb(16, 29, 39)"
+        }
+      }
+    ],
+    "externalRequests": 0,
+    "scope": "Chrome on installed tarball, six viewport/theme combinations; not physical Telegram device proof"
+  },
+  "telegram_requests": false,
+  "limits": "Windows commands and Chrome viewport preview; installers may use registries; no real Telegram client, live bot, backend auth or usability study"
+}

@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "library_version": "0.17.0",
+  "library_version": "0.18.0",
   "distribution": "local; not published to package registries",
   "packages": {
     "python": {
@@ -549,6 +549,24 @@
       ],
       "maturity": "experimental",
       "maturity_scope": "All public symbols in this component; local acceptance is not stable 1.0 or live proof"
+    },
+    {
+      "id": "dialog-forms",
+      "language": "python",
+      "import": "telegram_patterns.aiogram.FieldValue, NumberField, EmailField, PhoneField, DateField, FileField, ContactField, LocationField, DialogSubmission, dialog_form_router",
+      "intent": "Семь проверяемых типов полей, текущий автор/вопрос, native candidate, возврат/отмена и повтор той же заявки",
+      "source": "packages/python/src/telegram_patterns/dialog_forms.py",
+      "example": "examples/python/dialog_fields_bot.py",
+      "boundaries": [
+        "optional aiogram; ordinary private chat without Business/forum topics; existing host FSM/event isolation",
+        "ForceReply binds to current bot prompt; contact/location need explicit actor/step/message-bound candidate confirmation",
+        "opaque document metadata only; no download/content proof, phone/email ownership or physical location proof",
+        "host current ACL and durable operation_id transaction before effect/replay; unknown submit freezes edits",
+        "MemoryStorage and SimpleEventIsolation remain transient/single-process; host owns persistence and recovery"
+      ],
+      "maturity": "experimental",
+      "maturity_scope": "All public symbols in this component; local SDK/mock acceptance is not stable 1.0 or live proof",
+      "extra": "aiogram"
     }
   ],
   "maturity_policy": "docs/v1-maturity.md",

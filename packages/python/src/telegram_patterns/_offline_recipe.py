@@ -21,6 +21,7 @@ _FIXTURES = {
     'demo-navigation': ('navigation_bot.py', 'offline_navigation.py'),
     'demo-selection': ('selection_bot.py', 'offline_selection.py'),
     'demo-calendar': ('calendar_bot.py', 'offline_calendar.py'),
+    'demo-dialog-fields': ('dialog_fields_bot.py', 'offline_dialog_fields.py'),
     'demo-recovery': ('error_recovery.py',),
 }
 _ATTEMPTS = [0]
@@ -128,6 +129,9 @@ def _execute(recipe_id: str) -> dict:
             if recipe_id == 'demo-calendar':
                 assert evidence['business_effects'] == 1 and evidence['durable_replay'] and evidence['owner_stale_guards']
                 checks.extend(('calendar-date-time-back', 'sqlite-slot-one-booking', 'durable-receipt-replay'))
+            if recipe_id == 'demo-dialog-fields':
+                assert evidence['business_effects'] == 1 and evidence['field_types'] == 7 and evidence['owner_step_guards'] and evidence['unknown_receipt_same_intent']
+                checks.extend(('seven-dialog-field-types', 'native-candidate-confirmation', 'same-intent-one-sqlite-effect'))
         else:
             assert evidence['effect_count'] == 1 and evidence['replayed'] is True
             checks.extend(('sqlite-one-effect', 'same-key-replay'))

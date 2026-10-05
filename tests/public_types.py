@@ -34,3 +34,17 @@ bad_recovery = safe_error_report(RuntimeError(), operation='retry')  # type: ign
 bad_store: OnceStore[sqlite3.Connection] = object()  # type: ignore[assignment]
 bad_execution: RecipeRunPlan = object()  # type: ignore[assignment]
 bad_recipe_run = run_recipe_offline('demo-recovery', timeout='fast')  # type: ignore[arg-type]
+
+# Structured dialogs preserve public consumer types without importing internals.
+from telegram_patterns.aiogram import FieldValue, NumberField, ContactField, DialogSubmission, dialog_form_router
+from aiogram import Router
+from typing import Mapping
+dialog_value: FieldValue = {'latitude': 52.2, 'longitude': 21.0, 'horizontal_accuracy': None}
+dialog_submission = DialogSubmission(100, 42, 42, 'fixture-intent', {'number': '12.5', 'location': dialog_value})
+dialog_snapshot: Mapping[str, FieldValue] = dialog_submission.values
+dialog_json: dict[str, FieldValue] = dialog_submission.as_dict()
+async def dialog_service(submission: DialogSubmission) -> str:
+    return 'Consumer type fixture'
+dialog_router: Router = dialog_form_router([NumberField('number', 'Number', 'Number?'), ContactField('contact', 'Contact', 'Contact?')], dialog_service)
+bad_dialog_value: FieldValue = 1.0  # type: ignore[assignment]
+bad_dialog_submit = dialog_form_router([NumberField('n', 'N', 'N?')], lambda submission: 'sync')  # type: ignore[arg-type,return-value]

@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "library_version": "0.17.0",
+  "library_version": "0.18.0",
   "source_snapshot": "2026-10-04",
   "source_hashes": {
     "bot_api": "29f5f25caa18d303f14ce83af5a4df784eb3094c3076cb040a1ad950c157ad44",
@@ -21146,6 +21146,92 @@
       }
     },
     {
+      "id": "demo-dialog-fields",
+      "title": "Семь типов полей диалога",
+      "summary": "Полная композиция с тем же Dispatcher для offline и polling.",
+      "category": "scenarios",
+      "language": "python",
+      "maturity": "experimental",
+      "keywords": [
+        "бот",
+        "пример",
+        "callback",
+        "меню",
+        "события",
+        "ввод",
+        "и",
+        "формы",
+        "кнопки",
+        "раскладки",
+        "личный",
+        "чат",
+        "поля",
+        "число",
+        "email",
+        "телефон",
+        "файл",
+        "контакт",
+        "геопозиция",
+        "ForceReply",
+        "candidate",
+        "шаг"
+      ],
+      "code": "\"\"\"Attach typed forms to an existing Dispatcher; business effect uses file SQLite.\"\"\"\nfrom __future__ import annotations\n\nimport asyncio\nfrom contextlib import closing\nimport json\nfrom pathlib import Path\nimport sqlite3\nimport sys\n\nfrom aiogram import Dispatcher\nfrom aiogram.fsm.storage.memory import SimpleEventIsolation\nfrom telegram_patterns import BotSettings, SQLiteOnce\nfrom telegram_patterns.aiogram import (ContactField, DateField, DialogSubmission, EmailField, FileField,\n    LocationField, NumberField, PhoneField, dialog_form_router, run_bot)\n\n\ndef fields():\n    return [NumberField('amount','Количество','Введите количество от 1 до 100.',minimum=1,maximum=100,decimal_places=0),\n        EmailField('email','Email','Укажите email.'),\n        PhoneField('phone','Телефон','Укажите номер с + и кодом страны.'),\n        DateField('date','Дата','Введите дату в формате ГГГГ-ММ-ДД.',minimum='2026-10-05'),\n        FileField('file','Документ','Пришлите один PDF ответом на этот вопрос.',max_bytes=1024*1024,mime_types=('application/pdf',)),\n        ContactField('contact','Контакт','Поделитесь своим контактом через кнопку.'),\n        LocationField('location','Место','Поделитесь статичной геопозицией через кнопку.')]\n\n\nclass Requests:\n    \"\"\"Example policy: authenticated private actors create only their own request.\n\n    No entitlement or external action. File metadata isn't content validation.\n    Production supplies persistent FSM/isolation and retention for personal data.\n    \"\"\"\n    def __init__(self,database:Path):\n        self.once=SQLiteOnce(database);self.once.initialize()\n        with closing(sqlite3.connect(database)) as connection,connection:\n            connection.execute('CREATE TABLE IF NOT EXISTS requests (id INTEGER PRIMARY KEY, actor INTEGER NOT NULL, body TEXT NOT NULL)')\n\n    async def submit(self,submission:DialogSubmission)->str:\n        if submission.actor_id != submission.chat_id or set(submission.values) != {f.name for f in fields()}:\n            raise ValueError('Invalid private request scope')\n        values={f.name:f.restore(submission.values[f.name]) for f in fields()}\n        if values['contact']['user_id']!=submission.actor_id: raise ValueError('Contact owner mismatch')\n        def persist():\n            # Current authorization policy checked before effect AND cached replay.\n            if submission.actor_id <= 0: raise PermissionError('Actor is not allowed')\n            return self.once.run(f'bot:{submission.bot_id}:actor:{submission.actor_id}:dialog',submission.operation_id,values,\n                lambda db:{'id':db.execute('INSERT INTO requests(actor,body) VALUES (?,?)',\n                    (submission.actor_id,json.dumps(values,ensure_ascii=False))).lastrowid})\n        result=await asyncio.to_thread(persist)\n        return f\"Заявка №{result.value['id']} сохранена.\"\n\n\ndef attach_dialog(dispatcher:Dispatcher,service:Requests):\n    # Preserve existing handlers, commands, storage and middleware.\n    dispatcher.include_router(dialog_form_router(fields(),service.submit,name='request',command='collect'))\n\n\nasync def main():\n    database=Path(sys.argv[1]) if len(sys.argv)>1 else Path('requests.sqlite')\n    dispatcher=Dispatcher(events_isolation=SimpleEventIsolation())\n    attach_dialog(dispatcher,Requests(database))\n    await run_bot(dispatcher,BotSettings.from_env())\n\n\nif __name__=='__main__':asyncio.run(main())\n",
+      "verification": "mock",
+      "scope": "Synthetic Dispatcher сценарий исполнен при генерации в private fixture. Telegram delivery/physical clients не проверены.",
+      "sources": [
+        "https://core.telegram.org/bots/api"
+      ],
+      "preview": null,
+      "code_sha256": "01dde379c0b7f2b44c3ad76631b93854f02c0ecd9e68279686b6ec493482b67a",
+      "tasks": [
+        "input",
+        "keyboards"
+      ],
+      "contexts": [
+        "private"
+      ],
+      "sdk": "aiogram",
+      "sdk_version": "3.31.0",
+      "api_version": "bot:10.3",
+      "source_files": [
+        "examples/python/dialog_fields_bot.py",
+        "packages/python/src/telegram_patterns/dialog_fields.py",
+        "packages/python/src/telegram_patterns/dialog_forms.py",
+        "packages/python/src/telegram_patterns/execution.py",
+        "packages/python/src/telegram_patterns/_offline_recipe.py"
+      ],
+      "check_files": [
+        "examples/python/offline_dialog_fields.py",
+        "packages/python/tests/test_dialog_forms.py"
+      ],
+      "execution": {
+        "kind": "dispatcher",
+        "dependencies": [
+          "aiogram==3.31.0"
+        ],
+        "offline_environment": [],
+        "offline_permissions": [],
+        "offline_data": [
+          "Только поставляемые синтетические данные; реальные IDs и secrets не принимаются."
+        ],
+        "live_environment": [
+          "BOT_TOKEN"
+        ],
+        "live_permissions": [
+          "Прикладная авторизация сервиса; fixture actor не доказывает server ACL."
+        ],
+        "live_data": [
+          "Текущий Dispatcher, реальные actor/chat и сервис приложения",
+          "Проверка объекта, автора и состояния до effect/replay"
+        ],
+        "live_review": "Live executor отсутствует. Перед интеграцией проверить источники, ограничения конкретного метода/контекста, auth и ACL; metadata не подтверждает права.",
+        "effects": [
+          "Synthetic Dispatcher + StubSession; временная fixture, без polling"
+        ]
+      }
+    },
+    {
       "id": "demo-recovery",
       "title": "Потерянный ответ: сверка той же операции",
       "summary": "SQLite effect уже сохранен; unknown outcome сверяется тем же scoped ID без второго заказа.",
@@ -21181,7 +21267,7 @@
         "backend"
       ],
       "sdk": "python-core",
-      "sdk_version": "0.17.0",
+      "sdk_version": "0.18.0",
       "api_version": "none",
       "source_files": [
         "examples/python/error_recovery.py",

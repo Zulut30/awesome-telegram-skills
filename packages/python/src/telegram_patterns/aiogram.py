@@ -17,6 +17,8 @@ from aiogram.types import BotCommand, CallbackQuery, InlineKeyboardMarkup, Label
 from .keyboards import ActionButton, ButtonStyle, MenuPage, _callback_data, action_keyboard, action_menu, page_number, paginated_menu
 from .settings import BotSettings
 from .forms import FormSubmission, InvalidField, TextField, text_form_router
+from .dialog_fields import FieldValue, NumberField, EmailField, PhoneField, DateField, FileField, ContactField, LocationField
+from .dialog_forms import DialogSubmission, dialog_form_router
 from .native_keyboards import ChatType, inline_keyboard, reply_keyboard, input_prompt, remove_keyboard
 from .keyboard_layouts import KeyboardLayout, KeyboardCapabilities, action_layout, inline_layout, reply_layout
 from .navigation import NavigationScreen, NavigationState, NavigationResult, MessageNavigation, navigation_router
@@ -30,6 +32,8 @@ __all__ = [
     "CommandReply", "command_menu", "command_router", "run_bot", "stars_invoice",
     "ActionButton", "ButtonStyle", "MenuPage", "action_keyboard", "action_menu", "paginated_menu", "page_number",
     "FormSubmission", "InvalidField", "TextField", "text_form_router",
+    "FieldValue", "NumberField", "EmailField", "PhoneField", "DateField", "FileField", "ContactField", "LocationField",
+    "DialogSubmission", "dialog_form_router",
     "ChatType", "inline_keyboard", "reply_keyboard", "input_prompt", "remove_keyboard",
     "KeyboardLayout", "KeyboardCapabilities", "action_layout", "inline_layout", "reply_layout",
     "NavigationScreen", "NavigationState", "NavigationResult", "MessageNavigation", "navigation_router",
@@ -72,7 +76,7 @@ def callback_router(
         try:
             _callback_data(key, prefix)
         except ValueError:
-            await notify(query, ActionResult("stale", "Кнопка недействительна. Откройте актуальное меню."))
+            await notify(query, ActionResult("stale", "РљРЅРѕРїРєР° РЅРµРґРµР№СЃС‚РІРёС‚РµР»СЊРЅР°. РћС‚РєСЂРѕР№С‚Рµ Р°РєС‚СѓР°Р»СЊРЅРѕРµ РјРµРЅСЋ."))
             return
         result = await execute(Action(actor_id=query.from_user.id, key=key))
         await notify(query, result)
