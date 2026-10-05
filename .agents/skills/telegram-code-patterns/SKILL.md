@@ -19,6 +19,8 @@ description: "Подбирает и подключает готовые комп
 
 Для первого запуска нового бота и Mini App из предоставленных wheel/tarball прочитай [короткий первый запуск](references/quickstart.md). Это Windows offline/browser пример; существующий проект сохраняй, backend auth подключай по его контракту.
 
+Для сервисного бота с записью, меню, диалогом, напоминанием и восстановлением прочитай [сервисный пример](references/service-bot.md). Его приложение поставляется отдельно от библиотеки; используй предоставленный source/wheel, сохраняй текущие SDK и storage. Persistent FSM, owner ACL, replay и неизвестная отправка — прикладная композиция, не новые public exports.
+
 Для выбора по готовности прочитай [зрелость и доказательства проверки](references/maturity.md): `maturity` отдельно от SDK/mock/browser/live evidence. Reference-запрос не заменяет прикладной workflow; experimental не обещает стабильность 1.0.
 
 1. Прочитай зависимости и точку интеграции целевого проекта. Установлены ли `awesome-telegram-patterns` и/или `@awesome-telegram/patterns`, какая версия? Не заменяй SDK/БД/frontend-фреймворк ради helper.

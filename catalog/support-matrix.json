@@ -63,7 +63,7 @@
     "real Telegram iOS/Android/Desktop/tablet client versions",
     "screen readers",
     "provider sandboxes and production payment workflows",
-    "durable FSM/multiworker restart"
+    "general durable FSM/multiworker and accepted-update recovery; single-process service example checked separately"
   ],
   "skip": {
     "python_tests": 1,
@@ -75,5 +75,27 @@
       "scope": "Node 20 EOL; supported LTS recommendation",
       "checked_date": "2026-10-04"
     }
-  ]
+  ],
+  "application_examples": {
+    "service-bot": {
+      "version": "0.1.0",
+      "library_version": "0.13.0",
+      "evidence": "docs/v1-checks/017.json",
+      "verified": {
+        "os": "Windows 11 AMD64",
+        "python": "3.13.12",
+        "aiogram": "3.31.0",
+        "unit_tests": 8,
+        "distinct_process_phases": 7,
+        "real_storage": "file SQLite",
+        "synthetic_transport": true,
+        "crash_after_commit": true,
+        "crash_after_stub_send": true,
+        "shutdown_sqlite_join": true
+      },
+      "live": false,
+      "multiworker": false,
+      "maturity": "experimental"
+    }
+  }
 }

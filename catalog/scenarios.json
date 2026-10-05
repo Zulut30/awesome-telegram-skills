@@ -1,0 +1,34 @@
+{
+  "schema_version": 1,
+  "kind": "application-example-catalog",
+  "examples": [
+    {
+      "id": "service-bot",
+      "project": "examples/service-bot",
+      "distribution": "awesome-telegram-service-example",
+      "version": "0.1.0",
+      "library_version": "0.13.0",
+      "entry_point": "telegram-service-example",
+      "guide": "docs/service-bot.md",
+      "portable_guide": ".agents/skills/telegram-code-patterns/references/service-bot.md",
+      "verification_command": "python scripts/verify_service_bot.py --wheel <PROVIDED_PATTERN_WHEEL> --output <NEW_PROOF_DIR>",
+      "evidence": "docs/v1-checks/017.json",
+      "maturity": "experimental",
+      "verification": [
+        "sdk",
+        "mock",
+        "real-sqlite",
+        "process-crash-restart"
+      ],
+      "workflow": [
+        "menu",
+        "book",
+        "persistent-dialog",
+        "owner-status",
+        "consented-reminder",
+        "restart-recovery"
+      ],
+      "scope": "Separate application composition; classes are not library public exports. No live Telegram or multiworker acceptance."
+    }
+  ]
+}

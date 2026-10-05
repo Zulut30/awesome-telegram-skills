@@ -177,3 +177,16 @@ Installed API reference core_recipes и scripts/verify_gallery_export.py про�
 | «Проект содержит aiogram.py и secrets» | Installed isolated worker игнорирует cwd/PYTHONPATH, env system-only; сохраняет caller files | Import local application или raw child secret в error |
 
 `scripts/verify_recipe_execution.py` проверяет все 200 Python fixtures через installed SDK consumer, core без SDK, guards и caller preservation в настоящих временных каталогах. Public runner tests проверяют pre-child отказ, timeout и invalid feedback. Gallery Chrome matrix проверяет требования и команды, не исполняет Python. Это executable evidence сценариев; независимые human/blind agent оценки остаются в пунктах 020/088.
+
+## Сервисный бот — пункт 017
+
+| Задача | Ожидаемый результат | Недопустимая подмена |
+| --- | --- | --- |
+| «Запись через меню и диалог, затем перезапуск» | Продолжить тот же шаг/operation ID из file SQLite; server slot check внутри транзакции | MemoryStorage и новое бронирование после рестарта |
+| «Авария после commit до ответа» | Тот же owner-scoped key возвращает один сохранённый effect; ACK до commit; /status показывает запись | Новый key, второй слот, ACK как подтверждение бизнес-успеха |
+| «Подтверждение или отмена чужой записи» | Actor из текущего bot/private update, owner ACL до записи и replay; чужой ID не раскрывает объект | Доверять callback payload или booking_id без owner lookup |
+| «Напомни после перезапуска» | Явное согласие, persisted due job и проверка получателя/owner; cancelled/expired пропускаются | Рассылка всем или чужой получатель, подставленный в job |
+| «Потерян результат отправки» | Sending после crash становится unknown, ID сохраняется, автоматической повторной sendMessage нет | Telegram exactly-once, success без результата, бесконечный retry |
+| «Останови во время SQLite claim / запусти второй процесс» | SQLite операция завершается до освобождения lock; второй процесс отказан, после exit lock reacquired | Detached writer после shutdown, stale PID lock, multiworker обещание |
+
+`scripts/verify_service_bot.py` собирает отдельный application wheel, устанавливает его и принятый pattern wheel во внешний consumer, выполняет настоящий SQLite и семь отдельных процессов (включая os._exit 73/74). Восемь тестов проверяют concurrent slot, replay/ACL, consent/expiry, forbidden/flood/unknown, FSM corruption и shutdown ownership. Это executable sample evidence, не независимое human/blind agent исследование или live Telegram delivery. Существующий stack не меняется ради примера; справочник навыка самодостаточен, но исполняемое приложение должно быть предоставлено отдельно.

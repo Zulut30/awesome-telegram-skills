@@ -1,0 +1,17 @@
+[build-system]
+requires = ["setuptools>=75,<83"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "awesome-telegram-service-example"
+version = "0.1.0"
+description = "Persistent single-process service bot example"
+readme = "README.md"
+requires-python = ">=3.11"
+dependencies = ["awesome-telegram-patterns[aiogram]>=0.13,<0.14"]
+
+[project.scripts]
+telegram-service-example = "telegram_service_example.bot:main"
+
+[tool.setuptools.packages.find]
+where = ["src"]
