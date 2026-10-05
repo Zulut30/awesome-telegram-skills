@@ -1,0 +1,110 @@
+{
+  "roadmap_item": 21,
+  "version": "0.14.0",
+  "checked_date": "2026-10-05",
+  "passed": true,
+  "report": "output/pattern-library-0.14.0/distribution-report.json",
+  "report_sha256": "b3be2a0088d61486cad5a21ece9561de83c6cb978acd356c447733782b23b027",
+  "distribution_stages": 58,
+  "python_tests": {
+    "run": 127,
+    "passed": 126,
+    "skipped": 1
+  },
+  "typescript_tests": 26,
+  "root_tests": 32,
+  "skills_checked": 41,
+  "browser_scope": {
+    "example": 141,
+    "gallery": 470,
+    "export": 470,
+    "starter": 66,
+    "selected_starter": 76,
+    "api_reference": 36
+  },
+  "browser_total": 1259,
+  "first_run_browser_checks": 60,
+  "public_symbols": {
+    "total": 125,
+    "python": 84,
+    "typescript": 41
+  },
+  "component_groups": 29,
+  "recipes": 299,
+  "source_typing_files": 22,
+  "layout_unit_tests": 7,
+  "installed_layout_composition": {
+    "passed": true,
+    "network": false,
+    "session_closed": true,
+    "methods": 6,
+    "shapes": [
+      [
+        2,
+        2,
+        2
+      ],
+      [
+        3,
+        3
+      ],
+      [
+        2,
+        3,
+        1
+      ],
+      [
+        2,
+        1,
+        2,
+        1
+      ]
+    ],
+    "emoji_entitlement": "unverified/fallback",
+    "client": "synthetic SDK serialization, no live rendering"
+  },
+  "portable_exact_blocks": 2,
+  "first_run_report": "output/v1-quickstart-021-final/report.json",
+  "first_run_report_sha256": "8e8c4214dd8f27f3b4ab480c84ac8c3c53bd1d9a6135814b8d2346483a36bf59",
+  "artifacts": [
+    {
+      "name": "awesome_telegram_patterns-0.14.0-py3-none-any.whl",
+      "bytes": 147864,
+      "sha256": "354d655a37d5fb39635f0334c6aa40001f95937bfedf67668a4367f8f4bd9234"
+    },
+    {
+      "name": "awesome-telegram-patterns-0.14.0.tgz",
+      "bytes": 19517,
+      "sha256": "389a964d0275004e7e8b0181170140f532044933ed1a4b402ccc0b968b521254"
+    }
+  ],
+  "evidence": {
+    "distribution": "docs/v1-checks/021-distribution.json",
+    "first_run": "docs/v1-checks/021-first-run.json",
+    "portable": "docs/v1-checks/021-portable.json"
+  },
+  "source_and_guide_hashes": {
+    "packages/python/src/telegram_patterns/keyboard_layouts.py": "7c783cf585b440cfe73f9d32aaf1a5960cde312cd61d3c0250ac3c47be815c58",
+    "packages/python/src/telegram_patterns/aiogram.py": "2d6490882f5c2ceada464e1adcfcb404cffe72fc3519c972b3c7126ef2e43d42",
+    "packages/python/src/telegram_patterns/_offline_recipe.py": "e137a4aa22aa1ccd8ed7c67c0599d1b085e44df39eda07c5e3730d4c49492a64",
+    "packages/python/tests/test_keyboard_layouts.py": "1623aed4953d5db416b522b30c51a96203daf75685cef80ca45087da4c8165fa",
+    "examples/python/keyboard_layouts.py": "11f8d8e2446090f2cb69239250c9fa6d02381b426ed009eec6d4389189ec7ecf",
+    "examples/api-reference/python/bot_keyboards.py": "ac59b30b5b13ee6fcba17b3ee5b0d2c37f98be45582be663e491f06c9f8f6334",
+    "docs/keyboard-layouts.md": "3dd9cf61b3c20b18154eb9473c863cb20d805f5fc7a8900fea114b74e8c2b47a",
+    ".agents/skills/telegram-code-patterns/references/keyboard-layouts.md": "3dd9cf61b3c20b18154eb9473c863cb20d805f5fc7a8900fea114b74e8c2b47a",
+    "scripts/verify_keyboard_recipe.py": "253f25d873e98d8f8c09b511f4d30de3c10642d6b1c5d729497a78c06c7a637c",
+    "scripts/build_recipe_gallery.py": "def3ddf3a33f8f3a44bfb16e14551cb9f0d9d21043de81752c3caca370eb0ac4",
+    "scripts/verify_pattern_packages.py": "1bdfb2818bf4b86b8c35e8b20918febb24adf37b62835a4a93f178976a9bb873",
+    "docs/quickstart.md": "f4324b411dc693d52ded0947cfb0af1a190a61344e941f5f89984f5102278251",
+    ".agents/skills/telegram-code-patterns/references/quickstart.md": "f4324b411dc693d52ded0947cfb0af1a190a61344e941f5f89984f5102278251"
+  },
+  "limits": [
+    "Experimental local package; no live Telegram/client rendering or server emoji entitlement acceptance.",
+    "Capabilities are explicit host hints for the current context; markup construction is not authorization.",
+    "Physical devices, provider workflows, human/blind usability and general production acceptance remain unverified.",
+    "Historical independent application examples remain pinned to accepted 0.13.0 artifacts.",
+    "Full distribution used previous portable helper; exact new guide checks were added and rerun separately against the same installed wheel."
+  ],
+  "root_log_sha256": "7344f4daa64463cf11b8c17d742f0c97941cca570fd5d5ba6af1142fc3cfc24f",
+  "skill_log_sha256": "8807a4a6e3207331f403446a458788ef471faa999c4f11c303833c22e58313a2"
+}

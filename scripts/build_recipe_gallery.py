@@ -46,11 +46,11 @@ def method_tasks(name: str) -> list[str]:
     if 'Message' in name: return ['messages']
     return ['other']
 IMPORTS = ('from aiogram.types import InlineKeyboardButton as Button, KeyboardButton, CopyTextButton, DisabledButton, WebAppInfo\n'
-           'from telegram_patterns.aiogram import inline_keyboard, reply_keyboard, input_prompt, remove_keyboard\n\n')
+           'from telegram_patterns.aiogram import inline_keyboard, reply_keyboard, input_prompt, remove_keyboard, KeyboardLayout, inline_layout\n\n')
 MANUAL = [
-    ('two-columns', 'Две кнопки в ряд', 'кнопки 2 строки две раскладка', 'markup = inline_keyboard([[Button(text="Каталог", callback_data="menu:catalog"), Button(text="Помощь", callback_data="menu:help")], [Button(text="Назад", callback_data="menu:back"), Button(text="Закрыть", callback_data="menu:close")]])'),
-    ('three-columns', 'Три кнопки в ряд', 'кнопки 3 строки три раскладка', 'buttons = [Button(text=str(n), callback_data=f"item:{n}") for n in range(1, 7)]\nmarkup = inline_keyboard([buttons[:3], buttons[3:]])'),
-    ('mixed-rows', 'Строки по одной, две и три кнопки', 'кнопки смешанная раскладка', 'buttons = [Button(text=str(n), callback_data=f"item:{n}") for n in range(1, 7)]\nmarkup = inline_keyboard([buttons[:1], buttons[1:3], buttons[3:]])'),
+    ('two-columns', 'Две кнопки в ряд', 'кнопки 2 строки две раскладка', 'buttons = [Button(text=text, callback_data="menu:"+key) for text,key in [("Каталог","catalog"),("Помощь","help"),("Назад","back"),("Закрыть","close")]]\nmarkup = inline_layout(buttons, KeyboardLayout([2]))'),
+    ('three-columns', 'Три кнопки в ряд', 'кнопки 3 строки три раскладка', 'buttons = [Button(text=str(n), callback_data=f"item:{n}") for n in range(1, 7)]\nmarkup = inline_layout(buttons, KeyboardLayout([3]))'),
+    ('mixed-rows', 'Строки по одной, две и три кнопки', 'кнопки смешанная раскладка', 'buttons = [Button(text=str(n), callback_data=f"item:{n}") for n in range(1, 7)]\nmarkup = inline_layout(buttons, KeyboardLayout([1,2,3]))'),
     ('button-colors', 'Цветные кнопки: синий, зеленый, красный', 'цвета покрасить style primary success danger', 'markup = inline_keyboard([[Button(text="Основная", callback_data="a", style="primary"), Button(text="Готово", callback_data="b", style="success"), Button(text="Отмена", callback_data="c", style="danger")]])'),
     ('emoji-fallback', 'Custom emoji с запасным оформлением', 'premium emoji иконка entitlement', 'button = Button(text="Готово", callback_data="ok", icon_custom_emoji_id="123456789")\n# ID-пример заменяется реальным; entitlement по умолчанию не подтвержден.\nmarkup = inline_keyboard([[button]])'),
     ('reply-menu', 'Клавиатура под полем ввода', 'reply keyboard меню ввод подсказка', 'markup = reply_keyboard([["Каталог", "Помощь"], ["Закрыть"]], placeholder="Выберите действие")'),
@@ -90,8 +90,8 @@ def build(root: Path = ROOT) -> dict:
             [API + '#inlinekeyboardbutton', API + '#replykeyboardmarkup'], markup,
             tasks=['input'] if key in {'contact-location', 'force-reply', 'remove-reply', 'reply-menu'} else ['keyboards', 'navigation'] if key == 'two-columns' else ['keyboards'],
             contexts=['unspecified'] if key in {'force-reply', 'remove-reply'} else ['private'],
-            source_files=['recipes/bot-api/keyboards.md', 'packages/python/src/telegram_patterns/native_keyboards.py'],
-            check_files=['scripts/build_recipe_gallery.py', 'packages/python/tests/test_native_features.py'])
+            source_files=['recipes/bot-api/keyboards.md', 'packages/python/src/telegram_patterns/native_keyboards.py', 'packages/python/src/telegram_patterns/keyboard_layouts.py'],
+            check_files=['scripts/build_recipe_gallery.py', 'packages/python/tests/test_native_features.py', 'packages/python/tests/test_keyboard_layouts.py'])
         if key == 'two-columns': records[-1]['keywords'] += ['назад', 'back']
     for method in api['bot_api']['methods']:
         name = method['name']

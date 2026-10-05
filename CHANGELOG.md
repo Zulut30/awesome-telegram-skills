@@ -1,5 +1,10 @@
 # Изменения библиотеки компонентов
 
+## 0.14.0 — пункт 021
+
+- KeyboardLayout и KeyboardCapabilities, action_layout/inline_layout/reply_layout: flat buttons, mixed widths, last/cycle tail, immutable snapshot и проверка native context/actions до presentation fallback. Default новых helpers убирает непроверенные styles/emoji, сохраняя labels/actions; прежние builders не меняются. Entitlement/client hints передаёт host, live проверка не подменяется.
+- Новые публичные exports, API reference/контракты, gallery layouts и installed SDK composition согласованы. Python/TypeScript поставка локальная; исторические applications используют принятые артефакты 0.13.0.
+
 ## Unreleased — подготовка 1.0
 
 - Пункт 019: самостоятельное приложение `examples/group-bot` / `awesome-telegram-group-example` 0.1.0. Темы, свежие права bot/actor, context-bound confirmation, обычные/assigned заявки и десятиминутная модерация; file SQLite journal, миграции и membership invalidation. Повтор и crash после synthetic API-запроса не отправляют действие заново. Внешний consumer проверяет wheel/RECORD/entrypoint, типы, 19 тестов и четыре реальные процессные фазы. Live права/delivery не объявлены проверенными; публичный API библиотеки 0.13.0 не изменился.

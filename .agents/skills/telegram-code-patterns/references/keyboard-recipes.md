@@ -1,6 +1,6 @@
-# Клавиатуры и события библиотеки 0.4.0
+# Клавиатуры и события библиотеки 0.14.0
 
-Навык переносится отдельно; примеры требуют установленный локальный `awesome-telegram-patterns[aiogram]` 0.4.0 и aiogram >=3.31. Установка из PyPI не подразумевается. Сохраняй текущий Dispatcher/SDK; для проекта с другой библиотекой используй ее native API, не меняй стек ради helper.
+Навык переносится отдельно; примеры требуют установленный локальный `awesome-telegram-patterns[aiogram]` 0.14.0 и aiogram >=3.31. Установка из PyPI не подразумевается. Сохраняй текущий Dispatcher/SDK; для проекта с другой библиотекой используй ее native API, не меняй стек ради helper.
 
 Две кнопки в строке, затем еще две; замена на три и цвет:
 
@@ -52,3 +52,5 @@ Observer best-effort, include_ids=False; failed recorder не ломает handl
 Проверь реальный Dispatcher и installed package с negative cases: чужой actor, duplicate callback, непредусмотренный reply_to, неверный context, unknown/misspelled parameter, missing native method. Fake transport/mock не доказывают доставку/физический Telegram-клиент. Нельзя отправлять synthetic request fixtures без замены.
 
 Проверено 4 октября 2026: [InlineKeyboardButton](https://core.telegram.org/bots/api#inlinekeyboardbutton), [KeyboardButton](https://core.telegram.org/bots/api#keyboardbutton), [ReplyKeyboardMarkup](https://core.telegram.org/bots/api#replykeyboardmarkup), [ForceReply](https://core.telegram.org/bots/api#forcereply), [Update](https://core.telegram.org/bots/api#update), [Mini App client API](https://core.telegram.org/bots/webapps#initializing-mini-apps), [события](https://core.telegram.org/bots/webapps#events-available-for-mini-apps). Версия установленного SDK для проверки: aiogram 3.31.0.
+
+Для flat списка и width patterns 2/3/mixed прочитай [новую композицию](keyboard-layouts.md). Новый default capability fallback сохраняет текст без styles/emoji; старые calls выше не меняют поведения.

@@ -118,3 +118,7 @@ Recipe добавляет frozen tuple fields tasks, contexts, source_files, che
 | `RecipeRunResult(recipe_id,library_version,kind,checks,passed=True,telegram_requests=False)` | Frozen DTO; прямой constructor не выполняет fixture | Checks tuple с bounded whitelist именами. Значения от runner подтверждают synthetic SDK/StubSession/SQLite fixture. Не live provider/device/Telegram proof |
 
 CLI `run-recipe ID [--offline] [--timeout SECONDS]` сначала flush-ит plan JSONL. Без --offline только read-only plan; с ним второй JSONL result при успехе. Controlled failure → безопасный JSON stderr и exit 2. Native fragments/missing SDK отклоняются до child и temporary writes. [Полная композиция и ограничения](recipe-execution.md), [core пример](api-reference-core.md#ref-core_execution).
+
+## Композиции клавиатур 0.14.0
+
+[Полные контракты и исполняемые примеры](keyboard-layouts.md): KeyboardLayout, KeyboardCapabilities, action_layout, inline_layout и reply_layout. Immutable width pattern, snapshot native inputs, current context checks и explicit host presentation fallback; старые builders сохранены. DTO flags не доказывают live entitlement, callback ACL остаётся на сервере.

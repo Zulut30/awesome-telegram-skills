@@ -1,4 +1,4 @@
-# Матрица поддержки 0.13.0
+# Матрица поддержки 0.14.0
 
 Пункт 005. Машиночитаемый снимок — [support-matrix.json](../catalog/support-matrix.json). «Заявлено» означает dependency/runtime constraint; «проверено» — конкретный прошедший сценарий. Весь declared range не считается проверенным одной комбинацией. API пока experimental.
 
@@ -51,3 +51,7 @@ Evidence: [016.json](v1-checks/016.json), `output/pattern-library-0.13.0/distrib
 ### Групповой бот — пункт 019
 
 [Групповой пример](group-bot.md), отдельное приложение 0.1.0, использует принятый Python wheel 0.13.0 без изменения библиотеки. [019.json](v1-checks/019.json): Windows/Python 3.13.12/aiogram 3.31.0, Mypy пяти source files, 19 behavioral tests, четыре отдельные процессные фазы и проверка второго OS lock owner. File SQLite и crash exit 77 реальные; SDK Dispatcher/transport synthetic. Проверены bot/actor revoke, две группы/темы, prompt ACL, queue/unknown/new-request version, десятиминутная модерация, migration, cancelled writes и shutdown concurrent handlers. Это application evidence, не новый core release. Live права, delivery/privacy, 10-second query deadline на сервере, другие OS и multiworker не приняты. User-based approve/decline не имеют request-version параметра; поздняя серверная смена заявки остаётся гонкой и требует сверки.
+
+### Композиции клавиатур — пункт 021
+
+[021.json](v1-checks/021.json) фиксирует новую локальную поставку 0.14.0: 58 этапов, 127 Python tests (126 passed/1 Windows symlink skip), 26 TypeScript, 125 публичных символов и 22 Python source typing files. Семь новых layout tests сравнивают adjust pattern с установленным SDK и проверяют validation/fallback/wire/snapshot. Installed composition отправляет шесть synthetic SendMessage; два точных блока переносимого руководства дополнительно исполняются в скопированном навыке через тот же установленный wheel. Полный distribution report остаётся неизменным; отдельная portable evidence учитывает обновлённый helper после этого прохода. UI matrix: 1259 checks плюс 60 checks команд первого запуска, без physical/live Telegram proof. Source focus на Python 3.12.13 проверяет только семь layout tests; полная матрица относится к 3.13.12. Исторические app examples 017–019 остаются на предоставленных 0.13.0 артефактах и не объявляются повторно принятыми на 0.14.0.

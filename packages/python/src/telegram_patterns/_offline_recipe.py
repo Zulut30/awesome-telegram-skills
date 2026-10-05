@@ -81,11 +81,18 @@ def _execute(recipe_id: str) -> dict:
     elif plan.kind == 'sdk-markup':
         from aiogram.types import InlineKeyboardButton, KeyboardButton, InlineKeyboardMarkup, ReplyKeyboardMarkup, ForceReply, ReplyKeyboardRemove
         from .native_keyboards import inline_keyboard, reply_keyboard, input_prompt, remove_keyboard
+        from .keyboard_layouts import KeyboardLayout, inline_layout
         preview = recipe.preview
         assert preview is not None
         markup: InlineKeyboardMarkup | ReplyKeyboardMarkup | ForceReply | ReplyKeyboardRemove
         if 'inline_keyboard' in preview:
-            markup = inline_keyboard([[InlineKeyboardButton.model_validate(b) for b in row] for row in preview['inline_keyboard']])
+            widths = {'two-columns':(2,), 'three-columns':(3,), 'mixed-rows':(1,2,3)}
+            if recipe_id in widths:
+                buttons = [InlineKeyboardButton.model_validate(b) for row in preview['inline_keyboard'] for b in row]
+                markup = inline_layout(buttons,KeyboardLayout(widths[recipe_id]))
+                checks.append('native-layout-pattern')
+            else:
+                markup = inline_keyboard([[InlineKeyboardButton.model_validate(b) for b in row] for row in preview['inline_keyboard']])
         elif 'keyboard' in preview:
             markup = reply_keyboard([[KeyboardButton.model_validate(b) for b in row] for row in preview['keyboard']],
                                     placeholder=preview.get('input_field_placeholder'), one_time=bool(preview.get('one_time_keyboard')))

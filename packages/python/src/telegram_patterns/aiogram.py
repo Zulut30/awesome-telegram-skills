@@ -18,6 +18,7 @@ from .keyboards import ActionButton, ButtonStyle, MenuPage, _callback_data, acti
 from .settings import BotSettings
 from .forms import FormSubmission, InvalidField, TextField, text_form_router
 from .native_keyboards import ChatType, inline_keyboard, reply_keyboard, input_prompt, remove_keyboard
+from .keyboard_layouts import KeyboardLayout, KeyboardCapabilities, action_layout, inline_layout, reply_layout
 from .api import MethodSpec, InvalidAPIRequest, method_catalog, build_request
 from .events import UpdatePhase, UpdateTrace, UpdateObserver, update_kinds, event_router
 
@@ -27,6 +28,7 @@ __all__ = [
     "ActionButton", "ButtonStyle", "MenuPage", "action_keyboard", "action_menu", "paginated_menu", "page_number",
     "FormSubmission", "InvalidField", "TextField", "text_form_router",
     "ChatType", "inline_keyboard", "reply_keyboard", "input_prompt", "remove_keyboard",
+    "KeyboardLayout", "KeyboardCapabilities", "action_layout", "inline_layout", "reply_layout",
     "MethodSpec", "InvalidAPIRequest", "method_catalog", "build_request",
     "UpdatePhase", "UpdateTrace", "UpdateObserver", "update_kinds", "event_router",
 ]

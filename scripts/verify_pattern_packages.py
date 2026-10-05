@@ -159,6 +159,10 @@ print(json.dumps({'core_without_sdk':True,'python':sys.version.split()[0]}))
         if not keyboards['passed'] or keyboards['network'] or not keyboards['session_closed']:
             raise RuntimeError('Keyboard cookbook composition did not pass')
         report['offline_keyboards'] = keyboards
+        layouts = json.loads(run('keyboard-layouts', [str(python_in(sdk)), str(ROOT / 'examples/python/keyboard_layouts.py')], consumers))
+        if not layouts['passed'] or layouts['network'] or not layouts['session_closed'] or layouts['methods'] != 6:
+            raise RuntimeError('Installed keyboard layout composition failed')
+        report['keyboard_layouts'] = layouts
         report['telegram_catalog'] = json.loads(run('telegram-catalog', [str(python_in(sdk)), str(ROOT / 'scripts/build_telegram_catalog.py'), '--check'], consumers))
         report['recipe_gallery'] = json.loads(run('recipe-gallery', [str(python_in(sdk)), str(ROOT / 'scripts/build_recipe_gallery.py'), '--check'], consumers))
         gallery_command = [str(python_in(sdk)), str(ROOT / 'scripts/verify_gallery_export.py'), '--output', str(consumers / 'gallery-export')]

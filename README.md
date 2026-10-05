@@ -8,15 +8,17 @@
 
 Есть [общая библиотека готовых компонентов](docs/component-library.md): два импортируемых пакета Python/TypeScript, 29 групп компонентов и работающие примеры. ИИ подключает нужный API через `telegram-code-patterns`; пакеты пока распространяются локально.
 
+[Композиции клавиатур](docs/keyboard-layouts.md): flat списки, шаблоны рядов 2/3/смешанной ширины, styles и явный capability fallback; прежние builders сохраняются.
+
 [Требования и offline запуск](docs/recipe-execution.md): планы всех 299 рецептов и 200 Python fixtures без токена; native references требуют host/аргументов.
 
 [Поиск и фильтры галереи](docs/gallery-navigation.md): 299 рецептов, задачи, контекст, SDK/версии, зрелость и доказательства проверки; ссылки на исходники и проверяющий код. Standalone export включает связанные файлы.
 
-Проверена локальная поставка 0.13.0: [статус зрелости API](docs/v1-maturity.md) отдельно от SDK/mock/browser/live evidence. Каталог, Python API, CLI и галерея различают experimental/reference; стабильные сценарии 1.0 пока не заявлены.
+Проверена локальная поставка 0.14.0: [статус зрелости API](docs/v1-maturity.md) отдельно от SDK/mock/browser/live evidence. Каталог, Python API, CLI и галерея различают experimental/reference; стабильные сценарии 1.0 пока не заявлены.
 
 [Публичные контракты Python/TypeScript](docs/public-api.md) описывают параметры, результаты, ошибки, побочные эффекты и владение ресурсами для всех документированных API.
 
-[Справочник API](docs/api-reference.md): 120 публичных Python/TypeScript-символов, CLI и CSS; 19 полных примеров с импортами и ограничениями. Проверка исполняет код из документации через установленные wheel/tarball в отдельном consumer.
+[Справочник API](docs/api-reference.md): 125 публичных Python/TypeScript-символов, CLI и CSS; 19 полных примеров с импортами и ограничениями. Проверка исполняет код из документации через установленные wheel/tarball в отдельном consumer.
 
 [Doctor и исправления](docs/doctor.md) объясняет локальные ошибки установки и manifests, показывает команды следующего действия и сохраняет конфигурацию проекта.
 

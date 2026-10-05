@@ -1,4 +1,4 @@
-# Справочник API 0.13.0
+# Справочник API 0.14.0
 
 Публичные imports, самостоятельные минимальные композиции и границы каждого символа. Все группы experimental. Рецепты ref.* принадлежат этому справочнику; cookbook RecipeCatalog отдельно содержит Telegram requests/layouts. Исполненные fixtures не доказывают live/device/provider acceptance.
 
@@ -65,6 +65,11 @@
 | `reply_keyboard` | `from telegram_patterns.aiogram import reply_keyboard` | [ref.bot_keyboards](api-reference-bot.md#ref-bot_keyboards) | Reply rows/input placeholder |
 | `input_prompt` | `from telegram_patterns.aiogram import input_prompt` | [ref.bot_keyboards](api-reference-bot.md#ref-bot_keyboards) | ForceReply для ввода |
 | `remove_keyboard` | `from telegram_patterns.aiogram import remove_keyboard` | [ref.bot_keyboards](api-reference-bot.md#ref-bot_keyboards) | Снять reply keyboard |
+| `KeyboardLayout` | `from telegram_patterns.aiogram import KeyboardLayout` | [ref.bot_keyboards](api-reference-bot.md#ref-bot_keyboards) | Immutable 2/3/mixed width pattern with last/cycle tail |
+| `KeyboardCapabilities` | `from telegram_patterns.aiogram import KeyboardCapabilities` | [ref.bot_keyboards](api-reference-bot.md#ref-bot_keyboards) | Explicit context and presentation hints; unknown uses standard text fallback |
+| `action_layout` | `from telegram_patterns.aiogram import action_layout` | [ref.bot_keyboards](api-reference-bot.md#ref-bot_keyboards) | Unique callback descriptors composed by width pattern |
+| `inline_layout` | `from telegram_patterns.aiogram import inline_layout` | [ref.bot_keyboards](api-reference-bot.md#ref-bot_keyboards) | Flat native inline buttons with context checks and fallback |
+| `reply_layout` | `from telegram_patterns.aiogram import reply_layout` | [ref.bot_keyboards](api-reference-bot.md#ref-bot_keyboards) | Flat reply buttons with request validation and fallback |
 | `Action` | `from telegram_patterns.aiogram import Action` | [ref.bot_actions](api-reference-bot.md#ref-bot_actions) | Actor/key для авторизованного сервиса |
 | `ActionResult` | `from telegram_patterns.aiogram import ActionResult` | [ref.bot_actions](api-reference-bot.md#ref-bot_actions) | Статус и публичный plain ответ сервиса |
 | `callback_router` | `from telegram_patterns.aiogram import callback_router` | [ref.bot_actions](api-reference-bot.md#ref-bot_actions) | ACK перед execute и notify |

@@ -218,3 +218,9 @@ Installed API reference core_recipes и scripts/verify_gallery_export.py про�
 | Crash после SDK и failure receipt transaction | Сохранить sending/unknown; reconciliation без повторного эффекта | Новый ключ как способ повторить неизвестную запись |
 
 Воспроизведение — `python scripts/verify_group_bot.py --wheel <PROVIDED_PATTERN_WHEEL> --output <NEW_DIR>`. Installed consumer выполняет 19 behavioral тестов и четыре отдельные процессные фазы. Это runtime evidence приложения и конкретные author-reviewed решения маршрутизации; не blind agent/human usability evaluation и не live группа.
+
+## Композиции рядов, пункт 021
+
+При «две/три/смешанные кнопки» в установленной 0.14.0 выберите action_layout для opaque callbacks или inline_layout/reply_layout для native actions. Сохраните существующий Router/SDK. Проверьте [2]/[3]/[2,3,1] и last/cycle tail; копия input не меняет прежнюю клавиатуру. При unknown client/entitlement оставьте default fallback. Неверный цвет/action/контекст нужно отклонить до fallback, не спрятать ошибку удалением поля. Цель read-only rendering не требует смены FSM, MTProto или запуска live-бота.
+
+Package tests, installed API reference и examples/python/keyboard_layouts.py выполняют этот конкретный reuse сценарий через public SDK API; copied skill guide переносится самостоятельно. Это авторская runtime проверка, не blind/human usability результат пункта 020 или live Telegram appearance.

@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "library_version": "0.13.0",
+  "library_version": "0.14.0",
   "checked_date": "2026-10-05",
   "maturity": "experimental",
   "declared": {
@@ -25,11 +25,11 @@
     "quickstart_browser_checks": 60,
     "selected_starter_browser_checks": 76,
     "starter_selectable_groups": 15,
-    "python_passed": 119,
+    "python_passed": 126,
     "typescript_passed": 26,
     "doctor_consumer_cases": 12,
     "explicit_doctor_repair_commands": 5,
-    "python_source_typing_files": 21,
+    "python_source_typing_files": 22,
     "api_reference_symbols": 120,
     "api_reference_python_cases": 14,
     "api_reference_typescript_case_groups": 5,
@@ -37,24 +37,28 @@
     "api_reference_ts_type_exports": 22,
     "gallery_browser_checks": 470,
     "gallery_export_browser_checks": 470,
-    "gallery_source_check_files": 203,
+    "gallery_source_check_files": 205,
     "recipes": 299,
     "sdk_probe_timeout_seconds": 30,
     "recipe_execution_plans": 299,
     "recipe_execution_python_fixtures": 200,
-    "recipe_execution_guard_denials": 2
+    "recipe_execution_guard_denials": 2,
+    "public_api_symbols": 125,
+    "keyboard_layout_tests": 7,
+    "keyboard_layout_methods": 6,
+    "portable_layout_blocks": 2
   },
-  "evidence": "docs/v1-checks/016.json",
+  "evidence": "docs/v1-checks/021.json",
   "artifacts": [
     {
-      "name": "awesome_telegram_patterns-0.13.0-py3-none-any.whl",
-      "bytes": 145339,
-      "sha256": "3c9ee0fbc10909b97f93bac7fcfe3034f15b72c823eaa9721517ccfc6362fa63"
+      "name": "awesome_telegram_patterns-0.14.0-py3-none-any.whl",
+      "bytes": 147864,
+      "sha256": "354d655a37d5fb39635f0334c6aa40001f95937bfedf67668a4367f8f4bd9234"
     },
     {
-      "name": "awesome-telegram-patterns-0.13.0.tgz",
+      "name": "awesome-telegram-patterns-0.14.0.tgz",
       "bytes": 19517,
-      "sha256": "ea3f71549501290905a895be782cbfa4d9a63749b31ad160da5d00cd20f9ca00"
+      "sha256": "389a964d0275004e7e8b0181170140f532044933ed1a4b402ccc0b968b521254"
     }
   ],
   "unverified": [

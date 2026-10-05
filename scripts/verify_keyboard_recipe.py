@@ -28,7 +28,17 @@ def main():
     if namespace['request'].__api_method__ != 'sendMessage': raise ValueError('Request recipe failed')
     if namespace['confirm'].inline_keyboard[0][0].style != 'success': raise ValueError('Style recipe failed')
     if not namespace['prompt'].force_reply or not namespace['hidden'].remove_keyboard: raise ValueError('Input recipe failed')
+    layout_guide = skill / 'references/keyboard-layouts.md'
+    layout_blocks = re.findall(r'```python\n(.*?)```', layout_guide.read_text(encoding='utf-8'), re.S) if layout_guide.exists() else []
+    if layout_guide.exists() and len(layout_blocks) != 2: raise ValueError('Update checker for changed layout guide blocks')
+    layout_namespace = {}
+    for block in layout_blocks: exec(compile(block,str(layout_guide),'exec'),layout_namespace)
+    if layout_blocks:
+        if list(map(len,layout_namespace['mixed'].inline_keyboard)) != [2,3,1,1]: raise ValueError('Mixed layout guide failed')
+        if layout_namespace['unknown'].style is not None or layout_namespace['unknown'].icon_custom_emoji_id is not None: raise ValueError('Unknown presentation fallback failed')
+        if layout_namespace['shown'].style != 'success': raise ValueError('Verified style guide failed')
     print(json.dumps({'passed':True,'network':False,'markdown_files':len(markdown),'python_blocks':len(blocks),
+                      'layout_guide_blocks':len(layout_blocks),
                       'methods':len(namespace['methods']),'scope':'copied skill recipe execution; not independent agent decision evaluation'}))
 
 

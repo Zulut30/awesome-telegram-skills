@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "library_version": "0.13.0",
+  "library_version": "0.14.0",
   "distribution": "local; not published to package registries",
   "packages": {
     "python": {
@@ -71,7 +71,7 @@
     {
       "id": "native-keyboards",
       "language": "python",
-      "import": "telegram_patterns.aiogram.ChatType, ButtonStyle, inline_keyboard, reply_keyboard, input_prompt, remove_keyboard",
+      "import": "telegram_patterns.aiogram.ChatType, ButtonStyle, inline_keyboard, reply_keyboard, input_prompt, remove_keyboard, KeyboardLayout, KeyboardCapabilities, inline_layout, reply_layout",
       "extra": "aiogram",
       "intent": "Явные строки inline/reply, native actions, styles и интерфейс ответа",
       "source": "packages/python/src/telegram_patterns/native_keyboards.py",
@@ -79,7 +79,9 @@
       "boundaries": [
         "caller supplies actual context and verified emoji entitlement",
         "1..8 buttons per row / <=100 total are component limits",
-        "markup construction; no private effect or forced input validation"
+        "markup construction; no private effect or forced input validation",
+        "flat mixed-width patterns snapshot input; unknown presentation strips styles/emoji without hiding invalid fields",
+        "capability values are host-supplied for this context; SDK construction never proves live availability"
       ],
       "maturity": "experimental",
       "maturity_scope": "All public API symbols in this component; local verification is not a stable 1.0 promise"
@@ -231,7 +233,7 @@
     {
       "id": "action-menu",
       "language": "python",
-      "import": "telegram_patterns.aiogram.ActionButton, action_menu",
+      "import": "telegram_patterns.aiogram.ActionButton, action_menu, action_layout",
       "extra": "aiogram",
       "intent": "Собрать строки callback-кнопок из списка с уникальными ключами",
       "source": "packages/python/src/telegram_patterns/keyboards.py",

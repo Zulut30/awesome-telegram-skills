@@ -1,4 +1,4 @@
-# TypeScript Mini App — 0.13.0
+# TypeScript Mini App — 0.14.0
 
 [Индекс всех символов](api-reference.md). Образцы ниже воспроизводятся через установленный wheel/tarball вне исходного дерева. Assert — проверка fixture, не бизнес-правило production приложения.
 

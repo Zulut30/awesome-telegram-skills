@@ -406,10 +406,25 @@
       "id": 21,
       "title": "Расширить конструктор клавиатур",
       "requirement": "Добавить удобные композиции рядов 2/3/смешанной ширины, разрешенные стили и custom emoji с проверкой доступности; сохранить существующие builders и fallback.",
-      "status": "pending",
-      "commit_subject": null,
-      "artifacts": [],
-      "evidence": []
+      "status": "done",
+      "commit_subject": "roadmap(021): compose mixed keyboard rows with explicit presentation fallback",
+      "artifacts": [
+        "packages/python/src/telegram_patterns/keyboard_layouts.py",
+        "packages/python/tests/test_keyboard_layouts.py",
+        "examples/python/keyboard_layouts.py",
+        "docs/keyboard-layouts.md",
+        "docs/v1-checks/021.json",
+        "docs/v1-checks/021-distribution.json",
+        "docs/v1-checks/021-first-run.json",
+        "docs/v1-checks/021-portable.json"
+      ],
+      "evidence": [
+        "docs/v1-checks/021.json",
+        "0.14.0 synchronized local wheel/tarball; 58 distribution stages, 126 Python passed + 1 skip, 26 TypeScript, 1259 browser checks + 60 quickstart checks",
+        "Seven layout tests; immutable widths and native model snapshots; 2/3/mixed last/cycle tail; invalid native fields/context rejected before style/emoji fallback; previous builders preserved",
+        "125 public symbols/19 documented examples; installed SDK composition and exact two portable guide blocks; source Mypy 22 files, 32 root tests and 41 standalone skills",
+        "No live Telegram rendering/emoji entitlement or human usability claim; item 020 remains pending its measured human/AI baseline and targets"
+      ]
     },
     {
       "id": 22,
