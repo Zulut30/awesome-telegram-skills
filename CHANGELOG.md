@@ -1,5 +1,11 @@
 # Изменения библиотеки компонентов
 
+## 0.22.0
+
+- Добавлен inline-поиск с явно shareable articles, текущими host правами, scoped pagination и раздельными public/personal cache policies; native answer не повторяется вслепую.
+- Добавлены современные poll/quiz requests, persistent option IDs и scoped наблюдения собственных опросов с сохранением unknown fields и ограничений анонимности.
+- Публичные API-примеры, самостоятельные guides, закрытые offline Dispatcher recipes и пример host SQLite intent/receipt. Experimental локальная поставка; live Telegram/device/provider и независимая приемка остаются отдельными.
+
 ## 0.21.0
 
 - Добавлены immutable наблюдения пользователя, чата и фотографий профиля: неизвестные optional значения остаются None, источник и время сохраняются.

@@ -1,0 +1,194 @@
+{
+  "roadmap_item": 29,
+  "version": "0.22.0",
+  "checked_date": "2026-10-05",
+  "passed": true,
+  "report": "output/pattern-library-0.22.0/distribution-report.json",
+  "report_sha256": "6af27830c43b6a6a6fe6dcc1a5cf9358a321187f5a5a8bc88747b3a6a17b7430",
+  "distribution_stages": 73,
+  "python_tests": {
+    "run": 378,
+    "passed": 377,
+    "skipped": 1
+  },
+  "inline_behavioral_tests": 32,
+  "poll_behavioral_tests": 34,
+  "typescript_tests": 26,
+  "root_tests": 34,
+  "skills_checked": 41,
+  "browser_scope": {
+    "example": 141,
+    "gallery": 974,
+    "export": 974,
+    "starter": 66,
+    "selected_starter": 76,
+    "api_reference": 36
+  },
+  "browser_total": 2267,
+  "first_run_browser_checks": 60,
+  "public_symbols": {
+    "total": 215,
+    "python": 174,
+    "typescript": 41
+  },
+  "component_groups": 41,
+  "recipes": 308,
+  "python_fixtures": 209,
+  "source_check_files": 247,
+  "source_typing_files": 35,
+  "installed_compositions": {
+    "inline_search": {
+      "passed": true,
+      "network": false,
+      "session_closed": true,
+      "personal_cache": true,
+      "scoped_pagination": true,
+      "fresh_acl": true,
+      "private_items_excluded": true,
+      "unknown_answer_no_retry": true,
+      "existing_dispatcher_preserved": true,
+      "feedback_is_optional": true
+    },
+    "polls": {
+      "passed": true,
+      "network": false,
+      "session_closed": true,
+      "modern_quiz": true,
+      "own_poll_binding": true,
+      "persistent_vote_ids": true,
+      "anonymous_limits": true,
+      "unknown_addition_not_guessed": true,
+      "durable_host_dedup": true,
+      "unknown_send_no_retry": true,
+      "fresh_acl": true,
+      "existing_dispatcher_preserved": true
+    }
+  },
+  "first_run_report": "output/v1-quickstart-029-accepted/report.json",
+  "first_run_report_sha256": "6291bc7ffcd07e9bc712c96d79e56f97352d1b6d5727b4d78512a1e8d2250e83",
+  "first_run_guide_hash": {
+    "method": "UTF-8 normalized-LF text executed by verify_quickstart.py",
+    "sha256": "1ff8759b38cba3b1185e66a1990134f9729f40248a56b4749aa0b492d0904ebf",
+    "source_bytes_sha256": "f1af894bf19286b5bff6812b0c3a80cf5f267e6bf2f52b60eee87c6eba23591b"
+  },
+  "artifacts": [
+    {
+      "name": "awesome_telegram_patterns-0.22.0-py3-none-any.whl",
+      "bytes": 261328,
+      "sha256": "aed2664faa783e40b2c80cb86fc2cad7a883bc6aa3c59a3b5732dde8c92eed16"
+    },
+    {
+      "name": "awesome-telegram-patterns-0.22.0.tgz",
+      "bytes": 19530,
+      "sha256": "db2effa61251b3b5735064b451d785a6d8a066ffbe8134d43140a24132b22184"
+    }
+  ],
+  "evidence": {
+    "distribution": "docs/v1-checks/029-distribution.json",
+    "first_run": "docs/v1-checks/029-first-run.json",
+    "portable": "docs/v1-checks/029-portable.json"
+  },
+  "source_and_guide_hashes": {
+    "packages/python/src/telegram_patterns/inline_mode_aiogram.py": "ca8eb173c17d67494590ec15750704b12140e4186148c489124b6a32840e350b",
+    "packages/python/src/telegram_patterns/polls_aiogram.py": "da19aff1134d3fa74908db9d31e2339160af9cd12577cab8208a960503c6c38f",
+    "packages/python/src/telegram_patterns/aiogram.py": "599b5af2b01e7d78d6c71bdfadc8c7812d2a48de0969c677d3180a110f1e766d",
+    "packages/python/src/telegram_patterns/_offline_recipe.py": "7c51e17e4120936d417184ebde5195404637e4b117664cb2c3685aad6aa01762",
+    "packages/python/tests/test_inline_mode.py": "f67121edb39dbae15aac4c560896ac87488a70108442610bf27a26acda38ccc1",
+    "packages/python/tests/test_polls.py": "6cf1eaddc036c61913d8a9fe92109e32d493baca7141d71ca3bfc9768b5dd924",
+    "packages/python/tests/test_catalog_cli.py": "5fc1aa5e668d34e55465b614369e6b3414493b573cf5000f7876d3a6dcc2e866",
+    "tests/public_types.py": "e10ce27583d2d577d6e296b06577880b721639402f824a423c8c9ce48cda35ee",
+    "examples/python/inline_search_bot.py": "3fd2068de1e8f9ccad55f1eb7911ccf73304fd427ea2a80032930e1df44355af",
+    "examples/python/offline_inline_search.py": "78cd0d8723b65bab6aa85022146bc6e895849ede9954e76aa91ca03e896f66be",
+    "examples/python/polls_bot.py": "693cd6807f953695365975d6132a1223a1caff3b76721315f49ee50a4bd29cc6",
+    "examples/python/offline_polls.py": "b6be019aa03a8150cfed2d6a66bd98624ce7cdb8dc5334417bf4ff1a4572b1c1",
+    "examples/api-reference/python/bot_inline_search.py": "7d9243202fc3c273165a43cc3f2c7fe36bb658a27610cb3b25fbd62cfe3da18e",
+    "examples/api-reference/python/bot_polls.py": "6d1dec9ef76a012ea369e5287800f7dea9a5b96515d9b264fc2bedfcee6956b5",
+    "examples/api-reference/python/core_recipes.py": "991a92498a64147721ee0c7f4bf9cf8dccbcc2fa8ae6c1d51daa5e31e677456b",
+    "docs/inline-search.md": "5eda950b21fb78f5451dbb9904526d821fbdd30735bb1cebe72bfd0446a74c99",
+    "docs/polls.md": "accfc3d23421840aaaa436709430c77a05297d39bcd9eca618b6463b71fe74c0",
+    ".agents/skills/telegram-code-patterns/references/inline-search.md": "5eda950b21fb78f5451dbb9904526d821fbdd30735bb1cebe72bfd0446a74c99",
+    ".agents/skills/telegram-inline-mode/references/inline-search.md": "5eda950b21fb78f5451dbb9904526d821fbdd30735bb1cebe72bfd0446a74c99",
+    ".agents/skills/telegram-code-patterns/references/polls.md": "accfc3d23421840aaaa436709430c77a05297d39bcd9eca618b6463b71fe74c0",
+    ".agents/skills/telegram-bot-api/references/polls.md": "accfc3d23421840aaaa436709430c77a05297d39bcd9eca618b6463b71fe74c0",
+    ".agents/skills/telegram-code-patterns/SKILL.md": "72b6d61d5926c9a5870664cae3a6e8965f0bee218579e03a8f6db1ec5555d568",
+    ".agents/skills/telegram-inline-mode/SKILL.md": "08aa53fab1c8366e0fa51ad1e2da85cffeecb2485fb10f81725d3954f67b1642",
+    ".agents/skills/telegram-bot-api/SKILL.md": "f31aa1dfb52075211ead76c52afb641fce1dac04cbc39ad828a1f30c0252bf91",
+    "scripts/verify_inline_search_recipe.py": "eafa72b4de7cdc1122c7f6c6dcdb5e9c7c487eee5d11c94b1f691690d2c334ba",
+    "scripts/verify_poll_recipe.py": "30d12dd09016ea83efc95c3640c8e4daf774df708c4528b6c334a1d4c6eebd88",
+    "scripts/build_recipe_gallery.py": "f53aa1faeba660638f66dfb74aa7a1788cc36f03a8ff9064e70c1566905179f4",
+    "scripts/verify_pattern_packages.py": "bb4951451d763e7ab911f90304403171944fe8a379bb0991c438617fe668e7cc",
+    "scripts/verify_gallery_export.py": "842d02266cda2add43493a11cbec5d1b56262db7457bc5df42b22766a93b1eff",
+    "scripts/verify_recipe_execution.py": "010bdb7e47c034c5a20991fac300a9b0546f55708bf86961f815dcfc2ef7fc7b",
+    "tests/gallery-browser.mjs": "d7a3cb6b04b7d80b9b84140cd529e4be18f6f12490a7058c2df7a9fa5689d7f6",
+    "docs/quickstart.md": "f1af894bf19286b5bff6812b0c3a80cf5f267e6bf2f52b60eee87c6eba23591b",
+    ".agents/skills/telegram-code-patterns/references/quickstart.md": "f1af894bf19286b5bff6812b0c3a80cf5f267e6bf2f52b60eee87c6eba23591b",
+    ".agents/skills/telegram-code-patterns/references/components.md": "ec7b4320d686de839c427fd4a9eaacb0c0a23d41458bbb61df039f0b2538ffd2"
+  },
+  "root_log_sha256": "e7bd6cb036a603f04ba0c7a3cecf5a8ab8afe8cfc5369cf3942a422fc16bcb52",
+  "skill_log_sha256": "8807a4a6e3207331f403446a458788ef471faa999c4f11c303833c22e58313a2",
+  "focused_log_sha256": {
+    "output/inline-search-029-tests.log": "ab7d384041f64c52a8a2695388475fa4db277c787395f28c7b6e9467925ac4dd",
+    "output/polls-029-tests.log": "75b96039d2e10670cdb257c38829b71af83b3d914b57bfae2501e040b51d7be7"
+  },
+  "helper_operations_sha256": "dab1cf0ab3110f1453d629dc1d62afdf86e406573d72427b413e464a87b42de4",
+  "repair_history": [
+    {
+      "attempt": "output/pattern-library-0.22.0-attempt-01/distribution-report.json",
+      "report_sha256": "3e2230e0fcb04e773b859a14660db6c49070d9af81084052f57ba325dc4265c0",
+      "failed_stage": "api-reference-consumer/example-python-types",
+      "reason": "New inline example accessed union content and a generic TelegramMethod without narrowing",
+      "repair": "Explicit isinstance narrowing to InputTextMessageContent and AnswerInlineQuery; regenerated exact API docs/index and repeated complete distribution",
+      "superseded_first_run": "output/v1-quickstart-029-accepted-attempt-01/report.json",
+      "superseded_first_run_sha256": "3b0de8515fef291c9124251f2f4e4bf8149b2eac852e2d88688be6dea303fe56"
+    },
+    {
+      "attempt": "output/pattern-library-0.22.0-attempt-02/distribution-report.json",
+      "report_sha256": "8977df794c19e65068eb0d5bdb88c464393da02dea111613b8511c916526ba37",
+      "failed_stage": "gallery-export-consumer/browser",
+      "reason": "Broad inventory replacement changed the unchanged keyboard category expectation from 11 to 13; new task checks also inherited the profile search query",
+      "repair": "Restored category count 11 and scoped search state; targeted Chrome run passed 974 checks/14 viewport-theme cases, then complete distribution repeated",
+      "targeted_browser": "output/inline-polls-029-gallery-targeted-console.log",
+      "targeted_browser_sha256": "bab0c8964b554d7bbcd2a7444e259487084bcef06774c0f9520ecca86fdf0dcb",
+      "superseded_first_run": "output/v1-quickstart-029-accepted-attempt-02/report.json",
+      "superseded_first_run_sha256": "922fa1ee60e609a5d5f5988edb6041dd0b546a9dc0920bf860cf079542f6079c"
+    }
+  ],
+  "requirement_evidence": {
+    "search_pagination_cache": [
+      "Explicitly shareable literal/entity articles and per-actor current host ACL; private records excluded before search/ACL",
+      "Casefold search, stable IDs, bot/actor/query/context/catalog/permission cursor binding and non-sliding expiry",
+      "Personal cache versus fully public shared cache; shared cached pagination works across actors/contexts, restricted composition cache_time=0",
+      "Fresh provider and before/after role revision; deadline, stale/denied empty answer, cancellation and one native answer without retry"
+    ],
+    "quiz": [
+      "Current 1..12 initial options and modern monotonic multi-correct arrays; deprecated correct_option_id is not emitted",
+      "Revoting/shuffle/adding/hide flags, literal emoji fallback, description/explanation and cloned native SDK rich media",
+      "Channel restrictions, aware 5..2628000 schedule and character/entity bounds tested without media IO"
+    ],
+    "voting_events": [
+      "Immutable raw Poll state preserves optional/unknown fields and ambiguous reported zero",
+      "Persistent and ordinal identities, exact user/chat voter kind and empty-array retraction",
+      "Fresh own-bot/poll/chat/message/thread/business binding; unknown association/foreign/anonymous/unregistered events never invent a ledger",
+      "Actual Poll/PollAnswer/message/business_message Dispatcher paths; host SQLite dedup and durable pending/unknown create intent across reopen"
+    ],
+    "distribution": [
+      "All 27 new optional aiogram exports covered in exact installed reference and positive/negative types",
+      "Copied code-pattern and individual inline/Bot API guides execute; invalid guides rejected and existing files preserved",
+      "Gallery/export source/check discovery across fourteen viewport/theme cases; matching exact wheel/tarball first-run"
+    ]
+  },
+  "limits": [
+    "Experimental local packages; no stable, production-ready or PyPI/npm publication claim",
+    "Shareable selection sends content to a chat; personal cache is not private delivery. Positive cache may outlive current rights without a new bot update",
+    "Host owns ACL/isolation/permission revisions, durable secret/catalog consistency, concurrency, storage and operation/event receipts",
+    "Native media references/bytes do not prove physical file snapshot, codec, entitlement, rights or live rendering",
+    "No getPoll/history access, hidden voters, complete vote ledger or count reconstruction; missing or out-of-order updates require host policy",
+    "Unknown SendPoll creation cannot be blindly repeated or reconciled using a nonexistent read method",
+    "SDK/mock/Chrome evidence does not accept real cache/delivery/poll voting, physical devices, provider settlement or independent usability",
+    "Original item020 remains pending human/independent AI baseline; applications017–019 keep separate 0.13.0 acceptance"
+  ],
+  "final_repository_checks": {
+    "output/inline-polls-029-final-root.log": "14c982b4c606cf9c2966059b010d3f15b1941e453b90837532ec86226dd7decb",
+    "output/inline-polls-029-final-skills.log": "8807a4a6e3207331f403446a458788ef471faa999c4f11c303833c22e58313a2"
+  }
+}

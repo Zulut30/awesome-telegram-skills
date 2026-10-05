@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "library_version": "0.21.0",
+  "library_version": "0.22.0",
   "source_snapshot": "2026-10-04",
   "source_hashes": {
     "bot_api": "29f5f25caa18d303f14ce83af5a4df784eb3094c3076cb040a1ad950c157ad44",
@@ -1314,7 +1314,7 @@
         "button",
         "api",
         "запрос",
-        "другие",
+        "inline-поиск",
         "уточнить",
         "контекст"
       ],
@@ -1327,7 +1327,7 @@
       "preview": null,
       "code_sha256": "46a27495329e8e5858a0808acfffaecaa1ffba23eacb68023b206e7a325174e1",
       "tasks": [
-        "other"
+        "inline"
       ],
       "contexts": [
         "unspecified"
@@ -8827,7 +8827,7 @@
         "allow_channel_chats",
         "api",
         "запрос",
-        "сообщения",
+        "inline-поиск",
         "уточнить",
         "контекст"
       ],
@@ -8840,7 +8840,7 @@
       "preview": null,
       "code_sha256": "2563f591bc14e97e88ccf52aeae5d091154d85c1209cea07cde107c766002dec",
       "tasks": [
-        "messages"
+        "inline"
       ],
       "contexts": [
         "unspecified"
@@ -10493,7 +10493,9 @@
         "reply_markup",
         "api",
         "запрос",
-        "другие",
+        "опросы",
+        "и",
+        "quiz",
         "уточнить",
         "контекст"
       ],
@@ -10506,7 +10508,7 @@
       "preview": null,
       "code_sha256": "b40725204d9a78870955c6768d667073633786dde3bac42fbc98c0c5ba347016",
       "tasks": [
-        "other"
+        "polls"
       ],
       "contexts": [
         "unspecified"
@@ -13458,7 +13460,9 @@
         "reply_markup",
         "api",
         "запрос",
-        "другие",
+        "опросы",
+        "и",
+        "quiz",
         "уточнить",
         "контекст"
       ],
@@ -13471,7 +13475,7 @@
       "preview": null,
       "code_sha256": "de82d7c3964d13ef6723df2cf07c0890b0af3b50c42586e7a021d2c14ba8f05a",
       "tasks": [
-        "other"
+        "polls"
       ],
       "contexts": [
         "unspecified"
@@ -21232,6 +21236,164 @@
       }
     },
     {
+      "id": "demo-inline-search",
+      "title": "Inline-поиск с персональной пагинацией",
+      "summary": "Персональный inline-поиск, shareable articles, scoped cursor и явный cache policy",
+      "category": "scenarios",
+      "language": "python",
+      "maturity": "experimental",
+      "keywords": [
+        "бот",
+        "пример",
+        "callback",
+        "меню",
+        "события",
+        "композиция",
+        "бота",
+        "личный",
+        "чат",
+        "inline",
+        "поиск",
+        "заметки",
+        "пагинация",
+        "кеширование",
+        "cache",
+        "cursor",
+        "private"
+      ],
+      "code": "\"\"\"Attach shareable-note search; host supplies catalog, ACL and a persistent secret.\"\"\"\nfrom __future__ import annotations\nfrom typing import Awaitable, Callable, Sequence\nfrom aiogram import Router\nfrom aiogram.types import ChosenInlineResult, InlineQuery\nfrom telegram_patterns.aiogram import InlineAuthorizer, InlineItem, InlineSearch, inline_query_router\n\nCatalogLoader = Callable[[int], Awaitable[tuple[str, Sequence[InlineItem]]]]\nPermissionRevision = Callable[[int], Awaitable[str]]\nFeedbackObserver = Callable[[ChosenInlineResult], Awaitable[None]]\n\n\ndef inline_search_router(load_catalog: CatalogLoader, authorize: InlineAuthorizer,\n                         permission_revision: PermissionRevision, *, cursor_secret: bytes,\n                         page_size: int = 20, feedback: FeedbackObserver | None = None) -> Router:\n    async def provider(query: InlineQuery) -> InlineSearch:\n        revision, items = await load_catalog(query.from_user.id)\n        # Items are explicitly shareable. A chosen item is sent to a chat partner,\n        # even with is_personal=True; private notes must retain shareable=False.\n        # cache_time=0 keeps restricted results from Telegram's reusable cache.\n        return InlineSearch(items, secret=cursor_secret, revision=revision, page_size=page_size,\n                            allowed_chat_types=('sender', 'private', 'group', 'supergroup', 'channel'))\n\n    router = inline_query_router(provider, authorize=authorize, permission_revision=permission_revision)\n    if feedback is not None:\n        @router.chosen_inline_result()\n        async def chosen(result: ChosenInlineResult) -> None:\n            # Optional observation only. Absence of feedback never proves that\n            # nothing was sent; this callback must not grant access or charge.\n            await feedback(result)\n    return router\n",
+      "verification": "mock",
+      "scope": "Actual synthetic Dispatcher and explicit host policy; local cache/cursor/poll observations, not Telegram live/client delivery or a complete voter ledger.",
+      "sources": [
+        "https://core.telegram.org/bots/api"
+      ],
+      "preview": null,
+      "code_sha256": "3fd2068de1e8f9ccad55f1eb7911ccf73304fd427ea2a80032930e1df44355af",
+      "tasks": [
+        "inline"
+      ],
+      "contexts": [
+        "private"
+      ],
+      "sdk": "aiogram",
+      "sdk_version": "3.31.0",
+      "api_version": "bot:10.3",
+      "source_files": [
+        "examples/python/inline_search_bot.py",
+        "packages/python/src/telegram_patterns/inline_mode_aiogram.py",
+        "packages/python/src/telegram_patterns/execution.py",
+        "packages/python/src/telegram_patterns/_offline_recipe.py"
+      ],
+      "check_files": [
+        "examples/python/offline_inline_search.py",
+        "packages/python/tests/test_inline_mode.py"
+      ],
+      "execution": {
+        "kind": "dispatcher",
+        "dependencies": [
+          "aiogram==3.31.0"
+        ],
+        "offline_environment": [],
+        "offline_permissions": [],
+        "offline_data": [
+          "Только поставляемые синтетические данные; реальные IDs и secrets не принимаются."
+        ],
+        "live_environment": [
+          "BOT_TOKEN"
+        ],
+        "live_permissions": [
+          "Прикладная авторизация сервиса; fixture actor не доказывает server ACL."
+        ],
+        "live_data": [
+          "Текущий Dispatcher, реальные actor/chat и сервис приложения",
+          "Проверка объекта, автора и состояния до effect/replay"
+        ],
+        "live_review": "Live executor отсутствует. Перед интеграцией проверить источники, ограничения конкретного метода/контекста, auth и ACL; metadata не подтверждает права.",
+        "effects": [
+          "Synthetic Dispatcher + StubSession; временная fixture, без polling"
+        ]
+      }
+    },
+    {
+      "id": "demo-polls",
+      "title": "Опросы, quiz и события голосования",
+      "summary": "Modern poll/quiz requests and own-bot scoped observations without hidden-voter inference",
+      "category": "scenarios",
+      "language": "python",
+      "maturity": "experimental",
+      "keywords": [
+        "бот",
+        "пример",
+        "callback",
+        "меню",
+        "события",
+        "композиция",
+        "бота",
+        "личный",
+        "чат",
+        "опрос",
+        "quiz",
+        "голосование",
+        "persistent",
+        "poll_answer",
+        "анонимный",
+        "revoting",
+        "correct_option_ids"
+      ],
+      "code": "\"\"\"Own polls and scoped observations; host owns durable intent, binding and receipts.\"\"\"\nfrom __future__ import annotations\nimport asyncio\nfrom typing import Awaitable, Callable, cast\nfrom aiogram import F, Router\nfrom aiogram.filters import Command\nfrom aiogram.methods import SendPoll\nfrom aiogram.types import Message\nfrom telegram_patterns import InvalidCompletion, InvalidType, safe_error_report\nfrom telegram_patterns.aiogram import (ChatType, PollBinding, PollLookup, PollObserver, PollSpec,\n                                      poll_events_router, poll_request)\n\nAuthorizer = Callable[[int, int, str], Awaitable[bool]]\nClaim = Callable[[Message, SendPoll], Awaitable[bool]]\nConfirm = Callable[[Message, PollBinding], Awaitable[None]]\nMarkUnknown = Callable[[Message], Awaitable[None]]\n\n\ndef polls_router(authorize: Authorizer, claim: Claim, confirm: Confirm, mark_unknown: MarkUnknown,\n                 lookup: PollLookup, observe: PollObserver) -> Router:\n    router = Router(name='own-polls-example')\n    commands = Router(name='own-polls-commands')\n    commands.message.filter(F.chat.type.in_({'private','supergroup'}), F.from_user.is_bot == False)\n\n    async def create(message: Message, spec: PollSpec) -> None:\n        if message.from_user is None:\n            return\n        bot = message.bot\n        if bot is None:\n            raise InvalidType('Host Dispatcher must mount the message to its Bot')\n        if await authorize(message.from_user.id,message.chat.id,'send') is not True:\n            await message.answer('Недостаточно прав.',parse_mode=None)\n            return\n        request = poll_request(spec,chat_id=message.chat.id,chat_type=cast(ChatType,message.chat.type),\n                               message_thread_id=message.message_thread_id,\n                               business_connection_id=message.business_connection_id)\n        # Host persists a scoped intent BEFORE sending. Replay/pending/unknown\n        # must return False; a new attempt must never reuse a different payload.\n        if await claim(message,request) is not True:\n            await message.answer('Запрос уже принят. Проверьте его статус.',parse_mode=None)\n            return\n        try:\n            sent = await bot(request)\n            binding = PollBinding.from_message(sent,bot_id=bot.id)\n            if binding.kind != spec.kind or binding.is_anonymous != spec.is_anonymous:\n                raise InvalidCompletion('Own poll response does not match its request')\n            # Host transaction records the binding and confirmed receipt.\n            await confirm(message,binding)\n        except asyncio.CancelledError:\n            await mark_unknown(message)\n            raise\n        except Exception as error:\n            await mark_unknown(message)\n            await message.answer(safe_error_report(error,operation='write').message,parse_mode=None)\n            return\n\n    @commands.message(Command('poll'))\n    async def regular(message: Message) -> None:\n        await create(message,PollSpec('Когда встретиться?',['Утром','Днем','Вечером'],is_anonymous=False,\n            allows_multiple_answers=True,allows_revoting=True,allow_adding_options=True))\n\n    @commands.message(Command('quiz'))\n    async def quiz(message: Message) -> None:\n        await create(message,PollSpec('Какие числа четные?',['2','3','4'],kind='quiz',correct_option_ids=[0,2],\n            allows_multiple_answers=True,explanation='2 и 4 делятся на 2 без остатка.',shuffle_options=True))\n\n    router.include_router(commands)\n    router.include_router(poll_events_router(lookup,observe))\n    return router\n",
+      "verification": "mock",
+      "scope": "Actual synthetic Dispatcher and explicit host policy; local cache/cursor/poll observations, not Telegram live/client delivery or a complete voter ledger.",
+      "sources": [
+        "https://core.telegram.org/bots/api"
+      ],
+      "preview": null,
+      "code_sha256": "693cd6807f953695365975d6132a1223a1caff3b76721315f49ee50a4bd29cc6",
+      "tasks": [
+        "polls"
+      ],
+      "contexts": [
+        "private"
+      ],
+      "sdk": "aiogram",
+      "sdk_version": "3.31.0",
+      "api_version": "bot:10.3",
+      "source_files": [
+        "examples/python/polls_bot.py",
+        "packages/python/src/telegram_patterns/polls_aiogram.py",
+        "packages/python/src/telegram_patterns/execution.py",
+        "packages/python/src/telegram_patterns/_offline_recipe.py"
+      ],
+      "check_files": [
+        "examples/python/offline_polls.py",
+        "packages/python/tests/test_polls.py"
+      ],
+      "execution": {
+        "kind": "dispatcher",
+        "dependencies": [
+          "aiogram==3.31.0"
+        ],
+        "offline_environment": [],
+        "offline_permissions": [],
+        "offline_data": [
+          "Только поставляемые синтетические данные; реальные IDs и secrets не принимаются."
+        ],
+        "live_environment": [
+          "BOT_TOKEN"
+        ],
+        "live_permissions": [
+          "Прикладная авторизация сервиса; fixture actor не доказывает server ACL."
+        ],
+        "live_data": [
+          "Текущий Dispatcher, реальные actor/chat и сервис приложения",
+          "Проверка объекта, автора и состояния до effect/replay"
+        ],
+        "live_review": "Live executor отсутствует. Перед интеграцией проверить источники, ограничения конкретного метода/контекста, auth и ACL; metadata не подтверждает права.",
+        "effects": [
+          "Synthetic Dispatcher + StubSession; временная fixture, без polling"
+        ]
+      }
+    },
+    {
       "id": "demo-profiles",
       "title": "Профили, фото и локализация бота",
       "summary": "Nullable user/chat facts, profile photos, localized own-bot edits, current method ACL and explicit unknown reconciliation.",
@@ -21508,7 +21670,7 @@
         "backend"
       ],
       "sdk": "python-core",
-      "sdk_version": "0.21.0",
+      "sdk_version": "0.22.0",
       "api_version": "none",
       "source_files": [
         "examples/python/error_recovery.py",
@@ -21546,6 +21708,8 @@
       "keyboards": "Кнопки и раскладки",
       "input": "Ввод и формы",
       "navigation": "Возврат и навигация",
+      "inline": "Inline-поиск",
+      "polls": "Опросы и quiz",
       "messages": "Сообщения",
       "media": "Медиа и файлы",
       "profiles": "Профили",

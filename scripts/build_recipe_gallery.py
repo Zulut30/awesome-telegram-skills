@@ -21,6 +21,7 @@ API = 'https://core.telegram.org/bots/api'
 WEB = 'https://core.telegram.org/bots/webapps'
 NAVIGATION = {
     'tasks': {'keyboards': 'Кнопки и раскладки', 'input': 'Ввод и формы', 'navigation': 'Возврат и навигация',
+              'inline': 'Inline-поиск', 'polls': 'Опросы и quiz',
               'messages': 'Сообщения', 'media': 'Медиа и файлы', 'profiles': 'Профили', 'moderation': 'Группы и модерация',
               'payments': 'Платежные запросы', 'native': 'Native Mini Apps', 'recovery': 'Восстановление операций',
               'bot': 'Композиция бота', 'other': 'Другие API'},
@@ -44,6 +45,8 @@ def method_tasks(name: str) -> list[str]:
     if any(word in name for word in ('Photo', 'Video', 'Audio', 'Document', 'Media', 'Sticker', 'File', 'Story')): return ['media']
     if any(word in name for word in ('Member', 'ForumTopic', 'InviteLink', 'JoinRequest', 'Permissions')): return ['moderation']
     if name == 'getMe' or any(word in name for word in ('Profile', 'MyName', 'MyDescription', 'MyShortDescription')): return ['profiles']
+    if 'Inline' in name: return ['inline']
+    if 'Poll' in name: return ['polls']
     if 'Message' in name: return ['messages']
     return ['other']
 IMPORTS = ('from aiogram.types import InlineKeyboardButton as Button, KeyboardButton, CopyTextButton, DisabledButton, WebAppInfo\n'
@@ -127,6 +130,8 @@ def build(root: Path = ROOT) -> dict:
         ('selection_bot.py', 'offline_selection.py', 'demo-selection', 'Переключатели, выбор, количество и подтверждение'),
         ('calendar_bot.py', 'offline_calendar.py', 'demo-calendar', 'Календарь и запись на свободное время'),
         ('dialog_fields_bot.py', 'offline_dialog_fields.py', 'demo-dialog-fields', 'Семь типов полей диалога'),
+        ('inline_search_bot.py', 'offline_inline_search.py', 'demo-inline-search', 'Inline-поиск с персональной пагинацией'),
+        ('polls_bot.py', 'offline_polls.py', 'demo-polls', 'Опросы, quiz и события голосования'),
         ('profiles_bot.py', 'offline_profiles.py', 'demo-profiles', 'Профили, фото и локализация бота'),
         ('media_bot.py', 'offline_media.py', 'demo-media', 'Фото, документы, альбомы и скачивание'),
         ('message_text_bot.py', 'offline_message_text.py', 'demo-message-text', 'Безопасные сообщения и разбиение текста'),
@@ -179,6 +184,20 @@ def build(root: Path = ROOT) -> dict:
             records[-1]['source_files'].append('packages/python/src/telegram_patterns/profiles_aiogram.py')
             records[-1]['check_files'].append('packages/python/tests/test_profiles.py')
             records[-1]['scope'] = 'Actual synthetic Dispatcher, localized state and SDK new-file multipart; live profile visibility/codec/rights/rendering unconfirmed.'
+        if key == 'demo-inline-search':
+            records[-1]['summary'] = 'Персональный inline-поиск, shareable articles, scoped cursor и явный cache policy'
+            records[-1]['tasks'] = ['inline']
+            records[-1]['keywords'] += ['inline', 'поиск', 'заметки', 'пагинация', 'кеширование', 'cache', 'cursor', 'private']
+            records[-1]['source_files'].append('packages/python/src/telegram_patterns/inline_mode_aiogram.py')
+            records[-1]['check_files'].append('packages/python/tests/test_inline_mode.py')
+            records[-1]['scope'] = 'Actual synthetic Dispatcher and explicit host policy; local cache/cursor/poll observations, not Telegram live/client delivery or a complete voter ledger.'
+        if key == 'demo-polls':
+            records[-1]['summary'] = 'Modern poll/quiz requests and own-bot scoped observations without hidden-voter inference'
+            records[-1]['tasks'] = ['polls']
+            records[-1]['keywords'] += ['опрос', 'quiz', 'голосование', 'persistent', 'poll_answer', 'анонимный', 'revoting', 'correct_option_ids']
+            records[-1]['source_files'].append('packages/python/src/telegram_patterns/polls_aiogram.py')
+            records[-1]['check_files'].append('packages/python/tests/test_polls.py')
+            records[-1]['scope'] = 'Actual synthetic Dispatcher and explicit host policy; local cache/cursor/poll observations, not Telegram live/client delivery or a complete voter ledger.'
     recovery_file = root / 'examples/python/error_recovery.py'
     recovery = subprocess.run([sys.executable, str(recovery_file)], capture_output=True, text=True, encoding='utf-8', env=environment, timeout=60)
     if recovery.returncode: raise ValueError('Recovery fixture failed')

@@ -25,6 +25,8 @@ _FIXTURES = {
     'demo-message-text': ('message_text_bot.py', 'offline_message_text.py'),
     'demo-media': ('media_bot.py', 'offline_media.py'),
     'demo-profiles': ('profiles_bot.py', 'offline_profiles.py'),
+    'demo-inline-search': ('inline_search_bot.py', 'offline_inline_search.py'),
+    'demo-polls': ('polls_bot.py', 'offline_polls.py'),
     'demo-recovery': ('error_recovery.py',),
 }
 _ATTEMPTS = [0]
@@ -144,6 +146,12 @@ def _execute(recipe_id: str) -> dict:
             if recipe_id == 'demo-profiles':
                 assert evidence['photo_upload_bytes'] == 634 and all(evidence[k] for k in ('unknown_fields_preserved', 'profile_photos', 'localized_omission_clear', 'fresh_method_acl', 'new_avatar_upload_removal', 'unknown_edit_reconciliation', 'private_context_guards', 'existing_dispatcher_preserved'))
                 checks.extend(('nullable-profile-observations', 'own-bot-per-method-acl', 'localized-omission-clear', 'new-avatar-upload-removal', 'explicit-unknown-edit-reconciliation'))
+            if recipe_id == 'demo-inline-search':
+                assert all(evidence[key] for key in ('personal_cache', 'scoped_pagination', 'fresh_acl', 'private_items_excluded', 'unknown_answer_no_retry', 'existing_dispatcher_preserved', 'feedback_is_optional'))
+                checks.extend(('shareable-only-personal-cache', 'scoped-fixed-expiry-cursor', 'fresh-host-acl-no-native-retry'))
+            if recipe_id == 'demo-polls':
+                assert all(evidence[key] for key in ('modern_quiz', 'own_poll_binding', 'persistent_vote_ids', 'anonymous_limits', 'unknown_addition_not_guessed', 'durable_host_dedup', 'unknown_send_no_retry', 'fresh_acl', 'existing_dispatcher_preserved'))
+                checks.extend(('own-bot-modern-quiz', 'persistent-id-vote-retraction', 'unknown-association-not-guessed', 'host-sqlite-dedup-unknown-intent'))
         else:
             assert evidence['effect_count'] == 1 and evidence['replayed'] is True
             checks.extend(('sqlite-one-effect', 'same-key-replay'))

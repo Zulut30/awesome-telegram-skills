@@ -26,6 +26,8 @@ from .selection_aiogram import selection_keyboard, selection_router
 from .calendar_aiogram import calendar_keyboard, time_slot_keyboard
 from .media_aiogram import MediaKind, MediaSendRequest, MediaFile, MediaItem, DownloadedMedia, media_request, media_album, media_edit, download_media
 from .profiles_aiogram import ProfileSource, ProfileAuthorizer, UserProfile, ChatProfile, ProfilePhotoSize, ProfilePhotos, BotProfile, BotProfilePatch, ProfileEditIncomplete, user_profile, chat_profile, read_profile_photos, read_bot_profile, update_bot_profile
+from .inline_mode_aiogram import InlineChatType, InlineAuthorizer, InlineSearchProvider, InlineCachePolicy, InlineItem, InlinePage, InlineSearch, inline_articles, inline_query_router
+from .polls_aiogram import PollKind, PollChoice, PollSpec, PollOptionState, PollState, PollVote, PollOptionAddition, PollBinding, PollLocator, PollObservation, PollEvent, PollObserver, PollLookup, poll_request, poll_state, poll_vote, poll_option_added, poll_events_router
 from .api import MethodSpec, InvalidAPIRequest, method_catalog, build_request
 from .events import UpdatePhase, UpdateTrace, UpdateObserver, update_kinds, event_router
 
@@ -46,6 +48,11 @@ __all__ = [
     "ProfileSource", "ProfileAuthorizer", "UserProfile", "ChatProfile", "ProfilePhotoSize", "ProfilePhotos",
     "BotProfile", "BotProfilePatch", "ProfileEditIncomplete", "user_profile", "chat_profile",
     "read_profile_photos", "read_bot_profile", "update_bot_profile",
+    "InlineChatType", "InlineAuthorizer", "InlineSearchProvider", "InlineCachePolicy", "InlineItem", "InlinePage",
+    "InlineSearch", "inline_articles", "inline_query_router",
+    "PollKind", "PollChoice", "PollSpec", "PollOptionState", "PollState", "PollVote", "PollOptionAddition",
+    "PollBinding", "PollLocator", "PollObservation", "PollEvent", "PollObserver", "PollLookup",
+    "poll_request", "poll_state", "poll_vote", "poll_option_added", "poll_events_router",
     "MethodSpec", "InvalidAPIRequest", "method_catalog", "build_request",
     "UpdatePhase", "UpdateTrace", "UpdateObserver", "update_kinds", "event_router",
 ]

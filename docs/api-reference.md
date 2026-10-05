@@ -1,4 +1,4 @@
-# Справочник API 0.21.0
+# Справочник API 0.22.0
 
 Публичные imports, самостоятельные минимальные композиции и границы каждого символа. Все группы experimental. Рецепты ref.* принадлежат этому справочнику; cookbook RecipeCatalog отдельно содержит Telegram requests/layouts. Исполненные fixtures не доказывают live/device/provider acceptance.
 
@@ -200,6 +200,33 @@
 | `read_profile_photos` | `from telegram_patterns.aiogram import read_profile_photos` | [ref.bot_profiles](api-reference-bot.md#ref-bot_profiles) | Один explicit getUserProfilePhotos, immutable sizes, без отрицательных privacy выводов |
 | `read_bot_profile` | `from telegram_patterns.aiogram import read_bot_profile` | [ref.bot_profiles](api-reference-bot.md#ref-bot_profiles) | Fresh getMe плюс три locale reads; optional own-bot photos, unrequested None |
 | `update_bot_profile` | `from telegram_patterns.aiogram import update_bot_profile` | [ref.bot_profiles](api-reference-bot.md#ref-bot_profiles) | Текущий host ACL перед каждым выбранным own-bot методом и fresh readback; без retry/rollback |
+| `InlineChatType` | `from telegram_patterns.aiogram import InlineChatType` | [ref.bot_inline_search](api-reference-bot.md#ref-bot_inline_search) | Literal inline chat context, including explicit unknown None |
+| `InlineAuthorizer` | `from telegram_patterns.aiogram import InlineAuthorizer` | [ref.bot_inline_search](api-reference-bot.md#ref-bot_inline_search) | Async current host ACL(actor,item) → strict bool |
+| `InlineSearchProvider` | `from telegram_patterns.aiogram import InlineSearchProvider` | [ref.bot_inline_search](api-reference-bot.md#ref-bot_inline_search) | Async host provider of a fresh immutable catalog |
+| `InlineCachePolicy` | `from telegram_patterns.aiogram import InlineCachePolicy` | [ref.bot_inline_search](api-reference-bot.md#ref-bot_inline_search) | Explicit bounded cache_time/is_personal policy |
+| `InlineItem` | `from telegram_patterns.aiogram import InlineItem` | [ref.bot_inline_search](api-reference-bot.md#ref-bot_inline_search) | Frozen article identity and literal/entities text; shareable=False by default |
+| `InlinePage` | `from telegram_patterns.aiogram import InlinePage` | [ref.bot_inline_search](api-reference-bot.md#ref-bot_inline_search) | Frozen page bound to the original query; answer_request builds one native request |
+| `InlineSearch` | `from telegram_patterns.aiogram import InlineSearch` | [ref.bot_inline_search](api-reference-bot.md#ref-bot_inline_search) | Bounded immutable search snapshot with HMAC cursor and fixed chain expiry |
+| `inline_articles` | `from telegram_patterns.aiogram import inline_articles` | [ref.bot_inline_search](api-reference-bot.md#ref-bot_inline_search) | Fresh native article/text models with explicit parse_mode=None |
+| `inline_query_router` | `from telegram_patterns.aiogram import inline_query_router` | [ref.bot_inline_search](api-reference-bot.md#ref-bot_inline_search) | Host Dispatcher router with provider/ACL deadline, stale rejection and one native answer |
+| `PollKind` | `from telegram_patterns.aiogram import PollKind` | [ref.bot_polls](api-reference-bot.md#ref-bot_polls) | Literal regular/quiz |
+| `PollChoice` | `from telegram_patterns.aiogram import PollChoice` | [ref.bot_polls](api-reference-bot.md#ref-bot_polls) | Frozen literal option and cloned native SDK rich media |
+| `PollSpec` | `from telegram_patterns.aiogram import PollSpec` | [ref.bot_polls](api-reference-bot.md#ref-bot_polls) | Frozen validated modern creation parameters |
+| `PollOptionState` | `from telegram_patterns.aiogram import PollOptionState` | [ref.bot_polls](api-reference-bot.md#ref-bot_polls) | Persistent option identity and raw reported count |
+| `PollState` | `from telegram_patterns.aiogram import PollState` | [ref.bot_polls](api-reference-bot.md#ref-bot_polls) | Immutable native Poll snapshot with nullable answers and full JSON details |
+| `PollVote` | `from telegram_patterns.aiogram import PollVote` | [ref.bot_polls](api-reference-bot.md#ref-bot_polls) | Selected persistent/ordinal IDs and exact user/chat identity; empty means retraction |
+| `PollOptionAddition` | `from telegram_patterns.aiogram import PollOptionAddition` | [ref.bot_polls](api-reference-bot.md#ref-bot_polls) | Option service observation with possibly unknown poll association and preserved details |
+| `PollBinding` | `from telegram_patterns.aiogram import PollBinding` | [ref.bot_polls](api-reference-bot.md#ref-bot_polls) | Bot/poll/chat/message/thread/business binding of an own confirmed response |
+| `PollLocator` | `from telegram_patterns.aiogram import PollLocator` | [ref.bot_polls](api-reference-bot.md#ref-bot_polls) | Host lookup identity or exact address, always bot scoped |
+| `PollObservation` | `from telegram_patterns.aiogram import PollObservation` | [ref.bot_polls](api-reference-bot.md#ref-bot_polls) | Union of available state/vote/option observations |
+| `PollEvent` | `from telegram_patterns.aiogram import PollEvent` | [ref.bot_polls](api-reference-bot.md#ref-bot_polls) | Update ID, binding and one immutable observation |
+| `PollObserver` | `from telegram_patterns.aiogram import PollObserver` | [ref.bot_polls](api-reference-bot.md#ref-bot_polls) | Async host observer; owns durable dedup/state policy |
+| `PollLookup` | `from telegram_patterns.aiogram import PollLookup` | [ref.bot_polls](api-reference-bot.md#ref-bot_polls) | Async current host binding lookup, no hidden authorization |
+| `poll_request` | `from telegram_patterns.aiogram import poll_request` | [ref.bot_polls](api-reference-bot.md#ref-bot_polls) | One native SendPoll request; literal entities, modern fields and no IO |
+| `poll_state` | `from telegram_patterns.aiogram import poll_state` | [ref.bot_polls](api-reference-bot.md#ref-bot_polls) | Copy native Poll without count inference |
+| `poll_vote` | `from telegram_patterns.aiogram import poll_vote` | [ref.bot_polls](api-reference-bot.md#ref-bot_polls) | Copy native PollAnswer without inventing user identity |
+| `poll_option_added` | `from telegram_patterns.aiogram import poll_option_added` | [ref.bot_polls](api-reference-bot.md#ref-bot_polls) | Copy Message.poll_option_added, including inaccessible/omitted address |
+| `poll_events_router` | `from telegram_patterns.aiogram import poll_events_router` | [ref.bot_polls](api-reference-bot.md#ref-bot_polls) | Scoped Poll/PollAnswer/message/business_message routing; no count/retry/getPoll |
 
 ## CLI и CSS
 

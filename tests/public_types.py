@@ -96,3 +96,44 @@ profile_incomplete = ProfileEditIncomplete(('setMyName',),'setMyDescription')
 bad_profile_source: ProfileSource = 'MTProto'  # type: ignore[assignment]
 bad_profile_patch = BotProfilePatch(description=False)  # type: ignore[arg-type]
 bad_profile_acl: ProfileAuthorizer = lambda actor, bot_id, method: True  # type: ignore[assignment,return-value]
+
+# Inline search and modern polls through the optional public API.
+from aiogram.types import InlineQuery, Message, Poll, PollAnswer
+from telegram_patterns.aiogram import (InlineChatType, InlineAuthorizer, InlineSearchProvider, InlineCachePolicy,
+    InlineItem, InlinePage, InlineSearch, inline_articles, inline_query_router, PollKind, PollChoice, PollSpec,
+    PollOptionState, PollState, PollVote, PollOptionAddition, PollBinding, PollLocator, PollObservation,
+    PollEvent, PollObserver, PollLookup, poll_request, poll_state, poll_vote, poll_option_added, poll_events_router)
+inline_context: InlineChatType = 'sender'
+inline_item = InlineItem('a','A','Shareable',shareable=True)
+inline_search = InlineSearch([inline_item],secret=b'host-persistent-typechecking-key32',revision='v1',cache=InlineCachePolicy())
+async def inline_acl(actor: int, item: InlineItem) -> bool: return actor==42
+inline_authorizer: InlineAuthorizer = inline_acl
+async def inline_provider(query: InlineQuery) -> InlineSearch: return inline_search
+inline_search_provider: InlineSearchProvider = inline_provider
+async def inline_consumer(query: InlineQuery) -> InlinePage:
+    page = await inline_search.page(query,bot_id=100,authorize=inline_authorizer)
+    articles = inline_articles(page)
+    request = page.answer_request(query,bot_id=100)
+    return page
+inline_router = inline_query_router(inline_search_provider,authorize=inline_authorizer)
+poll_kind: PollKind = 'quiz'
+poll_spec = PollSpec('Even numbers',[PollChoice('2'),'3','4'],kind=poll_kind,correct_option_ids=[0,2],allows_multiple_answers=True)
+poll_send = poll_request(poll_spec,chat_id=42)
+poll_binding = PollBinding(100,'poll',42,10,False,'regular')
+async def poll_lookup(locator: PollLocator) -> PollBinding | None: return poll_binding
+async def poll_observer(event: PollEvent) -> None: pass
+poll_lookup_host: PollLookup = poll_lookup
+poll_observer_host: PollObserver = poll_observer
+poll_router = poll_events_router(poll_lookup_host,poll_observer_host)
+def poll_consumer(native: Poll, answer: PollAnswer, message: Message) -> PollObservation:
+    state: PollState = poll_state(native)
+    option: PollOptionState = state.options[0]
+    vote: PollVote = poll_vote(answer)
+    addition: PollOptionAddition = poll_option_added(message)
+    return vote
+bad_inline_context: InlineChatType = 'backend'  # type: ignore[assignment]
+bad_inline_item = InlineItem('a','A','Text',shareable='yes')  # type: ignore[arg-type]
+bad_inline_acl: InlineAuthorizer = lambda actor,item: True  # type: ignore[assignment,return-value]
+bad_poll_kind: PollKind = 'survey'  # type: ignore[assignment]
+bad_poll_spec = PollSpec('Q',['A'],correct_option_ids=['0'])  # type: ignore[list-item]
+bad_poll_observer: PollObserver = lambda event: None  # type: ignore[assignment,return-value]

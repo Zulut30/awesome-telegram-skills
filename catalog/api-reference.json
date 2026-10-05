@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "library_version": "0.21.0",
+  "library_version": "0.22.0",
   "scope": "Public library exports; ref.* recipes belong to the API reference, not the Telegram method snapshot",
   "groups": [
     {
@@ -498,6 +498,55 @@
           "read_profile_photos": "Один explicit getUserProfilePhotos, immutable sizes, без отрицательных privacy выводов",
           "read_bot_profile": "Fresh getMe плюс три locale reads; optional own-bot photos, unrequested None",
           "update_bot_profile": "Текущий host ACL перед каждым выбранным own-bot методом и fresh readback; без retry/rollback"
+        }
+      }
+    },
+    {
+      "id": "bot_inline_search",
+      "section": "bot",
+      "title": "Inline-поиск и shareable results",
+      "example": "examples/api-reference/python/bot_inline_search.py",
+      "limits": "Private items default to unshareable; personal Telegram cache is not secrecy of a sent inline message Host owns current ACL, catalog/permission revisions, durable secret, deadlines/concurrency and storage Personal cursors bind actor/bot/query/context/catalog; shared cache is fully public/all-context and actor-agnostic Positive server cache may replay old results without reaching the bot; restricted current-ACL composition uses cache_time=0 Cursor chain expiry does not slide; stale/denied/timeout answers empty personal, not an automatic restart Literal articles and opt-in verified emoji metadata; no native answer retry, chosen feedback or live privacy proof",
+      "api": {
+        "telegram_patterns.aiogram": {
+          "InlineChatType": "Literal inline chat context, including explicit unknown None",
+          "InlineAuthorizer": "Async current host ACL(actor,item) → strict bool",
+          "InlineSearchProvider": "Async host provider of a fresh immutable catalog",
+          "InlineCachePolicy": "Explicit bounded cache_time/is_personal policy",
+          "InlineItem": "Frozen article identity and literal/entities text; shareable=False by default",
+          "InlinePage": "Frozen page bound to the original query; answer_request builds one native request",
+          "InlineSearch": "Bounded immutable search snapshot with HMAC cursor and fixed chain expiry",
+          "inline_articles": "Fresh native article/text models with explicit parse_mode=None",
+          "inline_query_router": "Host Dispatcher router with provider/ACL deadline, stale rejection and one native answer"
+        }
+      }
+    },
+    {
+      "id": "bot_polls",
+      "section": "bot",
+      "title": "Опросы, quiz и доступные события",
+      "example": "examples/api-reference/python/bot_polls.py",
+      "limits": "1..12 initial options, monotonic multi-correct quiz, revoting and SDK rich media; native limits checked separately from local bounds Channel-only members/country restrictions and explicit declared chat/thread/business context, not server permission proof Persistent option IDs and user/chat voter identities; None and reported zero remain raw/possibly unknown Host registers confirmed own SendPoll responses, resolves current binding and persists Update receipt transactionally Unavailable poll_message cannot invent association; anonymous/foreign/unbound events do not give a voter ledger No getPoll API, implicit stopPoll, history scan, vote counting, create retry, media IO or live delivery promise",
+      "api": {
+        "telegram_patterns.aiogram": {
+          "PollKind": "Literal regular/quiz",
+          "PollChoice": "Frozen literal option and cloned native SDK rich media",
+          "PollSpec": "Frozen validated modern creation parameters",
+          "PollOptionState": "Persistent option identity and raw reported count",
+          "PollState": "Immutable native Poll snapshot with nullable answers and full JSON details",
+          "PollVote": "Selected persistent/ordinal IDs and exact user/chat identity; empty means retraction",
+          "PollOptionAddition": "Option service observation with possibly unknown poll association and preserved details",
+          "PollBinding": "Bot/poll/chat/message/thread/business binding of an own confirmed response",
+          "PollLocator": "Host lookup identity or exact address, always bot scoped",
+          "PollObservation": "Union of available state/vote/option observations",
+          "PollEvent": "Update ID, binding and one immutable observation",
+          "PollObserver": "Async host observer; owns durable dedup/state policy",
+          "PollLookup": "Async current host binding lookup, no hidden authorization",
+          "poll_request": "One native SendPoll request; literal entities, modern fields and no IO",
+          "poll_state": "Copy native Poll without count inference",
+          "poll_vote": "Copy native PollAnswer without inventing user identity",
+          "poll_option_added": "Copy Message.poll_option_added, including inaccessible/omitted address",
+          "poll_events_router": "Scoped Poll/PollAnswer/message/business_message routing; no count/retry/getPoll"
         }
       }
     }

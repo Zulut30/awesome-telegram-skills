@@ -98,7 +98,7 @@ from telegram_patterns import BotSettings, validate_init_data, RecipeCatalog, cr
 assert importlib.util.find_spec('aiogram') is None
 assert Path(telegram_patterns.__file__).is_relative_to(Path(sys.argv[1]))
 assert BotSettings.from_env(environ={'BOT_TOKEN':'100:CORE_FIXTURE'}).token=='100:CORE_FIXTURE'
-assert len(RecipeCatalog().recipes)==306
+assert len(RecipeCatalog().recipes)==308
 assert RecipeCatalog().search('две кнопки')[0].id=='two-columns'
 assert RecipeCatalog().get('two-columns').maturity=='experimental'
 assert RecipeCatalog().get('api.sendPhoto').maturity=='reference'
@@ -199,6 +199,14 @@ print(json.dumps({'core_without_sdk':True,'python':sys.version.split()[0]}))
         if not profiles['passed'] or profiles['network'] or not profiles['session_closed'] or profiles['photo_upload_bytes'] != 634 or not all(profiles[k] for k in ('unknown_fields_preserved', 'profile_photos', 'localized_omission_clear', 'fresh_method_acl', 'new_avatar_upload_removal', 'unknown_edit_reconciliation', 'private_context_guards', 'existing_dispatcher_preserved')):
             raise RuntimeError('Installed profile composition failed')
         report['profiles'] = profiles
+        inline_search = json.loads(run('inline-search', [str(python_in(sdk)), str(ROOT / 'examples/python/offline_inline_search.py')], consumers))
+        if not inline_search['passed'] or inline_search['network'] or not inline_search['session_closed'] or not all(inline_search[k] for k in ('personal_cache', 'scoped_pagination', 'fresh_acl', 'private_items_excluded', 'unknown_answer_no_retry', 'existing_dispatcher_preserved', 'feedback_is_optional')):
+            raise RuntimeError('Installed inline_search composition failed')
+        report['inline_search'] = inline_search
+        polls = json.loads(run('polls', [str(python_in(sdk)), str(ROOT / 'examples/python/offline_polls.py')], consumers))
+        if not polls['passed'] or polls['network'] or not polls['session_closed'] or not all(polls[k] for k in ('modern_quiz', 'own_poll_binding', 'persistent_vote_ids', 'anonymous_limits', 'unknown_addition_not_guessed', 'durable_host_dedup', 'unknown_send_no_retry', 'fresh_acl', 'existing_dispatcher_preserved')):
+            raise RuntimeError('Installed polls composition failed')
+        report['polls'] = polls
         report['telegram_catalog'] = json.loads(run('telegram-catalog', [str(python_in(sdk)), str(ROOT / 'scripts/build_telegram_catalog.py'), '--check'], consumers))
         report['recipe_gallery'] = json.loads(run('recipe-gallery', [str(python_in(sdk)), str(ROOT / 'scripts/build_recipe_gallery.py'), '--check'], consumers))
         gallery_command = [str(python_in(sdk)), str(ROOT / 'scripts/verify_gallery_export.py'), '--output', str(consumers / 'gallery-export')]
@@ -225,6 +233,8 @@ print(json.dumps({'core_without_sdk':True,'python':sys.version.split()[0]}))
         run('selected-starter-build', [npm, 'run', 'build'], selected_mini)
         copied_skill = consumers / 'portable-skill/telegram-code-patterns'
         shutil.copytree(ROOT / '.agents/skills/telegram-code-patterns', copied_skill)
+        report['portable_inline_search_recipe'] = json.loads(run('portable-inline-search-recipe', [str(python_in(sdk)), str(ROOT / 'scripts/verify_inline_search_recipe.py'), str(copied_skill)], consumers))
+        report['portable_poll_recipe'] = json.loads(run('portable-poll-recipe', [str(python_in(sdk)), str(ROOT / 'scripts/verify_poll_recipe.py'), str(copied_skill)], consumers))
         blocks = re.findall(r'```python\r?\n(.*?)```', (copied_skill / 'references/errors.md').read_text(encoding='utf-8'), re.S)
         if len(blocks) != 1:
             raise RuntimeError('Expected one standalone error handling example')
