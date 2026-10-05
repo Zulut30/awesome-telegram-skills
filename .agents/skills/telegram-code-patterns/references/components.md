@@ -68,3 +68,5 @@ Core starter 0.19.0: StarterComponent, StarterConflict, starter_components; crea
 ## Сообщения
 
 `MessageBuilder/FormattedText/TextEntity`, `EntityKind/TextPayload`, UTF-16/HTML/MarkdownV2 helpers и split_formatted — SDK-free API. [Полная композиция](message-text.md) сохраняет текущий Dispatcher и связывает literal user text, explicit parse_mode=None и lossless partition. Capability flag не проверяет custom emoji metadata/entitlement; host делает это отдельно.
+
+Для optional aiogram медиа 0.20.0 — [полный контракт](media.md): byte upload/same-bot file_id, literal подпись, album/edit и bounded hosted read. No sending/retry/codec/ACL guarantee; используется Bot проекта.

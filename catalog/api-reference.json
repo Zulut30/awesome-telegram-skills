@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "library_version": "0.19.0",
+  "library_version": "0.20.0",
   "scope": "Public library exports; ref.* recipes belong to the API reference, not the Telegram method snapshot",
   "groups": [
     {
@@ -453,6 +453,26 @@
           "LocationField": "Finite static coordinate candidate",
           "DialogSubmission": "Immutable identity and values; fresh as_dict",
           "dialog_form_router": "Mixed router with owner/step guards, back/cancel and confirmation"
+        }
+      }
+    },
+    {
+      "id": "bot_media",
+      "section": "bot",
+      "title": "Медиа, альбомы и ограниченное скачивание",
+      "example": "examples/api-reference/python/bot_media.py",
+      "limits": "Optional aiogram; requests do not send. Typed byte upload or same-bot file_id, no codec validation/ACL guarantee. 2..10 compatible album items, 1024 UTF-16 caption, inline upload rejected. Explicit hosted bounded download closes stream; local filesystem/URLs/unique_id conversion and automatic retry are absent. Host preserves native routing/rights and validates actual content.",
+      "api": {
+        "telegram_patterns.aiogram": {
+          "MediaKind": "Literal photo/video/audio/document; исходный тип file_id проверяет host",
+          "MediaSendRequest": "Union четырех native send request типов",
+          "MediaFile": "Immutable bytes/filename или same-bot file_id, bounds и fresh multipart input",
+          "MediaItem": "Immutable typed source, literal FormattedText caption и presentation flags",
+          "DownloadedMedia": "Frozen bounded bytes и bot-scoped identifiers без URL/file_path",
+          "media_request": "Один native send request без отправки",
+          "media_album": "Один native 2..10-item homogeneous/visual album без batching",
+          "media_edit": "Exclusive chat/message или inline address и album type guard",
+          "download_media": "Явное hosted чтение с actual byte bound, total deadline и stream close"
         }
       }
     }

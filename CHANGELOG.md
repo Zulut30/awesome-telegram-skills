@@ -1,5 +1,11 @@
 # Изменения библиотеки компонентов
 
+## 0.20.0
+
+- Добавлены optional aiogram media компоненты: typed byte uploads/same-bot file_id, literal captions/entities, compatible albums, guarded normal/inline replacement и bounded hosted download.
+- Скачивание ограничивает actual bytes и общий deadline, закрывает stream при error/cancel и не читает Local API paths. Host остается владельцем session, content/codec validation, ACL и delivery/retry policy.
+- Добавлены полный Dispatcher рецепт, closed offline fixture, девять публичных exports, API consumer и переносимый media guide; SDK/mock/browser evidence отделено от live.
+
 ## 0.19.0 — пункт 026
 
 - SDK-free MessageBuilder/FormattedText/TextEntity, TypedDict payload и explicit parse_mode=None; UTF-16 scalars, nested spans и bounded metadata. Пользовательские вставки остаются literal.

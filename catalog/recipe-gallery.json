@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "library_version": "0.19.0",
+  "library_version": "0.20.0",
   "source_snapshot": "2026-10-04",
   "source_hashes": {
     "bot_api": "29f5f25caa18d303f14ce83af5a4df784eb3094c3076cb040a1ad950c157ad44",
@@ -21232,6 +21232,86 @@
       }
     },
     {
+      "id": "demo-media",
+      "title": "Фото, документы, альбомы и скачивание",
+      "summary": "Typed media, literal captions, one compatible album, replacement and bounded explicit download; attach to current Dispatcher.",
+      "category": "scenarios",
+      "language": "python",
+      "maturity": "experimental",
+      "keywords": [
+        "бот",
+        "пример",
+        "callback",
+        "меню",
+        "события",
+        "композиция",
+        "бота",
+        "личный",
+        "чат",
+        "медиа",
+        "фото",
+        "документ",
+        "альбом",
+        "подпись",
+        "замена",
+        "скачивание",
+        "multipart",
+        "file_id"
+      ],
+      "code": "\"\"\"Attach media examples to the existing Dispatcher; no polling on import.\"\"\"\nimport base64\nfrom aiogram import Bot, Dispatcher, F, Router\nfrom aiogram.filters import Command\nfrom aiogram.types import Message\nfrom telegram_patterns import MessageBuilder, safe_error_report\nfrom telegram_patterns.aiogram import MediaFile, MediaItem, media_request, media_album, media_edit, download_media\n\n# Public synthetic fixtures. Real uploads need the host's content/codec checks.\nPHOTO = base64.b64decode('iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mP8/x8AAwMCAO+ip1sAAAAASUVORK5CYII=')\nDOCUMENT = b'Telegram media example.\\n'\n\n\nasync def send_media_demo(bot: Bot, chat_id: int) -> None:\n    caption = MessageBuilder().text('😀 ').style('Фото <буквально>_*', 'bold').build()\n    photo = MediaItem(MediaFile('photo', PHOTO, filename='sample.png', width=1, height=1), caption)\n    document = MediaItem(MediaFile('document', DOCUMENT, filename='sample.txt'),\n                         MessageBuilder().text('Документ без потери исходных байтов').build())\n    await bot(media_request(photo, bot_id=bot.id, chat_id=chat_id))\n    await bot(media_request(document, bot_id=bot.id, chat_id=chat_id))\n    messages = await bot(media_album([photo, photo], bot_id=bot.id, chat_id=chat_id))\n    # These IDs come from this bot's own response, not a user callback.\n    await bot(media_edit(photo, bot_id=bot.id, chat_id=chat_id,\n                         message_id=messages[0].message_id, album_kind='photo-video'))\n    # A network timeout propagates. Never retry the whole sequence blindly.\n\n\ndef attach_media(dispatcher: Dispatcher) -> Router:\n    router = Router(name='media-examples')\n    ordinary_private = ((F.chat.type == 'private') & (F.message_thread_id == None)\n                        & (F.is_topic_message != True) & (F.business_connection_id == None))\n\n    @router.message(Command('media'), ordinary_private)\n    async def demo(message: Message, bot: Bot) -> None:\n        if message.from_user is None or message.from_user.is_bot:\n            return\n        await send_media_demo(bot, message.chat.id)\n\n    @router.message(F.document, ordinary_private)\n    async def receive(message: Message, bot: Bot) -> None:\n        if message.from_user is None or message.from_user.is_bot or message.document is None:\n            return\n        # Bounded explicit read, not arbitrary filesystem access or a URL fetch.\n        # The user's filename/MIME is not a trusted storage path or content type.\n        try:\n            result = await download_media(bot, message.document.file_id, max_bytes=1_000_000)\n        except Exception as error:\n            report = safe_error_report(error, operation='read')\n            await message.answer(report.message, parse_mode=None)\n            return\n        await message.answer(f'Получено {len(result.data)} байт.', parse_mode=None)\n        # Do not execute or parse the downloaded content in this demonstration.\n\n    dispatcher.include_router(router)\n    return router\n",
+      "verification": "mock",
+      "scope": "Actual synthetic Dispatcher, SDK multipart bytes and bounded fixture stream; live upload/rendering/content validation/rights and real download unconfirmed.",
+      "sources": [
+        "https://core.telegram.org/bots/api"
+      ],
+      "preview": null,
+      "code_sha256": "3285da1b27e152ec6d14b4d0bc36a86fa3da0c3adbe8f034587a689d2e0b57c7",
+      "tasks": [
+        "media"
+      ],
+      "contexts": [
+        "private"
+      ],
+      "sdk": "aiogram",
+      "sdk_version": "3.31.0",
+      "api_version": "bot:10.3",
+      "source_files": [
+        "examples/python/media_bot.py",
+        "packages/python/src/telegram_patterns/media_aiogram.py",
+        "packages/python/src/telegram_patterns/execution.py",
+        "packages/python/src/telegram_patterns/_offline_recipe.py"
+      ],
+      "check_files": [
+        "examples/python/offline_media.py",
+        "packages/python/tests/test_media.py"
+      ],
+      "execution": {
+        "kind": "dispatcher",
+        "dependencies": [
+          "aiogram==3.31.0"
+        ],
+        "offline_environment": [],
+        "offline_permissions": [],
+        "offline_data": [
+          "Только поставляемые синтетические данные; реальные IDs и secrets не принимаются."
+        ],
+        "live_environment": [
+          "BOT_TOKEN"
+        ],
+        "live_permissions": [
+          "Прикладная авторизация сервиса; fixture actor не доказывает server ACL."
+        ],
+        "live_data": [
+          "Текущий Dispatcher, реальные actor/chat и сервис приложения",
+          "Проверка объекта, автора и состояния до effect/replay"
+        ],
+        "live_review": "Live executor отсутствует. Перед интеграцией проверить источники, ограничения конкретного метода/контекста, auth и ACL; metadata не подтверждает права.",
+        "effects": [
+          "Synthetic Dispatcher + StubSession; временная fixture, без polling"
+        ]
+      }
+    },
+    {
       "id": "demo-message-text",
       "title": "Безопасные сообщения и разбиение текста",
       "summary": "Literal text + entities с UTF-16 offsets; интеграция в текущий Dispatcher, без polling на import.",
@@ -21349,7 +21429,7 @@
         "backend"
       ],
       "sdk": "python-core",
-      "sdk_version": "0.19.0",
+      "sdk_version": "0.20.0",
       "api_version": "none",
       "source_files": [
         "examples/python/error_recovery.py",

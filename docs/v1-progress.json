@@ -583,10 +583,33 @@
       "id": 27,
       "title": "Собрать компоненты работы с медиа",
       "requirement": "Показать фото, документы, альбомы, подписи, замену и скачивание; лимиты, неподдерживаемые форматы и ошибки Telegram имеют проверенные сценарии.",
-      "status": "pending",
-      "commit_subject": null,
-      "artifacts": [],
-      "evidence": []
+      "status": "done",
+      "commit_subject": "roadmap(027): add typed media composition and bounded hosted download",
+      "artifacts": [
+        "packages/python/src/telegram_patterns/media_aiogram.py",
+        "packages/python/src/telegram_patterns/aiogram.py",
+        "packages/python/src/telegram_patterns/_offline_recipe.py",
+        "packages/python/tests/test_media.py",
+        "examples/python/media_bot.py",
+        "examples/python/offline_media.py",
+        "examples/api-reference/python/bot_media.py",
+        "examples/api-reference/python/core_recipes.py",
+        "docs/media.md",
+        ".agents/skills/telegram-code-patterns/references/media.md",
+        ".agents/skills/telegram-bot-api/references/media.md",
+        "docs/v1-checks/027.json",
+        "docs/v1-checks/027-distribution.json",
+        "docs/v1-checks/027-first-run.json",
+        "docs/v1-checks/027-portable.json"
+      ],
+      "evidence": [
+        "docs/v1-checks/027.json",
+        "0.20.0 exact local wheel/tarball: 67 stages, 274 Python passed + 1 Windows skip, 26 TypeScript, 1931 browser checks + 60 first-run",
+        "25 meaningful media/SDK/stream/Dispatcher tests; valid small PNG, exact multipart bytes, safe partial unknown delivery and stream close",
+        "Nine optional aiogram public symbols, 174 total exports/27 API groups; exact installed API example and copied full media guide pass",
+        "305 recipes/206 Python fixtures/235 linked source/check files, closed installed media executor and intent links verified",
+        "Actual content/codec/ACL and declared file_id kind/scope stay host-owned; synthetic unsupported-format errors do not prove live codec acceptance"
+      ]
     },
     {
       "id": 28,

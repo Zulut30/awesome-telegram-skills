@@ -13,6 +13,8 @@ description: "Реализует сообщения, медиа, клавиат�
 
 Если используется локальный пакет awesome-telegram-patterns 0.19.0, [безопасный конструктор сообщений](references/message-text.md) дает literal text/entities, UTF-16 offsets и lossless split; escape helpers выбираются по HTML/MarkdownV2 context. Другой SDK/проект сохраняй; навык не требует пакета или соседних навыков.
 
+Для фото, документов, альбомов, подписей, замены и скачивания в локальном пакете 0.20.0 прочитайте [медиа-компоненты](references/media.md). Byte upload и file_id различаются; bound и SDK construction не подтверждают content/codec, ACL или live delivery. Сохраняйте Bot/Dispatcher проекта.
+
 ## Построить операцию
 
 Определи входной update, доступный тип чата, необходимые поля и ожидаемый ответ. Поля `message`, `text`, `from` и данные callback могут отсутствовать. Не делай обработчик одного типа update универсальным разборщиком всех событий.

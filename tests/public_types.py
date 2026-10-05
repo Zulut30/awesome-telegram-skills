@@ -61,3 +61,19 @@ md_literal: str = escape_markdown_v2(')\\',context='link')
 bad_entity_kind: EntityKind = 'HTML'  # type: ignore[assignment]
 bad_message_builder = MessageBuilder().append('raw')  # type: ignore[arg-type]
 bad_markdown_context = escape_markdown_v2('x',context='HTML')  # type: ignore[arg-type]
+
+# Media public exports retain typed sources and SDK requests.
+from telegram_patterns.aiogram import MediaKind, MediaSendRequest, MediaFile, MediaItem, DownloadedMedia, media_request, media_album, media_edit, download_media
+from aiogram import Bot
+media_kind: MediaKind = 'photo'
+media_source = MediaFile(media_kind, b'host-approved-bytes', filename='photo.png')
+media_item = MediaItem(media_source, MessageBuilder().text('Literal caption').build())
+media_send: MediaSendRequest = media_request(media_item,bot_id=100,chat_id=42)
+media_group = media_album([media_item,media_item],bot_id=100,chat_id=42)
+media_replacement = media_edit(media_item,bot_id=100,chat_id=42,message_id=1)
+async def media_consumer(bot: Bot) -> DownloadedMedia:
+    return await download_media(bot,'host-observed-id',max_bytes=100)
+bad_media_kind: MediaKind = 'animation'  # type: ignore[assignment]
+bad_media_source = MediaFile('photo',123,filename='x')  # type: ignore[arg-type]
+bad_media_caption = MediaItem(media_source,'raw markdown')  # type: ignore[arg-type]
+bad_media_request = media_request('raw request',bot_id=100,chat_id=42)  # type: ignore[arg-type]

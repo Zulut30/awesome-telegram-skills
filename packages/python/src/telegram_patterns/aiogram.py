@@ -24,6 +24,7 @@ from .keyboard_layouts import KeyboardLayout, KeyboardCapabilities, action_layou
 from .navigation import NavigationScreen, NavigationState, NavigationResult, MessageNavigation, navigation_router
 from .selection_aiogram import selection_keyboard, selection_router
 from .calendar_aiogram import calendar_keyboard, time_slot_keyboard
+from .media_aiogram import MediaKind, MediaSendRequest, MediaFile, MediaItem, DownloadedMedia, media_request, media_album, media_edit, download_media
 from .api import MethodSpec, InvalidAPIRequest, method_catalog, build_request
 from .events import UpdatePhase, UpdateTrace, UpdateObserver, update_kinds, event_router
 
@@ -39,6 +40,8 @@ __all__ = [
     "NavigationScreen", "NavigationState", "NavigationResult", "MessageNavigation", "navigation_router",
     "selection_keyboard", "selection_router",
     "calendar_keyboard", "time_slot_keyboard",
+    "MediaKind", "MediaSendRequest", "MediaFile", "MediaItem", "DownloadedMedia",
+    "media_request", "media_album", "media_edit", "download_media",
     "MethodSpec", "InvalidAPIRequest", "method_catalog", "build_request",
     "UpdatePhase", "UpdateTrace", "UpdateObserver", "update_kinds", "event_router",
 ]

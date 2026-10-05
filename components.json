@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "library_version": "0.19.0",
+  "library_version": "0.20.0",
   "distribution": "local; not published to package registries",
   "packages": {
     "python": {
@@ -580,6 +580,24 @@
         "Host owns link trust, valid custom emoji sticker/fallback metadata and verified entitlement/context",
         "Lossless text/style partition keeps links/quotes/custom emoji atomic; oversized sequence raises before returning any chunks",
         "Sending a chunk sequence may partially succeed; no delivery/retry/authorization guarantee"
+      ],
+      "maturity": "experimental",
+      "maturity_scope": "All public API symbols in this component; local verification is not a stable 1.0 promise"
+    },
+    {
+      "id": "media",
+      "language": "python",
+      "import": "telegram_patterns.aiogram.MediaKind, MediaSendRequest, MediaFile, MediaItem, DownloadedMedia, media_request, media_album, media_edit, download_media",
+      "extra": "aiogram",
+      "intent": "Фото, документы, альбомы, literal подписи, замена медиа и bounded скачивание в текущем Bot",
+      "source": "packages/python/src/telegram_patterns/media_aiogram.py",
+      "example": "examples/python/media_bot.py",
+      "boundaries": [
+        "Explicit typed bytes or same-bot file_id; no implicit filesystem/URL input or unique_id conversion",
+        "Decimal upload limits 10 MB photo / 50 MB other, 1024 UTF-16 captions, 2..10 album; these are conservative local policies",
+        "Codecs/content validation, rights and actual host-observed media kind/dimensions remain host responsibilities",
+        "Download is explicit hosted GetFile plus bounded stream, <=20 MB, total deadline and close; no disk or local Bot API path reads",
+        "No automatic sending/retry/batching/outbox/delivery guarantee; metadata and SDK objects do not prove live Telegram"
       ],
       "maturity": "experimental",
       "maturity_scope": "All public API symbols in this component; local verification is not a stable 1.0 promise"

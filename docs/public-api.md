@@ -156,3 +156,7 @@ CLI `run-recipe ID [--offline] [--timeout SECONDS]` сначала flush-ит pl
 ## Конструктор сообщений — 0.19.0
 
 Девять SDK-free exports `EntityKind/TextEntity/TextPayload/FormattedText/MessageBuilder/utf16_length/escape_html/escape_markdown_v2/split_formatted` описаны в [контрактах и полной композиции](message-text.md). Immutable snapshots, literal user text, UTF-16 scalar ranges, ограниченная nesting policy, явный parse_mode=None, local size/entity/chunk bounds и atomic lossless partition; custom metadata/entitlement/link trust/delivery принадлежат host. Нет полного Unicode UAX29 parser, rich messages или гарантии exactly-once доставки.
+
+## Медиа — 0.20.0
+
+`telegram_patterns.aiogram` exports `MediaKind`, `MediaSendRequest`, `MediaFile`, `MediaItem`, `DownloadedMedia`, `media_request`, `media_album`, `media_edit`, `download_media`. Полные параметры, типы результата, ошибки, владение и side effects описаны в [контрактах медиа](media.md). Construct/send отдельно; downloader — explicit bounded read через host session, no filesystem/retry. Host owns actual codec/content, object ACL, routing and delivery. Native URL/FSInputFile/другие виды сохраняются через SDK, без скрытой миграции.

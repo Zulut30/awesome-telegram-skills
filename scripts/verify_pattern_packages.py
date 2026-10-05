@@ -98,7 +98,7 @@ from telegram_patterns import BotSettings, validate_init_data, RecipeCatalog, cr
 assert importlib.util.find_spec('aiogram') is None
 assert Path(telegram_patterns.__file__).is_relative_to(Path(sys.argv[1]))
 assert BotSettings.from_env(environ={'BOT_TOKEN':'100:CORE_FIXTURE'}).token=='100:CORE_FIXTURE'
-assert len(RecipeCatalog().recipes)==304
+assert len(RecipeCatalog().recipes)==305
 assert RecipeCatalog().search('две кнопки')[0].id=='two-columns'
 assert RecipeCatalog().get('two-columns').maturity=='experimental'
 assert RecipeCatalog().get('api.sendPhoto').maturity=='reference'
@@ -191,6 +191,10 @@ print(json.dumps({'core_without_sdk':True,'python':sys.version.split()[0]}))
         if not message_text['passed'] or message_text['network'] or not message_text['session_closed'] or message_text['chunks'] < 2 or not all(message_text[k] for k in ('literal_injection','utf16_offsets','split_preserves_entities','explicit_parse_mode_none','emoji_capability_fallback','existing_dispatcher_preserved','private_context_guards')):
             raise RuntimeError('Installed literal messages and lossless partition failed')
         report['message_text'] = message_text
+        media = json.loads(run('media', [str(python_in(sdk)), str(ROOT / 'examples/python/offline_media.py')], consumers))
+        if not media['passed'] or media['network'] or not media['session_closed'] or media['uploaded_parts'] != 5 or not all(media[k] for k in ('photo_document_album_edit','caption_entities','explicit_parse_mode_none','bounded_stream_download','private_context_guards','existing_dispatcher_preserved')):
+            raise RuntimeError('Installed media composition failed')
+        report['media'] = media
         report['telegram_catalog'] = json.loads(run('telegram-catalog', [str(python_in(sdk)), str(ROOT / 'scripts/build_telegram_catalog.py'), '--check'], consumers))
         report['recipe_gallery'] = json.loads(run('recipe-gallery', [str(python_in(sdk)), str(ROOT / 'scripts/build_recipe_gallery.py'), '--check'], consumers))
         gallery_command = [str(python_in(sdk)), str(ROOT / 'scripts/verify_gallery_export.py'), '--output', str(consumers / 'gallery-export')]
@@ -225,6 +229,7 @@ print(json.dumps({'core_without_sdk':True,'python':sys.version.split()[0]}))
         run('portable-error-recipe', [str(python_in(core)), str(error_example)], consumers)
         report['portable_keyboard_recipe'] = json.loads(run('portable-keyboard-recipe', [str(python_in(sdk)), str(ROOT / 'scripts/verify_keyboard_recipe.py'), str(copied_skill)], consumers))
         report['portable_dialog_recipe'] = json.loads(run('portable-dialog-recipe', [str(python_in(sdk)), str(ROOT / 'scripts/verify_dialog_recipe.py'), str(copied_skill)], consumers))
+        report['portable_media_recipe'] = json.loads(run('portable-media-recipe', [str(python_in(sdk)), str(ROOT / 'scripts/verify_media_recipe.py'), str(copied_skill)], consumers))
         report['portable_message_recipe'] = json.loads(run('portable-message-recipe', [str(python_in(sdk)), str(ROOT / 'scripts/verify_message_recipe.py'), str(copied_skill)], consumers))
         report['portable_developer_recipe'] = json.loads(run('portable-developer-recipe', [str(python_in(core)), str(ROOT / 'scripts/verify_developer_recipe.py'), str(copied_skill)], consumers))
 

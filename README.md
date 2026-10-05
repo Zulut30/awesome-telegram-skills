@@ -1,5 +1,7 @@
 # Awesome Telegram Skills
 
+[Медиа-компоненты](docs/media.md): фото, документы, альбомы, literal подписи, замена и bounded скачивание через существующий Bot.
+
 Набор навыков для AI-агентов, которые помогают разрабатывать Telegram-ботов и Mini Apps: от выбора архитектуры до проверки работающего приложения.
 
 [Безопасные сообщения](docs/message-text.md): literal text/entities, UTF-16 offsets, HTML/MarkdownV2 escaping и lossless split; custom emoji по проверенной host capability.
@@ -12,21 +14,21 @@
 
 Основной стек проекта: **Python для ботов и backend, TypeScript для Mini Apps**.
 
-Есть [общая библиотека готовых компонентов](docs/component-library.md): два импортируемых пакета Python/TypeScript, 37 групп компонентов и работающие примеры. ИИ подключает нужный API через `telegram-code-patterns`; пакеты пока распространяются локально.
+Есть [общая библиотека готовых компонентов](docs/component-library.md): два импортируемых пакета Python/TypeScript, 38 групп компонентов и работающие примеры. ИИ подключает нужный API через `telegram-code-patterns`; пакеты пока распространяются локально.
 
 [Навигация в одном сообщении](docs/message-navigation.md): экраны, history/back, owner/context/revision guards и explicit восстановление после unknown edit.
 
 [Композиции клавиатур](docs/keyboard-layouts.md): flat списки, шаблоны рядов 2/3/смешанной ширины, styles и явный capability fallback; прежние builders сохраняются.
 
-[Требования и offline запуск](docs/recipe-execution.md): планы всех 304 рецептов и 205 Python fixtures без токена; native references требуют host/аргументов.
+[Требования и offline запуск](docs/recipe-execution.md): планы всех 305 рецептов и 206 Python fixtures без токена; native references требуют host/аргументов.
 
-[Поиск и фильтры галереи](docs/gallery-navigation.md): 304 рецепта, задачи, контекст, SDK/версии, зрелость и доказательства проверки; ссылки на исходники и проверяющий код. Standalone export включает связанные файлы.
+[Поиск и фильтры галереи](docs/gallery-navigation.md): 305 рецепта, задачи, контекст, SDK/версии, зрелость и доказательства проверки; ссылки на исходники и проверяющий код. Standalone export включает связанные файлы.
 
-Проверена локальная поставка 0.19.0: [статус зрелости API](docs/v1-maturity.md) отдельно от SDK/mock/browser/live evidence. Каталог, Python API, CLI и галерея различают experimental/reference; стабильные сценарии 1.0 пока не заявлены.
+Проверена локальная поставка 0.20.0: [статус зрелости API](docs/v1-maturity.md) отдельно от SDK/mock/browser/live evidence. Каталог, Python API, CLI и галерея различают experimental/reference; стабильные сценарии 1.0 пока не заявлены.
 
 [Публичные контракты Python/TypeScript](docs/public-api.md) описывают параметры, результаты, ошибки, побочные эффекты и владение ресурсами для всех документированных API.
 
-[Справочник API](docs/api-reference.md): 165 публичных Python/TypeScript-символов, CLI и CSS; 26 полных примеров с импортами и ограничениями. Проверка исполняет код из документации через установленные wheel/tarball в отдельном consumer.
+[Справочник API](docs/api-reference.md): 174 публичных Python/TypeScript-символов, CLI и CSS; 27 полных примеров с импортами и ограничениями. Проверка исполняет код из документации через установленные wheel/tarball в отдельном consumer.
 
 [Составной выбор](docs/selection-controls.md): toggle, multiselect, количество, фильтры и подтверждение с current server spec, context/revision guards и отдельной бизнес-транзакцией приложения.
 

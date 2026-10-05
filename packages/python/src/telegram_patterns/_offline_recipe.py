@@ -23,6 +23,7 @@ _FIXTURES = {
     'demo-calendar': ('calendar_bot.py', 'offline_calendar.py'),
     'demo-dialog-fields': ('dialog_fields_bot.py', 'offline_dialog_fields.py'),
     'demo-message-text': ('message_text_bot.py', 'offline_message_text.py'),
+    'demo-media': ('media_bot.py', 'offline_media.py'),
     'demo-recovery': ('error_recovery.py',),
 }
 _ATTEMPTS = [0]
@@ -136,6 +137,9 @@ def _execute(recipe_id: str) -> dict:
             if recipe_id == 'demo-message-text':
                 assert evidence['chunks'] > 1 and all(evidence[k] for k in ('literal_injection', 'utf16_offsets', 'split_preserves_entities', 'explicit_parse_mode_none', 'emoji_capability_fallback', 'existing_dispatcher_preserved', 'private_context_guards'))
                 checks.extend(('literal-user-insertions', 'utf16-entities-lossless-partition', 'explicit-default-parse-mode-override', 'custom-emoji-fallback'))
+            if recipe_id == 'demo-media':
+                assert evidence['uploaded_parts'] == 5 and all(evidence[k] for k in ('photo_document_album_edit','caption_entities','explicit_parse_mode_none','bounded_stream_download','private_context_guards','existing_dispatcher_preserved'))
+                checks.extend(('photo-document-album-edit','literal-caption-default-override','bounded-content-stream'))
         else:
             assert evidence['effect_count'] == 1 and evidence['replayed'] is True
             checks.extend(('sqlite-one-effect', 'same-key-replay'))

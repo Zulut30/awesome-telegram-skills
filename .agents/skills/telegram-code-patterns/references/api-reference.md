@@ -1,4 +1,4 @@
-# Справочник API 0.19.0
+# Справочник API 0.20.0
 
 Публичные imports, самостоятельные минимальные композиции и границы каждого символа. Все группы experimental. Рецепты ref.* принадлежат этому справочнику; cookbook RecipeCatalog отдельно содержит Telegram requests/layouts. Исполненные fixtures не доказывают live/device/provider acceptance.
 
@@ -177,6 +177,15 @@
 | `LocationField` | `from telegram_patterns.aiogram import LocationField` | [ref.bot_dialog_fields](api-reference-bot.md#ref-bot_dialog_fields) | Finite static coordinate candidate |
 | `DialogSubmission` | `from telegram_patterns.aiogram import DialogSubmission` | [ref.bot_dialog_fields](api-reference-bot.md#ref-bot_dialog_fields) | Immutable identity and values; fresh as_dict |
 | `dialog_form_router` | `from telegram_patterns.aiogram import dialog_form_router` | [ref.bot_dialog_fields](api-reference-bot.md#ref-bot_dialog_fields) | Mixed router with owner/step guards, back/cancel and confirmation |
+| `MediaKind` | `from telegram_patterns.aiogram import MediaKind` | [ref.bot_media](api-reference-bot.md#ref-bot_media) | Literal photo/video/audio/document; исходный тип file_id проверяет host |
+| `MediaSendRequest` | `from telegram_patterns.aiogram import MediaSendRequest` | [ref.bot_media](api-reference-bot.md#ref-bot_media) | Union четырех native send request типов |
+| `MediaFile` | `from telegram_patterns.aiogram import MediaFile` | [ref.bot_media](api-reference-bot.md#ref-bot_media) | Immutable bytes/filename или same-bot file_id, bounds и fresh multipart input |
+| `MediaItem` | `from telegram_patterns.aiogram import MediaItem` | [ref.bot_media](api-reference-bot.md#ref-bot_media) | Immutable typed source, literal FormattedText caption и presentation flags |
+| `DownloadedMedia` | `from telegram_patterns.aiogram import DownloadedMedia` | [ref.bot_media](api-reference-bot.md#ref-bot_media) | Frozen bounded bytes и bot-scoped identifiers без URL/file_path |
+| `media_request` | `from telegram_patterns.aiogram import media_request` | [ref.bot_media](api-reference-bot.md#ref-bot_media) | Один native send request без отправки |
+| `media_album` | `from telegram_patterns.aiogram import media_album` | [ref.bot_media](api-reference-bot.md#ref-bot_media) | Один native 2..10-item homogeneous/visual album без batching |
+| `media_edit` | `from telegram_patterns.aiogram import media_edit` | [ref.bot_media](api-reference-bot.md#ref-bot_media) | Exclusive chat/message или inline address и album type guard |
+| `download_media` | `from telegram_patterns.aiogram import download_media` | [ref.bot_media](api-reference-bot.md#ref-bot_media) | Явное hosted чтение с actual byte bound, total deadline и stream close |
 
 ## CLI и CSS
 

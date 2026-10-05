@@ -1,6 +1,6 @@
 # Общая библиотека компонентов
 
-Текущая локальная поставка 0.19.0: 37 групп компонентов, 165 публичных Python/TypeScript-символов и 304 рецепта. 205 Python fixtures имеют закрытый executor, 99 native references требуют host/аргументов. [Конструктор сообщений](message-text.md) дает literal composition, explicit parse_mode=None, UTF-16 и lossless partition с atomic entities. [Приемка 026](v1-checks/026.json) привязана к wheel/tarball; historical reports сохраняют собственные версии.
+Текущая локальная поставка 0.20.0: 38 групп компонентов, 174 публичных Python/TypeScript-символа и 305 рецептов. 206 Python fixtures имеют закрытый executor, 99 native references требуют host/аргументов. [Медиа](media.md) дает typed bytes/file_id, literal captions, compatible album, edit и bounded hosted stream. [Приемка 027](v1-checks/027.json) привязана к wheel/tarball; historical reports сохраняют свои версии.
 
 [Формы 0.3.0](form-tools-review.md) добавляют поля с проверкой, возврат, отмену и подтверждение со стабильным ID заявки. Готовый [бот формы](../examples/python/form_bot.py) и [offline-проверка](../examples/python/offline_form.py) используют один create_app; backend сохраняет заявку и replay result в SQLite.
 
@@ -108,3 +108,5 @@ python -m unittest discover -s tests -v
 Playwright — только dev dependency проверки, не runtime приложения. Проверяются 7 viewport размеров и 2 темы; это не physical device QA. При разработке editable install использует актуальный исходный код, не закэшированный uv wheel. При обновлении версии синхронизируй оба package manifest, examples/mini-app/package.json, lockfile и components.json; документация установленной версии должна соответствовать артефактам.
 
 Составные элементы выбора: `SelectionOption/Spec/Context/State/Result/SelectionMenu` из SDK-free root и `selection_keyboard/selection_router` из optional aiogram. [Server rules и confirmation](selection-controls.md) описывают границы локального намерения и бизнес-транзакции host.
+
+[Медиа 0.20.0](media.md): requests/bytes/file_id/album/edit и bounded explicit read; optional aiogram, без нового обязательного сервиса. Полная приемка — [027](v1-checks/027.json).

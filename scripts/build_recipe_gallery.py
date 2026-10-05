@@ -127,6 +127,7 @@ def build(root: Path = ROOT) -> dict:
         ('selection_bot.py', 'offline_selection.py', 'demo-selection', 'Переключатели, выбор, количество и подтверждение'),
         ('calendar_bot.py', 'offline_calendar.py', 'demo-calendar', 'Календарь и запись на свободное время'),
         ('dialog_fields_bot.py', 'offline_dialog_fields.py', 'demo-dialog-fields', 'Семь типов полей диалога'),
+        ('media_bot.py', 'offline_media.py', 'demo-media', 'Фото, документы, альбомы и скачивание'),
         ('message_text_bot.py', 'offline_message_text.py', 'demo-message-text', 'Безопасные сообщения и разбиение текста'),
     ):
         result = subprocess.run([sys.executable, str(root / 'examples/python' / offline)], capture_output=True,
@@ -163,6 +164,13 @@ def build(root: Path = ROOT) -> dict:
             records[-1]['source_files'].append('packages/python/src/telegram_patterns/message_text.py')
             records[-1]['check_files'] += ['packages/python/tests/test_message_text.py', 'packages/python/tests/test_message_text_sdk.py']
             records[-1]['scope'] = 'Actual synthetic Dispatcher/StubSession и SDK wire serialization; delivery, Unicode asset metadata, entitlement и physical client не подтверждены.'
+        if key == 'demo-media':
+            records[-1]['summary'] = 'Typed media, literal captions, one compatible album, replacement and bounded explicit download; attach to current Dispatcher.'
+            records[-1]['tasks'] = ['media']
+            records[-1]['keywords'] += ['медиа', 'фото', 'документ', 'альбом', 'подпись', 'замена', 'скачивание', 'multipart', 'file_id']
+            records[-1]['source_files'].append('packages/python/src/telegram_patterns/media_aiogram.py')
+            records[-1]['check_files'].append('packages/python/tests/test_media.py')
+            records[-1]['scope'] = 'Actual synthetic Dispatcher, SDK multipart bytes and bounded fixture stream; live upload/rendering/content validation/rights and real download unconfirmed.'
     recovery_file = root / 'examples/python/error_recovery.py'
     recovery = subprocess.run([sys.executable, str(recovery_file)], capture_output=True, text=True, encoding='utf-8', env=environment, timeout=60)
     if recovery.returncode: raise ValueError('Recovery fixture failed')

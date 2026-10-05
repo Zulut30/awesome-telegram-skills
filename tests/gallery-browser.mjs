@@ -32,20 +32,20 @@ try{
       const context=await browser.newContext({viewport:{width,height},colorScheme:theme});const page=await context.newPage();const errors=[],outside=[];
       page.on('pageerror',error=>errors.push(error.message));page.on('request',request=>{if(!request.url().startsWith(base))outside.push(request.url());});
       await page.goto(base);await page.getByRole('heading',{name:'Найти рецепт. Собрать бота.'}).waitFor();
-      verify(await page.locator('#recipes .recipe-card').count()===304,`${name}/${theme}: catalog count`);
+      verify(await page.locator('#recipes .recipe-card').count()===305,`${name}/${theme}: catalog count`);
       if(width===320)await page.screenshot({path:path.join(output,`phone-initial-${theme}.png`),fullPage:true});
       if(!await page.locator('#advanced-filters').evaluate(details=>details.open))await page.locator('#advanced-filters summary').click();
       await page.getByLabel('Зрелость',{exact:true}).selectOption('experimental');
-      verify(await page.locator('#recipes .recipe-card').count()===20,`${name}/${theme}: experimental count`);
+      verify(await page.locator('#recipes .recipe-card').count()===21,`${name}/${theme}: experimental count`);
       await page.getByLabel('Проверка',{exact:true}).selectOption('mock');
-      verify(await page.locator('#recipes .recipe-card').count()===9,`${name}/${theme}: independent evidence filter`);
+      verify(await page.locator('#recipes .recipe-card').count()===10,`${name}/${theme}: independent evidence filter`);
       await page.getByLabel('Зрелость',{exact:true}).selectOption('reference');
       verify(await page.locator('#recipes .recipe-card').count()===0,`${name}/${theme}: mock does not imply reference or stable`);
       await page.getByRole('button',{name:'Сбросить',exact:true}).click();
       await page.getByLabel('Зрелость',{exact:true}).selectOption('stable');
       verify(await page.locator('#recipes .recipe-card').count()===0,`${name}/${theme}: no fabricated stable claim`);
       await page.getByRole('button',{name:'Сбросить',exact:true}).click();
-      verify(await page.locator('#recipes .recipe-card').count()===304,`${name}/${theme}: reset clears maturity`);
+      verify(await page.locator('#recipes .recipe-card').count()===305,`${name}/${theme}: reset clears maturity`);
       await page.getByLabel('Что хотите сделать?').fill('две кнопки');
       await page.getByRole('button',{name:'Две кнопки в ряд',exact:true}).click();
       verify((await page.locator('#preview .keyboard-row').evaluateAll(rows=>rows.map(row=>row.children.length))).join(',')==='2,2',`${name}/${theme}: two rows`);
@@ -127,6 +127,16 @@ try{
         const href=await page.locator('#'+id+' a').first().getAttribute('href');const response=await context.request.get(new URL(href,base+'/').href);
         verify(response.status()===200&&(await response.text()).includes('attach_dialog'),`${name}/${theme}: dialog ${id} resolves`);
       }
+      await page.getByRole('button',{name:'Сбросить',exact:true}).click();await page.getByLabel('Что хотите сделать?').fill('скачивание');
+      await page.getByLabel('Задача',{exact:true}).selectOption('media');await page.getByLabel('Контекст',{exact:true}).selectOption('private');
+      verify(await page.locator('#recipes .recipe-card').count()===1&&await page.getByRole('button',{name:'Фото, документы, альбомы и скачивание',exact:true}).isVisible(),`${name}/${theme}: bounded media discoverable`);
+      await page.getByRole('button',{name:'Фото, документы, альбомы и скачивание',exact:true}).click();
+      await page.locator('#execution-details').evaluate(details=>details.open=true);
+      verify((await page.locator('#code').textContent()).includes('download_media')&&(await page.locator('#execution-command').textContent())==='telegram-patterns run-recipe demo-media --offline',`${name}/${theme}: media public composition and fixture`);
+      for(const id of ['source-files','check-files']){
+        const href=await page.locator(`#${id} a`).first().getAttribute('href');const response=await context.request.get(new URL(href,base+'/').href);
+        verify(response.status()===200&&(await response.text()).includes(id==='source-files'?'send_media_demo':'bounded_stream_download'),`${name}/${theme}: media ${id} resolves`);
+      }
       await page.getByRole('button',{name:'Сбросить',exact:true}).click();await page.getByLabel('Что хотите сделать?').fill('форматирование');
       await page.getByLabel('Задача',{exact:true}).selectOption('bot');await page.getByLabel('Контекст',{exact:true}).selectOption('private');
       verify(await page.locator('#recipes .recipe-card').count()===1&&await page.getByRole('button',{name:'Безопасные сообщения и разбиение текста',exact:true}).isVisible(),`${name}/${theme}: message formatting discoverable`);
@@ -139,7 +149,7 @@ try{
       }
       await page.getByRole('button',{name:'Сбросить',exact:true}).click();await page.getByLabel('SDK',{exact:true}).selectOption('aiogram');
       await page.getByLabel('Версия SDK / снимок',{exact:true}).selectOption('3.31.0');await page.getByLabel('Версия API',{exact:true}).selectOption('bot:10.3');
-      verify(await page.locator('#recipes .recipe-card').count()===204,`${name}/${theme}: SDK/version/API exact intersection`);
+      verify(await page.locator('#recipes .recipe-card').count()===205,`${name}/${theme}: SDK/version/API exact intersection`);
       await page.getByLabel('SDK',{exact:true}).selectOption('python-core');
       verify(await page.getByLabel('Версия SDK / снимок',{exact:true}).inputValue()==='',`${name}/${theme}: changing SDK clears incompatible version`);
       await page.getByRole('button',{name:'Сбросить',exact:true}).click();await page.getByLabel('Контекст',{exact:true}).selectOption('supergroup');
@@ -148,7 +158,7 @@ try{
       await page.getByRole('button',{name:'Сбросить',exact:true}).click();await page.getByLabel('Контекст',{exact:true}).selectOption('group');
       verify(await page.locator('[data-id="api.getUpdates"]').count()===0,`${name}/${theme}: unspecified context is not all chats`);
       await page.getByRole('button',{name:'Сбросить',exact:true}).click();
-      verify(await page.locator('#recipes .recipe-card').count()===304&&await page.getByLabel('Что хотите сделать?').evaluate(input=>input===document.activeElement),`${name}/${theme}: full filter reset and focus`);
+      verify(await page.locator('#recipes .recipe-card').count()===305&&await page.getByLabel('Что хотите сделать?').evaluate(input=>input===document.activeElement),`${name}/${theme}: full filter reset and focus`);
       verify(errors.length===0&&outside.length===0,`${name}/${theme}: page errors/external requests`);
       await page.getByLabel('Что хотите сделать?').fill('цветные');
       await page.screenshot({path:path.join(output,`${name}-${theme}.png`),fullPage:true});results.push({name,width,height,theme,geometry});await context.close();

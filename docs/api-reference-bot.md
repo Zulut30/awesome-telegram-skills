@@ -1,4 +1,4 @@
-# Python bot и test transport — 0.19.0
+# Python bot и test transport — 0.20.0
 
 [Индекс всех символов](api-reference.md). Образцы ниже воспроизводятся через установленный wheel/tarball вне исходного дерева. Assert — проверка fixture, не бизнес-правило production приложения.
 
@@ -485,4 +485,54 @@ async def host_submit(s:DialogSubmission)->str:
 dispatcher=Dispatcher(events_isolation=SimpleEventIsolation())
 dispatcher.include_router(dialog_form_router(fields,host_submit))
 print(json.dumps({'passed':True,'case':'bot_dialog_fields','network':False,'field_types':len(fields),'constructed_router':True}))
+```
+
+<a id="ref-bot_media"></a>
+
+## Медиа, альбомы и ограниченное скачивание — ref.bot_media
+
+Файл: `bot_media.py`. Символы: `MediaKind`, `MediaSendRequest`, `MediaFile`, `MediaItem`, `DownloadedMedia`, `media_request`, `media_album`, `media_edit`, `download_media`
+
+Границы: Optional aiogram; requests do not send. Typed byte upload or same-bot file_id, no codec validation/ACL guarantee. 2..10 compatible album items, 1024 UTF-16 caption, inline upload rejected. Explicit hosted bounded download closes stream; local filesystem/URLs/unique_id conversion and automatic retry are absent. Host preserves native routing/rights and validates actual content.
+
+```python
+"""All public media symbols against SDK objects and a synthetic byte stream."""
+import asyncio
+import json
+from aiogram import Bot
+from aiogram.methods import GetFile, SendPhoto
+from telegram_patterns import MessageBuilder
+from telegram_patterns.aiogram import (
+    MediaKind, MediaSendRequest, MediaFile, MediaItem, DownloadedMedia,
+    media_request, media_album, media_edit, download_media,
+)
+from telegram_patterns.testing import StubSession
+
+
+class MediaSession(StubSession):
+    async def stream_content(self, url, headers=None, timeout=30, chunk_size=65536, raise_for_status=True):
+        yield b'actual fixture bytes'
+
+
+async def main():
+    session=MediaSession()
+    bot=Bot('100:MEDIA_REFERENCE',session=session)
+    kind: MediaKind='photo'
+    item=MediaItem(MediaFile(kind,'opaque',bot_id=bot.id),MessageBuilder().style('Фото','bold').build())
+    request: MediaSendRequest=media_request(item,bot_id=bot.id,chat_id=42)
+    assert isinstance(request,SendPhoto) and request.parse_mode is None
+    native=item.as_input_media(bot.id)
+    assert native.caption_entities is not None and native.caption_entities[0].length==4
+    assert len(media_album([item,item],bot_id=bot.id,chat_id=42).media)==2
+    assert media_edit(item,bot_id=bot.id,inline_message_id='inline_fixture').inline_message_id=='inline_fixture'
+    session.respond(GetFile,{'file_id':'opaque','file_unique_id':'unique','file_size':20,'file_path':'documents/fixture.txt'})
+    try:
+        downloaded: DownloadedMedia=await download_media(bot,'opaque',max_bytes=20)
+        assert downloaded.data==b'actual fixture bytes' and downloaded.bot_id==bot.id
+    finally:
+        await bot.session.close()
+    print(json.dumps({'case':'bot_media','passed':True,'network':False,'session_closed':session.closed}))
+
+
+if __name__=='__main__': asyncio.run(main())
 ```
