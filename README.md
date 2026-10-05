@@ -16,7 +16,7 @@
 
 [Публичные контракты Python/TypeScript](docs/public-api.md) описывают параметры, результаты, ошибки, побочные эффекты и владение ресурсами для всех документированных API.
 
-[Справочник API](docs/api-reference.md): 116 публичных Python/TypeScript-символов, CLI и CSS; 18 полных примеров с импортами и ограничениями. Проверка исполняет код из документации через установленные wheel/tarball в отдельном consumer.
+[Справочник API](docs/api-reference.md): 120 публичных Python/TypeScript-символов, CLI и CSS; 19 полных примеров с импортами и ограничениями. Проверка исполняет код из документации через установленные wheel/tarball в отдельном consumer.
 
 [Doctor и исправления](docs/doctor.md) объясняет локальные ошибки установки и manifests, показывает команды следующего действия и сохраняет конфигурацию проекта.
 
@@ -27,6 +27,8 @@
 [Границы Telegram API](docs/telegram-api-boundaries.md): Bot API, Mini App, Business и user-client, launch/rights и специальные guest/bot-to-bot режимы.
 
 [Выбор компонентов нового проекта](docs/starter-selection.md): CLI init, dependency closure, preflight conflicts и полный dry-run.
+
+[Групповой бот](docs/group-bot.md): темы, свежие права bot/actor, заявки и временная модерация с подтверждением; SQLite journal и crash recovery без повторной отправки. Код — `examples/group-bot`.
 
 [Магазин с Mini App](docs/shop-example.md): каталог, корзина, серверная цена и доступ после Stars receipt; TypeScript frontend и Python backend в `examples/shop`.
 

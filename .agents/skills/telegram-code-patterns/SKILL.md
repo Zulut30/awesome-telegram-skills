@@ -23,6 +23,8 @@ description: "Подбирает и подключает готовые комп
 
 Для каталога, корзины и цифрового заказа с backend прочитай [магазин Mini App](references/shop-example.md). Используй server-owned цены, signed launch → session/CSRF → object ACL и Stars receipt → access; invoice callback не выдаёт товар. Приложение предоставляется отдельно, а сохранение номера заказа и неизвестная invoice-подготовка имеют свои правила сверки.
 
+Для тем, прав, заявок и временной модерации прочитай [групповой пример](references/group-bot.md). Это отдельное приложение Bot API с личным подтверждением, свежими bot/actor правами и durable неизвестным результатом. Сохраняй явную конфигурацию группы и контекст темы; не переносить подтверждение на новую заявку или migrated ID. Synthetic SDK не доказывает live permissions/delivery.
+
 Для выбора по готовности прочитай [зрелость и доказательства проверки](references/maturity.md): `maturity` отдельно от SDK/mock/browser/live evidence. Reference-запрос не заменяет прикладной workflow; experimental не обещает стабильность 1.0.
 
 1. Прочитай зависимости и точку интеграции целевого проекта. Установлены ли `awesome-telegram-patterns` и/или `@awesome-telegram/patterns`, какая версия? Не заменяй SDK/БД/frontend-фреймворк ради helper.

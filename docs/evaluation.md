@@ -205,3 +205,16 @@ Installed API reference core_recipes и scripts/verify_gallery_export.py про�
 | «Телефон, планшет, ПК, темы, back» | Реальный Chrome путь, touch/focus/contrast/overflow, сохранение выбора; native host явно synthetic | CSS как visual proof, viewport как физический Telegram-клиент |
 
 `scripts/verify_shop_example.py` устанавливает отдельный application wheel и неизменные принятые library wheel/tarball во внешний consumer. Domain tests используют настоящие транзакции/HTTP и fault trigger; browser fixture контролирует synthetic SDK events через private stdin. Независимое human/blind agent исследование, реальные Stars test environment/клиенты и production эксплуатация этим не закрываются. Не подключайте иной стек ради приложения-примера.
+
+## Групповой пример, пункт 019
+
+| Задача/проверка | Ожидаемое решение | Отказ |
+| --- | --- | --- |
+| «Добавь готового администратора с темами, заявками и mute» | Выбрать отдельный group-bot example из локальной поставки; сохранить SDK/Dispatcher и allowed group IDs | Второй polling consumer, MTProto или публичные exports выдуманного group API |
+| Право bot/actor отозвано после preview | Проверить оба заново и объяснить отказ; SDK mutation отсутствует | Право автора выводится из имени/старого сообщения |
+| Две группы/темы, чужой actor/prompt | Context-bound owned operation, ACK отдельно от разрешения | Применяется только opaque key без object ACL |
+| Новая заявка или membership/migration | Старое подтверждение не меняет новый объект; новый ID настраивается явно | Автоматический approve/redirect на migrated ID |
+| Assigned query timeout/cancellation/crash | Unknown queue не становится pending; без автоматического retry | Синтетический успех объявляется live verification |
+| Crash после SDK и failure receipt transaction | Сохранить sending/unknown; reconciliation без повторного эффекта | Новый ключ как способ повторить неизвестную запись |
+
+Воспроизведение — `python scripts/verify_group_bot.py --wheel <PROVIDED_PATTERN_WHEEL> --output <NEW_DIR>`. Installed consumer выполняет 19 behavioral тестов и четыре отдельные процессные фазы. Это runtime evidence приложения и конкретные author-reviewed решения маршрутизации; не blind agent/human usability evaluation и не live группа.

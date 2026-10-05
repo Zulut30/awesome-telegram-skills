@@ -61,6 +61,36 @@
         "protected-content"
       ],
       "scope": "Separate application; trusted SDK receipts synthetic in fixture. No public HTTP grant route or live Stars/device acceptance."
+    },
+    {
+      "id": "group-bot",
+      "project": "examples/group-bot",
+      "distribution": "awesome-telegram-group-example",
+      "version": "0.1.0",
+      "library_version": "0.13.0",
+      "entry_point": "telegram-group-example",
+      "guide": "docs/group-bot.md",
+      "portable_guide": ".agents/skills/telegram-code-patterns/references/group-bot.md",
+      "verification_command": "python scripts/verify_group_bot.py --wheel <PROVIDED_PATTERN_WHEEL> --output <NEW_PROOF_DIR>",
+      "evidence": "docs/v1-checks/019.json",
+      "maturity": "experimental",
+      "verification": [
+        "sdk",
+        "mock",
+        "real-sqlite",
+        "process-crash-restart"
+      ],
+      "workflow": [
+        "topics",
+        "current-rights",
+        "actor-confirmation",
+        "join-requests",
+        "query-queue",
+        "temporary-moderation",
+        "migration",
+        "restart-recovery"
+      ],
+      "scope": "Separate Bot API application. Synthetic SDK; no live permission/delivery or multiworker acceptance."
     }
   ]
 }

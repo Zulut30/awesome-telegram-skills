@@ -372,10 +372,26 @@
       "id": 19,
       "title": "Подготовить пример группового бота",
       "requirement": "Показать темы, права, заявки и модерацию; отсутствие нужных прав возвращает объяснение и не запускает действие.",
-      "status": "pending",
-      "commit_subject": null,
-      "artifacts": [],
-      "evidence": []
+      "status": "done",
+      "commit_subject": "roadmap(019): add reviewed group bot with current permissions and crash recovery",
+      "artifacts": [
+        "examples/group-bot",
+        "docs/group-bot.md",
+        "scripts/verify_group_bot.py",
+        "tests/test_group_verifier.py",
+        "catalog/scenarios.json",
+        "catalog/support-matrix.json",
+        ".agents/skills/telegram-code-patterns/references/group-bot.md",
+        "docs/v1-checks/019.json",
+        "docs/v1-checks/019-group.json"
+      ],
+      "evidence": [
+        "docs/v1-checks/019.json",
+        "Separate installed application wheel; exact six source files/RECORD/entrypoint; Mypy; 19 SDK/file-SQLite behavioral tests; four distinct process phases including actual exit 77 and unknown recovery without resend",
+        "Bot/actor rights refreshed before preview, effect and replay; context/prompt ACL; queue/new-version/membership/migration; temporary moderation; shutdown joins active handlers before OS unlock",
+        "32 root tests and 41 standalone skills; existing output and real junction refusal preserve caller files; library 0.13.0 artifacts/public exports unchanged",
+        "Synthetic transport only; no live group changes, permissions, privacy delivery or server query deadline acceptance; user-based join action race recorded"
+      ]
     },
     {
       "id": 20,

@@ -123,6 +123,29 @@
       "stars_test_environment": false,
       "physical_device": false,
       "maturity": "experimental"
+    },
+    "group-bot": {
+      "version": "0.1.0",
+      "library_version": "0.13.0",
+      "evidence": "docs/v1-checks/019.json",
+      "verified": {
+        "os": "Windows 11 AMD64",
+        "python": "3.13.12",
+        "aiogram": "3.31.0",
+        "unit_tests": 19,
+        "distinct_process_phases": 4,
+        "real_storage": "file SQLite",
+        "synthetic_transport": true,
+        "crash_exit_codes": [
+          77
+        ],
+        "current_actor_bot_rights": true,
+        "context_bound_confirmation": true,
+        "shutdown_joins_handlers": true
+      },
+      "live": false,
+      "multiworker": false,
+      "maturity": "experimental"
     }
   }
 }

@@ -1,0 +1,17 @@
+[build-system]
+requires = ["setuptools>=75,<83"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "awesome-telegram-group-example"
+version = "0.1.0"
+description = "Reviewed group operations with current permissions and crash recovery"
+readme = "README.md"
+requires-python = ">=3.11"
+dependencies = ["awesome-telegram-patterns[aiogram]>=0.13,<0.14"]
+
+[project.scripts]
+telegram-group-example = "telegram_group_example.bot:main"
+
+[tool.setuptools.packages.find]
+where = ["src"]

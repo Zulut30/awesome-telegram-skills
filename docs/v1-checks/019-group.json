@@ -1,0 +1,157 @@
+{
+  "passed": true,
+  "roadmap_item": 19,
+  "library_version": "0.13.0",
+  "installed_origins": {
+    "prefix": "C:\\Users\\zulut\\AppData\\Local\\Temp\\telegram group consumer 1slr51mi\\environment",
+    "library": "C:\\Users\\zulut\\AppData\\Local\\Temp\\telegram group consumer 1slr51mi\\environment\\Lib\\site-packages\\telegram_patterns\\__init__.py",
+    "example": "C:\\Users\\zulut\\AppData\\Local\\Temp\\telegram group consumer 1slr51mi\\environment\\Lib\\site-packages\\telegram_group_example\\__init__.py",
+    "library_version": "0.13.0",
+    "aiogram": "3.31.0",
+    "python": "3.13.12"
+  },
+  "consumer": "C:\\Users\\zulut\\AppData\\Local\\Temp\\telegram group consumer 1slr51mi",
+  "phases": [
+    {
+      "phase": "preview",
+      "passed": true,
+      "checks": [
+        "menu",
+        "current-admin-rights",
+        "thread-info",
+        "bound-persisted-preview",
+        "no-mutation-before-confirm"
+      ],
+      "telegram_requests": false,
+      "external_network_attempts": 0,
+      "session_closed": true,
+      "application_closed": true,
+      "lock_released": true
+    },
+    {
+      "phase": "confirm",
+      "passed": true,
+      "checks": [
+        "restart-restores-preview",
+        "foreign-actor-chat-thread-denied",
+        "ack-before-authorization",
+        "one-sdk-effect",
+        "owner-replay-no-resend"
+      ],
+      "telegram_requests": false,
+      "external_network_attempts": 0,
+      "session_closed": true,
+      "application_closed": true,
+      "lock_released": true
+    },
+    {
+      "phase": "crash",
+      "stub_transport_effect": true,
+      "durable_sending": true,
+      "telegram_requests": false,
+      "external_network_attempts": 0
+    },
+    {
+      "phase": "recover",
+      "passed": true,
+      "checks": [
+        "process-lock-reacquired",
+        "sending-recovers-as-unknown",
+        "unknown-owner-replay-no-effect",
+        "controlled-reconciliation-message"
+      ],
+      "telegram_requests": false,
+      "external_network_attempts": 0,
+      "session_closed": true,
+      "application_closed": true,
+      "lock_released": true
+    }
+  ],
+  "process_lock": {
+    "passed": true,
+    "second_process_refused": true,
+    "released_reacquired": true
+  },
+  "stages": [
+    {
+      "stage": "build-example",
+      "exit_code": 0,
+      "expected_exit": 0
+    },
+    {
+      "stage": "environment",
+      "exit_code": 0,
+      "expected_exit": 0
+    },
+    {
+      "stage": "install",
+      "exit_code": 0,
+      "expected_exit": 0
+    },
+    {
+      "stage": "origin",
+      "exit_code": 0,
+      "expected_exit": 0
+    },
+    {
+      "stage": "entrypoint-help",
+      "exit_code": 0,
+      "expected_exit": 0
+    },
+    {
+      "stage": "typecheck",
+      "exit_code": 0,
+      "expected_exit": 0
+    },
+    {
+      "stage": "tests",
+      "exit_code": 0,
+      "expected_exit": 0
+    },
+    {
+      "stage": "preview",
+      "exit_code": 0,
+      "expected_exit": 0
+    },
+    {
+      "stage": "confirm",
+      "exit_code": 0,
+      "expected_exit": 0
+    },
+    {
+      "stage": "crash",
+      "exit_code": 77,
+      "expected_exit": 77
+    },
+    {
+      "stage": "recover",
+      "exit_code": 0,
+      "expected_exit": 0
+    },
+    {
+      "stage": "process-lock",
+      "exit_code": 0,
+      "expected_exit": 0
+    }
+  ],
+  "unit_tests": 19,
+  "archive_source_exact_files": 6,
+  "wheel_record_verified": true,
+  "installed_entrypoint_help": true,
+  "caller_files_preserved": true,
+  "telegram_requests": false,
+  "external_network_attempts": 0,
+  "artifacts": [
+    {
+      "name": "awesome_telegram_patterns-0.13.0-py3-none-any.whl",
+      "sha256": "3c9ee0fbc10909b97f93bac7fcfe3034f15b72c823eaa9721517ccfc6362fa63",
+      "bytes": 145339
+    },
+    {
+      "name": "awesome_telegram_group_example-0.1.0-py3-none-any.whl",
+      "sha256": "0c885e1c996bc4ed1c2eb2f8d465b4a9a879c6e8c078e6dcdb300aaf1687bf3d",
+      "bytes": 23271
+    }
+  ],
+  "scope": "Installed application and accepted library wheel, real SQLite and distinct crash/restart processes, synthetic SDK Dispatcher/transport. No live Telegram, privacy-mode delivery, server permissions or multiworker acceptance."
+}
