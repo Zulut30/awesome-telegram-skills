@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "library_version": "0.18.0",
+  "library_version": "0.19.0",
   "symbols": [
     {
       "module": "telegram_patterns",
@@ -48,6 +48,114 @@
       "intent": "HMAC и freshness raw initData",
       "example_sha256": "79ba58973a74c842c84dc7d79b81f337a2bb332ab201803aa574f20111a56614",
       "example_source_sha256": "79ba58973a74c842c84dc7d79b81f337a2bb332ab201803aa574f20111a56614",
+      "kind": "value"
+    },
+    {
+      "module": "telegram_patterns",
+      "name": "EntityKind",
+      "import": "from telegram_patterns import EntityKind",
+      "recipe": "ref.core_message_text",
+      "example": "examples/api-reference/python/core_message_text.py",
+      "limits": "SDK-free/entities payload с parse_mode=None. Консервативный UTF-16 limit; atomic oversized entity/Unicode sequence вызывает error. Общие emoji/combining sequences сохранены, полная UAX29 segmentation не обещана. Host проверяет link trust, sticker/fallback metadata и custom emoji entitlement/context; default — regular emoji. Никаких network/retry/delivery/ACL promises.",
+      "intent": "Literal одиннадцати поддерживаемых outgoing entity типов",
+      "example_sha256": "abcf46f5052aadd73a6fa08de0c743b7a7dbccd91fd965ab6b8cdf47b6f42ebe",
+      "example_source_sha256": "abcf46f5052aadd73a6fa08de0c743b7a7dbccd91fd965ab6b8cdf47b6f42ebe",
+      "kind": "value"
+    },
+    {
+      "module": "telegram_patterns",
+      "name": "TextEntity",
+      "import": "from telegram_patterns import TextEntity",
+      "recipe": "ref.core_message_text",
+      "example": "examples/api-reference/python/core_message_text.py",
+      "limits": "SDK-free/entities payload с parse_mode=None. Консервативный UTF-16 limit; atomic oversized entity/Unicode sequence вызывает error. Общие emoji/combining sequences сохранены, полная UAX29 segmentation не обещана. Host проверяет link trust, sticker/fallback metadata и custom emoji entitlement/context; default — regular emoji. Никаких network/retry/delivery/ACL promises.",
+      "intent": "Frozen range и проверенные metadata",
+      "example_sha256": "abcf46f5052aadd73a6fa08de0c743b7a7dbccd91fd965ab6b8cdf47b6f42ebe",
+      "example_source_sha256": "abcf46f5052aadd73a6fa08de0c743b7a7dbccd91fd965ab6b8cdf47b6f42ebe",
+      "kind": "value"
+    },
+    {
+      "module": "telegram_patterns",
+      "name": "TextPayload",
+      "import": "from telegram_patterns import TextPayload",
+      "recipe": "ref.core_message_text",
+      "example": "examples/api-reference/python/core_message_text.py",
+      "limits": "SDK-free/entities payload с parse_mode=None. Консервативный UTF-16 limit; atomic oversized entity/Unicode sequence вызывает error. Общие emoji/combining sequences сохранены, полная UAX29 segmentation не обещана. Host проверяет link trust, sticker/fallback metadata и custom emoji entitlement/context; default — regular emoji. Никаких network/retry/delivery/ACL promises.",
+      "intent": "TypedDict JSON text/entities/parse_mode=None",
+      "example_sha256": "abcf46f5052aadd73a6fa08de0c743b7a7dbccd91fd965ab6b8cdf47b6f42ebe",
+      "example_source_sha256": "abcf46f5052aadd73a6fa08de0c743b7a7dbccd91fd965ab6b8cdf47b6f42ebe",
+      "kind": "value"
+    },
+    {
+      "module": "telegram_patterns",
+      "name": "FormattedText",
+      "import": "from telegram_patterns import FormattedText",
+      "recipe": "ref.core_message_text",
+      "example": "examples/api-reference/python/core_message_text.py",
+      "limits": "SDK-free/entities payload с parse_mode=None. Консервативный UTF-16 limit; atomic oversized entity/Unicode sequence вызывает error. Общие emoji/combining sequences сохранены, полная UAX29 segmentation не обещана. Host проверяет link trust, sticker/fallback metadata и custom emoji entitlement/context; default — regular emoji. Никаких network/retry/delivery/ACL promises.",
+      "intent": "Immutable snapshot и kwargs/split",
+      "example_sha256": "abcf46f5052aadd73a6fa08de0c743b7a7dbccd91fd965ab6b8cdf47b6f42ebe",
+      "example_source_sha256": "abcf46f5052aadd73a6fa08de0c743b7a7dbccd91fd965ab6b8cdf47b6f42ebe",
+      "kind": "value"
+    },
+    {
+      "module": "telegram_patterns",
+      "name": "MessageBuilder",
+      "import": "from telegram_patterns import MessageBuilder",
+      "recipe": "ref.core_message_text",
+      "example": "examples/api-reference/python/core_message_text.py",
+      "limits": "SDK-free/entities payload с parse_mode=None. Консервативный UTF-16 limit; atomic oversized entity/Unicode sequence вызывает error. Общие emoji/combining sequences сохранены, полная UAX29 segmentation не обещана. Host проверяет link trust, sticker/fallback metadata и custom emoji entitlement/context; default — regular emoji. Никаких network/retry/delivery/ACL promises.",
+      "intent": "Immutable fluent literal composition и rebased entities",
+      "example_sha256": "abcf46f5052aadd73a6fa08de0c743b7a7dbccd91fd965ab6b8cdf47b6f42ebe",
+      "example_source_sha256": "abcf46f5052aadd73a6fa08de0c743b7a7dbccd91fd965ab6b8cdf47b6f42ebe",
+      "kind": "value"
+    },
+    {
+      "module": "telegram_patterns",
+      "name": "utf16_length",
+      "import": "from telegram_patterns import utf16_length",
+      "recipe": "ref.core_message_text",
+      "example": "examples/api-reference/python/core_message_text.py",
+      "limits": "SDK-free/entities payload с parse_mode=None. Консервативный UTF-16 limit; atomic oversized entity/Unicode sequence вызывает error. Общие emoji/combining sequences сохранены, полная UAX29 segmentation не обещана. Host проверяет link trust, sticker/fallback metadata и custom emoji entitlement/context; default — regular emoji. Никаких network/retry/delivery/ACL promises.",
+      "intent": "Валидация scalars и подсчет UTF-16 units",
+      "example_sha256": "abcf46f5052aadd73a6fa08de0c743b7a7dbccd91fd965ab6b8cdf47b6f42ebe",
+      "example_source_sha256": "abcf46f5052aadd73a6fa08de0c743b7a7dbccd91fd965ab6b8cdf47b6f42ebe",
+      "kind": "value"
+    },
+    {
+      "module": "telegram_patterns",
+      "name": "escape_html",
+      "import": "from telegram_patterns import escape_html",
+      "recipe": "ref.core_message_text",
+      "example": "examples/api-reference/python/core_message_text.py",
+      "limits": "SDK-free/entities payload с parse_mode=None. Консервативный UTF-16 limit; atomic oversized entity/Unicode sequence вызывает error. Общие emoji/combining sequences сохранены, полная UAX29 segmentation не обещана. Host проверяет link trust, sticker/fallback metadata и custom emoji entitlement/context; default — regular emoji. Никаких network/retry/delivery/ACL promises.",
+      "intent": "Literal HTML text/attribute escaping",
+      "example_sha256": "abcf46f5052aadd73a6fa08de0c743b7a7dbccd91fd965ab6b8cdf47b6f42ebe",
+      "example_source_sha256": "abcf46f5052aadd73a6fa08de0c743b7a7dbccd91fd965ab6b8cdf47b6f42ebe",
+      "kind": "value"
+    },
+    {
+      "module": "telegram_patterns",
+      "name": "escape_markdown_v2",
+      "import": "from telegram_patterns import escape_markdown_v2",
+      "recipe": "ref.core_message_text",
+      "example": "examples/api-reference/python/core_message_text.py",
+      "limits": "SDK-free/entities payload с parse_mode=None. Консервативный UTF-16 limit; atomic oversized entity/Unicode sequence вызывает error. Общие emoji/combining sequences сохранены, полная UAX29 segmentation не обещана. Host проверяет link trust, sticker/fallback metadata и custom emoji entitlement/context; default — regular emoji. Никаких network/retry/delivery/ACL promises.",
+      "intent": "Literal escaping в text/code/link контексте",
+      "example_sha256": "abcf46f5052aadd73a6fa08de0c743b7a7dbccd91fd965ab6b8cdf47b6f42ebe",
+      "example_source_sha256": "abcf46f5052aadd73a6fa08de0c743b7a7dbccd91fd965ab6b8cdf47b6f42ebe",
+      "kind": "value"
+    },
+    {
+      "module": "telegram_patterns",
+      "name": "split_formatted",
+      "import": "from telegram_patterns import split_formatted",
+      "recipe": "ref.core_message_text",
+      "example": "examples/api-reference/python/core_message_text.py",
+      "limits": "SDK-free/entities payload с parse_mode=None. Консервативный UTF-16 limit; atomic oversized entity/Unicode sequence вызывает error. Общие emoji/combining sequences сохранены, полная UAX29 segmentation не обещана. Host проверяет link trust, sticker/fallback metadata и custom emoji entitlement/context; default — regular emoji. Никаких network/retry/delivery/ACL promises.",
+      "intent": "Lossless partition, clipping styles/code и atomic links/quotes/emoji",
+      "example_sha256": "abcf46f5052aadd73a6fa08de0c743b7a7dbccd91fd965ab6b8cdf47b6f42ebe",
+      "example_source_sha256": "abcf46f5052aadd73a6fa08de0c743b7a7dbccd91fd965ab6b8cdf47b6f42ebe",
       "kind": "value"
     },
     {
@@ -358,8 +466,8 @@
       "example": "examples/api-reference/python/core_recipes.py",
       "limits": "Чтение не исполняет recipe code. Maturity отдельно от verification; SDK/mock не доказывают live/device. Preview — независимая копия. Этот пример ищет существующий cookbook recipe two-columns; ref.* — имена справочника API.",
       "intent": "Literal stable/experimental/reference",
-      "example_sha256": "5e301b990fc73a70908f941f9fb85d6c84e1c67460c11229c98f9d9733e51622",
-      "example_source_sha256": "7fce0e1e0b1eba39c3411eeeae6397c18e019da9f8960f8b305caecc7edc2cb7",
+      "example_sha256": "0fe30eeb50d02263b660405e0541d0e7181404010695b169d1c2d25773394933",
+      "example_source_sha256": "81e4ea1577fb1ebec0b556a229aef000ebea6d1275cacaea331652d40ef93d7f",
       "kind": "value"
     },
     {
@@ -370,8 +478,8 @@
       "example": "examples/api-reference/python/core_recipes.py",
       "limits": "Чтение не исполняет recipe code. Maturity отдельно от verification; SDK/mock не доказывают live/device. Preview — независимая копия. Этот пример ищет существующий cookbook recipe two-columns; ref.* — имена справочника API.",
       "intent": "Literal sdk/mock/browser/live/not_run",
-      "example_sha256": "5e301b990fc73a70908f941f9fb85d6c84e1c67460c11229c98f9d9733e51622",
-      "example_source_sha256": "7fce0e1e0b1eba39c3411eeeae6397c18e019da9f8960f8b305caecc7edc2cb7",
+      "example_sha256": "0fe30eeb50d02263b660405e0541d0e7181404010695b169d1c2d25773394933",
+      "example_source_sha256": "81e4ea1577fb1ebec0b556a229aef000ebea6d1275cacaea331652d40ef93d7f",
       "kind": "value"
     },
     {
@@ -382,8 +490,8 @@
       "example": "examples/api-reference/python/core_recipes.py",
       "limits": "Чтение не исполняет recipe code. Maturity отдельно от verification; SDK/mock не доказывают live/device. Preview — независимая копия. Этот пример ищет существующий cookbook recipe two-columns; ref.* — имена справочника API.",
       "intent": "Неизменяемая запись и копия preview",
-      "example_sha256": "5e301b990fc73a70908f941f9fb85d6c84e1c67460c11229c98f9d9733e51622",
-      "example_source_sha256": "7fce0e1e0b1eba39c3411eeeae6397c18e019da9f8960f8b305caecc7edc2cb7",
+      "example_sha256": "0fe30eeb50d02263b660405e0541d0e7181404010695b169d1c2d25773394933",
+      "example_source_sha256": "81e4ea1577fb1ebec0b556a229aef000ebea6d1275cacaea331652d40ef93d7f",
       "kind": "value"
     },
     {
@@ -394,8 +502,8 @@
       "example": "examples/api-reference/python/core_recipes.py",
       "limits": "Чтение не исполняет recipe code. Maturity отдельно от verification; SDK/mock не доказывают live/device. Preview — независимая копия. Этот пример ищет существующий cookbook recipe two-columns; ref.* — имена справочника API.",
       "intent": "Версия, recipes, get/search с фильтрами",
-      "example_sha256": "5e301b990fc73a70908f941f9fb85d6c84e1c67460c11229c98f9d9733e51622",
-      "example_source_sha256": "7fce0e1e0b1eba39c3411eeeae6397c18e019da9f8960f8b305caecc7edc2cb7",
+      "example_sha256": "0fe30eeb50d02263b660405e0541d0e7181404010695b169d1c2d25773394933",
+      "example_source_sha256": "81e4ea1577fb1ebec0b556a229aef000ebea6d1275cacaea331652d40ef93d7f",
       "kind": "value"
     },
     {
@@ -1875,9 +1983,9 @@
       "kind": "value"
     }
   ],
-  "python_symbols": 115,
+  "python_symbols": 124,
   "typescript_symbols": 41,
-  "recipes": 25,
+  "recipes": 26,
   "additional_entries": [
     "CLI recipes",
     "CLI init",

@@ -1,6 +1,6 @@
 # Общая библиотека компонентов
 
-Текущая локальная поставка 0.18.0: 36 групп компонентов, 156 публичных Python/TypeScript-символов и 303 рецепта. 204 Python fixtures имеют закрытый executor, 99 native references требуют host/аргументов. [Расширенные поля диалогов](dialog-fields.md) дают семь типов ввода с current owner/step guards и native candidate confirmation. [Приемка 025](v1-checks/025.json) привязана к wheel/tarball; historical reports сохраняют собственные версии.
+Текущая локальная поставка 0.19.0: 37 групп компонентов, 165 публичных Python/TypeScript-символов и 304 рецепта. 205 Python fixtures имеют закрытый executor, 99 native references требуют host/аргументов. [Конструктор сообщений](message-text.md) дает literal composition, explicit parse_mode=None, UTF-16 и lossless partition с atomic entities. [Приемка 026](v1-checks/026.json) привязана к wheel/tarball; historical reports сохраняют собственные версии.
 
 [Формы 0.3.0](form-tools-review.md) добавляют поля с проверкой, возврат, отмену и подтверждение со стабильным ID заявки. Готовый [бот формы](../examples/python/form_bot.py) и [offline-проверка](../examples/python/offline_form.py) используют один create_app; backend сохраняет заявку и replay result в SQLite.
 

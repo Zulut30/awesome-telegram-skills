@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "library_version": "0.18.0",
+  "library_version": "0.19.0",
   "scope": "Public library exports; ref.* recipes belong to the API reference, not the Telegram method snapshot",
   "groups": [
     {
@@ -15,6 +15,26 @@
           "InvalidInitData": "Контролируемый отказ подписи/кодировки/freshness",
           "VerifiedLaunch": "Подписанные user_id/auth_date/user",
           "validate_init_data": "HMAC и freshness raw initData"
+        }
+      }
+    },
+    {
+      "id": "core_message_text",
+      "section": "core",
+      "title": "Безопасные сообщения и длинный текст",
+      "example": "examples/api-reference/python/core_message_text.py",
+      "limits": "SDK-free/entities payload с parse_mode=None. Консервативный UTF-16 limit; atomic oversized entity/Unicode sequence вызывает error. Общие emoji/combining sequences сохранены, полная UAX29 segmentation не обещана. Host проверяет link trust, sticker/fallback metadata и custom emoji entitlement/context; default — regular emoji. Никаких network/retry/delivery/ACL promises.",
+      "api": {
+        "telegram_patterns": {
+          "EntityKind": "Literal одиннадцати поддерживаемых outgoing entity типов",
+          "TextEntity": "Frozen range и проверенные metadata",
+          "TextPayload": "TypedDict JSON text/entities/parse_mode=None",
+          "FormattedText": "Immutable snapshot и kwargs/split",
+          "MessageBuilder": "Immutable fluent literal composition и rebased entities",
+          "utf16_length": "Валидация scalars и подсчет UTF-16 units",
+          "escape_html": "Literal HTML text/attribute escaping",
+          "escape_markdown_v2": "Literal escaping в text/code/link контексте",
+          "split_formatted": "Lossless partition, clipping styles/code и atomic links/quotes/emoji"
         }
       }
     },

@@ -1,5 +1,11 @@
 # Изменения библиотеки компонентов
 
+## 0.19.0 — пункт 026
+
+- SDK-free MessageBuilder/FormattedText/TextEntity, TypedDict payload и explicit parse_mode=None; UTF-16 scalars, nested spans и bounded metadata. Пользовательские вставки остаются literal.
+- HTML и MarkdownV2 escaping по text/code/link context; lossless split сохраняет style/code coverage и metadata, atomic links/quotes/custom emoji, common combining/emoji sequences. Oversized atomic block возвращает error до отправки; full UAX29 не заявлена.
+- Custom emoji по умолчанию regular fallback; host проверяет metadata/entitlement/context. Public/API consumer, copied full recipe и actual Dispatcher/SDK serialization; partial unknown delivery не повторяется автоматически.
+
 ## 0.18.0 — пункт 025
 
 - NumberField/EmailField/PhoneField/DateField/FileField/ContactField/LocationField: ограниченный и нормализованный ввод, точные decimal-строки, реальные даты и flat metadata без download/DNS/проверки физического присутствия.

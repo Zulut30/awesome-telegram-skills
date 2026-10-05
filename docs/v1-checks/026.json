@@ -1,0 +1,159 @@
+{
+  "roadmap_item": 26,
+  "version": "0.19.0",
+  "checked_date": "2026-10-05",
+  "passed": true,
+  "report": "output/pattern-library-0.19.0/distribution-report.json",
+  "report_sha256": "cd163972eb8405507b0b9d5f87f477dbfb994b442d1f0be1964aebcd7d770df2",
+  "distribution_stages": 65,
+  "python_tests": {
+    "run": 250,
+    "passed": 249,
+    "skipped": 1
+  },
+  "message_behavioral_tests": 27,
+  "typescript_tests": 26,
+  "root_tests": 34,
+  "skills_checked": 41,
+  "browser_scope": {
+    "example": 141,
+    "gallery": 750,
+    "export": 750,
+    "starter": 66,
+    "selected_starter": 76,
+    "api_reference": 36
+  },
+  "browser_total": 1819,
+  "first_run_browser_checks": 60,
+  "public_symbols": {
+    "total": 165,
+    "python": 124,
+    "typescript": 41
+  },
+  "component_groups": 37,
+  "recipes": 304,
+  "python_fixtures": 205,
+  "source_check_files": 231,
+  "source_typing_files": 31,
+  "installed_message_text": {
+    "passed": true,
+    "network": false,
+    "session_closed": true,
+    "chunks": 2,
+    "literal_injection": true,
+    "utf16_offsets": true,
+    "split_preserves_entities": true,
+    "explicit_parse_mode_none": true,
+    "emoji_capability_fallback": true,
+    "existing_dispatcher_preserved": true,
+    "private_context_guards": true
+  },
+  "first_run_report": "output/v1-quickstart-026/report.json",
+  "first_run_report_sha256": "f7308a94546f6f16c85b0f344f4dbe0db6c80cd31efa6bfb5d99fe4a6ce95f64",
+  "first_run_guide_hash": {
+    "method": "UTF-8 normalized-LF text executed by verify_quickstart.py",
+    "sha256": "2b9d781080affe5a5dec4c8cc3eb010f63595a695acd079ae5153c8e43ca66bc",
+    "source_bytes_sha256": "22511956e716644f935acd2e050f9601453bce334abcb09ed6b6c14e803fd1f0"
+  },
+  "artifacts": [
+    {
+      "name": "awesome_telegram_patterns-0.19.0-py3-none-any.whl",
+      "bytes": 217771,
+      "sha256": "1c33e9e3a2b4c3d82561fddea98281ca01ae0ef661ed3656111fb089e085c3b7"
+    },
+    {
+      "name": "awesome-telegram-patterns-0.19.0.tgz",
+      "bytes": 19530,
+      "sha256": "7d904507af66e7f3244c9e8ebb53f7eca30b50318da3cfcf7c8c6f98c8b531ce"
+    }
+  ],
+  "evidence": {
+    "distribution": "docs/v1-checks/026-distribution.json",
+    "first_run": "docs/v1-checks/026-first-run.json",
+    "portable": "docs/v1-checks/026-portable.json"
+  },
+  "source_and_guide_hashes": {
+    "packages/python/src/telegram_patterns/message_text.py": "d27aefa7a0d2f2c530422ccbba3b91f900ef44a51b467a65e78ca5834ea26c3e",
+    "packages/python/src/telegram_patterns/__init__.py": "016257f728c53b67c34a837eab41e199427917299791907f026317048673ed21",
+    "packages/python/src/telegram_patterns/_offline_recipe.py": "6a73a38b3dda901e944a3a17662e2ee6b7de011c9923887258dce5140c6a9112",
+    "packages/python/tests/test_message_text.py": "26c7a1cc3d4075d02b0ef2145fca7ec35e200fcf5f480d720941defa024aec07",
+    "packages/python/tests/test_message_text_sdk.py": "c6204e01becfec70625cbd6d74bf518ad631da1b1f41189f896b661063331054",
+    "packages/python/tests/test_catalog_cli.py": "53ce03101bdc64783f294cd03bdc857ce41722d09495263fe88521e062655617",
+    "tests/public_types.py": "4c1530c5113747b7cc7339e704a459d0a336b5b46807e51235c327fe07279356",
+    "examples/python/message_text_bot.py": "04a4a7c96ee37ca97231aa327c08d9e3e23a7f125525b42be74dbab66f614ff5",
+    "examples/python/offline_message_text.py": "1026d41c8e2b46550d16d7347e779fadf2999763fe924b95ce012cda2f692802",
+    "examples/api-reference/python/core_message_text.py": "abcf46f5052aadd73a6fa08de0c743b7a7dbccd91fd965ab6b8cdf47b6f42ebe",
+    "docs/message-text.md": "3e2068f7128adfc5f9691cdc8ccfab63e55c2f94963ae04b94a8fa20c205aaeb",
+    ".agents/skills/telegram-code-patterns/references/message-text.md": "3e2068f7128adfc5f9691cdc8ccfab63e55c2f94963ae04b94a8fa20c205aaeb",
+    ".agents/skills/telegram-bot-api/references/message-text.md": "3e2068f7128adfc5f9691cdc8ccfab63e55c2f94963ae04b94a8fa20c205aaeb",
+    ".agents/skills/telegram-bot-api/SKILL.md": "d1130e28a11e7c13d30ad26940c34244bca6d17431342ea37a0f0c96aba056d5",
+    ".agents/skills/telegram-code-patterns/SKILL.md": "25ada3ac98eeebfbd2efa9e2cb4761ca9dc3c139ef44be2d5e170c13b408df51",
+    "scripts/verify_message_recipe.py": "2c55ea49fb4d456b64260c66856e18970c0179f8366dfb87a579c1fed5a26d85",
+    "scripts/build_recipe_gallery.py": "a0cbe29082b2ae8dffd895ea864f29f222f6b041c10fa96245f44a1d4610b568",
+    "scripts/verify_pattern_packages.py": "c7ccc7f89eae566320204722c6c9ba7cf06be04e1dd85e2907ed5bdf2d2ffdae",
+    "scripts/verify_gallery_export.py": "e26532aea419c6795ec91c170a2c594d2c5c5ab44c7a3845a90ca01d8a1365a7",
+    "scripts/verify_recipe_execution.py": "e9bbe7280e229d1b63344a1c341514bc810a98e2af0becfabe1d72e4606cabec",
+    "tests/gallery-browser.mjs": "334622b7e2085d6fb3797e83920b79319110ede43726241a0c5414be0aa1b7f6",
+    "docs/quickstart.md": "22511956e716644f935acd2e050f9601453bce334abcb09ed6b6c14e803fd1f0",
+    ".agents/skills/telegram-code-patterns/references/quickstart.md": "22511956e716644f935acd2e050f9601453bce334abcb09ed6b6c14e803fd1f0",
+    "examples/api-reference/python/core_recipes.py": "81e4ea1577fb1ebec0b556a229aef000ebea6d1275cacaea331652d40ef93d7f",
+    "packages/python/README.md": "47e1ccfc99f449998971bbf071126745bbdaa2c4feb4a1cb7b7319d9918c6400"
+  },
+  "root_log_sha256": "d4b06525dc2079234a2b1dda4a45fbc7b02a9f812e910e37230b0cb555b5b617",
+  "skill_log_sha256": "8807a4a6e3207331f403446a458788ef471faa999c4f11c303833c22e58313a2",
+  "superseded_pass": {
+    "report": "output/pattern-library-0.19.0-attempt-3/distribution-report.json",
+    "passed": true,
+    "reason": "Complete pass after final code/guards; final review found a stale 204-versus-205 fixture count in the package README. Corrected documentation is included in the accepted rebuilt and fully reverified wheel."
+  },
+  "repair_history": [
+    {
+      "report": "output/pattern-library-0.19.0-attempt-1/distribution-report.json",
+      "failure": "New core API example omitted its required network=false evidence field. Added it, regenerated the exact API documentation/index and repeated the complete installed distribution acceptance."
+    }
+  ],
+  "requirement_evidence": {
+    "literal_escaping": [
+      "HTML quotes/ampersand/tags and double-escaping policy",
+      "all MarkdownV2 reserved text chars including backslash",
+      "separate code/pre and URL-destination escaping contexts"
+    ],
+    "entity_ranges": [
+      "SDK-free immutable builder/DTO snapshots and fresh JSON payload",
+      "UTF-16 offset/length rebasing and whole scalar bounds",
+      "invalid bool/negative/overflow/duplicates/crossing/non-style nesting rejected",
+      "code/pre metadata and nesting restrictions, supported subset explicit"
+    ],
+    "custom_emoji": [
+      "regular emoji fallback without native span by default",
+      "explicit host capability bool, checked ID/range format, unchanged underlying fallback text",
+      "real sticker/valid regular fallback/entitlement/context belong to host and are not proven by fixture"
+    ],
+    "partition": [
+      "exact text concatenation and independently compared per-unit style coverage",
+      "150 deterministic randomized Unicode/style cases",
+      "style/code/pre clipped and rebased with language metadata",
+      "links/quotes/custom emoji atomic; oversized entity/retained Unicode sequence raises before chunks returned",
+      "common combining/ZWJ/modifier/variation/keycap/tag/flag/CRLF boundaries retained; full UAX29 excluded",
+      "bounded size, entities and chunk count; no silent dropping/truncation"
+    ],
+    "integration": [
+      "Explicit ordinary private sample rejects group/forum/Business markers before sending",
+      "SDK BaseSession.prepare_value produces explicit parse_mode=None even with a host default",
+      "installed actual Dispatcher/StubSession retains existing help",
+      "second-chunk unknown receipt stops without blind sequence retry",
+      "all nine public symbols used by installed exact API reference",
+      "copied one-block full guide and closed bundled recipe run from installed wheel",
+      "14 viewport/theme gallery and standalone export cases resolve the new source/check links"
+    ]
+  },
+  "limits": [
+    "Experimental local packages; no PyPI/npm publication or production-ready claim.",
+    "Outgoing 11-kind formatting subset, not incoming entity parser, Rich Message API, arbitrary HTML/Markdown parser or full Unicode UAX29 segmentation.",
+    "Conservative UTF-16 text/metadata/entity/chunk bounds are library policy; host preserves stricter method-specific requirements.",
+    "Host owns link trust, real custom emoji sticker/regular fallback metadata, entitlement and send context; opt-in flag does not verify them.",
+    "Chunk delivery may partially succeed; builder has no retries/outbox, effect authorization or exactly-once Telegram delivery guarantee.",
+    "SDK/mock/Chrome proof does not accept live rendering/rights, physical devices, settlement, independent usability or production pilot.",
+    "Original item020 remains pending human/independent AI baseline; applications017–019 retain separate 0.13.0 acceptance."
+  ]
+}

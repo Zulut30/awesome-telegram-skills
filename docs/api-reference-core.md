@@ -1,4 +1,4 @@
-# Python core — 0.18.0
+# Python core — 0.19.0
 
 [Индекс всех символов](api-reference.md). Образцы ниже воспроизводятся через установленный wheel/tarball вне исходного дерева. Assert — проверка fixture, не бизнес-правило production приложения.
 
@@ -35,6 +35,40 @@ else:
 assert 'REFERENCE_FIXTURE' not in repr(settings)
 # Настоящие initData приходят от Telegram; ACL/session/replay проверяет backend.
 print(json.dumps({'passed': True, 'case': 'core_identity', 'network': False}))
+```
+
+<a id="ref-core_message_text"></a>
+
+## Безопасные сообщения и длинный текст — ref.core_message_text
+
+Файл: `core_message_text.py`. Символы: `EntityKind`, `TextEntity`, `TextPayload`, `FormattedText`, `MessageBuilder`, `utf16_length`, `escape_html`, `escape_markdown_v2`, `split_formatted`
+
+Границы: SDK-free/entities payload с parse_mode=None. Консервативный UTF-16 limit; atomic oversized entity/Unicode sequence вызывает error. Общие emoji/combining sequences сохранены, полная UAX29 segmentation не обещана. Host проверяет link trust, sticker/fallback metadata и custom emoji entitlement/context; default — regular emoji. Никаких network/retry/delivery/ACL promises.
+
+```python
+"""All SDK-free message exports; no network, parser, Unicode asset or rights proof."""
+import json
+from telegram_patterns import (EntityKind, TextEntity, TextPayload, FormattedText, MessageBuilder,
+    utf16_length, escape_html, escape_markdown_v2, split_formatted)
+
+kind: EntityKind = 'bold'
+value = MessageBuilder().text('😀 ').style('<b>literal</b>_*', kind).text('\n'+'text '*1000).build()
+parts = split_formatted(value)
+assert ''.join(p.text for p in parts) == value.text
+assert value.entities[0].offset == 3
+payload: TextPayload = parts[0].as_kwargs()
+assert payload['parse_mode'] is None and payload['entities'][0]['offset'] == 3
+assert all(utf16_length(p.text)<=4096 for p in parts)
+raw = FormattedText('link', (TextEntity('text_link',0,4,url='https://example.com'),))
+assert raw.as_kwargs()['entities'][0]['url']=='https://example.com'
+assert escape_html('<b>&"')=='&lt;b&gt;&amp;&quot;'
+assert escape_markdown_v2('_*')=='\\_\\*'
+assert escape_markdown_v2('`\\',context='code')=='\\`\\\\'
+assert escape_markdown_v2(')\\',context='link')=='\\)\\\\'
+emoji=MessageBuilder().custom_emoji('👍','123456789').build()
+assert emoji.as_kwargs()['entities']==[]
+assert emoji.as_kwargs(custom_emoji_entitlement_verified=True)['entities'][0]['type']=='custom_emoji'
+print(json.dumps({'case':'core_message_text','passed':True,'network':False,'chunks':len(parts)}))
 ```
 
 <a id="ref-core_storage"></a>
@@ -182,7 +216,7 @@ catalog = RecipeCatalog()
 recipe: Recipe = catalog.search('две кнопки', maturity=maturity, verification=verification,
                                task='keyboards', context='private', sdk='aiogram', sdk_version='3.31.0', api_version='bot:10.3')[0]
 assert recipe.id == 'two-columns' and catalog.get(recipe.id) == recipe
-assert len(catalog.recipes) == 303 and catalog.library_version
+assert len(catalog.recipes) == 304 and catalog.library_version
 assert recipe.source_files and recipe.check_files and 'keyboards' in recipe.tasks
 lost = catalog.search('потерянный ответ', task='recovery', context='backend')[0]
 assert lost.id == 'demo-recovery' and lost.sdk == 'python-core' and lost.api_version == 'none'

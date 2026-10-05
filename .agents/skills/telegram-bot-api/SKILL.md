@@ -11,6 +11,8 @@ description: "Реализует сообщения, медиа, клавиат�
 
 Обновление снимка без credentials: `python scripts/update_api_index.py` из каталога этого навыка. Проверь дату, version и diff индекса; изменение имени поля не доказывает поддержку новой версии SDK.
 
+Если используется локальный пакет awesome-telegram-patterns 0.19.0, [безопасный конструктор сообщений](references/message-text.md) дает literal text/entities, UTF-16 offsets и lossless split; escape helpers выбираются по HTML/MarkdownV2 context. Другой SDK/проект сохраняй; навык не требует пакета или соседних навыков.
+
 ## Построить операцию
 
 Определи входной update, доступный тип чата, необходимые поля и ожидаемый ответ. Поля `message`, `text`, `from` и данные callback могут отсутствовать. Не делай обработчик одного типа update универсальным разборщиком всех событий.

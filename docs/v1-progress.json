@@ -551,10 +551,33 @@
       "id": 26,
       "title": "Сделать безопасный конструктор сообщений",
       "requirement": "Добавить экранирование HTML/MarkdownV2, entities, UTF-16 offsets, custom emoji и разбиение текста без повреждения форматирования.",
-      "status": "pending",
-      "commit_subject": null,
-      "artifacts": [],
-      "evidence": []
+      "status": "done",
+      "commit_subject": "roadmap(026): add literal message builder and lossless entity partition",
+      "artifacts": [
+        "packages/python/src/telegram_patterns/message_text.py",
+        "packages/python/src/telegram_patterns/__init__.py",
+        "packages/python/src/telegram_patterns/_offline_recipe.py",
+        "packages/python/tests/test_message_text.py",
+        "packages/python/tests/test_message_text_sdk.py",
+        "examples/python/message_text_bot.py",
+        "examples/python/offline_message_text.py",
+        "examples/api-reference/python/core_message_text.py",
+        "docs/message-text.md",
+        ".agents/skills/telegram-code-patterns/references/message-text.md",
+        ".agents/skills/telegram-bot-api/references/message-text.md",
+        "docs/v1-checks/026.json",
+        "docs/v1-checks/026-distribution.json",
+        "docs/v1-checks/026-first-run.json",
+        "docs/v1-checks/026-portable.json"
+      ],
+      "evidence": [
+        "docs/v1-checks/026.json",
+        "0.19.0 local wheel/tarball: 65 stages, 249 Python passed + 1 Windows skip, 26 TypeScript, 1819 browser checks + 60 first-run",
+        "27 meaningful formatting/SDK tests, including 150 independent per-unit partition oracle cases and stopped partial unknown delivery",
+        "Nine public SDK-free symbols, 165 total exports/26 groups; exact installed API reference and copied full recipe pass",
+        "304 recipes/205 Python fixtures/231 linked files; new gallery intent/code/source/check links and isolated bundled executor verified",
+        "Live/device/independent baseline/production remain outside author-local proof; full Unicode UAX29 is not claimed"
+      ]
     },
     {
       "id": 27,

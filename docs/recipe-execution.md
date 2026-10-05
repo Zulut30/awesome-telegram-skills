@@ -1,6 +1,6 @@
 # Требования и offline запуск рецептов — 0.18.0
 
-У всех 303 cookbook-рецептов есть план зависимостей, данных, окружения и прав. 204 Python-рецепта имеют локальный исполнитель: 185 SDK requests, 11 markup builders, семь Dispatcher-композиций и один SQLite lost-response сценарий. 99 native-фрагментов остаются reference: без Telegram host и аргументов запуск отклоняется до создания процесса. Это не меняет maturity и не добавляет live evidence.
+У всех 304 cookbook-рецептов есть план зависимостей, данных, окружения и прав. 205 Python-рецепта имеют локальный исполнитель: 185 SDK requests, 11 markup builders, восемь Dispatcher-композиций и один SQLite lost-response сценарий. 99 native-фрагментов остаются reference: без Telegram host и аргументов запуск отклоняется до создания процесса. Это не меняет maturity и не добавляет live evidence.
 
 ## Сначала требования
 
@@ -53,6 +53,6 @@ Timeout 1..120 секунд, default 60; bool/NaN/inf отклоняются д�
 
 5 октября 2026 частично сверены [Bot API](https://core.telegram.org/bots/api), условия topic/restrict/Business gift; [Mini Apps](https://core.telegram.org/bots/webapps), contact/write access/clipboard; [Python isolated mode](https://docs.python.org/3.13/using/cmdline.html#cmdoption-I). Aiogram 3.31.0 проверяется установленным wheel consumer. Эта дата относится к перечисленным условиям, не обновляет весь Telegram/payment каталог.
 
-`scripts/verify_recipe_execution.py` проверяет установленный core без SDK, все 204 Python fixtures в SDK consumer, отказ native/missing SDK, безопасные ошибки, сохранение файлов и два guard отказа. Browser tests проверяют requirements panel на phone/tablet/desktop и темах. Это executable fixtures; human/blind agent usability и реальные Telegram-клиенты остаются отдельными проверками.
+`scripts/verify_recipe_execution.py` проверяет установленный core без SDK, все 205 Python fixtures в SDK consumer, отказ native/missing SDK, безопасные ошибки, сохранение файлов и два guard отказа. Browser tests проверяют requirements panel на phone/tablet/desktop и темах. Это executable fixtures; human/blind agent usability и реальные Telegram-клиенты остаются отдельными проверками.
 
 `demo-calendar` — sixth Dispatcher fixture: temporary file SQLite booking/receipt, unavailable dates и DST offsets. Requires aiogram 3.31.0 и pinned tzdata 2026.5; plan сообщает calendar-extra-required или calendar-data-differs-from-checked-fixture до запуска worker.

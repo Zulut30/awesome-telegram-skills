@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "library_version": "0.18.0",
+  "library_version": "0.19.0",
   "distribution": "local; not published to package registries",
   "packages": {
     "python": {
@@ -567,6 +567,22 @@
       "maturity": "experimental",
       "maturity_scope": "All public symbols in this component; local SDK/mock acceptance is not stable 1.0 or live proof",
       "extra": "aiogram"
+    },
+    {
+      "id": "message-text",
+      "language": "python",
+      "import": "telegram_patterns.EntityKind, TextEntity, TextPayload, FormattedText, MessageBuilder, utf16_length, escape_html, escape_markdown_v2, split_formatted",
+      "intent": "Построить сообщение из буквальных вставок и entities, экранировать HTML/MarkdownV2 и разделить длинный текст с сохранением форматирования",
+      "source": "packages/python/src/telegram_patterns/message_text.py",
+      "example": "examples/python/message_text_bot.py",
+      "boundaries": [
+        "Core has no SDK/network/parser dependency; UTF-16 scalar validation, local bounds and explicit formatting subset",
+        "Host owns link trust, valid custom emoji sticker/fallback metadata and verified entitlement/context",
+        "Lossless text/style partition keeps links/quotes/custom emoji atomic; oversized sequence raises before returning any chunks",
+        "Sending a chunk sequence may partially succeed; no delivery/retry/authorization guarantee"
+      ],
+      "maturity": "experimental",
+      "maturity_scope": "All public API symbols in this component; local verification is not a stable 1.0 promise"
     }
   ],
   "maturity_policy": "docs/v1-maturity.md",

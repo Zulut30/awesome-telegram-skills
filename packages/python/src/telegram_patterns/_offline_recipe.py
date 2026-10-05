@@ -22,6 +22,7 @@ _FIXTURES = {
     'demo-selection': ('selection_bot.py', 'offline_selection.py'),
     'demo-calendar': ('calendar_bot.py', 'offline_calendar.py'),
     'demo-dialog-fields': ('dialog_fields_bot.py', 'offline_dialog_fields.py'),
+    'demo-message-text': ('message_text_bot.py', 'offline_message_text.py'),
     'demo-recovery': ('error_recovery.py',),
 }
 _ATTEMPTS = [0]
@@ -132,6 +133,9 @@ def _execute(recipe_id: str) -> dict:
             if recipe_id == 'demo-dialog-fields':
                 assert evidence['business_effects'] == 1 and evidence['field_types'] == 7 and evidence['owner_step_guards'] and evidence['unknown_receipt_same_intent']
                 checks.extend(('seven-dialog-field-types', 'native-candidate-confirmation', 'same-intent-one-sqlite-effect'))
+            if recipe_id == 'demo-message-text':
+                assert evidence['chunks'] > 1 and all(evidence[k] for k in ('literal_injection', 'utf16_offsets', 'split_preserves_entities', 'explicit_parse_mode_none', 'emoji_capability_fallback', 'existing_dispatcher_preserved', 'private_context_guards'))
+                checks.extend(('literal-user-insertions', 'utf16-entities-lossless-partition', 'explicit-default-parse-mode-override', 'custom-emoji-fallback'))
         else:
             assert evidence['effect_count'] == 1 and evidence['replayed'] is True
             checks.extend(('sqlite-one-effect', 'same-key-replay'))

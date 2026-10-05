@@ -1,4 +1,4 @@
-# Матрица поддержки 0.18.0
+# Матрица поддержки 0.19.0
 
 Пункт 005. Машиночитаемый снимок — [support-matrix.json](../catalog/support-matrix.json). «Заявлено» означает dependency/runtime constraint; «проверено» — конкретный прошедший сценарий. Весь declared range не считается проверенным одной комбинацией. API пока experimental.
 
@@ -8,16 +8,16 @@
 | Calendar / IANA | Optional calendar extra: tzdata>=2026.5,<2027; UTC без него | tzdata 2026.5, DST gap/fold и отдельные процессы через установленный wheel | Другие tzdata versions и системные базы требуют проверки конкретного проекта |
 | Python bot adapters | Optional aiogram >=3.31,<4 | aiogram 3.31.0, тот же Python/OS, native SDK construction и synthetic Dispatcher | Другие SDK versions, PTB/TeleBot adapters и live Telegram не подтверждены |
 | TypeScript tooling | Node >=20, ESM; no runtime dependencies | Node 24.19.0, npm 12.0.2, TypeScript 7.0.2, tarball imports/types/build и 26 тест | Другие версии Node/TS и bundlers не объявлены проверенными; CommonJS export отсутствует |
-| Browser UI | DOM/fetch/ESM; Chrome или CHROME_PATH для verification | Chrome 154.0.8037.97, Playwright 1.63.0; 141 example + 694 gallery + 694 export + 66 starter + 76 selected starter + 36 API-reference checks | Другие engines, screen readers и физические устройства отдельно |
+| Browser UI | DOM/fetch/ESM; Chrome или CHROME_PATH для verification | Chrome 154.0.8037.97, Playwright 1.63.0; 141 example + 750 gallery + 750 export + 66 starter + 76 selected starter + 36 API-reference checks | Другие engines, screen readers и физические устройства отдельно |
 | Viewports/themes | Responsive composition | Browser cases: 320–1920 px по ширине, portrait/landscape/tablet/desktop; light/dark | Viewport emulation не настоящие iOS/Android/tablet Telegram clients |
 | Telegram Bot API | Runtime возможности установленного SDK | Snapshot Bot API 10.3: 185 request methods / 400 indexed types, construction | Server permissions, real delivery, payment workflows и все SDK versions не доказаны |
 | Mini App native API | 99 paths / 44 events snapshot, version/platform/presence gates | Types/build, mock native callbacks/listeners и browser compositions | Нет live matrix версий Telegram iOS/Android/Desktop; method availability не permission/auth |
 | Storage | SQLiteOnce/SQLiteSlotStore — file SQLite; host FSM | Local file SQLite/replay; actual spawned-process slot races; MemoryStorage form example | Single-process сервисный FSM/restart — отдельный пример 017 ниже; general FSM/multiworker и production adapters — последующие пункты |
-| Windows symlink case | Directory symlink проверяется при возможности | 222 Python passed; 1 из 223 skipped из-за недоступных directory symlinks | Пропуск не PASS этого filesystem случая |
+| Windows symlink case | Directory symlink проверяется при возможности | 249 Python passed; 1 из 250 skipped из-за недоступных directory symlinks | Пропуск не PASS этого filesystem случая |
 
 Node >=20 — текущий технический минимум manifests, а не рекомендация выбирать Node 20 для production. По [официальной таблице Node.js](https://nodejs.org/en/about/previous-releases) ветка 20 уже EOL; использовать поддерживаемую LTS и затем проверять точную версию приложения. Наш снимок проверен на 24.19.0, что не означает «самая свежая версия».
 
-Текущая приемка: [025.json](v1-checks/025.json), `output/pattern-library-0.18.0/distribution-report.json` и соответствующие logs, привязанные к hashes wheel/tarball. История предыдущих поставок описана ниже. Telegram/live/sandbox evidence сейчас отсутствует, версии клиентов поэтому не выдумываются. Расширение исполняемой OS/runtime matrix относится к 081, device acceptance — к 067; публикация таблицы не закрывает эти пункты.
+Текущая приемка: [026.json](v1-checks/026.json), `output/pattern-library-0.19.0/distribution-report.json` и соответствующие logs, привязанные к hashes wheel/tarball. История предыдущих поставок описана ниже. Telegram/live/sandbox evidence сейчас отсутствует, версии клиентов поэтому не выдумываются. Расширение исполняемой OS/runtime matrix относится к 081, device acceptance — к 067; публикация таблицы не закрывает эти пункты.
 
 Для другого SDK/runtime сохраняйте выбранный стек и выполните relevant consumer/tests перед обещанием совместимости. `doctor` предупреждает об aiogram, отличном от проверенного 3.31.0; проверка формата token не проверяет Telegram identity. Обновление support matrix следует за новым evidence, а не только за изменением диапазона зависимости.
 
@@ -74,3 +74,7 @@ Installed Dispatcher workflow проходит date/time/back/month navigation, 
 ### Расширенные поля — пункт 025
 
 [025.json](v1-checks/025.json) фиксирует 0.18.0: 63 этапа, 223 Python tests (222 passed/1 Windows symlink skip), 26 TypeScript, 156 публичных символов/25 API групп и 30 source typing files. 23 новых behavioral tests покрывают семь типов, current owner/step/reply/candidate guards, возврат/отмену, потерянный prompt/feedback, cancellation и schema corruption. Installed Dispatcher и copied guide сохраняют host help/data; lost receipt после реального SQLite commit сверяется тем же intent с одной записью. 303 recipes, 204 Python fixtures, 226 linked export files; 1707 browser checks и еще 60 first-run. Current FSM/storage/isolation/ACL/retention принадлежит host; native input metadata не подтверждает физическое присутствие или содержание файла. Live/device/independent usability/production evidence отсутствует.
+
+### Безопасные сообщения — пункт 026
+
+[026.json](v1-checks/026.json) фиксирует 0.19.0: 65 этапов, 250 Python tests (249 passed/1 Windows symlink skip), 26 TypeScript, 165 публичных символов/26 API групп и 31 source typing file. 27 новых behavioral/SDK tests покрывают escaping contexts, literal insertions, UTF-16 scalars, nesting, metadata, atomic spans, Unicode sequences и 150 deterministic partition oracle cases. Installed Dispatcher/copied guide сохраняют host help; SDK serialization подавляет default parse mode. Unknown второго chunk прекращает отправку; all-sequence retry отсутствует. 304 recipes, 205 Python fixtures, 231 linked files; 1819 browser checks плюс 60 first-run. Это ограниченный formatting subset без full UAX29/Rich Message parser; live rendering/metadata/entitlement/device/usability/production evidence отсутствует.

@@ -98,7 +98,7 @@ from telegram_patterns import BotSettings, validate_init_data, RecipeCatalog, cr
 assert importlib.util.find_spec('aiogram') is None
 assert Path(telegram_patterns.__file__).is_relative_to(Path(sys.argv[1]))
 assert BotSettings.from_env(environ={'BOT_TOKEN':'100:CORE_FIXTURE'}).token=='100:CORE_FIXTURE'
-assert len(RecipeCatalog().recipes)==303
+assert len(RecipeCatalog().recipes)==304
 assert RecipeCatalog().search('две кнопки')[0].id=='two-columns'
 assert RecipeCatalog().get('two-columns').maturity=='experimental'
 assert RecipeCatalog().get('api.sendPhoto').maturity=='reference'
@@ -127,7 +127,7 @@ print(json.dumps({'core_without_sdk':True,'python':sys.version.split()[0]}))
         if report['core_cli']['recipes'][0]['id'] != 'two-columns':
             raise RuntimeError('Core console recipe search failed')
         report['maturity_cli'] = json.loads(run('maturity-cli', [str(core_console), 'recipes', '--maturity', 'experimental'], consumers))
-        if len(report['maturity_cli']['recipes']) != 19 or any(item['maturity'] != 'experimental' for item in report['maturity_cli']['recipes']):
+        if len(report['maturity_cli']['recipes']) != 20 or any(item['maturity'] != 'experimental' for item in report['maturity_cli']['recipes']):
             raise RuntimeError('Installed maturity CLI filter failed')
         database = consumers / 'booking.sqlite'
         first = json.loads(run('booking-first', [str(python_in(core)), str(ROOT / 'examples/python/booking.py'), str(database)], consumers))
@@ -187,6 +187,10 @@ print(json.dumps({'core_without_sdk':True,'python':sys.version.split()[0]}))
         if not dialog['passed'] or dialog['network'] or not dialog['session_closed'] or dialog['field_types'] != 7 or dialog['business_effects'] != 1 or not all(dialog[k] for k in ('owner_step_guards','native_candidate_confirmation','back_cancel','unknown_receipt_same_intent','existing_dispatcher_preserved','host_data_preserved')):
             raise RuntimeError('Installed seven-field dialog scenario failed')
         report['dialog_fields'] = dialog
+        message_text = json.loads(run('message-text', [str(python_in(sdk)), str(ROOT / 'examples/python/offline_message_text.py')], consumers))
+        if not message_text['passed'] or message_text['network'] or not message_text['session_closed'] or message_text['chunks'] < 2 or not all(message_text[k] for k in ('literal_injection','utf16_offsets','split_preserves_entities','explicit_parse_mode_none','emoji_capability_fallback','existing_dispatcher_preserved','private_context_guards')):
+            raise RuntimeError('Installed literal messages and lossless partition failed')
+        report['message_text'] = message_text
         report['telegram_catalog'] = json.loads(run('telegram-catalog', [str(python_in(sdk)), str(ROOT / 'scripts/build_telegram_catalog.py'), '--check'], consumers))
         report['recipe_gallery'] = json.loads(run('recipe-gallery', [str(python_in(sdk)), str(ROOT / 'scripts/build_recipe_gallery.py'), '--check'], consumers))
         gallery_command = [str(python_in(sdk)), str(ROOT / 'scripts/verify_gallery_export.py'), '--output', str(consumers / 'gallery-export')]
@@ -221,6 +225,7 @@ print(json.dumps({'core_without_sdk':True,'python':sys.version.split()[0]}))
         run('portable-error-recipe', [str(python_in(core)), str(error_example)], consumers)
         report['portable_keyboard_recipe'] = json.loads(run('portable-keyboard-recipe', [str(python_in(sdk)), str(ROOT / 'scripts/verify_keyboard_recipe.py'), str(copied_skill)], consumers))
         report['portable_dialog_recipe'] = json.loads(run('portable-dialog-recipe', [str(python_in(sdk)), str(ROOT / 'scripts/verify_dialog_recipe.py'), str(copied_skill)], consumers))
+        report['portable_message_recipe'] = json.loads(run('portable-message-recipe', [str(python_in(sdk)), str(ROOT / 'scripts/verify_message_recipe.py'), str(copied_skill)], consumers))
         report['portable_developer_recipe'] = json.loads(run('portable-developer-recipe', [str(python_in(core)), str(ROOT / 'scripts/verify_developer_recipe.py'), str(copied_skill)], consumers))
 
         client = consumers / 'typescript'

@@ -48,3 +48,16 @@ async def dialog_service(submission: DialogSubmission) -> str:
 dialog_router: Router = dialog_form_router([NumberField('number', 'Number', 'Number?'), ContactField('contact', 'Contact', 'Contact?')], dialog_service)
 bad_dialog_value: FieldValue = 1.0  # type: ignore[assignment]
 bad_dialog_submit = dialog_form_router([NumberField('n', 'N', 'N?')], lambda submission: 'sync')  # type: ignore[arg-type,return-value]
+
+from telegram_patterns import EntityKind, TextEntity, TextPayload, FormattedText, MessageBuilder, utf16_length, escape_html, escape_markdown_v2, split_formatted
+entity_kind: EntityKind = 'bold'
+formatted: FormattedText = MessageBuilder().text('😀 ').style('literal',entity_kind).build()
+message_payload: TextPayload = formatted.as_kwargs()
+message_parts: tuple[FormattedText, ...] = split_formatted(formatted)
+message_entity: TextEntity = TextEntity('bold',3,7)
+units: int = utf16_length(formatted.text)
+html_literal: str = escape_html('<b>')
+md_literal: str = escape_markdown_v2(')\\',context='link')
+bad_entity_kind: EntityKind = 'HTML'  # type: ignore[assignment]
+bad_message_builder = MessageBuilder().append('raw')  # type: ignore[arg-type]
+bad_markdown_context = escape_markdown_v2('x',context='HTML')  # type: ignore[arg-type]

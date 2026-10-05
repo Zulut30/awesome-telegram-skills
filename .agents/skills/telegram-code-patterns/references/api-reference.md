@@ -1,4 +1,4 @@
-# Справочник API 0.18.0
+# Справочник API 0.19.0
 
 Публичные imports, самостоятельные минимальные композиции и границы каждого символа. Все группы experimental. Рецепты ref.* принадлежат этому справочнику; cookbook RecipeCatalog отдельно содержит Telegram requests/layouts. Исполненные fixtures не доказывают live/device/provider acceptance.
 
@@ -16,6 +16,15 @@
 | `InvalidInitData` | `from telegram_patterns import InvalidInitData` | [ref.core_identity](api-reference-core.md#ref-core_identity) | Контролируемый отказ подписи/кодировки/freshness |
 | `VerifiedLaunch` | `from telegram_patterns import VerifiedLaunch` | [ref.core_identity](api-reference-core.md#ref-core_identity) | Подписанные user_id/auth_date/user |
 | `validate_init_data` | `from telegram_patterns import validate_init_data` | [ref.core_identity](api-reference-core.md#ref-core_identity) | HMAC и freshness raw initData |
+| `EntityKind` | `from telegram_patterns import EntityKind` | [ref.core_message_text](api-reference-core.md#ref-core_message_text) | Literal одиннадцати поддерживаемых outgoing entity типов |
+| `TextEntity` | `from telegram_patterns import TextEntity` | [ref.core_message_text](api-reference-core.md#ref-core_message_text) | Frozen range и проверенные metadata |
+| `TextPayload` | `from telegram_patterns import TextPayload` | [ref.core_message_text](api-reference-core.md#ref-core_message_text) | TypedDict JSON text/entities/parse_mode=None |
+| `FormattedText` | `from telegram_patterns import FormattedText` | [ref.core_message_text](api-reference-core.md#ref-core_message_text) | Immutable snapshot и kwargs/split |
+| `MessageBuilder` | `from telegram_patterns import MessageBuilder` | [ref.core_message_text](api-reference-core.md#ref-core_message_text) | Immutable fluent literal composition и rebased entities |
+| `utf16_length` | `from telegram_patterns import utf16_length` | [ref.core_message_text](api-reference-core.md#ref-core_message_text) | Валидация scalars и подсчет UTF-16 units |
+| `escape_html` | `from telegram_patterns import escape_html` | [ref.core_message_text](api-reference-core.md#ref-core_message_text) | Literal HTML text/attribute escaping |
+| `escape_markdown_v2` | `from telegram_patterns import escape_markdown_v2` | [ref.core_message_text](api-reference-core.md#ref-core_message_text) | Literal escaping в text/code/link контексте |
+| `split_formatted` | `from telegram_patterns import split_formatted` | [ref.core_message_text](api-reference-core.md#ref-core_message_text) | Lossless partition, clipping styles/code и atomic links/quotes/emoji |
 | `OnceResult` | `from telegram_patterns import OnceResult` | [ref.core_storage](api-reference-core.md#ref-core_storage) | Результат эффекта с replay flag |
 | `OperationConflict` | `from telegram_patterns import OperationConflict` | [ref.core_storage](api-reference-core.md#ref-core_storage) | Тот же scoped key с другим payload |
 | `SQLiteOnce` | `from telegram_patterns import SQLiteOnce` | [ref.core_storage](api-reference-core.md#ref-core_storage) | Инициализация и атомарный run в файле SQLite |

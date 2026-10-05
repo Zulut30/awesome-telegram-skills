@@ -33,7 +33,7 @@ def main() -> int:
         return result.stdout
     builder = ROOT / 'scripts/build_recipe_gallery.py'
     result = json.loads(run('export', [sys.executable, builder, '--output-dir', gallery]))
-    assert result['recipes'] == 303 and not result['telegram_network']
+    assert result['recipes'] == 304 and not result['telegram_network']
     marker = gallery / 'owned.txt'; marker.write_bytes(b'preserve consumer notes\n')
     before = {p.relative_to(gallery): hashlib.sha256(p.read_bytes()).hexdigest() for p in gallery.rglob('*') if p.is_file()}
     run('check', [sys.executable, builder, '--output-dir', gallery, '--check'])
@@ -48,7 +48,8 @@ def main() -> int:
              ('navigation', ['история', '--task', 'navigation', '--context', 'private', '--sdk', 'aiogram'], 'demo-navigation'),
              ('selection', ['multiselect', '--task', 'input', '--context', 'private', '--sdk', 'aiogram'], 'demo-selection'),
              ('calendar', ['календарь', '--task', 'input', '--context', 'private', '--sdk', 'aiogram'], 'demo-calendar'),
-             ('dialog-fields', ['поля', '--task', 'input', '--context', 'private', '--sdk', 'aiogram'], 'demo-dialog-fields')]
+             ('dialog-fields', ['поля', '--task', 'input', '--context', 'private', '--sdk', 'aiogram'], 'demo-dialog-fields'),
+             ('message-text', ['форматирование', '--task', 'bot', '--context', 'private', '--sdk', 'aiogram'], 'demo-message-text')]
     for label, arguments, expected in cases:
         response = json.loads(run(label, [sys.executable, '-m', 'telegram_patterns', 'recipes', *arguments]))
         assert response['matches'] and response['recipes'][0]['source_files'] and response['recipes'][0]['check_files']

@@ -127,6 +127,7 @@ def build(root: Path = ROOT) -> dict:
         ('selection_bot.py', 'offline_selection.py', 'demo-selection', 'Переключатели, выбор, количество и подтверждение'),
         ('calendar_bot.py', 'offline_calendar.py', 'demo-calendar', 'Календарь и запись на свободное время'),
         ('dialog_fields_bot.py', 'offline_dialog_fields.py', 'demo-dialog-fields', 'Семь типов полей диалога'),
+        ('message_text_bot.py', 'offline_message_text.py', 'demo-message-text', 'Безопасные сообщения и разбиение текста'),
     ):
         result = subprocess.run([sys.executable, str(root / 'examples/python' / offline)], capture_output=True,
                                 text=True, encoding='utf-8', env=environment, timeout=60)
@@ -155,6 +156,13 @@ def build(root: Path = ROOT) -> dict:
             records[-1]['keywords'] += ['поля', 'число', 'email', 'телефон', 'файл', 'контакт', 'геопозиция', 'ForceReply', 'candidate', 'шаг']
             records[-1]['source_files'] += ['packages/python/src/telegram_patterns/dialog_fields.py', 'packages/python/src/telegram_patterns/dialog_forms.py']
             records[-1]['check_files'].append('packages/python/tests/test_dialog_forms.py')
+        if key == 'demo-message-text':
+            records[-1]['summary'] = 'Literal text + entities с UTF-16 offsets; интеграция в текущий Dispatcher, без polling на import.'
+            records[-1]['tasks'] = ['bot']
+            records[-1]['keywords'] += ['форматирование', 'экранирование', 'html', 'MarkdownV2', 'entities', 'UTF-16', 'custom', 'emoji', 'разбиение', 'сообщения']
+            records[-1]['source_files'].append('packages/python/src/telegram_patterns/message_text.py')
+            records[-1]['check_files'] += ['packages/python/tests/test_message_text.py', 'packages/python/tests/test_message_text_sdk.py']
+            records[-1]['scope'] = 'Actual synthetic Dispatcher/StubSession и SDK wire serialization; delivery, Unicode asset metadata, entitlement и physical client не подтверждены.'
     recovery_file = root / 'examples/python/error_recovery.py'
     recovery = subprocess.run([sys.executable, str(recovery_file)], capture_output=True, text=True, encoding='utf-8', env=environment, timeout=60)
     if recovery.returncode: raise ValueError('Recovery fixture failed')

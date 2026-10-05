@@ -152,3 +152,7 @@ CLI `run-recipe ID [--offline] [--timeout SECONDS]` сначала flush-ит pl
 ## Типизированный ввод диалога — 0.18.0
 
 `telegram_patterns.aiogram` экспортирует `FieldValue` (string или flat metadata mapping), семь field classes и `DialogSubmission`/`dialog_form_router`. [Полный контракт и готовая композиция](dialog-fields.md) описывают configuration bounds, owner/step/reply guards, native candidate confirmation и сохранение intent после unknown. Новый DTO делает deep snapshot flat metadata и возвращает JSON-копию через as_dict; старые TextField/FormSubmission/text_form_router совместимы. Custom TextField validator требует явного schema_version при смене правила. Storage/isolation/ACL/effect/retention принадлежат host.
+
+## Конструктор сообщений — 0.19.0
+
+Девять SDK-free exports `EntityKind/TextEntity/TextPayload/FormattedText/MessageBuilder/utf16_length/escape_html/escape_markdown_v2/split_formatted` описаны в [контрактах и полной композиции](message-text.md). Immutable snapshots, literal user text, UTF-16 scalar ranges, ограниченная nesting policy, явный parse_mode=None, local size/entity/chunk bounds и atomic lossless partition; custom metadata/entitlement/link trust/delivery принадлежат host. Нет полного Unicode UAX29 parser, rich messages или гарантии exactly-once доставки.

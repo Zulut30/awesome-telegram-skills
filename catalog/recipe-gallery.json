@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "library_version": "0.18.0",
+  "library_version": "0.19.0",
   "source_snapshot": "2026-10-04",
   "source_hashes": {
     "bot_api": "29f5f25caa18d303f14ce83af5a4df784eb3094c3076cb040a1ad950c157ad44",
@@ -21232,6 +21232,88 @@
       }
     },
     {
+      "id": "demo-message-text",
+      "title": "Безопасные сообщения и разбиение текста",
+      "summary": "Literal text + entities с UTF-16 offsets; интеграция в текущий Dispatcher, без polling на import.",
+      "category": "scenarios",
+      "language": "python",
+      "maturity": "experimental",
+      "keywords": [
+        "бот",
+        "пример",
+        "callback",
+        "меню",
+        "события",
+        "композиция",
+        "бота",
+        "личный",
+        "чат",
+        "форматирование",
+        "экранирование",
+        "html",
+        "MarkdownV2",
+        "entities",
+        "UTF-16",
+        "custom",
+        "emoji",
+        "разбиение",
+        "сообщения"
+      ],
+      "code": "\"\"\"Attach a literal report handler to the host Dispatcher; no polling on import.\"\"\"\nfrom aiogram import Dispatcher, F, Router\nfrom aiogram.filters import Command\nfrom aiogram.types import Message\nfrom aiogram.methods import SendMessage\nfrom telegram_patterns import FormattedText, MessageBuilder\n\n\ndef compose_report(name: str, notes: str, *, emoji_id: str | None = None) -> tuple[FormattedText, ...]:\n    # Both values are literal, even when they contain Telegram markup.\n    builder = MessageBuilder().style('Отчет\\n', 'bold').text('Имя: ').style(name, 'italic')\n    builder = builder.text('\\nЗаметки:\\n').text(notes).text('\\n').style('Документация', 'text_link', url='https://core.telegram.org/bots/api')\n    if emoji_id is not None:\n        # Host inspects sticker metadata to choose its valid regular emoji fallback.\n        builder = builder.text(' ').custom_emoji('👍', emoji_id)\n    return builder.build().split()\n\n\ndef attach_reports(dispatcher: Dispatcher) -> Router:\n    router = Router(name='message-report')\n\n    private = (F.chat.type == 'private') & (F.message_thread_id == None) & (F.is_topic_message != True) & (F.business_connection_id == None)\n    @router.message(Command('report'), private)\n    async def report(message: Message):\n        if message.from_user is None or message.from_user.is_bot:\n            return\n        # Example policy: only a public synthetic report, no private records/ACL claim.\n        chunks = compose_report(message.from_user.full_name, '<b>буквальный текст</b> *_ [] & 😀\\n' * 160)\n        for chunk in chunks:\n            # Explicit None overrides host HTML/MarkdownV2 defaults. SDK validates JSON.\n            # Delivery may stop after a partial prefix. Never retry the whole sequence blindly.\n            await message.bot(SendMessage.model_validate({'chat_id': message.chat.id, **chunk.as_kwargs()}))\n\n    dispatcher.include_router(router)\n    return router\n",
+      "verification": "mock",
+      "scope": "Actual synthetic Dispatcher/StubSession и SDK wire serialization; delivery, Unicode asset metadata, entitlement и physical client не подтверждены.",
+      "sources": [
+        "https://core.telegram.org/bots/api"
+      ],
+      "preview": null,
+      "code_sha256": "04a4a7c96ee37ca97231aa327c08d9e3e23a7f125525b42be74dbab66f614ff5",
+      "tasks": [
+        "bot"
+      ],
+      "contexts": [
+        "private"
+      ],
+      "sdk": "aiogram",
+      "sdk_version": "3.31.0",
+      "api_version": "bot:10.3",
+      "source_files": [
+        "examples/python/message_text_bot.py",
+        "packages/python/src/telegram_patterns/message_text.py",
+        "packages/python/src/telegram_patterns/execution.py",
+        "packages/python/src/telegram_patterns/_offline_recipe.py"
+      ],
+      "check_files": [
+        "examples/python/offline_message_text.py",
+        "packages/python/tests/test_message_text.py",
+        "packages/python/tests/test_message_text_sdk.py"
+      ],
+      "execution": {
+        "kind": "dispatcher",
+        "dependencies": [
+          "aiogram==3.31.0"
+        ],
+        "offline_environment": [],
+        "offline_permissions": [],
+        "offline_data": [
+          "Только поставляемые синтетические данные; реальные IDs и secrets не принимаются."
+        ],
+        "live_environment": [
+          "BOT_TOKEN"
+        ],
+        "live_permissions": [
+          "Прикладная авторизация сервиса; fixture actor не доказывает server ACL."
+        ],
+        "live_data": [
+          "Текущий Dispatcher, реальные actor/chat и сервис приложения",
+          "Проверка объекта, автора и состояния до effect/replay"
+        ],
+        "live_review": "Live executor отсутствует. Перед интеграцией проверить источники, ограничения конкретного метода/контекста, auth и ACL; metadata не подтверждает права.",
+        "effects": [
+          "Synthetic Dispatcher + StubSession; временная fixture, без polling"
+        ]
+      }
+    },
+    {
       "id": "demo-recovery",
       "title": "Потерянный ответ: сверка той же операции",
       "summary": "SQLite effect уже сохранен; unknown outcome сверяется тем же scoped ID без второго заказа.",
@@ -21267,7 +21349,7 @@
         "backend"
       ],
       "sdk": "python-core",
-      "sdk_version": "0.18.0",
+      "sdk_version": "0.19.0",
       "api_version": "none",
       "source_files": [
         "examples/python/error_recovery.py",
