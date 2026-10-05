@@ -1,6 +1,6 @@
 # Первый запуск: бот и экран Mini App
 
-Этот пример проверен на Windows с PowerShell, Python 3.13, Node.js 24 и локальной поставкой **0.12.0**. Требуются Python >=3.11 и Node.js >=20; проверенные версии перечислены в матрице поддержки проекта. Пакеты пока не опубликованы в PyPI/npm: получите wheel и tarball от владельца проекта. Оба файла должны относиться к одной поставке.
+Этот пример проверен на Windows с PowerShell, Python 3.13, Node.js 24 и локальной поставкой **0.13.0**. Требуются Python >=3.11 и Node.js >=20; проверенные версии перечислены в матрице поддержки проекта. Пакеты пока не опубликованы в PyPI/npm: получите wheel и tarball от владельца проекта. Оба файла должны относиться к одной поставке.
 
 До начала: установка Python/npm-зависимостей может использовать интернет. `init`, `offline.py` и локальная форма не требуют настоящего токена, аккаунта Telegram или платежных ключей. Бот выполняет настоящий aiogram Dispatcher через `StubSession`; экран проверяет ввод локально. Backend, серверная авторизация и отправка формы здесь еще не подключены.
 
@@ -10,7 +10,7 @@
 
 <!-- quickstart:parameters -->
 ```powershell
-$tgArtifacts = 'C:\path\to\pattern-library-0.12.0\artifacts'
+$tgArtifacts = 'C:\path\to\pattern-library-0.13.0\artifacts'
 $tgWorkspace = Join-Path $env:TEMP 'telegram-first-run'
 $tgPreviewPort = 4173
 ```
@@ -18,9 +18,9 @@ $tgPreviewPort = 4173
 <!-- quickstart:setup -->
 ```powershell
 $ErrorActionPreference = 'Stop'
-$tgWheel = Join-Path $tgArtifacts 'awesome_telegram_patterns-0.12.0-py3-none-any.whl'
-$tgTarball = Join-Path $tgArtifacts 'awesome-telegram-patterns-0.12.0.tgz'
-if (!(Test-Path -LiteralPath $tgWheel -PathType Leaf) -or !(Test-Path -LiteralPath $tgTarball -PathType Leaf)) { throw 'Нужны оба локальных артефакта 0.12.0' }
+$tgWheel = Join-Path $tgArtifacts 'awesome_telegram_patterns-0.13.0-py3-none-any.whl'
+$tgTarball = Join-Path $tgArtifacts 'awesome-telegram-patterns-0.13.0.tgz'
+if (!(Test-Path -LiteralPath $tgWheel -PathType Leaf) -or !(Test-Path -LiteralPath $tgTarball -PathType Leaf)) { throw 'Нужны оба локальных артефакта 0.13.0' }
 if (Test-Path -LiteralPath $tgWorkspace) { throw 'Выберите новый каталог tgWorkspace' }
 New-Item -ItemType Directory -Path $tgWorkspace | Out-Null
 Set-Location -LiteralPath $tgWorkspace

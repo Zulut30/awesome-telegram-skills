@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "library_version": "0.12.0",
+  "library_version": "0.13.0",
   "scope": "Public library exports; ref.* recipes belong to the API reference, not the Telegram method snapshot",
   "groups": [
     {
@@ -32,6 +32,21 @@
       "example": "examples/api-reference/python/core_recipes.py",
       "limits": "Чтение не исполняет recipe code. Maturity отдельно от verification; SDK/mock не доказывают live/device. Preview — независимая копия. Этот пример ищет существующий cookbook recipe two-columns; ref.* — имена справочника API.",
       "api": {"telegram_patterns": {"Maturity": "Literal stable/experimental/reference", "VerificationLevel": "Literal sdk/mock/browser/live/not_run", "Recipe": "Неизменяемая запись и копия preview", "RecipeCatalog": "Версия, recipes, get/search с фильтрами"}}
+    },
+    {
+      "id": "core_execution",
+      "section": "core",
+      "title": "Требования и явная offline проверка",
+      "example": "examples/api-reference/python/core_execution.py",
+      "limits": "Только установленный доверенный wheel и закрытые fixtures. Plan не читает secret values. Runner не исполняет recipe.code/приложение; native references отказывает до child. Python -I/-B, системный env allowlist, временный cwd; это не OS sandbox. Нет live rights/auth/device acceptance.",
+      "api": {
+        "telegram_patterns": {
+          "RecipeRunPlan": "Неизменяемые требования offline/live и причины недоступности",
+          "RecipeRunResult": "Результат известной локальной fixture без Telegram requests",
+          "plan_recipe": "Read-only план всех cookbook рецептов",
+          "run_recipe_offline": "Явный изолированный запуск известной Python fixture"
+        }
+      }
     },
     {
       "id": "core_starter", "section": "core", "title": "Новый проект из предоставленного wheel",

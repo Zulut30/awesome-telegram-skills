@@ -10,6 +10,7 @@ import zipfile
 from .diagnostics import diagnose
 from .errors import PatternError, safe_error_report
 from .recipes import RecipeCatalog
+from .execution import plan_recipe, run_recipe_offline
 from .starter import create_starter
 from .starter_components import StarterConflict, starter_components
 
@@ -34,6 +35,10 @@ def main(argv: list[str] | None = None) -> int:
     init.add_argument('--list-components', action='store_true', help='List the closed starter registry; no filesystem or network')
     diagnostics = commands.add_parser('doctor', help='Read-only local diagnostics; never prints token')
     diagnostics.add_argument('target', nargs='?', default='.'); diagnostics.add_argument('--require-token', action='store_true')
+    run_recipe = commands.add_parser('run-recipe', help='Show prerequisites; --offline runs only a bundled fixture')
+    run_recipe.add_argument('recipe_id')
+    run_recipe.add_argument('--offline', action='store_true')
+    run_recipe.add_argument('--timeout', type=float, default=60.0)
     args = parser.parse_args(argv)
     try:
         if args.command == 'recipes':
@@ -48,6 +53,15 @@ def main(argv: list[str] | None = None) -> int:
                     {'id': item.id, 'title': item.title, 'category': item.category, 'maturity': item.maturity, 'verification': item.verification, 'scope': item.scope,
                      'tasks': item.tasks, 'contexts': item.contexts, 'sdk': item.sdk, 'sdk_version': item.sdk_version, 'api_version': item.api_version,
                      'source_files': item.source_files, 'check_files': item.check_files} for item in found]}, ensure_ascii=False))
+        elif args.command == 'run-recipe':
+            from dataclasses import asdict
+            execution_plan = plan_recipe(args.recipe_id)
+            # -I ignores PYTHONUTF8 on Windows; ASCII JSON preserves every Unicode
+            # value while remaining decodable across redirected console encodings.
+            print(json.dumps({'stage': 'plan', **asdict(execution_plan), 'offline_ready': execution_plan.offline_ready}), flush=True)
+            if args.offline:
+                result = run_recipe_offline(args.recipe_id, timeout=args.timeout)
+                print(json.dumps({'stage': 'result', **asdict(result)}))
         elif args.command == 'init':
             if args.list_components:
                 if args.target or args.library or args.typescript or args.component or args.dry_run:

@@ -1,4 +1,4 @@
-# Матрица поддержки 0.12.0
+# Матрица поддержки 0.13.0
 
 Пункт 005. Машиночитаемый снимок — [support-matrix.json](../catalog/support-matrix.json). «Заявлено» означает dependency/runtime constraint; «проверено» — конкретный прошедший сценарий. Весь declared range не считается проверенным одной комбинацией. API пока experimental.
 
@@ -7,16 +7,16 @@
 | Python core | Python >=3.11, stdlib, без SDK | 3.13.12, Windows 11 AMD64, установленный wheel без aiogram; CLI/core/SQLite consumers | Остальные Python versions и Linux/macOS требуют отдельной матрицы |
 | Python bot adapters | Optional aiogram >=3.31,<4 | aiogram 3.31.0, тот же Python/OS, native SDK construction и synthetic Dispatcher | Другие SDK versions, PTB/TeleBot adapters и live Telegram не подтверждены |
 | TypeScript tooling | Node >=20, ESM; no runtime dependencies | Node 24.19.0, npm 12.0.2, TypeScript 7.0.2, tarball imports/types/build и 26 тест | Другие версии Node/TS и bundlers не объявлены проверенными; CommonJS export отсутствует |
-| Browser UI | DOM/fetch/ESM; Chrome или CHROME_PATH для verification | Chrome 154.0.8037.97, Playwright 1.63.0; 141 example + 414 gallery + 414 export + 66 starter + 76 selected starter + 36 API-reference checks | Другие engines, screen readers и физические устройства отдельно |
+| Browser UI | DOM/fetch/ESM; Chrome или CHROME_PATH для verification | Chrome 154.0.8037.97, Playwright 1.63.0; 141 example + 470 gallery + 470 export + 66 starter + 76 selected starter + 36 API-reference checks | Другие engines, screen readers и физические устройства отдельно |
 | Viewports/themes | Responsive composition | Browser cases: 320–1920 px по ширине, portrait/landscape/tablet/desktop; light/dark | Viewport emulation не настоящие iOS/Android/tablet Telegram clients |
 | Telegram Bot API | Runtime возможности установленного SDK | Snapshot Bot API 10.3: 185 request methods / 400 indexed types, construction | Server permissions, real delivery, payment workflows и все SDK versions не доказаны |
 | Mini App native API | 99 paths / 44 events snapshot, version/platform/presence gates | Types/build, mock native callbacks/listeners и browser compositions | Нет live matrix версий Telegram iOS/Android/Desktop; method availability не permission/auth |
 | Storage | SQLiteOnce только file SQLite; host FSM | Local file SQLite/replay; MemoryStorage form example | Durable FSM/restart/multiworker, production storage adapters — последующие пункты |
-| Windows symlink case | Directory symlink проверяется при возможности | 114 Python passed; 1 из 115 skipped из-за недоступных directory symlinks | Пропуск не PASS этого filesystem случая |
+| Windows symlink case | Directory symlink проверяется при возможности | 119 Python passed; 1 из 120 skipped из-за недоступных directory symlinks | Пропуск не PASS этого filesystem случая |
 
 Node >=20 — текущий технический минимум manifests, а не рекомендация выбирать Node 20 для production. По [официальной таблице Node.js](https://nodejs.org/en/about/previous-releases) ветка 20 уже EOL; использовать поддерживаемую LTS и затем проверять точную версию приложения. Наш снимок проверен на 24.19.0, что не означает «самая свежая версия».
 
-Evidence: [015.json](v1-checks/015.json), `output/pattern-library-0.12.0/distribution-report.json` и соответствующие logs, привязанные к hashes wheel/tarball. Telegram/live/sandbox evidence сейчас отсутствует, версии клиентов поэтому не выдумываются. Расширение исполняемой OS/runtime matrix относится к 081, device acceptance — к 067; публикация таблицы не закрывает эти пункты.
+Evidence: [016.json](v1-checks/016.json), `output/pattern-library-0.13.0/distribution-report.json` и соответствующие logs, привязанные к hashes wheel/tarball. Telegram/live/sandbox evidence сейчас отсутствует, версии клиентов поэтому не выдумываются. Расширение исполняемой OS/runtime matrix относится к 081, device acceptance — к 067; публикация таблицы не закрывает эти пункты.
 
 Для другого SDK/runtime сохраняйте выбранный стек и выполните relevant consumer/tests перед обещанием совместимости. `doctor` предупреждает об aiogram, отличном от проверенного 3.31.0; проверка формата token не проверяет Telegram identity. Обновление support matrix следует за новым evidence, а не только за изменением диапазона зависимости.
 
@@ -37,3 +37,5 @@ Evidence: [015.json](v1-checks/015.json), `output/pattern-library-0.12.0/distrib
 В 0.11.1 проверен [API-справочник](api-reference.md): 75 Python и 41 TypeScript symbol, CLI и CSS, 13 Python и 5 TypeScript композиций из точного кода документации. Compiler-symbol audit подтверждает 41 используемый binding из установленного tarball: 19 runtime values и 22 types; 7 negative typing cases и отдельный отказ unused imported type. Mypy проверяет 14 example files. 36 новых Chrome checks относятся к документации, а не к physical device acceptance: общая поставка проходит 55 этапов и 564 browser checks, документированный первый запуск — еще 60. История 0.11.0 и ее артефакты сохраняются.
 
 В 0.12.0 проверены [навигация галереи](gallery-navigation.md), пересечения task/context/SDK/version/maturity/evidence и три запроса CLI. Экспорт содержит 201 byte-exact source/check files и проходит 414 Chrome checks вне репозитория; рабочая галерея проходит еще 414. Всего поставка проходит 56 этапов и 1147 browser checks, документированный первый запуск — еще 60 на тех же hashes. В новом Windows consumer измерен SDK import 11.792s: прежний timeout 10s воспроизведен как отказ, новый ограниченный 30s probe прошел. Ошибки, timeout и защитные проверки импорта сохраняются; это не обещание скорости другого окружения.
+
+В 0.13.0 [планы и offline runner](recipe-execution.md) проверены через установленный wheel: requirements всех 299 recipes, 200 Python fixtures, native/missing SDK отказ до child, caller preservation и два guard отказа. Mypy проверяет 21 source file; API reference — 120 символов и 14 Python композиций. Поставка проходит 57 этапов и 1259 Chrome checks; первый запуск — еще 60 на тех же hashes. Раскрытые requirements помещаются на phone/tablet/desktop в темах; это не physical device или live permission acceptance.

@@ -6,6 +6,7 @@ import importlib.util
 import importlib.metadata
 import json
 import os
+import re
 from pathlib import Path
 import subprocess
 import sys
@@ -146,6 +147,55 @@ def build(root: Path = ROOT) -> dict:
         [API], tasks=['recovery'], contexts=['backend'], sdk='python-core', sdk_ver=version, api_version='none',
         source_files=['examples/python/error_recovery.py', 'packages/python/src/telegram_patterns/sqlite_once.py'],
         check_files=['examples/python/error_recovery.py'])
+    # Execution metadata describes fixtures and required live project input separately.
+    import aiogram.methods as sdk_methods
+    method_specs = {m['name']: m for m in api['bot_api']['methods']}
+    rights = {
+        'createForumTopic': ['В supergroup: administrator + can_manage_topics; private — отдельный допустимый контекст.'],
+        'editForumTopic': ['В supergroup: administrator + can_manage_topics, кроме создателя темы; private — отдельный контекст.'],
+        'restrictChatMember': ['Supergroup: бот administrator с правами ограничения участников.'],
+        'getBusinessAccountGifts': ['Действующий Business connection и can_view_gifts_and_stars.'],
+    }
+    for record in records:
+        native = record['category'] == 'mini-app'
+        kind = 'reference' if native else 'sdk-request' if record['category'] == 'bot-api' else 'sdk-markup' if record['category'] == 'keyboards' else 'sqlite' if record['id'] == 'demo-recovery' else 'dispatcher'
+        permissions = []
+        live_data = []
+        if kind == 'sdk-request':
+            spec = method_specs[record['id'].removeprefix('api.')]
+            live_data = list(spec['required'])
+            model = getattr(sdk_methods, spec['sdk_class'])
+            hints = sorted(set(re.findall(r'\bcan_[a-z_]+\b', model.__doc__ or '')))
+            permissions = rights.get(spec['name'], ['SDK упоминает ' + ', '.join(hints) + '; обязательность и условия проверить в официальном методе.'] if hints else ['Права и контекст метода не полностью индексированы: проверить официальные ограничения.'])
+        elif kind == 'sdk-markup':
+            live_data = ['Реальные chat/actor, handler и callback/message correlation']
+            permissions = ['Проверить фактический chat type, отправку и права автора действия.']
+            if record['id'] == 'emoji-fallback': permissions.append('Реальный custom emoji ID и доступность; по умолчанию текстовый fallback.')
+            if record['id'] in {'contact-location', 'url-app'}: permissions.append('Обычный private bot chat; соответствующее действие подтверждает пользователь.')
+        elif kind == 'dispatcher':
+            live_data = ['Текущий Dispatcher, реальные actor/chat и сервис приложения', 'Проверка объекта, автора и состояния до effect/replay']
+            permissions = ['Прикладная авторизация сервиса; fixture actor не доказывает server ACL.']
+        elif kind == 'sqlite':
+            live_data = ['Путь к БД сервиса, проверенный actor scope и неизменяемый operation key']
+            permissions = ['Авторизация до записи и возврата сохраненного результата.']
+        else:
+            live_data = ['Host Telegram.WebApp и аргументы: ' + record['summary'], 'Клиентская версия, launch mechanism и server auth/ACL приложения']
+            if record['id'] in {'native.requestContact', 'native.requestWriteAccess'}:
+                permissions = ['Пользователь подтверждает native запрос; наличие метода не означает согласие.']
+            elif record['id'] == 'native.readTextFromClipboard':
+                permissions = ['Запуск из attachment menu и действие пользователя.']
+        record['execution'] = {
+            'kind': kind,
+            'dependencies': [] if kind == 'sqlite' else ['Предоставленный TypeScript tarball и host Mini App'] if native else ['aiogram==' + sdk_version],
+            'offline_environment': [], 'offline_permissions': [],
+            'offline_data': [] if native else ['Только поставляемые синтетические данные; реальные IDs и secrets не принимаются.'],
+            'live_environment': [] if kind == 'sqlite' else ['HTTPS_APP_URL', 'TELEGRAM_WEBAPP_CONTEXT'] if native else ['BOT_TOKEN'],
+            'live_permissions': permissions, 'live_data': live_data,
+            'live_review': 'Live executor отсутствует. Перед интеграцией проверить источники, ограничения конкретного метода/контекста, auth и ACL; metadata не подтверждает права.',
+            'effects': ['Локальные SDK объекты без HTTP'] if kind.startswith('sdk-') else ['Временные файлы/SQLite fixture, очищаемые после обычного завершения'] if kind == 'sqlite' else ['Synthetic Dispatcher + StubSession; временная fixture, без polling'] if kind == 'dispatcher' else ['Offline fragment execution недоступен без host/аргументов'],
+        }
+        if not native:
+            record['source_files'] += ['packages/python/src/telegram_patterns/execution.py', 'packages/python/src/telegram_patterns/_offline_recipe.py']
     data = {'schema_version': 1, 'library_version': version, 'source_snapshot': api['checked_date'],
             'source_hashes': {'bot_api': api['bot_api']['source_sha256'], 'mini_app': api['mini_app']['source_sha256']},
             'recipes': records, 'navigation': NAVIGATION}
@@ -182,6 +232,9 @@ def main():
                     raise ValueError('Source links are not allowed')
                 products[output / 'files' / name] = source.read_bytes()
     else:
+        products[ROOT / 'packages/python/src/telegram_patterns/resources/request-fixtures.json'] = (ROOT / 'catalog/bot-api-request-fixtures.json').read_bytes()
+        for name in ('bot.py', 'offline_bot.py', 'form_bot.py', 'offline_form.py', 'keyboards_bot.py', 'offline_keyboards.py', 'error_recovery.py'):
+            products[ROOT / 'packages/python/src/telegram_patterns/resources/offline' / (name + '.txt')] = (ROOT / 'examples/python' / name).read_bytes()
         products[ROOT / 'packages/python/src/telegram_patterns/resources/recipes.json'] = encoded
         products[ROOT / 'catalog/recipe-gallery.json'] = encoded
     for path in products:

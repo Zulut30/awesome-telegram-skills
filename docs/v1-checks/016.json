@@ -1,0 +1,88 @@
+{
+  "roadmap_item": 16,
+  "version": "0.13.0",
+  "checked_date": "2026-10-05",
+  "passed": true,
+  "report": "output/pattern-library-0.13.0/distribution-report.json",
+  "report_sha256": "4cebed160728292a5a20f20e07d83179c0dfeaf39c17fad60ecc706fd8f501be",
+  "distribution_stages": 57,
+  "python_tests": {
+    "run": 120,
+    "passed": 119,
+    "skipped": 1
+  },
+  "typescript_tests": 26,
+  "browser_scope": {
+    "browser": 141,
+    "gallery_browser": 470,
+    "starter_browser": 66,
+    "selected_starter_browser": 76,
+    "api_reference_browser": 36,
+    "gallery_export_browser": 470
+  },
+  "full_browser_checks": 1259,
+  "documented_first_run_browser_checks": 60,
+  "root_tests": 26,
+  "skills_checked": 41,
+  "artifacts": [
+    {
+      "name": "awesome_telegram_patterns-0.13.0-py3-none-any.whl",
+      "bytes": 145339,
+      "sha256": "3c9ee0fbc10909b97f93bac7fcfe3034f15b72c823eaa9721517ccfc6362fa63"
+    },
+    {
+      "name": "awesome-telegram-patterns-0.13.0.tgz",
+      "bytes": 19517,
+      "sha256": "ea3f71549501290905a895be782cbfa4d9a63749b31ad160da5d00cd20f9ca00"
+    }
+  ],
+  "distribution_contract": {
+    "passed": true,
+    "version": "0.13.0",
+    "network": false,
+    "extracts_files": false,
+    "wheel": {
+      "files": 53,
+      "source_files_exact": 48,
+      "record_verified": true
+    },
+    "tarball": {
+      "files": 21,
+      "modules_with_types": 9,
+      "css_exact": true
+    },
+    "limits": "Content/metadata check; imports, installed types, CLI and browser runtime are separate consumer stages."
+  },
+  "recipe_execution": {
+    "plans": 299,
+    "kind_counts": {
+      "sdk-markup": 11,
+      "sdk-request": 185,
+      "reference": 99,
+      "dispatcher": 3,
+      "sqlite": 1
+    },
+    "python_fixtures_passed": 200,
+    "native_reference_refused": true,
+    "missing_sdk_refused": true,
+    "caller_files_preserved": true,
+    "guard_denials": 2,
+    "telegram_requests": false
+  },
+  "api_reference_symbols": 120,
+  "api_reference_python_cases": 14,
+  "gallery_export_source_check_files": 203,
+  "first_run_report": "output/v1-quickstart-016-final/report.json",
+  "first_run_report_sha256": "3f22e38c40457ea9bf9034a1c452f7a91d4626a282f9af60eec8dcc1c0822ed0",
+  "evidence": {
+    "execution": "docs/v1-checks/016-execution.json",
+    "first_run": "docs/v1-checks/016-first-run.json",
+    "regressions": "docs/v1-checks/016-regression.json"
+  },
+  "documentation": {
+    "docs/recipe-execution.md": "07cedae9bd11bd8c6c80393206b1afc1586b737f3168b579e360eaf667beb77a",
+    "docs/api-reference-core.md": "d5e0e8b3c7900abcaf3917694dc04bc3e4eeed72a81f10cd3aaec47b34bf8fde",
+    "docs/quickstart.md": "f8396e5efe93a9cd98ad997adc74a8686f160dfff60cc246077426603c6f339f"
+  },
+  "limits": "Experimental local wheel/tarball. Offline fixtures and Chrome viewports do not prove live Telegram, full rights/ACL, payment settlement, physical clients, human usability or OS sandbox."
+}

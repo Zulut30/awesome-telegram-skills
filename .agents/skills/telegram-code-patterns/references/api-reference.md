@@ -1,4 +1,4 @@
-# Справочник API 0.12.0
+# Справочник API 0.13.0
 
 Публичные imports, самостоятельные минимальные композиции и границы каждого символа. Все группы experimental. Рецепты ref.* принадлежат этому справочнику; cookbook RecipeCatalog отдельно содержит Telegram requests/layouts. Исполненные fixtures не доказывают live/device/provider acceptance.
 
@@ -43,6 +43,10 @@
 | `VerificationLevel` | `from telegram_patterns import VerificationLevel` | [ref.core_recipes](api-reference-core.md#ref-core_recipes) | Literal sdk/mock/browser/live/not_run |
 | `Recipe` | `from telegram_patterns import Recipe` | [ref.core_recipes](api-reference-core.md#ref-core_recipes) | Неизменяемая запись и копия preview |
 | `RecipeCatalog` | `from telegram_patterns import RecipeCatalog` | [ref.core_recipes](api-reference-core.md#ref-core_recipes) | Версия, recipes, get/search с фильтрами |
+| `RecipeRunPlan` | `from telegram_patterns import RecipeRunPlan` | [ref.core_execution](api-reference-core.md#ref-core_execution) | Неизменяемые требования offline/live и причины недоступности |
+| `RecipeRunResult` | `from telegram_patterns import RecipeRunResult` | [ref.core_execution](api-reference-core.md#ref-core_execution) | Результат известной локальной fixture без Telegram requests |
+| `plan_recipe` | `from telegram_patterns import plan_recipe` | [ref.core_execution](api-reference-core.md#ref-core_execution) | Read-only план всех cookbook рецептов |
+| `run_recipe_offline` | `from telegram_patterns import run_recipe_offline` | [ref.core_execution](api-reference-core.md#ref-core_execution) | Явный изолированный запуск известной Python fixture |
 | `StarterPlan` | `from telegram_patterns import StarterPlan` | [ref.core_starter](api-reference-core.md#ref-core_starter) | Target/version/files/created и выбранные группы |
 | `StarterComponent` | `from telegram_patterns import StarterComponent` | [ref.core_starter](api-reference-core.md#ref-core_starter) | Описание группы и зависимости/minimum API |
 | `StarterConflict` | `from telegram_patterns import StarterConflict` | [ref.core_starter](api-reference-core.md#ref-core_starter) | Безопасная известная preflight причина |
@@ -129,7 +133,7 @@
 
 ## CLI и CSS
 
-`python -m telegram_patterns recipes "две кнопки"` читает cookbook, не исполняет код. `python -m telegram_patterns init "<NEW_PATH>" --library "<PROVIDED_WHEEL>" --dry-run` показывает все файлы; без dry-run создает новый каталог. `python -m telegram_patterns doctor "<PROJECT>"` делает local diagnosis без repairs/HTTP. Изменение существующего проекта и live запуск — отдельные действия. Commands/exit codes проверяются installed CLI.
+`python -m telegram_patterns recipes "две кнопки"` читает cookbook, не исполняет код. `python -m telegram_patterns init "<NEW_PATH>" --library "<PROVIDED_WHEEL>" --dry-run` показывает все файлы; без dry-run создает новый каталог. `python -m telegram_patterns doctor "<PROJECT>"` делает local diagnosis без repairs/HTTP. `python -m telegram_patterns run-recipe demo-recovery` показывает requirements; явный `--offline` запускает закрытый installed fixture без токена. Native references требуют host/аргументов. Изменение существующего проекта и live запуск — отдельные действия. Commands/exit codes проверяются installed CLI.
 
 CSS entry: `@awesome-telegram/patterns/styles.css`. В bundler: `import "@awesome-telegram/patterns/styles.css";`; в browser consumer подключите link к скопированному CSS из resolved subpath. CSS не создает UI и не заменяет host state. Import resolution и настоящий browser stylesheet проверяются отдельно.
 

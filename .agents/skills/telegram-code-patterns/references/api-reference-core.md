@@ -1,4 +1,4 @@
-# Python core — 0.12.0
+# Python core — 0.13.0
 
 [Индекс всех символов](api-reference.md). Образцы ниже воспроизводятся через установленный wheel/tarball вне исходного дерева. Assert — проверка fixture, не бизнес-правило production приложения.
 
@@ -192,6 +192,31 @@ preview['inline_keyboard'][0][0]['text'] = 'local-copy'
 assert catalog.get(recipe.id).preview != preview
 # SDK evidence не делает API stable и не доказывает appearance в Telegram.
 print(json.dumps({'passed': True, 'case': 'core_recipes', 'network': False}))
+```
+
+<a id="ref-core_execution"></a>
+
+## Требования и явная offline проверка — ref.core_execution
+
+Файл: `core_execution.py`. Символы: `RecipeRunPlan`, `RecipeRunResult`, `plan_recipe`, `run_recipe_offline`
+
+Границы: Только установленный доверенный wheel и закрытые fixtures. Plan не читает secret values. Runner не исполняет recipe.code/приложение; native references отказывает до child. Python -I/-B, системный env allowlist, временный cwd; это не OS sandbox. Нет live rights/auth/device acceptance.
+
+```python
+"""План перед запуском; установленный core wheel, без SDK и Telegram."""
+import json
+from telegram_patterns import RecipeRunPlan, RecipeRunResult, plan_recipe, run_recipe_offline
+
+plan: RecipeRunPlan = plan_recipe('demo-recovery')
+assert plan.offline_ready and plan.kind == 'sqlite'
+assert not plan.offline_environment and not plan.offline_permissions
+assert plan.live_data and plan.live_permissions and plan.sources
+result: RecipeRunResult = run_recipe_offline(plan.recipe_id)
+assert result.passed and not result.telegram_requests
+assert result.checks == ('sqlite-one-effect', 'same-key-replay')
+reference = plan_recipe('native.requestContact')
+assert not reference.offline_ready and reference.live_permissions
+print(json.dumps({'passed': True, 'case': 'core_execution', 'network': False}))
 ```
 
 <a id="ref-core_starter"></a>

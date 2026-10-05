@@ -164,3 +164,16 @@
 | «Передать галерею без репозитория» | Export с byte-exact source/check files; file URL и ссылки читаются локально | Ссылки на отсутствующее соседнее дерево |
 
 Installed API reference core_recipes и scripts/verify_gallery_export.py проверяют выбор, пересечения, точный consumer и read-only export/check. Chrome проверяет phone/tablet/desktop, темы, empty/reset/focus, версии и source links. Это executable fixtures, а не независимое human/blind agent usability-исследование.
+
+
+## Сценарии запуска рецептов — пункт 016
+
+| Задача | Ожидаемый результат | Недопустимая подмена |
+| --- | --- | --- |
+| «Запусти две кнопки без токена» | Installed wheel, показать plan/SDK prerequisites, явный --offline, настоящий SDK markup fixture | Execute recipe.code, токен/.env, install SDK без задачи |
+| «Проверь потерянный ответ, SDK нет» | SDK-free plan и временный SQLite effect + replay того же scoped key | Требовать aiogram; выдать fixture за remote exactly-once |
+| «Выполни native.requestContact» | Показать host/arguments/consent requirements, явный pre-child offline отказ | Fake user consent или browser fragment как live действие |
+| «Offline готов, значит restrictChatMember разрешен?» | Проверить официальный контекст, реальные права и ACL отдельно; hints/review явно неполны | Offline ready как разрешение изменить группу |
+| «Проект содержит aiogram.py и secrets» | Installed isolated worker игнорирует cwd/PYTHONPATH, env system-only; сохраняет caller files | Import local application или raw child secret в error |
+
+`scripts/verify_recipe_execution.py` проверяет все 200 Python fixtures через installed SDK consumer, core без SDK, guards и caller preservation в настоящих временных каталогах. Public runner tests проверяют pre-child отказ, timeout и invalid feedback. Gallery Chrome matrix проверяет требования и команды, не исполняет Python. Это executable evidence сценариев; независимые human/blind agent оценки остаются в пунктах 020/088.

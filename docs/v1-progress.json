@@ -305,10 +305,27 @@
       "id": 16,
       "title": "Добавить проверяемые сценарии запуска рецептов",
       "requirement": "Показывать необходимые права, зависимости и данные окружения до выполнения; локальный offline-режим работает без секретов и Telegram-запросов.",
-      "status": "pending",
-      "commit_subject": null,
-      "artifacts": [],
-      "evidence": []
+      "status": "done",
+      "commit_subject": "roadmap(016): add prerequisite plans and isolated offline recipe execution",
+      "artifacts": [
+        "packages/python/src/telegram_patterns/execution.py",
+        "packages/python/src/telegram_patterns/_offline_recipe.py",
+        "packages/python/tests/test_execution.py",
+        "scripts/verify_recipe_execution.py",
+        "docs/recipe-execution.md",
+        ".agents/skills/telegram-code-patterns/references/recipe-execution.md",
+        "gallery/index.html",
+        "docs/v1-checks/016.json"
+      ],
+      "evidence": [
+        "docs/v1-checks/016.json",
+        "docs/v1-checks/016-execution.json",
+        "docs/v1-checks/016-first-run.json",
+        "docs/v1-checks/016-regression.json",
+        "57 distribution stages; 119 Python passed + 1 skip; 26 TypeScript; 1259 Chrome plus 60 documented first-run checks; 26 root tests; 41 skills",
+        "299 prerequisite plans; all 200 Python fixtures in installed SDK/core consumers; native/missing SDK pre-child refusal, no inherited credentials, caller files preserved, two guard refusals",
+        "Windows isolated JSON encoding and generic gallery locator failures reproduced and corrected; failed candidate preserved; maturity unchanged, no live/physical client/OS sandbox claim"
+      ]
     },
     {
       "id": 17,

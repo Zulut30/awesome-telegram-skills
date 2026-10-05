@@ -117,6 +117,8 @@ def build() -> tuple[dict[str, str], dict]:
               '`python -m telegram_patterns init "<NEW_PATH>" --library "<PROVIDED_WHEEL>" --dry-run` '
               'показывает все файлы; без dry-run создает новый каталог. '
               '`python -m telegram_patterns doctor "<PROJECT>"` делает local diagnosis без repairs/HTTP. '
+              '`python -m telegram_patterns run-recipe demo-recovery` показывает requirements; '
+              'явный `--offline` запускает закрытый installed fixture без токена. Native references требуют host/аргументов. '
               'Изменение существующего проекта и live запуск — отдельные действия. Commands/exit codes проверяются installed CLI.\n\n'
               'CSS entry: `@awesome-telegram/patterns/styles.css`. В bundler: '
               '`import "@awesome-telegram/patterns/styles.css";`; в browser consumer подключите link к скопированному '
@@ -130,7 +132,7 @@ def build() -> tuple[dict[str, str], dict]:
     index = {'schema_version': 1, 'library_version': version, 'symbols': entries,
              'python_symbols': sum(not item['module'].startswith('@') for item in entries),
              'typescript_symbols': sum(item['module'].startswith('@') for item in entries),
-             'recipes': len(groups), 'additional_entries': ['CLI recipes', 'CLI init', 'CLI doctor', 'styles.css'],
+             'recipes': len(groups), 'additional_entries': ['CLI recipes', 'CLI init', 'CLI doctor', 'CLI run-recipe', 'styles.css'],
              'evidence': 'Installed type/runtime/DOM consumers; no independent agent or physical client proof'}
     return products, index
 

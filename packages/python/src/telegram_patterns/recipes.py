@@ -38,6 +38,12 @@ class Recipe:
     api_version: str = 'unspecified'
     source_files: tuple[str, ...] = ()
     check_files: tuple[str, ...] = ()
+    execution_json: str | None = None
+
+    @property
+    def execution(self) -> dict[str, Any] | None:
+        """Detached prerequisite description; metadata itself never executes code."""
+        return json.loads(self.execution_json) if self.execution_json is not None else None
 
     @property
     def preview(self) -> dict[str, Any] | None:
@@ -75,6 +81,16 @@ class RecipeCatalog:
             preview = item.get('preview')
             if preview is not None and not isinstance(preview, dict): raise ValidationFailure('Invalid recipe preview')
             metadata: dict[str, Any] = {}
+            execution = item.get('execution')
+            if execution is not None:
+                if not isinstance(execution, dict) or execution.get('kind') not in {'sdk-request', 'sdk-markup', 'dispatcher', 'sqlite', 'reference'}:
+                    raise ValidationFailure('Invalid execution requirements')
+                for field in ('dependencies', 'offline_environment', 'offline_permissions', 'offline_data', 'live_environment', 'live_permissions', 'live_data', 'effects'):
+                    if not isinstance(execution.get(field), list) or any(not isinstance(v, str) or not 1 <= len(v) <= 1000 for v in execution[field]):
+                        raise ValidationFailure('Execution requirements use nonempty string lists')
+                if not isinstance(execution.get('live_review'), str) or not execution['live_review'].strip():
+                    raise ValidationFailure('Live requirements need an explicit review boundary')
+            metadata['execution_json'] = json.dumps(execution, ensure_ascii=False) if execution is not None else None
             for field, default in [('tasks', []), ('contexts', ['unspecified'])]:
                 value = item.get(field, default)
                 if not isinstance(value, list) or any(not isinstance(v, str) or not re.fullmatch(r'[a-z][a-z0-9-]{0,79}', v) for v in value):

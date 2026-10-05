@@ -51,6 +51,21 @@ function choose(recipe){
   byId('detail-category').textContent=categories[recipe.category]+' · '+maturityLabels[recipe.maturity]+' · '+labels[recipe.verification]+' · '+recipe.language;
   byId('detail-title').textContent=recipe.title;byId('detail-summary').textContent=recipe.summary;byId('detail-scope').textContent=recipe.scope;
   byId('code').textContent=recipe.code;byId('copy-status').textContent='';preview(recipe.preview);
+  const requirements=byId('execution-requirements');requirements.replaceChildren();
+  const execution=recipe.execution;
+  const executable=execution&&execution.kind!=='reference';
+  for(const [label,value] of execution?[
+    ['Проверка',executable?'Поставляемая offline fixture: '+execution.kind:'Справочный фрагмент: нужны host и аргументы'],
+    ['Зависимости',execution.dependencies.join('; ')||'Python core без SDK'],
+    ['Offline окружение',execution.offline_environment.join('; ')||'Секреты и Telegram-права не требуются'],
+    ['Локальные эффекты',execution.effects.join('; ')],
+    ['Для приложения: окружение',execution.live_environment.join('; ')||'Окружение задаёт сервис'],
+    ['Для приложения: права',execution.live_permissions.join('; ')||'Проверить ограничения конкретного метода'],
+    ['Для приложения: данные',execution.live_data.join('; ')||'Без обязательных SDK-параметров'],
+    ['Границы',execution.live_review]]:[['Проверка','План запуска отсутствует']]){
+    const heading=document.createElement('strong'),text=document.createElement('p');heading.textContent=label;text.textContent=value;requirements.append(heading,text);
+  }
+  byId('execution-command').textContent=/^[A-Za-z0-9_.:-]{1,120}$/.test(recipe.id)?'telegram-patterns run-recipe '+recipe.id+(executable?' --offline':''):'Нет допустимой команды';
   const metadata=byId('detail-metadata');metadata.replaceChildren();
   for(const [label,value] of [['Задача',(recipe.tasks??[]).map(task=>navigation.tasks[task]??task).join(', ')||'Не указана'],
     ['Контекст',(recipe.contexts??['unspecified']).map(context=>navigation.contexts[context]??context).join(', ')],

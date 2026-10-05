@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "library_version": "0.12.0",
+  "library_version": "0.13.0",
   "symbols": [
     {
       "module": "telegram_patterns",
@@ -363,6 +363,50 @@
       "limits": "Чтение не исполняет recipe code. Maturity отдельно от verification; SDK/mock не доказывают live/device. Preview — независимая копия. Этот пример ищет существующий cookbook recipe two-columns; ref.* — имена справочника API.",
       "intent": "Версия, recipes, get/search с фильтрами",
       "example_sha256": "65cb36c2214a9cb94145ad7622144581d2bdb791617576ee1528ba87565be47d",
+      "kind": "value"
+    },
+    {
+      "module": "telegram_patterns",
+      "name": "RecipeRunPlan",
+      "import": "from telegram_patterns import RecipeRunPlan",
+      "recipe": "ref.core_execution",
+      "example": "examples/api-reference/python/core_execution.py",
+      "limits": "Только установленный доверенный wheel и закрытые fixtures. Plan не читает secret values. Runner не исполняет recipe.code/приложение; native references отказывает до child. Python -I/-B, системный env allowlist, временный cwd; это не OS sandbox. Нет live rights/auth/device acceptance.",
+      "intent": "Неизменяемые требования offline/live и причины недоступности",
+      "example_sha256": "005d1975997c60c9c31d6943f14ff1fd36a4f6d8bf311cce161f1c41dad33d2f",
+      "kind": "value"
+    },
+    {
+      "module": "telegram_patterns",
+      "name": "RecipeRunResult",
+      "import": "from telegram_patterns import RecipeRunResult",
+      "recipe": "ref.core_execution",
+      "example": "examples/api-reference/python/core_execution.py",
+      "limits": "Только установленный доверенный wheel и закрытые fixtures. Plan не читает secret values. Runner не исполняет recipe.code/приложение; native references отказывает до child. Python -I/-B, системный env allowlist, временный cwd; это не OS sandbox. Нет live rights/auth/device acceptance.",
+      "intent": "Результат известной локальной fixture без Telegram requests",
+      "example_sha256": "005d1975997c60c9c31d6943f14ff1fd36a4f6d8bf311cce161f1c41dad33d2f",
+      "kind": "value"
+    },
+    {
+      "module": "telegram_patterns",
+      "name": "plan_recipe",
+      "import": "from telegram_patterns import plan_recipe",
+      "recipe": "ref.core_execution",
+      "example": "examples/api-reference/python/core_execution.py",
+      "limits": "Только установленный доверенный wheel и закрытые fixtures. Plan не читает secret values. Runner не исполняет recipe.code/приложение; native references отказывает до child. Python -I/-B, системный env allowlist, временный cwd; это не OS sandbox. Нет live rights/auth/device acceptance.",
+      "intent": "Read-only план всех cookbook рецептов",
+      "example_sha256": "005d1975997c60c9c31d6943f14ff1fd36a4f6d8bf311cce161f1c41dad33d2f",
+      "kind": "value"
+    },
+    {
+      "module": "telegram_patterns",
+      "name": "run_recipe_offline",
+      "import": "from telegram_patterns import run_recipe_offline",
+      "recipe": "ref.core_execution",
+      "example": "examples/api-reference/python/core_execution.py",
+      "limits": "Только установленный доверенный wheel и закрытые fixtures. Plan не читает secret values. Runner не исполняет recipe.code/приложение; native references отказывает до child. Python -I/-B, системный env allowlist, временный cwd; это не OS sandbox. Нет live rights/auth/device acceptance.",
+      "intent": "Явный изолированный запуск известной Python fixture",
+      "example_sha256": "005d1975997c60c9c31d6943f14ff1fd36a4f6d8bf311cce161f1c41dad33d2f",
       "kind": "value"
     },
     {
@@ -1279,13 +1323,14 @@
       "kind": "type"
     }
   ],
-  "python_symbols": 75,
+  "python_symbols": 79,
   "typescript_symbols": 41,
-  "recipes": 18,
+  "recipes": 19,
   "additional_entries": [
     "CLI recipes",
     "CLI init",
     "CLI doctor",
+    "CLI run-recipe",
     "styles.css"
   ],
   "evidence": "Installed type/runtime/DOM consumers; no independent agent or physical client proof"

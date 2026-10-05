@@ -70,10 +70,17 @@ try{
       verify(await page.getByRole('button',{name:'Две кнопки в ряд',exact:true}).isVisible(),`${name}/${theme}: back layout searchable`);
       await page.getByLabel('SDK',{exact:true}).selectOption('telegram-webapp');
       verify(await page.locator('#recipes .recipe-card').count()>0&&await page.locator('#code').textContent().then(code=>code.includes('BackButton')),`${name}/${theme}: native back SDK filter`);
+      verify(!(await page.locator('#execution-command').textContent()).includes('--offline')&&(await page.locator('#execution-requirements').textContent()).includes('Справочный фрагмент'),`${name}/${theme}: native requirements do not invent an executor`);
       await page.getByRole('button',{name:'Сбросить',exact:true}).click();await page.getByLabel('Что хотите сделать?').fill('потерянный ответ');
       await page.getByLabel('Задача',{exact:true}).selectOption('recovery');await page.getByLabel('Контекст',{exact:true}).selectOption('backend');
       verify(await page.locator('#recipes .recipe-card').count()===1,`${name}/${theme}: recovery intersection`);
       verify((await page.locator('#code').textContent()).includes('must_not_apply')&&(await page.locator('#detail-scope').textContent()).includes('Нет HTTP'),`${name}/${theme}: real local recovery with clear limits`);
+      await page.locator('#execution-details').evaluate(details=>details.open=true);
+      verify((await page.locator('#execution-command').textContent())==='telegram-patterns run-recipe demo-recovery --offline',`${name}/${theme}: closed offline command`);
+      verify((await page.locator('#execution-requirements').textContent()).includes('Секреты и Telegram-права не требуются')&&(await page.locator('#execution-requirements').textContent()).includes('Авторизация до записи'),`${name}/${theme}: offline and live obligations are distinct`);
+      verify(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth),`${name}/${theme}: expanded requirements fit viewport`);
+      if(['phone','tablet','desktop'].includes(name))await page.screenshot({path:path.join(output,`${name}-${theme}-requirements.png`),fullPage:true});
+      await page.locator('#execution-details').evaluate(details=>details.open=false);
       for(const id of ['source-files','check-files']){
         const href=await page.locator('#'+id+' a').first().getAttribute('href');const response=await context.request.get(new URL(href,base+'/').href);
         verify(response.status()===200&&(await response.text()).includes('SQLiteOnce'),`${name}/${theme}: ${id} resolves to source code`);
@@ -103,7 +110,7 @@ try{
   verify((await page.evaluate(()=>window.getSelection()?.toString())).includes('inline_keyboard'),'clipboard fallback selected actual code');
   await page.evaluate(()=>{catalog.recipes[0].title='<img src=x onerror="window.PWNED=true">';render();});
   verify(await page.locator('#recipes img').count()===0&&await page.evaluate(()=>window.PWNED===undefined),'untrusted title rendered as text');
-  verify(await page.locator('pre').getAttribute('tabindex')==='0','keyboard accessible code block');
+  verify(await page.getByLabel('Код рецепта',{exact:true}).getAttribute('tabindex')==='0','keyboard accessible code block');
   await page.evaluate(()=>{catalog.recipes[0].source_files=['../secret.env','javascript:alert(1)','https://invalid.test'];render();});
   verify(await page.locator('#source-files a').count()===0,'malformed source paths never become links');await context.close();
   const local=await browser.newContext();const offlinePage=await local.newPage();const localErrors=[],localHTTP=[];

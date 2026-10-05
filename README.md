@@ -6,11 +6,13 @@
 
 Основной стек проекта: **Python для ботов и backend, TypeScript для Mini Apps**.
 
-Есть [общая библиотека готовых компонентов](docs/component-library.md): два импортируемых пакета Python/TypeScript, 28 групп компонентов и работающие примеры. ИИ подключает нужный API через `telegram-code-patterns`; пакеты пока распространяются локально.
+Есть [общая библиотека готовых компонентов](docs/component-library.md): два импортируемых пакета Python/TypeScript, 29 групп компонентов и работающие примеры. ИИ подключает нужный API через `telegram-code-patterns`; пакеты пока распространяются локально.
+
+[Требования и offline запуск](docs/recipe-execution.md): планы всех 299 рецептов и 200 Python fixtures без токена; native references требуют host/аргументов.
 
 [Поиск и фильтры галереи](docs/gallery-navigation.md): 299 рецептов, задачи, контекст, SDK/версии, зрелость и доказательства проверки; ссылки на исходники и проверяющий код. Standalone export включает связанные файлы.
 
-Проверена локальная поставка 0.12.0: [статус зрелости API](docs/v1-maturity.md) отдельно от SDK/mock/browser/live evidence. Каталог, Python API, CLI и галерея различают experimental/reference; стабильные сценарии 1.0 пока не заявлены.
+Проверена локальная поставка 0.13.0: [статус зрелости API](docs/v1-maturity.md) отдельно от SDK/mock/browser/live evidence. Каталог, Python API, CLI и галерея различают experimental/reference; стабильные сценарии 1.0 пока не заявлены.
 
 [Публичные контракты Python/TypeScript](docs/public-api.md) описывают параметры, результаты, ошибки, побочные эффекты и владение ресурсами для всех документированных API.
 

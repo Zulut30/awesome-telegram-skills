@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "library_version": "0.12.0",
+  "library_version": "0.13.0",
   "checked_date": "2026-10-05",
   "maturity": "experimental",
   "declared": {
@@ -20,38 +20,41 @@
     "os": "Windows 11",
     "arch": "AMD64",
     "browser": "154.0.8037.97",
-    "browser_checks": 1147,
+    "browser_checks": 1259,
     "mypy": "2.4.0",
     "quickstart_browser_checks": 60,
     "selected_starter_browser_checks": 76,
     "starter_selectable_groups": 15,
-    "python_passed": 114,
+    "python_passed": 119,
     "typescript_passed": 26,
     "doctor_consumer_cases": 12,
     "explicit_doctor_repair_commands": 5,
-    "python_source_typing_files": 19,
-    "api_reference_symbols": 116,
-    "api_reference_python_cases": 13,
+    "python_source_typing_files": 21,
+    "api_reference_symbols": 120,
+    "api_reference_python_cases": 14,
     "api_reference_typescript_case_groups": 5,
     "api_reference_browser_checks": 36,
     "api_reference_ts_type_exports": 22,
-    "gallery_browser_checks": 414,
-    "gallery_export_browser_checks": 414,
-    "gallery_source_check_files": 201,
+    "gallery_browser_checks": 470,
+    "gallery_export_browser_checks": 470,
+    "gallery_source_check_files": 203,
     "recipes": 299,
-    "sdk_probe_timeout_seconds": 30
+    "sdk_probe_timeout_seconds": 30,
+    "recipe_execution_plans": 299,
+    "recipe_execution_python_fixtures": 200,
+    "recipe_execution_guard_denials": 2
   },
-  "evidence": "docs/v1-checks/015.json",
+  "evidence": "docs/v1-checks/016.json",
   "artifacts": [
     {
-      "name": "awesome_telegram_patterns-0.12.0-py3-none-any.whl",
-      "bytes": 115927,
-      "sha256": "93d2b7971f2bd423ef78d66a2312ea3a4a30947757975454141783f87b08c7c3"
+      "name": "awesome_telegram_patterns-0.13.0-py3-none-any.whl",
+      "bytes": 145339,
+      "sha256": "3c9ee0fbc10909b97f93bac7fcfe3034f15b72c823eaa9721517ccfc6362fa63"
     },
     {
-      "name": "awesome-telegram-patterns-0.12.0.tgz",
+      "name": "awesome-telegram-patterns-0.13.0.tgz",
       "bytes": 19517,
-      "sha256": "2edaad4b522cdb597f761477fa19c9fbad2133effca0c70e43248e61ac08587f"
+      "sha256": "ea3f71549501290905a895be782cbfa4d9a63749b31ad160da5d00cd20f9ca00"
     }
   ],
   "unverified": [

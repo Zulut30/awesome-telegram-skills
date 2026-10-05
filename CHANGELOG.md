@@ -2,6 +2,10 @@
 
 ## Unreleased — подготовка 1.0
 
+- Пункт 016, 0.13.0: у всех 299 cookbook recipes появились execution requirements. Публичные frozen RecipeRunPlan/RecipeRunResult, plan_recipe/run_recipe_offline и CLI run-recipe сначала показывают план, затем по --offline запускают закрытый fixture из установленного пакета. 200 Python сценариев выполняются без токена: 185 SDK requests, 11 markup builders, три Dispatcher-композиции и один SQLite lost-response. 99 native references дают явный отказ без host/аргументов.
+
+  Изолированный child получает только системный env, owns temporary files и не выполняет recipe.code/user application. Real SDK HTTP и внешний Python DNS/connect запрещены; доверенный fixture worker не является OS sandbox. Сессия/FSM явно закрываются. Requirements panel отделяет offline readiness от live auth/ACL/entitlement; SDK can_* hints не объявляются полным permission engine. Предыдущие API/schema defaults сохранены; maturity/evidence не повышены. Каталог: 29 групп, справочник: 120 символов и 19 полных примеров. Поставка локальная.
+
 - Пункт 015, 0.12.0: галерея и SDK-free RecipeCatalog/CLI ищут по задаче, контексту, SDK/снимку и версии API независимо от maturity/evidence. Источники и executable проверки связаны с каждой записью; standalone export копирует связанные файлы byte-exact. Добавлен существующий SQLite lost-response пример: 299 recipes, 15 experimental, 284 reference; 196 SDK / 4 mock / 99 not_run. Schema 1 и прежние defaults/imports сохраняются; unknown context не означает все чаты. На телефоне дополнительные фильтры и пояснения свернуты.
 
   При проверке новой поставки воспроизведен timeout первого изолированного SDK import в свежем Windows consumer: старый лимит 10s заменен на 30s. Ошибки и превышение лимита сохраняют fail; проверки timeout и отсутствия секретов проходят. Consumer harness сохраняет причины/время tool probes для расследования таких сбоев.

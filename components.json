@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "library_version": "0.12.0",
+  "library_version": "0.13.0",
   "distribution": "local; not published to package registries",
   "packages": {
     "python": {
@@ -434,6 +434,21 @@
       ],
       "maturity": "experimental",
       "maturity_scope": "All public API symbols in this component; local verification is not a stable 1.0 promise"
+    },
+    {
+      "id": "python-recipe-execution",
+      "language": "python",
+      "import": "telegram_patterns.RecipeRunPlan, RecipeRunResult, plan_recipe, run_recipe_offline",
+      "intent": "Показать dependencies/permissions/data до явной offline проверки поставляемого рецепта",
+      "source": "packages/python/src/telegram_patterns/execution.py",
+      "example": "examples/api-reference/python/core_execution.py",
+      "boundaries": [
+        "Closed trusted fixtures only; never executes recipe.code or caller application",
+        "No credentials inherited; no live runner, auth/rights proof or OS sandbox",
+        "Installed wheel required; native fragments require host and arguments separately"
+      ],
+      "maturity": "experimental",
+      "maturity_scope": "All public API symbols; offline evidence is not stable/live acceptance"
     }
   ],
   "maturity_policy": "docs/v1-maturity.md",

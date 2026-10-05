@@ -1,4 +1,4 @@
-# Публичные контракты библиотеки 0.12.0
+# Публичные контракты библиотеки 0.13.0
 
 Пункт 003 плана 1.0. Все API ниже пока experimental; статус их группы указан в `components.json`, правила — в [maturity](v1-maturity.md). Контракт описывает реально реализованные границы, а не будущую полноту сценария. Аргументы с Python/TypeScript type annotations должны соответствовать типам; наличие типа не заменяет runtime validation внешних данных.
 
@@ -84,7 +84,7 @@ CLI `recipes [query] [--show ID] [--category ...] [--language ...] [--verificati
 
 ## Источники контрактов и проверка
 
-Поведение таблиц сверено с текущими исходниками и declarations 0.6.0, не с предположениями о Telegram. [Полная поставка пункта 002](v1-checks/002.json) подтверждает существующие package/consumer/browser проверки. [Поименный справочник](api-reference.md) пункта 014 содержит 116 публичных символов, полные installed consumer примеры и CLI/CSS. Compatibility regression suite относится к 084 и не объявляется выполненным этим справочником.
+Поведение таблиц сверено с текущими исходниками и declarations 0.6.0, не с предположениями о Telegram. [Полная поставка пункта 002](v1-checks/002.json) подтверждает существующие package/consumer/browser проверки. [Поименный справочник](api-reference.md) пункта 014 содержит 120 публичных символов, полные installed consumer примеры и CLI/CSS. Compatibility regression suite относится к 084 и не объявляется выполненным этим справочником.
 
 При добавлении публичного API обновляются этот контракт, группа в components.json, exports/types, пример, существенные tests и changelog. Контракт helpers не отменяет [границы сценариев](v1-scope.md).
 
@@ -105,3 +105,16 @@ CLI `recipes [query] [--show ID] [--category ...] [--language ...] [--verificati
 ## Навигация рецептов — 0.12.0
 
 Recipe добавляет frozen tuple fields tasks, contexts, source_files, check_files и строки sdk/sdk_version/api_version. Schema 1 без этих полей сохраняется: задачи/ссылки пусты, context/sdk/versions unspecified; это не все чаты. Source/check files — root-relative пути репозитория без traversal/URL, не обязательные ресурсы installed wheel. Search добавляет optional exact filters task/context/sdk/sdk_version/api_version; task/context проверяют принадлежность tuple, все filters объединяются пересечением. None сохраняет прежнее поведение; новые filters принимают непустые strings до 80 chars. Порядок — title/keyword rank и стабильный исходный порядок при равенстве. Source-file data не загружается и код не исполняется поиском. SDK версия — конкретная проверенная версия/снимок, api mini:* — минимум документации, без обещания permission или всей compatibility matrix. CLI добавляет те же flags и metadata в JSON; прежние поля сохранены. [Практическая композиция](api-reference-core.md#ref-core_recipes).
+
+
+## Требования и offline запуск — 0.13.0
+
+| API / параметры и результат | Ошибки | Effects / владение / границы |
+| --- | --- | --- |
+| `Recipe.execution_json=None`; `.execution` → dict/None | Invalid optional execution schema → ValueError при чтении catalog; прямой DTO JSON invalid → JSON error | Независимая JSON-копия. Legacy schema 1 без metadata сохраняется. Kind/dependencies/offline и live requirements/effects/review; metadata не является исполняемым кодом |
+| `plan_recipe(recipe_id)` → RecipeRunPlan | Unknown ID → KeyError; неверный тип → ValidationFailure; отсутствие execution → UnsupportedCapability | Только bundled catalog и import metadata установленного SDK; без SDK import, token/.env/project file read/install/network. Missing/different SDK и native reference возвращают blocked_reasons |
+| `RecipeRunPlan(recipe_id,library_version,kind,dependencies,offline_environment,offline_permissions,offline_data,live_environment,live_permissions,live_data,live_review,effects,sources,blocked_reasons)`; `.offline_ready` → bool | Frozen DTO; прямой constructor не повторяет catalog validation | Collection fields tuples, строки metadata. Ready iff blocked_reasons пуст; это готовность offline fixture, не live auth/ACL. SDK can_* hints неполны, project проверяет официальные условия |
+| `run_recipe_offline(recipe_id, *, timeout=60.0)` → RecipeRunResult | ValidationFailure для timeout 1..120/finite/non-bool; план errors; UnsupportedCapability до child при blockers; TimeoutFailure; InvalidCompletion для child/feedback; native FS/process errors могут propagate | Нужен установленный wheel в текущем interpreter. Закрытый worker -I -B, owned temporary cwd/cleanup, system env allowlist; trusted bundled fixture, не recipe.code/user app. Real aiogram HTTP и внешний Python DNS/connect запрещены; loopback разрешен; не OS sandbox. Без Telegram/effect вне временной SQLite, без auto-retry |
+| `RecipeRunResult(recipe_id,library_version,kind,checks,passed=True,telegram_requests=False)` | Frozen DTO; прямой constructor не выполняет fixture | Checks tuple с bounded whitelist именами. Значения от runner подтверждают synthetic SDK/StubSession/SQLite fixture. Не live provider/device/Telegram proof |
+
+CLI `run-recipe ID [--offline] [--timeout SECONDS]` сначала flush-ит plan JSONL. Без --offline только read-only plan; с ним второй JSONL result при успехе. Controlled failure → безопасный JSON stderr и exit 2. Native fragments/missing SDK отклоняются до child и temporary writes. [Полная композиция и ограничения](recipe-execution.md), [core пример](api-reference-core.md#ref-core_execution).

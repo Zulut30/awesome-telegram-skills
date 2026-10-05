@@ -136,6 +136,7 @@ print(json.dumps({'core_without_sdk':True,'python':sys.version.split()[0]}))
         public_python_types.write_text((ROOT / 'tests/public_types.py').read_text(encoding='utf-8'), encoding='utf-8')
         run('python-consumer-typecheck', [str(python_in(sdk)), '-m', 'mypy', '--follow-imports=silent', '--warn-unused-ignores', '--no-incremental', str(public_python_types)], consumers)
         run('custom-adapter-typecheck', [str(python_in(sdk)), '-m', 'mypy', '--follow-imports=silent', '--no-incremental', str(custom_adapters)], consumers)
+        report['recipe_execution'] = json.loads(run('recipe-execution-consumer', [sys.executable, str(ROOT / 'scripts/verify_recipe_execution.py'), '--core-python', str(python_in(core)), '--sdk-python', str(python_in(sdk)), '--output', str(consumers / 'recipe-execution')], consumers))
         run('api-reference-build', [sys.executable, str(ROOT / 'scripts/build_api_reference.py'), '--check'])
         reference_command = [str(python_in(sdk)), str(ROOT / 'scripts/verify_api_reference.py'),
             '--wheel', str(wheel), '--tarball', str(tarball), '--core-python', str(python_in(core)),
