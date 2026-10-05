@@ -1,0 +1,372 @@
+{
+  "passed": true,
+  "cases": [
+    {
+      "script": "verify_starter_consumer.py",
+      "passed": true,
+      "output": "C:\\Users\\zulut\\AppData\\Local\\Temp\\telegram-patterns-0.12.0-14n3i3qw\\starter-budget-final",
+      "report": {
+        "passed": true,
+        "network": false,
+        "installed_console": true,
+        "starters": [
+          {
+            "template": "bot",
+            "files": 7,
+            "offline": {
+              "passed": true,
+              "network": false,
+              "methods": [
+                "SendMessage",
+                "AnswerCallbackQuery",
+                "SendMessage"
+              ],
+              "session_closed": true
+            },
+            "doctor": {
+              "passed": true,
+              "network": false,
+              "checks": [
+                {
+                  "name": "python",
+                  "status": "pass",
+                  "detail": "3.13.12",
+                  "reason": "python-supported",
+                  "remediation": {
+                    "summary": "",
+                    "commands": []
+                  }
+                },
+                {
+                  "name": "library",
+                  "status": "pass",
+                  "detail": "0.12.0",
+                  "reason": "library-installed",
+                  "remediation": {
+                    "summary": "",
+                    "commands": []
+                  }
+                },
+                {
+                  "name": "aiogram",
+                  "status": "pass",
+                  "detail": "3.31.0",
+                  "reason": "sdk-supported",
+                  "remediation": {
+                    "summary": "",
+                    "commands": []
+                  }
+                },
+                {
+                  "name": "python-exports",
+                  "status": "pass",
+                  "detail": "Публичные adapters доступны в изолированном установленном окружении.",
+                  "reason": "adapter-ready",
+                  "remediation": {
+                    "summary": "",
+                    "commands": []
+                  }
+                },
+                {
+                  "name": "pyproject",
+                  "status": "pass",
+                  "detail": "TOML прочитан; код проекта не выполнялся.",
+                  "reason": "toml-valid",
+                  "remediation": {
+                    "summary": "",
+                    "commands": []
+                  }
+                },
+                {
+                  "name": "token-format",
+                  "status": "warn",
+                  "detail": "BOT_TOKEN отсутствует в окружении; .env не читается.",
+                  "reason": "token-missing",
+                  "remediation": {
+                    "summary": "Для offline запуска token не нужен. Для live задайте BOT_TOKEN через свой механизм секретов; doctor не подтверждает действительность token.",
+                    "commands": [
+                      {
+                        "argv": [
+                          "python",
+                          "-m",
+                          "telegram_patterns",
+                          "doctor",
+                          ".",
+                          "--require-token"
+                        ],
+                        "cwd": "project",
+                        "requires_substitution": false
+                      }
+                    ]
+                  }
+                }
+              ],
+              "limits": "Only local manifests, installed package metadata, isolated Python adapter imports and fixed node --version; no Telegram token validity/webhook/polling, deployment, project-code execution, backend auth, dependency installation or real-client check. Suggested commands are not executed.",
+              "schema_version": 1,
+              "tool_probes_attempted": [
+                "python -I -B adapter imports"
+              ],
+              "suggestions_executed": false
+            }
+          },
+          {
+            "template": "bot-mini-app",
+            "files": 11,
+            "offline": {
+              "passed": true,
+              "network": false,
+              "methods": [
+                "SendMessage",
+                "AnswerCallbackQuery",
+                "SendMessage"
+              ],
+              "session_closed": true
+            },
+            "doctor": {
+              "passed": true,
+              "network": false,
+              "checks": [
+                {
+                  "name": "python",
+                  "status": "pass",
+                  "detail": "3.13.12",
+                  "reason": "python-supported",
+                  "remediation": {
+                    "summary": "",
+                    "commands": []
+                  }
+                },
+                {
+                  "name": "library",
+                  "status": "pass",
+                  "detail": "0.12.0",
+                  "reason": "library-installed",
+                  "remediation": {
+                    "summary": "",
+                    "commands": []
+                  }
+                },
+                {
+                  "name": "aiogram",
+                  "status": "pass",
+                  "detail": "3.31.0",
+                  "reason": "sdk-supported",
+                  "remediation": {
+                    "summary": "",
+                    "commands": []
+                  }
+                },
+                {
+                  "name": "python-exports",
+                  "status": "pass",
+                  "detail": "Публичные adapters доступны в изолированном установленном окружении.",
+                  "reason": "adapter-ready",
+                  "remediation": {
+                    "summary": "",
+                    "commands": []
+                  }
+                },
+                {
+                  "name": "pyproject",
+                  "status": "pass",
+                  "detail": "TOML прочитан; код проекта не выполнялся.",
+                  "reason": "toml-valid",
+                  "remediation": {
+                    "summary": "",
+                    "commands": []
+                  }
+                },
+                {
+                  "name": "token-format",
+                  "status": "warn",
+                  "detail": "BOT_TOKEN отсутствует в окружении; .env не читается.",
+                  "reason": "token-missing",
+                  "remediation": {
+                    "summary": "Для offline запуска token не нужен. Для live задайте BOT_TOKEN через свой механизм секретов; doctor не подтверждает действительность token.",
+                    "commands": [
+                      {
+                        "argv": [
+                          "python",
+                          "-m",
+                          "telegram_patterns",
+                          "doctor",
+                          ".",
+                          "--require-token"
+                        ],
+                        "cwd": "project",
+                        "requires_substitution": false
+                      }
+                    ]
+                  }
+                },
+                {
+                  "name": "mini-app-manifest",
+                  "status": "pass",
+                  "detail": "Зависимость библиотеки объявлена; установка и совместимость frontend не подтверждены.",
+                  "reason": "mini-app-dependency-declared",
+                  "remediation": {
+                    "summary": "",
+                    "commands": []
+                  }
+                },
+                {
+                  "name": "npm",
+                  "status": "pass",
+                  "detail": "Npm найден в PATH; пакеты не устанавливались.",
+                  "reason": "npm-on-path",
+                  "remediation": {
+                    "summary": "",
+                    "commands": []
+                  }
+                },
+                {
+                  "name": "node",
+                  "status": "pass",
+                  "detail": "v24.19.0",
+                  "reason": "node-supported",
+                  "remediation": {
+                    "summary": "",
+                    "commands": []
+                  }
+                }
+              ],
+              "limits": "Only local manifests, installed package metadata, isolated Python adapter imports and fixed node --version; no Telegram token validity/webhook/polling, deployment, project-code execution, backend auth, dependency installation or real-client check. Suggested commands are not executed.",
+              "schema_version": 1,
+              "tool_probes_attempted": [
+                "python -I -B adapter imports",
+                "node --version"
+              ],
+              "suggestions_executed": false
+            }
+          }
+        ],
+        "cli_stages": [
+          {
+            "action": "recipes",
+            "exit_code": 0,
+            "expected_exit": 0
+          },
+          {
+            "action": "init",
+            "exit_code": 0,
+            "expected_exit": 0
+          },
+          {
+            "action": "init",
+            "exit_code": 0,
+            "expected_exit": 0
+          },
+          {
+            "action": "init",
+            "exit_code": 2,
+            "expected_exit": 2
+          },
+          {
+            "action": "doctor",
+            "exit_code": 0,
+            "expected_exit": 0
+          },
+          {
+            "action": "doctor",
+            "exit_code": 1,
+            "expected_exit": 1
+          },
+          {
+            "action": "init",
+            "exit_code": 0,
+            "expected_exit": 0
+          },
+          {
+            "action": "init",
+            "exit_code": 0,
+            "expected_exit": 0
+          },
+          {
+            "action": "init",
+            "exit_code": 2,
+            "expected_exit": 2
+          },
+          {
+            "action": "doctor",
+            "exit_code": 0,
+            "expected_exit": 0
+          },
+          {
+            "action": "doctor",
+            "exit_code": 1,
+            "expected_exit": 1
+          }
+        ]
+      }
+    },
+    {
+      "script": "verify_selected_starter.py",
+      "passed": true,
+      "output": "C:\\Users\\zulut\\AppData\\Local\\Temp\\telegram-patterns-0.12.0-14n3i3qw\\selected-budget-final",
+      "report": {
+        "passed": true,
+        "network": false,
+        "components": 15,
+        "files": 19,
+        "project": "C:\\Users\\zulut\\AppData\\Local\\Temp\\telegram-patterns-0.12.0-14n3i3qw\\selected-budget-final\\all selected",
+        "dry_run_exact": true,
+        "repeat_preserved": true,
+        "conflicts_without_write": 2,
+        "offline": {
+          "passed": true,
+          "network": false,
+          "selected": [
+            "action-menu",
+            "api-client",
+            "bot-polling",
+            "bot-settings",
+            "bot-test-transport",
+            "callback-router",
+            "command-replies",
+            "mini-app-bridge",
+            "mini-app-native-api",
+            "native-keyboards",
+            "paginated-menu",
+            "responsive-shell",
+            "selection-draft",
+            "text-form",
+            "update-events"
+          ],
+          "commands": [
+            "start",
+            "help",
+            "keyboard",
+            "catalog",
+            "apply",
+            "back",
+            "cancel"
+          ],
+          "methods": [
+            "SendMessage",
+            "SendMessage",
+            "AnswerCallbackQuery",
+            "SendMessage",
+            "AnswerCallbackQuery",
+            "SendMessage",
+            "SendMessage",
+            "AnswerCallbackQuery",
+            "EditMessageText",
+            "AnswerCallbackQuery",
+            "AnswerCallbackQuery",
+            "SendMessage",
+            "SendMessage",
+            "SendMessage",
+            "SendMessage",
+            "SendMessage",
+            "AnswerCallbackQuery",
+            "SendMessage",
+            "AnswerCallbackQuery",
+            "SendMessage"
+          ],
+          "session_closed": true,
+          "checked_submissions": 1
+        }
+      }
+    }
+  ]
+}

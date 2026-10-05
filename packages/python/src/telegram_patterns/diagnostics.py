@@ -55,7 +55,7 @@ def _sdk_probe() -> bool:
     """Fixed isolated import check, never importing SDK dependencies from target."""
     try:
         result = subprocess.run([sys.executable, '-I', '-B', '-c', _SDK_PROBE], cwd=sys.prefix,
-                                capture_output=True, text=True, timeout=10,
+                                capture_output=True, text=True, timeout=30,
                                 env=_tool_environment(), shell=False)
         return result.returncode == 0 and result.stdout.strip() == 'ready'
     except (OSError, subprocess.TimeoutExpired, UnicodeError):

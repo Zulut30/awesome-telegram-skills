@@ -16,6 +16,30 @@ import sys
 from telegram_patterns.cli import doctor
 
 CANARY = '100:DOCTOR_FIXTURE_PRIVATE'
+TRACE_DOCTOR = '''import json,sys,time
+from pathlib import Path
+from telegram_patterns.cli import main
+from telegram_patterns import diagnostics
+original=diagnostics.subprocess.run
+calls=[]
+def traced(*args,**kwargs):
+    started=time.monotonic()
+    probe='sdk' if '-I' in args[0] else 'node'
+    try:
+        result=original(*args,**kwargs)
+        calls.append({'probe':probe,'seconds':round(time.monotonic()-started,3),'exit_code':result.returncode,
+                      'ready':result.stdout.strip()=='ready','stderr_present':bool(result.stderr)})
+        return result
+    except Exception as error:
+        calls.append({'probe':probe,'seconds':round(time.monotonic()-started,3),'exception':type(error).__name__})
+        raise
+diagnostics.subprocess.run=traced
+try:
+    status=main(sys.argv[2:])
+finally:
+    Path(sys.argv[1]).write_text(json.dumps(calls,indent=2)+'\\n',encoding='utf-8')
+raise SystemExit(status)
+'''
 
 
 def main() -> int:
@@ -46,25 +70,32 @@ def main() -> int:
     def run(label, command, *, cwd=project, env=None, expected=0):
         done = subprocess.run(command, cwd=cwd, env=environment if env is None else env,
                               capture_output=True, text=True, encoding='utf-8', timeout=120, shell=False)
-        if done.returncode != expected:
+        if expected is not None and done.returncode != expected:
             raise RuntimeError('Doctor consumer operation failed: ' + label)
         return done
 
     def diagnostic(label, *, python=sys.executable, target='.', required=False, env=None, expected=1):
         before = snapshot()
-        command = [str(python), '-m', 'telegram_patterns', 'doctor', str(target)]
+        # Observe actual fixed tool calls without recording argv, env, output or exception payloads.
+        command = [str(python), '-c', TRACE_DOCTOR, str((args.output / (label + '-timing.json')).resolve()), 'doctor', str(target)]
         if required: command.append('--require-token')
-        done = run(label, command, env=env, expected=expected)
+        done = run(label, command, env=env, expected=None)
         assert not done.stderr and CANARY not in done.stdout and 'DOCTOR_FIXTURE_PRIVATE' not in done.stdout
         report = json.loads(done.stdout)
+        summary = {'case': label, 'exit_code': done.returncode, 'expected_exit': expected, 'checks': [
+            {'name': c['name'], 'status': c['status'], 'reason': c['reason']} for c in report['checks']]}
+        summary['tool_timing'] = json.loads((args.output / (label + '-timing.json')).read_text(encoding='utf-8'))
+        (args.output / (label + '.json')).write_text(json.dumps(summary, indent=2) + '\n', encoding='utf-8')
+        if done.returncode != expected:
+            failed = [c['reason'] for c in report['checks'] if c['status'] == 'fail']
+            raise RuntimeError(f'Doctor consumer {label} returned {done.returncode}; expected {expected}; reasons: {failed}')
         assert not report['network'] and not report['suggestions_executed']
         assert before == snapshot()
         for check in report['checks']:
             assert check['reason'] and 'remediation' in check
             if check['status'] != 'pass':
                 assert check['remediation']['summary'] and check['remediation']['commands']
-        cases.append({'case': label, 'exit_code': done.returncode, 'checks': [
-            {'name': c['name'], 'status': c['status'], 'reason': c['reason']} for c in report['checks']]})
+        cases.append(summary)
         return report
 
     def named(report, name): return next(c for c in report['checks'] if c['name'] == name)

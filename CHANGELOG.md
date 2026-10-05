@@ -2,6 +2,10 @@
 
 ## Unreleased — подготовка 1.0
 
+- Пункт 015, 0.12.0: галерея и SDK-free RecipeCatalog/CLI ищут по задаче, контексту, SDK/снимку и версии API независимо от maturity/evidence. Источники и executable проверки связаны с каждой записью; standalone export копирует связанные файлы byte-exact. Добавлен существующий SQLite lost-response пример: 299 recipes, 15 experimental, 284 reference; 196 SDK / 4 mock / 99 not_run. Schema 1 и прежние defaults/imports сохраняются; unknown context не означает все чаты. На телефоне дополнительные фильтры и пояснения свернуты.
+
+  При проверке новой поставки воспроизведен timeout первого изолированного SDK import в свежем Windows consumer: старый лимит 10s заменен на 30s. Ошибки и превышение лимита сохраняют fail; проверки timeout и отсутствия секретов проходят. Consumer harness сохраняет причины/время tool probes для расследования таких сбоев.
+
 - Пункт 014, 0.11.1: поименный API-справочник, 116 публичных символов и CLI/CSS, 18 полных примеров core/bot/Mini App. Переносимые references автономны. Генератор обнаруживает незадокументированные exports; отдельный consumer проверяет точные блоки документации, installed types, CLI, ESM и DOM. Runtime API не изменен; patch нужен для новых package README bytes.
 
 - Пункт 013 / поставка 0.11.0: doctor сообщает машинные причины и команды исправления без исполнения рекомендаций. Ожидаемые ошибки target/manifest становятся failed checks, JSON shape проверяется, чтение ограничено и известные links отклоняются. Node probe получает системный env allowlist и не отражает raw output. Рекомендованные wheel/tarball repairs проверяются отдельно в новом окружении.

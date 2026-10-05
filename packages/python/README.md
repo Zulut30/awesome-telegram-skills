@@ -1,5 +1,7 @@
 # awesome-telegram-patterns — Python
 
+RecipeCatalog.search добавляет optional task/context/sdk/sdk_version/api_version. Recipe хранит immutable metadata и repository source/check links; legacy schema 1 defaults сохранены. Поиск SDK-free, без исполнения: [навигация рецептов](../../docs/gallery-navigation.md).
+
 Справочник публичных imports и полные примеры: [Python core](../../docs/api-reference-core.md), [bot и test transport](../../docs/api-reference-bot.md), [индекс API](../../docs/api-reference.md). Эти ссылки доступны в source checkout; при передаче wheel отдельно приложите portable references навыка telegram-code-patterns. Пакет не зависит от документации при выполнении.
 
 [Поставка](../../docs/distribution-contract.md): архивы и установленные consumer-проекты проверяются отдельно; прежние публичные API сохранены.
@@ -14,7 +16,7 @@ Root экспортирует `Maturity`, `VerificationLevel`; aiogram — `Butt
 
 Общие компоненты для бота и backend, версия 0.11.0. Пакет пока поставляется из этого репозитория/локального wheel; публикации на PyPI нет. Python >=3.11. Core использует стандартную библиотеку; адаптер aiogram и тестовый транспорт — отдельный extra.
 
-[Галерея 298 рецептов](../../gallery/index.html) работает без токенов и сети. В wheel входят `RecipeCatalog`, шаблоны новых проектов и CLI `telegram-patterns recipes/init/doctor`. [Использование и границы](../../docs/developer-tools-review.md).
+[Галерея 299 рецептов](../../gallery/index.html) работает без токенов и сети. В wheel входят `RecipeCatalog`, шаблоны новых проектов и CLI `telegram-patterns recipes/init/doctor`. [Использование и границы](../../docs/developer-tools-review.md).
 
 Новое: [клавиатуры и ввод](../../recipes/bot-api/keyboards.md), [отслеживание Update](../../recipes/bot-api/events.md), [185 Bot API request-рецептов](../../recipes/bot-api/README.md). [Бот-пример](../../examples/python/keyboards_bot.py) показывает строки/цвета, обработку/редактирование и input UI; [offline-сценарий](../../examples/python/offline_keyboards.py) проверяет ту же композицию. Native SDK выполняет транспорт; request-only рецепты содержат искусственные данные, не отправляйте их без замены.
 

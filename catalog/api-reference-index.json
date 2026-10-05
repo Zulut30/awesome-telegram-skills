@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "library_version": "0.11.1",
+  "library_version": "0.12.0",
   "symbols": [
     {
       "module": "telegram_patterns",
@@ -329,7 +329,7 @@
       "example": "examples/api-reference/python/core_recipes.py",
       "limits": "Чтение не исполняет recipe code. Maturity отдельно от verification; SDK/mock не доказывают live/device. Preview — независимая копия. Этот пример ищет существующий cookbook recipe two-columns; ref.* — имена справочника API.",
       "intent": "Literal stable/experimental/reference",
-      "example_sha256": "f0b53bac31816064466ae6ce626213e92da400f3d7b600baf4e17734031f3367",
+      "example_sha256": "65cb36c2214a9cb94145ad7622144581d2bdb791617576ee1528ba87565be47d",
       "kind": "value"
     },
     {
@@ -340,7 +340,7 @@
       "example": "examples/api-reference/python/core_recipes.py",
       "limits": "Чтение не исполняет recipe code. Maturity отдельно от verification; SDK/mock не доказывают live/device. Preview — независимая копия. Этот пример ищет существующий cookbook recipe two-columns; ref.* — имена справочника API.",
       "intent": "Literal sdk/mock/browser/live/not_run",
-      "example_sha256": "f0b53bac31816064466ae6ce626213e92da400f3d7b600baf4e17734031f3367",
+      "example_sha256": "65cb36c2214a9cb94145ad7622144581d2bdb791617576ee1528ba87565be47d",
       "kind": "value"
     },
     {
@@ -351,7 +351,7 @@
       "example": "examples/api-reference/python/core_recipes.py",
       "limits": "Чтение не исполняет recipe code. Maturity отдельно от verification; SDK/mock не доказывают live/device. Preview — независимая копия. Этот пример ищет существующий cookbook recipe two-columns; ref.* — имена справочника API.",
       "intent": "Неизменяемая запись и копия preview",
-      "example_sha256": "f0b53bac31816064466ae6ce626213e92da400f3d7b600baf4e17734031f3367",
+      "example_sha256": "65cb36c2214a9cb94145ad7622144581d2bdb791617576ee1528ba87565be47d",
       "kind": "value"
     },
     {
@@ -362,7 +362,7 @@
       "example": "examples/api-reference/python/core_recipes.py",
       "limits": "Чтение не исполняет recipe code. Maturity отдельно от verification; SDK/mock не доказывают live/device. Preview — независимая копия. Этот пример ищет существующий cookbook recipe two-columns; ref.* — имена справочника API.",
       "intent": "Версия, recipes, get/search с фильтрами",
-      "example_sha256": "f0b53bac31816064466ae6ce626213e92da400f3d7b600baf4e17734031f3367",
+      "example_sha256": "65cb36c2214a9cb94145ad7622144581d2bdb791617576ee1528ba87565be47d",
       "kind": "value"
     },
     {

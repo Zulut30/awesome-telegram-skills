@@ -1,0 +1,122 @@
+{
+  "roadmap_item": 15,
+  "version": "0.12.0",
+  "checked_date": "2026-10-05",
+  "passed": true,
+  "report": "output/pattern-library-0.12.0/distribution-report.json",
+  "report_sha256": "6bcbd5e03c22978c205d854c9bb2b0de4104b1f49a38c9463b682290dfcd69c2",
+  "distribution_stages": 56,
+  "python_tests": {
+    "run": 115,
+    "passed": 114,
+    "skipped": 1
+  },
+  "typescript_tests": 26,
+  "browser_scope": {
+    "browser": 141,
+    "gallery_browser": 414,
+    "starter_browser": 66,
+    "selected_starter_browser": 76,
+    "api_reference_browser": 36,
+    "gallery_export_browser": 414
+  },
+  "full_browser_checks": 1147,
+  "documented_first_run_browser_checks": 60,
+  "root_tests": 26,
+  "skills_checked": 41,
+  "artifacts": [
+    {
+      "name": "awesome_telegram_patterns-0.12.0-py3-none-any.whl",
+      "bytes": 115927,
+      "sha256": "93d2b7971f2bd423ef78d66a2312ea3a4a30947757975454141783f87b08c7c3"
+    },
+    {
+      "name": "awesome-telegram-patterns-0.12.0.tgz",
+      "bytes": 19517,
+      "sha256": "2edaad4b522cdb597f761477fa19c9fbad2133effca0c70e43248e61ac08587f"
+    }
+  ],
+  "distribution_contract": {
+    "passed": true,
+    "version": "0.12.0",
+    "network": false,
+    "extracts_files": false,
+    "wheel": {
+      "files": 43,
+      "source_files_exact": 38,
+      "record_verified": true
+    },
+    "tarball": {
+      "files": 21,
+      "modules_with_types": 9,
+      "css_exact": true
+    },
+    "limits": "Content/metadata check; imports, installed types, CLI and browser runtime are separate consumer stages."
+  },
+  "gallery": {
+    "recipes": 299,
+    "experimental": 15,
+    "reference": 284,
+    "stable": 0,
+    "sdk": 196,
+    "mock": 4,
+    "not_run": 99,
+    "live": 0,
+    "task_filters": 12,
+    "context_filters": 8,
+    "sdk_filters": 4,
+    "standalone_source_check_files": 201,
+    "cli_cases": 3,
+    "search_cases": [
+      "две кнопки",
+      "назад",
+      "потерянный ответ"
+    ],
+    "filters_intersect": true,
+    "unspecified_is_not_all_contexts": true,
+    "standalone_byte_exact_files": true,
+    "export_check_read_only": true,
+    "owned_notes_preserved": true
+  },
+  "evidence": {
+    "gallery_export": "docs/v1-checks/015-gallery-export.json",
+    "doctor": "docs/v1-checks/015-doctor.json",
+    "first_run": "docs/v1-checks/015-first-run.json",
+    "sdk_timeout_regression": "docs/v1-checks/015-regression.json",
+    "final_cli_helpers": "docs/v1-checks/015-cli-budget.json"
+  },
+  "first_run_report": "output/v1-quickstart-015-final/report.json",
+  "first_run_report_sha256": "d373cc9e26fc178059a5aba493fbbe9fa74a7d3a1ef02d84ee08ce0262e5661f",
+  "final_cli_helpers_report": "output/pattern-library-0.12.0/cli-budget-recheck.json",
+  "final_cli_helpers_report_sha256": "1e196ee17bb75b21082eb6defb51d78d76bf1e3cc114ba6c6e594e3d55f71d12",
+  "logs": [
+    "output/pattern-library-0.12.0/root-tests.log",
+    "output/pattern-library-0.12.0/skills.log"
+  ],
+  "documentation": {
+    "docs/gallery-navigation.md": "7a602647f4483b68d1c8cf9e4c4b93b1f9bc4f48067fbcdbc917bf68ce01f7f3",
+    "docs/doctor.md": "ebec52897bb1fd25af11ff11e48cebfd3f3cb9796bad58bf715588845ce702f2",
+    "docs/quickstart.md": "ad61d04af36f09ded982708b8f088c98d525f08c04fd4197d42ad61a6e7510a2",
+    "docs/api-reference-core.md": "c69bf45cbec38a8f3c4f1a53b6a2d8f0e66fec0619e0acb71129a1eb50f1f525"
+  },
+  "visual_review": {
+    "inspected": [
+      "output/pattern-library-0.12.0/gallery-browser/phone-initial-light.png",
+      "output/pattern-library-0.12.0/gallery-browser/desktop-dark.png"
+    ],
+    "scope": "Human-readable source/check links, collapsed phone controls, viewport layout and theme viewed by this agent; no independent usability or physical device claim"
+  },
+  "failed_candidates_preserved": [
+    "output/pattern-library-0.12.0-candidate1",
+    "output/pattern-library-0.12.0-candidate2",
+    "output/pattern-library-0.12.0-candidate3"
+  ],
+  "limits": [
+    "Windows only; one Python directory symlink test skipped",
+    "No live Telegram, physical clients, payment sandbox, human/blind agent usability acceptance",
+    "All components experimental; most Bot API contexts unspecified; known tags are a curated subset",
+    "Search and source links do not execute code or confirm permissions; standalone export is static, not an installed application",
+    "Native fragments remain not_run; WebApp snapshot is not a Telegram client version",
+    "Browser viewport checks do not establish device compatibility"
+  ]
+}

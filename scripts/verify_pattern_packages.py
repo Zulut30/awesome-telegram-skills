@@ -90,7 +90,7 @@ from telegram_patterns import BotSettings, validate_init_data, RecipeCatalog, cr
 assert importlib.util.find_spec('aiogram') is None
 assert Path(telegram_patterns.__file__).is_relative_to(Path(sys.argv[1]))
 assert BotSettings.from_env(environ={'BOT_TOKEN':'100:CORE_FIXTURE'}).token=='100:CORE_FIXTURE'
-assert len(RecipeCatalog().recipes)==298
+assert len(RecipeCatalog().recipes)==299
 assert RecipeCatalog().search('две кнопки')[0].id=='two-columns'
 assert RecipeCatalog().get('two-columns').maturity=='experimental'
 assert RecipeCatalog().get('api.sendPhoto').maturity=='reference'
@@ -119,7 +119,7 @@ print(json.dumps({'core_without_sdk':True,'python':sys.version.split()[0]}))
         if report['core_cli']['recipes'][0]['id'] != 'two-columns':
             raise RuntimeError('Core console recipe search failed')
         report['maturity_cli'] = json.loads(run('maturity-cli', [str(core_console), 'recipes', '--maturity', 'experimental'], consumers))
-        if len(report['maturity_cli']['recipes']) != 14 or any(item['maturity'] != 'experimental' for item in report['maturity_cli']['recipes']):
+        if len(report['maturity_cli']['recipes']) != 15 or any(item['maturity'] != 'experimental' for item in report['maturity_cli']['recipes']):
             raise RuntimeError('Installed maturity CLI filter failed')
         database = consumers / 'booking.sqlite'
         first = json.loads(run('booking-first', [str(python_in(core)), str(ROOT / 'examples/python/booking.py'), str(database)], consumers))
@@ -160,6 +160,9 @@ print(json.dumps({'core_without_sdk':True,'python':sys.version.split()[0]}))
         report['offline_keyboards'] = keyboards
         report['telegram_catalog'] = json.loads(run('telegram-catalog', [str(python_in(sdk)), str(ROOT / 'scripts/build_telegram_catalog.py'), '--check'], consumers))
         report['recipe_gallery'] = json.loads(run('recipe-gallery', [str(python_in(sdk)), str(ROOT / 'scripts/build_recipe_gallery.py'), '--check'], consumers))
+        gallery_command = [str(python_in(sdk)), str(ROOT / 'scripts/verify_gallery_export.py'), '--output', str(consumers / 'gallery-export')]
+        if args.skip_browser: gallery_command.append('--skip-browser')
+        report['gallery_export'] = json.loads(run('gallery-export-consumer', gallery_command, consumers))
         starter_root = consumers / 'starters'
         report['starter_cli'] = json.loads(run('starter-cli', [str(python_in(sdk)), str(ROOT / 'scripts/verify_starter_consumer.py'), '--wheel', str(wheel), '--tarball', str(tarball), '--output', str(starter_root)], consumers))
         # Resolve the generated PEP dependency against the supplied local wheel.

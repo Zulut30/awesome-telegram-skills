@@ -3,6 +3,7 @@ from __future__ import annotations
 import argparse
 import hashlib
 import importlib.util
+import importlib.metadata
 import json
 import os
 from pathlib import Path
@@ -16,6 +17,33 @@ from telegram_patterns.aiogram import inline_keyboard, reply_keyboard, input_pro
 ROOT = Path(__file__).resolve().parents[1]
 API = 'https://core.telegram.org/bots/api'
 WEB = 'https://core.telegram.org/bots/webapps'
+NAVIGATION = {
+    'tasks': {'keyboards': 'Кнопки и раскладки', 'input': 'Ввод и формы', 'navigation': 'Возврат и навигация',
+              'messages': 'Сообщения', 'media': 'Медиа и файлы', 'profiles': 'Профили', 'moderation': 'Группы и модерация',
+              'payments': 'Платежные запросы', 'native': 'Native Mini Apps', 'recovery': 'Восстановление операций',
+              'bot': 'Композиция бота', 'other': 'Другие API'},
+    'contexts': {'private': 'Личный чат', 'group': 'Группа', 'supergroup': 'Супергруппа', 'channel': 'Канал',
+                 'business': 'Business connection', 'mini-app': 'Mini App', 'backend': 'Backend без чата',
+                 'unspecified': 'Уточнить контекст'},
+    'sdks': {'aiogram': 'aiogram', 'python-core': 'Python core без SDK', 'telegram-webapp': 'Telegram WebApp (снимок)',
+             'unspecified': 'SDK не указан'},
+}
+# Curated subset checked against official docs 2026-10-04. Unknown is never all chats.
+CONTEXTS = {'sendMessage': ['private', 'group', 'supergroup', 'channel'],
+            'sendPhoto': ['private', 'group', 'supergroup', 'channel'],
+            'createForumTopic': ['private', 'supergroup'], 'editForumTopic': ['private', 'supergroup'],
+            'restrictChatMember': ['supergroup'], 'createChatSubscriptionInviteLink': ['channel'],
+            'getBusinessAccountGifts': ['business']}
+
+
+def method_tasks(name: str) -> list[str]:
+    """Discovery classification by method name; never a claim of a full workflow."""
+    if any(word in name for word in ('Payment', 'Invoice', 'Star', 'Subscription')): return ['payments']
+    if any(word in name for word in ('Photo', 'Video', 'Audio', 'Document', 'Media', 'Sticker', 'File', 'Story')): return ['media']
+    if any(word in name for word in ('Member', 'ForumTopic', 'InviteLink', 'JoinRequest', 'Permissions')): return ['moderation']
+    if name == 'getMe' or any(word in name for word in ('Profile', 'MyName', 'MyDescription', 'MyShortDescription')): return ['profiles']
+    if 'Message' in name: return ['messages']
+    return ['other']
 IMPORTS = ('from aiogram.types import InlineKeyboardButton as Button, KeyboardButton, CopyTextButton, DisabledButton, WebAppInfo\n'
            'from telegram_patterns.aiogram import inline_keyboard, reply_keyboard, input_prompt, remove_keyboard\n\n')
 MANUAL = [
@@ -36,21 +64,34 @@ MANUAL = [
 def build(root: Path = ROOT) -> dict:
     version = tomllib.loads((root / 'packages/python/pyproject.toml').read_text(encoding='utf-8'))['project']['version']
     api = json.loads((root / 'catalog/telegram-capabilities.json').read_text(encoding='utf-8'))
+    sdk_version = importlib.metadata.version('aiogram')
+    if api['sdk'] != 'aiogram ' + sdk_version: raise ValueError('Installed SDK differs from catalog snapshot')
     fixtures = json.loads((root / 'catalog/bot-api-request-fixtures.json').read_text(encoding='utf-8'))['methods']
     spec = importlib.util.spec_from_file_location('fixture_materializer', ROOT / 'scripts/build_telegram_catalog.py')
     helper = importlib.util.module_from_spec(spec); spec.loader.exec_module(helper)
     records = []
-    def add(recipe_id, title, summary, category, language, keywords, code, verification, scope, sources, preview=None):
+    def add(recipe_id, title, summary, category, language, keywords, code, verification, scope, sources, preview=None,
+            *, tasks, contexts, sdk='aiogram', sdk_ver=None, api_version=None, source_files, check_files):
+        keywords = list(dict.fromkeys([*keywords, *' '.join(NAVIGATION['tasks'][t] for t in tasks).lower().split(),
+                                       *' '.join(NAVIGATION['contexts'][c] for c in contexts).lower().split()]))
         records.append({'id': recipe_id, 'title': title, 'summary': summary, 'category': category, 'language': language,
             'maturity': 'reference' if category == 'bot-api' or verification == 'not_run' else 'experimental',
             'keywords': keywords, 'code': code, 'verification': verification, 'scope': scope, 'sources': sources, 'preview': preview,
-            'code_sha256': hashlib.sha256(code.encode('utf-8')).hexdigest()})
+            'code_sha256': hashlib.sha256(code.encode('utf-8')).hexdigest(), 'tasks': tasks, 'contexts': contexts,
+            'sdk': sdk, 'sdk_version': sdk_ver or sdk_version, 'api_version': api_version or 'bot:' + api['bot_api']['version'],
+            'source_files': source_files, 'check_files': check_files})
     for key, title, tags, body in MANUAL:
         code = IMPORTS + body + '\n# В handler: await message.answer("Пример", reply_markup=markup)\n'
         namespace = {}; exec(compile(code, key, 'exec'), namespace)
         markup = namespace['markup'].model_dump(mode='json', exclude_none=True)
         add(key, title, 'Готовая разметка; обработку и права проверяет ваш handler.', 'keyboards', 'python', tags.split(), code,
-            'sdk', 'Построено native SDK при генерации. Веб-превью показывает раскладку, не Telegram-клиент.', [API + '#inlinekeyboardbutton', API + '#replykeyboardmarkup'], markup)
+            'sdk', 'Построено native SDK при генерации; helper context private по умолчанию. ForceReply/remove требуют host chat/actor correlation. Веб-превью не Telegram.',
+            [API + '#inlinekeyboardbutton', API + '#replykeyboardmarkup'], markup,
+            tasks=['input'] if key in {'contact-location', 'force-reply', 'remove-reply', 'reply-menu'} else ['keyboards', 'navigation'] if key == 'two-columns' else ['keyboards'],
+            contexts=['unspecified'] if key in {'force-reply', 'remove-reply'} else ['private'],
+            source_files=['recipes/bot-api/keyboards.md', 'packages/python/src/telegram_patterns/native_keyboards.py'],
+            check_files=['scripts/build_recipe_gallery.py', 'packages/python/tests/test_native_features.py'])
+        if key == 'two-columns': records[-1]['keywords'] += ['назад', 'back']
     for method in api['bot_api']['methods']:
         name = method['name']
         request = build_request(name, helper.materialize(fixtures[name]))
@@ -58,7 +99,9 @@ def build(root: Path = ROOT) -> dict:
         text = (root / method['recipe']).read_text(encoding='utf-8')
         code = text.split('```python\n', 1)[1].split('```', 1)[0]
         add('api.' + name, name, 'Искусственные ID/данные: заменить перед отправкой. Проверить права и ограничения.', 'bot-api', 'python',
-            [name, *method['fields'], 'api', 'запрос'], code, 'sdk', 'Native request построен; HTTP, права и весь business flow не проверены.', [API + '#' + name.lower()])
+            [name, *method['fields'], 'api', 'запрос'], code, 'sdk', 'Native request построен; HTTP, права и весь business flow не проверены. Context tags — проверенный поднабор, не полная матрица разрешений.', [API + '#' + name.lower()],
+            tasks=method_tasks(name), contexts=CONTEXTS.get(name, ['unspecified']), source_files=[method['recipe']],
+            check_files=['scripts/build_recipe_gallery.py', 'scripts/build_telegram_catalog.py'])
     for method in api['mini_app']['methods']:
         path = method['path']
         code = ('import { TelegramNativeAPI } from "@awesome-telegram/patterns";\n'
@@ -67,7 +110,12 @@ def build(root: Path = ROOT) -> dict:
             f'  // api.call("{path}", ...параметры_по_документации);\n}}\napi.dispose();\n')
         add('native.' + path, path, 'Native сигнатура: ' + method['signature'] + '. Минимальная версия ' + method['min_version'],
             'mini-app', 'typescript', [path, 'native', 'mini', 'app', method['signature']], code, 'not_run',
-            'Справочный фрагмент. Аргументы, permissions/init/callback и реальный клиент требуют отдельного сценария.', [method['url']])
+            'Справочный фрагмент. Аргументы, permissions/init/callback и реальный клиент требуют отдельного сценария; снимок не версия Telegram-клиента.', [method['url']],
+            tasks=['navigation'] if path.startswith('BackButton.') else ['native'], contexts=['mini-app'], sdk='telegram-webapp',
+            sdk_ver='snapshot:' + api['mini_app']['checked_date'], api_version='mini:' + method['min_version'],
+            source_files=['recipes/mini-app/README.md', 'packages/typescript/src/native-api.ts'],
+            check_files=['scripts/build_telegram_catalog.py', 'packages/typescript/tests/core.test.mjs'])
+        if path.startswith('BackButton.'): records[-1]['keywords'] += ['назад', 'back']
     environment = dict(os.environ); environment.pop('BOT_TOKEN', None); environment['PYTHONUTF8'] = '1'
     for filename, offline, key, title in (
         ('keyboards_bot.py', 'offline_keyboards.py', 'demo-keyboards', 'Рабочий бот клавиатур и событий'),
@@ -82,17 +130,32 @@ def build(root: Path = ROOT) -> dict:
         code = (root / 'examples/python' / filename).read_text(encoding='utf-8')
         add(key, title, 'Полная композиция с тем же Dispatcher для offline и polling.', 'scenarios', 'python',
             ['бот', 'пример', 'callback', 'форма' if key == 'demo-form' else 'меню', 'события'], code, 'mock',
-            'Synthetic Dispatcher сценарий исполнен при генерации. Telegram delivery/physical clients не проверены.', [API])
+            'Synthetic Dispatcher сценарий исполнен при генерации в private fixture. Telegram delivery/physical clients не проверены.', [API],
+            tasks=['input'] if key == 'demo-form' else ['bot'], contexts=['private'],
+            source_files=['examples/python/' + filename], check_files=['examples/python/' + offline])
+    recovery_file = root / 'examples/python/error_recovery.py'
+    recovery = subprocess.run([sys.executable, str(recovery_file)], capture_output=True, text=True, encoding='utf-8', env=environment, timeout=60)
+    if recovery.returncode: raise ValueError('Recovery fixture failed')
+    evidence = json.loads(recovery.stdout)
+    if not evidence.get('passed') or evidence.get('network') is not False or evidence.get('effect_count') != 1 or evidence.get('replayed') is not True:
+        raise ValueError('Recovery fixture did not reconcile the same operation')
+    add('demo-recovery', 'Потерянный ответ: сверка той же операции',
+        'SQLite effect уже сохранен; unknown outcome сверяется тем же scoped ID без второго заказа.', 'scenarios', 'python',
+        ['потерянный', 'ответ', 'timeout', 'сверка', 'reconcile', 'повтор', 'операция'], recovery_file.read_text(encoding='utf-8'),
+        'mock', 'Локальная SQLite fixture; ACL/scope заданы искусственно. Нет HTTP, server session или доказательства exactly-once доставки.',
+        [API], tasks=['recovery'], contexts=['backend'], sdk='python-core', sdk_ver=version, api_version='none',
+        source_files=['examples/python/error_recovery.py', 'packages/python/src/telegram_patterns/sqlite_once.py'],
+        check_files=['examples/python/error_recovery.py'])
     data = {'schema_version': 1, 'library_version': version, 'source_snapshot': api['checked_date'],
             'source_hashes': {'bot_api': api['bot_api']['source_sha256'], 'mini_app': api['mini_app']['source_sha256']},
-            'recipes': records}
+            'recipes': records, 'navigation': NAVIGATION}
     RecipeCatalog(data)  # Validate packaged schema before any output writes.
     return data
 
 
-def render_html(data: dict) -> str:
+def render_html(data: dict, repository_base: str = '../') -> str:
     embedded = json.dumps(data, ensure_ascii=False).replace('<', '\\u003c').replace('\u2028', '\\u2028').replace('\u2029', '\\u2029')
-    return (ROOT / 'scripts/gallery-template.html').read_text(encoding='utf-8').replace('__CATALOG_JSON__', embedded)
+    return (ROOT / 'scripts/gallery-template.html').read_text(encoding='utf-8').replace('__CATALOG_JSON__', embedded).replace('__REPOSITORY_BASE__', repository_base)
 
 
 def main():
@@ -100,9 +163,11 @@ def main():
     parser.add_argument('--output-dir', type=Path, help='Standalone gallery in an explicitly named NEW or existing output directory')
     parser.add_argument('--check', action='store_true')
     args = parser.parse_args()
+    if args.output_dir and any(p.is_symlink() or bool(getattr(p, 'is_junction', lambda: False)()) for p in (args.output_dir, *args.output_dir.parents)):
+        raise ValueError('Output directory links are not allowed')
     data = build()
     encoded = json.dumps(data, ensure_ascii=False, indent=2) + '\n'
-    html = render_html(data)
+    html = render_html(data, 'files/' if args.output_dir else '../')
     if args.output_dir and (args.output_dir.is_symlink() or bool(getattr(args.output_dir, 'is_junction', lambda: False)())):
         raise ValueError('Output directory links are not allowed')
     output = args.output_dir.resolve() if args.output_dir else ROOT / 'gallery'
@@ -110,15 +175,25 @@ def main():
     if args.output_dir:
         products[output / 'recipes.json'] = encoded
         for name in ('gallery.css', 'gallery.js'): products[output / name] = (ROOT / 'gallery' / name).read_text(encoding='utf-8')
+        for record in data['recipes']:
+            for name in (*record['source_files'], *record['check_files']):
+                source = ROOT / name
+                if any(p.is_symlink() or bool(getattr(p, 'is_junction', lambda: False)()) for p in (source, *source.parents)):
+                    raise ValueError('Source links are not allowed')
+                products[output / 'files' / name] = source.read_bytes()
     else:
         products[ROOT / 'packages/python/src/telegram_patterns/resources/recipes.json'] = encoded
         products[ROOT / 'catalog/recipe-gallery.json'] = encoded
+    for path in products:
+        if any(p.is_symlink() or bool(getattr(p, 'is_junction', lambda: False)()) for p in (path, *path.parents)):
+            raise ValueError('Output links are not allowed')
     for path, content in products.items():
-        if path.is_symlink() or bool(getattr(path, 'is_junction', lambda: False)()): raise ValueError('Output links are not allowed')
         if args.check:
-            if not path.is_file() or path.read_text(encoding='utf-8') != content: raise ValueError('Gallery output drift: ' + str(path))
+            if not path.is_file() or (path.read_bytes() if isinstance(content, bytes) else path.read_text(encoding='utf-8')) != content: raise ValueError('Gallery output drift: ' + str(path))
         else:
-            path.parent.mkdir(parents=True, exist_ok=True); path.write_text(content, encoding='utf-8')
+            path.parent.mkdir(parents=True, exist_ok=True)
+            if isinstance(content, bytes): path.write_bytes(content)
+            else: path.write_text(content, encoding='utf-8')
     print(json.dumps({'passed': True, 'recipes': len(data['recipes']), 'sdk': sum(item['verification']=='sdk' for item in data['recipes']),
         'mock': sum(item['verification']=='mock' for item in data['recipes']), 'reference': sum(item['verification']=='not_run' for item in data['recipes']),
         'live': 0, 'telegram_network': False, 'mode': 'check' if args.check else 'write'}))

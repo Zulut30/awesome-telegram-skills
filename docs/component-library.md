@@ -1,5 +1,7 @@
 # Общая библиотека компонентов
 
+Текущая локальная поставка 0.12.0: 28 групп компонентов, 116 публичных Python/TypeScript-символов и 299 рецептов. [Навигация](gallery-navigation.md) добавляет task/context/SDK/version filters, source/check links и самостоятельный export. Исторические обзоры ниже сохраняют свои версии и evidence; они не заменяют текущую support matrix.
+
 [Формы 0.3.0](form-tools-review.md) добавляют поля с проверкой, возврат, отмену и подтверждение со стабильным ID заявки. Готовый [бот формы](../examples/python/form_bot.py) и [offline-проверка](../examples/python/offline_form.py) используют один create_app; backend сохраняет заявку и replay result в SQLite.
 
 Агент импортирует поддерживаемые компоненты и добавляет бизнес-логику проекта. Версия 0.5.0 содержит 24 группы компонентов в двух независимых пакетах. [components.json](../components.json) — каталог; [telegram-code-patterns](../.agents/skills/telegram-code-patterns/SKILL.md) учит агента подключать API. Установка навыка не устанавливает пакеты.

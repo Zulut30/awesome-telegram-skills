@@ -1,0 +1,762 @@
+{
+  "passed": true,
+  "doctor_network": false,
+  "doctor_writes": false,
+  "cases": [
+    {
+      "case": "sdk-free-and-missing-dependency",
+      "exit_code": 1,
+      "expected_exit": 1,
+      "checks": [
+        {
+          "name": "python",
+          "status": "pass",
+          "reason": "python-supported"
+        },
+        {
+          "name": "library",
+          "status": "pass",
+          "reason": "library-installed"
+        },
+        {
+          "name": "aiogram",
+          "status": "fail",
+          "reason": "sdk-missing"
+        },
+        {
+          "name": "pyproject",
+          "status": "pass",
+          "reason": "toml-valid"
+        },
+        {
+          "name": "token-format",
+          "status": "warn",
+          "reason": "token-missing"
+        },
+        {
+          "name": "mini-app-manifest",
+          "status": "fail",
+          "reason": "mini-app-dependency-missing"
+        },
+        {
+          "name": "npm",
+          "status": "pass",
+          "reason": "npm-on-path"
+        },
+        {
+          "name": "node",
+          "status": "pass",
+          "reason": "node-supported"
+        }
+      ],
+      "tool_timing": [
+        {
+          "probe": "node",
+          "seconds": 0.056,
+          "exit_code": 0,
+          "ready": false,
+          "stderr_present": false
+        }
+      ]
+    },
+    {
+      "case": "unavailable-target",
+      "exit_code": 1,
+      "expected_exit": 1,
+      "checks": [
+        {
+          "name": "project",
+          "status": "fail",
+          "reason": "project-unavailable"
+        }
+      ],
+      "tool_timing": []
+    },
+    {
+      "case": "required-token",
+      "exit_code": 1,
+      "expected_exit": 1,
+      "checks": [
+        {
+          "name": "python",
+          "status": "pass",
+          "reason": "python-supported"
+        },
+        {
+          "name": "library",
+          "status": "pass",
+          "reason": "library-installed"
+        },
+        {
+          "name": "aiogram",
+          "status": "fail",
+          "reason": "sdk-missing"
+        },
+        {
+          "name": "pyproject",
+          "status": "pass",
+          "reason": "toml-valid"
+        },
+        {
+          "name": "token-format",
+          "status": "fail",
+          "reason": "token-missing"
+        },
+        {
+          "name": "mini-app-manifest",
+          "status": "fail",
+          "reason": "mini-app-dependency-missing"
+        },
+        {
+          "name": "npm",
+          "status": "pass",
+          "reason": "npm-on-path"
+        },
+        {
+          "name": "node",
+          "status": "pass",
+          "reason": "node-supported"
+        }
+      ],
+      "tool_timing": [
+        {
+          "probe": "node",
+          "seconds": 0.047,
+          "exit_code": 0,
+          "ready": false,
+          "stderr_present": false
+        }
+      ]
+    },
+    {
+      "case": "invalid-token",
+      "exit_code": 1,
+      "expected_exit": 1,
+      "checks": [
+        {
+          "name": "python",
+          "status": "pass",
+          "reason": "python-supported"
+        },
+        {
+          "name": "library",
+          "status": "pass",
+          "reason": "library-installed"
+        },
+        {
+          "name": "aiogram",
+          "status": "fail",
+          "reason": "sdk-missing"
+        },
+        {
+          "name": "pyproject",
+          "status": "pass",
+          "reason": "toml-valid"
+        },
+        {
+          "name": "token-format",
+          "status": "warn",
+          "reason": "token-format-invalid"
+        },
+        {
+          "name": "mini-app-manifest",
+          "status": "fail",
+          "reason": "mini-app-dependency-missing"
+        },
+        {
+          "name": "npm",
+          "status": "pass",
+          "reason": "npm-on-path"
+        },
+        {
+          "name": "node",
+          "status": "pass",
+          "reason": "node-supported"
+        }
+      ],
+      "tool_timing": [
+        {
+          "probe": "node",
+          "seconds": 0.045,
+          "exit_code": 0,
+          "ready": false,
+          "stderr_present": false
+        }
+      ]
+    },
+    {
+      "case": "wrong-dependency-shape",
+      "exit_code": 1,
+      "expected_exit": 1,
+      "checks": [
+        {
+          "name": "python",
+          "status": "pass",
+          "reason": "python-supported"
+        },
+        {
+          "name": "library",
+          "status": "pass",
+          "reason": "library-installed"
+        },
+        {
+          "name": "aiogram",
+          "status": "fail",
+          "reason": "sdk-missing"
+        },
+        {
+          "name": "pyproject",
+          "status": "pass",
+          "reason": "toml-valid"
+        },
+        {
+          "name": "token-format",
+          "status": "warn",
+          "reason": "token-missing"
+        },
+        {
+          "name": "mini-app-manifest",
+          "status": "fail",
+          "reason": "mini-app-dependency-missing"
+        },
+        {
+          "name": "npm",
+          "status": "pass",
+          "reason": "npm-on-path"
+        },
+        {
+          "name": "node",
+          "status": "pass",
+          "reason": "node-supported"
+        }
+      ],
+      "tool_timing": [
+        {
+          "probe": "node",
+          "seconds": 0.047,
+          "exit_code": 0,
+          "ready": false,
+          "stderr_present": false
+        }
+      ]
+    },
+    {
+      "case": "repaired-sdk-and-mini-app",
+      "exit_code": 0,
+      "expected_exit": 0,
+      "checks": [
+        {
+          "name": "python",
+          "status": "pass",
+          "reason": "python-supported"
+        },
+        {
+          "name": "library",
+          "status": "pass",
+          "reason": "library-installed"
+        },
+        {
+          "name": "aiogram",
+          "status": "pass",
+          "reason": "sdk-supported"
+        },
+        {
+          "name": "python-exports",
+          "status": "pass",
+          "reason": "adapter-ready"
+        },
+        {
+          "name": "pyproject",
+          "status": "pass",
+          "reason": "toml-valid"
+        },
+        {
+          "name": "token-format",
+          "status": "pass",
+          "reason": "token-format-valid"
+        },
+        {
+          "name": "mini-app-manifest",
+          "status": "pass",
+          "reason": "mini-app-dependency-declared"
+        },
+        {
+          "name": "npm",
+          "status": "pass",
+          "reason": "npm-on-path"
+        },
+        {
+          "name": "node",
+          "status": "pass",
+          "reason": "node-supported"
+        }
+      ],
+      "tool_timing": [
+        {
+          "probe": "sdk",
+          "seconds": 11.792,
+          "exit_code": 0,
+          "ready": true,
+          "stderr_present": false
+        },
+        {
+          "probe": "node",
+          "seconds": 0.043,
+          "exit_code": 0,
+          "ready": false,
+          "stderr_present": false
+        }
+      ]
+    },
+    {
+      "case": "project-sdk-shadow-not-executed",
+      "exit_code": 1,
+      "expected_exit": 1,
+      "checks": [
+        {
+          "name": "python",
+          "status": "pass",
+          "reason": "python-supported"
+        },
+        {
+          "name": "library",
+          "status": "pass",
+          "reason": "library-installed"
+        },
+        {
+          "name": "aiogram",
+          "status": "pass",
+          "reason": "sdk-supported"
+        },
+        {
+          "name": "python-exports",
+          "status": "fail",
+          "reason": "adapter-origin-unverified"
+        },
+        {
+          "name": "pyproject",
+          "status": "pass",
+          "reason": "toml-valid"
+        },
+        {
+          "name": "token-format",
+          "status": "pass",
+          "reason": "token-format-valid"
+        },
+        {
+          "name": "mini-app-manifest",
+          "status": "pass",
+          "reason": "mini-app-dependency-declared"
+        },
+        {
+          "name": "npm",
+          "status": "pass",
+          "reason": "npm-on-path"
+        },
+        {
+          "name": "node",
+          "status": "pass",
+          "reason": "node-supported"
+        }
+      ],
+      "tool_timing": [
+        {
+          "probe": "node",
+          "seconds": 0.05,
+          "exit_code": 0,
+          "ready": false,
+          "stderr_present": false
+        }
+      ]
+    },
+    {
+      "case": "project-dependency-shadow-not-executed",
+      "exit_code": 0,
+      "expected_exit": 0,
+      "checks": [
+        {
+          "name": "python",
+          "status": "pass",
+          "reason": "python-supported"
+        },
+        {
+          "name": "library",
+          "status": "pass",
+          "reason": "library-installed"
+        },
+        {
+          "name": "aiogram",
+          "status": "pass",
+          "reason": "sdk-supported"
+        },
+        {
+          "name": "python-exports",
+          "status": "pass",
+          "reason": "adapter-ready"
+        },
+        {
+          "name": "pyproject",
+          "status": "pass",
+          "reason": "toml-valid"
+        },
+        {
+          "name": "token-format",
+          "status": "pass",
+          "reason": "token-format-valid"
+        },
+        {
+          "name": "mini-app-manifest",
+          "status": "pass",
+          "reason": "mini-app-dependency-declared"
+        },
+        {
+          "name": "npm",
+          "status": "pass",
+          "reason": "npm-on-path"
+        },
+        {
+          "name": "node",
+          "status": "pass",
+          "reason": "node-supported"
+        }
+      ],
+      "tool_timing": [
+        {
+          "probe": "sdk",
+          "seconds": 4.309,
+          "exit_code": 0,
+          "ready": true,
+          "stderr_present": false
+        },
+        {
+          "probe": "node",
+          "seconds": 0.052,
+          "exit_code": 0,
+          "ready": false,
+          "stderr_present": false
+        }
+      ]
+    },
+    {
+      "case": "invalid-toml",
+      "exit_code": 1,
+      "expected_exit": 1,
+      "checks": [
+        {
+          "name": "python",
+          "status": "pass",
+          "reason": "python-supported"
+        },
+        {
+          "name": "library",
+          "status": "pass",
+          "reason": "library-installed"
+        },
+        {
+          "name": "aiogram",
+          "status": "pass",
+          "reason": "sdk-supported"
+        },
+        {
+          "name": "python-exports",
+          "status": "pass",
+          "reason": "adapter-ready"
+        },
+        {
+          "name": "pyproject",
+          "status": "fail",
+          "reason": "toml-invalid"
+        },
+        {
+          "name": "token-format",
+          "status": "pass",
+          "reason": "token-format-valid"
+        },
+        {
+          "name": "mini-app-manifest",
+          "status": "pass",
+          "reason": "mini-app-dependency-declared"
+        },
+        {
+          "name": "npm",
+          "status": "pass",
+          "reason": "npm-on-path"
+        },
+        {
+          "name": "node",
+          "status": "pass",
+          "reason": "node-supported"
+        }
+      ],
+      "tool_timing": [
+        {
+          "probe": "sdk",
+          "seconds": 4.17,
+          "exit_code": 0,
+          "ready": true,
+          "stderr_present": false
+        },
+        {
+          "probe": "node",
+          "seconds": 0.052,
+          "exit_code": 0,
+          "ready": false,
+          "stderr_present": false
+        }
+      ]
+    },
+    {
+      "case": "rerun-after-manual-toml-fix",
+      "exit_code": 0,
+      "expected_exit": 0,
+      "checks": [
+        {
+          "name": "python",
+          "status": "pass",
+          "reason": "python-supported"
+        },
+        {
+          "name": "library",
+          "status": "pass",
+          "reason": "library-installed"
+        },
+        {
+          "name": "aiogram",
+          "status": "pass",
+          "reason": "sdk-supported"
+        },
+        {
+          "name": "python-exports",
+          "status": "pass",
+          "reason": "adapter-ready"
+        },
+        {
+          "name": "pyproject",
+          "status": "pass",
+          "reason": "toml-valid"
+        },
+        {
+          "name": "token-format",
+          "status": "pass",
+          "reason": "token-format-valid"
+        },
+        {
+          "name": "mini-app-manifest",
+          "status": "pass",
+          "reason": "mini-app-dependency-declared"
+        },
+        {
+          "name": "npm",
+          "status": "pass",
+          "reason": "npm-on-path"
+        },
+        {
+          "name": "node",
+          "status": "pass",
+          "reason": "node-supported"
+        }
+      ],
+      "tool_timing": [
+        {
+          "probe": "sdk",
+          "seconds": 4.04,
+          "exit_code": 0,
+          "ready": true,
+          "stderr_present": false
+        },
+        {
+          "probe": "node",
+          "seconds": 0.044,
+          "exit_code": 0,
+          "ready": false,
+          "stderr_present": false
+        }
+      ]
+    },
+    {
+      "case": "missing-node-and-npm",
+      "exit_code": 1,
+      "expected_exit": 1,
+      "checks": [
+        {
+          "name": "python",
+          "status": "pass",
+          "reason": "python-supported"
+        },
+        {
+          "name": "library",
+          "status": "pass",
+          "reason": "library-installed"
+        },
+        {
+          "name": "aiogram",
+          "status": "pass",
+          "reason": "sdk-supported"
+        },
+        {
+          "name": "python-exports",
+          "status": "pass",
+          "reason": "adapter-ready"
+        },
+        {
+          "name": "pyproject",
+          "status": "pass",
+          "reason": "toml-valid"
+        },
+        {
+          "name": "token-format",
+          "status": "pass",
+          "reason": "token-format-valid"
+        },
+        {
+          "name": "mini-app-manifest",
+          "status": "pass",
+          "reason": "mini-app-dependency-declared"
+        },
+        {
+          "name": "npm",
+          "status": "fail",
+          "reason": "npm-missing"
+        },
+        {
+          "name": "node",
+          "status": "fail",
+          "reason": "node-missing"
+        }
+      ],
+      "tool_timing": [
+        {
+          "probe": "sdk",
+          "seconds": 4.116,
+          "exit_code": 0,
+          "ready": true,
+          "stderr_present": false
+        }
+      ]
+    },
+    {
+      "case": "restored-tool-path",
+      "exit_code": 0,
+      "expected_exit": 0,
+      "checks": [
+        {
+          "name": "python",
+          "status": "pass",
+          "reason": "python-supported"
+        },
+        {
+          "name": "library",
+          "status": "pass",
+          "reason": "library-installed"
+        },
+        {
+          "name": "aiogram",
+          "status": "pass",
+          "reason": "sdk-supported"
+        },
+        {
+          "name": "python-exports",
+          "status": "pass",
+          "reason": "adapter-ready"
+        },
+        {
+          "name": "pyproject",
+          "status": "pass",
+          "reason": "toml-valid"
+        },
+        {
+          "name": "token-format",
+          "status": "pass",
+          "reason": "token-format-valid"
+        },
+        {
+          "name": "mini-app-manifest",
+          "status": "pass",
+          "reason": "mini-app-dependency-declared"
+        },
+        {
+          "name": "npm",
+          "status": "pass",
+          "reason": "npm-on-path"
+        },
+        {
+          "name": "node",
+          "status": "pass",
+          "reason": "node-supported"
+        }
+      ],
+      "tool_timing": [
+        {
+          "probe": "sdk",
+          "seconds": 3.934,
+          "exit_code": 0,
+          "ready": true,
+          "stderr_present": false
+        },
+        {
+          "probe": "node",
+          "seconds": 0.061,
+          "exit_code": 0,
+          "ready": false,
+          "stderr_present": false
+        }
+      ]
+    }
+  ],
+  "repairs_executed": [
+    {
+      "argv_template": [
+        "python",
+        "-m",
+        "ensurepip"
+      ],
+      "cwd": "project"
+    },
+    {
+      "argv_template": [
+        "python",
+        "-m",
+        "pip",
+        "check"
+      ],
+      "cwd": "project"
+    },
+    {
+      "argv_template": [
+        "python",
+        "-m",
+        "pip",
+        "install",
+        "<PROVIDED_WHEEL>[aiogram]"
+      ],
+      "cwd": "project"
+    },
+    {
+      "argv_template": [
+        "npm.cmd",
+        "install",
+        "<PROVIDED_TARBALL>"
+      ],
+      "cwd": "mini-app"
+    },
+    {
+      "argv_template": [
+        "python",
+        "-m",
+        "telegram_patterns",
+        "doctor",
+        "."
+      ],
+      "cwd": "project"
+    }
+  ],
+  "installed_origin": {
+    "module": "C:\\Users\\zulut\\AppData\\Local\\Temp\\telegram-patterns-0.12.0-14n3i3qw\\doctor\\repair environment with spaces\\Lib\\site-packages\\telegram_patterns\\__init__.py",
+    "prefix": "C:\\Users\\zulut\\AppData\\Local\\Temp\\telegram-patterns-0.12.0-14n3i3qw\\doctor\\repair environment with spaces",
+    "aiogram": "3.31.0"
+  },
+  "scope": "Installed wheel, fresh SDK-free and repaired consumer, real supplied wheel/tarball installs; no Telegram requests or physical client proof",
+  "sdk_project_shadow_rejected": true,
+  "dependency_shadow_not_executed": true,
+  "installer_network": "Explicit fixture repair installers may use registries; doctor never invokes them"
+}

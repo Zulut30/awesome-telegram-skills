@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "library_version": "0.11.1",
+  "library_version": "0.12.0",
   "scope": "Public library exports; ref.* recipes belong to the API reference, not the Telegram method snapshot",
   "groups": [
     {

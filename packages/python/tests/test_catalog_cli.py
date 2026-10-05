@@ -18,9 +18,39 @@ ROOT = Path(__file__).resolve().parents[3]
 
 
 class RecipeTests(unittest.TestCase):
+    def test_navigation_intersections_versions_unknown_context_and_immutable_links(self):
+        catalog = RecipeCatalog()
+        recipe = catalog.search('две кнопки', task='keyboards', context='private', sdk='aiogram', sdk_version='3.31.0')[0]
+        self.assertEqual(recipe.id, 'two-columns')
+        self.assertTrue(recipe.source_files and recipe.check_files)
+        self.assertIsInstance(recipe.contexts, tuple)
+        self.assertIn('native.BackButton.show', {r.id for r in catalog.search('назад', sdk='telegram-webapp')})
+        lost = catalog.search('потерянный ответ', context='backend', task='recovery')[0]
+        self.assertEqual((lost.id, lost.sdk, lost.api_version), ('demo-recovery', 'python-core', 'none'))
+        self.assertEqual(catalog.search('потерянный ответ', context='private'), ())
+        self.assertEqual(catalog.search(sdk='aiogram', sdk_version='0.0.0'), ())
+        self.assertEqual(catalog.get('api.getUpdates').contexts, ('unspecified',))
+        self.assertNotIn(catalog.get('api.getUpdates'), catalog.search(context='group', limit=1000))
+        self.assertIn('private', catalog.get('api.createForumTopic').contexts)
+        for field in ('task', 'context', 'sdk', 'sdk_version', 'api_version'):
+            for invalid in (True, '', 'x' * 81):
+                with self.subTest(field=field, invalid=invalid), self.assertRaises(ValueError): catalog.search(**{field: invalid})
+
+    def test_legacy_navigation_defaults_and_link_injection_rejected(self):
+        data={'schema_version':1,'library_version':'fixture','recipes':[{
+            'id':'legacy','title':'Fixture','summary':'fixture','category':'keyboards','language':'python','keywords':[],
+            'code':'pass','verification':'sdk','scope':'fixture','sources':['https://core.telegram.org/bots/api']}]}
+        legacy=RecipeCatalog(data).get('legacy')
+        self.assertEqual((legacy.tasks,legacy.contexts,legacy.source_files), ((),('unspecified',),()))
+        for field, value in [('contexts',[]),('tasks',['Invented label']),('sdk',None),('sdk_version','<script>'),
+                             ('source_files',['../secret.env']),('check_files',['https://invalid.test']),
+                             ('source_files',['C:/secret']),('source_files',['scripts//check.py'])]:
+            bad=json.loads(json.dumps(data));bad['recipes'][0][field]=value
+            with self.subTest(field=field,value=value), self.assertRaises(ValueError): RecipeCatalog(bad)
+
     def test_maturity_does_not_promote_evidence_to_stable(self):
         catalog = RecipeCatalog()
-        self.assertEqual(len(catalog.search(maturity='experimental', limit=1000)), 14)
+        self.assertEqual(len(catalog.search(maturity='experimental', limit=1000)), 15)
         self.assertEqual(len(catalog.search(maturity='reference', limit=1000)), 284)
         self.assertEqual(catalog.search(maturity='stable'), ())
         self.assertEqual(catalog.get('api.sendPhoto').maturity, 'reference')
@@ -44,13 +74,13 @@ class RecipeTests(unittest.TestCase):
 
     def test_packaged_catalog_search_ranking_filters_and_scopes(self):
         catalog = RecipeCatalog()
-        self.assertEqual(len(catalog.recipes), 298)
+        self.assertEqual(len(catalog.recipes), 299)
         self.assertEqual(catalog.search('ДВЕ кнопки')[0].id, 'two-columns')
         self.assertEqual(catalog.search('три кнопки')[0].id, 'three-columns')
         self.assertEqual(catalog.search()[0].id, 'two-columns')
         self.assertEqual(len(catalog.search(category='keyboards', limit=1000)), 11)
         self.assertEqual(len(catalog.search(language='typescript', limit=1000)), 99)
-        self.assertEqual(len(catalog.search(verification='mock')), 3)
+        self.assertEqual(len(catalog.search(verification='mock')), 4)
         self.assertEqual(catalog.search(verification='live'), ())
         self.assertEqual(catalog.search('токен_НЕТ_РЕЦЕПТА'), ())
         self.assertEqual(catalog.get('api.sendPhoto').verification, 'sdk')
@@ -204,7 +234,7 @@ class GalleryGeneratorTests(unittest.TestCase):
             output=Path(folder)/'site'
             with patch('sys.argv',['builder','--output-dir',str(output)]),redirect_stdout(io.StringIO()):builder.main()
             self.assertTrue((output/'index.html').is_file());self.assertTrue((output/'gallery.js').is_file())
-            self.assertEqual(len(json.loads((output/'recipes.json').read_text(encoding='utf-8'))['recipes']),298)
+            self.assertEqual(len(json.loads((output/'recipes.json').read_text(encoding='utf-8'))['recipes']),299)
             with patch('sys.argv',['builder','--output-dir',str(output),'--check']),redirect_stdout(io.StringIO()):builder.main()
             (output/'index.html').write_text('drift')
             with patch('sys.argv',['builder','--output-dir',str(output),'--check']),self.assertRaisesRegex(ValueError,'drift'):builder.main()

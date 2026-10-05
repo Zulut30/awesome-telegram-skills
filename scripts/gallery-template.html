@@ -2,17 +2,24 @@
 <html lang="ru"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
 <meta name="color-scheme" content="light dark"><title>Telegram — библиотека рецептов</title><link rel="icon" href="data:,"><link rel="stylesheet" href="gallery.css">
 <script id="recipe-data" type="application/json">__CATALOG_JSON__</script><script src="gallery.js" defer></script></head>
-<body><header><div class="brand"><span class="logo" aria-hidden="true">↗</span><div><p class="eyebrow">AWESOME TELEGRAM · <span id="version"></span></p><h1>Найти рецепт. Собрать бота.</h1></div></div>
+<body data-repository-base="__REPOSITORY_BASE__"><header><div class="brand"><span class="logo" aria-hidden="true">↗</span><div><p class="eyebrow">AWESOME TELEGRAM · <span id="version"></span></p><h1>Найти рецепт. Собрать бота.</h1></div></div>
 <p class="intro">Готовый код для Python-ботов и TypeScript Mini Apps. Выберите задачу, посмотрите пример и границы его проверки.</p></header>
-<main><section class="toolbar" aria-label="Поиск рецептов"><label>Что хотите сделать?<input id="search" type="search" maxlength="512" placeholder="Например: три кнопки, контакт, sendPhoto" autocomplete="off"></label>
+<main><section class="toolbar" aria-label="Поиск рецептов"><label>Что хотите сделать?<input id="search" type="search" maxlength="512" placeholder="Две кнопки, назад, потерянный ответ" autocomplete="off"></label>
+<label>Задача<select id="task" aria-label="Задача"><option value="">Все задачи</option></select></label>
+<button id="reset" class="quiet" type="button">Сбросить</button>
+<details id="advanced-filters"><summary>Другие фильтры <span id="filter-count"></span></summary><div class="filter-grid">
+<label>Контекст<select id="context" aria-label="Контекст"><option value="">Все контексты</option></select></label>
+<label>SDK<select id="sdk" aria-label="SDK"><option value="">Все SDK</option></select></label>
+<label>Версия SDK / снимок<select id="sdk-version" aria-label="Версия SDK / снимок"><option value="">Все версии</option></select></label>
+<label>Версия API<select id="api-version" aria-label="Версия API"><option value="">Все версии API</option></select></label>
 <label>Раздел<select id="category" aria-label="Раздел"><option value="">Все разделы</option><option value="keyboards">Клавиатуры и ввод</option><option value="scenarios">Полные сценарии ботов</option><option value="bot-api">Bot API</option><option value="mini-app">Mini Apps</option></select></label>
 <label>Проверка<select id="verification" aria-label="Проверка"><option value="">Все уровни</option><option value="sdk">SDK: построение запроса</option><option value="mock">Mock: локальный сценарий</option><option value="not_run">Справочный фрагмент</option><option value="live">Настоящий Telegram</option></select></label>
 <label>Зрелость<select id="maturity" aria-label="Зрелость"><option value="">Все статусы</option><option value="stable">Стабильный</option><option value="experimental">Экспериментальный</option><option value="reference">Справочный</option></select></label>
-<button id="reset" class="quiet" type="button">Сбросить</button></section>
-<p class="legend">Зрелость и доказательства проверки независимы. SDK проверяет построение объектов. Mock исполняет сценарий без Telegram. Справочный фрагмент требует доработки. Веб-превью показывает раскладку; настоящие клиенты здесь не проверяются. Сейчас стабильные сценарии 1.0 еще не заявлены.</p>
+</div></details></section>
+<details class="legend"><summary>Как читать статусы и версии</summary><p>Зрелость и доказательства проверки независимы. SDK проверяет построение объектов. Mock исполняет сценарий без Telegram. Справочный фрагмент требует доработки. Веб-превью показывает раскладку; настоящие клиенты здесь не проверяются. Контекст — метка примера, права проверяет приложение. Версия SDK — проверенный снимок; min native API не доказывает поддержку клиентом. Стабильные сценарии 1.0 еще не заявлены.</p></details>
 <div class="workspace"><section class="catalog"><div class="section-label"><h2>Рецепты</h2><span id="count" role="status" aria-live="polite"></span></div><div id="recipes"></div></section>
-<section class="detail" id="detail" aria-label="Выбранный рецепт"><p class="eyebrow" id="detail-category"></p><h2 id="detail-title"></h2><p id="detail-summary"></p><p class="scope" id="detail-scope"></p>
+<section class="detail" id="detail" aria-label="Выбранный рецепт"><p class="eyebrow" id="detail-category"></p><h2 id="detail-title"></h2><p id="detail-summary"></p><p class="scope" id="detail-scope"></p><dl id="detail-metadata" class="metadata"></dl>
 <div id="preview" class="preview" aria-label="Веб-превью результата"></div><p id="preview-status" role="status"></p>
 <div class="section-label"><h3>Код</h3><button id="copy" type="button">Копировать</button></div><p id="copy-status" role="status"></p><pre tabindex="0" aria-label="Код рецепта"><code id="code"></code></pre>
-<div id="sources" class="sources"></div></section></div></main>
+<div class="repository-links"><h3>Исходники</h3><div id="source-files"></div><h3>Код проверки</h3><p class="link-note">Ссылка на проверяющий код не означает live-проверку Telegram.</p><div id="check-files"></div></div><div id="sources" class="sources"></div></section></div></main>
 <footer>Локальная галерея · без токенов, авторизации и вызовов Telegram API</footer></body></html>

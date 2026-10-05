@@ -183,9 +183,13 @@ class DoctorTests(unittest.TestCase):
         self.assertEqual(args[0][:4], [diagnostics.sys.executable, '-I', '-B', '-c'])
         self.assertEqual(args[0][4], diagnostics._SDK_PROBE)
         self.assertEqual(kwargs['cwd'], diagnostics.sys.prefix)
+        self.assertEqual(kwargs['timeout'], 30)
         self.assertFalse(any(CANARY in v for v in kwargs['env'].values()))
         for output in (CANARY, 'ready\n' + CANARY):
             with patch.object(diagnostics.subprocess, 'run', return_value=subprocess.CompletedProcess([], 0, output, CANARY)):
+                self.assertFalse(diagnostics._sdk_probe())
+        for error in (OSError(CANARY), subprocess.TimeoutExpired(CANARY, 30, output=CANARY)):
+            with patch.object(diagnostics.subprocess, 'run', side_effect=error):
                 self.assertFalse(diagnostics._sdk_probe())
 
     def test_cli_returns_actionable_json_for_failed_target_and_successful_bot(self):

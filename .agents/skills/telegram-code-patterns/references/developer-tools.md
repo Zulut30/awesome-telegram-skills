@@ -1,5 +1,7 @@
 # Поиск рецепта и подготовка проекта — API 0.5.0
 
+Этот обзор сохраняет исторические 0.5.0 defaults. Для 0.12.0 добавлены [task/context/SDK/version filters и source/check links](gallery-navigation.md): 299 recipes, без исполнения при поиске; неопределенный контекст не означает любой чат. Прежний API ниже сохраняется.
+
 Используй только при намерении найти готовый пример, создать новый проект или проверить локальное окружение. Существующий PTB/React/БД сохраняй. Пакеты поставляются локально; сначала проверь импорт/версию и предоставленный путь/wheel/tarball, а не ищи наше имя в registry. Этот reference работает без соседних навыков и исходного репозитория.
 
 ## Поиск
@@ -31,12 +33,12 @@ CLI эквивалент: `telegram-patterns recipes "две кнопки"`, `te
 
 `telegram-patterns doctor <PROJECT>` выполняет read-only local checks: Python/package/aiogram imports, TOML, Node/npm для `mini-app/package.json`, формат BOT_TOKEN в окружении. `.env` не читается, token не печатается. Exit 0 означает отсутствие локальных fail; warn допустим. `--require-token` превращает отсутствие/невалидный формат token в fail. Core без aiogram найдет рецепты/создаст template, но doctor вернет fail SDK readiness.
 
-В 0.11.1 причины, контексты и команды исправления описаны в [самостоятельном reference](doctor.md). Проверяй `name`/`reason`, показывай remediation и выполняй отдельное согласованное действие. Недоступный target/read failure становятся failed checks; manifests ограничены 256 KiB, известные links/junctions отклоняются. Doctor не устанавливает зависимости и не выполняет предлагаемые команды.
+В 0.12.0 причины, контексты и команды исправления описаны в [самостоятельном reference](doctor.md). Проверяй `name`/`reason`, показывай remediation и выполняй отдельное согласованное действие. Недоступный target/read failure становятся failed checks; manifests ограничены 256 KiB, известные links/junctions отклоняются. Doctor не устанавливает зависимости и не выполняет предлагаемые команды.
 
 Doctor не запускает проект; fixed `node --version` и изолированный Python `-I -B` import probe установленного adapter/SDK — единственные code checks. Известная подмена aiogram import отклоняется; каталог проекта, PYTHONPATH и user-site не входят в SDK probe. Не подтверждает token validity, единственный polling consumer, webhook, backend auth, deployment, другие зависимости или реальный Telegram. Перед live polling отдельно проверь отсутствие конкурирующего consumer и наличие webhook. Запускай offline.py до настройки token; подтверждай установленную библиотеку, а не случайный source import.
 
 Частично проверенные 4 октября 2026 источники: [PyPA CLI](https://packaging.python.org/en/latest/guides/creating-command-line-tools/) и [direct dependency references](https://packaging.python.org/en/latest/specifications/dependency-specifiers/). API Telegram/SDK не менялся в этом reference; [границы кнопок и событий](keyboard-recipes.md) остаются применимыми.
 
-Для первого запуска предоставленных 0.11.1 wheel/tarball используй [проверенные команды](quickstart.md). Исправление npm path подтверждено настоящим consumer install с пробелами; npm local path/tarball документация сверена 2026-10-04, источники в этом reference.
+Для первого запуска предоставленных 0.12.0 wheel/tarball используй [проверенные команды](quickstart.md). Исправление npm path подтверждено настоящим consumer install с пробелами; npm local path/tarball документация сверена 2026-10-04, источники в этом reference.
 
 В 0.10.0 выбор starter групп через --component и init --list-components описан в [самостоятельном reference](starter-selection.md). Прежние default композиции сохранены; partial I/O failure не разрешает удалять чужие файлы.

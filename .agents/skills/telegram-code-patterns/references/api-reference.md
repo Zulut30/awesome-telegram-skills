@@ -1,4 +1,4 @@
-# Справочник API 0.11.1
+# Справочник API 0.12.0
 
 Публичные imports, самостоятельные минимальные композиции и границы каждого символа. Все группы experimental. Рецепты ref.* принадлежат этому справочнику; cookbook RecipeCatalog отдельно содержит Telegram requests/layouts. Исполненные fixtures не доказывают live/device/provider acceptance.
 

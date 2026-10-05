@@ -25,6 +25,8 @@ def main(argv: list[str] | None = None) -> int:
     recipes.add_argument('query', nargs='?', default=''); recipes.add_argument('--category'); recipes.add_argument('--language')
     recipes.add_argument('--verification'); recipes.add_argument('--limit', type=int, default=20); recipes.add_argument('--show')
     recipes.add_argument('--maturity', choices=('stable', 'experimental', 'reference'))
+    for field in ('task', 'context', 'sdk', 'sdk-version', 'api-version'):
+        recipes.add_argument('--' + field, help='Exact catalog metadata; not permission/compatibility proof')
     init = commands.add_parser('init', help='Create a NEW project; no install/network/overwrite')
     init.add_argument('target', nargs='?'); init.add_argument('--library'); init.add_argument('--template', choices=('bot', 'bot-mini-app'), default='bot')
     init.add_argument('--typescript'); init.add_argument('--dry-run', action='store_true')
@@ -40,9 +42,12 @@ def main(argv: list[str] | None = None) -> int:
                 recipe = catalog.get(args.show)
                 print(f'{recipe.title}\n{recipe.maturity} / {recipe.verification}: {recipe.scope}\n\n{recipe.code}')
             else:
-                found = catalog.search(args.query, category=args.category, language=args.language, verification=args.verification, maturity=args.maturity, limit=args.limit)
+                found = catalog.search(args.query, category=args.category, language=args.language, verification=args.verification, maturity=args.maturity, limit=args.limit,
+                                       task=args.task, context=args.context, sdk=args.sdk, sdk_version=args.sdk_version, api_version=args.api_version)
                 print(json.dumps({'version': catalog.library_version, 'matches': len(found), 'recipes': [
-                    {'id': item.id, 'title': item.title, 'category': item.category, 'maturity': item.maturity, 'verification': item.verification, 'scope': item.scope} for item in found]}, ensure_ascii=False))
+                    {'id': item.id, 'title': item.title, 'category': item.category, 'maturity': item.maturity, 'verification': item.verification, 'scope': item.scope,
+                     'tasks': item.tasks, 'contexts': item.contexts, 'sdk': item.sdk, 'sdk_version': item.sdk_version, 'api_version': item.api_version,
+                     'source_files': item.source_files, 'check_files': item.check_files} for item in found]}, ensure_ascii=False))
         elif args.command == 'init':
             if args.list_components:
                 if args.target or args.library or args.typescript or args.component or args.dry_run:

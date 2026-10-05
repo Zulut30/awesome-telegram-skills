@@ -151,4 +151,16 @@
 | «Импортируй тип RequestOptions» | Type-only import; strict consumer compile через declarations tarball | Поиск несуществующего runtime export |
 | «Новый public export» | Генератор требует import, композицию, limits и ref.* recipe | Незадокументированный export или дрейф portable копии проходит --check |
 
-`scripts/verify_api_reference.py` копирует точный код из fenced blocks в consumer вне репозитория: 13 Python scripts, 5 TypeScript групп, Mypy/strict TS, compiler-symbol resolution, installed CLI и настоящий Chrome DOM. Это воспроизводимое executable evidence сценариев, не независимое human/blind agent usability-исследование. Ref.* рецепты справочника отделены от 298 cookbook recipes.
+`scripts/verify_api_reference.py` копирует точный код из fenced blocks в consumer вне репозитория: 13 Python scripts, 5 TypeScript групп, Mypy/strict TS, compiler-symbol resolution, installed CLI и настоящий Chrome DOM. Это воспроизводимое executable evidence сценариев, не независимое human/blind agent usability-исследование. Ref.* рецепты справочника отделены от cookbook recipes (299 в 0.12.0).
+
+## Сценарии навигации — пункт 015
+
+| Задача | Ожидаемый результат | Недопустимая подмена |
+| --- | --- | --- |
+| «Две кнопки в личном чате на aiogram 3.31» | two-columns через task/context/SDK/version; открыть source и check, сохранить текущий Dispatcher | Установка SDK ради поиска, новый framework, snapshot как весь compatibility range |
+| «Назад в Mini App» | BackButton fragments с min version/presence/context fallback; host навигация и disposal отдельно | Markup callback как готовая история экранов; любой клиент поддерживает native |
+| «Потерянный ответ после заказа» | demo-recovery, тот же scoped operation ID; ACL до effect/replay | Автоматический новый заказ или fake remote exactly-once |
+| «Групповой контекст неизвестного API» | Уточнить официальный контекст и права; unspecified не проходит known group filter | Неизвестное превращается во все чаты |
+| «Передать галерею без репозитория» | Export с byte-exact source/check files; file URL и ссылки читаются локально | Ссылки на отсутствующее соседнее дерево |
+
+Installed API reference core_recipes и scripts/verify_gallery_export.py проверяют выбор, пересечения, точный consumer и read-only export/check. Chrome проверяет phone/tablet/desktop, темы, empty/reset/focus, версии и source links. Это executable fixtures, а не независимое human/blind agent usability-исследование.

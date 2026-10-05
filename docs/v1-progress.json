@@ -280,10 +280,26 @@
       "id": 15,
       "title": "Улучшить навигацию галереи",
       "requirement": "Добавить фильтры по задаче, контексту чата, SDK/версии и зрелости, ссылки на исходники и проверку; поиск должен находить «две кнопки», «назад» и «потерянный ответ».",
-      "status": "pending",
-      "commit_subject": null,
-      "artifacts": [],
-      "evidence": []
+      "status": "done",
+      "commit_subject": "roadmap(015): filter gallery by task context and SDK with portable source links",
+      "artifacts": [
+        "docs/gallery-navigation.md",
+        "gallery/gallery.js",
+        "gallery/index.html",
+        "catalog/recipe-gallery.json",
+        "packages/python/src/telegram_patterns/recipes.py",
+        "packages/python/src/telegram_patterns/cli.py",
+        "scripts/build_recipe_gallery.py",
+        "scripts/verify_gallery_export.py",
+        "docs/v1-checks/015.json"
+      ],
+      "evidence": [
+        "docs/v1-checks/015.json",
+        "56 distribution stages; 114 Python passed + 1 skip; 26 TypeScript; 1147 full Chrome checks plus 60 first-run checks; 26 root tests and 41 skills",
+        "299 records with intersecting task/context/SDK/version/maturity/evidence filters; three requested searches, negative context/version, reset/focus and source link cases",
+        "201 byte-exact standalone source/check files; installed SDK-free CLI, read-only export check and owned-note preservation outside repository",
+        "Cold SDK import timeout reproduced at 10.035s; bounded 30s probe succeeds at 11.792s; timeouts/errors and secret isolation remain tested; final CLI helpers exercised in fresh targets"
+      ]
     },
     {
       "id": 16,

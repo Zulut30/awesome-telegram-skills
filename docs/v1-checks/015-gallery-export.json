@@ -1,0 +1,52 @@
+{
+  "passed": true,
+  "version": "0.12.0",
+  "recipes": 299,
+  "source_check_files": 201,
+  "byte_exact_copies": true,
+  "check_read_only": true,
+  "owned_file_preserved": true,
+  "cli_cases": 3,
+  "browser": {
+    "passed": true,
+    "version": "0.12.0",
+    "checks": 414,
+    "viewportThemeCases": 14,
+    "telegram_network": false
+  },
+  "browser_skipped": false,
+  "stages": [
+    {
+      "stage": "export",
+      "exit_code": 0,
+      "expected_exit": 0
+    },
+    {
+      "stage": "check",
+      "exit_code": 0,
+      "expected_exit": 0
+    },
+    {
+      "stage": "rows",
+      "exit_code": 0,
+      "expected_exit": 0
+    },
+    {
+      "stage": "back",
+      "exit_code": 0,
+      "expected_exit": 0
+    },
+    {
+      "stage": "recovery",
+      "exit_code": 0,
+      "expected_exit": 0
+    },
+    {
+      "stage": "browser",
+      "exit_code": 0,
+      "expected_exit": 0
+    }
+  ],
+  "consumer": "C:\\Users\\zulut\\AppData\\Local\\Temp\\telegram-patterns-0.12.0-14n3i3qw\\gallery-export",
+  "scope": "Standalone static gallery and installed CLI; no live Telegram, permission or compatibility range proof"
+}
