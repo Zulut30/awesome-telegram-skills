@@ -90,7 +90,7 @@ from telegram_patterns import BotSettings, validate_init_data, RecipeCatalog, cr
 assert importlib.util.find_spec('aiogram') is None
 assert Path(telegram_patterns.__file__).is_relative_to(Path(sys.argv[1]))
 assert BotSettings.from_env(environ={'BOT_TOKEN':'100:CORE_FIXTURE'}).token=='100:CORE_FIXTURE'
-assert len(RecipeCatalog().recipes)==300
+assert len(RecipeCatalog().recipes)==301
 assert RecipeCatalog().search('две кнопки')[0].id=='two-columns'
 assert RecipeCatalog().get('two-columns').maturity=='experimental'
 assert RecipeCatalog().get('api.sendPhoto').maturity=='reference'
@@ -119,7 +119,7 @@ print(json.dumps({'core_without_sdk':True,'python':sys.version.split()[0]}))
         if report['core_cli']['recipes'][0]['id'] != 'two-columns':
             raise RuntimeError('Core console recipe search failed')
         report['maturity_cli'] = json.loads(run('maturity-cli', [str(core_console), 'recipes', '--maturity', 'experimental'], consumers))
-        if len(report['maturity_cli']['recipes']) != 16 or any(item['maturity'] != 'experimental' for item in report['maturity_cli']['recipes']):
+        if len(report['maturity_cli']['recipes']) != 17 or any(item['maturity'] != 'experimental' for item in report['maturity_cli']['recipes']):
             raise RuntimeError('Installed maturity CLI filter failed')
         database = consumers / 'booking.sqlite'
         first = json.loads(run('booking-first', [str(python_in(core)), str(ROOT / 'examples/python/booking.py'), str(database)], consumers))
@@ -167,6 +167,10 @@ print(json.dumps({'core_without_sdk':True,'python':sys.version.split()[0]}))
         if not navigation['passed'] or navigation['network'] or not navigation['session_closed'] or not all(navigation[k] for k in ('owner_guard','stale_guard','history_back','unknown_edit_recovery','single_message')):
             raise RuntimeError('Installed message navigation composition failed')
         report['message_navigation'] = navigation
+        selection = json.loads(run('selection-controls', [str(python_in(sdk)), str(ROOT / 'examples/python/offline_selection.py')], consumers))
+        if not selection['passed'] or selection['network'] or not selection['session_closed'] or selection['business_effects'] != 0 or not all(selection[k] for k in ('toggle','multiselect','quantity','filters','owner_guard','stale_guard','fresh_rules','confirmation_once','single_message')):
+            raise RuntimeError('Installed composite selection scenario failed')
+        report['selection_controls'] = selection
         report['telegram_catalog'] = json.loads(run('telegram-catalog', [str(python_in(sdk)), str(ROOT / 'scripts/build_telegram_catalog.py'), '--check'], consumers))
         report['recipe_gallery'] = json.loads(run('recipe-gallery', [str(python_in(sdk)), str(ROOT / 'scripts/build_recipe_gallery.py'), '--check'], consumers))
         gallery_command = [str(python_in(sdk)), str(ROOT / 'scripts/verify_gallery_export.py'), '--output', str(consumers / 'gallery-export')]

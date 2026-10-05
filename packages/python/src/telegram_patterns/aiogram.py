@@ -20,6 +20,7 @@ from .forms import FormSubmission, InvalidField, TextField, text_form_router
 from .native_keyboards import ChatType, inline_keyboard, reply_keyboard, input_prompt, remove_keyboard
 from .keyboard_layouts import KeyboardLayout, KeyboardCapabilities, action_layout, inline_layout, reply_layout
 from .navigation import NavigationScreen, NavigationState, NavigationResult, MessageNavigation, navigation_router
+from .selection_aiogram import selection_keyboard, selection_router
 from .api import MethodSpec, InvalidAPIRequest, method_catalog, build_request
 from .events import UpdatePhase, UpdateTrace, UpdateObserver, update_kinds, event_router
 
@@ -31,6 +32,7 @@ __all__ = [
     "ChatType", "inline_keyboard", "reply_keyboard", "input_prompt", "remove_keyboard",
     "KeyboardLayout", "KeyboardCapabilities", "action_layout", "inline_layout", "reply_layout",
     "NavigationScreen", "NavigationState", "NavigationResult", "MessageNavigation", "navigation_router",
+    "selection_keyboard", "selection_router",
     "MethodSpec", "InvalidAPIRequest", "method_catalog", "build_request",
     "UpdatePhase", "UpdateTrace", "UpdateObserver", "update_kinds", "event_router",
 ]

@@ -1,4 +1,4 @@
-# Справочник API 0.15.0
+# Справочник API 0.16.0
 
 Публичные imports, самостоятельные минимальные композиции и границы каждого символа. Все группы experimental. Рецепты ref.* принадлежат этому справочнику; cookbook RecipeCatalog отдельно содержит Telegram requests/layouts. Исполненные fixtures не доказывают live/device/provider acceptance.
 
@@ -140,6 +140,14 @@
 | `NavigationResult` | `from telegram_patterns.aiogram import NavigationResult` | [ref.bot_navigation](api-reference-bot.md#ref-bot_navigation) | Safe accepted/denied/stale/unavailable/unknown feedback |
 | `MessageNavigation` | `from telegram_patterns.aiogram import MessageNavigation` | [ref.bot_navigation](api-reference-bot.md#ref-bot_navigation) | Bounded open/get_state/handle/discard lifecycle for one owned message |
 | `navigation_router` | `from telegram_patterns.aiogram import navigation_router` | [ref.bot_navigation](api-reference-bot.md#ref-bot_navigation) | SDK Router with ACK-first guarded navigation and optional feedback |
+| `SelectionOption` | `from telegram_patterns import SelectionOption` | [ref.core_selection](api-reference-core.md#ref-core_selection) | Immutable keyed option and filter membership |
+| `SelectionSpec` | `from telegram_patterns import SelectionSpec` | [ref.core_selection](api-reference-core.md#ref-core_selection) | Current server values, field bounds and resource version |
+| `SelectionContext` | `from telegram_patterns import SelectionContext` | [ref.core_selection](api-reference-core.md#ref-core_selection) | Host-derived owner/bot/chat/thread/message identity |
+| `SelectionState` | `from telegram_patterns import SelectionState` | [ref.core_selection](api-reference-core.md#ref-core_selection) | Immutable draft snapshot, summary and bounded callback code |
+| `SelectionResult` | `from telegram_patterns import SelectionResult` | [ref.core_selection](api-reference-core.md#ref-core_selection) | Guarded selection decision with safe feedback |
+| `SelectionMenu` | `from telegram_patterns import SelectionMenu` | [ref.core_selection](api-reference-core.md#ref-core_selection) | Atomic server draft, rule refresh and revision-bound one-time confirmation |
+| `selection_keyboard` | `from telegram_patterns.aiogram import selection_keyboard` | [ref.bot_selection](api-reference-bot.md#ref-bot_selection) | Render toggle/multiselect/quantity/filter and confirmation markup with capability fallback |
+| `selection_router` | `from telegram_patterns.aiogram import selection_router` | [ref.bot_selection](api-reference-bot.md#ref-bot_selection) | ACK-first composition with fresh server spec, safe callback guards and host-owned hooks |
 
 ## CLI и CSS
 

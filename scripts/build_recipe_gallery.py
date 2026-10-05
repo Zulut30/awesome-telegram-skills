@@ -13,6 +13,7 @@ import sys
 import tomllib
 from aiogram.types import InlineKeyboardButton, KeyboardButton, CopyTextButton, DisabledButton, WebAppInfo
 from telegram_patterns import RecipeCatalog
+from telegram_patterns._offline_recipe import _FIXTURES
 from telegram_patterns.aiogram import inline_keyboard, reply_keyboard, input_prompt, remove_keyboard, build_request
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -123,6 +124,7 @@ def build(root: Path = ROOT) -> dict:
         ('bot.py', 'offline_bot.py', 'demo-catalog', 'Каталог с пагинацией и callbacks'),
         ('form_bot.py', 'offline_form.py', 'demo-form', 'Форма с проверкой и подтверждением'),
         ('navigation_bot.py', 'offline_navigation.py', 'demo-navigation', 'Экраны и история в одном сообщении'),
+        ('selection_bot.py', 'offline_selection.py', 'demo-selection', 'Переключатели, выбор, количество и подтверждение'),
     ):
         result = subprocess.run([sys.executable, str(root / 'examples/python' / offline)], capture_output=True,
                                 text=True, encoding='utf-8', env=environment, timeout=60)
@@ -133,12 +135,16 @@ def build(root: Path = ROOT) -> dict:
         add(key, title, 'Полная композиция с тем же Dispatcher для offline и polling.', 'scenarios', 'python',
             ['бот', 'пример', 'callback', 'форма' if key == 'demo-form' else 'меню', 'события'], code, 'mock',
             'Synthetic Dispatcher сценарий исполнен при генерации в private fixture. Telegram delivery/physical clients не проверены.', [API],
-            tasks=['input'] if key == 'demo-form' else (['navigation', 'recovery'] if key == 'demo-navigation' else ['bot']), contexts=['private'],
+            tasks=['input', 'keyboards'] if key == 'demo-selection' else ['input'] if key == 'demo-form' else (['navigation', 'recovery'] if key == 'demo-navigation' else ['bot']), contexts=['private'],
             source_files=['examples/python/' + filename], check_files=['examples/python/' + offline])
         if key == 'demo-navigation':
             records[-1]['keywords'] += ['назад', 'история', 'одно', 'сообщение', 'owner', 'stale', 'recovery']
             records[-1]['source_files'].append('packages/python/src/telegram_patterns/navigation.py')
             records[-1]['check_files'].append('packages/python/tests/test_navigation.py')
+        if key == 'demo-selection':
+            records[-1]['keywords'] += ['toggle', 'multiselect', 'переключатель', 'количество', 'фильтр', 'подтверждение', 'выбор', 'confirmation', 'revision']
+            records[-1]['source_files'] += ['packages/python/src/telegram_patterns/selection.py', 'packages/python/src/telegram_patterns/selection_aiogram.py']
+            records[-1]['check_files'].append('packages/python/tests/test_selection.py')
     recovery_file = root / 'examples/python/error_recovery.py'
     recovery = subprocess.run([sys.executable, str(recovery_file)], capture_output=True, text=True, encoding='utf-8', env=environment, timeout=60)
     if recovery.returncode: raise ValueError('Recovery fixture failed')
@@ -238,7 +244,7 @@ def main():
                 products[output / 'files' / name] = source.read_bytes()
     else:
         products[ROOT / 'packages/python/src/telegram_patterns/resources/request-fixtures.json'] = (ROOT / 'catalog/bot-api-request-fixtures.json').read_bytes()
-        for name in ('bot.py', 'offline_bot.py', 'form_bot.py', 'offline_form.py', 'keyboards_bot.py', 'offline_keyboards.py', 'error_recovery.py', 'navigation_bot.py', 'offline_navigation.py'):
+        for name in sorted({name for names in _FIXTURES.values() for name in names}):
             products[ROOT / 'packages/python/src/telegram_patterns/resources/offline' / (name + '.txt')] = (ROOT / 'examples/python' / name).read_bytes()
         products[ROOT / 'packages/python/src/telegram_patterns/resources/recipes.json'] = encoded
         products[ROOT / 'catalog/recipe-gallery.json'] = encoded

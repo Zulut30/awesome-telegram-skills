@@ -1,6 +1,6 @@
 # Общая библиотека компонентов
 
-Текущая локальная поставка 0.15.0: 30 групп компонентов, 130 публичных Python/TypeScript-символов и 300 рецептов. [Требования и offline запуск](recipe-execution.md) доступны для всех записей; 201 Python fixtures имеют executor, 99 native references требуют host/аргументов. [Навигация](gallery-navigation.md) добавляет task/context/SDK/version filters, source/check links и самостоятельный export. Исторические обзоры ниже сохраняют свои версии и evidence; они не заменяют текущую support matrix.
+Текущая локальная поставка 0.16.0: 32 группы компонентов, 138 публичных Python/TypeScript-символов и 301 рецепт. [Требования и offline запуск](recipe-execution.md) доступны для всех записей; 202 Python fixtures имеют executor, 99 native references требуют host/аргументов. [Навигация](gallery-navigation.md) добавляет task/context/SDK/version filters, source/check links и самостоятельный export. Исторические обзоры ниже сохраняют свои версии и evidence; они не заменяют текущую support matrix.
 
 [Формы 0.3.0](form-tools-review.md) добавляют поля с проверкой, возврат, отмену и подтверждение со стабильным ID заявки. Готовый [бот формы](../examples/python/form_bot.py) и [offline-проверка](../examples/python/offline_form.py) используют один create_app; backend сохраняет заявку и replay result в SQLite.
 
@@ -106,3 +106,5 @@ python -m unittest discover -s tests -v
 Для нового компонента: конкретная повторяющаяся задача, контракт и границы; API и meaningful effect/негативная проверка; export/catalog/example/changelog; сборка и consumer install. Бизнес-правила одного проекта остаются у него. Crypto Pay/Platega/ЮKassa пока представлены навыками интеграции; исполняемых provider adapters в 0.5.0 нет.
 
 Playwright — только dev dependency проверки, не runtime приложения. Проверяются 7 viewport размеров и 2 темы; это не physical device QA. При разработке editable install использует актуальный исходный код, не закэшированный uv wheel. При обновлении версии синхронизируй оба package manifest, examples/mini-app/package.json, lockfile и components.json; документация установленной версии должна соответствовать артефактам.
+
+Составные элементы выбора: `SelectionOption/Spec/Context/State/Result/SelectionMenu` из SDK-free root и `selection_keyboard/selection_router` из optional aiogram. [Server rules и confirmation](selection-controls.md) описывают границы локального намерения и бизнес-транзакции host.

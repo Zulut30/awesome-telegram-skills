@@ -1,4 +1,4 @@
-# Python core — 0.15.0
+# Python core — 0.16.0
 
 [Индекс всех символов](api-reference.md). Образцы ниже воспроизводятся через установленный wheel/tarball вне исходного дерева. Assert — проверка fixture, не бизнес-правило production приложения.
 
@@ -182,7 +182,7 @@ catalog = RecipeCatalog()
 recipe: Recipe = catalog.search('две кнопки', maturity=maturity, verification=verification,
                                task='keyboards', context='private', sdk='aiogram', sdk_version='3.31.0', api_version='bot:10.3')[0]
 assert recipe.id == 'two-columns' and catalog.get(recipe.id) == recipe
-assert len(catalog.recipes) == 300 and catalog.library_version
+assert len(catalog.recipes) == 301 and catalog.library_version
 assert recipe.source_files and recipe.check_files and 'keyboards' in recipe.tasks
 lost = catalog.search('потерянный ответ', task='recovery', context='backend')[0]
 assert lost.id == 'demo-recovery' and lost.sdk == 'python-core' and lost.api_version == 'none'
@@ -282,4 +282,47 @@ with TemporaryDirectory() as folder:
     assert checks['aiogram']['remediation']['commands'] and 'PRIVATE_FIXTURE' not in json.dumps(report)
     assert before == {p.name: p.read_bytes() for p in project.iterdir()}
 print(json.dumps({'passed': True, 'case': 'core_doctor', 'network': False}))
+```
+
+<a id="ref-core_selection"></a>
+
+## Серверные значения и подтверждение выбора — ref.core_selection
+
+Файл: `core_selection.py`. Символы: `SelectionOption`, `SelectionSpec`, `SelectionContext`, `SelectionState`, `SelectionResult`, `SelectionMenu`
+
+Границы: Single-process server draft; exact owner/context/revision and confirmation token guards. No automatic business operation, persistence or multiworker guarantee. Current ACL/resource_version/idempotency transaction belongs to host; synthetic transport does not prove live delivery or rendering.
+
+```python
+"""SDK-free server draft: configured values, revisions and bound confirmation."""
+from dataclasses import replace
+import json
+from telegram_patterns import SelectionContext, SelectionMenu, SelectionOption, SelectionResult, SelectionSpec, SelectionState
+
+context = SelectionContext(100, 42, 42, 100)
+rules = SelectionSpec([SelectionOption('a', 'Alpha', ['basic']), SelectionOption('b', 'Beta')],
+                      toggles={'notify':'Уведомлять'}, filters={'all':'Все','basic':'Основные'},
+                      quantity_min=1, quantity_max=3, min_selected=1, max_selected=2)
+menu = SelectionMenu(rules, context)
+initial: SelectionState = menu.state
+denied: SelectionResult = menu.apply(initial.callback('s:a'), replace(context, owner_id=43))
+assert denied.status == 'denied' and denied.state is None and menu.state is initial
+assert menu.apply(initial.callback('s:a'), context).status == 'accepted'
+assert menu.apply(initial.callback('s:a'), context).status == 'stale'
+for action in ('s:b','t:notify','q:inc','f:basic','ask'):
+    assert menu.apply(menu.state.callback(action), context).status in {'accepted','confirming'}
+pending = menu.state
+assert pending.confirmation_id is not None
+old_confirmation = pending.callback('y:' + pending.confirmation_id)
+menu.replace_spec(replace(rules, resource_version='2'))
+assert menu.apply(old_confirmation, context).status == 'stale'
+assert menu.state.selected == ('a','b')
+assert menu.apply(menu.state.callback('ask'), context).status == 'confirming'
+pending = menu.state
+assert pending.confirmation_id is not None
+data = pending.callback('y:' + pending.confirmation_id)
+result = menu.apply(data, context)
+assert result.status == 'confirmed' and result.state is not None and result.state.operation_id is not None
+assert result.state.spec.resource_version == '2'
+assert menu.apply(data, context).status == 'stale'
+print(json.dumps({'passed':True,'case':'core_selection','network':False,'business_effects':0}))
 ```

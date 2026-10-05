@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "library_version": "0.15.0",
+  "library_version": "0.16.0",
   "symbols": [
     {
       "module": "telegram_patterns",
@@ -329,7 +329,7 @@
       "example": "examples/api-reference/python/core_recipes.py",
       "limits": "Чтение не исполняет recipe code. Maturity отдельно от verification; SDK/mock не доказывают live/device. Preview — независимая копия. Этот пример ищет существующий cookbook recipe two-columns; ref.* — имена справочника API.",
       "intent": "Literal stable/experimental/reference",
-      "example_sha256": "f9af8ef0068a644d767074595d5da596aa5e859425e431a32a32eb8482f22987",
+      "example_sha256": "e9d571728f10e37f5e58e410c2c7666b0a19a7e4cb05e3234d4774523f924975",
       "kind": "value"
     },
     {
@@ -340,7 +340,7 @@
       "example": "examples/api-reference/python/core_recipes.py",
       "limits": "Чтение не исполняет recipe code. Maturity отдельно от verification; SDK/mock не доказывают live/device. Preview — независимая копия. Этот пример ищет существующий cookbook recipe two-columns; ref.* — имена справочника API.",
       "intent": "Literal sdk/mock/browser/live/not_run",
-      "example_sha256": "f9af8ef0068a644d767074595d5da596aa5e859425e431a32a32eb8482f22987",
+      "example_sha256": "e9d571728f10e37f5e58e410c2c7666b0a19a7e4cb05e3234d4774523f924975",
       "kind": "value"
     },
     {
@@ -351,7 +351,7 @@
       "example": "examples/api-reference/python/core_recipes.py",
       "limits": "Чтение не исполняет recipe code. Maturity отдельно от verification; SDK/mock не доказывают live/device. Preview — независимая копия. Этот пример ищет существующий cookbook recipe two-columns; ref.* — имена справочника API.",
       "intent": "Неизменяемая запись и копия preview",
-      "example_sha256": "f9af8ef0068a644d767074595d5da596aa5e859425e431a32a32eb8482f22987",
+      "example_sha256": "e9d571728f10e37f5e58e410c2c7666b0a19a7e4cb05e3234d4774523f924975",
       "kind": "value"
     },
     {
@@ -362,7 +362,7 @@
       "example": "examples/api-reference/python/core_recipes.py",
       "limits": "Чтение не исполняет recipe code. Maturity отдельно от verification; SDK/mock не доказывают live/device. Preview — независимая копия. Этот пример ищет существующий cookbook recipe two-columns; ref.* — имена справочника API.",
       "intent": "Версия, recipes, get/search с фильтрами",
-      "example_sha256": "f9af8ef0068a644d767074595d5da596aa5e859425e431a32a32eb8482f22987",
+      "example_sha256": "e9d571728f10e37f5e58e410c2c7666b0a19a7e4cb05e3234d4774523f924975",
       "kind": "value"
     },
     {
@@ -1431,11 +1431,99 @@
       "intent": "SDK Router with ACK-first guarded navigation and optional feedback",
       "example_sha256": "2bdd6ebae6d75cd1cea4d8a51b8c7ec87247ccd2d6c88dfa15a56ec5756a5add",
       "kind": "value"
+    },
+    {
+      "module": "telegram_patterns",
+      "name": "SelectionOption",
+      "import": "from telegram_patterns import SelectionOption",
+      "recipe": "ref.core_selection",
+      "example": "examples/api-reference/python/core_selection.py",
+      "limits": "Single-process server draft; exact owner/context/revision and confirmation token guards. No automatic business operation, persistence or multiworker guarantee. Current ACL/resource_version/idempotency transaction belongs to host; synthetic transport does not prove live delivery or rendering.",
+      "intent": "Immutable keyed option and filter membership",
+      "example_sha256": "fe2f0b4a9b8b771e3532c715e1478dae48e882d32e38cb58696e4dd649242478",
+      "kind": "value"
+    },
+    {
+      "module": "telegram_patterns",
+      "name": "SelectionSpec",
+      "import": "from telegram_patterns import SelectionSpec",
+      "recipe": "ref.core_selection",
+      "example": "examples/api-reference/python/core_selection.py",
+      "limits": "Single-process server draft; exact owner/context/revision and confirmation token guards. No automatic business operation, persistence or multiworker guarantee. Current ACL/resource_version/idempotency transaction belongs to host; synthetic transport does not prove live delivery or rendering.",
+      "intent": "Current server values, field bounds and resource version",
+      "example_sha256": "fe2f0b4a9b8b771e3532c715e1478dae48e882d32e38cb58696e4dd649242478",
+      "kind": "value"
+    },
+    {
+      "module": "telegram_patterns",
+      "name": "SelectionContext",
+      "import": "from telegram_patterns import SelectionContext",
+      "recipe": "ref.core_selection",
+      "example": "examples/api-reference/python/core_selection.py",
+      "limits": "Single-process server draft; exact owner/context/revision and confirmation token guards. No automatic business operation, persistence or multiworker guarantee. Current ACL/resource_version/idempotency transaction belongs to host; synthetic transport does not prove live delivery or rendering.",
+      "intent": "Host-derived owner/bot/chat/thread/message identity",
+      "example_sha256": "fe2f0b4a9b8b771e3532c715e1478dae48e882d32e38cb58696e4dd649242478",
+      "kind": "value"
+    },
+    {
+      "module": "telegram_patterns",
+      "name": "SelectionState",
+      "import": "from telegram_patterns import SelectionState",
+      "recipe": "ref.core_selection",
+      "example": "examples/api-reference/python/core_selection.py",
+      "limits": "Single-process server draft; exact owner/context/revision and confirmation token guards. No automatic business operation, persistence or multiworker guarantee. Current ACL/resource_version/idempotency transaction belongs to host; synthetic transport does not prove live delivery or rendering.",
+      "intent": "Immutable draft snapshot, summary and bounded callback code",
+      "example_sha256": "fe2f0b4a9b8b771e3532c715e1478dae48e882d32e38cb58696e4dd649242478",
+      "kind": "value"
+    },
+    {
+      "module": "telegram_patterns",
+      "name": "SelectionResult",
+      "import": "from telegram_patterns import SelectionResult",
+      "recipe": "ref.core_selection",
+      "example": "examples/api-reference/python/core_selection.py",
+      "limits": "Single-process server draft; exact owner/context/revision and confirmation token guards. No automatic business operation, persistence or multiworker guarantee. Current ACL/resource_version/idempotency transaction belongs to host; synthetic transport does not prove live delivery or rendering.",
+      "intent": "Guarded selection decision with safe feedback",
+      "example_sha256": "fe2f0b4a9b8b771e3532c715e1478dae48e882d32e38cb58696e4dd649242478",
+      "kind": "value"
+    },
+    {
+      "module": "telegram_patterns",
+      "name": "SelectionMenu",
+      "import": "from telegram_patterns import SelectionMenu",
+      "recipe": "ref.core_selection",
+      "example": "examples/api-reference/python/core_selection.py",
+      "limits": "Single-process server draft; exact owner/context/revision and confirmation token guards. No automatic business operation, persistence or multiworker guarantee. Current ACL/resource_version/idempotency transaction belongs to host; synthetic transport does not prove live delivery or rendering.",
+      "intent": "Atomic server draft, rule refresh and revision-bound one-time confirmation",
+      "example_sha256": "fe2f0b4a9b8b771e3532c715e1478dae48e882d32e38cb58696e4dd649242478",
+      "kind": "value"
+    },
+    {
+      "module": "telegram_patterns.aiogram",
+      "name": "selection_keyboard",
+      "import": "from telegram_patterns.aiogram import selection_keyboard",
+      "recipe": "ref.bot_selection",
+      "example": "examples/api-reference/python/bot_selection.py",
+      "limits": "Single-process server draft; exact owner/context/revision and confirmation token guards. No automatic business operation, persistence or multiworker guarantee. Current ACL/resource_version/idempotency transaction belongs to host; synthetic transport does not prove live delivery or rendering.",
+      "intent": "Render toggle/multiselect/quantity/filter and confirmation markup with capability fallback",
+      "example_sha256": "177d88baae02778f3a21064421c2f765b5f0c8691a19fc4f162b112947e279c9",
+      "kind": "value"
+    },
+    {
+      "module": "telegram_patterns.aiogram",
+      "name": "selection_router",
+      "import": "from telegram_patterns.aiogram import selection_router",
+      "recipe": "ref.bot_selection",
+      "example": "examples/api-reference/python/bot_selection.py",
+      "limits": "Single-process server draft; exact owner/context/revision and confirmation token guards. No automatic business operation, persistence or multiworker guarantee. Current ACL/resource_version/idempotency transaction belongs to host; synthetic transport does not prove live delivery or rendering.",
+      "intent": "ACK-first composition with fresh server spec, safe callback guards and host-owned hooks",
+      "example_sha256": "177d88baae02778f3a21064421c2f765b5f0c8691a19fc4f162b112947e279c9",
+      "kind": "value"
     }
   ],
-  "python_symbols": 89,
+  "python_symbols": 97,
   "typescript_symbols": 41,
-  "recipes": 20,
+  "recipes": 22,
   "additional_entries": [
     "CLI recipes",
     "CLI init",

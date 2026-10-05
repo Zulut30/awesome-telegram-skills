@@ -1,5 +1,11 @@
 # Изменения библиотеки компонентов
 
+## 0.16.0 — пункт 023
+
+- SelectionOption/Spec/Context/State/Result и SelectionMenu: server-owned toggle, multiselect, quantity и filters, immutable snapshots и атомарные проверки owner/bot/chat/thread/message/token/revision/TTL без SDK. Fresh server spec отзывает старые кнопки и confirmation.
+- selection_keyboard/selection_router: композиция с текущим Dispatcher, capability fallback, ACK перед hooks/lock/edit и повторная проверка после async load. Опасное действие подтверждается отдельным короткоживущим ID; consumed local intent возвращает operation_id/resource_version для бизнес-транзакции host, без автоматического эффекта или retry.
+- Готовый пример и закрытый offline recipe показывают все элементы выбора в одном сообщении. State остается в памяти одного процесса; durable storage, multiworker и live Telegram требуют отдельных проверок.
+
 ## 0.15.0 — пункт 022
 
 - MessageNavigation, NavigationScreen/State/Result и navigation_router: экраны, history/back и refresh в одном owner/bot/chat/thread/message-bound сообщении. ACK до lock/edit, revision/graph/TTL guards и сериализация одного меню; stale/foreign action не меняет состояние.

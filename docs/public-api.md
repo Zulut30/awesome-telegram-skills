@@ -1,10 +1,21 @@
-# Публичные контракты библиотеки 0.15.0
+# Публичные контракты библиотеки 0.16.0
 
 Пункт 003 плана 1.0. Все API ниже пока experimental; статус их группы указан в `components.json`, правила — в [maturity](v1-maturity.md). Контракт описывает реально реализованные границы, а не будущую полноту сценария. Аргументы с Python/TypeScript type annotations должны соответствовать типам; наличие типа не заменяет runtime validation внешних данных.
 
 Публичные точки входа: Python root `telegram_patterns`, документированные имена `telegram_patterns.aiogram`, `telegram_patterns.testing.StubSession`, `telegram_patterns.cli.doctor`, CLI `telegram-patterns`; TypeScript root `@awesome-telegram/patterns` и CSS subpath `/styles.css`. Случайно доступные SDK/import names и внутренние modules/helpers не являются обещанным API. Нормативные сигнатуры и DTO-поля находятся в исходниках Python и поставляемых `.d.ts`; таблицы ниже определяют семантику, ошибки и обязанности.
 
 ## Python: ядро без SDK
+
+Составной выбор: [полное руководство](selection-controls.md). Host передает current server spec и аутентифицированный context; UI snapshot не служит источником авторизации.
+
+| API / параметры и результат | Ошибки | Effects / владение / границы |
+| --- | --- | --- |
+| `SelectionOption(key,label,filters=(),enabled=True)` | ValidationFailure/InvalidType для key, UTF-16 label, tags и bool | Immutable copy; фильтр не заменяет права на объект |
+| `SelectionSpec(options,toggles,filters,quantity_min/max,min/max_selected,confirm_text,resource_version)` | ValidationFailure/InvalidType для коллекций, ключей и границ | Current server rules; скопированные options/mappings; при изменении host вызывает replace_spec |
+| `SelectionContext(bot_id,owner_id,chat_id,message_id,message_thread_id=None)` | ValidationFailure для IDs | Host-derived event/message identity; не данные из callback |
+| `SelectionState`; `callback(action)->str`, `text()->str` | ValidationFailure для wire fields/action | Immutable view; constructor не меняет серверный draft и не выдает бизнес-доступ |
+| `SelectionResult(status,text,state=None)` | Нет I/O | Foreign context не раскрывает чужой snapshot; confirmed означает локальное намерение |
+| `SelectionMenu(spec,context,*,prefix,selected,toggles,quantity,ttl_seconds,confirmation_ttl_seconds)`; `state/check/apply/replace_spec` | ValidationFailure/InvalidType; ConflictFailure для revision exhaustion/closed reconfiguration | Атомарная RAM-сессия одного процесса, без SDK/бизнес-эффектов; token/revision/owner/context guards. Confirmation выдает operation_id/resource_version, host проверяет current ACL/idempotency в своей durable transaction |
 
 | API / параметры и результат | Ошибки | Effects / владение / границы |
 | --- | --- | --- |
@@ -27,6 +38,8 @@
 
 | API / параметры и результат | Ошибки и effects | Владение / ограничения |
 | --- | --- | --- |
+| `telegram_patterns.aiogram.selection_keyboard(state,*,layout,capabilities)->InlineKeyboardMarkup` | ValidationFailure/InvalidType/native validation | Optional SDK; snapshot render, styles fallback; no send/auth. Обычный private/group/supergroup context |
+| `telegram_patterns.aiogram.selection_router(menu_or_resolver,*,prefix,capabilities,load_spec,on_result)->Router` | Host/hook/API errors и cancellation propagate; UnknownOutcome при неподходящем response | ACK перед lock/hooks; fresh spec и повторный apply guard. Commit draft до host hook/edit; no rollback/retry. Host owns registry, session, tasks, business reconciliation; one UI router/event loop |
 | `Action(actor_id,key)`, `ActionResult(status,text)` | Frozen DTO; status accepted/denied/stale/replayed | Сервис проверяет actor/key/объект, а не доверяет callback; DTO не авторизует |
 | `callback_router(execute,notify,prefix='act:')` → Router | ACK перед execute; неверный key → stale через notify; остальные ошибки после ACK пробрасываются | Host включает Router в текущий Dispatcher. Execute async, notify выбирает безопасный канал для inline/inaccessible query. ACK не успех |
 | `start_router(text,keyboard=None)` → Router | Handler вызывает answer с parse_mode=None | Stateless /start; ограничения text/keyboard валидирует дальнейший SDK/API; не FSM/auth |
@@ -123,7 +136,7 @@ CLI `run-recipe ID [--offline] [--timeout SECONDS]` сначала flush-ит pl
 
 [Полные контракты и исполняемые примеры](keyboard-layouts.md): KeyboardLayout, KeyboardCapabilities, action_layout, inline_layout и reply_layout. Immutable width pattern, snapshot native inputs, current context checks и explicit host presentation fallback; старые builders сохранены. DTO flags не доказывают live entitlement, callback ACL остаётся на сервере.
 
-## Навигация сообщений 0.15.0
+## Навигация сообщений 0.16.0
 
 | API | Ошибки и effects | Владение и ограничения |
 | --- | --- | --- |

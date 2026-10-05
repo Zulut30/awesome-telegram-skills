@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "library_version": "0.15.0",
+  "library_version": "0.16.0",
   "distribution": "local; not published to package registries",
   "packages": {
     "python": {
@@ -469,6 +469,39 @@
       ],
       "maturity": "experimental",
       "maturity_scope": "All public API symbols in this component; local verification is not a stable 1.0 promise"
+    },
+    {
+      "id": "selection-state",
+      "language": "python",
+      "import": "telegram_patterns.SelectionOption, SelectionSpec, SelectionContext, SelectionState, SelectionResult, SelectionMenu",
+      "intent": "Server-owned toggle/multiselect/quantity/filter draft and revision-bound confirmation",
+      "source": "packages/python/src/telegram_patterns/selection.py",
+      "example": "examples/api-reference/python/core_selection.py",
+      "boundaries": [
+        "Single-process in-memory draft; no durable or multiworker business transaction",
+        "Host derives actual owner/bot/chat/thread/message context and current server resource rules",
+        "Confirmation consumes only local intent; application checks current ACL/version/idempotency and records business result",
+        "Unknown edit/hook retains server state; no automatic retry or rollback"
+      ],
+      "maturity": "experimental",
+      "maturity_scope": "All public API symbols in this component; local verification is not a stable 1.0 promise"
+    },
+    {
+      "id": "selection-ui",
+      "language": "python",
+      "import": "telegram_patterns.aiogram.selection_keyboard, selection_router",
+      "intent": "Compose a bot selection keyboard and ACK-first guarded Router with current server rules",
+      "source": "packages/python/src/telegram_patterns/selection_aiogram.py",
+      "example": "examples/python/selection_bot.py",
+      "boundaries": [
+        "Single-process in-memory draft; no durable or multiworker business transaction",
+        "Host derives actual owner/bot/chat/thread/message context and current server resource rules",
+        "Confirmation consumes only local intent; application checks current ACL/version/idempotency and records business result",
+        "Unknown edit/hook retains server state; no automatic retry or rollback"
+      ],
+      "maturity": "experimental",
+      "maturity_scope": "All public API symbols in this component; local verification is not a stable 1.0 promise",
+      "extra": "aiogram"
     }
   ],
   "maturity_policy": "docs/v1-maturity.md",

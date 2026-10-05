@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "library_version": "0.15.0",
+  "library_version": "0.16.0",
   "source_snapshot": "2026-10-04",
   "source_hashes": {
     "bot_api": "29f5f25caa18d303f14ce83af5a4df784eb3094c3076cb040a1ad950c157ad44",
@@ -20972,6 +20972,91 @@
       }
     },
     {
+      "id": "demo-selection",
+      "title": "Переключатели, выбор, количество и подтверждение",
+      "summary": "Полная композиция с тем же Dispatcher для offline и polling.",
+      "category": "scenarios",
+      "language": "python",
+      "maturity": "experimental",
+      "keywords": [
+        "бот",
+        "пример",
+        "callback",
+        "меню",
+        "события",
+        "ввод",
+        "и",
+        "формы",
+        "кнопки",
+        "раскладки",
+        "личный",
+        "чат",
+        "toggle",
+        "multiselect",
+        "переключатель",
+        "количество",
+        "фильтр",
+        "подтверждение",
+        "выбор",
+        "confirmation",
+        "revision"
+      ],
+      "code": "\"\"\"Selection UI composition; demo intent only, no destructive business effect.\"\"\"\nfrom __future__ import annotations\n\nimport asyncio\nfrom typing import Awaitable, Callable\n\nfrom aiogram import Dispatcher, Router\nfrom aiogram.filters import Command\nfrom aiogram.types import CallbackQuery, Message\nfrom telegram_patterns import BotSettings, SelectionContext, SelectionMenu, SelectionOption, SelectionResult, SelectionSpec, UnknownOutcome\nfrom telegram_patterns.aiogram import run_bot, selection_keyboard, selection_router\n\n\ndef demo_spec() -> SelectionSpec:\n    return SelectionSpec([\n        SelectionOption('alpha', 'Пакет Alpha', ['basic']),\n        SelectionOption('beta', 'Пакет Beta', ['extra']),\n        SelectionOption('gamma', 'Пакет Gamma', ['extra']),\n    ], toggles={'notify': 'Уведомлять'}, filters={'all': 'Все', 'basic': 'Основные', 'extra': 'Дополнительные'},\n        quantity_min=1, quantity_max=5, min_selected=1, max_selected=2, confirm_text='Подтвердить выбор')\n\n\ndef build_selection_router(*, current_spec: Callable[[], SelectionSpec] = demo_spec,\n                           on_result: Callable[[CallbackQuery, SelectionResult], Awaitable[None]] | None = None\n                           ) -> tuple[Router, dict[int, SelectionMenu]]:\n    \"\"\"Attach to existing Dispatcher; bounded demo registry, host owns its lifetime.\"\"\"\n    router = Router()\n    menus: dict[int, SelectionMenu] = {}\n\n    async def load(query: CallbackQuery, menu: SelectionMenu) -> SelectionSpec:\n        return current_spec()  # Production host supplies its current DB rules/ACL.\n\n    def resolve(query: CallbackQuery) -> SelectionMenu | None:\n        # Actual identity/context/token checks remain inside the component.\n        message = query.message\n        return menus.get(message.chat.id) if isinstance(message, Message) else None\n\n    @router.message(Command('choose'))\n    async def choose(message: Message) -> None:\n        if message.chat.type != 'private' or message.message_thread_id is not None or message.from_user is None or message.bot is None:\n            return\n        bot = message.bot\n        owner = message.from_user.id\n        menu = menus.get(message.chat.id)\n        if menu is not None and (menu.state.context.owner_id != owner or menu.state.context.bot_id != bot.id):\n            return\n        rules = current_spec()\n        if menu is None:\n            if len(menus) >= 100:\n                await message.answer('Демонстрационный лимит меню достигнут.', parse_mode=None)\n                return\n            # Explicit command sends once. A send exception propagates without retry.\n            sent = await message.answer('Открываю выбор…', parse_mode=None)\n            if (sent.chat.id != message.chat.id or sent.message_id <= 0 or sent.date.timestamp() <= 0 or\n                    sent.from_user is None or sent.from_user.id != bot.id or not sent.from_user.is_bot):\n                raise UnknownOutcome('Initial selection message response was not confirmed')\n            menu = SelectionMenu(rules, SelectionContext(bot.id, owner, message.chat.id, sent.message_id))\n        elif menu.state.phase in {'confirmed', 'cancelled'} or menu.check(menu.state.callback('refresh'), menu.state.context) is not None:\n            # New explicit intent in the same known message; production retains durable operation records separately.\n            menu = SelectionMenu(rules, menu.state.context)\n        else:\n            menu.replace_spec(rules)\n        menus[message.chat.id] = menu\n        state = menu.state\n        await bot.edit_message_text(state.text(), chat_id=state.context.chat_id, message_id=state.context.message_id,\n                                    parse_mode=None, reply_markup=selection_keyboard(state))\n\n    router.include_router(selection_router(resolve, load_spec=load, on_result=on_result))\n    return router, menus\n\n\nasync def main() -> None:\n    dispatcher = Dispatcher()\n    router, _ = build_selection_router()\n    dispatcher.include_router(router)\n    await run_bot(dispatcher, BotSettings.from_env())\n\n\nif __name__ == '__main__':\n    asyncio.run(main())\n",
+      "verification": "mock",
+      "scope": "Synthetic Dispatcher сценарий исполнен при генерации в private fixture. Telegram delivery/physical clients не проверены.",
+      "sources": [
+        "https://core.telegram.org/bots/api"
+      ],
+      "preview": null,
+      "code_sha256": "c729d806adb7ab64b70abc42c169307346341037b546b3c8a2c9952f215d05d3",
+      "tasks": [
+        "input",
+        "keyboards"
+      ],
+      "contexts": [
+        "private"
+      ],
+      "sdk": "aiogram",
+      "sdk_version": "3.31.0",
+      "api_version": "bot:10.3",
+      "source_files": [
+        "examples/python/selection_bot.py",
+        "packages/python/src/telegram_patterns/selection.py",
+        "packages/python/src/telegram_patterns/selection_aiogram.py",
+        "packages/python/src/telegram_patterns/execution.py",
+        "packages/python/src/telegram_patterns/_offline_recipe.py"
+      ],
+      "check_files": [
+        "examples/python/offline_selection.py",
+        "packages/python/tests/test_selection.py"
+      ],
+      "execution": {
+        "kind": "dispatcher",
+        "dependencies": [
+          "aiogram==3.31.0"
+        ],
+        "offline_environment": [],
+        "offline_permissions": [],
+        "offline_data": [
+          "Только поставляемые синтетические данные; реальные IDs и secrets не принимаются."
+        ],
+        "live_environment": [
+          "BOT_TOKEN"
+        ],
+        "live_permissions": [
+          "Прикладная авторизация сервиса; fixture actor не доказывает server ACL."
+        ],
+        "live_data": [
+          "Текущий Dispatcher, реальные actor/chat и сервис приложения",
+          "Проверка объекта, автора и состояния до effect/replay"
+        ],
+        "live_review": "Live executor отсутствует. Перед интеграцией проверить источники, ограничения конкретного метода/контекста, auth и ACL; metadata не подтверждает права.",
+        "effects": [
+          "Synthetic Dispatcher + StubSession; временная fixture, без polling"
+        ]
+      }
+    },
+    {
       "id": "demo-recovery",
       "title": "Потерянный ответ: сверка той же операции",
       "summary": "SQLite effect уже сохранен; unknown outcome сверяется тем же scoped ID без второго заказа.",
@@ -21007,7 +21092,7 @@
         "backend"
       ],
       "sdk": "python-core",
-      "sdk_version": "0.15.0",
+      "sdk_version": "0.16.0",
       "api_version": "none",
       "source_files": [
         "examples/python/error_recovery.py",

@@ -6,21 +6,23 @@
 
 Основной стек проекта: **Python для ботов и backend, TypeScript для Mini Apps**.
 
-Есть [общая библиотека готовых компонентов](docs/component-library.md): два импортируемых пакета Python/TypeScript, 30 групп компонентов и работающие примеры. ИИ подключает нужный API через `telegram-code-patterns`; пакеты пока распространяются локально.
+Есть [общая библиотека готовых компонентов](docs/component-library.md): два импортируемых пакета Python/TypeScript, 32 группы компонентов и работающие примеры. ИИ подключает нужный API через `telegram-code-patterns`; пакеты пока распространяются локально.
 
 [Навигация в одном сообщении](docs/message-navigation.md): экраны, history/back, owner/context/revision guards и explicit восстановление после unknown edit.
 
 [Композиции клавиатур](docs/keyboard-layouts.md): flat списки, шаблоны рядов 2/3/смешанной ширины, styles и явный capability fallback; прежние builders сохраняются.
 
-[Требования и offline запуск](docs/recipe-execution.md): планы всех 300 рецептов и 201 Python fixtures без токена; native references требуют host/аргументов.
+[Требования и offline запуск](docs/recipe-execution.md): планы всех 301 рецепт и 202 Python fixtures без токена; native references требуют host/аргументов.
 
-[Поиск и фильтры галереи](docs/gallery-navigation.md): 300 рецептов, задачи, контекст, SDK/версии, зрелость и доказательства проверки; ссылки на исходники и проверяющий код. Standalone export включает связанные файлы.
+[Поиск и фильтры галереи](docs/gallery-navigation.md): 301 рецепт, задачи, контекст, SDK/версии, зрелость и доказательства проверки; ссылки на исходники и проверяющий код. Standalone export включает связанные файлы.
 
-Проверена локальная поставка 0.15.0: [статус зрелости API](docs/v1-maturity.md) отдельно от SDK/mock/browser/live evidence. Каталог, Python API, CLI и галерея различают experimental/reference; стабильные сценарии 1.0 пока не заявлены.
+Проверена локальная поставка 0.16.0: [статус зрелости API](docs/v1-maturity.md) отдельно от SDK/mock/browser/live evidence. Каталог, Python API, CLI и галерея различают experimental/reference; стабильные сценарии 1.0 пока не заявлены.
 
 [Публичные контракты Python/TypeScript](docs/public-api.md) описывают параметры, результаты, ошибки, побочные эффекты и владение ресурсами для всех документированных API.
 
-[Справочник API](docs/api-reference.md): 130 публичных Python/TypeScript-символов, CLI и CSS; 20 полных примеров с импортами и ограничениями. Проверка исполняет код из документации через установленные wheel/tarball в отдельном consumer.
+[Справочник API](docs/api-reference.md): 138 публичных Python/TypeScript-символов, CLI и CSS; 22 полных примера с импортами и ограничениями. Проверка исполняет код из документации через установленные wheel/tarball в отдельном consumer.
+
+[Составной выбор](docs/selection-controls.md): toggle, multiselect, количество, фильтры и подтверждение с current server spec, context/revision guards и отдельной бизнес-транзакцией приложения.
 
 [Doctor и исправления](docs/doctor.md) объясняет локальные ошибки установки и manifests, показывает команды следующего действия и сохраняет конфигурацию проекта.
 

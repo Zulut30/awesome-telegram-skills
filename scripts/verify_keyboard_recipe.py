@@ -60,6 +60,58 @@ async def navigation_check(namespace):
     return {'passed':True,'existing_dispatcher_preserved':True,'owner_and_stale_guards':True,'history_back':True,'session_closed':True,'edits':3}
 
 
+async def selection_check(namespace):
+    from aiogram import Bot, Dispatcher, Router
+    from aiogram.filters import Command
+    from aiogram.methods import AnswerCallbackQuery, EditMessageText, SendMessage
+    from aiogram.types import Update
+    from telegram_patterns.testing import StubSession
+    menu, router = namespace['menu'], namespace['router']
+    existing = Router()
+    @existing.message(Command('help'))
+    async def help(message): await message.answer('Selection help preserved',parse_mode=None)
+    dispatcher=Dispatcher(); dispatcher.include_router(existing); dispatcher.include_router(router)
+    def reply(request):
+        return {'message_id':100,'date':1,'chat':{'id':42,'type':'private'},
+                'from':{'id':100,'is_bot':True,'first_name':'Fixture'},'text':request.text}
+    session=StubSession().respond(AnswerCallbackQuery,True).respond(EditMessageText,reply).respond(SendMessage,reply)
+    async with Bot('100:PORTABLE_SELECTION_FIXTURE',session=session) as bot:
+        try:
+            index=0
+            async def click(action,actor=42,data=None):
+                nonlocal index
+                index+=1
+                update=Update.model_validate({'update_id':index,'callback_query':{'id':str(index),'chat_instance':'fixture',
+                    'from':{'id':actor,'is_bot':False,'first_name':'Owner'},'data':data or menu.state.callback(action),
+                    'message':{'message_id':100,'date':1,'chat':{'id':42,'type':'private'},
+                               'from':{'id':100,'is_bot':True,'first_name':'Fixture'}}}},context={'bot':bot})
+                await dispatcher.feed_update(bot,update)
+            before=menu.state
+            await click('s:alpha',actor=43); assert menu.state is before
+            old=before.callback('s:alpha')
+            await click('s:alpha'); accepted=menu.state
+            await click('s:alpha',data=old); assert menu.state is accepted
+            for action in ('s:beta','t:notify','q:inc','f:basic','ask'):
+                await click(action)
+            pending=menu.state
+            assert pending.confirmation_id is not None
+            confirmation=pending.callback('y:'+pending.confirmation_id)
+            await click('refresh',data=confirmation)
+            final=menu.state
+            await click('refresh',data=confirmation); assert menu.state is final
+            assert final.phase=='confirmed' and final.selected==('alpha','beta') and final.quantity==2
+            assert dict(final.toggles)['notify'] and final.operation_id is not None
+            await dispatcher.feed_update(bot,Update.model_validate({'update_id':99,'message':{'message_id':99,'date':1,
+                'chat':{'id':42,'type':'private'},'from':{'id':42,'is_bot':False,'first_name':'Owner'},'text':'/help'}},context={'bot':bot}))
+            assert session.calls[-1].text=='Selection help preserved'
+            assert all(c.message_id==100 for c in session.calls if isinstance(c,EditMessageText))
+        finally:
+            await dispatcher.fsm.close()
+    assert session.closed
+    return {'passed':True,'existing_dispatcher_preserved':True,'owner_stale_guards':True,
+            'composite_fields':True,'confirmation_once':True,'session_closed':True,'business_effects':0}
+
+
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument('skill', type=Path)
@@ -97,9 +149,16 @@ def main():
     navigation_namespace={}
     for block in navigation_blocks:exec(compile(block,str(navigation_guide),'exec'),navigation_namespace)
     navigation=asyncio.run(navigation_check(navigation_namespace)) if navigation_blocks else None
+    selection_guide=skill/'references/selection-controls.md'
+    selection_blocks=re.findall(r'```python\n(.*?)```',selection_guide.read_text(encoding='utf-8'),re.S) if selection_guide.exists() else []
+    if selection_guide.exists() and len(selection_blocks)!=1:raise ValueError('Update checker for selection guide blocks')
+    selection_namespace={}
+    for block in selection_blocks:exec(compile(block,str(selection_guide),'exec'),selection_namespace)
+    selection=asyncio.run(selection_check(selection_namespace)) if selection_blocks else None
     print(json.dumps({'passed':True,'network':False,'markdown_files':len(markdown),'python_blocks':len(blocks),
                       'layout_guide_blocks':len(layout_blocks),
                       'navigation_guide_blocks':len(navigation_blocks),'navigation':navigation,
+                      'selection_guide_blocks':len(selection_blocks),'selection':selection,
                       'methods':len(namespace['methods']),'scope':'copied skill recipe execution; not independent agent decision evaluation'}))
 
 

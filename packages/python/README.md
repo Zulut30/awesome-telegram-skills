@@ -189,4 +189,9 @@ Aiogram протестирован на 3.31.0. Кнопочный entitlement �
 
 ## Навигация сообщений 0.15.0
 
+
 `NavigationScreen`, `NavigationState`, `NavigationResult`, `MessageNavigation` и `navigation_router` импортируются из `telegram_patterns.aiogram`. Экраны/history/back/refresh редактируют одно owner/bot/chat/thread/message-bound сообщение с revision и TTL guards. ACK предшествует lock/edit. Unknown edit блокирует переходы до explicit owner `/menu`; unknown initial send не повторяется автоматически. State одного процесса/event loop, не durable FSM; SDK sessions и tasks принадлежат host. Полный [контракт](../../docs/message-navigation.md), [готовый бот](../../examples/python/navigation_bot.py) и [offline проверка](../../examples/python/offline_navigation.py).
+
+## Составной выбор 0.16.0
+
+Составной выбор 0.16.0: `SelectionOption`, `SelectionSpec`, `SelectionContext`, `SelectionState`, `SelectionResult`, `SelectionMenu` из SDK-free root и `selection_keyboard`/`selection_router` из optional `telegram_patterns.aiogram`. Toggle, multiselect, quantity/filter, server rules и revision-bound confirmation; host владеет бизнес-транзакцией и durable receipt. [Контракт](../../docs/selection-controls.md), [бот](../../examples/python/selection_bot.py), [offline сценарий](../../examples/python/offline_selection.py).

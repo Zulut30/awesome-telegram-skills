@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "library_version": "0.15.0",
+  "library_version": "0.16.0",
   "scope": "Public library exports; ref.* recipes belong to the API reference, not the Telegram method snapshot",
   "groups": [
     {
@@ -352,6 +352,36 @@
           "NavigationResult": "Safe accepted/denied/stale/unavailable/unknown feedback",
           "MessageNavigation": "Bounded open/get_state/handle/discard lifecycle for one owned message",
           "navigation_router": "SDK Router with ACK-first guarded navigation and optional feedback"
+        }
+      }
+    },
+    {
+      "id": "core_selection",
+      "section": "core",
+      "title": "Серверные значения и подтверждение выбора",
+      "example": "examples/api-reference/python/core_selection.py",
+      "limits": "Single-process server draft; exact owner/context/revision and confirmation token guards. No automatic business operation, persistence or multiworker guarantee. Current ACL/resource_version/idempotency transaction belongs to host; synthetic transport does not prove live delivery or rendering.",
+      "api": {
+        "telegram_patterns": {
+          "SelectionOption": "Immutable keyed option and filter membership",
+          "SelectionSpec": "Current server values, field bounds and resource version",
+          "SelectionContext": "Host-derived owner/bot/chat/thread/message identity",
+          "SelectionState": "Immutable draft snapshot, summary and bounded callback code",
+          "SelectionResult": "Guarded selection decision with safe feedback",
+          "SelectionMenu": "Atomic server draft, rule refresh and revision-bound one-time confirmation"
+        }
+      }
+    },
+    {
+      "id": "bot_selection",
+      "section": "bot",
+      "title": "Составная клавиатура и Router выбора",
+      "example": "examples/api-reference/python/bot_selection.py",
+      "limits": "Single-process server draft; exact owner/context/revision and confirmation token guards. No automatic business operation, persistence or multiworker guarantee. Current ACL/resource_version/idempotency transaction belongs to host; synthetic transport does not prove live delivery or rendering.",
+      "api": {
+        "telegram_patterns.aiogram": {
+          "selection_keyboard": "Render toggle/multiselect/quantity/filter and confirmation markup with capability fallback",
+          "selection_router": "ACK-first composition with fresh server spec, safe callback guards and host-owned hooks"
         }
       }
     }

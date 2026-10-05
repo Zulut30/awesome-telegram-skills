@@ -459,10 +459,30 @@
       "id": 23,
       "title": "Добавить составные элементы выбора",
       "requirement": "Реализовать toggle, multiselect, количество, фильтры и подтверждение опасного действия; сервер проверяет разрешенные значения и актуальность выбора.",
-      "status": "pending",
-      "commit_subject": null,
-      "artifacts": [],
-      "evidence": []
+      "status": "done",
+      "commit_subject": "roadmap(023): compose server-owned selection controls and bound confirmation",
+      "artifacts": [
+        "packages/python/src/telegram_patterns/selection.py",
+        "packages/python/src/telegram_patterns/selection_aiogram.py",
+        "packages/python/tests/test_selection.py",
+        "examples/python/selection_bot.py",
+        "examples/python/offline_selection.py",
+        "examples/api-reference/python/core_selection.py",
+        "examples/api-reference/python/bot_selection.py",
+        "docs/selection-controls.md",
+        ".agents/skills/telegram-code-patterns/references/selection-controls.md",
+        "docs/v1-checks/023.json",
+        "docs/v1-checks/023-distribution.json",
+        "docs/v1-checks/023-first-run.json",
+        "docs/v1-checks/023-portable.json"
+      ],
+      "evidence": [
+        "docs/v1-checks/023.json",
+        "0.16.0 local wheel/tarball: 60 stages, 170 Python passed + 1 Windows skip, 26 TypeScript, 1483 browser checks + 60 first-run checks",
+        "27 behavioral tests: all composite fields, server rules/values/context/revision, concurrent clicks, bounded exact confirmation, expiry/back/cancel and failure recovery",
+        "SDK-free core, installed Dispatcher and exact portable guide preserve current app; 138 symbols/22 API example groups, 301 recipes/202 Python fixtures, 25 source typing files",
+        "No automatic business effect; current ACL/version/idempotency and durable reconciliation belong to host. Live/human/blind/device/production remain unverified"
+      ]
     },
     {
       "id": 24,

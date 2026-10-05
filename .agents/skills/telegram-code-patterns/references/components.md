@@ -1,6 +1,6 @@
-# API библиотеки 0.15.0
+# API библиотеки 0.16.0
 
-Именованные типы 0.15.0: core `Maturity`, `VerificationLevel`; aiogram `ButtonStyle`, `ChatType`, `UpdatePhase`; testing `Responder`; TypeScript `TextFieldControl`. SDK `Bot`/`Dispatcher` импортируй из aiogram: wildcard library exports теперь явные, существующие документированные function/DTO imports сохранены.
+Именованные типы 0.16.0: core `Maturity`, `VerificationLevel`; aiogram `ButtonStyle`, `ChatType`, `UpdatePhase`; testing `Responder`; TypeScript `TextFieldControl`. SDK `Bot`/`Dispatcher` импортируй из aiogram: wildcard library exports теперь явные, существующие документированные function/DTO imports сохранены.
 
 Все группы пока experimental. [Maturity](maturity.md) наследуется их публичными символами; SDK/mock/browser/live — отдельный уровень доказательств. `RecipeCatalog.search` дополнительно принимает `maturity`, а `Recipe` содержит этот immutable field.
 
@@ -51,12 +51,14 @@ System/content insets имеют разный смысл. Shell получает
 
 Частично проверенные источники 3 октября 2026 года: [Bot API](https://core.telegram.org/bots/api), [Mini Apps/ThemeParams](https://core.telegram.org/bots/webapps#themeparams), [официальный WebApp SDK](https://telegram.org/js/telegram-web-app.js), [aiogram Router](https://docs.aiogram.dev/en/latest/dispatcher/router.html), [SQLite authorizer](https://docs.python.org/3.13/library/sqlite3.html#sqlite3.Connection.set_authorizer), [executescript](https://docs.python.org/3.13/library/sqlite3.html#sqlite3.Connection.executescript), [Response.json](https://developer.mozilla.org/en-US/docs/Web/API/Response/json), [204](https://developer.mozilla.org/en-US/docs/Web/HTTP/Reference/Status/204), [205](https://developer.mozilla.org/en-US/docs/Web/HTTP/Reference/Status/205), [color-scheme](https://developer.mozilla.org/en-US/docs/Web/CSS/Reference/Properties/color-scheme), [randomUUID](https://developer.mozilla.org/en-US/docs/Web/API/Crypto/randomUUID), [fetch](https://developer.mozilla.org/en-US/docs/Web/API/Fetch_API/Using_Fetch), [redirect](https://developer.mozilla.org/en-US/docs/Web/API/Request/redirect). Это сверка перечисленных контрактов, не live аккаунт/платеж.
 
-Storage/transport/provider interfaces 0.15.0: OnceStore/AsyncTransport/ProviderAdapter/RefundProvider и KeyValueStorage/StorageFactory/FetchTransport. Параметры и проверки адаптера — в локальной [модели расширения](extensions.md).
+Storage/transport/provider interfaces 0.16.0: OnceStore/AsyncTransport/ProviderAdapter/RefundProvider и KeyValueStorage/StorageFactory/FetchTransport. Параметры и проверки адаптера — в локальной [модели расширения](extensions.md).
 
-Core starter 0.15.0: StarterComponent, StarterConflict, starter_components; create_starter components keyword и StarterPlan.components/requested_components. Закрытый набор и сценарии — [выбор компонентов](starter-selection.md).
+Core starter 0.16.0: StarterComponent, StarterConflict, starter_components; create_starter components keyword и StarterPlan.components/requested_components. Закрытый набор и сценарии — [выбор компонентов](starter-selection.md).
 
-Планы и локальный runner 0.15.0: `RecipeRunPlan`, `RecipeRunResult`, `plan_recipe`, `run_recipe_offline` из Python root; [requirements/fixtures/границы](recipe-execution.md). 200 Python fixtures, 99 native references без executor; offline_ready не означает live разрешение.
+Планы и локальный runner 0.16.0: `RecipeRunPlan`, `RecipeRunResult`, `plan_recipe`, `run_recipe_offline` из Python root; [requirements/fixtures/границы](recipe-execution.md). 200 Python fixtures, 99 native references без executor; offline_ready не означает live разрешение.
 
-В 0.15.0 новые KeyboardLayout/KeyboardCapabilities и action_layout/inline_layout/reply_layout описаны в [композициях клавиатур](keyboard-layouts.md): flat inputs, width pattern, snapshot/context validation и host capability fallback.
+В 0.16.0 новые KeyboardLayout/KeyboardCapabilities и action_layout/inline_layout/reply_layout описаны в [композициях клавиатур](keyboard-layouts.md): flat inputs, width pattern, snapshot/context validation и host capability fallback.
 
 Навигация сообщений: `NavigationScreen`, `NavigationState`, `NavigationResult`, `MessageNavigation`, `navigation_router`; полный [контракт](message-navigation.md). Все пять public exports experimental; state локальный, business ACL и persistent state остаются у проекта.
+
+Составные элементы выбора: `SelectionOption/Spec/Context/State/Result/SelectionMenu` из SDK-free root и `selection_keyboard/selection_router` из optional aiogram. [Server rules и confirmation](selection-controls.md) описывают границы локального намерения и бизнес-транзакции host.
