@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "library_version": "0.16.0",
+  "library_version": "0.17.0",
   "scope": "Public library exports; ref.* recipes belong to the API reference, not the Telegram method snapshot",
   "groups": [
     {
@@ -382,6 +382,36 @@
         "telegram_patterns.aiogram": {
           "selection_keyboard": "Render toggle/multiselect/quantity/filter and confirmation markup with capability fallback",
           "selection_router": "ACK-first composition with fresh server spec, safe callback guards and host-owned hooks"
+        }
+      }
+    },
+    {
+      "id": "core_calendar",
+      "section": "core",
+      "title": "Календарь, время и транзакционная запись",
+      "example": "examples/api-reference/python/core_calendar.py",
+      "limits": "SDK-free; Europe/Warsaw needs host IANA database or optional calendar extra (tested tzdata 2026.5). Current synchronous host ACL inside file SQLite transaction before effect/replay. Publish is trusted host CAS; immutable receipt differs from current booking; no external side effects. Host owns file/migrations/retention and async shutdown work.",
+      "api": {
+        "telegram_patterns": {
+          "CalendarMonth": "Immutable Monday-first month, available/blocked dates and plain summary",
+          "TimeSlot": "Half-open UTC interval and local offset display",
+          "resolve_local_time": "Naive wall time to UTC, DST gap rejection and explicit ambiguous fold",
+          "SlotSchedule": "Immutable resource/revision/sorted uniquely keyed slots",
+          "SlotBooking": "Current owner-bound booking status and immutable times",
+          "SQLiteSlotStore": "Explicit schema, schedule CAS, current ACL, atomic reserve/cancel and replay"
+        }
+      }
+    },
+    {
+      "id": "bot_calendar",
+      "section": "bot",
+      "title": "Кнопки календаря и времени",
+      "example": "examples/api-reference/python/bot_calendar.py",
+      "limits": "Optional aiogram; markup only. Callback data must be owner/context/revision bound by controller; the booking transaction rechecks availability. Default weekday fallback omits unavailable days. disabled_buttons=True requires explicit host-verified support; no live/device claim.",
+      "api": {
+        "telegram_patterns.aiogram": {
+          "calendar_keyboard": "Available-date fallback or native disabled month grid with explicit navigation",
+          "time_slot_keyboard": "Enabled UTC intervals displayed with local offset, native layout/validation"
         }
       }
     }

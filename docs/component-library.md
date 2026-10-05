@@ -1,6 +1,6 @@
 # Общая библиотека компонентов
 
-Текущая локальная поставка 0.16.0: 32 группы компонентов, 138 публичных Python/TypeScript-символов и 301 рецепт. [Требования и offline запуск](recipe-execution.md) доступны для всех записей; 202 Python fixtures имеют executor, 99 native references требуют host/аргументов. [Навигация](gallery-navigation.md) добавляет task/context/SDK/version filters, source/check links и самостоятельный export. Исторические обзоры ниже сохраняют свои версии и evidence; они не заменяют текущую support matrix.
+Текущая локальная поставка 0.17.0: 35 групп компонентов, 146 публичных Python/TypeScript-символов и 302 рецепт. [Требования и offline запуск](recipe-execution.md) доступны для всех записей; 203 Python fixtures имеют executor, 99 native references требуют host/аргументов. [Навигация](gallery-navigation.md) добавляет task/context/SDK/version filters, source/check links и самостоятельный export. Исторические обзоры ниже сохраняют свои версии и evidence; они не заменяют текущую support matrix.
 
 [Формы 0.3.0](form-tools-review.md) добавляют поля с проверкой, возврат, отмену и подтверждение со стабильным ID заявки. Готовый [бот формы](../examples/python/form_bot.py) и [offline-проверка](../examples/python/offline_form.py) используют один create_app; backend сохраняет заявку и replay result в SQLite.
 

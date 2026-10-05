@@ -8,9 +8,10 @@ import weakref
 from aiogram import F, Router
 from aiogram.types import CallbackQuery, InlineKeyboardButton, InlineKeyboardMarkup, Message
 
-from .errors import ConflictFailure, InvalidType, UnknownOutcome, ValidationFailure
+from .errors import ConflictFailure, InvalidCompletion, InvalidType, UnknownOutcome, ValidationFailure
 from .keyboard_layouts import KeyboardCapabilities, KeyboardLayout, inline_layout
 from .selection import SelectionContext, SelectionMenu, SelectionResult, SelectionSpec, SelectionState
+from .native_keyboards import _text
 
 
 def selection_keyboard(state: SelectionState, *, layout: KeyboardLayout = KeyboardLayout((2,)),
@@ -48,7 +49,8 @@ def selection_keyboard(state: SelectionState, *, layout: KeyboardLayout = Keyboa
 def selection_router(resolve: SelectionMenu | Callable[[CallbackQuery], SelectionMenu | None], *, prefix: str | None = None,
                      capabilities: KeyboardCapabilities = KeyboardCapabilities(),
                      load_spec: Callable[[CallbackQuery, SelectionMenu], Awaitable[SelectionSpec]] | None = None,
-                     on_result: Callable[[CallbackQuery, SelectionResult], Awaitable[None]] | None = None) -> Router:
+                     on_result: Callable[[CallbackQuery, SelectionResult], Awaitable[None]] | None = None,
+                     render: Callable[[SelectionState], tuple[str, InlineKeyboardMarkup]] | None = None) -> Router:
     """ACK first; recheck after host load; commit local intent before host hook/edit.
 
     on_result runs before rendering. Its business transaction must recheck ACL,
@@ -56,6 +58,8 @@ def selection_router(resolve: SelectionMenu | Callable[[CallbackQuery], Selectio
     propagate with the draft already committed: never roll back or auto retry.
     A single router/event loop serializes a menu's display. Host owns registry,
     expiry/removal, Bot/session/Dispatcher and any durable operation reconciliation.
+    Optional synchronous render(state) composes calendar/custom views after the
+    host hook. It cannot change the server guards; invalid output retains intent.
     """
     from .selection import _PREFIX
     if prefix is None:
@@ -68,6 +72,8 @@ def selection_router(resolve: SelectionMenu | Callable[[CallbackQuery], Selectio
         raise ValidationFailure('Router prefix must match its menu prefix')
     if any(hook is not None and not callable(hook) for hook in (load_spec, on_result)):
         raise InvalidType('Use async host hooks')
+    if render is not None and not callable(render):
+        raise InvalidType('Use a synchronous display renderer')
     if not isinstance(capabilities, KeyboardCapabilities) or capabilities.business or capabilities.chat_type == 'channel':
         raise ValidationFailure('Use ordinary private/group/supergroup capabilities')
     router = Router()
@@ -114,8 +120,15 @@ def selection_router(resolve: SelectionMenu | Callable[[CallbackQuery], Selectio
                 return
             # Host hook may refresh rules; render the latest coherent snapshot.
             state = menu.state
-            edited = await bot.edit_message_text(state.text(), chat_id=context.chat_id, message_id=context.message_id,
-                parse_mode=None, reply_markup=selection_keyboard(state, capabilities=capabilities))
+            view = render(state) if render is not None else (state.text(), selection_keyboard(state, capabilities=capabilities))
+            if not isinstance(view, tuple) or len(view) != 2 or not isinstance(view[1], InlineKeyboardMarkup):
+                raise InvalidCompletion('Renderer must return (plain text, InlineKeyboardMarkup); intent retained')
+            try:
+                _text(view[0], limit=4096)
+            except ValidationFailure:
+                raise InvalidCompletion('Renderer text is invalid; intent retained') from None
+            edited = await bot.edit_message_text(view[0], chat_id=context.chat_id, message_id=context.message_id,
+                parse_mode=None, reply_markup=view[1])
             if (not isinstance(edited, Message) or edited.message_id != context.message_id or edited.chat.id != context.chat_id or
                     edited.message_thread_id != context.message_thread_id or edited.date.timestamp() <= 0 or
                     edited.from_user is None or edited.from_user.id != bot.id or not edited.from_user.is_bot or

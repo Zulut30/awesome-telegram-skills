@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "library_version": "0.16.0",
+  "library_version": "0.17.0",
   "distribution": "local; not published to package registries",
   "packages": {
     "python": {
@@ -502,6 +502,53 @@
       "maturity": "experimental",
       "maturity_scope": "All public API symbols in this component; local verification is not a stable 1.0 promise",
       "extra": "aiogram"
+    },
+    {
+      "id": "calendar-core",
+      "language": "python",
+      "import": "telegram_patterns.CalendarMonth, TimeSlot, resolve_local_time",
+      "intent": "Календарь, недоступные даты, IANA timezone и явный выбор повторяющегося local time",
+      "source": "packages/python/src/telegram_patterns/calendar.py",
+      "example": "examples/api-reference/python/core_calendar.py",
+      "boundaries": [
+        "SDK-free; optional calendar extra supplies IANA data on Windows",
+        "immutable server snapshot; calendar does not grant permission or reserve a slot",
+        "DST gaps rejected; ambiguous local times require explicit fold; UTC labels include offset"
+      ],
+      "maturity": "experimental",
+      "maturity_scope": "All public symbols in this component; local acceptance is not stable 1.0 or live proof"
+    },
+    {
+      "id": "slot-booking",
+      "language": "python",
+      "import": "telegram_patterns.SlotSchedule, SlotBooking, SQLiteSlotStore",
+      "intent": "Транзакционная запись на слот с текущими ACL, schedule revision и durable replay",
+      "source": "packages/python/src/telegram_patterns/slots.py",
+      "example": "examples/python/calendar_bot.py",
+      "boundaries": [
+        "file SQLite only; current synchronous host ACL runs inside transaction before effect/replay",
+        "one seat per resource interval; overlapping aliases rejected across shared-file processes",
+        "trusted host publishes schedule; current booking differs from immutable operation receipt",
+        "no external effects, holds or background tasks; host owns database, migrations, retention and async work lifecycle"
+      ],
+      "maturity": "experimental",
+      "maturity_scope": "All public symbols in this component; local acceptance is not stable 1.0 or live proof"
+    },
+    {
+      "id": "calendar-aiogram",
+      "language": "python",
+      "import": "telegram_patterns.aiogram.calendar_keyboard, time_slot_keyboard",
+      "intent": "Выбор даты и времени с native disabled grid либо weekday fallback",
+      "source": "packages/python/src/telegram_patterns/calendar_aiogram.py",
+      "example": "examples/python/calendar_bot.py",
+      "boundaries": [
+        "optional aiogram; callback owner/context/revision and reservation checked by controller/service",
+        "default omits unavailable days; full grid requires explicit host-verified disabled support",
+        "synthetic SDK proves serialization/dispatch, not live client rendering",
+        "one-message example is ephemeral; bookings and receipts survive restart"
+      ],
+      "maturity": "experimental",
+      "maturity_scope": "All public symbols in this component; local acceptance is not stable 1.0 or live proof"
     }
   ],
   "maturity_policy": "docs/v1-maturity.md",

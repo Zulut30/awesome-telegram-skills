@@ -1,6 +1,8 @@
-# Справочник API 0.16.0
+# Справочник API 0.17.0
 
 Публичные imports, самостоятельные минимальные композиции и границы каждого символа. Все группы experimental. Рецепты ref.* принадлежат этому справочнику; cookbook RecipeCatalog отдельно содержит Telegram requests/layouts. Исполненные fixtures не доказывают live/device/provider acceptance.
+
+В index example_sha256 относится к исполняемому fenced-блоку с LF и одной завершающей новой строкой; example_source_sha256 отдельно фиксирует исходные байты файла, включая окончания строк.
 
 Выберите раздел; не подключайте SDK/фреймворк ради core или узкой правки:
 
@@ -148,6 +150,14 @@
 | `SelectionMenu` | `from telegram_patterns import SelectionMenu` | [ref.core_selection](api-reference-core.md#ref-core_selection) | Atomic server draft, rule refresh and revision-bound one-time confirmation |
 | `selection_keyboard` | `from telegram_patterns.aiogram import selection_keyboard` | [ref.bot_selection](api-reference-bot.md#ref-bot_selection) | Render toggle/multiselect/quantity/filter and confirmation markup with capability fallback |
 | `selection_router` | `from telegram_patterns.aiogram import selection_router` | [ref.bot_selection](api-reference-bot.md#ref-bot_selection) | ACK-first composition with fresh server spec, safe callback guards and host-owned hooks |
+| `CalendarMonth` | `from telegram_patterns import CalendarMonth` | [ref.core_calendar](api-reference-core.md#ref-core_calendar) | Immutable Monday-first month, available/blocked dates and plain summary |
+| `TimeSlot` | `from telegram_patterns import TimeSlot` | [ref.core_calendar](api-reference-core.md#ref-core_calendar) | Half-open UTC interval and local offset display |
+| `resolve_local_time` | `from telegram_patterns import resolve_local_time` | [ref.core_calendar](api-reference-core.md#ref-core_calendar) | Naive wall time to UTC, DST gap rejection and explicit ambiguous fold |
+| `SlotSchedule` | `from telegram_patterns import SlotSchedule` | [ref.core_calendar](api-reference-core.md#ref-core_calendar) | Immutable resource/revision/sorted uniquely keyed slots |
+| `SlotBooking` | `from telegram_patterns import SlotBooking` | [ref.core_calendar](api-reference-core.md#ref-core_calendar) | Current owner-bound booking status and immutable times |
+| `SQLiteSlotStore` | `from telegram_patterns import SQLiteSlotStore` | [ref.core_calendar](api-reference-core.md#ref-core_calendar) | Explicit schema, schedule CAS, current ACL, atomic reserve/cancel and replay |
+| `calendar_keyboard` | `from telegram_patterns.aiogram import calendar_keyboard` | [ref.bot_calendar](api-reference-bot.md#ref-bot_calendar) | Available-date fallback or native disabled month grid with explicit navigation |
+| `time_slot_keyboard` | `from telegram_patterns.aiogram import time_slot_keyboard` | [ref.bot_calendar](api-reference-bot.md#ref-bot_calendar) | Enabled UTC intervals displayed with local offset, native layout/validation |
 
 ## CLI и CSS
 

@@ -488,10 +488,35 @@
       "id": 24,
       "title": "Добавить календарь и слоты времени",
       "requirement": "Учесть часовые пояса, переходы времени и недоступные даты; конкурентная запись на один слот проверяется транзакционно на сервере.",
-      "status": "pending",
-      "commit_subject": null,
-      "artifacts": [],
-      "evidence": []
+      "status": "done",
+      "commit_subject": "roadmap(024): add timezone-aware calendar and transactional slot booking",
+      "artifacts": [
+        "packages/python/src/telegram_patterns/calendar.py",
+        "packages/python/src/telegram_patterns/slots.py",
+        "packages/python/src/telegram_patterns/calendar_aiogram.py",
+        "packages/python/src/telegram_patterns/selection_aiogram.py",
+        "packages/python/tests/test_calendar.py",
+        "packages/python/tests/test_calendar_aiogram.py",
+        "packages/python/tests/test_execution.py",
+        "examples/python/calendar_bot.py",
+        "examples/python/offline_calendar.py",
+        "examples/api-reference/python/core_calendar.py",
+        "examples/api-reference/python/bot_calendar.py",
+        "docs/calendar-slots.md",
+        ".agents/skills/telegram-code-patterns/references/calendar-slots.md",
+        "docs/v1-checks/024.json",
+        "docs/v1-checks/024-distribution.json",
+        "docs/v1-checks/024-first-run.json",
+        "docs/v1-checks/024-portable.json"
+      ],
+      "evidence": [
+        "docs/v1-checks/024.json",
+        "0.17.0 local wheel/tarball: 61 stages, 199 Python passed + 1 Windows skip, 26 TypeScript, 1595 browser checks + 60 first-run checks",
+        "28 calendar behavioral tests plus offline prerequisites; actual spawned-process races for one slot, overlapping aliases and replay",
+        "Explicit IANA fold/gap, unavailable dates, current same-transaction ACL/CAS, atomic booking+receipt, rollback and restart/status",
+        "Installed one-message date/time/back/confirm and lost-edit recovery; exact copied guide and SDK-free/SDK API examples",
+        "146 symbols/24 API groups, 302 recipes/203 Python fixtures, 35 components, 28 source typing files; live/human/device/production remain unverified"
+      ]
     },
     {
       "id": 25,

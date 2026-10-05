@@ -42,6 +42,8 @@ def build() -> tuple[dict[str, str], dict]:
              'Публичные imports, самостоятельные минимальные композиции и границы каждого символа. '
              'Все группы experimental. Рецепты ref.* принадлежат этому справочнику; cookbook RecipeCatalog '
              'отдельно содержит Telegram requests/layouts. Исполненные fixtures не доказывают live/device/provider acceptance.\n\n'
+             'В index example_sha256 относится к исполняемому fenced-блоку с LF и одной завершающей новой строкой; '
+             'example_source_sha256 отдельно фиксирует исходные байты файла, включая окончания строк.\n\n'
              'Выберите раздел; не подключайте SDK/фреймворк ради core или узкой правки:\n\n')
     intro += '\n'.join(f'- [{title}]({file})' for file, title in SECTION.values()) + '\n\n'
     intro += '| Символ | Импорт | Минимальная композиция / рецепт | Назначение |\n| --- | --- | --- | --- |\n'
@@ -51,7 +53,9 @@ def build() -> tuple[dict[str, str], dict]:
               for key, (_, title) in SECTION.items()}
     bodies['core'] += ('Установите предоставленный локальный wheel без aiogram. Для core_starter.py передайте '
                        'путь к нему как первый аргумент: `python core_starter.py "<PROVIDED_WHEEL>"`. '
-                       'Остальные файлы запускаются `python <FILE.py>`. core_doctor намеренно проверяет SDK-free окружение.\n\n')
+                       'Остальные файлы запускаются `python <FILE.py>`. Для core_calendar нужна IANA-база '
+                       'Europe/Warsaw: при ее отсутствии установите calendar extra того же wheel; aiogram не требуется. '
+                       'core_doctor намеренно проверяет SDK-free окружение.\n\n')
     bodies['bot'] += ('Нужны предоставленный wheel с aiogram extra и установленный совместимый SDK. '
                      'В той же папке создайте bot_fixture.py из блока ниже, затем запускайте `python <FILE.py>`. '
                      'Фиктивный token применяется только с StubSession: HTTP fallback отсутствует.\n\n'
@@ -80,6 +84,7 @@ def build() -> tuple[dict[str, str], dict]:
         if not path.is_relative_to(ROOT / 'examples/api-reference'):
             raise ValueError('Reference example path escaped owned directory')
         code = path.read_text(encoding='utf-8')
+        fenced_code = code.rstrip() + '\n'
         if not group['limits'].strip(): raise ValueError('Reference lacks limits')
         if path.suffix == '.py':
             tree = ast.parse(code)
@@ -102,14 +107,15 @@ def build() -> tuple[dict[str, str], dict]:
                 statement = f'import {"type " if kind == "type" else ""}{{{name}}} from "{module}"' if module.startswith('@') else f'from {module} import {name}'
                 record = {'module': module, 'name': name, 'import': statement, 'recipe': 'ref.' + identifier,
                           'example': group['example'], 'limits': group['limits'], 'intent': intent,
-                          'example_sha256': hashlib.sha256(path.read_bytes()).hexdigest(), 'kind': kind}
+                          'example_sha256': hashlib.sha256(fenced_code.encode('utf-8')).hexdigest(),
+                          'example_source_sha256': hashlib.sha256(path.read_bytes()).hexdigest(), 'kind': kind}
                 entries.append(record)
                 intro += f'| `{name}` | `{statement}` | [{record["recipe"]}]({SECTION[section][0]}#ref-{identifier}) | {intent} |\n'
         language = 'python' if path.suffix == '.py' else 'typescript'
         bodies[section] += (f'<a id="ref-{identifier}"></a>\n\n## {group["title"]} — ref.{identifier}\n\n'
                             f'Файл: `{path.name}`. Символы: ' + ', '.join(f'`{name}`' for name in symbols) + '\n\n'
                             'Границы: ' + group['limits'] + '\n\n' +
-                            f'```{language}\n{code.rstrip()}\n```\n\n')
+                            f'```{language}\n{fenced_code}```\n\n')
     if seen != expected:
         raise ValueError('Public export documentation drift: ' + repr(sorted(expected - seen)))
     intro += ('\n## CLI и CSS\n\n'

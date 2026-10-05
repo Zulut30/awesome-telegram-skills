@@ -69,6 +69,14 @@ def plan_recipe(recipe_id: str) -> RecipeRunPlan:
         else:
             if installed != recipe.sdk_version:
                 blocked.append('sdk-differs-from-checked-fixture')
+    if recipe.id == 'demo-calendar':
+        try:
+            data_version = importlib.metadata.version('tzdata')
+        except importlib.metadata.PackageNotFoundError:
+            blocked.append('calendar-extra-required')
+        else:
+            if data_version != '2026.5':
+                blocked.append('calendar-data-differs-from-checked-fixture')
     return RecipeRunPlan(recipe.id, catalog.library_version, execution['kind'],
                          dependencies=tuple(execution['dependencies']),
                          offline_environment=tuple(execution['offline_environment']),

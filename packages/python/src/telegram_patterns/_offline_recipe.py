@@ -20,6 +20,7 @@ _FIXTURES = {
     'demo-keyboards': ('keyboards_bot.py', 'offline_keyboards.py'),
     'demo-navigation': ('navigation_bot.py', 'offline_navigation.py'),
     'demo-selection': ('selection_bot.py', 'offline_selection.py'),
+    'demo-calendar': ('calendar_bot.py', 'offline_calendar.py'),
     'demo-recovery': ('error_recovery.py',),
 }
 _ATTEMPTS = [0]
@@ -124,6 +125,9 @@ def _execute(recipe_id: str) -> dict:
         if plan.kind == 'dispatcher':
             assert evidence['session_closed'] is True
             checks.extend(('dispatcher-composition', 'session-closed'))
+            if recipe_id == 'demo-calendar':
+                assert evidence['business_effects'] == 1 and evidence['durable_replay'] and evidence['owner_stale_guards']
+                checks.extend(('calendar-date-time-back', 'sqlite-slot-one-booking', 'durable-receipt-replay'))
         else:
             assert evidence['effect_count'] == 1 and evidence['replayed'] is True
             checks.extend(('sqlite-one-effect', 'same-key-replay'))

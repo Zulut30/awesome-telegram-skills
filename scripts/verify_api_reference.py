@@ -50,8 +50,9 @@ def main() -> int:
     ts = output / 'typescript'; ts.mkdir(); (ts / 'src').mkdir()
     for group in spec['groups']:
         content = definitions[group['id']]
-        expected = next(row['example_sha256'] for row in index['symbols'] if row['recipe'] == 'ref.' + group['id'])
-        assert hashlib.sha256(content.encode()).hexdigest() == expected
+        record = next(row for row in index['symbols'] if row['recipe'] == 'ref.' + group['id'])
+        assert hashlib.sha256(content.encode('utf-8')).hexdigest() == record['example_sha256']
+        assert hashlib.sha256((ROOT / group['example']).read_bytes()).hexdigest() == record['example_source_sha256']
         target = (py if group['section'] != 'typescript' else ts / 'src') / Path(group['example']).name
         target.write_text(content, encoding='utf-8', newline='\n')
     # Copy the shared helpers from their exact first fenced documentation block.

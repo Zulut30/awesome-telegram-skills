@@ -1,8 +1,8 @@
-# Python core — 0.16.0
+# Python core — 0.17.0
 
 [Индекс всех символов](api-reference.md). Образцы ниже воспроизводятся через установленный wheel/tarball вне исходного дерева. Assert — проверка fixture, не бизнес-правило production приложения.
 
-Установите предоставленный локальный wheel без aiogram. Для core_starter.py передайте путь к нему как первый аргумент: `python core_starter.py "<PROVIDED_WHEEL>"`. Остальные файлы запускаются `python <FILE.py>`. core_doctor намеренно проверяет SDK-free окружение.
+Установите предоставленный локальный wheel без aiogram. Для core_starter.py передайте путь к нему как первый аргумент: `python core_starter.py "<PROVIDED_WHEEL>"`. Остальные файлы запускаются `python <FILE.py>`. Для core_calendar нужна IANA-база Europe/Warsaw: при ее отсутствии установите calendar extra того же wheel; aiogram не требуется. core_doctor намеренно проверяет SDK-free окружение.
 
 <a id="ref-core_identity"></a>
 
@@ -182,7 +182,7 @@ catalog = RecipeCatalog()
 recipe: Recipe = catalog.search('две кнопки', maturity=maturity, verification=verification,
                                task='keyboards', context='private', sdk='aiogram', sdk_version='3.31.0', api_version='bot:10.3')[0]
 assert recipe.id == 'two-columns' and catalog.get(recipe.id) == recipe
-assert len(catalog.recipes) == 301 and catalog.library_version
+assert len(catalog.recipes) == 302 and catalog.library_version
 assert recipe.source_files and recipe.check_files and 'keyboards' in recipe.tasks
 lost = catalog.search('потерянный ответ', task='recovery', context='backend')[0]
 assert lost.id == 'demo-recovery' and lost.sdk == 'python-core' and lost.api_version == 'none'
@@ -325,4 +325,42 @@ assert result.status == 'confirmed' and result.state is not None and result.stat
 assert result.state.spec.resource_version == '2'
 assert menu.apply(data, context).status == 'stale'
 print(json.dumps({'passed':True,'case':'core_selection','network':False,'business_effects':0}))
+```
+
+<a id="ref-core_calendar"></a>
+
+## Календарь, время и транзакционная запись — ref.core_calendar
+
+Файл: `core_calendar.py`. Символы: `CalendarMonth`, `TimeSlot`, `resolve_local_time`, `SlotSchedule`, `SlotBooking`, `SQLiteSlotStore`
+
+Границы: SDK-free; Europe/Warsaw needs host IANA database or optional calendar extra (tested tzdata 2026.5). Current synchronous host ACL inside file SQLite transaction before effect/replay. Publish is trusted host CAS; immutable receipt differs from current booking; no external side effects. Host owns file/migrations/retention and async shutdown work.
+
+```python
+"""SDK-free calendar, explicit DST choice, transaction and current booking."""
+from datetime import date, datetime, timedelta, timezone
+import json
+from pathlib import Path
+from tempfile import TemporaryDirectory
+from telegram_patterns import CalendarMonth, TimeSlot, resolve_local_time, SlotSchedule, SlotBooking, SQLiteSlotStore
+
+month = CalendarMonth(2026, 10, 'Europe/Warsaw', [date(2026, 10, 25)])
+assert month.allows(date(2026, 10, 25))
+early = resolve_local_time(datetime(2026, 10, 25, 2, 30), 'Europe/Warsaw', fold=0)
+late = resolve_local_time(datetime(2026, 10, 25, 2, 30), 'Europe/Warsaw', fold=1)
+assert late - early == timedelta(hours=1)
+slot = TimeSlot('early', early, early + timedelta(minutes=15))
+with TemporaryDirectory(prefix='calendar public api ') as temporary:
+    store = SQLiteSlotStore(Path(temporary) / 'slots.sqlite3',
+                            authorize=lambda connection, actor, resource: actor == 42 and resource == 'room')
+    store.initialize()
+    schedule = store.publish('room', [slot], expected_revision=0)
+    assert isinstance(schedule, SlotSchedule)
+    now = datetime(2026, 10, 5, tzinfo=timezone.utc)
+    receipt = store.reserve('room', 'early', actor_id=42, expected_revision=schedule.revision, operation_id='public-example', now=now)
+    replay = store.reserve('room', 'early', actor_id=42, expected_revision=schedule.revision, operation_id='public-example', now=now)
+    assert replay.replayed and replay.value == receipt.value
+    booking = store.booking('room', receipt.value['booking_id'], actor_id=42)
+    assert isinstance(booking, SlotBooking) and booking.status == 'active'
+print(json.dumps({'passed': True, 'case': 'core_calendar', 'network': False,
+                  'business_effects': 1, 'replayed': replay.replayed}))
 ```

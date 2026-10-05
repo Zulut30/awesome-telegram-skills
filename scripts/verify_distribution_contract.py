@@ -128,10 +128,11 @@ def verify_distributions(root: Path, wheel: Path, tarball: Path) -> dict:
              'Wheel identity mismatch')
     _require(metadata.get('Requires-Python') == python['requires-python'], 'Wheel Python constraint mismatch')
     # Our current core has no runtime dependencies; every requirement belongs
-    # to the explicitly enabled aiogram extra. A dependency change needs review.
+    # to the explicitly enabled SDK or IANA-data extras. No mandatory core deps.
     _require(not python.get('dependencies'), 'Update the contract for a new core dependency')
     requirements = metadata.get_all('Requires-Dist', [])
-    _require(len(requirements) == 1 and re.fullmatch(r'aiogram<4,>=3\.31;\s*extra == "aiogram"', requirements[0]) is not None,
+    expected_requirements = {r'aiogram<4,>=3\.31;\s*extra == "aiogram"', r'tzdata<2027,>=2026\.5;\s*extra == "calendar"'}
+    _require(len(requirements) == 2 and all(sum(re.fullmatch(pattern, value) is not None for value in requirements) == 1 for pattern in expected_requirements),
              'Wheel extra dependency boundary changed')
     wheel_metadata = BytesParser().parsebytes(py_files[prefix + 'WHEEL'])
     _require(wheel_metadata.get('Root-Is-Purelib') == 'true' and wheel_metadata.get_all('Tag') == ['py3-none-any'],

@@ -21,6 +21,7 @@ from .native_keyboards import ChatType, inline_keyboard, reply_keyboard, input_p
 from .keyboard_layouts import KeyboardLayout, KeyboardCapabilities, action_layout, inline_layout, reply_layout
 from .navigation import NavigationScreen, NavigationState, NavigationResult, MessageNavigation, navigation_router
 from .selection_aiogram import selection_keyboard, selection_router
+from .calendar_aiogram import calendar_keyboard, time_slot_keyboard
 from .api import MethodSpec, InvalidAPIRequest, method_catalog, build_request
 from .events import UpdatePhase, UpdateTrace, UpdateObserver, update_kinds, event_router
 
@@ -33,6 +34,7 @@ __all__ = [
     "KeyboardLayout", "KeyboardCapabilities", "action_layout", "inline_layout", "reply_layout",
     "NavigationScreen", "NavigationState", "NavigationResult", "MessageNavigation", "navigation_router",
     "selection_keyboard", "selection_router",
+    "calendar_keyboard", "time_slot_keyboard",
     "MethodSpec", "InvalidAPIRequest", "method_catalog", "build_request",
     "UpdatePhase", "UpdateTrace", "UpdateObserver", "update_kinds", "event_router",
 ]

@@ -1,5 +1,13 @@
 # Изменения библиотеки компонентов
 
+## 0.17.0 — пункт 024
+
+- SDK-free CalendarMonth/TimeSlot/resolve_local_time: immutable Monday-first calendar, unavailable dates, UTC intervals и явный fold для DST ambiguity. Gap/imaginary wall time отвергается; optional calendar extra предоставляет IANA data на Windows.
+- SlotSchedule/SlotBooking/SQLiteSlotStore: current project ACL внутри file SQLite transaction до effect/replay, schedule CAS, interval/key availability и atomic booking + immutable receipt. Overlapping aliases, повтор и конкуренция shared-file процессов не создают двойную запись. Текущий booking status отличается от исходного receipt; owner cancel освобождает слот.
+- calendar_keyboard/time_slot_keyboard и optional selection_router renderer: weekday fallback, host-verified native disabled grid, local offset labels и готовый one-message date/time/back/confirmation workflow. Explicit recovery сверяет intent, /book new начинает новый выбор; UI/session ephemeral, booking/receipt durable.
+- API/examples/catalog/portable guide и pinned consumers проверяют composition, timezone, negative cases и real-process race. Live clients/devices, external storage и exactly-once Telegram delivery не заявлены.
+- Справочник API отдельно сверяет исходные байты и исполняемый fenced-код с LF; CRLF и завершающие пустые строки покрыты регрессионной проверкой в временном дереве.
+
 ## 0.16.0 — пункт 023
 
 - SelectionOption/Spec/Context/State/Result и SelectionMenu: server-owned toggle, multiselect, quantity и filters, immutable snapshots и атомарные проверки owner/bot/chat/thread/message/token/revision/TTL без SDK. Fresh server spec отзывает старые кнопки и confirmation.

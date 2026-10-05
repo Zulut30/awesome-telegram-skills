@@ -1,0 +1,156 @@
+{
+  "roadmap_item": 24,
+  "version": "0.17.0",
+  "checked_date": "2026-10-05",
+  "passed": true,
+  "report": "output/pattern-library-0.17.0/distribution-report.json",
+  "report_sha256": "d2ea989341243486b70920d576d32c2b75d0634a43a08ef02dd9d76cfec9c753",
+  "distribution_stages": 61,
+  "python_tests": {
+    "run": 200,
+    "passed": 199,
+    "skipped": 1
+  },
+  "typescript_tests": 26,
+  "root_tests": 33,
+  "skills_checked": 41,
+  "browser_scope": {
+    "example": 141,
+    "gallery": 638,
+    "export": 638,
+    "starter": 66,
+    "selected_starter": 76,
+    "api_reference": 36
+  },
+  "browser_total": 1595,
+  "first_run_browser_checks": 60,
+  "public_symbols": {
+    "total": 146,
+    "python": 105,
+    "typescript": 41
+  },
+  "component_groups": 35,
+  "recipes": 302,
+  "source_typing_files": 28,
+  "calendar_core_tests": 21,
+  "calendar_sdk_tests": 7,
+  "installed_calendar_composition": {
+    "passed": true,
+    "network": false,
+    "session_closed": true,
+    "single_message": true,
+    "date_time_back": true,
+    "unavailable_date": true,
+    "month_navigation": true,
+    "owner_stale_guards": true,
+    "schedule_confirmation_guard": true,
+    "durable_replay": true,
+    "existing_dispatcher_preserved": true,
+    "unknown_edit_recovery": true,
+    "business_effects": 1,
+    "edits": 16
+  },
+  "portable_calendar_blocks": 1,
+  "first_run_report": "output/v1-quickstart-024-final/report.json",
+  "first_run_report_sha256": "9052cbe3c04036436f81c716b3fcff9017ccfc3d86a582694f3f0ebb5548b281",
+  "first_run_guide_hash": {
+    "method": "UTF-8 text with normalized LF, as read/executed by verify_quickstart.py",
+    "sha256": "2263c76e051cbd42e18d8135faca596344bffbbb0b3fb7f9d45fcc3d6c38fe3c",
+    "source_bytes_sha256": "542b0ed29daa3a1ffcaadc9f2d0243b4353bf463e1dfdf9919c3d2c10bd255dd"
+  },
+  "artifacts": [
+    {
+      "name": "awesome_telegram_patterns-0.17.0-py3-none-any.whl",
+      "bytes": 192751,
+      "sha256": "1ecb02d4cb2d4dd114d64e8612e127c2cf87e46553bc917b0c17bfd69a4525f0"
+    },
+    {
+      "name": "awesome-telegram-patterns-0.17.0.tgz",
+      "bytes": 19530,
+      "sha256": "742945759785d68c30fc8355ee5763a4d6a4f826205e46c1bd6f644c29acdc04"
+    }
+  ],
+  "evidence": {
+    "distribution": "docs/v1-checks/024-distribution.json",
+    "first_run": "docs/v1-checks/024-first-run.json",
+    "portable": "docs/v1-checks/024-portable.json"
+  },
+  "source_and_guide_hashes": {
+    "packages/python/src/telegram_patterns/calendar.py": "ec23d63779c79e60e28958c70989d9521a46030734ac2ddb4e0f1feb81bea72d",
+    "packages/python/src/telegram_patterns/slots.py": "571d0b74c1192cf8e8669b788661cce6f1e40a0be88e5e1e02cb26f6cfe4e729",
+    "packages/python/src/telegram_patterns/calendar_aiogram.py": "7abf9c7dc29ed66507341675d7c5de19f54eb4ce55101bb732184bf01d0d4825",
+    "packages/python/src/telegram_patterns/selection_aiogram.py": "4131c25e7fcdc2050d16ef72ade867e6ab316431b15425874785752347a53183",
+    "packages/python/src/telegram_patterns/__init__.py": "893fa04d214688dc879aed976976fe11e5b1542166eba465543fc7223900bd57",
+    "packages/python/src/telegram_patterns/aiogram.py": "036332c7ad293da2cf4ec0a3fe583dcaa63b2d09df89c5824290edf2e5d73d79",
+    "packages/python/src/telegram_patterns/_offline_recipe.py": "747290eef1e9f12e09df25e09a70fbd7b0e23825c6a0e9fd4669769c690f08aa",
+    "packages/python/src/telegram_patterns/execution.py": "1aa2dcd4083db6b3f657af7c0dd6adc5862a9cd8d144b4e72ca6f219eed2594f",
+    "packages/python/tests/test_calendar.py": "63a4e50e0a6272b2d4ab0422fc9873138ebee5a7a5560faa457de8881d221c2f",
+    "packages/python/tests/test_calendar_aiogram.py": "95fc9e4d14fe728087dca8d42ae0b0391c8ca9be6de05ad77a6c276fa8008c5f",
+    "packages/python/tests/test_execution.py": "d51513ac5d2df52f44d859393478b1a80f17ba400b82a84da44911d026e061dc",
+    "examples/python/calendar_bot.py": "54e5b48bea957711b82bd84156be5257356024f2add66cf711e1d42b7ab6f374",
+    "examples/python/offline_calendar.py": "25d26a642c5b78297f1dc18222e35c64f994478fd191494f6000e9dc23f5d99a",
+    "examples/api-reference/python/core_calendar.py": "b2fd640b4e935e9b867b80ef48aca9a443d7a4f748ecf57bd9bbcde7e32147fc",
+    "examples/api-reference/python/bot_calendar.py": "f96e073461ae88e8f76fcb67fe3ec2b2c0be4492ab30666ac75d35d7f7b64133",
+    "docs/calendar-slots.md": "ffeadde78a57c33701279d2c3348de9c0b970f189b183dd43bcc980757b9734c",
+    ".agents/skills/telegram-code-patterns/references/calendar-slots.md": "ffeadde78a57c33701279d2c3348de9c0b970f189b183dd43bcc980757b9734c",
+    "scripts/verify_keyboard_recipe.py": "9532e6fda24d5a84c6fbeb0aa65a21ed1e104234019824c7acab093da0b30bf7",
+    "scripts/build_recipe_gallery.py": "be56dc56d6dfebb684022d5eb1eec6b363e203c6ea9a2be84e4413b80c5eff0f",
+    "scripts/verify_pattern_packages.py": "d6557f3cc15355fdc831d2d0e86b5762d57be70e1bd191dd25a089a94e0bfbf6",
+    "scripts/verify_gallery_export.py": "3bf8b943b73db932e024f04b78d94f4bb5e8623c426a11ee0964c5b08a030adf",
+    "scripts/verify_recipe_execution.py": "58bea35b18004ecdb1c0fc1533dbc2a5486261627cbc5e866532e38daa679c0b",
+    "tests/gallery-browser.mjs": "f416c4cba7d6f726333f3b57bdacec2344972d608009aa5efed5eb6e763f8b1f",
+    "scripts/build_api_reference.py": "51b2aa5feb734b0e040652517a7f6008773c8bfc1b7500d8cff5d89fe038f5aa",
+    "scripts/verify_api_reference.py": "d01c2a3b5d39930b161e8646bcee8617508f1ff5008608ed2276ec0f9e723ec4",
+    "tests/test_api_reference.py": "e279c14b74a34aff5fa4b7dde76e2707bfe0efd78fc23b588126ed5cd3b70ed1",
+    "docs/quickstart.md": "542b0ed29daa3a1ffcaadc9f2d0243b4353bf463e1dfdf9919c3d2c10bd255dd",
+    ".agents/skills/telegram-code-patterns/references/quickstart.md": "542b0ed29daa3a1ffcaadc9f2d0243b4353bf463e1dfdf9919c3d2c10bd255dd"
+  },
+  "root_log_sha256": "2cab9ba44f0ae35e447606a1b97b39ef724df30eaf380377132b0e0d6fc0a25e",
+  "skill_log_sha256": "8807a4a6e3207331f403446a458788ef471faa999c4f11c303833c22e58313a2",
+  "requirement_evidence": {
+    "time_zones_and_transitions": [
+      "Warsaw gap/fold, Lord Howe half-hour, skipped Apia date, imaginary times, UTC microsecond precision",
+      "offset labels distinguish repeated wall time and cross-offset intervals; optional pinned tzdata 2026.5"
+    ],
+    "unavailable_dates": [
+      "immutable available/blocked month; leap month/year edges",
+      "weekday fallback and real disabled-button serializer",
+      "installed date/time/back/month navigation, empty/current schedule and unavailable-date guard"
+    ],
+    "transactional_competition": [
+      "BEGIN IMMEDIATE, current same-connection ACL before effect and replay, schedule CAS",
+      "real spawned processes: one slot, overlapping aliases and identical intent",
+      "fault between booking insert and receipt rolls back both; adjacent intervals and resources remain independent"
+    ],
+    "restart_and_unknown": [
+      "file-store restart replays identical immutable receipt; cancel uses owner guard and current booking status",
+      "installed lost edit after commit, stale duplicate confirmation, explicit same-intent /book recovery and /book new"
+    ],
+    "public_and_portable": [
+      "SDK-free and SDK exact fenced API examples through installed wheel",
+      "copied one-block calendar guide with real temp SQLite; existing Dispatcher/help preserved",
+      "146 public symbols, 24 reference groups, 302 gallery recipes, 203 Python fixtures, 221 linked export files"
+    ],
+    "documentation_regression": [
+      "CRLF and trailing-blank source retains raw-byte hash; canonical executable fenced LF hash verified separately"
+    ]
+  },
+  "repair_history": [
+    {
+      "report": "output/pattern-library-0.17.0-attempt-1/distribution-report.json",
+      "failure": "API reference raw source hash differed from canonical fenced LF code; generator/verifier and CRLF regression repaired"
+    },
+    {
+      "report": "output/pattern-library-0.17.0-attempt-2/distribution-report.json",
+      "failure": "New API examples lacked expected result JSON; example metadata repaired and focused exact consumer passed before complete rerun"
+    }
+  ],
+  "limits": [
+    "Experimental local packages; one seat per resource interval in one shared SQLite file, no external effects/holds/waitlist guarantee.",
+    "Host supplies verified identity, same-database current ACL, trusted clock, file/migrations/retention and owned thread/shutdown work.",
+    "UI/session remains ephemeral; after process restart host persists its user-to-operation/booking link separately from durable booking/receipt.",
+    "Native disabled grid requires host-verified client support; default fallback omits unavailable callbacks.",
+    "Synthetic SDK/Chrome evidence does not prove live Telegram rendering, real devices, providers, human/independent AI usability or production pilots.",
+    "Application examples 017–019 retain separately accepted 0.13.0 artifacts; item 020 remains pending."
+  ]
+}

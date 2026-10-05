@@ -1,5 +1,8 @@
 # Публичные контракты библиотеки 0.16.0
 
+Календарь и UTC/DST: `CalendarMonth`, `TimeSlot`, `resolve_local_time`; current ACL и atomic booking/replay: `SlotSchedule`, `SlotBooking`, `SQLiteSlotStore`; optional aiogram: `calendar_keyboard`, `time_slot_keyboard`. IANA data на Windows — extra `calendar` (проверено tzdata 2026.5). [Контракт и пример](calendar-slots.md). UI snapshot не резервирует ресурс; receipt отличается от current booking status.
+
+
 Пункт 003 плана 1.0. Все API ниже пока experimental; статус их группы указан в `components.json`, правила — в [maturity](v1-maturity.md). Контракт описывает реально реализованные границы, а не будущую полноту сценария. Аргументы с Python/TypeScript type annotations должны соответствовать типам; наличие типа не заменяет runtime validation внешних данных.
 
 Публичные точки входа: Python root `telegram_patterns`, документированные имена `telegram_patterns.aiogram`, `telegram_patterns.testing.StubSession`, `telegram_patterns.cli.doctor`, CLI `telegram-patterns`; TypeScript root `@awesome-telegram/patterns` и CSS subpath `/styles.css`. Случайно доступные SDK/import names и внутренние modules/helpers не являются обещанным API. Нормативные сигнатуры и DTO-поля находятся в исходниках Python и поставляемых `.d.ts`; таблицы ниже определяют семантику, ошибки и обязанности.

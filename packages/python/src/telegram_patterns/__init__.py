@@ -1,6 +1,8 @@
 """Core components; importing these does not require a Telegram SDK."""
 from .initdata import InvalidInitData, VerifiedLaunch, validate_init_data
 from .sqlite_once import OnceResult, OperationConflict, SQLiteOnce
+from .calendar import CalendarMonth, TimeSlot, resolve_local_time
+from .slots import SlotBooking, SlotSchedule, SQLiteSlotStore
 from .settings import BotSettings
 from .selection import SelectionOption, SelectionSpec, SelectionContext, SelectionState, SelectionResult, SelectionMenu
 from .recipes import Maturity, Recipe, RecipeCatalog, VerificationLevel
@@ -18,6 +20,7 @@ __all__ = [
     "BotSettings", "InvalidInitData", "VerifiedLaunch", "validate_init_data",
     "SelectionOption", "SelectionSpec", "SelectionContext", "SelectionState", "SelectionResult", "SelectionMenu",
     "OnceResult", "OperationConflict", "SQLiteOnce",
+    "CalendarMonth", "TimeSlot", "resolve_local_time", "SlotBooking", "SlotSchedule", "SQLiteSlotStore",
     "Maturity", "VerificationLevel", "Recipe", "RecipeCatalog",
     "RecipeRunPlan", "RecipeRunResult", "plan_recipe", "run_recipe_offline",
     "StarterPlan", "create_starter",

@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "library_version": "0.16.0",
+  "library_version": "0.17.0",
   "checked_date": "2026-10-05",
   "maturity": "experimental",
   "declared": {
@@ -8,7 +8,8 @@
     "aiogram": "aiogram>=3.31,<4",
     "node": ">=20",
     "module": "ESM",
-    "runtime_typescript_dependencies": []
+    "runtime_typescript_dependencies": [],
+    "calendar": "optional tzdata>=2026.5,<2027; UTC works without it"
   },
   "verified": {
     "python": "3.13.12",
@@ -20,30 +21,30 @@
     "os": "Windows 11",
     "arch": "AMD64",
     "browser": "154.0.8037.97",
-    "browser_checks": 1483,
+    "browser_checks": 1595,
     "mypy": "2.4.0",
     "quickstart_browser_checks": 60,
     "selected_starter_browser_checks": 76,
     "starter_selectable_groups": 15,
-    "python_passed": 170,
+    "python_passed": 199,
     "typescript_passed": 26,
     "doctor_consumer_cases": 12,
     "explicit_doctor_repair_commands": 5,
-    "python_source_typing_files": 25,
-    "api_reference_symbols": 138,
-    "api_reference_python_cases": 17,
+    "python_source_typing_files": 28,
+    "api_reference_symbols": 146,
+    "api_reference_python_cases": 19,
     "api_reference_typescript_case_groups": 5,
     "api_reference_browser_checks": 36,
     "api_reference_ts_type_exports": 22,
-    "gallery_browser_checks": 582,
-    "gallery_export_browser_checks": 582,
-    "gallery_source_check_files": 214,
-    "recipes": 301,
+    "gallery_browser_checks": 638,
+    "gallery_export_browser_checks": 638,
+    "gallery_source_check_files": 221,
+    "recipes": 302,
     "sdk_probe_timeout_seconds": 30,
-    "recipe_execution_plans": 301,
-    "recipe_execution_python_fixtures": 202,
+    "recipe_execution_plans": 302,
+    "recipe_execution_python_fixtures": 203,
     "recipe_execution_guard_denials": 2,
-    "public_api_symbols": 138,
+    "public_api_symbols": 146,
     "keyboard_layout_tests": 7,
     "keyboard_layout_methods": 6,
     "portable_layout_blocks": 2,
@@ -52,19 +53,24 @@
     "portable_navigation_blocks": 1,
     "selection_unit_tests": 27,
     "selection_edit_methods": 13,
-    "portable_selection_blocks": 1
+    "portable_selection_blocks": 1,
+    "tzdata": "2026.5",
+    "calendar_core_tests": 21,
+    "calendar_sdk_tests": 7,
+    "calendar_edit_methods": 16,
+    "portable_calendar_blocks": 1
   },
-  "evidence": "docs/v1-checks/023.json",
+  "evidence": "docs/v1-checks/024.json",
   "artifacts": [
     {
-      "name": "awesome_telegram_patterns-0.16.0-py3-none-any.whl",
-      "bytes": 171639,
-      "sha256": "c0643228999f72178e1fae23bca9598c7239cc545afa2f2a376e96ffcc8bd513"
+      "name": "awesome_telegram_patterns-0.17.0-py3-none-any.whl",
+      "bytes": 192751,
+      "sha256": "1ecb02d4cb2d4dd114d64e8612e127c2cf87e46553bc917b0c17bfd69a4525f0"
     },
     {
-      "name": "awesome-telegram-patterns-0.16.0.tgz",
-      "bytes": 19529,
-      "sha256": "2b33b308eaa6311a62b23399a487745d628a04f1744fd045c3537e10d2a56c3e"
+      "name": "awesome-telegram-patterns-0.17.0.tgz",
+      "bytes": 19530,
+      "sha256": "742945759785d68c30fc8355ee5763a4d6a4f826205e46c1bd6f644c29acdc04"
     }
   ],
   "unverified": [

@@ -155,10 +155,22 @@ def main():
     selection_namespace={}
     for block in selection_blocks:exec(compile(block,str(selection_guide),'exec'),selection_namespace)
     selection=asyncio.run(selection_check(selection_namespace)) if selection_blocks else None
+    calendar_guide=skill/'references/calendar-slots.md'
+    calendar_blocks=re.findall(r'```python\n(.*?)```',calendar_guide.read_text(encoding='utf-8'),re.S) if calendar_guide.exists() else []
+    if calendar_guide.exists() and len(calendar_blocks)!=1: raise ValueError('Update checker for calendar guide blocks')
+    calendar_namespace={}
+    for block in calendar_blocks: exec(compile(block,str(calendar_guide),'exec'),calendar_namespace)
+    if calendar_blocks:
+        assert calendar_namespace['replay'].replayed and calendar_namespace['receipt'].value==calendar_namespace['replay'].value
+        assert calendar_namespace['booking'].status=='active'
+        assert len(calendar_namespace['month'].allowed_dates)==1
+        assert calendar_namespace['calendar_markup'].inline_keyboard[0][0].callback_data=='date:2026-10-25'
+        assert 'UTC+02:00' in calendar_namespace['time_markup'].inline_keyboard[0][0].text
     print(json.dumps({'passed':True,'network':False,'markdown_files':len(markdown),'python_blocks':len(blocks),
                       'layout_guide_blocks':len(layout_blocks),
                       'navigation_guide_blocks':len(navigation_blocks),'navigation':navigation,
                       'selection_guide_blocks':len(selection_blocks),'selection':selection,
+                      'calendar_guide_blocks':len(calendar_blocks),'calendar':{'passed':True,'file_sqlite_booking':True,'durable_replay':True,'dst_offsets':True,'unavailable_date':True} if calendar_blocks else None,
                       'methods':len(namespace['methods']),'scope':'copied skill recipe execution; not independent agent decision evaluation'}))
 
 

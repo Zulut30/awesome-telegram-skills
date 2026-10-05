@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "library_version": "0.16.0",
+  "library_version": "0.17.0",
   "source_snapshot": "2026-10-04",
   "source_hashes": {
     "bot_api": "29f5f25caa18d303f14ce83af5a4df784eb3094c3076cb040a1ad950c157ad44",
@@ -21057,6 +21057,95 @@
       }
     },
     {
+      "id": "demo-calendar",
+      "title": "Календарь и запись на свободное время",
+      "summary": "Полная композиция с тем же Dispatcher для offline и polling.",
+      "category": "scenarios",
+      "language": "python",
+      "maturity": "experimental",
+      "keywords": [
+        "бот",
+        "пример",
+        "callback",
+        "меню",
+        "события",
+        "ввод",
+        "и",
+        "формы",
+        "кнопки",
+        "раскладки",
+        "личный",
+        "чат",
+        "календарь",
+        "дата",
+        "время",
+        "слот",
+        "запись",
+        "timezone",
+        "DST",
+        "booking",
+        "receipt"
+      ],
+      "code": "\"\"\"One-message calendar -> time -> confirmation, backed by file SQLite.\n\nAttach build_calendar_router to the project's Dispatcher. The host supplies its\ncurrent ACL, schedule, trusted clock and thread lifecycle; no polling on import.\n\"\"\"\nfrom __future__ import annotations\n\nimport asyncio\nfrom dataclasses import dataclass\nfrom datetime import date, datetime, timedelta, timezone\nfrom functools import partial\nfrom pathlib import Path\nfrom typing import Any, Awaitable, Callable\nfrom zoneinfo import ZoneInfo\n\nfrom aiogram import Dispatcher, Router\nfrom aiogram.filters import Command\nfrom aiogram.types import CallbackQuery, InlineKeyboardButton, InlineKeyboardMarkup, Message\nfrom telegram_patterns import (BotSettings, CalendarMonth, ConflictFailure, SelectionContext, SelectionMenu,\n    SelectionOption, SelectionResult, SelectionSpec, SelectionState, SlotSchedule, SQLiteSlotStore,\n    TimeSlot, UnknownOutcome, ValidationFailure, resolve_local_time)\nfrom telegram_patterns.aiogram import calendar_keyboard, run_bot, selection_keyboard, selection_router, time_slot_keyboard\n\n\nasync def database_call(function: Callable[..., Any], *args: Any, **kwargs: Any) -> Any:\n    \"\"\"Join the owned SQLite work before releasing the controller on cancellation.\"\"\"\n    task = asyncio.create_task(asyncio.to_thread(partial(function, *args, **kwargs)))\n    try:\n        return await asyncio.shield(task)\n    except asyncio.CancelledError:\n        while not task.done():\n            try:\n                await asyncio.shield(task)\n            except asyncio.CancelledError:\n                continue\n            except Exception:\n                break\n        if task.done() and not task.cancelled():\n            task.exception()  # Observed; durable operation ID remains for reconciliation.\n        raise\n\n\n@dataclass\nclass CalendarSession:\n    menu: SelectionMenu\n    schedule: SlotSchedule\n    year: int\n    month: int\n    selected_date: date | None = None\n    receipt: dict[str, Any] | None = None\n    error: str | None = None\n    request: dict[str, Any] | None = None\n    booking_status: str | None = None\n\n\ndef build_calendar_router(store: SQLiteSlotStore, resource: str, *, time_zone: str = 'UTC',\n                          clock: Callable[[], datetime] = lambda: datetime.now(timezone.utc),\n                          disabled_buttons: bool = False,\n                          on_result: Callable[[CallbackQuery, SelectionResult], Awaitable[None]] | None = None\n                          ) -> tuple[Router, dict[int, CalendarSession]]:\n    \"\"\"Private-chat example, at most 100 sessions and 60 slots per shown date.\n\n    Registry/selection are ephemeral; booking and receipt survive restart. A\n    known message is edited on explicit /book recovery, never auto-resending.\n    disabled_buttons=True requires host-verified native support; default uses\n    weekday/date fallback. Current user identity always comes from SDK Update.\n    \"\"\"\n    zone = timezone.utc if time_zone == 'UTC' else ZoneInfo(time_zone)\n    router = Router()\n    sessions: dict[int, CalendarSession] = {}\n\n    def month_view(session: CalendarSession) -> CalendarMonth:\n        dates = {slot.start.astimezone(zone).date() for slot in session.schedule.slots if slot.enabled}\n        return CalendarMonth(session.year, session.month, time_zone,\n            [day for day in dates if (day.year, day.month) == (session.year, session.month)])\n\n    def day_slots(session: CalendarSession) -> tuple[TimeSlot, ...]:\n        return tuple(slot for slot in session.schedule.slots if slot.start.astimezone(zone).date() == session.selected_date)\n\n    def rules(session: CalendarSession) -> SelectionSpec:\n        if session.selected_date is None:\n            month = month_view(session)\n            options = [SelectionOption('d' + day.isoformat().replace('-', ''), str(day.day), enabled=month.allows(day))\n                       for week in month.weeks for day in week if day is not None]\n            filters = {'all': 'Даты', 'prev': 'Предыдущий месяц', 'next': 'Следующий месяц'}\n        else:\n            slots = day_slots(session)\n            if len(slots) > 60:\n                raise ValidationFailure('This example supports at most 60 slots per date; host must paginate larger schedules')\n            options = [SelectionOption(slot.key, slot.label(time_zone), enabled=slot.enabled) for slot in slots]\n            options = options or [SelectionOption('unavailable', 'Нет свободного времени', enabled=False)]\n            filters = {'all': 'Время', 'dates': 'Другие даты'}\n        return SelectionSpec(options, quantity_min=0, quantity_max=0, max_selected=1,\n            min_selected=1 if any(option.enabled for option in options) else 0,\n            filters=filters, confirm_text='Записаться',\n            resource_version=f'{session.schedule.revision}:{session.year:04d}{session.month:02d}:{session.selected_date or \"dates\"}')\n\n    def render(state: SelectionState) -> tuple[str, InlineKeyboardMarkup]:\n        session = sessions[state.context.chat_id]\n        if state.phase == 'cancelled':\n            return 'Выбор отменен. Запись не создавалась.', InlineKeyboardMarkup(inline_keyboard=[])\n        if state.phase == 'confirmed':\n            if session.receipt:\n                return 'Запись сохранена. Номер: ' + session.receipt['booking_id'] + '\\nСтатус: ' + (session.booking_status or 'active') + '\\nДля новой записи: /book new', InlineKeyboardMarkup(inline_keyboard=[])\n            return session.error or 'Результат записи уточняется. Используйте /book для сверки.', InlineKeyboardMarkup(inline_keyboard=[])\n        if state.phase == 'confirming':\n            selected = next((slot for slot in day_slots(session) if slot.key in state.selected), None)\n            if selected is None:\n                return 'Время не выбрано. Вернитесь к датам.', InlineKeyboardMarkup(inline_keyboard=[[\n                    InlineKeyboardButton(text='Изменить выбор', callback_data=state.callback('back'))]])\n            return f'Запись на {session.selected_date:%d.%m.%Y}\\n{selected.label(time_zone)}\\nПодтвердить?', selection_keyboard(state)\n        if session.selected_date is None:\n            month = month_view(session)\n            keyboard = calendar_keyboard(month, lambda day: state.callback('s:d' + day.isoformat().replace('-', '')),\n                navigation=(state.callback('f:prev'), state.callback('f:next')), disabled_buttons=disabled_buttons)\n            keyboard.inline_keyboard.append([InlineKeyboardButton(text='Отмена', callback_data=state.callback('cancel'))])\n            return month.text(), keyboard\n        keyboard = time_slot_keyboard(day_slots(session), time_zone, lambda slot: state.callback('s:' + slot.key))\n        selected = next((slot for slot in day_slots(session) if slot.key in state.selected and slot.enabled), None)\n        if selected is not None:\n            keyboard.inline_keyboard.append([InlineKeyboardButton(text='Подтвердить: ' + selected.label(time_zone), callback_data=state.callback('ask'))])\n        keyboard.inline_keyboard.append([InlineKeyboardButton(text='Другие даты', callback_data=state.callback('f:dates')),\n                                        InlineKeyboardButton(text='Отмена', callback_data=state.callback('cancel'))])\n        return f'Выберите время: {session.selected_date:%d.%m.%Y} · {time_zone}\\nВремя недоступно, если уже занято.', keyboard\n\n    def resolve(query: CallbackQuery) -> SelectionMenu | None:\n        session = sessions.get(query.message.chat.id) if isinstance(query.message, Message) else None\n        return session.menu if session else None\n\n    async def load(query: CallbackQuery, menu: SelectionMenu) -> SelectionSpec:\n        session = sessions[menu.state.context.chat_id]\n        session.schedule = await database_call(store.schedule, resource, actor_id=query.from_user.id, now=clock())\n        return rules(session)\n\n    async def reserve(session: CalendarSession, actor_id: int) -> None:\n        assert session.request is not None\n        try:\n            result = await database_call(store.reserve, resource, session.request['slot_key'], actor_id=actor_id,\n                expected_revision=session.request['revision'], operation_id=session.request['operation_id'], now=clock())\n            session.receipt = result.value\n        except ConflictFailure:\n            session.error = 'Запись не создана: расписание изменилось или время занято. Откройте /book.'\n\n    async def feedback(query: CallbackQuery, result: SelectionResult) -> None:\n        session = sessions.get(query.message.chat.id) if isinstance(query.message, Message) else None\n        if session is not None and result.state is not None and result.status == 'accepted':\n            state = session.menu.state\n            if session.selected_date is None and state.filter_key in {'prev', 'next'}:\n                offset = session.year * 12 + session.month - 1 + (-1 if state.filter_key == 'prev' else 1)\n                year, month = divmod(offset, 12)\n                if 1 <= year <= 9999:\n                    session.year, session.month = year, month + 1\n                session.menu.replace_spec(rules(session))\n                session.menu.apply(session.menu.state.callback('f:all'), session.menu.state.context)\n            elif session.selected_date is not None and state.filter_key == 'dates':\n                session.selected_date = None\n                session.menu.replace_spec(rules(session))\n            elif session.selected_date is None and state.selected:\n                session.selected_date = datetime.strptime(state.selected[0][1:], '%Y%m%d').date()\n                session.menu.replace_spec(rules(session))\n            elif session.selected_date is not None and state.selected:\n                if (query.data or '').endswith(':back'):\n                    session.menu.apply(state.callback('s:' + state.selected[0]), state.context)\n                else:\n                    session.menu.apply(state.callback('ask'), state.context)\n        elif session is not None and result.status == 'confirmed' and result.state is not None:\n            if session.selected_date is None or len(result.state.selected) != 1 or result.state.operation_id is None:\n                session.error = 'Запись не создана: время не выбрано. Откройте /book.'\n            else:\n                session.request = {'slot_key': result.state.selected[0], 'revision': session.schedule.revision,\n                                   'operation_id': result.state.operation_id}\n                await reserve(session, query.from_user.id)\n        if on_result is not None:\n            await on_result(query, result)\n\n    @router.message(Command('book'))\n    async def book(message: Message) -> None:\n        if message.chat.type != 'private' or message.message_thread_id is not None or message.from_user is None or message.bot is None:\n            return\n        bot, owner = message.bot, message.from_user.id\n        session = sessions.get(message.chat.id)\n        if session is not None and (session.menu.state.context.owner_id != owner or session.menu.state.context.bot_id != bot.id):\n            return\n        if session is not None and session.request is not None and session.receipt is None and session.error is None:\n            # Explicit reconciliation of this exact intent; no fresh operation ID.\n            await reserve(session, owner)\n        elif session is not None and session.receipt is not None and (message.text or '').split(maxsplit=1)[1:] != ['new']:\n            current_booking = await database_call(store.booking, resource, session.receipt['booking_id'], actor_id=owner)\n            session.booking_status = current_booking.status if current_booking is not None else 'unknown'\n        else:\n            schedule = await database_call(store.schedule, resource, actor_id=owner, now=clock())\n            if session is None:\n                if len(sessions) >= 100:\n                    await message.answer('Лимит демонстрационных меню достигнут.', parse_mode=None)\n                    return\n                sent = await message.answer('Открываю календарь…', parse_mode=None)\n                if (sent.chat.id != message.chat.id or sent.message_id <= 0 or sent.date.timestamp() <= 0 or\n                        sent.from_user is None or sent.from_user.id != bot.id or not sent.from_user.is_bot):\n                    raise UnknownOutcome('Initial calendar message was not confirmed')\n                context = SelectionContext(bot.id, owner, message.chat.id, sent.message_id)\n            else:\n                context = session.menu.state.context\n            if session is None or session.menu.state.phase in {'confirmed', 'cancelled'} or session.menu.check(session.menu.state.callback('refresh'), context) is not None:\n                current = clock().astimezone(zone)\n                session = CalendarSession(SelectionMenu(SelectionSpec([SelectionOption('initial', 'Календарь')]), context),\n                                          schedule, current.year, current.month)\n            else:\n                session.schedule = schedule\n            session.menu.replace_spec(rules(session))\n            sessions[message.chat.id] = session\n        state = session.menu.state\n        text, markup = render(state)\n        edited = await bot.edit_message_text(text, chat_id=state.context.chat_id, message_id=state.context.message_id,\n                                            parse_mode=None, reply_markup=markup)\n        if (not isinstance(edited, Message) or edited.chat.id != state.context.chat_id or edited.message_id != state.context.message_id or\n                edited.date.timestamp() <= 0 or edited.from_user is None or edited.from_user.id != bot.id or not edited.from_user.is_bot):\n            raise UnknownOutcome('Calendar display was not confirmed; use the known message on explicit recovery')\n\n    router.include_router(selection_router(resolve, load_spec=load, on_result=feedback, render=render))\n    return router, sessions\n\n\nasync def main() -> None:\n    # Explicit demo startup: public resource; replace this policy with project ACL.\n    store = SQLiteSlotStore(Path('calendar.sqlite3'), authorize=lambda connection, actor, resource: resource == 'consultation')\n    await database_call(store.initialize)\n    now = datetime.now(timezone.utc)\n    try:\n        await database_call(store.schedule, 'consultation', actor_id=1, now=now)\n    except ConflictFailure:\n        day = now.astimezone(ZoneInfo('Europe/Warsaw')).date() + timedelta(days=1)\n        start = resolve_local_time(datetime.combine(day, datetime.min.time()).replace(hour=10), 'Europe/Warsaw')\n        await database_call(store.publish, 'consultation', [TimeSlot('morning', start, start + timedelta(minutes=30))], expected_revision=0)\n    router, _ = build_calendar_router(store, 'consultation', time_zone='Europe/Warsaw')\n    dispatcher = Dispatcher(); dispatcher.include_router(router)\n    await run_bot(dispatcher, BotSettings.from_env())\n\n\nif __name__ == '__main__': asyncio.run(main())\n",
+      "verification": "mock",
+      "scope": "Synthetic Dispatcher сценарий исполнен при генерации в private fixture. Telegram delivery/physical clients не проверены.",
+      "sources": [
+        "https://core.telegram.org/bots/api"
+      ],
+      "preview": null,
+      "code_sha256": "54e5b48bea957711b82bd84156be5257356024f2add66cf711e1d42b7ab6f374",
+      "tasks": [
+        "input",
+        "keyboards"
+      ],
+      "contexts": [
+        "private"
+      ],
+      "sdk": "aiogram",
+      "sdk_version": "3.31.0",
+      "api_version": "bot:10.3",
+      "source_files": [
+        "examples/python/calendar_bot.py",
+        "packages/python/src/telegram_patterns/calendar.py",
+        "packages/python/src/telegram_patterns/calendar_aiogram.py",
+        "packages/python/src/telegram_patterns/slots.py",
+        "packages/python/src/telegram_patterns/execution.py",
+        "packages/python/src/telegram_patterns/_offline_recipe.py"
+      ],
+      "check_files": [
+        "examples/python/offline_calendar.py",
+        "packages/python/tests/test_calendar.py",
+        "packages/python/tests/test_calendar_aiogram.py"
+      ],
+      "execution": {
+        "kind": "dispatcher",
+        "dependencies": [
+          "aiogram==3.31.0",
+          "tzdata==2026.5 (calendar extra; pinned offline fixture)"
+        ],
+        "offline_environment": [],
+        "offline_permissions": [],
+        "offline_data": [
+          "Только поставляемые синтетические данные; реальные IDs и secrets не принимаются."
+        ],
+        "live_environment": [
+          "BOT_TOKEN"
+        ],
+        "live_permissions": [
+          "Прикладная авторизация сервиса; fixture actor не доказывает server ACL."
+        ],
+        "live_data": [
+          "Текущий Dispatcher, реальные actor/chat и сервис приложения",
+          "Проверка объекта, автора и состояния до effect/replay"
+        ],
+        "live_review": "Live executor отсутствует. Перед интеграцией проверить источники, ограничения конкретного метода/контекста, auth и ACL; metadata не подтверждает права.",
+        "effects": [
+          "Synthetic Dispatcher + StubSession; временная fixture, без polling",
+          "Temporary file SQLite booking + receipt; both cleaned after normal completion"
+        ]
+      }
+    },
+    {
       "id": "demo-recovery",
       "title": "Потерянный ответ: сверка той же операции",
       "summary": "SQLite effect уже сохранен; unknown outcome сверяется тем же scoped ID без второго заказа.",
@@ -21092,7 +21181,7 @@
         "backend"
       ],
       "sdk": "python-core",
-      "sdk_version": "0.16.0",
+      "sdk_version": "0.17.0",
       "api_version": "none",
       "source_files": [
         "examples/python/error_recovery.py",

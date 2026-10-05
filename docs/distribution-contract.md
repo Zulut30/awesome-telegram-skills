@@ -1,5 +1,7 @@
 # Поставка локальных пакетов — 0.11.0
 
+Дополнение 0.17.0: optional extra `calendar` содержит `tzdata>=2026.5,<2027` для IANA данных (особенно Windows); `aiogram` остается отдельным extra. Обязательных зависимостей ядра нет. Проверка wheel metadata допускает ровно эти два optional требования, а installed calendar fixtures закрепляют `tzdata==2026.5`. Архивы принимаются по точным bytes/хешам и без доступа к исходному checkout; историческая приемка 009 ниже сохраняется.
+
 Пункт 009. Публичная Python поверхность — core `telegram_patterns`, optional `telegram_patterns.aiogram`/`testing` и console `telegram-patterns`. TypeScript — ESM root с declarations и отдельный `@awesome-telegram/patterns/styles.css`. Пакеты поставляются локально, не опубликованы в PyPI/npm. Интерфейсы и имена см. в [публичных контрактах](public-api.md), [структуре API](api-structure.md) и [адаптерах](extension-model.md).
 
 ## Что входит в артефакт

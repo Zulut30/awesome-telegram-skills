@@ -125,6 +125,7 @@ def build(root: Path = ROOT) -> dict:
         ('form_bot.py', 'offline_form.py', 'demo-form', 'Форма с проверкой и подтверждением'),
         ('navigation_bot.py', 'offline_navigation.py', 'demo-navigation', 'Экраны и история в одном сообщении'),
         ('selection_bot.py', 'offline_selection.py', 'demo-selection', 'Переключатели, выбор, количество и подтверждение'),
+        ('calendar_bot.py', 'offline_calendar.py', 'demo-calendar', 'Календарь и запись на свободное время'),
     ):
         result = subprocess.run([sys.executable, str(root / 'examples/python' / offline)], capture_output=True,
                                 text=True, encoding='utf-8', env=environment, timeout=60)
@@ -135,7 +136,7 @@ def build(root: Path = ROOT) -> dict:
         add(key, title, 'Полная композиция с тем же Dispatcher для offline и polling.', 'scenarios', 'python',
             ['бот', 'пример', 'callback', 'форма' if key == 'demo-form' else 'меню', 'события'], code, 'mock',
             'Synthetic Dispatcher сценарий исполнен при генерации в private fixture. Telegram delivery/physical clients не проверены.', [API],
-            tasks=['input', 'keyboards'] if key == 'demo-selection' else ['input'] if key == 'demo-form' else (['navigation', 'recovery'] if key == 'demo-navigation' else ['bot']), contexts=['private'],
+            tasks=['input', 'keyboards'] if key in {'demo-selection', 'demo-calendar'} else ['input'] if key == 'demo-form' else (['navigation', 'recovery'] if key == 'demo-navigation' else ['bot']), contexts=['private'],
             source_files=['examples/python/' + filename], check_files=['examples/python/' + offline])
         if key == 'demo-navigation':
             records[-1]['keywords'] += ['назад', 'история', 'одно', 'сообщение', 'owner', 'stale', 'recovery']
@@ -145,6 +146,10 @@ def build(root: Path = ROOT) -> dict:
             records[-1]['keywords'] += ['toggle', 'multiselect', 'переключатель', 'количество', 'фильтр', 'подтверждение', 'выбор', 'confirmation', 'revision']
             records[-1]['source_files'] += ['packages/python/src/telegram_patterns/selection.py', 'packages/python/src/telegram_patterns/selection_aiogram.py']
             records[-1]['check_files'].append('packages/python/tests/test_selection.py')
+        if key == 'demo-calendar':
+            records[-1]['keywords'] += ['календарь', 'дата', 'время', 'слот', 'запись', 'timezone', 'DST', 'booking', 'receipt']
+            records[-1]['source_files'] += ['packages/python/src/telegram_patterns/calendar.py', 'packages/python/src/telegram_patterns/calendar_aiogram.py', 'packages/python/src/telegram_patterns/slots.py']
+            records[-1]['check_files'] += ['packages/python/tests/test_calendar.py', 'packages/python/tests/test_calendar_aiogram.py']
     recovery_file = root / 'examples/python/error_recovery.py'
     recovery = subprocess.run([sys.executable, str(recovery_file)], capture_output=True, text=True, encoding='utf-8', env=environment, timeout=60)
     if recovery.returncode: raise ValueError('Recovery fixture failed')
@@ -207,6 +212,9 @@ def build(root: Path = ROOT) -> dict:
         }
         if not native:
             record['source_files'] += ['packages/python/src/telegram_patterns/execution.py', 'packages/python/src/telegram_patterns/_offline_recipe.py']
+        if record['id'] == 'demo-calendar':
+            record['execution']['dependencies'].append('tzdata==2026.5 (calendar extra; pinned offline fixture)')
+            record['execution']['effects'].append('Temporary file SQLite booking + receipt; both cleaned after normal completion')
     data = {'schema_version': 1, 'library_version': version, 'source_snapshot': api['checked_date'],
             'source_hashes': {'bot_api': api['bot_api']['source_sha256'], 'mini_app': api['mini_app']['source_sha256']},
             'recipes': records, 'navigation': NAVIGATION}

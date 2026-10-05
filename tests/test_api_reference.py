@@ -1,6 +1,8 @@
 """Exercise documentation generator with isolated trees and export drift."""
+import hashlib
 import json
 from pathlib import Path
+import re
 import shutil
 import sys
 import tempfile
@@ -56,6 +58,28 @@ class ApiReferenceTests(unittest.TestCase):
         example = self.root / 'examples/api-reference/python/core_identity.py'
         example.write_text(example.read_text(encoding='utf-8').replace('InvalidInitData,', ''), encoding='utf-8')
         with self.assertRaisesRegex(ValueError, 'documented import'): generator.build()
+
+    def test_crlf_source_and_trailing_blanks_have_distinct_verified_fenced_hash(self):
+        example = self.root / 'examples/api-reference/python/core_recipes.py'
+        canonical = example.read_text(encoding='utf-8').rstrip() + '\n'
+        original = (canonical + '\n\n').replace('\n', '\r\n').encode('utf-8')
+        example.write_bytes(original)
+        self.assertEqual(self.generate(), 0)
+        self.assertEqual(self.generate(check=True), 0)
+        primary = (self.root / 'docs/api-reference-core.md').read_bytes()
+        self.assertEqual(primary, (self.root / '.agents/skills/telegram-code-patterns/references/api-reference-core.md').read_bytes())
+        match = re.search(r'<a id="ref-core_recipes"></a>.*?```python\n(.*?)\n```', primary.decode('utf-8'), re.S)
+        self.assertIsNotNone(match)
+        fenced = (match.group(1) + '\n').encode('utf-8')
+        self.assertEqual(fenced, canonical.encode('utf-8'))
+        index = json.loads((self.root / 'catalog/api-reference-index.json').read_text(encoding='utf-8'))
+        rows = [row for row in index['symbols'] if row['recipe'] == 'ref.core_recipes']
+        self.assertTrue(rows)
+        for row in rows:
+            self.assertEqual(row['example_sha256'], hashlib.sha256(fenced).hexdigest())
+            self.assertEqual(row['example_source_sha256'], hashlib.sha256(original).hexdigest())
+            self.assertNotEqual(row['example_sha256'], row['example_source_sha256'])
+        self.assertEqual(example.read_bytes(), original)
 
     def test_limits_duplicates_and_outside_example_rejected_before_generation(self):
         original = json.loads(self.spec.read_text(encoding='utf-8'))

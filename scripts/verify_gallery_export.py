@@ -33,7 +33,7 @@ def main() -> int:
         return result.stdout
     builder = ROOT / 'scripts/build_recipe_gallery.py'
     result = json.loads(run('export', [sys.executable, builder, '--output-dir', gallery]))
-    assert result['recipes'] == 301 and not result['telegram_network']
+    assert result['recipes'] == 302 and not result['telegram_network']
     marker = gallery / 'owned.txt'; marker.write_bytes(b'preserve consumer notes\n')
     before = {p.relative_to(gallery): hashlib.sha256(p.read_bytes()).hexdigest() for p in gallery.rglob('*') if p.is_file()}
     run('check', [sys.executable, builder, '--output-dir', gallery, '--check'])
@@ -46,7 +46,8 @@ def main() -> int:
              ('back', ['назад', '--sdk', 'telegram-webapp'], None),
              ('recovery', ['потерянный ответ', '--task', 'recovery', '--context', 'backend'], 'demo-recovery'),
              ('navigation', ['история', '--task', 'navigation', '--context', 'private', '--sdk', 'aiogram'], 'demo-navigation'),
-             ('selection', ['multiselect', '--task', 'input', '--context', 'private', '--sdk', 'aiogram'], 'demo-selection')]
+             ('selection', ['multiselect', '--task', 'input', '--context', 'private', '--sdk', 'aiogram'], 'demo-selection'),
+             ('calendar', ['календарь', '--task', 'input', '--context', 'private', '--sdk', 'aiogram'], 'demo-calendar')]
     for label, arguments, expected in cases:
         response = json.loads(run(label, [sys.executable, '-m', 'telegram_patterns', 'recipes', *arguments]))
         assert response['matches'] and response['recipes'][0]['source_files'] and response['recipes'][0]['check_files']

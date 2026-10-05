@@ -1,4 +1,4 @@
-# Python bot и test transport — 0.16.0
+# Python bot и test transport — 0.17.0
 
 [Индекс всех символов](api-reference.md). Образцы ниже воспроизводятся через установленный wheel/tarball вне исходного дерева. Assert — проверка fixture, не бизнес-правило production приложения.
 
@@ -421,4 +421,29 @@ async def main() -> None:
 
 if __name__=='__main__':
     asyncio.run(main())
+```
+
+<a id="ref-bot_calendar"></a>
+
+## Кнопки календаря и времени — ref.bot_calendar
+
+Файл: `bot_calendar.py`. Символы: `calendar_keyboard`, `time_slot_keyboard`
+
+Границы: Optional aiogram; markup only. Callback data must be owner/context/revision bound by controller; the booking transaction rechecks availability. Default weekday fallback omits unavailable days. disabled_buttons=True requires explicit host-verified support; no live/device claim.
+
+```python
+"""Markup only: controller and transaction still validate callbacks on the server."""
+from datetime import date, datetime, timedelta, timezone
+import json
+from telegram_patterns import CalendarMonth, TimeSlot
+from telegram_patterns.aiogram import calendar_keyboard, time_slot_keyboard
+
+month = CalendarMonth(2026, 10, 'UTC', [date(2026, 10, 6)])
+calendar = calendar_keyboard(month, lambda day: 'calendar:' + day.isoformat())
+assert calendar.inline_keyboard[0][0].callback_data == 'calendar:2026-10-06'
+start = datetime(2026, 10, 6, 8, tzinfo=timezone.utc)
+slots = time_slot_keyboard([TimeSlot('morning', start, start + timedelta(minutes=30))], 'UTC', lambda slot: 'time:' + slot.key)
+assert slots.inline_keyboard[0][0].callback_data == 'time:morning'
+print(json.dumps({'passed': True, 'case': 'bot_calendar', 'network': False,
+                  'calendar_rows': len(calendar.inline_keyboard), 'slot_rows': len(slots.inline_keyboard)}))
 ```

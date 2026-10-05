@@ -1,6 +1,6 @@
 # Найти пример по задаче, контексту и версии — 0.12.0
 
-Галерея содержит 301 запись: 11 keyboard/input builders, 185 Bot API requests, 99 native fragments, 5 bot fixtures и SQLite recovery fixture. Поиск и выбор не исполняют найденный код. Из них 17 experimental и 284 reference; 196 sdk, 6 mock, 99 not_run. Stable/live не заявлены.
+Галерея содержит 302 запись: 11 keyboard/input builders, 185 Bot API requests, 99 native fragments, 5 bot fixtures и SQLite recovery fixture. Поиск и выбор не исполняют найденный код. Из них 18 experimental и 284 reference; 196 sdk, 7 mock, 99 not_run. Stable/live не заявлены.
 
 Главный поиск понимает «две кнопки», «назад», «потерянный ответ»; результаты ранжируются по названию и keywords. Задача доступна сразу; контекст, SDK/снимок, версия API, раздел, зрелость и уровень проверки — в «Другие фильтры». На телефоне блок свернут при первом входе. Фильтры пересекаются; «Сбросить» очищает их и возвращает фокус в поиск. При смене SDK несовместимая выбранная версия сбрасывается. В версии API `mini:*` — минимум native документации, а не обещание работы клиента.
 
@@ -43,3 +43,5 @@ Standalone skill достаточно этого reference и предостав
 ## Сверенные источники
 
 4 октября 2026 проверены private/supergroup topics и ограничение restrictChatMember, channel subscription invite и Business gift rights в [официальном Bot API](https://core.telegram.org/bots/api). Private defaults проверены в native_keyboards.py; runtime generation сверяет установленный aiogram 3.31.0 с snapshot. Остальные context tags не выдаются за новую полную ревизию Telegram API. Полная public support matrix и реальные клиенты остаются отдельными задачами.
+
+Поиск «календарь» с task=input/context=private/SDK=aiogram находит demo-calendar: date/time/back, timezone и transactional booking. Это mock Dispatcher/file SQLite evidence, не live device rendering.

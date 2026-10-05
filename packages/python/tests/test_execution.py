@@ -16,6 +16,18 @@ import telegram_patterns.execution as execution
 
 
 class ExecutionTests(unittest.TestCase):
+    def test_calendar_data_missing_or_unverified_blocks_before_worker(self):
+        original=execution.importlib.metadata.version
+        def missing(name):
+            if name=='tzdata': raise execution.importlib.metadata.PackageNotFoundError()
+            return original(name)
+        for probe,reason in [(missing,'calendar-extra-required'),(lambda name:'2026.4' if name=='tzdata' else original(name),'calendar-data-differs-from-checked-fixture')]:
+            with patch.object(execution.importlib.metadata,'version',side_effect=probe):
+                plan=plan_recipe('demo-calendar')
+                self.assertIn(reason,plan.blocked_reasons)
+                with patch.object(execution.subprocess,'run',side_effect=AssertionError('child forbidden')):
+                    with self.assertRaises(UnsupportedCapability): run_recipe_offline('demo-calendar')
+
     def test_catalog_requirements_are_detached_plans_are_frozen_and_never_read_secrets(self):
         with patch.dict(os.environ, {'BOT_TOKEN':'100:PRIVATE_CANARY', 'PAYMENT_SECRET':'PRIVATE_CANARY'}):
             for recipe in RecipeCatalog().recipes:

@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "library_version": "0.16.0",
+  "library_version": "0.17.0",
   "symbols": [
     {
       "module": "telegram_patterns",
@@ -11,6 +11,7 @@
       "limits": "HMAC fixture без Telegram; token только на backend, raw initData проверяется до session/ACL. BotSettings repr скрывает token, сериализация не становится безопасной. VerifiedLaunch — результат проверки, ручной DTO не подтверждает identity.",
       "intent": "Конфигурация из явного environ без dotenv",
       "example_sha256": "79ba58973a74c842c84dc7d79b81f337a2bb332ab201803aa574f20111a56614",
+      "example_source_sha256": "79ba58973a74c842c84dc7d79b81f337a2bb332ab201803aa574f20111a56614",
       "kind": "value"
     },
     {
@@ -22,6 +23,7 @@
       "limits": "HMAC fixture без Telegram; token только на backend, raw initData проверяется до session/ACL. BotSettings repr скрывает token, сериализация не становится безопасной. VerifiedLaunch — результат проверки, ручной DTO не подтверждает identity.",
       "intent": "Контролируемый отказ подписи/кодировки/freshness",
       "example_sha256": "79ba58973a74c842c84dc7d79b81f337a2bb332ab201803aa574f20111a56614",
+      "example_source_sha256": "79ba58973a74c842c84dc7d79b81f337a2bb332ab201803aa574f20111a56614",
       "kind": "value"
     },
     {
@@ -33,6 +35,7 @@
       "limits": "HMAC fixture без Telegram; token только на backend, raw initData проверяется до session/ACL. BotSettings repr скрывает token, сериализация не становится безопасной. VerifiedLaunch — результат проверки, ручной DTO не подтверждает identity.",
       "intent": "Подписанные user_id/auth_date/user",
       "example_sha256": "79ba58973a74c842c84dc7d79b81f337a2bb332ab201803aa574f20111a56614",
+      "example_source_sha256": "79ba58973a74c842c84dc7d79b81f337a2bb332ab201803aa574f20111a56614",
       "kind": "value"
     },
     {
@@ -44,6 +47,7 @@
       "limits": "HMAC fixture без Telegram; token только на backend, raw initData проверяется до session/ACL. BotSettings repr скрывает token, сериализация не становится безопасной. VerifiedLaunch — результат проверки, ручной DTO не подтверждает identity.",
       "intent": "HMAC и freshness raw initData",
       "example_sha256": "79ba58973a74c842c84dc7d79b81f337a2bb332ab201803aa574f20111a56614",
+      "example_source_sha256": "79ba58973a74c842c84dc7d79b81f337a2bb332ab201803aa574f20111a56614",
       "kind": "value"
     },
     {
@@ -55,6 +59,7 @@
       "limits": "Scope/ACL определяет сервер до effect и replay. Atomicity касается только переданного SQLite connection: без HTTP, другого storage, commit/rollback. Файл/миграции/retention принадлежат host.",
       "intent": "Результат эффекта с replay flag",
       "example_sha256": "32cf2ece4ab7489330f3ba85bda96d14b9e44b71c817dd01a964e2ae41335fe1",
+      "example_source_sha256": "32cf2ece4ab7489330f3ba85bda96d14b9e44b71c817dd01a964e2ae41335fe1",
       "kind": "value"
     },
     {
@@ -66,6 +71,7 @@
       "limits": "Scope/ACL определяет сервер до effect и replay. Atomicity касается только переданного SQLite connection: без HTTP, другого storage, commit/rollback. Файл/миграции/retention принадлежат host.",
       "intent": "Тот же scoped key с другим payload",
       "example_sha256": "32cf2ece4ab7489330f3ba85bda96d14b9e44b71c817dd01a964e2ae41335fe1",
+      "example_source_sha256": "32cf2ece4ab7489330f3ba85bda96d14b9e44b71c817dd01a964e2ae41335fe1",
       "kind": "value"
     },
     {
@@ -77,6 +83,7 @@
       "limits": "Scope/ACL определяет сервер до effect и replay. Atomicity касается только переданного SQLite connection: без HTTP, другого storage, commit/rollback. Файл/миграции/retention принадлежат host.",
       "intent": "Инициализация и атомарный run в файле SQLite",
       "example_sha256": "32cf2ece4ab7489330f3ba85bda96d14b9e44b71c817dd01a964e2ae41335fe1",
+      "example_source_sha256": "32cf2ece4ab7489330f3ba85bda96d14b9e44b71c817dd01a964e2ae41335fe1",
       "kind": "value"
     },
     {
@@ -88,6 +95,7 @@
       "limits": "Scope/ACL определяет сервер до effect и replay. Atomicity касается только переданного SQLite connection: без HTTP, другого storage, commit/rollback. Файл/миграции/retention принадлежат host.",
       "intent": "Структурный контракт initialize/run storage проекта",
       "example_sha256": "32cf2ece4ab7489330f3ba85bda96d14b9e44b71c817dd01a964e2ae41335fe1",
+      "example_source_sha256": "32cf2ece4ab7489330f3ba85bda96d14b9e44b71c817dd01a964e2ae41335fe1",
       "kind": "value"
     },
     {
@@ -99,6 +107,7 @@
       "limits": "Передавайте реальный operation kind. Report не копирует developer text и не делает retry. Timeout/cancel/невалидный feedback после возможной записи оставляют unknown outcome и требуют сверки той же операции; локальный отказ должен произойти до эффекта.",
       "intent": "Базовое исключение с безопасным report",
       "example_sha256": "d647370569ef2346f21d3c682f85f90af38eefb40be213da7b9764497d788706",
+      "example_source_sha256": "d647370569ef2346f21d3c682f85f90af38eefb40be213da7b9764497d788706",
       "kind": "value"
     },
     {
@@ -110,6 +119,7 @@
       "limits": "Передавайте реальный operation kind. Report не копирует developer text и не делает retry. Timeout/cancel/невалидный feedback после возможной записи оставляют unknown outcome и требуют сверки той же операции; локальный отказ должен произойти до эффекта.",
       "intent": "Известный локальный отказ validation",
       "example_sha256": "d647370569ef2346f21d3c682f85f90af38eefb40be213da7b9764497d788706",
+      "example_source_sha256": "d647370569ef2346f21d3c682f85f90af38eefb40be213da7b9764497d788706",
       "kind": "value"
     },
     {
@@ -121,6 +131,7 @@
       "limits": "Передавайте реальный operation kind. Report не копирует developer text и не делает retry. Timeout/cancel/невалидный feedback после возможной записи оставляют unknown outcome и требуют сверки той же операции; локальный отказ должен произойти до эффекта.",
       "intent": "Локальный type отказ, совместимый с TypeError",
       "example_sha256": "d647370569ef2346f21d3c682f85f90af38eefb40be213da7b9764497d788706",
+      "example_source_sha256": "d647370569ef2346f21d3c682f85f90af38eefb40be213da7b9764497d788706",
       "kind": "value"
     },
     {
@@ -132,6 +143,7 @@
       "limits": "Передавайте реальный operation kind. Report не копирует developer text и не делает retry. Timeout/cancel/невалидный feedback после возможной записи оставляют unknown outcome и требуют сверки той же операции; локальный отказ должен произойти до эффекта.",
       "intent": "Известный отказ до эффекта из-за отсутствия auth",
       "example_sha256": "d647370569ef2346f21d3c682f85f90af38eefb40be213da7b9764497d788706",
+      "example_source_sha256": "d647370569ef2346f21d3c682f85f90af38eefb40be213da7b9764497d788706",
       "kind": "value"
     },
     {
@@ -143,6 +155,7 @@
       "limits": "Передавайте реальный operation kind. Report не копирует developer text и не делает retry. Timeout/cancel/невалидный feedback после возможной записи оставляют unknown outcome и требуют сверки той же операции; локальный отказ должен произойти до эффекта.",
       "intent": "Известный отказ до эффекта по правам",
       "example_sha256": "d647370569ef2346f21d3c682f85f90af38eefb40be213da7b9764497d788706",
+      "example_source_sha256": "d647370569ef2346f21d3c682f85f90af38eefb40be213da7b9764497d788706",
       "kind": "value"
     },
     {
@@ -154,6 +167,7 @@
       "limits": "Передавайте реальный operation kind. Report не копирует developer text и не делает retry. Timeout/cancel/невалидный feedback после возможной записи оставляют unknown outcome и требуют сверки той же операции; локальный отказ должен произойти до эффекта.",
       "intent": "Отсутствующая capability и fallback",
       "example_sha256": "d647370569ef2346f21d3c682f85f90af38eefb40be213da7b9764497d788706",
+      "example_source_sha256": "d647370569ef2346f21d3c682f85f90af38eefb40be213da7b9764497d788706",
       "kind": "value"
     },
     {
@@ -165,6 +179,7 @@
       "limits": "Передавайте реальный operation kind. Report не копирует developer text и не делает retry. Timeout/cancel/невалидный feedback после возможной записи оставляют unknown outcome и требуют сверки той же операции; локальный отказ должен произойти до эффекта.",
       "intent": "Локальный конфликт операции",
       "example_sha256": "d647370569ef2346f21d3c682f85f90af38eefb40be213da7b9764497d788706",
+      "example_source_sha256": "d647370569ef2346f21d3c682f85f90af38eefb40be213da7b9764497d788706",
       "kind": "value"
     },
     {
@@ -176,6 +191,7 @@
       "limits": "Передавайте реальный operation kind. Report не копирует developer text и не делает retry. Timeout/cancel/невалидный feedback после возможной записи оставляют unknown outcome и требуют сверки той же операции; локальный отказ должен произойти до эффекта.",
       "intent": "Ожидание истекло, outcome зависит от операции",
       "example_sha256": "d647370569ef2346f21d3c682f85f90af38eefb40be213da7b9764497d788706",
+      "example_source_sha256": "d647370569ef2346f21d3c682f85f90af38eefb40be213da7b9764497d788706",
       "kind": "value"
     },
     {
@@ -187,6 +203,7 @@
       "limits": "Передавайте реальный operation kind. Report не копирует developer text и не делает retry. Timeout/cancel/невалидный feedback после возможной записи оставляют unknown outcome и требуют сверки той же операции; локальный отказ должен произойти до эффекта.",
       "intent": "Ошибка transport без обещания отмены записи",
       "example_sha256": "d647370569ef2346f21d3c682f85f90af38eefb40be213da7b9764497d788706",
+      "example_source_sha256": "d647370569ef2346f21d3c682f85f90af38eefb40be213da7b9764497d788706",
       "kind": "value"
     },
     {
@@ -198,6 +215,7 @@
       "limits": "Передавайте реальный operation kind. Report не копирует developer text и не делает retry. Timeout/cancel/невалидный feedback после возможной записи оставляют unknown outcome и требуют сверки той же операции; локальный отказ должен произойти до эффекта.",
       "intent": "Эффект пока не подтвержден",
       "example_sha256": "d647370569ef2346f21d3c682f85f90af38eefb40be213da7b9764497d788706",
+      "example_source_sha256": "d647370569ef2346f21d3c682f85f90af38eefb40be213da7b9764497d788706",
       "kind": "value"
     },
     {
@@ -209,6 +227,7 @@
       "limits": "Передавайте реальный operation kind. Report не копирует developer text и не делает retry. Timeout/cancel/невалидный feedback после возможной записи оставляют unknown outcome и требуют сверки той же операции; локальный отказ должен произойти до эффекта.",
       "intent": "Невалидный feedback после возможного эффекта",
       "example_sha256": "d647370569ef2346f21d3c682f85f90af38eefb40be213da7b9764497d788706",
+      "example_source_sha256": "d647370569ef2346f21d3c682f85f90af38eefb40be213da7b9764497d788706",
       "kind": "value"
     },
     {
@@ -220,6 +239,7 @@
       "limits": "Передавайте реальный operation kind. Report не копирует developer text и не делает retry. Timeout/cancel/невалидный feedback после возможной записи оставляют unknown outcome и требуют сверки той же операции; локальный отказ должен произойти до эффекта.",
       "intent": "Классификация без raw exception payload",
       "example_sha256": "d647370569ef2346f21d3c682f85f90af38eefb40be213da7b9764497d788706",
+      "example_source_sha256": "d647370569ef2346f21d3c682f85f90af38eefb40be213da7b9764497d788706",
       "kind": "value"
     },
     {
@@ -231,6 +251,7 @@
       "limits": "Передавайте реальный operation kind. Report не копирует developer text и не делает retry. Timeout/cancel/невалидный feedback после возможной записи оставляют unknown outcome и требуют сверки той же операции; локальный отказ должен произойти до эффекта.",
       "intent": "Неизменяемые code/category/outcome/recovery/message",
       "example_sha256": "d647370569ef2346f21d3c682f85f90af38eefb40be213da7b9764497d788706",
+      "example_source_sha256": "d647370569ef2346f21d3c682f85f90af38eefb40be213da7b9764497d788706",
       "kind": "value"
     },
     {
@@ -242,6 +263,7 @@
       "limits": "Передавайте реальный operation kind. Report не копирует developer text и не делает retry. Timeout/cancel/невалидный feedback после возможной записи оставляют unknown outcome и требуют сверки той же операции; локальный отказ должен произойти до эффекта.",
       "intent": "Literal категории ошибки",
       "example_sha256": "d647370569ef2346f21d3c682f85f90af38eefb40be213da7b9764497d788706",
+      "example_source_sha256": "d647370569ef2346f21d3c682f85f90af38eefb40be213da7b9764497d788706",
       "kind": "value"
     },
     {
@@ -253,6 +275,7 @@
       "limits": "Передавайте реальный operation kind. Report не копирует developer text и не делает retry. Timeout/cancel/невалидный feedback после возможной записи оставляют unknown outcome и требуют сверки той же операции; локальный отказ должен произойти до эффекта.",
       "intent": "Literal известных кодов",
       "example_sha256": "d647370569ef2346f21d3c682f85f90af38eefb40be213da7b9764497d788706",
+      "example_source_sha256": "d647370569ef2346f21d3c682f85f90af38eefb40be213da7b9764497d788706",
       "kind": "value"
     },
     {
@@ -264,6 +287,7 @@
       "limits": "Передавайте реальный operation kind. Report не копирует developer text и не делает retry. Timeout/cancel/невалидный feedback после возможной записи оставляют unknown outcome и требуют сверки той же операции; локальный отказ должен произойти до эффекта.",
       "intent": "Literal rejected/read-failed/unknown",
       "example_sha256": "d647370569ef2346f21d3c682f85f90af38eefb40be213da7b9764497d788706",
+      "example_source_sha256": "d647370569ef2346f21d3c682f85f90af38eefb40be213da7b9764497d788706",
       "kind": "value"
     },
     {
@@ -275,6 +299,7 @@
       "limits": "Передавайте реальный operation kind. Report не копирует developer text и не делает retry. Timeout/cancel/невалидный feedback после возможной записи оставляют unknown outcome и требуют сверки той же операции; локальный отказ должен произойти до эффекта.",
       "intent": "Literal следующего действия",
       "example_sha256": "d647370569ef2346f21d3c682f85f90af38eefb40be213da7b9764497d788706",
+      "example_source_sha256": "d647370569ef2346f21d3c682f85f90af38eefb40be213da7b9764497d788706",
       "kind": "value"
     },
     {
@@ -286,6 +311,7 @@
       "limits": "Передавайте реальный operation kind. Report не копирует developer text и не делает retry. Timeout/cancel/невалидный feedback после возможной записи оставляют unknown outcome и требуют сверки той же операции; локальный отказ должен произойти до эффекта.",
       "intent": "Literal read/write для реальной операции",
       "example_sha256": "d647370569ef2346f21d3c682f85f90af38eefb40be213da7b9764497d788706",
+      "example_source_sha256": "d647370569ef2346f21d3c682f85f90af38eefb40be213da7b9764497d788706",
       "kind": "value"
     },
     {
@@ -297,6 +323,7 @@
       "limits": "Структурные Protocol не создают ресурсы и не обещают provider idempotency. Fixture отвергает все события; реальный adapter проверяет официальный wire/auth contract. Signed event не означает оплату/доступ, refund — отдельная операция.",
       "intent": "Типизированный async send транспорта host",
       "example_sha256": "8079a1dc01923600560cc64a8ff20e0c06ae3bc23134a165d193cc7c2e3da04d",
+      "example_source_sha256": "8079a1dc01923600560cc64a8ff20e0c06ae3bc23134a165d193cc7c2e3da04d",
       "kind": "value"
     },
     {
@@ -308,6 +335,7 @@
       "limits": "Структурные Protocol не создают ресурсы и не обещают provider idempotency. Fixture отвергает все события; реальный adapter проверяет официальный wire/auth contract. Signed event не означает оплату/доступ, refund — отдельная операция.",
       "intent": "Контракт create/get/verify_event",
       "example_sha256": "8079a1dc01923600560cc64a8ff20e0c06ae3bc23134a165d193cc7c2e3da04d",
+      "example_source_sha256": "8079a1dc01923600560cc64a8ff20e0c06ae3bc23134a165d193cc7c2e3da04d",
       "kind": "value"
     },
     {
@@ -319,6 +347,7 @@
       "limits": "Структурные Protocol не создают ресурсы и не обещают provider idempotency. Fixture отвергает все события; реальный adapter проверяет официальный wire/auth contract. Signed event не означает оплату/доступ, refund — отдельная операция.",
       "intent": "Необязательный отдельный refund контракт",
       "example_sha256": "8079a1dc01923600560cc64a8ff20e0c06ae3bc23134a165d193cc7c2e3da04d",
+      "example_source_sha256": "8079a1dc01923600560cc64a8ff20e0c06ae3bc23134a165d193cc7c2e3da04d",
       "kind": "value"
     },
     {
@@ -329,7 +358,8 @@
       "example": "examples/api-reference/python/core_recipes.py",
       "limits": "Чтение не исполняет recipe code. Maturity отдельно от verification; SDK/mock не доказывают live/device. Preview — независимая копия. Этот пример ищет существующий cookbook recipe two-columns; ref.* — имена справочника API.",
       "intent": "Literal stable/experimental/reference",
-      "example_sha256": "e9d571728f10e37f5e58e410c2c7666b0a19a7e4cb05e3234d4774523f924975",
+      "example_sha256": "cd4ee1aff5a1b005ce20df5531130236a05975a7b88d416ced244e36f1600c21",
+      "example_source_sha256": "469609227550df1a7b1f13d4defabb9afe422555ee085bad4639dd8c618fccc8",
       "kind": "value"
     },
     {
@@ -340,7 +370,8 @@
       "example": "examples/api-reference/python/core_recipes.py",
       "limits": "Чтение не исполняет recipe code. Maturity отдельно от verification; SDK/mock не доказывают live/device. Preview — независимая копия. Этот пример ищет существующий cookbook recipe two-columns; ref.* — имена справочника API.",
       "intent": "Literal sdk/mock/browser/live/not_run",
-      "example_sha256": "e9d571728f10e37f5e58e410c2c7666b0a19a7e4cb05e3234d4774523f924975",
+      "example_sha256": "cd4ee1aff5a1b005ce20df5531130236a05975a7b88d416ced244e36f1600c21",
+      "example_source_sha256": "469609227550df1a7b1f13d4defabb9afe422555ee085bad4639dd8c618fccc8",
       "kind": "value"
     },
     {
@@ -351,7 +382,8 @@
       "example": "examples/api-reference/python/core_recipes.py",
       "limits": "Чтение не исполняет recipe code. Maturity отдельно от verification; SDK/mock не доказывают live/device. Preview — независимая копия. Этот пример ищет существующий cookbook recipe two-columns; ref.* — имена справочника API.",
       "intent": "Неизменяемая запись и копия preview",
-      "example_sha256": "e9d571728f10e37f5e58e410c2c7666b0a19a7e4cb05e3234d4774523f924975",
+      "example_sha256": "cd4ee1aff5a1b005ce20df5531130236a05975a7b88d416ced244e36f1600c21",
+      "example_source_sha256": "469609227550df1a7b1f13d4defabb9afe422555ee085bad4639dd8c618fccc8",
       "kind": "value"
     },
     {
@@ -362,7 +394,8 @@
       "example": "examples/api-reference/python/core_recipes.py",
       "limits": "Чтение не исполняет recipe code. Maturity отдельно от verification; SDK/mock не доказывают live/device. Preview — независимая копия. Этот пример ищет существующий cookbook recipe two-columns; ref.* — имена справочника API.",
       "intent": "Версия, recipes, get/search с фильтрами",
-      "example_sha256": "e9d571728f10e37f5e58e410c2c7666b0a19a7e4cb05e3234d4774523f924975",
+      "example_sha256": "cd4ee1aff5a1b005ce20df5531130236a05975a7b88d416ced244e36f1600c21",
+      "example_source_sha256": "469609227550df1a7b1f13d4defabb9afe422555ee085bad4639dd8c618fccc8",
       "kind": "value"
     },
     {
@@ -374,6 +407,7 @@
       "limits": "Только установленный доверенный wheel и закрытые fixtures. Plan не читает secret values. Runner не исполняет recipe.code/приложение; native references отказывает до child. Python -I/-B, системный env allowlist, временный cwd; это не OS sandbox. Нет live rights/auth/device acceptance.",
       "intent": "Неизменяемые требования offline/live и причины недоступности",
       "example_sha256": "005d1975997c60c9c31d6943f14ff1fd36a4f6d8bf311cce161f1c41dad33d2f",
+      "example_source_sha256": "005d1975997c60c9c31d6943f14ff1fd36a4f6d8bf311cce161f1c41dad33d2f",
       "kind": "value"
     },
     {
@@ -385,6 +419,7 @@
       "limits": "Только установленный доверенный wheel и закрытые fixtures. Plan не читает secret values. Runner не исполняет recipe.code/приложение; native references отказывает до child. Python -I/-B, системный env allowlist, временный cwd; это не OS sandbox. Нет live rights/auth/device acceptance.",
       "intent": "Результат известной локальной fixture без Telegram requests",
       "example_sha256": "005d1975997c60c9c31d6943f14ff1fd36a4f6d8bf311cce161f1c41dad33d2f",
+      "example_source_sha256": "005d1975997c60c9c31d6943f14ff1fd36a4f6d8bf311cce161f1c41dad33d2f",
       "kind": "value"
     },
     {
@@ -396,6 +431,7 @@
       "limits": "Только установленный доверенный wheel и закрытые fixtures. Plan не читает secret values. Runner не исполняет recipe.code/приложение; native references отказывает до child. Python -I/-B, системный env allowlist, временный cwd; это не OS sandbox. Нет live rights/auth/device acceptance.",
       "intent": "Read-only план всех cookbook рецептов",
       "example_sha256": "005d1975997c60c9c31d6943f14ff1fd36a4f6d8bf311cce161f1c41dad33d2f",
+      "example_source_sha256": "005d1975997c60c9c31d6943f14ff1fd36a4f6d8bf311cce161f1c41dad33d2f",
       "kind": "value"
     },
     {
@@ -407,6 +443,7 @@
       "limits": "Только установленный доверенный wheel и закрытые fixtures. Plan не читает secret values. Runner не исполняет recipe.code/приложение; native references отказывает до child. Python -I/-B, системный env allowlist, временный cwd; это не OS sandbox. Нет live rights/auth/device acceptance.",
       "intent": "Явный изолированный запуск известной Python fixture",
       "example_sha256": "005d1975997c60c9c31d6943f14ff1fd36a4f6d8bf311cce161f1c41dad33d2f",
+      "example_source_sha256": "005d1975997c60c9c31d6943f14ff1fd36a4f6d8bf311cce161f1c41dad33d2f",
       "kind": "value"
     },
     {
@@ -418,6 +455,7 @@
       "limits": "Дополнительный аргумент — путь к предоставленному wheel, не имя в registry. Только новый target и существующий parent; dry-run без записи, repeat сохраняет код. Closed starter registry не заменяет host backend/auth; I/O failure может оставить partial new files.",
       "intent": "Target/version/files/created и выбранные группы",
       "example_sha256": "6338db98e8966d978793e67cdc09081dbc03faf8154b160f924575b7f2604c03",
+      "example_source_sha256": "6338db98e8966d978793e67cdc09081dbc03faf8154b160f924575b7f2604c03",
       "kind": "value"
     },
     {
@@ -429,6 +467,7 @@
       "limits": "Дополнительный аргумент — путь к предоставленному wheel, не имя в registry. Только новый target и существующий parent; dry-run без записи, repeat сохраняет код. Closed starter registry не заменяет host backend/auth; I/O failure может оставить partial new files.",
       "intent": "Описание группы и зависимости/minimum API",
       "example_sha256": "6338db98e8966d978793e67cdc09081dbc03faf8154b160f924575b7f2604c03",
+      "example_source_sha256": "6338db98e8966d978793e67cdc09081dbc03faf8154b160f924575b7f2604c03",
       "kind": "value"
     },
     {
@@ -440,6 +479,7 @@
       "limits": "Дополнительный аргумент — путь к предоставленному wheel, не имя в registry. Только новый target и существующий parent; dry-run без записи, repeat сохраняет код. Closed starter registry не заменяет host backend/auth; I/O failure может оставить partial new files.",
       "intent": "Безопасная известная preflight причина",
       "example_sha256": "6338db98e8966d978793e67cdc09081dbc03faf8154b160f924575b7f2604c03",
+      "example_source_sha256": "6338db98e8966d978793e67cdc09081dbc03faf8154b160f924575b7f2604c03",
       "kind": "value"
     },
     {
@@ -451,6 +491,7 @@
       "limits": "Дополнительный аргумент — путь к предоставленному wheel, не имя в registry. Только новый target и существующий parent; dry-run без записи, repeat сохраняет код. Closed starter registry не заменяет host backend/auth; I/O failure может оставить partial new files.",
       "intent": "Каталог closed starter групп для шаблона",
       "example_sha256": "6338db98e8966d978793e67cdc09081dbc03faf8154b160f924575b7f2604c03",
+      "example_source_sha256": "6338db98e8966d978793e67cdc09081dbc03faf8154b160f924575b7f2604c03",
       "kind": "value"
     },
     {
@@ -462,6 +503,7 @@
       "limits": "Дополнительный аргумент — путь к предоставленному wheel, не имя в registry. Только новый target и существующий parent; dry-run без записи, repeat сохраняет код. Closed starter registry не заменяет host backend/auth; I/O failure может оставить partial new files.",
       "intent": "Dry-run и исключительное создание нового проекта",
       "example_sha256": "6338db98e8966d978793e67cdc09081dbc03faf8154b160f924575b7f2604c03",
+      "example_source_sha256": "6338db98e8966d978793e67cdc09081dbc03faf8154b160f924575b7f2604c03",
       "kind": "value"
     },
     {
@@ -473,6 +515,7 @@
       "limits": "Пример намеренно запускается без aiogram: readiness fail содержит команды следующего явного действия. Doctor не читает .env/не отправляет token, не выполняет предлагаемые repairs и не подтверждает live identity. SDK probe установленного extra изолирован от проекта.",
       "intent": "Локальные checks с reason/remediation и exit readiness",
       "example_sha256": "993d8b692f73a6360301e227962ef657f94e5cfe44319078bc18004796cdfb8d",
+      "example_source_sha256": "993d8b692f73a6360301e227962ef657f94e5cfe44319078bc18004796cdfb8d",
       "kind": "value"
     },
     {
@@ -484,6 +527,7 @@
       "limits": "Aiogram extra; callbacks до 64 bytes, keys bounded ASCII, prefixes навигации и action различимы. Colors только primary/success/danger, emoji entitlement отдельный. Контекст chat/business/invoice передает host. Reply не вызывает callback_query; appearance в Telegram не проверяется.",
       "intent": "Label/key/style/custom emoji descriptor",
       "example_sha256": "ac59b30b5b13ee6fcba17b3ee5b0d2c37f98be45582be663e491f06c9f8f6334",
+      "example_source_sha256": "ac59b30b5b13ee6fcba17b3ee5b0d2c37f98be45582be663e491f06c9f8f6334",
       "kind": "value"
     },
     {
@@ -495,6 +539,7 @@
       "limits": "Aiogram extra; callbacks до 64 bytes, keys bounded ASCII, prefixes навигации и action различимы. Colors только primary/success/danger, emoji entitlement отдельный. Контекст chat/business/invoice передает host. Reply не вызывает callback_query; appearance в Telegram не проверяется.",
       "intent": "Literal Telegram button style",
       "example_sha256": "ac59b30b5b13ee6fcba17b3ee5b0d2c37f98be45582be663e491f06c9f8f6334",
+      "example_source_sha256": "ac59b30b5b13ee6fcba17b3ee5b0d2c37f98be45582be663e491f06c9f8f6334",
       "kind": "value"
     },
     {
@@ -506,6 +551,7 @@
       "limits": "Aiogram extra; callbacks до 64 bytes, keys bounded ASCII, prefixes навигации и action различимы. Colors только primary/success/danger, emoji entitlement отдельный. Контекст chat/business/invoice передает host. Reply не вызывает callback_query; appearance в Telegram не проверяется.",
       "intent": "Markup и page/page_count/total_items",
       "example_sha256": "ac59b30b5b13ee6fcba17b3ee5b0d2c37f98be45582be663e491f06c9f8f6334",
+      "example_source_sha256": "ac59b30b5b13ee6fcba17b3ee5b0d2c37f98be45582be663e491f06c9f8f6334",
       "kind": "value"
     },
     {
@@ -517,6 +563,7 @@
       "limits": "Aiogram extra; callbacks до 64 bytes, keys bounded ASCII, prefixes навигации и action различимы. Colors только primary/success/danger, emoji entitlement отдельный. Контекст chat/business/invoice передает host. Reply не вызывает callback_query; appearance в Telegram не проверяется.",
       "intent": "Одна callback-кнопка",
       "example_sha256": "ac59b30b5b13ee6fcba17b3ee5b0d2c37f98be45582be663e491f06c9f8f6334",
+      "example_source_sha256": "ac59b30b5b13ee6fcba17b3ee5b0d2c37f98be45582be663e491f06c9f8f6334",
       "kind": "value"
     },
     {
@@ -528,6 +575,7 @@
       "limits": "Aiogram extra; callbacks до 64 bytes, keys bounded ASCII, prefixes навигации и action различимы. Colors только primary/success/danger, emoji entitlement отдельный. Контекст chat/business/invoice передает host. Reply не вызывает callback_query; appearance в Telegram не проверяется.",
       "intent": "Равномерные строки по 2/3 и другое число",
       "example_sha256": "ac59b30b5b13ee6fcba17b3ee5b0d2c37f98be45582be663e491f06c9f8f6334",
+      "example_source_sha256": "ac59b30b5b13ee6fcba17b3ee5b0d2c37f98be45582be663e491f06c9f8f6334",
       "kind": "value"
     },
     {
@@ -539,6 +587,7 @@
       "limits": "Aiogram extra; callbacks до 64 bytes, keys bounded ASCII, prefixes навигации и action различимы. Colors только primary/success/danger, emoji entitlement отдельный. Контекст chat/business/invoice передает host. Reply не вызывает callback_query; appearance в Telegram не проверяется.",
       "intent": "Локальная страница с отдельной навигацией",
       "example_sha256": "ac59b30b5b13ee6fcba17b3ee5b0d2c37f98be45582be663e491f06c9f8f6334",
+      "example_source_sha256": "ac59b30b5b13ee6fcba17b3ee5b0d2c37f98be45582be663e491f06c9f8f6334",
       "kind": "value"
     },
     {
@@ -550,6 +599,7 @@
       "limits": "Aiogram extra; callbacks до 64 bytes, keys bounded ASCII, prefixes навигации и action различимы. Colors только primary/success/danger, emoji entitlement отдельный. Контекст chat/business/invoice передает host. Reply не вызывает callback_query; appearance в Telegram не проверяется.",
       "intent": "Безопасный разбор callback страницы",
       "example_sha256": "ac59b30b5b13ee6fcba17b3ee5b0d2c37f98be45582be663e491f06c9f8f6334",
+      "example_source_sha256": "ac59b30b5b13ee6fcba17b3ee5b0d2c37f98be45582be663e491f06c9f8f6334",
       "kind": "value"
     },
     {
@@ -561,6 +611,7 @@
       "limits": "Aiogram extra; callbacks до 64 bytes, keys bounded ASCII, prefixes навигации и action различимы. Colors только primary/success/danger, emoji entitlement отдельный. Контекст chat/business/invoice передает host. Reply не вызывает callback_query; appearance в Telegram не проверяется.",
       "intent": "Literal настоящего контекста чата",
       "example_sha256": "ac59b30b5b13ee6fcba17b3ee5b0d2c37f98be45582be663e491f06c9f8f6334",
+      "example_source_sha256": "ac59b30b5b13ee6fcba17b3ee5b0d2c37f98be45582be663e491f06c9f8f6334",
       "kind": "value"
     },
     {
@@ -572,6 +623,7 @@
       "limits": "Aiogram extra; callbacks до 64 bytes, keys bounded ASCII, prefixes навигации и action различимы. Colors только primary/success/danger, emoji entitlement отдельный. Контекст chat/business/invoice передает host. Reply не вызывает callback_query; appearance в Telegram не проверяется.",
       "intent": "Явные строки native inline-кнопок",
       "example_sha256": "ac59b30b5b13ee6fcba17b3ee5b0d2c37f98be45582be663e491f06c9f8f6334",
+      "example_source_sha256": "ac59b30b5b13ee6fcba17b3ee5b0d2c37f98be45582be663e491f06c9f8f6334",
       "kind": "value"
     },
     {
@@ -583,6 +635,7 @@
       "limits": "Aiogram extra; callbacks до 64 bytes, keys bounded ASCII, prefixes навигации и action различимы. Colors только primary/success/danger, emoji entitlement отдельный. Контекст chat/business/invoice передает host. Reply не вызывает callback_query; appearance в Telegram не проверяется.",
       "intent": "Reply rows/input placeholder",
       "example_sha256": "ac59b30b5b13ee6fcba17b3ee5b0d2c37f98be45582be663e491f06c9f8f6334",
+      "example_source_sha256": "ac59b30b5b13ee6fcba17b3ee5b0d2c37f98be45582be663e491f06c9f8f6334",
       "kind": "value"
     },
     {
@@ -594,6 +647,7 @@
       "limits": "Aiogram extra; callbacks до 64 bytes, keys bounded ASCII, prefixes навигации и action различимы. Colors только primary/success/danger, emoji entitlement отдельный. Контекст chat/business/invoice передает host. Reply не вызывает callback_query; appearance в Telegram не проверяется.",
       "intent": "ForceReply для ввода",
       "example_sha256": "ac59b30b5b13ee6fcba17b3ee5b0d2c37f98be45582be663e491f06c9f8f6334",
+      "example_source_sha256": "ac59b30b5b13ee6fcba17b3ee5b0d2c37f98be45582be663e491f06c9f8f6334",
       "kind": "value"
     },
     {
@@ -605,6 +659,7 @@
       "limits": "Aiogram extra; callbacks до 64 bytes, keys bounded ASCII, prefixes навигации и action различимы. Colors только primary/success/danger, emoji entitlement отдельный. Контекст chat/business/invoice передает host. Reply не вызывает callback_query; appearance в Telegram не проверяется.",
       "intent": "Снять reply keyboard",
       "example_sha256": "ac59b30b5b13ee6fcba17b3ee5b0d2c37f98be45582be663e491f06c9f8f6334",
+      "example_source_sha256": "ac59b30b5b13ee6fcba17b3ee5b0d2c37f98be45582be663e491f06c9f8f6334",
       "kind": "value"
     },
     {
@@ -616,6 +671,7 @@
       "limits": "Aiogram extra; callbacks до 64 bytes, keys bounded ASCII, prefixes навигации и action различимы. Colors только primary/success/danger, emoji entitlement отдельный. Контекст chat/business/invoice передает host. Reply не вызывает callback_query; appearance в Telegram не проверяется.",
       "intent": "Immutable 2/3/mixed width pattern with last/cycle tail",
       "example_sha256": "ac59b30b5b13ee6fcba17b3ee5b0d2c37f98be45582be663e491f06c9f8f6334",
+      "example_source_sha256": "ac59b30b5b13ee6fcba17b3ee5b0d2c37f98be45582be663e491f06c9f8f6334",
       "kind": "value"
     },
     {
@@ -627,6 +683,7 @@
       "limits": "Aiogram extra; callbacks до 64 bytes, keys bounded ASCII, prefixes навигации и action различимы. Colors только primary/success/danger, emoji entitlement отдельный. Контекст chat/business/invoice передает host. Reply не вызывает callback_query; appearance в Telegram не проверяется.",
       "intent": "Explicit context and presentation hints; unknown uses standard text fallback",
       "example_sha256": "ac59b30b5b13ee6fcba17b3ee5b0d2c37f98be45582be663e491f06c9f8f6334",
+      "example_source_sha256": "ac59b30b5b13ee6fcba17b3ee5b0d2c37f98be45582be663e491f06c9f8f6334",
       "kind": "value"
     },
     {
@@ -638,6 +695,7 @@
       "limits": "Aiogram extra; callbacks до 64 bytes, keys bounded ASCII, prefixes навигации и action различимы. Colors только primary/success/danger, emoji entitlement отдельный. Контекст chat/business/invoice передает host. Reply не вызывает callback_query; appearance в Telegram не проверяется.",
       "intent": "Unique callback descriptors composed by width pattern",
       "example_sha256": "ac59b30b5b13ee6fcba17b3ee5b0d2c37f98be45582be663e491f06c9f8f6334",
+      "example_source_sha256": "ac59b30b5b13ee6fcba17b3ee5b0d2c37f98be45582be663e491f06c9f8f6334",
       "kind": "value"
     },
     {
@@ -649,6 +707,7 @@
       "limits": "Aiogram extra; callbacks до 64 bytes, keys bounded ASCII, prefixes навигации и action различимы. Colors только primary/success/danger, emoji entitlement отдельный. Контекст chat/business/invoice передает host. Reply не вызывает callback_query; appearance в Telegram не проверяется.",
       "intent": "Flat native inline buttons with context checks and fallback",
       "example_sha256": "ac59b30b5b13ee6fcba17b3ee5b0d2c37f98be45582be663e491f06c9f8f6334",
+      "example_source_sha256": "ac59b30b5b13ee6fcba17b3ee5b0d2c37f98be45582be663e491f06c9f8f6334",
       "kind": "value"
     },
     {
@@ -660,6 +719,7 @@
       "limits": "Aiogram extra; callbacks до 64 bytes, keys bounded ASCII, prefixes навигации и action различимы. Colors только primary/success/danger, emoji entitlement отдельный. Контекст chat/business/invoice передает host. Reply не вызывает callback_query; appearance в Telegram не проверяется.",
       "intent": "Flat reply buttons with request validation and fallback",
       "example_sha256": "ac59b30b5b13ee6fcba17b3ee5b0d2c37f98be45582be663e491f06c9f8f6334",
+      "example_source_sha256": "ac59b30b5b13ee6fcba17b3ee5b0d2c37f98be45582be663e491f06c9f8f6334",
       "kind": "value"
     },
     {
@@ -671,6 +731,7 @@
       "limits": "Добавляйте Router в существующий Dispatcher. Command menu устанавливается явно с выбранным scope. ACK убирает spinner, service проверяет actor/object/revision/idempotency. Notify выбирает безопасный доступный канал; пример использует только synthetic private message.",
       "intent": "Actor/key для авторизованного сервиса",
       "example_sha256": "3a846ca31534e2f13d6cc925327165be390686f55f30da6dacbd2c06341315c1",
+      "example_source_sha256": "3a846ca31534e2f13d6cc925327165be390686f55f30da6dacbd2c06341315c1",
       "kind": "value"
     },
     {
@@ -682,6 +743,7 @@
       "limits": "Добавляйте Router в существующий Dispatcher. Command menu устанавливается явно с выбранным scope. ACK убирает spinner, service проверяет actor/object/revision/idempotency. Notify выбирает безопасный доступный канал; пример использует только synthetic private message.",
       "intent": "Статус и публичный plain ответ сервиса",
       "example_sha256": "3a846ca31534e2f13d6cc925327165be390686f55f30da6dacbd2c06341315c1",
+      "example_source_sha256": "3a846ca31534e2f13d6cc925327165be390686f55f30da6dacbd2c06341315c1",
       "kind": "value"
     },
     {
@@ -693,6 +755,7 @@
       "limits": "Добавляйте Router в существующий Dispatcher. Command menu устанавливается явно с выбранным scope. ACK убирает spinner, service проверяет actor/object/revision/idempotency. Notify выбирает безопасный доступный канал; пример использует только synthetic private message.",
       "intent": "ACK перед execute и notify",
       "example_sha256": "3a846ca31534e2f13d6cc925327165be390686f55f30da6dacbd2c06341315c1",
+      "example_source_sha256": "3a846ca31534e2f13d6cc925327165be390686f55f30da6dacbd2c06341315c1",
       "kind": "value"
     },
     {
@@ -704,6 +767,7 @@
       "limits": "Добавляйте Router в существующий Dispatcher. Command menu устанавливается явно с выбранным scope. ACK убирает spinner, service проверяет actor/object/revision/idempotency. Notify выбирает безопасный доступный канал; пример использует только synthetic private message.",
       "intent": "Небольшой /start без состояния",
       "example_sha256": "3a846ca31534e2f13d6cc925327165be390686f55f30da6dacbd2c06341315c1",
+      "example_source_sha256": "3a846ca31534e2f13d6cc925327165be390686f55f30da6dacbd2c06341315c1",
       "kind": "value"
     },
     {
@@ -715,6 +779,7 @@
       "limits": "Добавляйте Router в существующий Dispatcher. Command menu устанавливается явно с выбранным scope. ACK убирает spinner, service проверяет actor/object/revision/idempotency. Notify выбирает безопасный доступный канал; пример использует только synthetic private message.",
       "intent": "Command/description/plain text/keyboard",
       "example_sha256": "3a846ca31534e2f13d6cc925327165be390686f55f30da6dacbd2c06341315c1",
+      "example_source_sha256": "3a846ca31534e2f13d6cc925327165be390686f55f30da6dacbd2c06341315c1",
       "kind": "value"
     },
     {
@@ -726,6 +791,7 @@
       "limits": "Добавляйте Router в существующий Dispatcher. Command menu устанавливается явно с выбранным scope. ACK убирает spinner, service проверяет actor/object/revision/idempotency. Notify выбирает безопасный доступный канал; пример использует только synthetic private message.",
       "intent": "Native BotCommand list без регистрации",
       "example_sha256": "3a846ca31534e2f13d6cc925327165be390686f55f30da6dacbd2c06341315c1",
+      "example_source_sha256": "3a846ca31534e2f13d6cc925327165be390686f55f30da6dacbd2c06341315c1",
       "kind": "value"
     },
     {
@@ -737,6 +803,7 @@
       "limits": "Добавляйте Router в существующий Dispatcher. Command menu устанавливается явно с выбранным scope. ACK убирает spinner, service проверяет actor/object/revision/idempotency. Notify выбирает безопасный доступный канал; пример использует только synthetic private message.",
       "intent": "Reply handlers с SDK mention filtering",
       "example_sha256": "3a846ca31534e2f13d6cc925327165be390686f55f30da6dacbd2c06341315c1",
+      "example_source_sha256": "3a846ca31534e2f13d6cc925327165be390686f55f30da6dacbd2c06341315c1",
       "kind": "value"
     },
     {
@@ -748,6 +815,7 @@
       "limits": "Добавляйте Router в существующий Dispatcher. Command menu устанавливается явно с выбранным scope. ACK убирает spinner, service проверяет actor/object/revision/idempotency. Notify выбирает безопасный доступный канал; пример использует только synthetic private message.",
       "intent": "Typed fixture value или sync/async callable",
       "example_sha256": "3a846ca31534e2f13d6cc925327165be390686f55f30da6dacbd2c06341315c1",
+      "example_source_sha256": "3a846ca31534e2f13d6cc925327165be390686f55f30da6dacbd2c06341315c1",
       "kind": "value"
     },
     {
@@ -759,6 +827,7 @@
       "limits": "Добавляйте Router в существующий Dispatcher. Command menu устанавливается явно с выбранным scope. ACK убирает spinner, service проверяет actor/object/revision/idempotency. Notify выбирает безопасный доступный канал; пример использует только synthetic private message.",
       "intent": "Явные responses, calls, close без HTTP fallback",
       "example_sha256": "3a846ca31534e2f13d6cc925327165be390686f55f30da6dacbd2c06341315c1",
+      "example_source_sha256": "3a846ca31534e2f13d6cc925327165be390686f55f30da6dacbd2c06341315c1",
       "kind": "value"
     },
     {
@@ -770,6 +839,7 @@
       "limits": "SDK polling через StubSession завершается после первого запроса; ни реального token, ни удаления webhook. Live требует отдельного процесса и проверки consumer/webhook. Runner закрывает session после успешного preflight. Stars request не создает оплату, заказ или entitlement; consent и server ledger у host.",
       "intent": "Owned polling/task/session lifecycle",
       "example_sha256": "f6ca6a2d06e7639a03642ee0d7fa7944e232604172e29930c89e7ce25f8619cf",
+      "example_source_sha256": "f6ca6a2d06e7639a03642ee0d7fa7944e232604172e29930c89e7ce25f8619cf",
       "kind": "value"
     },
     {
@@ -781,6 +851,7 @@
       "limits": "SDK polling через StubSession завершается после первого запроса; ни реального token, ни удаления webhook. Live требует отдельного процесса и проверки consumer/webhook. Runner закрывает session после успешного preflight. Stars request не создает оплату, заказ или entitlement; consent и server ledger у host.",
       "intent": "Native XTR CreateInvoiceLink request",
       "example_sha256": "f6ca6a2d06e7639a03642ee0d7fa7944e232604172e29930c89e7ce25f8619cf",
+      "example_source_sha256": "f6ca6a2d06e7639a03642ee0d7fa7944e232604172e29930c89e7ce25f8619cf",
       "kind": "value"
     },
     {
@@ -792,6 +863,7 @@
       "limits": "Private chat, 1..10 уникальных TextField, включенный actor-scoped FSM isolation. Max_length в UTF-16; validator synchronous. MemoryStorage и list — fixture, не durable заявка. Service проверяет ACL и эффект/replay; unknown outcome сохраняет operation identity до сверки.",
       "intent": "Конфигурация и нормализация/validation read",
       "example_sha256": "87bf04d3c82eaa22218eb7525c99eed955e8dae5523af209cadf57fe4f8a4841",
+      "example_source_sha256": "87bf04d3c82eaa22218eb7525c99eed955e8dae5523af209cadf57fe4f8a4841",
       "kind": "value"
     },
     {
@@ -803,6 +875,7 @@
       "limits": "Private chat, 1..10 уникальных TextField, включенный actor-scoped FSM isolation. Max_length в UTF-16; validator synchronous. MemoryStorage и list — fixture, не durable заявка. Service проверяет ACL и эффект/replay; unknown outcome сохраняет operation identity до сверки.",
       "intent": "Bounded plain ошибка пользователя без секретов",
       "example_sha256": "87bf04d3c82eaa22218eb7525c99eed955e8dae5523af209cadf57fe4f8a4841",
+      "example_source_sha256": "87bf04d3c82eaa22218eb7525c99eed955e8dae5523af209cadf57fe4f8a4841",
       "kind": "value"
     },
     {
@@ -814,6 +887,7 @@
       "limits": "Private chat, 1..10 уникальных TextField, включенный actor-scoped FSM isolation. Max_length в UTF-16; validator synchronous. MemoryStorage и list — fixture, не durable заявка. Service проверяет ACL и эффект/replay; unknown outcome сохраняет operation identity до сверки.",
       "intent": "Server-derived identity и copied values",
       "example_sha256": "87bf04d3c82eaa22218eb7525c99eed955e8dae5523af209cadf57fe4f8a4841",
+      "example_source_sha256": "87bf04d3c82eaa22218eb7525c99eed955e8dae5523af209cadf57fe4f8a4841",
       "kind": "value"
     },
     {
@@ -825,6 +899,7 @@
       "limits": "Private chat, 1..10 уникальных TextField, включенный actor-scoped FSM isolation. Max_length в UTF-16; validator synchronous. MemoryStorage и list — fixture, не durable заявка. Service проверяет ACL и эффект/replay; unknown outcome сохраняет operation identity до сверки.",
       "intent": "Многошаговый FSM с back/cancel/review",
       "example_sha256": "87bf04d3c82eaa22218eb7525c99eed955e8dae5523af209cadf57fe4f8a4841",
+      "example_source_sha256": "87bf04d3c82eaa22218eb7525c99eed955e8dae5523af209cadf57fe4f8a4841",
       "kind": "value"
     },
     {
@@ -836,6 +911,7 @@
       "limits": "Observer регистрируется на dispatcher.update. IDs opt-in; без текста/contacts/initData/raw exception. Best-effort не durable inbox/audit. Router subscription/rights/allowed_updates и ACK/auth остаются у host, Bot API не читает историю user account.",
       "intent": "Literal фаз received/handled/unhandled/failed/cancelled",
       "example_sha256": "4c199525b857b8e3587c93f912faf671810e767bbba8dd5c9922347efa40f3bb",
+      "example_source_sha256": "4c199525b857b8e3587c93f912faf671810e767bbba8dd5c9922347efa40f3bb",
       "kind": "value"
     },
     {
@@ -847,6 +923,7 @@
       "limits": "Observer регистрируется на dispatcher.update. IDs opt-in; без текста/contacts/initData/raw exception. Best-effort не durable inbox/audit. Router subscription/rights/allowed_updates и ACK/auth остаются у host, Bot API не читает историю user account.",
       "intent": "Неизменяемая metadata события",
       "example_sha256": "4c199525b857b8e3587c93f912faf671810e767bbba8dd5c9922347efa40f3bb",
+      "example_source_sha256": "4c199525b857b8e3587c93f912faf671810e767bbba8dd5c9922347efa40f3bb",
       "kind": "value"
     },
     {
@@ -858,6 +935,7 @@
       "limits": "Observer регистрируется на dispatcher.update. IDs opt-in; без текста/contacts/initData/raw exception. Best-effort не durable inbox/audit. Router subscription/rights/allowed_updates и ACK/auth остаются у host, Bot API не читает историю user account.",
       "intent": "Emit и outer middleware наблюдения",
       "example_sha256": "4c199525b857b8e3587c93f912faf671810e767bbba8dd5c9922347efa40f3bb",
+      "example_source_sha256": "4c199525b857b8e3587c93f912faf671810e767bbba8dd5c9922347efa40f3bb",
       "kind": "value"
     },
     {
@@ -869,6 +947,7 @@
       "limits": "Observer регистрируется на dispatcher.update. IDs opt-in; без текста/contacts/initData/raw exception. Best-effort не durable inbox/audit. Router subscription/rights/allowed_updates и ACK/auth остаются у host, Bot API не читает историю user account.",
       "intent": "Присутствующие native Update kinds",
       "example_sha256": "4c199525b857b8e3587c93f912faf671810e767bbba8dd5c9922347efa40f3bb",
+      "example_source_sha256": "4c199525b857b8e3587c93f912faf671810e767bbba8dd5c9922347efa40f3bb",
       "kind": "value"
     },
     {
@@ -880,6 +959,7 @@
       "limits": "Observer регистрируется на dispatcher.update. IDs opt-in; без текста/contacts/initData/raw exception. Best-effort не durable inbox/audit. Router subscription/rights/allowed_updates и ACK/auth остаются у host, Bot API не читает историю user account.",
       "intent": "Handlers по точным SDK kind names",
       "example_sha256": "4c199525b857b8e3587c93f912faf671810e767bbba8dd5c9922347efa40f3bb",
+      "example_source_sha256": "4c199525b857b8e3587c93f912faf671810e767bbba8dd5c9922347efa40f3bb",
       "kind": "value"
     },
     {
@@ -891,6 +971,7 @@
       "limits": "Catalog отражает установленный SDK, не server rights. Builder отклоняет неизвестные top-level fields; nested validation принадлежит SDK. InputFile не читается автоматически. HTTP/send/лимиты/доступ и provider workflow не появляются от construction.",
       "intent": "Name/class/fields/required/official URL",
       "example_sha256": "9d2e95a24eebb45c8c0f075d3c3915297b4ef36f2c3763ddc3f37ea8931dc43d",
+      "example_source_sha256": "9d2e95a24eebb45c8c0f075d3c3915297b4ef36f2c3763ddc3f37ea8931dc43d",
       "kind": "value"
     },
     {
@@ -902,6 +983,7 @@
       "limits": "Catalog отражает установленный SDK, не server rights. Builder отклоняет неизвестные top-level fields; nested validation принадлежит SDK. InputFile не читается автоматически. HTTP/send/лимиты/доступ и provider workflow не появляются от construction.",
       "intent": "Контролируемый отказ без SDK payload dump",
       "example_sha256": "9d2e95a24eebb45c8c0f075d3c3915297b4ef36f2c3763ddc3f37ea8931dc43d",
+      "example_source_sha256": "9d2e95a24eebb45c8c0f075d3c3915297b4ef36f2c3763ddc3f37ea8931dc43d",
       "kind": "value"
     },
     {
@@ -913,6 +995,7 @@
       "limits": "Catalog отражает установленный SDK, не server rights. Builder отклоняет неизвестные top-level fields; nested validation принадлежит SDK. InputFile не читается автоматически. HTTP/send/лимиты/доступ и provider workflow не появляются от construction.",
       "intent": "Текущие SDK request methods",
       "example_sha256": "9d2e95a24eebb45c8c0f075d3c3915297b4ef36f2c3763ddc3f37ea8931dc43d",
+      "example_source_sha256": "9d2e95a24eebb45c8c0f075d3c3915297b4ef36f2c3763ddc3f37ea8931dc43d",
       "kind": "value"
     },
     {
@@ -924,6 +1007,7 @@
       "limits": "Catalog отражает установленный SDK, не server rights. Builder отклоняет неизвестные top-level fields; nested validation принадлежит SDK. InputFile не читается автоматически. HTTP/send/лимиты/доступ и provider workflow не появляются от construction.",
       "intent": "Native request без HTTP",
       "example_sha256": "9d2e95a24eebb45c8c0f075d3c3915297b4ef36f2c3763ddc3f37ea8931dc43d",
+      "example_source_sha256": "9d2e95a24eebb45c8c0f075d3c3915297b4ef36f2c3763ddc3f37ea8931dc43d",
       "kind": "value"
     },
     {
@@ -935,6 +1019,7 @@
       "limits": "ESM + DOM + явно подключенный styles.css. Native объект synthetic; snapshot не auth. Host разрешает coordinates insets и владеет состоянием/navigation/focus. Shell/field используют textContent; dispose удаляет только own UI/subscriptions. Viewport не physical Telegram QA.",
       "intent": "Snapshot/subscribe/start/dispose lifecycle",
       "example_sha256": "db807a5cb98b03503a6c71d740697fbbe5e0ec0c6d919287a6a41a24639d4c99",
+      "example_source_sha256": "db807a5cb98b03503a6c71d740697fbbe5e0ec0c6d919287a6a41a24639d4c99",
       "kind": "value"
     },
     {
@@ -946,6 +1031,7 @@
       "limits": "ESM + DOM + явно подключенный styles.css. Native объект synthetic; snapshot не auth. Host разрешает coordinates insets и владеет состоянием/navigation/focus. Shell/field используют textContent; dispose удаляет только own UI/subscriptions. Viewport не physical Telegram QA.",
       "intent": "Readonly subset SDK для bridge",
       "example_sha256": "db807a5cb98b03503a6c71d740697fbbe5e0ec0c6d919287a6a41a24639d4c99",
+      "example_source_sha256": "db807a5cb98b03503a6c71d740697fbbe5e0ec0c6d919287a6a41a24639d4c99",
       "kind": "type"
     },
     {
@@ -957,6 +1043,7 @@
       "limits": "ESM + DOM + явно подключенный styles.css. Native объект synthetic; snapshot не auth. Host разрешает coordinates insets и владеет состоянием/navigation/focus. Shell/field используют textContent; dispose удаляет только own UI/subscriptions. Viewport не physical Telegram QA.",
       "intent": "Readonly top/right/bottom/left coordinates",
       "example_sha256": "db807a5cb98b03503a6c71d740697fbbe5e0ec0c6d919287a6a41a24639d4c99",
+      "example_source_sha256": "db807a5cb98b03503a6c71d740697fbbe5e0ec0c6d919287a6a41a24639d4c99",
       "kind": "type"
     },
     {
@@ -968,6 +1055,7 @@
       "limits": "ESM + DOM + явно подключенный styles.css. Native объект synthetic; snapshot не auth. Host разрешает coordinates insets и владеет состоянием/navigation/focus. Shell/field используют textContent; dispose удаляет только own UI/subscriptions. Viewport не physical Telegram QA.",
       "intent": "Неизменяемая theme/geometry metadata",
       "example_sha256": "db807a5cb98b03503a6c71d740697fbbe5e0ec0c6d919287a6a41a24639d4c99",
+      "example_source_sha256": "db807a5cb98b03503a6c71d740697fbbe5e0ec0c6d919287a6a41a24639d4c99",
       "kind": "type"
     },
     {
@@ -979,6 +1067,7 @@
       "limits": "ESM + DOM + явно подключенный styles.css. Native объект synthetic; snapshot не auth. Host разрешает coordinates insets и владеет состоянием/navigation/focus. Shell/field используют textContent; dispose удаляет только own UI/subscriptions. Viewport не physical Telegram QA.",
       "intent": "Owned content/summary/actions composition",
       "example_sha256": "db807a5cb98b03503a6c71d740697fbbe5e0ec0c6d919287a6a41a24639d4c99",
+      "example_source_sha256": "db807a5cb98b03503a6c71d740697fbbe5e0ec0c6d919287a6a41a24639d4c99",
       "kind": "value"
     },
     {
@@ -990,6 +1079,7 @@
       "limits": "ESM + DOM + явно подключенный styles.css. Native объект synthetic; snapshot не auth. Host разрешает coordinates insets и владеет состоянием/navigation/focus. Shell/field используют textContent; dispose удаляет только own UI/subscriptions. Viewport не physical Telegram QA.",
       "intent": "Typed shell slots/theme/insets/dispose",
       "example_sha256": "db807a5cb98b03503a6c71d740697fbbe5e0ec0c6d919287a6a41a24639d4c99",
+      "example_source_sha256": "db807a5cb98b03503a6c71d740697fbbe5e0ec0c6d919287a6a41a24639d4c99",
       "kind": "type"
     },
     {
@@ -1001,6 +1091,7 @@
       "limits": "ESM + DOM + явно подключенный styles.css. Native объект synthetic; snapshot не auth. Host разрешает coordinates insets и владеет состоянием/navigation/focus. Shell/field используют textContent; dispose удаляет только own UI/subscriptions. Viewport не physical Telegram QA.",
       "intent": "Связанные label/hint/error без HTML injection",
       "example_sha256": "db807a5cb98b03503a6c71d740697fbbe5e0ec0c6d919287a6a41a24639d4c99",
+      "example_source_sha256": "db807a5cb98b03503a6c71d740697fbbe5e0ec0c6d919287a6a41a24639d4c99",
       "kind": "value"
     },
     {
@@ -1012,6 +1103,7 @@
       "limits": "ESM + DOM + явно подключенный styles.css. Native объект synthetic; snapshot не auth. Host разрешает coordinates insets и владеет состоянием/navigation/focus. Shell/field используют textContent; dispose удаляет только own UI/subscriptions. Viewport не physical Telegram QA.",
       "intent": "Typed root/input/setError",
       "example_sha256": "db807a5cb98b03503a6c71d740697fbbe5e0ec0c6d919287a6a41a24639d4c99",
+      "example_source_sha256": "db807a5cb98b03503a6c71d740697fbbe5e0ec0c6d919287a6a41a24639d4c99",
       "kind": "type"
     },
     {
@@ -1023,6 +1115,7 @@
       "limits": "Response/fetch synthetic, реального backend нет. Trusted baseUrl и same-origin paths; runtime decode обязательно. Headers/session/CSRF/ACL/idempotency у host. Один invocation транспорта не исключает wire replay браузером. Unknown POST сверяется с тем же ключом без автоматического retry.",
       "intent": "Один request с runtime decoder",
       "example_sha256": "02b187c842cd5f1fd7aaccec8391d9fdbd3c995301421bd9f098c9bb1d983be0",
+      "example_source_sha256": "02b187c842cd5f1fd7aaccec8391d9fdbd3c995301421bd9f098c9bb1d983be0",
       "kind": "value"
     },
     {
@@ -1034,6 +1127,7 @@
       "limits": "Response/fetch synthetic, реального backend нет. Trusted baseUrl и same-origin paths; runtime decode обязательно. Headers/session/CSRF/ACL/idempotency у host. Один invocation транспорта не исключает wire replay браузером. Unknown POST сверяется с тем же ключом без автоматического retry.",
       "intent": "Kind/status/outcome без response body",
       "example_sha256": "02b187c842cd5f1fd7aaccec8391d9fdbd3c995301421bd9f098c9bb1d983be0",
+      "example_source_sha256": "02b187c842cd5f1fd7aaccec8391d9fdbd3c995301421bd9f098c9bb1d983be0",
       "kind": "value"
     },
     {
@@ -1045,6 +1139,7 @@
       "limits": "Response/fetch synthetic, реального backend нет. Trusted baseUrl и same-origin paths; runtime decode обязательно. Headers/session/CSRF/ACL/idempotency у host. Один invocation транспорта не исключает wire replay браузером. Unknown POST сверяется с тем же ключом без автоматического retry.",
       "intent": "Literal HTTP/network/timeout/abort/response failure",
       "example_sha256": "02b187c842cd5f1fd7aaccec8391d9fdbd3c995301421bd9f098c9bb1d983be0",
+      "example_source_sha256": "02b187c842cd5f1fd7aaccec8391d9fdbd3c995301421bd9f098c9bb1d983be0",
       "kind": "type"
     },
     {
@@ -1056,6 +1151,7 @@
       "limits": "Response/fetch synthetic, реального backend нет. Trusted baseUrl и same-origin paths; runtime decode обязательно. Headers/session/CSRF/ACL/idempotency у host. Один invocation транспорта не исключает wire replay браузером. Unknown POST сверяется с тем же ключом без автоматического retry.",
       "intent": "Base/headers/owned fetch transport",
       "example_sha256": "02b187c842cd5f1fd7aaccec8391d9fdbd3c995301421bd9f098c9bb1d983be0",
+      "example_source_sha256": "02b187c842cd5f1fd7aaccec8391d9fdbd3c995301421bd9f098c9bb1d983be0",
       "kind": "type"
     },
     {
@@ -1067,6 +1163,7 @@
       "limits": "Response/fetch synthetic, реального backend нет. Trusted baseUrl и same-origin paths; runtime decode обязательно. Headers/session/CSRF/ACL/idempotency у host. Один invocation транспорта не исключает wire replay браузером. Unknown POST сверяется с тем же ключом без автоматического retry.",
       "intent": "Method/body/signal/timeout options",
       "example_sha256": "02b187c842cd5f1fd7aaccec8391d9fdbd3c995301421bd9f098c9bb1d983be0",
+      "example_source_sha256": "02b187c842cd5f1fd7aaccec8391d9fdbd3c995301421bd9f098c9bb1d983be0",
       "kind": "type"
     },
     {
@@ -1078,6 +1175,7 @@
       "limits": "Response/fetch synthetic, реального backend нет. Trusted baseUrl и same-origin paths; runtime decode обязательно. Headers/session/CSRF/ACL/idempotency у host. Один invocation транспорта не исключает wire replay браузером. Unknown POST сверяется с тем же ключом без автоматического retry.",
       "intent": "Typed Fetch-compatible adapter host",
       "example_sha256": "02b187c842cd5f1fd7aaccec8391d9fdbd3c995301421bd9f098c9bb1d983be0",
+      "example_source_sha256": "02b187c842cd5f1fd7aaccec8391d9fdbd3c995301421bd9f098c9bb1d983be0",
       "kind": "type"
     },
     {
@@ -1089,6 +1187,7 @@
       "limits": "Только serviceId/slotId, без auth/contacts/price/pending operation. Account scope должен поступать от server host; fixture scope не авторизация. Store не меняет scope автоматически при account switch. Storage sync; async CloudStorage требует другого adapter, failure дает unavailable/false.",
       "intent": "Scoped read/write/clear и key",
       "example_sha256": "eb9875da832d4da5ea79b40cfecacd435625d39b10db139d4d925743040d2029",
+      "example_source_sha256": "eb9875da832d4da5ea79b40cfecacd435625d39b10db139d4d925743040d2029",
       "kind": "value"
     },
     {
@@ -1100,6 +1199,7 @@
       "limits": "Только serviceId/slotId, без auth/contacts/price/pending operation. Account scope должен поступать от server host; fixture scope не авторизация. Store не меняет scope автоматически при account switch. Storage sync; async CloudStorage требует другого adapter, failure дает unavailable/false.",
       "intent": "Readonly nullable identifiers",
       "example_sha256": "eb9875da832d4da5ea79b40cfecacd435625d39b10db139d4d925743040d2029",
+      "example_source_sha256": "eb9875da832d4da5ea79b40cfecacd435625d39b10db139d4d925743040d2029",
       "kind": "type"
     },
     {
@@ -1111,6 +1211,7 @@
       "limits": "Только serviceId/slotId, без auth/contacts/price/pending operation. Account scope должен поступать от server host; fixture scope не авторизация. Store не меняет scope автоматически при account switch. Storage sync; async CloudStorage требует другого adapter, failure дает unavailable/false.",
       "intent": "Discriminated status с value только restored",
       "example_sha256": "eb9875da832d4da5ea79b40cfecacd435625d39b10db139d4d925743040d2029",
+      "example_source_sha256": "eb9875da832d4da5ea79b40cfecacd435625d39b10db139d4d925743040d2029",
       "kind": "type"
     },
     {
@@ -1122,6 +1223,7 @@
       "limits": "Только serviceId/slotId, без auth/contacts/price/pending operation. Account scope должен поступать от server host; fixture scope не авторизация. Store не меняет scope автоматически при account switch. Storage sync; async CloudStorage требует другого adapter, failure дает unavailable/false.",
       "intent": "Namespace/scope/TTL/clock",
       "example_sha256": "eb9875da832d4da5ea79b40cfecacd435625d39b10db139d4d925743040d2029",
+      "example_source_sha256": "eb9875da832d4da5ea79b40cfecacd435625d39b10db139d4d925743040d2029",
       "kind": "type"
     },
     {
@@ -1133,6 +1235,7 @@
       "limits": "Только serviceId/slotId, без auth/contacts/price/pending operation. Account scope должен поступать от server host; fixture scope не авторизация. Store не меняет scope автоматически при account switch. Storage sync; async CloudStorage требует другого adapter, failure дает unavailable/false.",
       "intent": "Sync storage contract",
       "example_sha256": "eb9875da832d4da5ea79b40cfecacd435625d39b10db139d4d925743040d2029",
+      "example_source_sha256": "eb9875da832d4da5ea79b40cfecacd435625d39b10db139d4d925743040d2029",
       "kind": "type"
     },
     {
@@ -1144,6 +1247,7 @@
       "limits": "Только serviceId/slotId, без auth/contacts/price/pending operation. Account scope должен поступать от server host; fixture scope не авторизация. Store не меняет scope автоматически при account switch. Storage sync; async CloudStorage требует другого adapter, failure дает unavailable/false.",
       "intent": "Lazy owned storage factory",
       "example_sha256": "eb9875da832d4da5ea79b40cfecacd435625d39b10db139d4d925743040d2029",
+      "example_source_sha256": "eb9875da832d4da5ea79b40cfecacd435625d39b10db139d4d925743040d2029",
       "kind": "type"
     },
     {
@@ -1155,6 +1259,7 @@
       "limits": "Каталоги и facade не являются полной parameter schema. Presence/platform/version не consent, launch, auth или успешный платеж. Callback и receiver сохраняются; host выбирает arguments/permissions. Listener/dispose подавляют late callbacks, native cleanup failure может требовать повторного dispose.",
       "intent": "Supports/call/listen/dispose с gates",
       "example_sha256": "dc045786eba0343587d05fbd8a537a5bf892f519bd96e2466ee29d84db7c3e95",
+      "example_source_sha256": "dc045786eba0343587d05fbd8a537a5bf892f519bd96e2466ee29d84db7c3e95",
       "kind": "value"
     },
     {
@@ -1166,6 +1271,7 @@
       "limits": "Каталоги и facade не являются полной parameter schema. Presence/platform/version не consent, launch, auth или успешный платеж. Callback и receiver сохраняются; host выбирает arguments/permissions. Listener/dispose подавляют late callbacks, native cleanup failure может требовать повторного dispose.",
       "intent": "Контролируемое отсутствие/disposed native capability",
       "example_sha256": "dc045786eba0343587d05fbd8a537a5bf892f519bd96e2466ee29d84db7c3e95",
+      "example_source_sha256": "dc045786eba0343587d05fbd8a537a5bf892f519bd96e2466ee29d84db7c3e95",
       "kind": "value"
     },
     {
@@ -1177,6 +1283,7 @@
       "limits": "Каталоги и facade не являются полной parameter schema. Presence/platform/version не consent, launch, auth или успешный платеж. Callback и receiver сохраняются; host выбирает arguments/permissions. Listener/dispose подавляют late callbacks, native cleanup failure может требовать повторного dispose.",
       "intent": "Readonly path/minVersion/source catalog",
       "example_sha256": "dc045786eba0343587d05fbd8a537a5bf892f519bd96e2466ee29d84db7c3e95",
+      "example_source_sha256": "dc045786eba0343587d05fbd8a537a5bf892f519bd96e2466ee29d84db7c3e95",
       "kind": "value"
     },
     {
@@ -1188,6 +1295,7 @@
       "limits": "Каталоги и facade не являются полной parameter schema. Presence/platform/version не consent, launch, auth или успешный платеж. Callback и receiver сохраняются; host выбирает arguments/permissions. Listener/dispose подавляют late callbacks, native cleanup failure может требовать повторного dispose.",
       "intent": "Readonly имена native events",
       "example_sha256": "dc045786eba0343587d05fbd8a537a5bf892f519bd96e2466ee29d84db7c3e95",
+      "example_source_sha256": "dc045786eba0343587d05fbd8a537a5bf892f519bd96e2466ee29d84db7c3e95",
       "kind": "value"
     },
     {
@@ -1199,6 +1307,7 @@
       "limits": "Каталоги и facade не являются полной parameter schema. Presence/platform/version не consent, launch, auth или успешный платеж. Callback и receiver сохраняются; host выбирает arguments/permissions. Listener/dispose подавляют late callbacks, native cleanup failure может требовать повторного dispose.",
       "intent": "Readonly event version/source metadata",
       "example_sha256": "dc045786eba0343587d05fbd8a537a5bf892f519bd96e2466ee29d84db7c3e95",
+      "example_source_sha256": "dc045786eba0343587d05fbd8a537a5bf892f519bd96e2466ee29d84db7c3e95",
       "kind": "value"
     },
     {
@@ -1210,6 +1319,7 @@
       "limits": "Каталоги и facade не являются полной parameter schema. Presence/platform/version не consent, launch, auth или успешный платеж. Callback и receiver сохраняются; host выбирает arguments/permissions. Listener/dispose подавляют late callbacks, native cleanup failure может требовать повторного dispose.",
       "intent": "Literal известных native paths",
       "example_sha256": "dc045786eba0343587d05fbd8a537a5bf892f519bd96e2466ee29d84db7c3e95",
+      "example_source_sha256": "dc045786eba0343587d05fbd8a537a5bf892f519bd96e2466ee29d84db7c3e95",
       "kind": "type"
     },
     {
@@ -1221,6 +1331,7 @@
       "limits": "Каталоги и facade не являются полной parameter schema. Presence/platform/version не consent, launch, auth или успешный платеж. Callback и receiver сохраняются; host выбирает arguments/permissions. Listener/dispose подавляют late callbacks, native cleanup failure может требовать повторного dispose.",
       "intent": "Literal известных event names",
       "example_sha256": "dc045786eba0343587d05fbd8a537a5bf892f519bd96e2466ee29d84db7c3e95",
+      "example_source_sha256": "dc045786eba0343587d05fbd8a537a5bf892f519bd96e2466ee29d84db7c3e95",
       "kind": "type"
     },
     {
@@ -1232,6 +1343,7 @@
       "limits": "Developer messages не сериализуются в safe report. Operation kind отражает реальное действие; unknown write требует reconcile, classification не отменяет effect. InvalidType сохраняет TypeError catch, а не наследование PatternError. Type aliases не валидируют произвольный JSON автоматически.",
       "intent": "Base code/outcome с report",
       "example_sha256": "4d1b8172353a97d5c44b72e5b32753fc65bfc4e7dc2fcee8f8005a119d5c646e",
+      "example_source_sha256": "4d1b8172353a97d5c44b72e5b32753fc65bfc4e7dc2fcee8f8005a119d5c646e",
       "kind": "value"
     },
     {
@@ -1243,6 +1355,7 @@
       "limits": "Developer messages не сериализуются в safe report. Operation kind отражает реальное действие; unknown write требует reconcile, classification не отменяет effect. InvalidType сохраняет TypeError catch, а не наследование PatternError. Type aliases не валидируют произвольный JSON автоматически.",
       "intent": "Известная local validation rejection",
       "example_sha256": "4d1b8172353a97d5c44b72e5b32753fc65bfc4e7dc2fcee8f8005a119d5c646e",
+      "example_source_sha256": "4d1b8172353a97d5c44b72e5b32753fc65bfc4e7dc2fcee8f8005a119d5c646e",
       "kind": "value"
     },
     {
@@ -1254,6 +1367,7 @@
       "limits": "Developer messages не сериализуются в safe report. Operation kind отражает реальное действие; unknown write требует reconcile, classification не отменяет effect. InvalidType сохраняет TypeError catch, а не наследование PatternError. Type aliases не валидируют произвольный JSON автоматически.",
       "intent": "TypeError-compatible known local rejection",
       "example_sha256": "4d1b8172353a97d5c44b72e5b32753fc65bfc4e7dc2fcee8f8005a119d5c646e",
+      "example_source_sha256": "4d1b8172353a97d5c44b72e5b32753fc65bfc4e7dc2fcee8f8005a119d5c646e",
       "kind": "value"
     },
     {
@@ -1265,6 +1379,7 @@
       "limits": "Developer messages не сериализуются в safe report. Operation kind отражает реальное действие; unknown write требует reconcile, classification не отменяет effect. InvalidType сохраняет TypeError catch, а не наследование PatternError. Type aliases не валидируют произвольный JSON автоматически.",
       "intent": "Известный auth refusal",
       "example_sha256": "4d1b8172353a97d5c44b72e5b32753fc65bfc4e7dc2fcee8f8005a119d5c646e",
+      "example_source_sha256": "4d1b8172353a97d5c44b72e5b32753fc65bfc4e7dc2fcee8f8005a119d5c646e",
       "kind": "value"
     },
     {
@@ -1276,6 +1391,7 @@
       "limits": "Developer messages не сериализуются в safe report. Operation kind отражает реальное действие; unknown write требует reconcile, classification не отменяет effect. InvalidType сохраняет TypeError catch, а не наследование PatternError. Type aliases не валидируют произвольный JSON автоматически.",
       "intent": "Известный permission refusal",
       "example_sha256": "4d1b8172353a97d5c44b72e5b32753fc65bfc4e7dc2fcee8f8005a119d5c646e",
+      "example_source_sha256": "4d1b8172353a97d5c44b72e5b32753fc65bfc4e7dc2fcee8f8005a119d5c646e",
       "kind": "value"
     },
     {
@@ -1287,6 +1403,7 @@
       "limits": "Developer messages не сериализуются в safe report. Operation kind отражает реальное действие; unknown write требует reconcile, classification не отменяет effect. InvalidType сохраняет TypeError catch, а не наследование PatternError. Type aliases не валидируют произвольный JSON автоматически.",
       "intent": "Известная unavailable capability",
       "example_sha256": "4d1b8172353a97d5c44b72e5b32753fc65bfc4e7dc2fcee8f8005a119d5c646e",
+      "example_source_sha256": "4d1b8172353a97d5c44b72e5b32753fc65bfc4e7dc2fcee8f8005a119d5c646e",
       "kind": "value"
     },
     {
@@ -1298,6 +1415,7 @@
       "limits": "Developer messages не сериализуются в safe report. Operation kind отражает реальное действие; unknown write требует reconcile, classification не отменяет effect. InvalidType сохраняет TypeError catch, а не наследование PatternError. Type aliases не валидируют произвольный JSON автоматически.",
       "intent": "Неподтвержденный effect",
       "example_sha256": "4d1b8172353a97d5c44b72e5b32753fc65bfc4e7dc2fcee8f8005a119d5c646e",
+      "example_source_sha256": "4d1b8172353a97d5c44b72e5b32753fc65bfc4e7dc2fcee8f8005a119d5c646e",
       "kind": "value"
     },
     {
@@ -1309,6 +1427,7 @@
       "limits": "Developer messages не сериализуются в safe report. Operation kind отражает реальное действие; unknown write требует reconcile, classification не отменяет effect. InvalidType сохраняет TypeError catch, а не наследование PatternError. Type aliases не валидируют произвольный JSON автоматически.",
       "intent": "Allowlisted error metadata без raw exception",
       "example_sha256": "4d1b8172353a97d5c44b72e5b32753fc65bfc4e7dc2fcee8f8005a119d5c646e",
+      "example_source_sha256": "4d1b8172353a97d5c44b72e5b32753fc65bfc4e7dc2fcee8f8005a119d5c646e",
       "kind": "value"
     },
     {
@@ -1320,6 +1439,7 @@
       "limits": "Developer messages не сериализуются в safe report. Operation kind отражает реальное действие; unknown write требует reconcile, classification не отменяет effect. InvalidType сохраняет TypeError catch, а не наследование PatternError. Type aliases не валидируют произвольный JSON автоматически.",
       "intent": "Readonly code/category/outcome/recovery/message",
       "example_sha256": "4d1b8172353a97d5c44b72e5b32753fc65bfc4e7dc2fcee8f8005a119d5c646e",
+      "example_source_sha256": "4d1b8172353a97d5c44b72e5b32753fc65bfc4e7dc2fcee8f8005a119d5c646e",
       "kind": "type"
     },
     {
@@ -1331,6 +1451,7 @@
       "limits": "Developer messages не сериализуются в safe report. Operation kind отражает реальное действие; unknown write требует reconcile, classification не отменяет effect. InvalidType сохраняет TypeError catch, а не наследование PatternError. Type aliases не валидируют произвольный JSON автоматически.",
       "intent": "Literal категории ошибки",
       "example_sha256": "4d1b8172353a97d5c44b72e5b32753fc65bfc4e7dc2fcee8f8005a119d5c646e",
+      "example_source_sha256": "4d1b8172353a97d5c44b72e5b32753fc65bfc4e7dc2fcee8f8005a119d5c646e",
       "kind": "type"
     },
     {
@@ -1342,6 +1463,7 @@
       "limits": "Developer messages не сериализуются в safe report. Operation kind отражает реальное действие; unknown write требует reconcile, classification не отменяет effect. InvalidType сохраняет TypeError catch, а не наследование PatternError. Type aliases не валидируют произвольный JSON автоматически.",
       "intent": "Literal известных кодов",
       "example_sha256": "4d1b8172353a97d5c44b72e5b32753fc65bfc4e7dc2fcee8f8005a119d5c646e",
+      "example_source_sha256": "4d1b8172353a97d5c44b72e5b32753fc65bfc4e7dc2fcee8f8005a119d5c646e",
       "kind": "type"
     },
     {
@@ -1353,6 +1475,7 @@
       "limits": "Developer messages не сериализуются в safe report. Operation kind отражает реальное действие; unknown write требует reconcile, classification не отменяет effect. InvalidType сохраняет TypeError catch, а не наследование PatternError. Type aliases не валидируют произвольный JSON автоматически.",
       "intent": "Literal outcome",
       "example_sha256": "4d1b8172353a97d5c44b72e5b32753fc65bfc4e7dc2fcee8f8005a119d5c646e",
+      "example_source_sha256": "4d1b8172353a97d5c44b72e5b32753fc65bfc4e7dc2fcee8f8005a119d5c646e",
       "kind": "type"
     },
     {
@@ -1364,6 +1487,7 @@
       "limits": "Developer messages не сериализуются в safe report. Operation kind отражает реальное действие; unknown write требует reconcile, classification не отменяет effect. InvalidType сохраняет TypeError catch, а не наследование PatternError. Type aliases не валидируют произвольный JSON автоматически.",
       "intent": "Literal read/write",
       "example_sha256": "4d1b8172353a97d5c44b72e5b32753fc65bfc4e7dc2fcee8f8005a119d5c646e",
+      "example_source_sha256": "4d1b8172353a97d5c44b72e5b32753fc65bfc4e7dc2fcee8f8005a119d5c646e",
       "kind": "type"
     },
     {
@@ -1375,6 +1499,7 @@
       "limits": "Developer messages не сериализуются в safe report. Operation kind отражает реальное действие; unknown write требует reconcile, classification не отменяет effect. InvalidType сохраняет TypeError catch, а не наследование PatternError. Type aliases не валидируют произвольный JSON автоматически.",
       "intent": "Literal следующего действия",
       "example_sha256": "4d1b8172353a97d5c44b72e5b32753fc65bfc4e7dc2fcee8f8005a119d5c646e",
+      "example_source_sha256": "4d1b8172353a97d5c44b72e5b32753fc65bfc4e7dc2fcee8f8005a119d5c646e",
       "kind": "type"
     },
     {
@@ -1386,6 +1511,7 @@
       "limits": "Optional aiogram. Owner/bot/chat/thread/message/revision guards, ACK first, unknown edit freeze and explicit same-message recovery. State lives in one process/event loop; restart leaves old buttons stale. Host owns sessions/tasks and business ACL. No automatic resend after unknown initial send; no live UI proof.",
       "intent": "Immutable plain screen with declared links/layout",
       "example_sha256": "2bdd6ebae6d75cd1cea4d8a51b8c7ec87247ccd2d6c88dfa15a56ec5756a5add",
+      "example_source_sha256": "2bdd6ebae6d75cd1cea4d8a51b8c7ec87247ccd2d6c88dfa15a56ec5756a5add",
       "kind": "value"
     },
     {
@@ -1397,6 +1523,7 @@
       "limits": "Optional aiogram. Owner/bot/chat/thread/message/revision guards, ACK first, unknown edit freeze and explicit same-message recovery. State lives in one process/event loop; restart leaves old buttons stale. Host owns sessions/tasks and business ACL. No automatic resend after unknown initial send; no live UI proof.",
       "intent": "Frozen scoped history/revision/phase snapshot",
       "example_sha256": "2bdd6ebae6d75cd1cea4d8a51b8c7ec87247ccd2d6c88dfa15a56ec5756a5add",
+      "example_source_sha256": "2bdd6ebae6d75cd1cea4d8a51b8c7ec87247ccd2d6c88dfa15a56ec5756a5add",
       "kind": "value"
     },
     {
@@ -1408,6 +1535,7 @@
       "limits": "Optional aiogram. Owner/bot/chat/thread/message/revision guards, ACK first, unknown edit freeze and explicit same-message recovery. State lives in one process/event loop; restart leaves old buttons stale. Host owns sessions/tasks and business ACL. No automatic resend after unknown initial send; no live UI proof.",
       "intent": "Safe accepted/denied/stale/unavailable/unknown feedback",
       "example_sha256": "2bdd6ebae6d75cd1cea4d8a51b8c7ec87247ccd2d6c88dfa15a56ec5756a5add",
+      "example_source_sha256": "2bdd6ebae6d75cd1cea4d8a51b8c7ec87247ccd2d6c88dfa15a56ec5756a5add",
       "kind": "value"
     },
     {
@@ -1419,6 +1547,7 @@
       "limits": "Optional aiogram. Owner/bot/chat/thread/message/revision guards, ACK first, unknown edit freeze and explicit same-message recovery. State lives in one process/event loop; restart leaves old buttons stale. Host owns sessions/tasks and business ACL. No automatic resend after unknown initial send; no live UI proof.",
       "intent": "Bounded open/get_state/handle/discard lifecycle for one owned message",
       "example_sha256": "2bdd6ebae6d75cd1cea4d8a51b8c7ec87247ccd2d6c88dfa15a56ec5756a5add",
+      "example_source_sha256": "2bdd6ebae6d75cd1cea4d8a51b8c7ec87247ccd2d6c88dfa15a56ec5756a5add",
       "kind": "value"
     },
     {
@@ -1430,6 +1559,7 @@
       "limits": "Optional aiogram. Owner/bot/chat/thread/message/revision guards, ACK first, unknown edit freeze and explicit same-message recovery. State lives in one process/event loop; restart leaves old buttons stale. Host owns sessions/tasks and business ACL. No automatic resend after unknown initial send; no live UI proof.",
       "intent": "SDK Router with ACK-first guarded navigation and optional feedback",
       "example_sha256": "2bdd6ebae6d75cd1cea4d8a51b8c7ec87247ccd2d6c88dfa15a56ec5756a5add",
+      "example_source_sha256": "2bdd6ebae6d75cd1cea4d8a51b8c7ec87247ccd2d6c88dfa15a56ec5756a5add",
       "kind": "value"
     },
     {
@@ -1441,6 +1571,7 @@
       "limits": "Single-process server draft; exact owner/context/revision and confirmation token guards. No automatic business operation, persistence or multiworker guarantee. Current ACL/resource_version/idempotency transaction belongs to host; synthetic transport does not prove live delivery or rendering.",
       "intent": "Immutable keyed option and filter membership",
       "example_sha256": "fe2f0b4a9b8b771e3532c715e1478dae48e882d32e38cb58696e4dd649242478",
+      "example_source_sha256": "fe2f0b4a9b8b771e3532c715e1478dae48e882d32e38cb58696e4dd649242478",
       "kind": "value"
     },
     {
@@ -1452,6 +1583,7 @@
       "limits": "Single-process server draft; exact owner/context/revision and confirmation token guards. No automatic business operation, persistence or multiworker guarantee. Current ACL/resource_version/idempotency transaction belongs to host; synthetic transport does not prove live delivery or rendering.",
       "intent": "Current server values, field bounds and resource version",
       "example_sha256": "fe2f0b4a9b8b771e3532c715e1478dae48e882d32e38cb58696e4dd649242478",
+      "example_source_sha256": "fe2f0b4a9b8b771e3532c715e1478dae48e882d32e38cb58696e4dd649242478",
       "kind": "value"
     },
     {
@@ -1463,6 +1595,7 @@
       "limits": "Single-process server draft; exact owner/context/revision and confirmation token guards. No automatic business operation, persistence or multiworker guarantee. Current ACL/resource_version/idempotency transaction belongs to host; synthetic transport does not prove live delivery or rendering.",
       "intent": "Host-derived owner/bot/chat/thread/message identity",
       "example_sha256": "fe2f0b4a9b8b771e3532c715e1478dae48e882d32e38cb58696e4dd649242478",
+      "example_source_sha256": "fe2f0b4a9b8b771e3532c715e1478dae48e882d32e38cb58696e4dd649242478",
       "kind": "value"
     },
     {
@@ -1474,6 +1607,7 @@
       "limits": "Single-process server draft; exact owner/context/revision and confirmation token guards. No automatic business operation, persistence or multiworker guarantee. Current ACL/resource_version/idempotency transaction belongs to host; synthetic transport does not prove live delivery or rendering.",
       "intent": "Immutable draft snapshot, summary and bounded callback code",
       "example_sha256": "fe2f0b4a9b8b771e3532c715e1478dae48e882d32e38cb58696e4dd649242478",
+      "example_source_sha256": "fe2f0b4a9b8b771e3532c715e1478dae48e882d32e38cb58696e4dd649242478",
       "kind": "value"
     },
     {
@@ -1485,6 +1619,7 @@
       "limits": "Single-process server draft; exact owner/context/revision and confirmation token guards. No automatic business operation, persistence or multiworker guarantee. Current ACL/resource_version/idempotency transaction belongs to host; synthetic transport does not prove live delivery or rendering.",
       "intent": "Guarded selection decision with safe feedback",
       "example_sha256": "fe2f0b4a9b8b771e3532c715e1478dae48e882d32e38cb58696e4dd649242478",
+      "example_source_sha256": "fe2f0b4a9b8b771e3532c715e1478dae48e882d32e38cb58696e4dd649242478",
       "kind": "value"
     },
     {
@@ -1496,6 +1631,7 @@
       "limits": "Single-process server draft; exact owner/context/revision and confirmation token guards. No automatic business operation, persistence or multiworker guarantee. Current ACL/resource_version/idempotency transaction belongs to host; synthetic transport does not prove live delivery or rendering.",
       "intent": "Atomic server draft, rule refresh and revision-bound one-time confirmation",
       "example_sha256": "fe2f0b4a9b8b771e3532c715e1478dae48e882d32e38cb58696e4dd649242478",
+      "example_source_sha256": "fe2f0b4a9b8b771e3532c715e1478dae48e882d32e38cb58696e4dd649242478",
       "kind": "value"
     },
     {
@@ -1507,6 +1643,7 @@
       "limits": "Single-process server draft; exact owner/context/revision and confirmation token guards. No automatic business operation, persistence or multiworker guarantee. Current ACL/resource_version/idempotency transaction belongs to host; synthetic transport does not prove live delivery or rendering.",
       "intent": "Render toggle/multiselect/quantity/filter and confirmation markup with capability fallback",
       "example_sha256": "177d88baae02778f3a21064421c2f765b5f0c8691a19fc4f162b112947e279c9",
+      "example_source_sha256": "177d88baae02778f3a21064421c2f765b5f0c8691a19fc4f162b112947e279c9",
       "kind": "value"
     },
     {
@@ -1518,12 +1655,109 @@
       "limits": "Single-process server draft; exact owner/context/revision and confirmation token guards. No automatic business operation, persistence or multiworker guarantee. Current ACL/resource_version/idempotency transaction belongs to host; synthetic transport does not prove live delivery or rendering.",
       "intent": "ACK-first composition with fresh server spec, safe callback guards and host-owned hooks",
       "example_sha256": "177d88baae02778f3a21064421c2f765b5f0c8691a19fc4f162b112947e279c9",
+      "example_source_sha256": "177d88baae02778f3a21064421c2f765b5f0c8691a19fc4f162b112947e279c9",
+      "kind": "value"
+    },
+    {
+      "module": "telegram_patterns",
+      "name": "CalendarMonth",
+      "import": "from telegram_patterns import CalendarMonth",
+      "recipe": "ref.core_calendar",
+      "example": "examples/api-reference/python/core_calendar.py",
+      "limits": "SDK-free; Europe/Warsaw needs host IANA database or optional calendar extra (tested tzdata 2026.5). Current synchronous host ACL inside file SQLite transaction before effect/replay. Publish is trusted host CAS; immutable receipt differs from current booking; no external side effects. Host owns file/migrations/retention and async shutdown work.",
+      "intent": "Immutable Monday-first month, available/blocked dates and plain summary",
+      "example_sha256": "b2fd640b4e935e9b867b80ef48aca9a443d7a4f748ecf57bd9bbcde7e32147fc",
+      "example_source_sha256": "b2fd640b4e935e9b867b80ef48aca9a443d7a4f748ecf57bd9bbcde7e32147fc",
+      "kind": "value"
+    },
+    {
+      "module": "telegram_patterns",
+      "name": "TimeSlot",
+      "import": "from telegram_patterns import TimeSlot",
+      "recipe": "ref.core_calendar",
+      "example": "examples/api-reference/python/core_calendar.py",
+      "limits": "SDK-free; Europe/Warsaw needs host IANA database or optional calendar extra (tested tzdata 2026.5). Current synchronous host ACL inside file SQLite transaction before effect/replay. Publish is trusted host CAS; immutable receipt differs from current booking; no external side effects. Host owns file/migrations/retention and async shutdown work.",
+      "intent": "Half-open UTC interval and local offset display",
+      "example_sha256": "b2fd640b4e935e9b867b80ef48aca9a443d7a4f748ecf57bd9bbcde7e32147fc",
+      "example_source_sha256": "b2fd640b4e935e9b867b80ef48aca9a443d7a4f748ecf57bd9bbcde7e32147fc",
+      "kind": "value"
+    },
+    {
+      "module": "telegram_patterns",
+      "name": "resolve_local_time",
+      "import": "from telegram_patterns import resolve_local_time",
+      "recipe": "ref.core_calendar",
+      "example": "examples/api-reference/python/core_calendar.py",
+      "limits": "SDK-free; Europe/Warsaw needs host IANA database or optional calendar extra (tested tzdata 2026.5). Current synchronous host ACL inside file SQLite transaction before effect/replay. Publish is trusted host CAS; immutable receipt differs from current booking; no external side effects. Host owns file/migrations/retention and async shutdown work.",
+      "intent": "Naive wall time to UTC, DST gap rejection and explicit ambiguous fold",
+      "example_sha256": "b2fd640b4e935e9b867b80ef48aca9a443d7a4f748ecf57bd9bbcde7e32147fc",
+      "example_source_sha256": "b2fd640b4e935e9b867b80ef48aca9a443d7a4f748ecf57bd9bbcde7e32147fc",
+      "kind": "value"
+    },
+    {
+      "module": "telegram_patterns",
+      "name": "SlotSchedule",
+      "import": "from telegram_patterns import SlotSchedule",
+      "recipe": "ref.core_calendar",
+      "example": "examples/api-reference/python/core_calendar.py",
+      "limits": "SDK-free; Europe/Warsaw needs host IANA database or optional calendar extra (tested tzdata 2026.5). Current synchronous host ACL inside file SQLite transaction before effect/replay. Publish is trusted host CAS; immutable receipt differs from current booking; no external side effects. Host owns file/migrations/retention and async shutdown work.",
+      "intent": "Immutable resource/revision/sorted uniquely keyed slots",
+      "example_sha256": "b2fd640b4e935e9b867b80ef48aca9a443d7a4f748ecf57bd9bbcde7e32147fc",
+      "example_source_sha256": "b2fd640b4e935e9b867b80ef48aca9a443d7a4f748ecf57bd9bbcde7e32147fc",
+      "kind": "value"
+    },
+    {
+      "module": "telegram_patterns",
+      "name": "SlotBooking",
+      "import": "from telegram_patterns import SlotBooking",
+      "recipe": "ref.core_calendar",
+      "example": "examples/api-reference/python/core_calendar.py",
+      "limits": "SDK-free; Europe/Warsaw needs host IANA database or optional calendar extra (tested tzdata 2026.5). Current synchronous host ACL inside file SQLite transaction before effect/replay. Publish is trusted host CAS; immutable receipt differs from current booking; no external side effects. Host owns file/migrations/retention and async shutdown work.",
+      "intent": "Current owner-bound booking status and immutable times",
+      "example_sha256": "b2fd640b4e935e9b867b80ef48aca9a443d7a4f748ecf57bd9bbcde7e32147fc",
+      "example_source_sha256": "b2fd640b4e935e9b867b80ef48aca9a443d7a4f748ecf57bd9bbcde7e32147fc",
+      "kind": "value"
+    },
+    {
+      "module": "telegram_patterns",
+      "name": "SQLiteSlotStore",
+      "import": "from telegram_patterns import SQLiteSlotStore",
+      "recipe": "ref.core_calendar",
+      "example": "examples/api-reference/python/core_calendar.py",
+      "limits": "SDK-free; Europe/Warsaw needs host IANA database or optional calendar extra (tested tzdata 2026.5). Current synchronous host ACL inside file SQLite transaction before effect/replay. Publish is trusted host CAS; immutable receipt differs from current booking; no external side effects. Host owns file/migrations/retention and async shutdown work.",
+      "intent": "Explicit schema, schedule CAS, current ACL, atomic reserve/cancel and replay",
+      "example_sha256": "b2fd640b4e935e9b867b80ef48aca9a443d7a4f748ecf57bd9bbcde7e32147fc",
+      "example_source_sha256": "b2fd640b4e935e9b867b80ef48aca9a443d7a4f748ecf57bd9bbcde7e32147fc",
+      "kind": "value"
+    },
+    {
+      "module": "telegram_patterns.aiogram",
+      "name": "calendar_keyboard",
+      "import": "from telegram_patterns.aiogram import calendar_keyboard",
+      "recipe": "ref.bot_calendar",
+      "example": "examples/api-reference/python/bot_calendar.py",
+      "limits": "Optional aiogram; markup only. Callback data must be owner/context/revision bound by controller; the booking transaction rechecks availability. Default weekday fallback omits unavailable days. disabled_buttons=True requires explicit host-verified support; no live/device claim.",
+      "intent": "Available-date fallback or native disabled month grid with explicit navigation",
+      "example_sha256": "f96e073461ae88e8f76fcb67fe3ec2b2c0be4492ab30666ac75d35d7f7b64133",
+      "example_source_sha256": "f96e073461ae88e8f76fcb67fe3ec2b2c0be4492ab30666ac75d35d7f7b64133",
+      "kind": "value"
+    },
+    {
+      "module": "telegram_patterns.aiogram",
+      "name": "time_slot_keyboard",
+      "import": "from telegram_patterns.aiogram import time_slot_keyboard",
+      "recipe": "ref.bot_calendar",
+      "example": "examples/api-reference/python/bot_calendar.py",
+      "limits": "Optional aiogram; markup only. Callback data must be owner/context/revision bound by controller; the booking transaction rechecks availability. Default weekday fallback omits unavailable days. disabled_buttons=True requires explicit host-verified support; no live/device claim.",
+      "intent": "Enabled UTC intervals displayed with local offset, native layout/validation",
+      "example_sha256": "f96e073461ae88e8f76fcb67fe3ec2b2c0be4492ab30666ac75d35d7f7b64133",
+      "example_source_sha256": "f96e073461ae88e8f76fcb67fe3ec2b2c0be4492ab30666ac75d35d7f7b64133",
       "kind": "value"
     }
   ],
-  "python_symbols": 97,
+  "python_symbols": 105,
   "typescript_symbols": 41,
-  "recipes": 22,
+  "recipes": 24,
   "additional_entries": [
     "CLI recipes",
     "CLI init",
