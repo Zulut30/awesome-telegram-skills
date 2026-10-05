@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "library_version": "0.20.0",
+  "library_version": "0.21.0",
   "distribution": "local; not published to package registries",
   "packages": {
     "python": {
@@ -598,6 +598,25 @@
         "Codecs/content validation, rights and actual host-observed media kind/dimensions remain host responsibilities",
         "Download is explicit hosted GetFile plus bounded stream, <=20 MB, total deadline and close; no disk or local Bot API path reads",
         "No automatic sending/retry/batching/outbox/delivery guarantee; metadata and SDK objects do not prove live Telegram"
+      ],
+      "maturity": "experimental",
+      "maturity_scope": "All public API symbols in this component; local verification is not a stable 1.0 promise"
+    },
+    {
+      "id": "profiles",
+      "language": "python",
+      "extra": "aiogram",
+      "import": "telegram_patterns.aiogram.ProfileSource, ProfileAuthorizer, UserProfile, ChatProfile, ProfilePhotoSize, ProfilePhotos, BotProfile, BotProfilePatch, ProfileEditIncomplete, user_profile, chat_profile, read_profile_photos, read_bot_profile, update_bot_profile",
+      "intent": "Доступные данные, nullable Premium/permissions, фото и локализованное оформление собственного бота с текущими host правами",
+      "source": "packages/python/src/telegram_patterns/profiles_aiogram.py",
+      "example": "examples/python/profiles_bot.py",
+      "boundaries": [
+        "Immutable selected SDK facts with source/time; unknown remains None and does not authorize an actor",
+        "Explicit photos/getMe/localized reads; private visibility and fallback do not prove absence/override existence",
+        "Own bot only, current host ACL for read and each selected method; no arbitrary account, Business or MTProto write",
+        "None omits, empty string explicitly removes localized text; photo is global, JPG/MPEG4 new bytes only",
+        "Host validates actual photo/video codec/content, policy and input; markers/extension and SDK multipart are not codec/live acceptance",
+        "Partial effects/lost receipts/readback failure require explicit reconciliation; no retry/rollback/CAS/cache/durable transaction guarantee"
       ],
       "maturity": "experimental",
       "maturity_scope": "All public API symbols in this component; local verification is not a stable 1.0 promise"

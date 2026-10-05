@@ -98,7 +98,7 @@ from telegram_patterns import BotSettings, validate_init_data, RecipeCatalog, cr
 assert importlib.util.find_spec('aiogram') is None
 assert Path(telegram_patterns.__file__).is_relative_to(Path(sys.argv[1]))
 assert BotSettings.from_env(environ={'BOT_TOKEN':'100:CORE_FIXTURE'}).token=='100:CORE_FIXTURE'
-assert len(RecipeCatalog().recipes)==305
+assert len(RecipeCatalog().recipes)==306
 assert RecipeCatalog().search('две кнопки')[0].id=='two-columns'
 assert RecipeCatalog().get('two-columns').maturity=='experimental'
 assert RecipeCatalog().get('api.sendPhoto').maturity=='reference'
@@ -195,6 +195,10 @@ print(json.dumps({'core_without_sdk':True,'python':sys.version.split()[0]}))
         if not media['passed'] or media['network'] or not media['session_closed'] or media['uploaded_parts'] != 5 or not all(media[k] for k in ('photo_document_album_edit','caption_entities','explicit_parse_mode_none','bounded_stream_download','private_context_guards','existing_dispatcher_preserved')):
             raise RuntimeError('Installed media composition failed')
         report['media'] = media
+        profiles = json.loads(run('profiles', [str(python_in(sdk)), str(ROOT / 'examples/python/offline_profiles.py')], consumers))
+        if not profiles['passed'] or profiles['network'] or not profiles['session_closed'] or profiles['photo_upload_bytes'] != 634 or not all(profiles[k] for k in ('unknown_fields_preserved', 'profile_photos', 'localized_omission_clear', 'fresh_method_acl', 'new_avatar_upload_removal', 'unknown_edit_reconciliation', 'private_context_guards', 'existing_dispatcher_preserved')):
+            raise RuntimeError('Installed profile composition failed')
+        report['profiles'] = profiles
         report['telegram_catalog'] = json.loads(run('telegram-catalog', [str(python_in(sdk)), str(ROOT / 'scripts/build_telegram_catalog.py'), '--check'], consumers))
         report['recipe_gallery'] = json.loads(run('recipe-gallery', [str(python_in(sdk)), str(ROOT / 'scripts/build_recipe_gallery.py'), '--check'], consumers))
         gallery_command = [str(python_in(sdk)), str(ROOT / 'scripts/verify_gallery_export.py'), '--output', str(consumers / 'gallery-export')]
@@ -229,6 +233,7 @@ print(json.dumps({'core_without_sdk':True,'python':sys.version.split()[0]}))
         run('portable-error-recipe', [str(python_in(core)), str(error_example)], consumers)
         report['portable_keyboard_recipe'] = json.loads(run('portable-keyboard-recipe', [str(python_in(sdk)), str(ROOT / 'scripts/verify_keyboard_recipe.py'), str(copied_skill)], consumers))
         report['portable_dialog_recipe'] = json.loads(run('portable-dialog-recipe', [str(python_in(sdk)), str(ROOT / 'scripts/verify_dialog_recipe.py'), str(copied_skill)], consumers))
+        report['portable_profile_recipe'] = json.loads(run('portable-profile-recipe', [str(python_in(sdk)), str(ROOT / 'scripts/verify_profile_recipe.py'), str(copied_skill)], consumers))
         report['portable_media_recipe'] = json.loads(run('portable-media-recipe', [str(python_in(sdk)), str(ROOT / 'scripts/verify_media_recipe.py'), str(copied_skill)], consumers))
         report['portable_message_recipe'] = json.loads(run('portable-message-recipe', [str(python_in(sdk)), str(ROOT / 'scripts/verify_message_recipe.py'), str(copied_skill)], consumers))
         report['portable_developer_recipe'] = json.loads(run('portable-developer-recipe', [str(python_in(core)), str(ROOT / 'scripts/verify_developer_recipe.py'), str(copied_skill)], consumers))

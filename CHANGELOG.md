@@ -1,5 +1,11 @@
 # Изменения библиотеки компонентов
 
+## 0.21.0
+
+- Добавлены immutable наблюдения пользователя, чата и фотографий профиля: неизвестные optional значения остаются None, источник и время сохраняются.
+- Добавлены свежие локализованные чтения собственного бота и изменения с текущими host правами для каждого метода: omission/clear, новые JPG/MPEG4 аватары, удаление и сверка частичного неизвестного результата.
+- Публичные типы, установленный API-пример, закрытая Dispatcher-композиция, самодостаточные guides и поиск галереи. Локальная experimental поставка; live privacy/codec/permissions и независимое использование принимаются отдельно.
+
 ## 0.20.0
 
 - Добавлены optional aiogram media компоненты: typed byte uploads/same-bot file_id, literal captions/entities, compatible albums, guarded normal/inline replacement и bounded hosted download.

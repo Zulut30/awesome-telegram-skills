@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "library_version": "0.20.0",
+  "library_version": "0.21.0",
   "scope": "Public library exports; ref.* recipes belong to the API reference, not the Telegram method snapshot",
   "groups": [
     {
@@ -473,6 +473,31 @@
           "media_album": "Один native 2..10-item homogeneous/visual album без batching",
           "media_edit": "Exclusive chat/message или inline address и album type guard",
           "download_media": "Явное hosted чтение с actual byte bound, total deadline и stream close"
+        }
+      }
+    },
+    {
+      "id": "bot_profiles",
+      "section": "bot",
+      "title": "Профили и разрешенное оформление собственного бота",
+      "example": "examples/api-reference/python/bot_profiles.py",
+      "limits": "Optional aiogram; immutable selected SDK facts, bool/None distinction and source/time do not authorize a user. Explicit native reads preserve visibility/locale fallback. Own-bot writes require fresh identity and current host per-method ACL; None omits, empty string clears locale, avatar global/new bytes. Host owns codec/content, serialization, caches and reconciliation; sequential writes/readback are not atomic, cancellation/rejected await does not undo effects. No Business/MTProto/arbitrary profile editing or live proof.",
+      "api": {
+        "telegram_patterns.aiogram": {
+          "ProfileSource": "Literal update/getMe — объявленный источник наблюдения, не authorization proof",
+          "ProfileAuthorizer": "Async host ACL(actor_id, bot_id, method) → bool; read и точные setMy*/removeMy* имена",
+          "UserProfile": "Frozen numeric identity, optional text/Premium/capabilities и aware source observation",
+          "ChatProfile": "Frozen выбранные getChat данные, фото/permissions/birthdate и nullable facts",
+          "ProfilePhotoSize": "Frozen bot/user-scoped photo identifiers; as_media только для message reuse",
+          "ProfilePhotos": "Immutable видимая страница, total_count/offset/limit и observation time",
+          "BotProfile": "Fresh getMe/localized texts, optional own-bot ProfilePhotos; не atomic snapshot",
+          "BotProfilePatch": "None omission/empty clear, bounds и новый static JPG/animated MPEG4 upload либо removal",
+          "ProfileEditIncomplete": "UnknownOutcome с safe confirmed prefix и pending phase; требуется сверка",
+          "user_profile": "Копирование User без I/O, nullable flags и ownership snapshot",
+          "chat_profile": "Копирование selected ChatFullInfo без I/O; default permissions не actor role",
+          "read_profile_photos": "Один explicit getUserProfilePhotos, immutable sizes, без отрицательных privacy выводов",
+          "read_bot_profile": "Fresh getMe плюс три locale reads; optional own-bot photos, unrequested None",
+          "update_bot_profile": "Текущий host ACL перед каждым выбранным own-bot методом и fresh readback; без retry/rollback"
         }
       }
     }

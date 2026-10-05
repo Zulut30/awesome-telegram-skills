@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "library_version": "0.20.0",
+  "library_version": "0.21.0",
   "source_snapshot": "2026-10-04",
   "source_hashes": {
     "bot_api": "29f5f25caa18d303f14ce83af5a4df784eb3094c3076cb040a1ad950c157ad44",
@@ -21232,6 +21232,85 @@
       }
     },
     {
+      "id": "demo-profiles",
+      "title": "Профили, фото и локализация бота",
+      "summary": "Nullable user/chat facts, profile photos, localized own-bot edits, current method ACL and explicit unknown reconciliation.",
+      "category": "scenarios",
+      "language": "python",
+      "maturity": "experimental",
+      "keywords": [
+        "бот",
+        "пример",
+        "callback",
+        "меню",
+        "события",
+        "композиция",
+        "бота",
+        "личный",
+        "чат",
+        "профиль",
+        "аватар",
+        "локализация",
+        "описание",
+        "Premium",
+        "unknown",
+        "setMyDescription",
+        "права"
+      ],
+      "code": "\"\"\"Attach profile commands to the existing Dispatcher; host supplies current ACL.\"\"\"\nfrom __future__ import annotations\nimport base64\nfrom aiogram import F, Router\nfrom aiogram.filters import Command\nfrom aiogram.types import Message\nfrom telegram_patterns import MessageBuilder, PermissionDenied, safe_error_report\nfrom telegram_patterns.aiogram import (\n    BotProfilePatch, MediaFile, ProfileAuthorizer, ProfileEditIncomplete,\n    chat_profile, user_profile, read_profile_photos, read_bot_profile, update_bot_profile,\n)\n\n# Trusted 16x16 JPG fixture produced by Windows System.Drawing; not a user upload.\nAVATAR = base64.b64decode('/9j/4AAQSkZJRgABAQEAYABgAAD/2wBDAAMCAgMCAgMDAwMEAwMEBQgFBQQEBQoHBwYIDAoMDAsKCwsNDhIQDQ4RDgsLEBYQERMUFRUVDA8XGBYUGBIUFRT/2wBDAQMEBAUEBQkFBQkUDQsNFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBT/wAARCAAQABADASIAAhEBAxEB/8QAHwAAAQUBAQEBAQEAAAAAAAAAAAECAwQFBgcICQoL/8QAtRAAAgEDAwIEAwUFBAQAAAF9AQIDAAQRBRIhMUEGE1FhByJxFDKBkaEII0KxwRVS0fAkM2JyggkKFhcYGRolJicoKSo0NTY3ODk6Q0RFRkdISUpTVFVWV1hZWmNkZWZnaGlqc3R1dnd4eXqDhIWGh4iJipKTlJWWl5iZmqKjpKWmp6ipqrKztLW2t7i5usLDxMXGx8jJytLT1NXW19jZ2uHi4+Tl5ufo6erx8vP09fb3+Pn6/8QAHwEAAwEBAQEBAQEBAQAAAAAAAAECAwQFBgcICQoL/8QAtREAAgECBAQDBAcFBAQAAQJ3AAECAxEEBSExBhJBUQdhcRMiMoEIFEKRobHBCSMzUvAVYnLRChYkNOEl8RcYGRomJygpKjU2Nzg5OkNERUZHSElKU1RVVldYWVpjZGVmZ2hpanN0dXZ3eHl6goOEhYaHiImKkpOUlZaXmJmaoqOkpaanqKmqsrO0tba3uLm6wsPExcbHyMnK0tPU1dbX2Nna4uPk5ebn6Onq8vP09fb3+Pn6/9oADAMBAAIRAxEAPwDq6KKK/os/Kj//2Q==')\n\n\ndef profile_router(authorize: ProfileAuthorizer) -> Router:\n    router = Router(name='profile-example')\n    router.message.filter(F.chat.type == 'private', F.from_user.is_bot == False,\n                          ~F.message_thread_id, ~F.is_topic_message, ~F.business_connection_id)\n\n    @router.message(Command('profile'))\n    async def own_profile(message: Message) -> None:\n        if message.from_user is None or message.from_user.id != message.chat.id:\n            return\n        observed = user_profile(message.from_user)\n        premium = 'неизвестно' if observed.is_premium is None else ('да' if observed.is_premium else 'нет')\n        try:\n            detail = chat_profile(await message.bot.get_chat(message.chat.id))\n            photos = await read_profile_photos(message.bot, observed.id, limit=1)\n        except Exception as error:\n            await message.answer(safe_error_report(error, operation='read').message, parse_mode=None)\n            return\n        text = MessageBuilder().text('Имя: ').text(observed.first_name).text('\\nPremium: ').text(premium)\n        text = text.text('\\nBio: ').text('неизвестно' if detail.bio is None else detail.bio)\n        # An empty API page never proves absence of a private avatar.\n        text = text.text('\\nДоступных фото: ').text(str(photos.total_count))\n        await message.answer(**text.build().as_kwargs())\n        if photos.photos:\n            await message.answer_photo(photo=photos.photos[0][-1].as_media().as_input(message.bot.id))\n\n    @router.message(Command('bot_profile'))\n    async def own_bot_profile(message: Message) -> None:\n        if message.from_user is None:\n            return\n        if await authorize(message.from_user.id, message.bot.id, 'read') is not True:\n            await message.answer('Недостаточно прав.', parse_mode=None)\n            return\n        observed = await read_bot_profile(message.bot, language_code='ru')\n        text = MessageBuilder().text(observed.name).text('\\n').text(observed.description)\n        await message.answer(**text.build().as_kwargs())\n\n    async def apply(message: Message, patch: BotProfilePatch) -> None:\n        if message.from_user is None:\n            return\n        try:\n            observed = await update_bot_profile(message.bot, patch, actor_id=message.from_user.id,\n                                                authorize=authorize, language_code='ru')\n        except (PermissionDenied, ProfileEditIncomplete) as error:\n            await message.answer(safe_error_report(error, operation='write').message, parse_mode=None)\n            return\n        # Fresh readback is not an atomic/CAS receipt. Host updates its cache from this observation.\n        await message.answer(**MessageBuilder().text('Текущее описание: ').text(observed.description).build().as_kwargs())\n\n    @router.message(Command('configure_bot'))\n    async def configure(message: Message) -> None:\n        await apply(message, BotProfilePatch(name='Бот записи', description='Запись на консультацию',\n                                            short_description='Выберите удобное время',\n                                            photo=MediaFile('photo', AVATAR, filename='avatar.jpg')))\n\n    @router.message(Command('clear_bot_description'))\n    async def clear(message: Message) -> None:\n        await apply(message, BotProfilePatch(description=''))\n\n    @router.message(Command('remove_bot_photo'))\n    async def remove(message: Message) -> None:\n        await apply(message, BotProfilePatch(remove_photo=True))\n\n    return router\n",
+      "verification": "mock",
+      "scope": "Actual synthetic Dispatcher, localized state and SDK new-file multipart; live profile visibility/codec/rights/rendering unconfirmed.",
+      "sources": [
+        "https://core.telegram.org/bots/api"
+      ],
+      "preview": null,
+      "code_sha256": "7ec55d81d4edafdeb84d84542857390d5941edb77575c5606d7a56faa0479479",
+      "tasks": [
+        "profiles"
+      ],
+      "contexts": [
+        "private"
+      ],
+      "sdk": "aiogram",
+      "sdk_version": "3.31.0",
+      "api_version": "bot:10.3",
+      "source_files": [
+        "examples/python/profiles_bot.py",
+        "packages/python/src/telegram_patterns/profiles_aiogram.py",
+        "packages/python/src/telegram_patterns/execution.py",
+        "packages/python/src/telegram_patterns/_offline_recipe.py"
+      ],
+      "check_files": [
+        "examples/python/offline_profiles.py",
+        "packages/python/tests/test_profiles.py"
+      ],
+      "execution": {
+        "kind": "dispatcher",
+        "dependencies": [
+          "aiogram==3.31.0"
+        ],
+        "offline_environment": [],
+        "offline_permissions": [],
+        "offline_data": [
+          "Только поставляемые синтетические данные; реальные IDs и secrets не принимаются."
+        ],
+        "live_environment": [
+          "BOT_TOKEN"
+        ],
+        "live_permissions": [
+          "Прикладная авторизация сервиса; fixture actor не доказывает server ACL."
+        ],
+        "live_data": [
+          "Текущий Dispatcher, реальные actor/chat и сервис приложения",
+          "Проверка объекта, автора и состояния до effect/replay"
+        ],
+        "live_review": "Live executor отсутствует. Перед интеграцией проверить источники, ограничения конкретного метода/контекста, auth и ACL; metadata не подтверждает права.",
+        "effects": [
+          "Synthetic Dispatcher + StubSession; временная fixture, без polling"
+        ]
+      }
+    },
+    {
       "id": "demo-media",
       "title": "Фото, документы, альбомы и скачивание",
       "summary": "Typed media, literal captions, one compatible album, replacement and bounded explicit download; attach to current Dispatcher.",
@@ -21429,7 +21508,7 @@
         "backend"
       ],
       "sdk": "python-core",
-      "sdk_version": "0.20.0",
+      "sdk_version": "0.21.0",
       "api_version": "none",
       "source_files": [
         "examples/python/error_recovery.py",

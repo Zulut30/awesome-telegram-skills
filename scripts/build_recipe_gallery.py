@@ -127,6 +127,7 @@ def build(root: Path = ROOT) -> dict:
         ('selection_bot.py', 'offline_selection.py', 'demo-selection', 'Переключатели, выбор, количество и подтверждение'),
         ('calendar_bot.py', 'offline_calendar.py', 'demo-calendar', 'Календарь и запись на свободное время'),
         ('dialog_fields_bot.py', 'offline_dialog_fields.py', 'demo-dialog-fields', 'Семь типов полей диалога'),
+        ('profiles_bot.py', 'offline_profiles.py', 'demo-profiles', 'Профили, фото и локализация бота'),
         ('media_bot.py', 'offline_media.py', 'demo-media', 'Фото, документы, альбомы и скачивание'),
         ('message_text_bot.py', 'offline_message_text.py', 'demo-message-text', 'Безопасные сообщения и разбиение текста'),
     ):
@@ -171,6 +172,13 @@ def build(root: Path = ROOT) -> dict:
             records[-1]['source_files'].append('packages/python/src/telegram_patterns/media_aiogram.py')
             records[-1]['check_files'].append('packages/python/tests/test_media.py')
             records[-1]['scope'] = 'Actual synthetic Dispatcher, SDK multipart bytes and bounded fixture stream; live upload/rendering/content validation/rights and real download unconfirmed.'
+        if key == 'demo-profiles':
+            records[-1]['summary'] = 'Nullable user/chat facts, profile photos, localized own-bot edits, current method ACL and explicit unknown reconciliation.'
+            records[-1]['tasks'] = ['profiles']
+            records[-1]['keywords'] += ['профиль', 'аватар', 'локализация', 'описание', 'Premium', 'unknown', 'setMyDescription', 'права']
+            records[-1]['source_files'].append('packages/python/src/telegram_patterns/profiles_aiogram.py')
+            records[-1]['check_files'].append('packages/python/tests/test_profiles.py')
+            records[-1]['scope'] = 'Actual synthetic Dispatcher, localized state and SDK new-file multipart; live profile visibility/codec/rights/rendering unconfirmed.'
     recovery_file = root / 'examples/python/error_recovery.py'
     recovery = subprocess.run([sys.executable, str(recovery_file)], capture_output=True, text=True, encoding='utf-8', env=environment, timeout=60)
     if recovery.returncode: raise ValueError('Recovery fixture failed')

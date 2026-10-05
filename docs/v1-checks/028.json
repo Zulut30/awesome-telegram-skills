@@ -1,0 +1,157 @@
+{
+  "roadmap_item": 28,
+  "version": "0.21.0",
+  "checked_date": "2026-10-05",
+  "passed": true,
+  "report": "output/pattern-library-0.21.0/distribution-report.json",
+  "report_sha256": "dc06effe0cc3129aa96731d841754a6d36ac806dbfce845d0a7d2b48aa47aa78",
+  "distribution_stages": 69,
+  "python_tests": {
+    "run": 312,
+    "passed": 311,
+    "skipped": 1
+  },
+  "profile_behavioral_tests": 37,
+  "typescript_tests": 26,
+  "root_tests": 34,
+  "skills_checked": 41,
+  "browser_scope": {
+    "example": 141,
+    "gallery": 862,
+    "export": 862,
+    "starter": 66,
+    "selected_starter": 76,
+    "api_reference": 36
+  },
+  "browser_total": 2043,
+  "first_run_browser_checks": 60,
+  "public_symbols": {
+    "total": 188,
+    "python": 147,
+    "typescript": 41
+  },
+  "component_groups": 39,
+  "recipes": 306,
+  "python_fixtures": 207,
+  "source_check_files": 239,
+  "source_typing_files": 33,
+  "installed_profiles": {
+    "passed": true,
+    "network": false,
+    "session_closed": true,
+    "unknown_fields_preserved": true,
+    "profile_photos": true,
+    "localized_omission_clear": true,
+    "fresh_method_acl": true,
+    "new_avatar_upload_removal": true,
+    "unknown_edit_reconciliation": true,
+    "private_context_guards": true,
+    "existing_dispatcher_preserved": true,
+    "photo_upload_bytes": 634
+  },
+  "first_run_report": "output/v1-quickstart-028-accepted/report.json",
+  "first_run_report_sha256": "bd03e91604ac642191e4b818a84369078a5c308efae30d691583fa0947ff6c94",
+  "first_run_guide_hash": {
+    "method": "UTF-8 normalized-LF text executed by verify_quickstart.py",
+    "sha256": "68fa28e2c24043fa75bf338df4106cdb261b01eee678f510c716492e48fcfb1a",
+    "source_bytes_sha256": "a5463f740ec271bae265712d3d5f985d99f3551c4d84b6be9174db90b8597074"
+  },
+  "artifacts": [
+    {
+      "name": "awesome_telegram_patterns-0.21.0-py3-none-any.whl",
+      "bytes": 240050,
+      "sha256": "f76deda500e76371039277884ea3c62af5c0aa4acd39bcc95322df3d95c87f27"
+    },
+    {
+      "name": "awesome-telegram-patterns-0.21.0.tgz",
+      "bytes": 19530,
+      "sha256": "5148f25053d919c707cd5814ec7d056ae2a78a3d817698bc49cf4640efe193ae"
+    }
+  ],
+  "evidence": {
+    "distribution": "docs/v1-checks/028-distribution.json",
+    "first_run": "docs/v1-checks/028-first-run.json",
+    "portable": "docs/v1-checks/028-portable.json"
+  },
+  "source_and_guide_hashes": {
+    "packages/python/src/telegram_patterns/profiles_aiogram.py": "d60c1f42ad37ce176b0e7179da1c30a205c5ae07d088e4d58cc3e979483e31a6",
+    "packages/python/src/telegram_patterns/aiogram.py": "e13749e4730290c6a25a730abdf75fb964b9878f6cccb1652278a4e2d0e0a609",
+    "packages/python/src/telegram_patterns/_offline_recipe.py": "5f07602bc81f2c35f2360a2ce330f5a94b6b982d16032cd9575fe107418dbedb",
+    "packages/python/tests/test_profiles.py": "c421460c2de207d44754e4a8869232747fcbf6837560465298f6af3b3fc44b0d",
+    "packages/python/tests/test_catalog_cli.py": "725f30cc00a24fcac68e655add70bd7366262102ede976f3381abb8b60789065",
+    "tests/public_types.py": "2289a70a0afa8d348139071da26f755268c05111c5ae97ee7eef148ada9bcdbc",
+    "examples/python/profiles_bot.py": "7ec55d81d4edafdeb84d84542857390d5941edb77575c5606d7a56faa0479479",
+    "examples/python/offline_profiles.py": "8ba7bc6fe53487e958684a5334da99d8592cd0021bd9b1945be1c6205e7412ff",
+    "examples/api-reference/python/bot_profiles.py": "d8a463a0df22f7e231e333904f9aed1dc614a120e973466e6e55393185901571",
+    "examples/api-reference/python/core_recipes.py": "384b06367e8139ff23c50ea2500a8bce2a4318099ea0943baa609030b2bef05e",
+    "docs/profiles.md": "df1345acf0f2e06f0f02f1cb7e4f4903bb7e28d5af8bbcd5d697b8b5c7f18a8a",
+    ".agents/skills/telegram-code-patterns/references/profiles.md": "df1345acf0f2e06f0f02f1cb7e4f4903bb7e28d5af8bbcd5d697b8b5c7f18a8a",
+    ".agents/skills/telegram-profiles/references/profiles.md": "df1345acf0f2e06f0f02f1cb7e4f4903bb7e28d5af8bbcd5d697b8b5c7f18a8a",
+    ".agents/skills/telegram-code-patterns/SKILL.md": "72546d708ad95882dab06001ee0b7408ef872c371192adb60b7ee23b348d6b17",
+    ".agents/skills/telegram-profiles/SKILL.md": "25e7469374a5b4b23447a9986c620f8e9bb009aadaecbe62282f15c0985f57c8",
+    ".agents/skills/telegram-profiles/references/profile-access.md": "9971d50e65f3aae7bb4c74306d35cb7f7f8800cbdec72ebaed174006a7e160f3",
+    "scripts/verify_profile_recipe.py": "ea3da1b849a3651d87f24d14fe7b40b953edcdabe8bce200b9a9cc46eacfeb27",
+    "scripts/build_recipe_gallery.py": "01922489d92d3e63fd2fa2e208e1627c4830cab177fffff96e51b907be73a6fc",
+    "scripts/verify_pattern_packages.py": "c7cd8d15968e5af1408aa5110182b63694fea1eb00a2412f6fcbae289395d7db",
+    "scripts/verify_gallery_export.py": "a6e006dc815fa8331f6c5c957e138d3ea6a2548d1fdb29aa59120a1e9283e2b7",
+    "scripts/verify_recipe_execution.py": "a024ca064dc34377bc2bfc94bb0741548ac904f058c57d97d561aa4d68d66258",
+    "tests/gallery-browser.mjs": "6d5c71bb6c4a0dc2d8e9f0c09aefd9e35fbc698e67c6070c62b93fdd21829506",
+    "docs/quickstart.md": "a5463f740ec271bae265712d3d5f985d99f3551c4d84b6be9174db90b8597074",
+    ".agents/skills/telegram-code-patterns/references/quickstart.md": "a5463f740ec271bae265712d3d5f985d99f3551c4d84b6be9174db90b8597074",
+    "packages/python/README.md": "7ab7ca8c613e2c68b9f96525b6e982c25fb962dd8ee2ad80910964f2db659e4e",
+    "catalog/api-reference.json": "3bcdb5e0a529d83ab0df32764ac80c51792f5ecae5338cf04c0b34e6419cb202",
+    "catalog/api-reference-index.json": "002697d83db00338c14af768025cb2b01918c11027a417bf2b63c8b3318813ca",
+    "components.json": "1c9a5110a4f913013aaa3fc75ae0e78801f7fdff46310bb4f40828cad237ea94",
+    "catalog/recipe-gallery.json": "4355b4198e33c81136e0896bf388ebc5c50333dfa5615ed14155f4e183e2111d",
+    "packages/python/src/telegram_patterns/resources/offline/profiles_bot.py.txt": "7ec55d81d4edafdeb84d84542857390d5941edb77575c5606d7a56faa0479479",
+    "packages/python/src/telegram_patterns/resources/offline/offline_profiles.py.txt": "8ba7bc6fe53487e958684a5334da99d8592cd0021bd9b1945be1c6205e7412ff"
+  },
+  "root_log_sha256": "4f3ee1313583897787c498f56ee3ef0eefe181cd27fc3fcd4176b5881ac3da14",
+  "skill_log_sha256": "8807a4a6e3207331f403446a458788ef471faa999c4f11c303833c22e58313a2",
+  "focused_log_sha256": "8f38b822099aee4cf939e5bcdfcc74e5664da435af0b94d953418d3580c02cc0",
+  "repair_history": [
+    {
+      "report": "output/pattern-library-0.21.0-attempt-1/distribution-report.json",
+      "failure": "Installed catalog test retained 21 experimental recipes after the profile composition raised the inventory to 22. Updated the exact expected inventory; repeated full distribution and first-run on matching rebuilt artifacts."
+    }
+  ],
+  "requirement_evidence": {
+    "user_bot_data": [
+      "Immutable selected SDK observations, explicit source and aware UTC time; optional fields preserve None versus False",
+      "Complete SDK optional bot-capability bool fields copied; no Premium, username or default-permission role inference",
+      "Fresh getMe identity matched to host bot; no hidden profile, phone, user-chat history or implicit MTProto access"
+    ],
+    "photos": [
+      "Bounded getUserProfilePhotos page preserves visible total, offset and immutable file snapshots",
+      "Empty offset page does not prove absent or hidden avatar; media reuse carries observed bot scope",
+      "Own-bot set/remove uses new upload bytes, not file_id; photo mutations obtain fresh own-bot photo page for cache observation",
+      "Valid small static JPEG fixture and exact 634 multipart bytes; animated native request timestamp validation"
+    ],
+    "description_localization": [
+      "get/setMyName, Description and ShortDescription with validated default or two-letter locale",
+      "None omits; empty string explicitly removes localized override; nontruncating character limits",
+      "Selected locale readback; fallback does not prove existence of a dedicated locale override"
+    ],
+    "unknown_rights": [
+      "Nullable immutable SDK facts; strict True permission decision from host async authorizer",
+      "Current host read authorization before getMe and fresh method authorization before each write",
+      "Revocation between native methods stops the remaining sequence; readback rights rechecked",
+      "Lost receipt or failed readback exposes confirmed prefix and pending phase, no blind retry/rollback or raw provider text",
+      "Cancellation propagates; host Bot/session/Dispatcher/storage ownership preserved"
+    ],
+    "distribution": [
+      "All 14 optional aiogram symbols exercised in exact installed API reference and positive/negative public consumer types",
+      "Copied standalone full composition executes through actual Dispatcher without source imports/HTTP",
+      "Gallery/export profile intent resolves public source/check links across 14 viewport/theme combinations"
+    ]
+  },
+  "limits": [
+    "Experimental local packages; no stable, production-ready or PyPI/npm publication claim.",
+    "Host owns content/codec validation, ACL policy, serialization/CAS, cache invalidation and retention. Synthetic multipart is not live Telegram codec acceptance.",
+    "Sequential native mutations are not atomic/durable; confirmed prefix may already be applied. Unknown operation requires explicit fresh observation/reconciliation.",
+    "Locale readback may fall back to default; empty visible photos do not establish hidden data or all-photo deletion.",
+    "Profile observation is not a role grant, privacy bypass, arbitrary username lookup or user-account automation.",
+    "SDK/mock/Chrome evidence does not accept live profile rendering/privacy/avatar upload/removal, physical devices, provider settlement or independent usability.",
+    "Original item020 remains pending human/independent AI baseline; applications017–019 retain separate 0.13.0 acceptance."
+  ]
+}

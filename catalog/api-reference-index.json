@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "library_version": "0.20.0",
+  "library_version": "0.21.0",
   "symbols": [
     {
       "module": "telegram_patterns",
@@ -466,8 +466,8 @@
       "example": "examples/api-reference/python/core_recipes.py",
       "limits": "Чтение не исполняет recipe code. Maturity отдельно от verification; SDK/mock не доказывают live/device. Preview — независимая копия. Этот пример ищет существующий cookbook recipe two-columns; ref.* — имена справочника API.",
       "intent": "Literal stable/experimental/reference",
-      "example_sha256": "55605f0479243e0ff31a1e9337416d9b7ecfacf2ba10046a2077546020bf2a86",
-      "example_source_sha256": "0ce82c96822a5477141e42e293c7e89c70a276e39259df7989751fad45f3ff24",
+      "example_sha256": "facc9d5e3e07d02de28db0de23c5eff27c5c932d524f7e80cc38b1abd6cad00d",
+      "example_source_sha256": "384b06367e8139ff23c50ea2500a8bce2a4318099ea0943baa609030b2bef05e",
       "kind": "value"
     },
     {
@@ -478,8 +478,8 @@
       "example": "examples/api-reference/python/core_recipes.py",
       "limits": "Чтение не исполняет recipe code. Maturity отдельно от verification; SDK/mock не доказывают live/device. Preview — независимая копия. Этот пример ищет существующий cookbook recipe two-columns; ref.* — имена справочника API.",
       "intent": "Literal sdk/mock/browser/live/not_run",
-      "example_sha256": "55605f0479243e0ff31a1e9337416d9b7ecfacf2ba10046a2077546020bf2a86",
-      "example_source_sha256": "0ce82c96822a5477141e42e293c7e89c70a276e39259df7989751fad45f3ff24",
+      "example_sha256": "facc9d5e3e07d02de28db0de23c5eff27c5c932d524f7e80cc38b1abd6cad00d",
+      "example_source_sha256": "384b06367e8139ff23c50ea2500a8bce2a4318099ea0943baa609030b2bef05e",
       "kind": "value"
     },
     {
@@ -490,8 +490,8 @@
       "example": "examples/api-reference/python/core_recipes.py",
       "limits": "Чтение не исполняет recipe code. Maturity отдельно от verification; SDK/mock не доказывают live/device. Preview — независимая копия. Этот пример ищет существующий cookbook recipe two-columns; ref.* — имена справочника API.",
       "intent": "Неизменяемая запись и копия preview",
-      "example_sha256": "55605f0479243e0ff31a1e9337416d9b7ecfacf2ba10046a2077546020bf2a86",
-      "example_source_sha256": "0ce82c96822a5477141e42e293c7e89c70a276e39259df7989751fad45f3ff24",
+      "example_sha256": "facc9d5e3e07d02de28db0de23c5eff27c5c932d524f7e80cc38b1abd6cad00d",
+      "example_source_sha256": "384b06367e8139ff23c50ea2500a8bce2a4318099ea0943baa609030b2bef05e",
       "kind": "value"
     },
     {
@@ -502,8 +502,8 @@
       "example": "examples/api-reference/python/core_recipes.py",
       "limits": "Чтение не исполняет recipe code. Maturity отдельно от verification; SDK/mock не доказывают live/device. Preview — независимая копия. Этот пример ищет существующий cookbook recipe two-columns; ref.* — имена справочника API.",
       "intent": "Версия, recipes, get/search с фильтрами",
-      "example_sha256": "55605f0479243e0ff31a1e9337416d9b7ecfacf2ba10046a2077546020bf2a86",
-      "example_source_sha256": "0ce82c96822a5477141e42e293c7e89c70a276e39259df7989751fad45f3ff24",
+      "example_sha256": "facc9d5e3e07d02de28db0de23c5eff27c5c932d524f7e80cc38b1abd6cad00d",
+      "example_source_sha256": "384b06367e8139ff23c50ea2500a8bce2a4318099ea0943baa609030b2bef05e",
       "kind": "value"
     },
     {
@@ -2089,11 +2089,179 @@
       "example_sha256": "f17d76df9fbd7edca66b716c96a8e37aa630130bdc1100dd0fea526b2fe519f2",
       "example_source_sha256": "f17d76df9fbd7edca66b716c96a8e37aa630130bdc1100dd0fea526b2fe519f2",
       "kind": "value"
+    },
+    {
+      "module": "telegram_patterns.aiogram",
+      "name": "ProfileSource",
+      "import": "from telegram_patterns.aiogram import ProfileSource",
+      "recipe": "ref.bot_profiles",
+      "example": "examples/api-reference/python/bot_profiles.py",
+      "limits": "Optional aiogram; immutable selected SDK facts, bool/None distinction and source/time do not authorize a user. Explicit native reads preserve visibility/locale fallback. Own-bot writes require fresh identity and current host per-method ACL; None omits, empty string clears locale, avatar global/new bytes. Host owns codec/content, serialization, caches and reconciliation; sequential writes/readback are not atomic, cancellation/rejected await does not undo effects. No Business/MTProto/arbitrary profile editing or live proof.",
+      "intent": "Literal update/getMe — объявленный источник наблюдения, не authorization proof",
+      "example_sha256": "d8a463a0df22f7e231e333904f9aed1dc614a120e973466e6e55393185901571",
+      "example_source_sha256": "d8a463a0df22f7e231e333904f9aed1dc614a120e973466e6e55393185901571",
+      "kind": "value"
+    },
+    {
+      "module": "telegram_patterns.aiogram",
+      "name": "ProfileAuthorizer",
+      "import": "from telegram_patterns.aiogram import ProfileAuthorizer",
+      "recipe": "ref.bot_profiles",
+      "example": "examples/api-reference/python/bot_profiles.py",
+      "limits": "Optional aiogram; immutable selected SDK facts, bool/None distinction and source/time do not authorize a user. Explicit native reads preserve visibility/locale fallback. Own-bot writes require fresh identity and current host per-method ACL; None omits, empty string clears locale, avatar global/new bytes. Host owns codec/content, serialization, caches and reconciliation; sequential writes/readback are not atomic, cancellation/rejected await does not undo effects. No Business/MTProto/arbitrary profile editing or live proof.",
+      "intent": "Async host ACL(actor_id, bot_id, method) → bool; read и точные setMy*/removeMy* имена",
+      "example_sha256": "d8a463a0df22f7e231e333904f9aed1dc614a120e973466e6e55393185901571",
+      "example_source_sha256": "d8a463a0df22f7e231e333904f9aed1dc614a120e973466e6e55393185901571",
+      "kind": "value"
+    },
+    {
+      "module": "telegram_patterns.aiogram",
+      "name": "UserProfile",
+      "import": "from telegram_patterns.aiogram import UserProfile",
+      "recipe": "ref.bot_profiles",
+      "example": "examples/api-reference/python/bot_profiles.py",
+      "limits": "Optional aiogram; immutable selected SDK facts, bool/None distinction and source/time do not authorize a user. Explicit native reads preserve visibility/locale fallback. Own-bot writes require fresh identity and current host per-method ACL; None omits, empty string clears locale, avatar global/new bytes. Host owns codec/content, serialization, caches and reconciliation; sequential writes/readback are not atomic, cancellation/rejected await does not undo effects. No Business/MTProto/arbitrary profile editing or live proof.",
+      "intent": "Frozen numeric identity, optional text/Premium/capabilities и aware source observation",
+      "example_sha256": "d8a463a0df22f7e231e333904f9aed1dc614a120e973466e6e55393185901571",
+      "example_source_sha256": "d8a463a0df22f7e231e333904f9aed1dc614a120e973466e6e55393185901571",
+      "kind": "value"
+    },
+    {
+      "module": "telegram_patterns.aiogram",
+      "name": "ChatProfile",
+      "import": "from telegram_patterns.aiogram import ChatProfile",
+      "recipe": "ref.bot_profiles",
+      "example": "examples/api-reference/python/bot_profiles.py",
+      "limits": "Optional aiogram; immutable selected SDK facts, bool/None distinction and source/time do not authorize a user. Explicit native reads preserve visibility/locale fallback. Own-bot writes require fresh identity and current host per-method ACL; None omits, empty string clears locale, avatar global/new bytes. Host owns codec/content, serialization, caches and reconciliation; sequential writes/readback are not atomic, cancellation/rejected await does not undo effects. No Business/MTProto/arbitrary profile editing or live proof.",
+      "intent": "Frozen выбранные getChat данные, фото/permissions/birthdate и nullable facts",
+      "example_sha256": "d8a463a0df22f7e231e333904f9aed1dc614a120e973466e6e55393185901571",
+      "example_source_sha256": "d8a463a0df22f7e231e333904f9aed1dc614a120e973466e6e55393185901571",
+      "kind": "value"
+    },
+    {
+      "module": "telegram_patterns.aiogram",
+      "name": "ProfilePhotoSize",
+      "import": "from telegram_patterns.aiogram import ProfilePhotoSize",
+      "recipe": "ref.bot_profiles",
+      "example": "examples/api-reference/python/bot_profiles.py",
+      "limits": "Optional aiogram; immutable selected SDK facts, bool/None distinction and source/time do not authorize a user. Explicit native reads preserve visibility/locale fallback. Own-bot writes require fresh identity and current host per-method ACL; None omits, empty string clears locale, avatar global/new bytes. Host owns codec/content, serialization, caches and reconciliation; sequential writes/readback are not atomic, cancellation/rejected await does not undo effects. No Business/MTProto/arbitrary profile editing or live proof.",
+      "intent": "Frozen bot/user-scoped photo identifiers; as_media только для message reuse",
+      "example_sha256": "d8a463a0df22f7e231e333904f9aed1dc614a120e973466e6e55393185901571",
+      "example_source_sha256": "d8a463a0df22f7e231e333904f9aed1dc614a120e973466e6e55393185901571",
+      "kind": "value"
+    },
+    {
+      "module": "telegram_patterns.aiogram",
+      "name": "ProfilePhotos",
+      "import": "from telegram_patterns.aiogram import ProfilePhotos",
+      "recipe": "ref.bot_profiles",
+      "example": "examples/api-reference/python/bot_profiles.py",
+      "limits": "Optional aiogram; immutable selected SDK facts, bool/None distinction and source/time do not authorize a user. Explicit native reads preserve visibility/locale fallback. Own-bot writes require fresh identity and current host per-method ACL; None omits, empty string clears locale, avatar global/new bytes. Host owns codec/content, serialization, caches and reconciliation; sequential writes/readback are not atomic, cancellation/rejected await does not undo effects. No Business/MTProto/arbitrary profile editing or live proof.",
+      "intent": "Immutable видимая страница, total_count/offset/limit и observation time",
+      "example_sha256": "d8a463a0df22f7e231e333904f9aed1dc614a120e973466e6e55393185901571",
+      "example_source_sha256": "d8a463a0df22f7e231e333904f9aed1dc614a120e973466e6e55393185901571",
+      "kind": "value"
+    },
+    {
+      "module": "telegram_patterns.aiogram",
+      "name": "BotProfile",
+      "import": "from telegram_patterns.aiogram import BotProfile",
+      "recipe": "ref.bot_profiles",
+      "example": "examples/api-reference/python/bot_profiles.py",
+      "limits": "Optional aiogram; immutable selected SDK facts, bool/None distinction and source/time do not authorize a user. Explicit native reads preserve visibility/locale fallback. Own-bot writes require fresh identity and current host per-method ACL; None omits, empty string clears locale, avatar global/new bytes. Host owns codec/content, serialization, caches and reconciliation; sequential writes/readback are not atomic, cancellation/rejected await does not undo effects. No Business/MTProto/arbitrary profile editing or live proof.",
+      "intent": "Fresh getMe/localized texts, optional own-bot ProfilePhotos; не atomic snapshot",
+      "example_sha256": "d8a463a0df22f7e231e333904f9aed1dc614a120e973466e6e55393185901571",
+      "example_source_sha256": "d8a463a0df22f7e231e333904f9aed1dc614a120e973466e6e55393185901571",
+      "kind": "value"
+    },
+    {
+      "module": "telegram_patterns.aiogram",
+      "name": "BotProfilePatch",
+      "import": "from telegram_patterns.aiogram import BotProfilePatch",
+      "recipe": "ref.bot_profiles",
+      "example": "examples/api-reference/python/bot_profiles.py",
+      "limits": "Optional aiogram; immutable selected SDK facts, bool/None distinction and source/time do not authorize a user. Explicit native reads preserve visibility/locale fallback. Own-bot writes require fresh identity and current host per-method ACL; None omits, empty string clears locale, avatar global/new bytes. Host owns codec/content, serialization, caches and reconciliation; sequential writes/readback are not atomic, cancellation/rejected await does not undo effects. No Business/MTProto/arbitrary profile editing or live proof.",
+      "intent": "None omission/empty clear, bounds и новый static JPG/animated MPEG4 upload либо removal",
+      "example_sha256": "d8a463a0df22f7e231e333904f9aed1dc614a120e973466e6e55393185901571",
+      "example_source_sha256": "d8a463a0df22f7e231e333904f9aed1dc614a120e973466e6e55393185901571",
+      "kind": "value"
+    },
+    {
+      "module": "telegram_patterns.aiogram",
+      "name": "ProfileEditIncomplete",
+      "import": "from telegram_patterns.aiogram import ProfileEditIncomplete",
+      "recipe": "ref.bot_profiles",
+      "example": "examples/api-reference/python/bot_profiles.py",
+      "limits": "Optional aiogram; immutable selected SDK facts, bool/None distinction and source/time do not authorize a user. Explicit native reads preserve visibility/locale fallback. Own-bot writes require fresh identity and current host per-method ACL; None omits, empty string clears locale, avatar global/new bytes. Host owns codec/content, serialization, caches and reconciliation; sequential writes/readback are not atomic, cancellation/rejected await does not undo effects. No Business/MTProto/arbitrary profile editing or live proof.",
+      "intent": "UnknownOutcome с safe confirmed prefix и pending phase; требуется сверка",
+      "example_sha256": "d8a463a0df22f7e231e333904f9aed1dc614a120e973466e6e55393185901571",
+      "example_source_sha256": "d8a463a0df22f7e231e333904f9aed1dc614a120e973466e6e55393185901571",
+      "kind": "value"
+    },
+    {
+      "module": "telegram_patterns.aiogram",
+      "name": "user_profile",
+      "import": "from telegram_patterns.aiogram import user_profile",
+      "recipe": "ref.bot_profiles",
+      "example": "examples/api-reference/python/bot_profiles.py",
+      "limits": "Optional aiogram; immutable selected SDK facts, bool/None distinction and source/time do not authorize a user. Explicit native reads preserve visibility/locale fallback. Own-bot writes require fresh identity and current host per-method ACL; None omits, empty string clears locale, avatar global/new bytes. Host owns codec/content, serialization, caches and reconciliation; sequential writes/readback are not atomic, cancellation/rejected await does not undo effects. No Business/MTProto/arbitrary profile editing or live proof.",
+      "intent": "Копирование User без I/O, nullable flags и ownership snapshot",
+      "example_sha256": "d8a463a0df22f7e231e333904f9aed1dc614a120e973466e6e55393185901571",
+      "example_source_sha256": "d8a463a0df22f7e231e333904f9aed1dc614a120e973466e6e55393185901571",
+      "kind": "value"
+    },
+    {
+      "module": "telegram_patterns.aiogram",
+      "name": "chat_profile",
+      "import": "from telegram_patterns.aiogram import chat_profile",
+      "recipe": "ref.bot_profiles",
+      "example": "examples/api-reference/python/bot_profiles.py",
+      "limits": "Optional aiogram; immutable selected SDK facts, bool/None distinction and source/time do not authorize a user. Explicit native reads preserve visibility/locale fallback. Own-bot writes require fresh identity and current host per-method ACL; None omits, empty string clears locale, avatar global/new bytes. Host owns codec/content, serialization, caches and reconciliation; sequential writes/readback are not atomic, cancellation/rejected await does not undo effects. No Business/MTProto/arbitrary profile editing or live proof.",
+      "intent": "Копирование selected ChatFullInfo без I/O; default permissions не actor role",
+      "example_sha256": "d8a463a0df22f7e231e333904f9aed1dc614a120e973466e6e55393185901571",
+      "example_source_sha256": "d8a463a0df22f7e231e333904f9aed1dc614a120e973466e6e55393185901571",
+      "kind": "value"
+    },
+    {
+      "module": "telegram_patterns.aiogram",
+      "name": "read_profile_photos",
+      "import": "from telegram_patterns.aiogram import read_profile_photos",
+      "recipe": "ref.bot_profiles",
+      "example": "examples/api-reference/python/bot_profiles.py",
+      "limits": "Optional aiogram; immutable selected SDK facts, bool/None distinction and source/time do not authorize a user. Explicit native reads preserve visibility/locale fallback. Own-bot writes require fresh identity and current host per-method ACL; None omits, empty string clears locale, avatar global/new bytes. Host owns codec/content, serialization, caches and reconciliation; sequential writes/readback are not atomic, cancellation/rejected await does not undo effects. No Business/MTProto/arbitrary profile editing or live proof.",
+      "intent": "Один explicit getUserProfilePhotos, immutable sizes, без отрицательных privacy выводов",
+      "example_sha256": "d8a463a0df22f7e231e333904f9aed1dc614a120e973466e6e55393185901571",
+      "example_source_sha256": "d8a463a0df22f7e231e333904f9aed1dc614a120e973466e6e55393185901571",
+      "kind": "value"
+    },
+    {
+      "module": "telegram_patterns.aiogram",
+      "name": "read_bot_profile",
+      "import": "from telegram_patterns.aiogram import read_bot_profile",
+      "recipe": "ref.bot_profiles",
+      "example": "examples/api-reference/python/bot_profiles.py",
+      "limits": "Optional aiogram; immutable selected SDK facts, bool/None distinction and source/time do not authorize a user. Explicit native reads preserve visibility/locale fallback. Own-bot writes require fresh identity and current host per-method ACL; None omits, empty string clears locale, avatar global/new bytes. Host owns codec/content, serialization, caches and reconciliation; sequential writes/readback are not atomic, cancellation/rejected await does not undo effects. No Business/MTProto/arbitrary profile editing or live proof.",
+      "intent": "Fresh getMe плюс три locale reads; optional own-bot photos, unrequested None",
+      "example_sha256": "d8a463a0df22f7e231e333904f9aed1dc614a120e973466e6e55393185901571",
+      "example_source_sha256": "d8a463a0df22f7e231e333904f9aed1dc614a120e973466e6e55393185901571",
+      "kind": "value"
+    },
+    {
+      "module": "telegram_patterns.aiogram",
+      "name": "update_bot_profile",
+      "import": "from telegram_patterns.aiogram import update_bot_profile",
+      "recipe": "ref.bot_profiles",
+      "example": "examples/api-reference/python/bot_profiles.py",
+      "limits": "Optional aiogram; immutable selected SDK facts, bool/None distinction and source/time do not authorize a user. Explicit native reads preserve visibility/locale fallback. Own-bot writes require fresh identity and current host per-method ACL; None omits, empty string clears locale, avatar global/new bytes. Host owns codec/content, serialization, caches and reconciliation; sequential writes/readback are not atomic, cancellation/rejected await does not undo effects. No Business/MTProto/arbitrary profile editing or live proof.",
+      "intent": "Текущий host ACL перед каждым выбранным own-bot методом и fresh readback; без retry/rollback",
+      "example_sha256": "d8a463a0df22f7e231e333904f9aed1dc614a120e973466e6e55393185901571",
+      "example_source_sha256": "d8a463a0df22f7e231e333904f9aed1dc614a120e973466e6e55393185901571",
+      "kind": "value"
     }
   ],
-  "python_symbols": 133,
+  "python_symbols": 147,
   "typescript_symbols": 41,
-  "recipes": 27,
+  "recipes": 28,
   "additional_entries": [
     "CLI recipes",
     "CLI init",

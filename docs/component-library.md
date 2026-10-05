@@ -1,6 +1,6 @@
 # Общая библиотека компонентов
 
-Текущая локальная поставка 0.20.0: 38 групп компонентов, 174 публичных Python/TypeScript-символа и 305 рецептов. 206 Python fixtures имеют закрытый executor, 99 native references требуют host/аргументов. [Медиа](media.md) дает typed bytes/file_id, literal captions, compatible album, edit и bounded hosted stream. [Приемка 027](v1-checks/027.json) привязана к wheel/tarball; historical reports сохраняют свои версии.
+Текущая локальная поставка 0.21.0: 39 групп компонентов, 188 публичных Python/TypeScript-символов и 306 рецептов. 207 проверочных Python-сценариев имеют самостоятельный offline-запуск, 99 примеров native API требуют окружения приложения и аргументов. [Профили](profiles.md) дают доступные данные и фото с сохранением неизвестных значений, локализацию и проверку текущих прав собственного бота. [Приемка 028](v1-checks/028.json) привязана к wheel/tarball; исторические отчеты сохраняют свои версии.
 
 [Формы 0.3.0](form-tools-review.md) добавляют поля с проверкой, возврат, отмену и подтверждение со стабильным ID заявки. Готовый [бот формы](../examples/python/form_bot.py) и [offline-проверка](../examples/python/offline_form.py) используют один create_app; backend сохраняет заявку и replay result в SQLite.
 
@@ -110,3 +110,5 @@ Playwright — только dev dependency проверки, не runtime при
 Составные элементы выбора: `SelectionOption/Spec/Context/State/Result/SelectionMenu` из SDK-free root и `selection_keyboard/selection_router` из optional aiogram. [Server rules и confirmation](selection-controls.md) описывают границы локального намерения и бизнес-транзакции host.
 
 [Медиа 0.20.0](media.md): requests/bytes/file_id/album/edit и bounded explicit read; optional aiogram, без нового обязательного сервиса. Полная приемка — [027](v1-checks/027.json).
+
+[Профили 0.21.0](profiles.md): immutable nullable facts/photos, локализация и current method ACL собственного бота; полная приемка — [028](v1-checks/028.json).

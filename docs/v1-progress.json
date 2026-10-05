@@ -615,10 +615,38 @@
       "id": 28,
       "title": "Оформить работу с профилями",
       "requirement": "Реализовать доступные данные пользователя/бота, фото, описание и локализацию; неизвестное поле не превращается в `false`, права на изменение проверяются.",
-      "status": "pending",
-      "commit_subject": null,
-      "artifacts": [],
-      "evidence": []
+      "status": "done",
+      "commit_subject": "roadmap(028): add scoped profile observations and authorized localized edits",
+      "artifacts": [
+        "packages/python/src/telegram_patterns/profiles_aiogram.py",
+        "packages/python/src/telegram_patterns/aiogram.py",
+        "packages/python/src/telegram_patterns/_offline_recipe.py",
+        "packages/python/tests/test_profiles.py",
+        "examples/python/profiles_bot.py",
+        "examples/python/offline_profiles.py",
+        "examples/api-reference/python/bot_profiles.py",
+        "examples/api-reference/python/core_recipes.py",
+        "docs/profiles.md",
+        ".agents/skills/telegram-code-patterns/references/profiles.md",
+        ".agents/skills/telegram-profiles/references/profiles.md",
+        ".agents/skills/telegram-code-patterns/SKILL.md",
+        ".agents/skills/telegram-profiles/SKILL.md",
+        ".agents/skills/telegram-profiles/references/profile-access.md",
+        "scripts/verify_profile_recipe.py",
+        "docs/v1-checks/028.json",
+        "docs/v1-checks/028-distribution.json",
+        "docs/v1-checks/028-first-run.json",
+        "docs/v1-checks/028-portable.json"
+      ],
+      "evidence": [
+        "docs/v1-checks/028.json",
+        "0.21.0 exact local wheel/tarball: 69 stages, 311 Python passed + 1 Windows skip, 26 TypeScript, 2043 browser checks + 60 first-run",
+        "37 meaningful profile/SDK/rights/Dispatcher tests; nullable immutable observations, localization omission/clear, exact new-avatar multipart and fresh readback",
+        "Fresh host ACL before each native action; lost receipt/partial edit and denied readback stop safely without retry or rollback",
+        "14 optional aiogram exports; 188 total symbols/28 API groups; exact installed example and copied standalone composition pass",
+        "306 recipes/207 Python fixtures/239 linked files; closed installed fixture and profile intent links verified",
+        "Content/codec/ACL/serialization/CAS remain host-owned; no real Telegram, device, settlement or independent-usability acceptance"
+      ]
     },
     {
       "id": 29,

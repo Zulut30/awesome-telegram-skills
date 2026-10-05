@@ -77,3 +77,22 @@ bad_media_kind: MediaKind = 'animation'  # type: ignore[assignment]
 bad_media_source = MediaFile('photo',123,filename='x')  # type: ignore[arg-type]
 bad_media_caption = MediaItem(media_source,'raw markdown')  # type: ignore[arg-type]
 bad_media_request = media_request('raw request',bot_id=100,chat_id=42)  # type: ignore[arg-type]
+
+# Profile snapshots, async current ACL and explicit own-bot patch.
+from telegram_patterns.aiogram import ProfileSource, ProfileAuthorizer, UserProfile, ChatProfile, ProfilePhotoSize, ProfilePhotos, BotProfile, BotProfilePatch, ProfileEditIncomplete, user_profile, chat_profile, read_profile_photos, read_bot_profile, update_bot_profile
+from aiogram.types import User, ChatFullInfo
+profile_source: ProfileSource = 'update'
+profile_user: UserProfile = user_profile(User(id=42,is_bot=False,first_name='Fixture'),source=profile_source)
+async def profile_acl(actor_id: int, bot_id: int, method: str) -> bool:
+    return actor_id==42 and bot_id==100 and method in ('read','setMyDescription')
+profile_authorizer: ProfileAuthorizer = profile_acl
+async def profile_consumer(bot: Bot, native: ChatFullInfo) -> BotProfile:
+    snapshot: ChatProfile = chat_profile(native)
+    page: ProfilePhotos = await read_profile_photos(bot,profile_user.id)
+    current: BotProfile = await read_bot_profile(bot,language_code='ru')
+    return await update_bot_profile(bot,BotProfilePatch(description='New'),actor_id=42,authorize=profile_authorizer,language_code='ru')
+profile_size = ProfilePhotoSize(100,42,'opaque','unique',100,100)
+profile_incomplete = ProfileEditIncomplete(('setMyName',),'setMyDescription')
+bad_profile_source: ProfileSource = 'MTProto'  # type: ignore[assignment]
+bad_profile_patch = BotProfilePatch(description=False)  # type: ignore[arg-type]
+bad_profile_acl: ProfileAuthorizer = lambda actor, bot_id, method: True  # type: ignore[assignment,return-value]

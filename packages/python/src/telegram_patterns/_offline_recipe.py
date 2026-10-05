@@ -24,6 +24,7 @@ _FIXTURES = {
     'demo-dialog-fields': ('dialog_fields_bot.py', 'offline_dialog_fields.py'),
     'demo-message-text': ('message_text_bot.py', 'offline_message_text.py'),
     'demo-media': ('media_bot.py', 'offline_media.py'),
+    'demo-profiles': ('profiles_bot.py', 'offline_profiles.py'),
     'demo-recovery': ('error_recovery.py',),
 }
 _ATTEMPTS = [0]
@@ -140,6 +141,9 @@ def _execute(recipe_id: str) -> dict:
             if recipe_id == 'demo-media':
                 assert evidence['uploaded_parts'] == 5 and all(evidence[k] for k in ('photo_document_album_edit','caption_entities','explicit_parse_mode_none','bounded_stream_download','private_context_guards','existing_dispatcher_preserved'))
                 checks.extend(('photo-document-album-edit','literal-caption-default-override','bounded-content-stream'))
+            if recipe_id == 'demo-profiles':
+                assert evidence['photo_upload_bytes'] == 634 and all(evidence[k] for k in ('unknown_fields_preserved', 'profile_photos', 'localized_omission_clear', 'fresh_method_acl', 'new_avatar_upload_removal', 'unknown_edit_reconciliation', 'private_context_guards', 'existing_dispatcher_preserved'))
+                checks.extend(('nullable-profile-observations', 'own-bot-per-method-acl', 'localized-omission-clear', 'new-avatar-upload-removal', 'explicit-unknown-edit-reconciliation'))
         else:
             assert evidence['effect_count'] == 1 and evidence['replayed'] is True
             checks.extend(('sqlite-one-effect', 'same-key-replay'))

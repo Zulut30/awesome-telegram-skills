@@ -1,4 +1,4 @@
-# Справочник API 0.20.0
+# Справочник API 0.21.0
 
 Публичные imports, самостоятельные минимальные композиции и границы каждого символа. Все группы experimental. Рецепты ref.* принадлежат этому справочнику; cookbook RecipeCatalog отдельно содержит Telegram requests/layouts. Исполненные fixtures не доказывают live/device/provider acceptance.
 
@@ -186,6 +186,20 @@
 | `media_album` | `from telegram_patterns.aiogram import media_album` | [ref.bot_media](api-reference-bot.md#ref-bot_media) | Один native 2..10-item homogeneous/visual album без batching |
 | `media_edit` | `from telegram_patterns.aiogram import media_edit` | [ref.bot_media](api-reference-bot.md#ref-bot_media) | Exclusive chat/message или inline address и album type guard |
 | `download_media` | `from telegram_patterns.aiogram import download_media` | [ref.bot_media](api-reference-bot.md#ref-bot_media) | Явное hosted чтение с actual byte bound, total deadline и stream close |
+| `ProfileSource` | `from telegram_patterns.aiogram import ProfileSource` | [ref.bot_profiles](api-reference-bot.md#ref-bot_profiles) | Literal update/getMe — объявленный источник наблюдения, не authorization proof |
+| `ProfileAuthorizer` | `from telegram_patterns.aiogram import ProfileAuthorizer` | [ref.bot_profiles](api-reference-bot.md#ref-bot_profiles) | Async host ACL(actor_id, bot_id, method) → bool; read и точные setMy*/removeMy* имена |
+| `UserProfile` | `from telegram_patterns.aiogram import UserProfile` | [ref.bot_profiles](api-reference-bot.md#ref-bot_profiles) | Frozen numeric identity, optional text/Premium/capabilities и aware source observation |
+| `ChatProfile` | `from telegram_patterns.aiogram import ChatProfile` | [ref.bot_profiles](api-reference-bot.md#ref-bot_profiles) | Frozen выбранные getChat данные, фото/permissions/birthdate и nullable facts |
+| `ProfilePhotoSize` | `from telegram_patterns.aiogram import ProfilePhotoSize` | [ref.bot_profiles](api-reference-bot.md#ref-bot_profiles) | Frozen bot/user-scoped photo identifiers; as_media только для message reuse |
+| `ProfilePhotos` | `from telegram_patterns.aiogram import ProfilePhotos` | [ref.bot_profiles](api-reference-bot.md#ref-bot_profiles) | Immutable видимая страница, total_count/offset/limit и observation time |
+| `BotProfile` | `from telegram_patterns.aiogram import BotProfile` | [ref.bot_profiles](api-reference-bot.md#ref-bot_profiles) | Fresh getMe/localized texts, optional own-bot ProfilePhotos; не atomic snapshot |
+| `BotProfilePatch` | `from telegram_patterns.aiogram import BotProfilePatch` | [ref.bot_profiles](api-reference-bot.md#ref-bot_profiles) | None omission/empty clear, bounds и новый static JPG/animated MPEG4 upload либо removal |
+| `ProfileEditIncomplete` | `from telegram_patterns.aiogram import ProfileEditIncomplete` | [ref.bot_profiles](api-reference-bot.md#ref-bot_profiles) | UnknownOutcome с safe confirmed prefix и pending phase; требуется сверка |
+| `user_profile` | `from telegram_patterns.aiogram import user_profile` | [ref.bot_profiles](api-reference-bot.md#ref-bot_profiles) | Копирование User без I/O, nullable flags и ownership snapshot |
+| `chat_profile` | `from telegram_patterns.aiogram import chat_profile` | [ref.bot_profiles](api-reference-bot.md#ref-bot_profiles) | Копирование selected ChatFullInfo без I/O; default permissions не actor role |
+| `read_profile_photos` | `from telegram_patterns.aiogram import read_profile_photos` | [ref.bot_profiles](api-reference-bot.md#ref-bot_profiles) | Один explicit getUserProfilePhotos, immutable sizes, без отрицательных privacy выводов |
+| `read_bot_profile` | `from telegram_patterns.aiogram import read_bot_profile` | [ref.bot_profiles](api-reference-bot.md#ref-bot_profiles) | Fresh getMe плюс три locale reads; optional own-bot photos, unrequested None |
+| `update_bot_profile` | `from telegram_patterns.aiogram import update_bot_profile` | [ref.bot_profiles](api-reference-bot.md#ref-bot_profiles) | Текущий host ACL перед каждым выбранным own-bot методом и fresh readback; без retry/rollback |
 
 ## CLI и CSS
 
