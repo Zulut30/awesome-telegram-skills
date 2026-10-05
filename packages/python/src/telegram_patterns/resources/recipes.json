@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "library_version": "0.22.0",
+  "library_version": "0.23.0",
   "source_snapshot": "2026-10-04",
   "source_hashes": {
     "bot_api": "29f5f25caa18d303f14ce83af5a4df784eb3094c3076cb040a1ad950c157ad44",
@@ -21394,6 +21394,97 @@
       }
     },
     {
+      "id": "demo-platform",
+      "title": "Темы, реакции, заявки и специальные операции",
+      "summary": "Семь семейств: native rights, host ACL/budget/intent, scoped events и explicit unknown reconciliation",
+      "category": "scenarios",
+      "language": "python",
+      "maturity": "experimental",
+      "keywords": [
+        "бот",
+        "пример",
+        "callback",
+        "меню",
+        "события",
+        "композиция",
+        "бота",
+        "личный",
+        "чат",
+        "темы",
+        "реакции",
+        "заявки",
+        "Business",
+        "stories",
+        "gifts",
+        "managed",
+        "Stars",
+        "права",
+        "receipt"
+      ],
+      "code": "\"\"\"Host-owned SQLite intents and native platform composition; no live startup.\"\"\"\nfrom __future__ import annotations\n\nfrom dataclasses import replace\nimport sqlite3\nfrom typing import Awaitable, Callable\n\nfrom aiogram import F, Router\nfrom aiogram.filters import Command\nfrom aiogram.types import Message\nfrom telegram_patterns import ConflictFailure, PermissionDenied, safe_error_report\nfrom telegram_patterns.aiogram import (PlatformAction, PlatformHooks, PlatformLookup, PlatformObserver,\n    PlatformPermit, PlatformReceipt, PlatformResult, execute_platform_action, platform_events_router)\n\nPolicy = Callable[[PlatformAction], Awaitable[PlatformPermit]]\nResolve = Callable[[Message], Awaitable[PlatformAction | None]]\nResultSink = Callable[[PlatformAction, PlatformResult], Awaitable[None]]\n\n\nclass PlatformJournal:\n    \"\"\"Example host storage. ACL/revision/budget are authoritative SQL rows.\n\n    Only the host provisions actors and budgets. Native eligibility, message/gift\n    ownership, media and child bindings come from its current policy callback.\n    A sending intent recovered after crash is unknown; it is never auto-retried.\n    This small synchronous file-SQLite example is not a distributed job queue.\n    \"\"\"\n    def __init__(self, connection: sqlite3.Connection, policy: Policy) -> None:\n        if connection.in_transaction:\n            raise ConflictFailure('Host must finish its transaction before initializing the journal')\n        self.connection, self.policy = connection, policy\n        connection.executescript('''\n          CREATE TABLE IF NOT EXISTS platform_actors (\n            bot_id INTEGER, actor_id INTEGER, revision INTEGER, enabled INTEGER,\n            PRIMARY KEY(bot_id, actor_id));\n          CREATE TABLE IF NOT EXISTS platform_budgets (\n            bot_id INTEGER, actor_id INTEGER, remaining INTEGER CHECK(remaining >= 0),\n            PRIMARY KEY(bot_id, actor_id));\n          CREATE TABLE IF NOT EXISTS platform_intents (\n            bot_id INTEGER, operation_id TEXT, actor_id INTEGER, fingerprint TEXT,\n            method TEXT, status TEXT, result_id INTEGER,\n            PRIMARY KEY(bot_id, operation_id));\n        ''')\n\n    def _allowed(self, action: PlatformAction) -> bool:\n        row = self.connection.execute('SELECT revision,enabled FROM platform_actors WHERE bot_id=? AND actor_id=?',\n            (action.scope.bot_id, action.scope.actor_id)).fetchone()\n        return row == (action.scope.revision, 1)\n\n    async def authorize(self, action: PlatformAction) -> PlatformPermit:\n        permit = await self.policy(action)\n        return replace(permit, allowed=permit.allowed and self._allowed(action))\n\n    async def claim(self, action: PlatformAction, permit: PlatformPermit) -> bool:\n        db, scope = self.connection, action.scope\n        if db.in_transaction: raise ConflictFailure('Host must end its transaction before claiming an external intent')\n        db.execute('BEGIN IMMEDIATE')\n        try:\n            if not self._allowed(action):\n                raise PermissionDenied('Current host ACL/revision changed before claim')\n            existing = db.execute('SELECT fingerprint FROM platform_intents WHERE bot_id=? AND operation_id=?',\n                (scope.bot_id, scope.operation_id)).fetchone()\n            if existing is not None:\n                db.rollback()\n                return False\n            if action.contract.financial:\n                cost = permit.star_cost\n                if cost is None or permit.max_stars is None or not permit.financial_authorized or cost > permit.max_stars:\n                    raise PermissionDenied('No current financial authorization')\n                result = db.execute('UPDATE platform_budgets SET remaining=remaining-? WHERE bot_id=? AND actor_id=? AND remaining>=?',\n                                    (cost, scope.bot_id, scope.actor_id, cost))\n                if result.rowcount != 1: raise PermissionDenied('Atomic host budget is unavailable')\n            db.execute('INSERT INTO platform_intents VALUES (?,?,?,?,?,?,NULL)',\n                       (scope.bot_id, scope.operation_id, scope.actor_id, action.fingerprint, action.contract.method, 'sending'))\n            db.commit()\n            return True\n        except BaseException:\n            db.rollback()\n            raise\n\n    async def record(self, action: PlatformAction, receipt: PlatformReceipt) -> None:\n        if self.connection.in_transaction:\n            raise ConflictFailure('Host must finish its transaction before recording a native receipt')\n        if (receipt.operation_id,receipt.fingerprint,receipt.method) != (action.scope.operation_id,action.fingerprint,action.contract.method):\n            raise ConflictFailure('Receipt does not match its claimed intent')\n        with self.connection:\n            result = self.connection.execute('UPDATE platform_intents SET status=?,result_id=? WHERE bot_id=? AND operation_id=? AND fingerprint=? AND status=?',\n                (receipt.outcome,receipt.result_id,action.scope.bot_id,action.scope.operation_id,action.fingerprint,'sending'))\n            if result.rowcount != 1: raise ConflictFailure('Receipt requires the original sending intent')\n\n\ndef platform_router(resolve: Resolve, hooks: PlatformHooks, lookup: PlatformLookup, observe: PlatformObserver,\n                    on_result: ResultSink) -> Router:\n    \"\"\"Mount into the current Dispatcher; host resolves configured targets and consent.\"\"\"\n    router = Router(name='platform-composition')\n    commands = Router(name='platform-commands')\n    commands.message.filter(F.chat.type == 'private', F.from_user.is_bot == False)\n\n    @commands.message(Command('topic','reaction','join','business','story','gift','managed'))\n    async def handle(message: Message) -> None:\n        if message.from_user is None or message.bot is None: return\n        action = await resolve(message)\n        if action is None: return\n        try:\n            if (action.scope.bot_id,action.scope.actor_id) != (message.bot.id,message.from_user.id):\n                raise PermissionDenied('Command actor does not match the host operation')\n            result = await execute_platform_action(message.bot,action,hooks)\n            # The host stores returned secrets explicitly; results never become\n            # command replies. A vault integration belongs to the application.\n            await on_result(action,result)\n            await message.answer('Действие подтверждено.' if result.receipt.outcome=='succeeded' else 'Проверьте состояние действия.',parse_mode=None)\n        except Exception as error:\n            await message.answer(safe_error_report(error,operation='write').message,parse_mode=None)\n\n    router.include_router(commands)\n    router.include_router(platform_events_router(lookup,observe))\n    return router\n",
+      "verification": "mock",
+      "scope": "Actual synthetic SDK/Dispatcher/file SQLite and multipart story serialization; no live rights, real media validation, remote atomic charge, settlement or physical Telegram proof.",
+      "sources": [
+        "https://core.telegram.org/bots/api"
+      ],
+      "preview": null,
+      "code_sha256": "7ffed08038eb727b025c7451086525f94989ccb63e999e50b53072f69d4065ef",
+      "tasks": [
+        "platform"
+      ],
+      "contexts": [
+        "private",
+        "group",
+        "supergroup",
+        "channel",
+        "business"
+      ],
+      "sdk": "aiogram",
+      "sdk_version": "3.31.0",
+      "api_version": "bot:10.3",
+      "source_files": [
+        "examples/python/platform_bot.py",
+        "packages/python/src/telegram_patterns/platform_aiogram.py",
+        "docs/platform-operations.md",
+        "packages/python/src/telegram_patterns/execution.py",
+        "packages/python/src/telegram_patterns/_offline_recipe.py"
+      ],
+      "check_files": [
+        "examples/python/offline_platform.py",
+        "packages/python/tests/test_platform.py",
+        "scripts/verify_platform_recipe.py"
+      ],
+      "execution": {
+        "kind": "dispatcher",
+        "dependencies": [
+          "aiogram==3.31.0"
+        ],
+        "offline_environment": [],
+        "offline_permissions": [],
+        "offline_data": [
+          "Только поставляемые синтетические данные; реальные IDs и secrets не принимаются."
+        ],
+        "live_environment": [
+          "BOT_TOKEN"
+        ],
+        "live_permissions": [
+          "Current host ACL/actor/resource/revision plus fresh native chat membership and method-specific forum/reaction/join rights.",
+          "Current enabled Business owner/connection and exact can_reply/read/delete/profile/story/gift/Stars right; managed parent/child/owner binding.",
+          "Explicit financial consent/current quote/atomic local budget; irreversible actions and unknown outcomes require reconciliation, no retry."
+        ],
+        "live_data": [
+          "Текущий Dispatcher, реальные actor/chat и сервис приложения",
+          "Проверка объекта, автора и состояния до effect/replay",
+          "Stable scoped operation ID, original join receive time, current connection/bindings, real validated story uploads and secure managed-token sink"
+        ],
+        "live_review": "Live executor отсутствует. Перед интеграцией проверить источники, ограничения конкретного метода/контекста, auth и ACL; metadata не подтверждает права.",
+        "effects": [
+          "Synthetic Dispatcher + StubSession; временная fixture, без polling",
+          "Host-owned file SQLite intent/actor/budget example; fixture temp files cleaned after completion"
+        ]
+      }
+    },
+    {
       "id": "demo-profiles",
       "title": "Профили, фото и локализация бота",
       "summary": "Nullable user/chat facts, profile photos, localized own-bot edits, current method ACL and explicit unknown reconciliation.",
@@ -21670,7 +21761,7 @@
         "backend"
       ],
       "sdk": "python-core",
-      "sdk_version": "0.22.0",
+      "sdk_version": "0.23.0",
       "api_version": "none",
       "source_files": [
         "examples/python/error_recovery.py",
@@ -21710,6 +21801,7 @@
       "navigation": "Возврат и навигация",
       "inline": "Inline-поиск",
       "polls": "Опросы и quiz",
+      "platform": "Темы и специальные операции",
       "messages": "Сообщения",
       "media": "Медиа и файлы",
       "profiles": "Профили",

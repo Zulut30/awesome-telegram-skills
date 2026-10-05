@@ -1,6 +1,6 @@
 # Общая библиотека компонентов
 
-Текущая локальная поставка 0.22.0: 41 группа компонентов, 215 публичных Python/TypeScript-символов и 308 рецептов. 209 Python fixtures имеют закрытый executor, 99 native references требуют host/аргументов. [Inline-поиск](inline-search.md) и [опросы](polls.md) дают scoped композиции; host сохраняет права, intent и receipts. [Приемка 029](v1-checks/029.json) привязана к точным wheel/tarball; исторические отчеты сохраняют свои версии.
+Текущая локальная поставка 0.23.0: 42 группы компонентов, 233 публичных Python/TypeScript-символа и 309 рецептов. 210 Python fixtures имеют закрытый executor, 99 native references требуют host/аргументов. [Семь специальных семейств](platform-operations.md) требуют current host policy и durable intent; локальный бюджет не обещает atomic remote debit. [Приемка 030](v1-checks/030.json) привязана к точным wheel/tarball; исторические отчеты сохраняют свои версии.
 
 [Формы 0.3.0](form-tools-review.md) добавляют поля с проверкой, возврат, отмену и подтверждение со стабильным ID заявки. Готовый [бот формы](../examples/python/form_bot.py) и [offline-проверка](../examples/python/offline_form.py) используют один create_app; backend сохраняет заявку и replay result в SQLite.
 
@@ -112,3 +112,5 @@ Playwright — только dev dependency проверки, не runtime при
 [Медиа 0.20.0](media.md): requests/bytes/file_id/album/edit и bounded explicit read; optional aiogram, без нового обязательного сервиса. Полная приемка — [027](v1-checks/027.json).
 
 [Профили 0.21.0](profiles.md): immutable nullable facts/photos, локализация и current method ACL собственного бота; полная приемка — [028](v1-checks/028.json).
+
+[Темы и специальные операции](platform-operations.md): `telegram_patterns.aiogram` сохраняет SDK/Dispatcher/storage проекта и требует current host policy/atomic intent; все семь семейств представлены исполняемой композицией.

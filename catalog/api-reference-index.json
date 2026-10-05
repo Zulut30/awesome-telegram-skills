@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "library_version": "0.22.0",
+  "library_version": "0.23.0",
   "symbols": [
     {
       "module": "telegram_patterns",
@@ -466,8 +466,8 @@
       "example": "examples/api-reference/python/core_recipes.py",
       "limits": "Чтение не исполняет recipe code. Maturity отдельно от verification; SDK/mock не доказывают live/device. Preview — независимая копия. Этот пример ищет существующий cookbook recipe two-columns; ref.* — имена справочника API.",
       "intent": "Literal stable/experimental/reference",
-      "example_sha256": "50aeb69a2fd3be08a611dbb2d18dddcc6e7f00c749442c6c9fb12fc9bd701498",
-      "example_source_sha256": "991a92498a64147721ee0c7f4bf9cf8dccbcc2fa8ae6c1d51daa5e31e677456b",
+      "example_sha256": "9b0707349545886d231dd21f31430983a1de2a358937708a23ee5a9596b50fb1",
+      "example_source_sha256": "b6271ca7c86140a7b283040b4f9da8ff5065eda1fbbc9297ed9f84c3e1c479b6",
       "kind": "value"
     },
     {
@@ -478,8 +478,8 @@
       "example": "examples/api-reference/python/core_recipes.py",
       "limits": "Чтение не исполняет recipe code. Maturity отдельно от verification; SDK/mock не доказывают live/device. Preview — независимая копия. Этот пример ищет существующий cookbook recipe two-columns; ref.* — имена справочника API.",
       "intent": "Literal sdk/mock/browser/live/not_run",
-      "example_sha256": "50aeb69a2fd3be08a611dbb2d18dddcc6e7f00c749442c6c9fb12fc9bd701498",
-      "example_source_sha256": "991a92498a64147721ee0c7f4bf9cf8dccbcc2fa8ae6c1d51daa5e31e677456b",
+      "example_sha256": "9b0707349545886d231dd21f31430983a1de2a358937708a23ee5a9596b50fb1",
+      "example_source_sha256": "b6271ca7c86140a7b283040b4f9da8ff5065eda1fbbc9297ed9f84c3e1c479b6",
       "kind": "value"
     },
     {
@@ -490,8 +490,8 @@
       "example": "examples/api-reference/python/core_recipes.py",
       "limits": "Чтение не исполняет recipe code. Maturity отдельно от verification; SDK/mock не доказывают live/device. Preview — независимая копия. Этот пример ищет существующий cookbook recipe two-columns; ref.* — имена справочника API.",
       "intent": "Неизменяемая запись и копия preview",
-      "example_sha256": "50aeb69a2fd3be08a611dbb2d18dddcc6e7f00c749442c6c9fb12fc9bd701498",
-      "example_source_sha256": "991a92498a64147721ee0c7f4bf9cf8dccbcc2fa8ae6c1d51daa5e31e677456b",
+      "example_sha256": "9b0707349545886d231dd21f31430983a1de2a358937708a23ee5a9596b50fb1",
+      "example_source_sha256": "b6271ca7c86140a7b283040b4f9da8ff5065eda1fbbc9297ed9f84c3e1c479b6",
       "kind": "value"
     },
     {
@@ -502,8 +502,8 @@
       "example": "examples/api-reference/python/core_recipes.py",
       "limits": "Чтение не исполняет recipe code. Maturity отдельно от verification; SDK/mock не доказывают live/device. Preview — независимая копия. Этот пример ищет существующий cookbook recipe two-columns; ref.* — имена справочника API.",
       "intent": "Версия, recipes, get/search с фильтрами",
-      "example_sha256": "50aeb69a2fd3be08a611dbb2d18dddcc6e7f00c749442c6c9fb12fc9bd701498",
-      "example_source_sha256": "991a92498a64147721ee0c7f4bf9cf8dccbcc2fa8ae6c1d51daa5e31e677456b",
+      "example_sha256": "9b0707349545886d231dd21f31430983a1de2a358937708a23ee5a9596b50fb1",
+      "example_source_sha256": "b6271ca7c86140a7b283040b4f9da8ff5065eda1fbbc9297ed9f84c3e1c479b6",
       "kind": "value"
     },
     {
@@ -2581,11 +2581,227 @@
       "example_sha256": "6d1dec9ef76a012ea369e5287800f7dea9a5b96515d9b264fc2bedfcee6956b5",
       "example_source_sha256": "6d1dec9ef76a012ea369e5287800f7dea9a5b96515d9b264fc2bedfcee6956b5",
       "kind": "value"
+    },
+    {
+      "module": "telegram_patterns.aiogram",
+      "name": "PlatformContract",
+      "import": "from telegram_patterns.aiogram import PlatformContract",
+      "recipe": "ref.bot_platform",
+      "example": "examples/api-reference/python/bot_platform.py",
+      "limits": "Closed 51-method Bot API allowlist across seven families; native SDK requests and current method-specific rights, not arbitrary MTProto/account history; Host owns current ACL/resource/revision/connection/child bindings, media verification and eligible activity; Write requires an atomic durable sending claim; host budget/consent/quote are rechecked before native I/O; Local reservation and fresh native quote are not a remote atomic debit or financial settlement guarantee; Unknown result/receipt/crash stays the same intent; no automatic retry, rollback, reconciliation or global inbox/outbox promise; Join query uses original receive time and remaining native deadline; private topics support only explicitly permitted methods; Managed creation requires native user confirmation; token repr is hidden but host secret storage/serialization remain explicit; Story upload bridge uses validated SDK nested multipart; codec/dimensions/content and immutable file lifetime remain host duties; Events preserve unknown/anonymous facts; current binding and host dedup/order/revocation, no inferred actor or voter/account history; Experimental author SDK/mock/browser evidence is separate from live permissions, real devices, remote charge or independent human/AI acceptance",
+      "intent": "Frozen native метод/семейство/right/version/source/evidence",
+      "example_sha256": "c5380e35cdc244cbb2bc10710da2ef6e47d04d06987c9095034b4332301f872e",
+      "example_source_sha256": "c5380e35cdc244cbb2bc10710da2ef6e47d04d06987c9095034b4332301f872e",
+      "kind": "value"
+    },
+    {
+      "module": "telegram_patterns.aiogram",
+      "name": "PlatformScope",
+      "import": "from telegram_patterns.aiogram import PlatformScope",
+      "recipe": "ref.bot_platform",
+      "example": "examples/api-reference/python/bot_platform.py",
+      "limits": "Closed 51-method Bot API allowlist across seven families; native SDK requests and current method-specific rights, not arbitrary MTProto/account history; Host owns current ACL/resource/revision/connection/child bindings, media verification and eligible activity; Write requires an atomic durable sending claim; host budget/consent/quote are rechecked before native I/O; Local reservation and fresh native quote are not a remote atomic debit or financial settlement guarantee; Unknown result/receipt/crash stays the same intent; no automatic retry, rollback, reconciliation or global inbox/outbox promise; Join query uses original receive time and remaining native deadline; private topics support only explicitly permitted methods; Managed creation requires native user confirmation; token repr is hidden but host secret storage/serialization remain explicit; Story upload bridge uses validated SDK nested multipart; codec/dimensions/content and immutable file lifetime remain host duties; Events preserve unknown/anonymous facts; current binding and host dedup/order/revocation, no inferred actor or voter/account history; Experimental author SDK/mock/browser evidence is separate from live permissions, real devices, remote charge or independent human/AI acceptance",
+      "intent": "Immutable server bot/actor/intent/revision и точные chat/thread/owner/child bindings",
+      "example_sha256": "c5380e35cdc244cbb2bc10710da2ef6e47d04d06987c9095034b4332301f872e",
+      "example_source_sha256": "c5380e35cdc244cbb2bc10710da2ef6e47d04d06987c9095034b4332301f872e",
+      "kind": "value"
+    },
+    {
+      "module": "telegram_patterns.aiogram",
+      "name": "PlatformPermit",
+      "import": "from telegram_patterns.aiogram import PlatformPermit",
+      "recipe": "ref.bot_platform",
+      "example": "examples/api-reference/python/bot_platform.py",
+      "limits": "Closed 51-method Bot API allowlist across seven families; native SDK requests and current method-specific rights, not arbitrary MTProto/account history; Host owns current ACL/resource/revision/connection/child bindings, media verification and eligible activity; Write requires an atomic durable sending claim; host budget/consent/quote are rechecked before native I/O; Local reservation and fresh native quote are not a remote atomic debit or financial settlement guarantee; Unknown result/receipt/crash stays the same intent; no automatic retry, rollback, reconciliation or global inbox/outbox promise; Join query uses original receive time and remaining native deadline; private topics support only explicitly permitted methods; Managed creation requires native user confirmation; token repr is hidden but host secret storage/serialization remain explicit; Story upload bridge uses validated SDK nested multipart; codec/dimensions/content and immutable file lifetime remain host duties; Events preserve unknown/anonymous facts; current binding and host dedup/order/revocation, no inferred actor or voter/account history; Experimental author SDK/mock/browser evidence is separate from live permissions, real devices, remote charge or independent human/AI acceptance",
+      "intent": "Текущие host policy facts, consent/quote и дополнительные права",
+      "example_sha256": "c5380e35cdc244cbb2bc10710da2ef6e47d04d06987c9095034b4332301f872e",
+      "example_source_sha256": "c5380e35cdc244cbb2bc10710da2ef6e47d04d06987c9095034b4332301f872e",
+      "kind": "value"
+    },
+    {
+      "module": "telegram_patterns.aiogram",
+      "name": "PlatformAction",
+      "import": "from telegram_patterns.aiogram import PlatformAction",
+      "recipe": "ref.bot_platform",
+      "example": "examples/api-reference/python/bot_platform.py",
+      "limits": "Closed 51-method Bot API allowlist across seven families; native SDK requests and current method-specific rights, not arbitrary MTProto/account history; Host owns current ACL/resource/revision/connection/child bindings, media verification and eligible activity; Write requires an atomic durable sending claim; host budget/consent/quote are rechecked before native I/O; Local reservation and fresh native quote are not a remote atomic debit or financial settlement guarantee; Unknown result/receipt/crash stays the same intent; no automatic retry, rollback, reconciliation or global inbox/outbox promise; Join query uses original receive time and remaining native deadline; private topics support only explicitly permitted methods; Managed creation requires native user confirmation; token repr is hidden but host secret storage/serialization remain explicit; Story upload bridge uses validated SDK nested multipart; codec/dimensions/content and immutable file lifetime remain host duties; Events preserve unknown/anonymous facts; current binding and host dedup/order/revocation, no inferred actor or voter/account history; Experimental author SDK/mock/browser evidence is separate from live permissions, real devices, remote charge or independent human/AI acceptance",
+      "intent": "Копия exact native request, проверка scope/params и immutable fingerprint",
+      "example_sha256": "c5380e35cdc244cbb2bc10710da2ef6e47d04d06987c9095034b4332301f872e",
+      "example_source_sha256": "c5380e35cdc244cbb2bc10710da2ef6e47d04d06987c9095034b4332301f872e",
+      "kind": "value"
+    },
+    {
+      "module": "telegram_patterns.aiogram",
+      "name": "PlatformReceipt",
+      "import": "from telegram_patterns.aiogram import PlatformReceipt",
+      "recipe": "ref.bot_platform",
+      "example": "examples/api-reference/python/bot_platform.py",
+      "limits": "Closed 51-method Bot API allowlist across seven families; native SDK requests and current method-specific rights, not arbitrary MTProto/account history; Host owns current ACL/resource/revision/connection/child bindings, media verification and eligible activity; Write requires an atomic durable sending claim; host budget/consent/quote are rechecked before native I/O; Local reservation and fresh native quote are not a remote atomic debit or financial settlement guarantee; Unknown result/receipt/crash stays the same intent; no automatic retry, rollback, reconciliation or global inbox/outbox promise; Join query uses original receive time and remaining native deadline; private topics support only explicitly permitted methods; Managed creation requires native user confirmation; token repr is hidden but host secret storage/serialization remain explicit; Story upload bridge uses validated SDK nested multipart; codec/dimensions/content and immutable file lifetime remain host duties; Events preserve unknown/anonymous facts; current binding and host dedup/order/revocation, no inferred actor or voter/account history; Experimental author SDK/mock/browser evidence is separate from live permissions, real devices, remote charge or independent human/AI acceptance",
+      "intent": "Безопасный method/outcome/result ID для прежнего intent",
+      "example_sha256": "c5380e35cdc244cbb2bc10710da2ef6e47d04d06987c9095034b4332301f872e",
+      "example_source_sha256": "c5380e35cdc244cbb2bc10710da2ef6e47d04d06987c9095034b4332301f872e",
+      "kind": "value"
+    },
+    {
+      "module": "telegram_patterns.aiogram",
+      "name": "PlatformResult",
+      "import": "from telegram_patterns.aiogram import PlatformResult",
+      "recipe": "ref.bot_platform",
+      "example": "examples/api-reference/python/bot_platform.py",
+      "limits": "Closed 51-method Bot API allowlist across seven families; native SDK requests and current method-specific rights, not arbitrary MTProto/account history; Host owns current ACL/resource/revision/connection/child bindings, media verification and eligible activity; Write requires an atomic durable sending claim; host budget/consent/quote are rechecked before native I/O; Local reservation and fresh native quote are not a remote atomic debit or financial settlement guarantee; Unknown result/receipt/crash stays the same intent; no automatic retry, rollback, reconciliation or global inbox/outbox promise; Join query uses original receive time and remaining native deadline; private topics support only explicitly permitted methods; Managed creation requires native user confirmation; token repr is hidden but host secret storage/serialization remain explicit; Story upload bridge uses validated SDK nested multipart; codec/dimensions/content and immutable file lifetime remain host duties; Events preserve unknown/anonymous facts; current binding and host dedup/order/revocation, no inferred actor or voter/account history; Experimental author SDK/mock/browser evidence is separate from live permissions, real devices, remote charge or independent human/AI acceptance",
+      "intent": "Receipt и native result; payload скрыт в repr",
+      "example_sha256": "c5380e35cdc244cbb2bc10710da2ef6e47d04d06987c9095034b4332301f872e",
+      "example_source_sha256": "c5380e35cdc244cbb2bc10710da2ef6e47d04d06987c9095034b4332301f872e",
+      "kind": "value"
+    },
+    {
+      "module": "telegram_patterns.aiogram",
+      "name": "PlatformHooks",
+      "import": "from telegram_patterns.aiogram import PlatformHooks",
+      "recipe": "ref.bot_platform",
+      "example": "examples/api-reference/python/bot_platform.py",
+      "limits": "Closed 51-method Bot API allowlist across seven families; native SDK requests and current method-specific rights, not arbitrary MTProto/account history; Host owns current ACL/resource/revision/connection/child bindings, media verification and eligible activity; Write requires an atomic durable sending claim; host budget/consent/quote are rechecked before native I/O; Local reservation and fresh native quote are not a remote atomic debit or financial settlement guarantee; Unknown result/receipt/crash stays the same intent; no automatic retry, rollback, reconciliation or global inbox/outbox promise; Join query uses original receive time and remaining native deadline; private topics support only explicitly permitted methods; Managed creation requires native user confirmation; token repr is hidden but host secret storage/serialization remain explicit; Story upload bridge uses validated SDK nested multipart; codec/dimensions/content and immutable file lifetime remain host duties; Events preserve unknown/anonymous facts; current binding and host dedup/order/revocation, no inferred actor or voter/account history; Experimental author SDK/mock/browser evidence is separate from live permissions, real devices, remote charge or independent human/AI acceptance",
+      "intent": "Async host authorize/atomic claim/durable record contract",
+      "example_sha256": "c5380e35cdc244cbb2bc10710da2ef6e47d04d06987c9095034b4332301f872e",
+      "example_source_sha256": "c5380e35cdc244cbb2bc10710da2ef6e47d04d06987c9095034b4332301f872e",
+      "kind": "value"
+    },
+    {
+      "module": "telegram_patterns.aiogram",
+      "name": "SecretToken",
+      "import": "from telegram_patterns.aiogram import SecretToken",
+      "recipe": "ref.bot_platform",
+      "example": "examples/api-reference/python/bot_platform.py",
+      "limits": "Closed 51-method Bot API allowlist across seven families; native SDK requests and current method-specific rights, not arbitrary MTProto/account history; Host owns current ACL/resource/revision/connection/child bindings, media verification and eligible activity; Write requires an atomic durable sending claim; host budget/consent/quote are rechecked before native I/O; Local reservation and fresh native quote are not a remote atomic debit or financial settlement guarantee; Unknown result/receipt/crash stays the same intent; no automatic retry, rollback, reconciliation or global inbox/outbox promise; Join query uses original receive time and remaining native deadline; private topics support only explicitly permitted methods; Managed creation requires native user confirmation; token repr is hidden but host secret storage/serialization remain explicit; Story upload bridge uses validated SDK nested multipart; codec/dimensions/content and immutable file lifetime remain host duties; Events preserve unknown/anonymous facts; current binding and host dedup/order/revocation, no inferred actor or voter/account history; Experimental author SDK/mock/browser evidence is separate from live permissions, real devices, remote charge or independent human/AI acceptance",
+      "intent": "Repr-hidden managed token с явным reveal для secret store",
+      "example_sha256": "c5380e35cdc244cbb2bc10710da2ef6e47d04d06987c9095034b4332301f872e",
+      "example_source_sha256": "c5380e35cdc244cbb2bc10710da2ef6e47d04d06987c9095034b4332301f872e",
+      "kind": "value"
+    },
+    {
+      "module": "telegram_patterns.aiogram",
+      "name": "PlatformEvent",
+      "import": "from telegram_patterns.aiogram import PlatformEvent",
+      "recipe": "ref.bot_platform",
+      "example": "examples/api-reference/python/bot_platform.py",
+      "limits": "Closed 51-method Bot API allowlist across seven families; native SDK requests and current method-specific rights, not arbitrary MTProto/account history; Host owns current ACL/resource/revision/connection/child bindings, media verification and eligible activity; Write requires an atomic durable sending claim; host budget/consent/quote are rechecked before native I/O; Local reservation and fresh native quote are not a remote atomic debit or financial settlement guarantee; Unknown result/receipt/crash stays the same intent; no automatic retry, rollback, reconciliation or global inbox/outbox promise; Join query uses original receive time and remaining native deadline; private topics support only explicitly permitted methods; Managed creation requires native user confirmation; token repr is hidden but host secret storage/serialization remain explicit; Story upload bridge uses validated SDK nested multipart; codec/dimensions/content and immutable file lifetime remain host duties; Events preserve unknown/anonymous facts; current binding and host dedup/order/revocation, no inferred actor or voter/account history; Experimental author SDK/mock/browser evidence is separate from live permissions, real devices, remote charge or independent human/AI acceptance",
+      "intent": "Immutable native Update facts и preserved raw JSON; payload скрыт в repr",
+      "example_sha256": "c5380e35cdc244cbb2bc10710da2ef6e47d04d06987c9095034b4332301f872e",
+      "example_source_sha256": "c5380e35cdc244cbb2bc10710da2ef6e47d04d06987c9095034b4332301f872e",
+      "kind": "value"
+    },
+    {
+      "module": "telegram_patterns.aiogram",
+      "name": "PlatformLookup",
+      "import": "from telegram_patterns.aiogram import PlatformLookup",
+      "recipe": "ref.bot_platform",
+      "example": "examples/api-reference/python/bot_platform.py",
+      "limits": "Closed 51-method Bot API allowlist across seven families; native SDK requests and current method-specific rights, not arbitrary MTProto/account history; Host owns current ACL/resource/revision/connection/child bindings, media verification and eligible activity; Write requires an atomic durable sending claim; host budget/consent/quote are rechecked before native I/O; Local reservation and fresh native quote are not a remote atomic debit or financial settlement guarantee; Unknown result/receipt/crash stays the same intent; no automatic retry, rollback, reconciliation or global inbox/outbox promise; Join query uses original receive time and remaining native deadline; private topics support only explicitly permitted methods; Managed creation requires native user confirmation; token repr is hidden but host secret storage/serialization remain explicit; Story upload bridge uses validated SDK nested multipart; codec/dimensions/content and immutable file lifetime remain host duties; Events preserve unknown/anonymous facts; current binding and host dedup/order/revocation, no inferred actor or voter/account history; Experimental author SDK/mock/browser evidence is separate from live permissions, real devices, remote charge or independent human/AI acceptance",
+      "intent": "Async current host binding по событию",
+      "example_sha256": "c5380e35cdc244cbb2bc10710da2ef6e47d04d06987c9095034b4332301f872e",
+      "example_source_sha256": "c5380e35cdc244cbb2bc10710da2ef6e47d04d06987c9095034b4332301f872e",
+      "kind": "value"
+    },
+    {
+      "module": "telegram_patterns.aiogram",
+      "name": "PlatformObserver",
+      "import": "from telegram_patterns.aiogram import PlatformObserver",
+      "recipe": "ref.bot_platform",
+      "example": "examples/api-reference/python/bot_platform.py",
+      "limits": "Closed 51-method Bot API allowlist across seven families; native SDK requests and current method-specific rights, not arbitrary MTProto/account history; Host owns current ACL/resource/revision/connection/child bindings, media verification and eligible activity; Write requires an atomic durable sending claim; host budget/consent/quote are rechecked before native I/O; Local reservation and fresh native quote are not a remote atomic debit or financial settlement guarantee; Unknown result/receipt/crash stays the same intent; no automatic retry, rollback, reconciliation or global inbox/outbox promise; Join query uses original receive time and remaining native deadline; private topics support only explicitly permitted methods; Managed creation requires native user confirmation; token repr is hidden but host secret storage/serialization remain explicit; Story upload bridge uses validated SDK nested multipart; codec/dimensions/content and immutable file lifetime remain host duties; Events preserve unknown/anonymous facts; current binding and host dedup/order/revocation, no inferred actor or voter/account history; Experimental author SDK/mock/browser evidence is separate from live permissions, real devices, remote charge or independent human/AI acceptance",
+      "intent": "Async host observer; owns dedup/order/revocation policy",
+      "example_sha256": "c5380e35cdc244cbb2bc10710da2ef6e47d04d06987c9095034b4332301f872e",
+      "example_source_sha256": "c5380e35cdc244cbb2bc10710da2ef6e47d04d06987c9095034b4332301f872e",
+      "kind": "value"
+    },
+    {
+      "module": "telegram_patterns.aiogram",
+      "name": "platform_contracts",
+      "import": "from telegram_patterns.aiogram import platform_contracts",
+      "recipe": "ref.bot_platform",
+      "example": "examples/api-reference/python/bot_platform.py",
+      "limits": "Closed 51-method Bot API allowlist across seven families; native SDK requests and current method-specific rights, not arbitrary MTProto/account history; Host owns current ACL/resource/revision/connection/child bindings, media verification and eligible activity; Write requires an atomic durable sending claim; host budget/consent/quote are rechecked before native I/O; Local reservation and fresh native quote are not a remote atomic debit or financial settlement guarantee; Unknown result/receipt/crash stays the same intent; no automatic retry, rollback, reconciliation or global inbox/outbox promise; Join query uses original receive time and remaining native deadline; private topics support only explicitly permitted methods; Managed creation requires native user confirmation; token repr is hidden but host secret storage/serialization remain explicit; Story upload bridge uses validated SDK nested multipart; codec/dimensions/content and immutable file lifetime remain host duties; Events preserve unknown/anonymous facts; current binding and host dedup/order/revocation, no inferred actor or voter/account history; Experimental author SDK/mock/browser evidence is separate from live permissions, real devices, remote charge or independent human/AI acceptance",
+      "intent": "51 разрешенный native метод с current method-specific rights и SDK sources",
+      "example_sha256": "c5380e35cdc244cbb2bc10710da2ef6e47d04d06987c9095034b4332301f872e",
+      "example_source_sha256": "c5380e35cdc244cbb2bc10710da2ef6e47d04d06987c9095034b4332301f872e",
+      "kind": "value"
+    },
+    {
+      "module": "telegram_patterns.aiogram",
+      "name": "execute_platform_action",
+      "import": "from telegram_patterns.aiogram import execute_platform_action",
+      "recipe": "ref.bot_platform",
+      "example": "examples/api-reference/python/bot_platform.py",
+      "limits": "Closed 51-method Bot API allowlist across seven families; native SDK requests and current method-specific rights, not arbitrary MTProto/account history; Host owns current ACL/resource/revision/connection/child bindings, media verification and eligible activity; Write requires an atomic durable sending claim; host budget/consent/quote are rechecked before native I/O; Local reservation and fresh native quote are not a remote atomic debit or financial settlement guarantee; Unknown result/receipt/crash stays the same intent; no automatic retry, rollback, reconciliation or global inbox/outbox promise; Join query uses original receive time and remaining native deadline; private topics support only explicitly permitted methods; Managed creation requires native user confirmation; token repr is hidden but host secret storage/serialization remain explicit; Story upload bridge uses validated SDK nested multipart; codec/dimensions/content and immutable file lifetime remain host duties; Events preserve unknown/anonymous facts; current binding and host dedup/order/revocation, no inferred actor or voter/account history; Experimental author SDK/mock/browser evidence is separate from live permissions, real devices, remote charge or independent human/AI acceptance",
+      "intent": "Authorize/fresh rights/one claim/one SDK call/receipt без automatic retry",
+      "example_sha256": "c5380e35cdc244cbb2bc10710da2ef6e47d04d06987c9095034b4332301f872e",
+      "example_source_sha256": "c5380e35cdc244cbb2bc10710da2ef6e47d04d06987c9095034b4332301f872e",
+      "kind": "value"
+    },
+    {
+      "module": "telegram_patterns.aiogram",
+      "name": "managed_bot_link",
+      "import": "from telegram_patterns.aiogram import managed_bot_link",
+      "recipe": "ref.bot_platform",
+      "example": "examples/api-reference/python/bot_platform.py",
+      "limits": "Closed 51-method Bot API allowlist across seven families; native SDK requests and current method-specific rights, not arbitrary MTProto/account history; Host owns current ACL/resource/revision/connection/child bindings, media verification and eligible activity; Write requires an atomic durable sending claim; host budget/consent/quote are rechecked before native I/O; Local reservation and fresh native quote are not a remote atomic debit or financial settlement guarantee; Unknown result/receipt/crash stays the same intent; no automatic retry, rollback, reconciliation or global inbox/outbox promise; Join query uses original receive time and remaining native deadline; private topics support only explicitly permitted methods; Managed creation requires native user confirmation; token repr is hidden but host secret storage/serialization remain explicit; Story upload bridge uses validated SDK nested multipart; codec/dimensions/content and immutable file lifetime remain host duties; Events preserve unknown/anonymous facts; current binding and host dedup/order/revocation, no inferred actor or voter/account history; Experimental author SDK/mock/browser evidence is separate from live permissions, real devices, remote charge or independent human/AI acceptance",
+      "intent": "Native user-confirmed создание; без I/O или получения token",
+      "example_sha256": "c5380e35cdc244cbb2bc10710da2ef6e47d04d06987c9095034b4332301f872e",
+      "example_source_sha256": "c5380e35cdc244cbb2bc10710da2ef6e47d04d06987c9095034b4332301f872e",
+      "kind": "value"
+    },
+    {
+      "module": "telegram_patterns.aiogram",
+      "name": "platform_event",
+      "import": "from telegram_patterns.aiogram import platform_event",
+      "recipe": "ref.bot_platform",
+      "example": "examples/api-reference/python/bot_platform.py",
+      "limits": "Closed 51-method Bot API allowlist across seven families; native SDK requests and current method-specific rights, not arbitrary MTProto/account history; Host owns current ACL/resource/revision/connection/child bindings, media verification and eligible activity; Write requires an atomic durable sending claim; host budget/consent/quote are rechecked before native I/O; Local reservation and fresh native quote are not a remote atomic debit or financial settlement guarantee; Unknown result/receipt/crash stays the same intent; no automatic retry, rollback, reconciliation or global inbox/outbox promise; Join query uses original receive time and remaining native deadline; private topics support only explicitly permitted methods; Managed creation requires native user confirmation; token repr is hidden but host secret storage/serialization remain explicit; Story upload bridge uses validated SDK nested multipart; codec/dimensions/content and immutable file lifetime remain host duties; Events preserve unknown/anonymous facts; current binding and host dedup/order/revocation, no inferred actor or voter/account history; Experimental author SDK/mock/browser evidence is separate from live permissions, real devices, remote charge or independent human/AI acceptance",
+      "intent": "Копирование native facts без guessed identity/history",
+      "example_sha256": "c5380e35cdc244cbb2bc10710da2ef6e47d04d06987c9095034b4332301f872e",
+      "example_source_sha256": "c5380e35cdc244cbb2bc10710da2ef6e47d04d06987c9095034b4332301f872e",
+      "kind": "value"
+    },
+    {
+      "module": "telegram_patterns.aiogram",
+      "name": "platform_events_router",
+      "import": "from telegram_patterns.aiogram import platform_events_router",
+      "recipe": "ref.bot_platform",
+      "example": "examples/api-reference/python/bot_platform.py",
+      "limits": "Closed 51-method Bot API allowlist across seven families; native SDK requests and current method-specific rights, not arbitrary MTProto/account history; Host owns current ACL/resource/revision/connection/child bindings, media verification and eligible activity; Write requires an atomic durable sending claim; host budget/consent/quote are rechecked before native I/O; Local reservation and fresh native quote are not a remote atomic debit or financial settlement guarantee; Unknown result/receipt/crash stays the same intent; no automatic retry, rollback, reconciliation or global inbox/outbox promise; Join query uses original receive time and remaining native deadline; private topics support only explicitly permitted methods; Managed creation requires native user confirmation; token repr is hidden but host secret storage/serialization remain explicit; Story upload bridge uses validated SDK nested multipart; codec/dimensions/content and immutable file lifetime remain host duties; Events preserve unknown/anonymous facts; current binding and host dedup/order/revocation, no inferred actor or voter/account history; Experimental author SDK/mock/browser evidence is separate from live permissions, real devices, remote charge or independent human/AI acceptance",
+      "intent": "Observers для разрешенных native events в текущем Dispatcher",
+      "example_sha256": "c5380e35cdc244cbb2bc10710da2ef6e47d04d06987c9095034b4332301f872e",
+      "example_source_sha256": "c5380e35cdc244cbb2bc10710da2ef6e47d04d06987c9095034b4332301f872e",
+      "kind": "value"
+    },
+    {
+      "module": "telegram_patterns.aiogram",
+      "name": "StoryPhotoUpload",
+      "import": "from telegram_patterns.aiogram import StoryPhotoUpload",
+      "recipe": "ref.bot_platform",
+      "example": "examples/api-reference/python/bot_platform.py",
+      "limits": "Closed 51-method Bot API allowlist across seven families; native SDK requests and current method-specific rights, not arbitrary MTProto/account history; Host owns current ACL/resource/revision/connection/child bindings, media verification and eligible activity; Write requires an atomic durable sending claim; host budget/consent/quote are rechecked before native I/O; Local reservation and fresh native quote are not a remote atomic debit or financial settlement guarantee; Unknown result/receipt/crash stays the same intent; no automatic retry, rollback, reconciliation or global inbox/outbox promise; Join query uses original receive time and remaining native deadline; private topics support only explicitly permitted methods; Managed creation requires native user confirmation; token repr is hidden but host secret storage/serialization remain explicit; Story upload bridge uses validated SDK nested multipart; codec/dimensions/content and immutable file lifetime remain host duties; Events preserve unknown/anonymous facts; current binding and host dedup/order/revocation, no inferred actor or voter/account history; Experimental author SDK/mock/browser evidence is separate from live permissions, real devices, remote charge or independent human/AI acceptance",
+      "intent": "Validated new photo InputFile bridge к SDK nested multipart",
+      "example_sha256": "c5380e35cdc244cbb2bc10710da2ef6e47d04d06987c9095034b4332301f872e",
+      "example_source_sha256": "c5380e35cdc244cbb2bc10710da2ef6e47d04d06987c9095034b4332301f872e",
+      "kind": "value"
+    },
+    {
+      "module": "telegram_patterns.aiogram",
+      "name": "StoryVideoUpload",
+      "import": "from telegram_patterns.aiogram import StoryVideoUpload",
+      "recipe": "ref.bot_platform",
+      "example": "examples/api-reference/python/bot_platform.py",
+      "limits": "Closed 51-method Bot API allowlist across seven families; native SDK requests and current method-specific rights, not arbitrary MTProto/account history; Host owns current ACL/resource/revision/connection/child bindings, media verification and eligible activity; Write requires an atomic durable sending claim; host budget/consent/quote are rechecked before native I/O; Local reservation and fresh native quote are not a remote atomic debit or financial settlement guarantee; Unknown result/receipt/crash stays the same intent; no automatic retry, rollback, reconciliation or global inbox/outbox promise; Join query uses original receive time and remaining native deadline; private topics support only explicitly permitted methods; Managed creation requires native user confirmation; token repr is hidden but host secret storage/serialization remain explicit; Story upload bridge uses validated SDK nested multipart; codec/dimensions/content and immutable file lifetime remain host duties; Events preserve unknown/anonymous facts; current binding and host dedup/order/revocation, no inferred actor or voter/account history; Experimental author SDK/mock/browser evidence is separate from live permissions, real devices, remote charge or independent human/AI acceptance",
+      "intent": "Validated new video InputFile/duration bridge к SDK nested multipart",
+      "example_sha256": "c5380e35cdc244cbb2bc10710da2ef6e47d04d06987c9095034b4332301f872e",
+      "example_source_sha256": "c5380e35cdc244cbb2bc10710da2ef6e47d04d06987c9095034b4332301f872e",
+      "kind": "value"
     }
   ],
-  "python_symbols": 174,
+  "python_symbols": 192,
   "typescript_symbols": 41,
-  "recipes": 30,
+  "recipes": 31,
   "additional_entries": [
     "CLI recipes",
     "CLI init",

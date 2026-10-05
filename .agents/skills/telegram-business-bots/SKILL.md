@@ -16,3 +16,5 @@ description: "Интегрирует Telegram Business/Secretary Bot с разр
 Защити от цикла автоответов, повторной доставки и смешения двух владельцев. При отзыве доступа отменяй будущие задания, которым он требуется. Логи должны содержать минимум контекста, не тексты приватной переписки.
 
 Проверь два connection, отсутствие нужного right, отзыв доступа и duplicate update. Живой ответ от имени владельца выполняй только по авторизованному тестовому сценарию; сам навык не предоставляет доступ к аккаунту.
+
+Для переиспользования Python-компонентов тем, реакций, заявок, Business, stories, gifts и managed bots прочитай [специальные операции](references/platform-operations.md). Выбери нужный метод из reviewed allowlist и сохрани текущий Bot/Dispatcher/storage. Current actor ACL и exact binding проверяются отдельно от fresh native right; перед write нужен durable host claim. Unknown outcome не повторяется; financial consent/quote/local budget не обещают atomic remote debit. Managed token передавай через явный secret sink, event не дает полномочий. SDK/mock не подтверждает live права или устройства.

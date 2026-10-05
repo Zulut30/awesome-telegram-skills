@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "library_version": "0.22.0",
+  "library_version": "0.23.0",
   "scope": "Public library exports; ref.* recipes belong to the API reference, not the Telegram method snapshot",
   "groups": [
     {
@@ -547,6 +547,35 @@
           "poll_vote": "Copy native PollAnswer without inventing user identity",
           "poll_option_added": "Copy Message.poll_option_added, including inaccessible/omitted address",
           "poll_events_router": "Scoped Poll/PollAnswer/message/business_message routing; no count/retry/getPoll"
+        }
+      }
+    },
+    {
+      "id": "bot_platform",
+      "section": "bot",
+      "title": "Темы, реакции, заявки и специальные операции",
+      "example": "examples/api-reference/python/bot_platform.py",
+      "limits": "Closed 51-method Bot API allowlist across seven families; native SDK requests and current method-specific rights, not arbitrary MTProto/account history; Host owns current ACL/resource/revision/connection/child bindings, media verification and eligible activity; Write requires an atomic durable sending claim; host budget/consent/quote are rechecked before native I/O; Local reservation and fresh native quote are not a remote atomic debit or financial settlement guarantee; Unknown result/receipt/crash stays the same intent; no automatic retry, rollback, reconciliation or global inbox/outbox promise; Join query uses original receive time and remaining native deadline; private topics support only explicitly permitted methods; Managed creation requires native user confirmation; token repr is hidden but host secret storage/serialization remain explicit; Story upload bridge uses validated SDK nested multipart; codec/dimensions/content and immutable file lifetime remain host duties; Events preserve unknown/anonymous facts; current binding and host dedup/order/revocation, no inferred actor or voter/account history; Experimental author SDK/mock/browser evidence is separate from live permissions, real devices, remote charge or independent human/AI acceptance",
+      "api": {
+        "telegram_patterns.aiogram": {
+          "PlatformContract": "Frozen native метод/семейство/right/version/source/evidence",
+          "PlatformScope": "Immutable server bot/actor/intent/revision и точные chat/thread/owner/child bindings",
+          "PlatformPermit": "Текущие host policy facts, consent/quote и дополнительные права",
+          "PlatformAction": "Копия exact native request, проверка scope/params и immutable fingerprint",
+          "PlatformReceipt": "Безопасный method/outcome/result ID для прежнего intent",
+          "PlatformResult": "Receipt и native result; payload скрыт в repr",
+          "PlatformHooks": "Async host authorize/atomic claim/durable record contract",
+          "SecretToken": "Repr-hidden managed token с явным reveal для secret store",
+          "PlatformEvent": "Immutable native Update facts и preserved raw JSON; payload скрыт в repr",
+          "PlatformLookup": "Async current host binding по событию",
+          "PlatformObserver": "Async host observer; owns dedup/order/revocation policy",
+          "platform_contracts": "51 разрешенный native метод с current method-specific rights и SDK sources",
+          "execute_platform_action": "Authorize/fresh rights/one claim/one SDK call/receipt без automatic retry",
+          "managed_bot_link": "Native user-confirmed создание; без I/O или получения token",
+          "platform_event": "Копирование native facts без guessed identity/history",
+          "platform_events_router": "Observers для разрешенных native events в текущем Dispatcher",
+          "StoryPhotoUpload": "Validated new photo InputFile bridge к SDK nested multipart",
+          "StoryVideoUpload": "Validated new video InputFile/duration bridge к SDK nested multipart"
         }
       }
     }

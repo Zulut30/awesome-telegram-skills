@@ -1,5 +1,11 @@
 # Изменения библиотеки компонентов
 
+## 0.23.0
+
+- Пункт 30: experimental `platform-operations`, 18 public symbols и 51 reviewed native method — темы, реакции, заявки, Business, stories, gifts, managed bots. Current actor/resource/revision и native rights проверяются отдельно.
+- Host authorize/atomic sending claim/receipt, SQLite actor/budget/intent example, scoped observers и user-confirmed managed flow. Unknown outcomes не повторяются; финансовые операции требуют согласия/quote, local budget не гарантирует atomic remote debit.
+- Validated photo/video story upload bridge к обычному SDK multipart, secret-token sink и сохранение текущего Dispatcher/стека. Catalog, standalone API/reference/copied guides и installed fixtures синхронизированы; live/device/provider/human acceptance остается отдельной.
+
 ## 0.22.0
 
 - Добавлен inline-поиск с явно shareable articles, текущими host правами, scoped pagination и раздельными public/personal cache policies; native answer не повторяется вслепую.

@@ -1,4 +1,4 @@
-# Справочник API 0.22.0
+# Справочник API 0.23.0
 
 Публичные imports, самостоятельные минимальные композиции и границы каждого символа. Все группы experimental. Рецепты ref.* принадлежат этому справочнику; cookbook RecipeCatalog отдельно содержит Telegram requests/layouts. Исполненные fixtures не доказывают live/device/provider acceptance.
 
@@ -227,6 +227,24 @@
 | `poll_vote` | `from telegram_patterns.aiogram import poll_vote` | [ref.bot_polls](api-reference-bot.md#ref-bot_polls) | Copy native PollAnswer without inventing user identity |
 | `poll_option_added` | `from telegram_patterns.aiogram import poll_option_added` | [ref.bot_polls](api-reference-bot.md#ref-bot_polls) | Copy Message.poll_option_added, including inaccessible/omitted address |
 | `poll_events_router` | `from telegram_patterns.aiogram import poll_events_router` | [ref.bot_polls](api-reference-bot.md#ref-bot_polls) | Scoped Poll/PollAnswer/message/business_message routing; no count/retry/getPoll |
+| `PlatformContract` | `from telegram_patterns.aiogram import PlatformContract` | [ref.bot_platform](api-reference-bot.md#ref-bot_platform) | Frozen native метод/семейство/right/version/source/evidence |
+| `PlatformScope` | `from telegram_patterns.aiogram import PlatformScope` | [ref.bot_platform](api-reference-bot.md#ref-bot_platform) | Immutable server bot/actor/intent/revision и точные chat/thread/owner/child bindings |
+| `PlatformPermit` | `from telegram_patterns.aiogram import PlatformPermit` | [ref.bot_platform](api-reference-bot.md#ref-bot_platform) | Текущие host policy facts, consent/quote и дополнительные права |
+| `PlatformAction` | `from telegram_patterns.aiogram import PlatformAction` | [ref.bot_platform](api-reference-bot.md#ref-bot_platform) | Копия exact native request, проверка scope/params и immutable fingerprint |
+| `PlatformReceipt` | `from telegram_patterns.aiogram import PlatformReceipt` | [ref.bot_platform](api-reference-bot.md#ref-bot_platform) | Безопасный method/outcome/result ID для прежнего intent |
+| `PlatformResult` | `from telegram_patterns.aiogram import PlatformResult` | [ref.bot_platform](api-reference-bot.md#ref-bot_platform) | Receipt и native result; payload скрыт в repr |
+| `PlatformHooks` | `from telegram_patterns.aiogram import PlatformHooks` | [ref.bot_platform](api-reference-bot.md#ref-bot_platform) | Async host authorize/atomic claim/durable record contract |
+| `SecretToken` | `from telegram_patterns.aiogram import SecretToken` | [ref.bot_platform](api-reference-bot.md#ref-bot_platform) | Repr-hidden managed token с явным reveal для secret store |
+| `PlatformEvent` | `from telegram_patterns.aiogram import PlatformEvent` | [ref.bot_platform](api-reference-bot.md#ref-bot_platform) | Immutable native Update facts и preserved raw JSON; payload скрыт в repr |
+| `PlatformLookup` | `from telegram_patterns.aiogram import PlatformLookup` | [ref.bot_platform](api-reference-bot.md#ref-bot_platform) | Async current host binding по событию |
+| `PlatformObserver` | `from telegram_patterns.aiogram import PlatformObserver` | [ref.bot_platform](api-reference-bot.md#ref-bot_platform) | Async host observer; owns dedup/order/revocation policy |
+| `platform_contracts` | `from telegram_patterns.aiogram import platform_contracts` | [ref.bot_platform](api-reference-bot.md#ref-bot_platform) | 51 разрешенный native метод с current method-specific rights и SDK sources |
+| `execute_platform_action` | `from telegram_patterns.aiogram import execute_platform_action` | [ref.bot_platform](api-reference-bot.md#ref-bot_platform) | Authorize/fresh rights/one claim/one SDK call/receipt без automatic retry |
+| `managed_bot_link` | `from telegram_patterns.aiogram import managed_bot_link` | [ref.bot_platform](api-reference-bot.md#ref-bot_platform) | Native user-confirmed создание; без I/O или получения token |
+| `platform_event` | `from telegram_patterns.aiogram import platform_event` | [ref.bot_platform](api-reference-bot.md#ref-bot_platform) | Копирование native facts без guessed identity/history |
+| `platform_events_router` | `from telegram_patterns.aiogram import platform_events_router` | [ref.bot_platform](api-reference-bot.md#ref-bot_platform) | Observers для разрешенных native events в текущем Dispatcher |
+| `StoryPhotoUpload` | `from telegram_patterns.aiogram import StoryPhotoUpload` | [ref.bot_platform](api-reference-bot.md#ref-bot_platform) | Validated new photo InputFile bridge к SDK nested multipart |
+| `StoryVideoUpload` | `from telegram_patterns.aiogram import StoryVideoUpload` | [ref.bot_platform](api-reference-bot.md#ref-bot_platform) | Validated new video InputFile/duration bridge к SDK nested multipart |
 
 ## CLI и CSS
 

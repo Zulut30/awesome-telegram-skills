@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "library_version": "0.22.0",
+  "library_version": "0.23.0",
   "distribution": "local; not published to package registries",
   "packages": {
     "python": {
@@ -655,6 +655,29 @@
         "Host registers confirmed own SendPoll responses, resolves current binding and persists Update receipt transactionally",
         "Unavailable poll_message cannot invent association; anonymous/foreign/unbound events do not give a voter ledger",
         "No getPoll API, implicit stopPoll, history scan, vote counting, create retry, media IO or live delivery promise"
+      ],
+      "maturity": "experimental",
+      "maturity_scope": "All public API symbols in this component; local verification is not stable/live acceptance"
+    },
+    {
+      "id": "platform-operations",
+      "language": "python",
+      "extra": "aiogram",
+      "import": "telegram_patterns.aiogram.PlatformContract, PlatformScope, PlatformPermit, PlatformAction, PlatformReceipt, PlatformResult, PlatformHooks, SecretToken, PlatformEvent, PlatformLookup, PlatformObserver, platform_contracts, execute_platform_action, managed_bot_link, platform_event, platform_events_router, StoryPhotoUpload, StoryVideoUpload",
+      "intent": "Темы, реакции, заявки, Business, stories, gifts и managed bots с текущими правами и durable host intent",
+      "source": "packages/python/src/telegram_patterns/platform_aiogram.py",
+      "example": "examples/python/platform_bot.py",
+      "boundaries": [
+        "Closed 51-method Bot API allowlist across seven families; native SDK requests and current method-specific rights, not arbitrary MTProto/account history",
+        "Host owns current ACL/resource/revision/connection/child bindings, media verification and eligible activity",
+        "Write requires an atomic durable sending claim; host budget/consent/quote are rechecked before native I/O",
+        "Local reservation and fresh native quote are not a remote atomic debit or financial settlement guarantee",
+        "Unknown result/receipt/crash stays the same intent; no automatic retry, rollback, reconciliation or global inbox/outbox promise",
+        "Join query uses original receive time and remaining native deadline; private topics support only explicitly permitted methods",
+        "Managed creation requires native user confirmation; token repr is hidden but host secret storage/serialization remain explicit",
+        "Story upload bridge uses validated SDK nested multipart; codec/dimensions/content and immutable file lifetime remain host duties",
+        "Events preserve unknown/anonymous facts; current binding and host dedup/order/revocation, no inferred actor or voter/account history",
+        "Experimental author SDK/mock/browser evidence is separate from live permissions, real devices, remote charge or independent human/AI acceptance"
       ],
       "maturity": "experimental",
       "maturity_scope": "All public API symbols in this component; local verification is not stable/live acceptance"

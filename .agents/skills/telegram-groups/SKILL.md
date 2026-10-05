@@ -28,3 +28,5 @@ description: "Реализует Telegram-функции групп, канал�
 ## Источники
 
 [Bot FAQ: группы и privacy mode](https://core.telegram.org/bots/faq), [возможности ботов](https://core.telegram.org/bots/features), [Bot API](https://core.telegram.org/bots/api). Условия получения конкретного update проверяй в его актуальном описании.
+
+Для переиспользования Python-компонентов тем, реакций, заявок, Business, stories, gifts и managed bots прочитай [специальные операции](references/platform-operations.md). Выбери нужный метод из reviewed allowlist и сохрани текущий Bot/Dispatcher/storage. Current actor ACL и exact binding проверяются отдельно от fresh native right; перед write нужен durable host claim. Unknown outcome не повторяется; financial consent/quote/local budget не обещают atomic remote debit. Managed token передавай через явный secret sink, event не дает полномочий. SDK/mock не подтверждает live права или устройства.

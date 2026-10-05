@@ -154,3 +154,7 @@ Crypto Pay: старая официальная страница указыва�
 ## 5 октября 2026 — inline search и polls (пункт 29)
 
 Сверены только InlineQuery/answerInlineQuery/article/text content/feedback и sendPoll/Poll/PollAnswer/PollOptionAdded/Update/stopPoll с [Bot API](https://core.telegram.org/bots/api), [inline guide](https://core.telegram.org/bots/inline) и установленным aiogram 3.31.0. Проверка охватывает cache/offset/sharing, modern correct_option_ids/revoting/persistent IDs, расписание и ограничения событий; прежние даты других API не обновлены. Synthetic SDK/Dispatcher/SQLite не означает live/cache/client/provider acceptance.
+
+## Пункт 30 — 5 октября 2026
+
+Проверены ровно 51 method-specific contract Bot API 10.3, Business/managed flow и installed aiogram 3.31.0 (native fields, nested multipart); [подробные условия и источники](platform-operations.md). Дата не обновляет остальной capability snapshot. Native SDK/mock не подтверждает live permissions, financial settlement или реальные устройства.

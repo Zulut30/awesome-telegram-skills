@@ -28,6 +28,7 @@ from .media_aiogram import MediaKind, MediaSendRequest, MediaFile, MediaItem, Do
 from .profiles_aiogram import ProfileSource, ProfileAuthorizer, UserProfile, ChatProfile, ProfilePhotoSize, ProfilePhotos, BotProfile, BotProfilePatch, ProfileEditIncomplete, user_profile, chat_profile, read_profile_photos, read_bot_profile, update_bot_profile
 from .inline_mode_aiogram import InlineChatType, InlineAuthorizer, InlineSearchProvider, InlineCachePolicy, InlineItem, InlinePage, InlineSearch, inline_articles, inline_query_router
 from .polls_aiogram import PollKind, PollChoice, PollSpec, PollOptionState, PollState, PollVote, PollOptionAddition, PollBinding, PollLocator, PollObservation, PollEvent, PollObserver, PollLookup, poll_request, poll_state, poll_vote, poll_option_added, poll_events_router
+from .platform_aiogram import PlatformContract, PlatformScope, PlatformPermit, PlatformAction, PlatformReceipt, PlatformResult, PlatformHooks, SecretToken, PlatformEvent, PlatformLookup, PlatformObserver, platform_contracts, execute_platform_action, managed_bot_link, platform_event, platform_events_router, StoryPhotoUpload, StoryVideoUpload
 from .api import MethodSpec, InvalidAPIRequest, method_catalog, build_request
 from .events import UpdatePhase, UpdateTrace, UpdateObserver, update_kinds, event_router
 
@@ -53,6 +54,10 @@ __all__ = [
     "PollKind", "PollChoice", "PollSpec", "PollOptionState", "PollState", "PollVote", "PollOptionAddition",
     "PollBinding", "PollLocator", "PollObservation", "PollEvent", "PollObserver", "PollLookup",
     "poll_request", "poll_state", "poll_vote", "poll_option_added", "poll_events_router",
+    "PlatformContract", "PlatformScope", "PlatformPermit", "PlatformAction", "PlatformReceipt", "PlatformResult",
+    "PlatformHooks", "SecretToken", "PlatformEvent", "PlatformLookup", "PlatformObserver", "platform_contracts",
+    "execute_platform_action", "managed_bot_link", "platform_event", "platform_events_router",
+    "StoryPhotoUpload", "StoryVideoUpload",
     "MethodSpec", "InvalidAPIRequest", "method_catalog", "build_request",
     "UpdatePhase", "UpdateTrace", "UpdateObserver", "update_kinds", "event_router",
 ]

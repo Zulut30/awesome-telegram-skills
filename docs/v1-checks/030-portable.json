@@ -1,0 +1,44 @@
+{
+  "passed": true,
+  "library_version": "0.23.0",
+  "consumer_python": "C:\\Users\\zulut\\AppData\\Local\\Temp\\telegram-patterns-0.23.0-wluqof86\\sdk\\Scripts\\python.exe",
+  "guide_sha256": {
+    "docs/platform-operations.md": "30b225765b664f67482d5b3dac36f28d034fd138fc7d29f213c8a357c78cb33a",
+    ".agents/skills/telegram-code-patterns/references/platform-operations.md": "30b225765b664f67482d5b3dac36f28d034fd138fc7d29f213c8a357c78cb33a",
+    ".agents/skills/telegram-groups/references/platform-operations.md": "30b225765b664f67482d5b3dac36f28d034fd138fc7d29f213c8a357c78cb33a",
+    ".agents/skills/telegram-business-bots/references/platform-operations.md": "30b225765b664f67482d5b3dac36f28d034fd138fc7d29f213c8a357c78cb33a"
+  },
+  "helper_sha256": "e64be60d07bb618a189eb07401fabdc269dcec60043f6a965c3566f475bfed7e",
+  "result": {
+    "passed": true,
+    "network": false,
+    "session_closed": true,
+    "families": 7,
+    "confirmed_operations": 7,
+    "durable_intents": true,
+    "unknown_send_no_retry": true,
+    "current_actor_acl": true,
+    "fresh_native_rights": true,
+    "financial_quote_budget": true,
+    "scoped_event_dedup": true,
+    "existing_dispatcher_preserved": true,
+    "user_confirmed_managed_link": true,
+    "contracts": 51,
+    "limits": "SDK/mock SQLite author evidence; no live permissions/media/Stars/owner/device proof",
+    "guide_blocks": 1,
+    "composition_sha256": "7ffed08038eb727b025c7451086525f94989ccb63e999e50b53072f69d4065ef",
+    "helper_operations": {
+      "passed": true,
+      "temporary_operations": [
+        "exact-copied-guide-executed",
+        "caller-files-byte-preserved",
+        "missing-block-rejected",
+        "tampered-block-rejected-before-execution",
+        "duplicate-block-rejected"
+      ],
+      "caller_files_preserved": true
+    },
+    "scope": "Exact copied guide and actual SDK/Dispatcher/file SQLite fixtures; no live rights, financial settlement, physical devices or independent acceptance"
+  },
+  "scope": "Exact identical standalone guides; installed SDK, actual Dispatcher and file SQLite; author acceptance, not independent/live proof"
+}

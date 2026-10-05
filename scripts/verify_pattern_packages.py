@@ -98,7 +98,7 @@ from telegram_patterns import BotSettings, validate_init_data, RecipeCatalog, cr
 assert importlib.util.find_spec('aiogram') is None
 assert Path(telegram_patterns.__file__).is_relative_to(Path(sys.argv[1]))
 assert BotSettings.from_env(environ={'BOT_TOKEN':'100:CORE_FIXTURE'}).token=='100:CORE_FIXTURE'
-assert len(RecipeCatalog().recipes)==308
+assert len(RecipeCatalog().recipes)==309
 assert RecipeCatalog().search('две кнопки')[0].id=='two-columns'
 assert RecipeCatalog().get('two-columns').maturity=='experimental'
 assert RecipeCatalog().get('api.sendPhoto').maturity=='reference'
@@ -207,6 +207,12 @@ print(json.dumps({'core_without_sdk':True,'python':sys.version.split()[0]}))
         if not polls['passed'] or polls['network'] or not polls['session_closed'] or not all(polls[k] for k in ('modern_quiz', 'own_poll_binding', 'persistent_vote_ids', 'anonymous_limits', 'unknown_addition_not_guessed', 'durable_host_dedup', 'unknown_send_no_retry', 'fresh_acl', 'existing_dispatcher_preserved')):
             raise RuntimeError('Installed polls composition failed')
         report['polls'] = polls
+        platform = json.loads(run('platform', [str(python_in(sdk)), str(ROOT / 'examples/python/offline_platform.py')], consumers))
+        if (not platform['passed'] or platform['network'] or not platform['session_closed']
+                or platform['families'] != 7 or platform['contracts'] != 51 or platform['confirmed_operations'] != 7
+                or not all(platform[k] for k in ('durable_intents', 'unknown_send_no_retry', 'current_actor_acl', 'fresh_native_rights', 'financial_quote_budget', 'scoped_event_dedup', 'existing_dispatcher_preserved', 'user_confirmed_managed_link'))):
+            raise RuntimeError('Installed seven-family platform composition failed')
+        report['platform'] = platform
         report['telegram_catalog'] = json.loads(run('telegram-catalog', [str(python_in(sdk)), str(ROOT / 'scripts/build_telegram_catalog.py'), '--check'], consumers))
         report['recipe_gallery'] = json.loads(run('recipe-gallery', [str(python_in(sdk)), str(ROOT / 'scripts/build_recipe_gallery.py'), '--check'], consumers))
         gallery_command = [str(python_in(sdk)), str(ROOT / 'scripts/verify_gallery_export.py'), '--output', str(consumers / 'gallery-export')]
@@ -233,6 +239,7 @@ print(json.dumps({'core_without_sdk':True,'python':sys.version.split()[0]}))
         run('selected-starter-build', [npm, 'run', 'build'], selected_mini)
         copied_skill = consumers / 'portable-skill/telegram-code-patterns'
         shutil.copytree(ROOT / '.agents/skills/telegram-code-patterns', copied_skill)
+        report['portable_platform_recipe'] = json.loads(run('portable-platform-recipe', [str(python_in(sdk)), str(ROOT / 'scripts/verify_platform_recipe.py'), str(copied_skill)], consumers))
         report['portable_inline_search_recipe'] = json.loads(run('portable-inline-search-recipe', [str(python_in(sdk)), str(ROOT / 'scripts/verify_inline_search_recipe.py'), str(copied_skill)], consumers))
         report['portable_poll_recipe'] = json.loads(run('portable-poll-recipe', [str(python_in(sdk)), str(ROOT / 'scripts/verify_poll_recipe.py'), str(copied_skill)], consumers))
         blocks = re.findall(r'```python\r?\n(.*?)```', (copied_skill / 'references/errors.md').read_text(encoding='utf-8'), re.S)

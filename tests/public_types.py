@@ -137,3 +137,34 @@ bad_inline_acl: InlineAuthorizer = lambda actor,item: True  # type: ignore[assig
 bad_poll_kind: PollKind = 'survey'  # type: ignore[assignment]
 bad_poll_spec = PollSpec('Q',['A'],correct_option_ids=['0'])  # type: ignore[list-item]
 bad_poll_observer: PollObserver = lambda event: None  # type: ignore[assignment,return-value]
+
+# Scoped native platform operations preserve existing Bot/Dispatcher and host hooks.
+from aiogram.methods import CreateForumTopic
+from telegram_patterns.aiogram import (PlatformContract, PlatformScope, PlatformPermit, PlatformAction,
+    PlatformReceipt, PlatformResult, PlatformHooks, SecretToken, PlatformEvent, PlatformLookup,
+    PlatformObserver, StoryPhotoUpload, StoryVideoUpload, platform_contracts, execute_platform_action,
+    managed_bot_link, platform_event, platform_events_router)
+platform_scope = PlatformScope(100,42,'typed-topic',chat_id=-100)
+platform_action = PlatformAction(platform_scope,CreateForumTopic(chat_id=-100,name='Topic'))
+platform_contract: PlatformContract = platform_contracts()[0]
+class TypedPlatformHost:
+    async def authorize(self, action: PlatformAction) -> PlatformPermit:
+        return PlatformPermit(allowed=False)
+    async def claim(self, action: PlatformAction, permit: PlatformPermit) -> bool:
+        return False
+    async def record(self, action: PlatformAction, receipt: PlatformReceipt) -> None:
+        pass
+platform_hooks: PlatformHooks = TypedPlatformHost()
+async def platform_consumer(bot: Bot) -> PlatformResult:
+    result: PlatformResult = await execute_platform_action(bot,platform_action,platform_hooks)
+    return result
+async def platform_lookup(event: PlatformEvent) -> PlatformScope | None:
+    return platform_scope
+async def platform_observer(event: PlatformEvent, scope: PlatformScope) -> None:
+    pass
+platform_lookup_host: PlatformLookup = platform_lookup
+platform_observer_host: PlatformObserver = platform_observer
+platform_router = platform_events_router(platform_lookup_host,platform_observer_host)
+bad_platform_scope = PlatformScope('bot',42,'typed')  # type: ignore[arg-type]
+bad_platform_permit = PlatformPermit(allowed='yes')  # type: ignore[arg-type]
+bad_platform_lookup: PlatformLookup = lambda event: platform_scope  # type: ignore[assignment,return-value]

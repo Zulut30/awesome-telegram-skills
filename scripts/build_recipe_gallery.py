@@ -21,7 +21,7 @@ API = 'https://core.telegram.org/bots/api'
 WEB = 'https://core.telegram.org/bots/webapps'
 NAVIGATION = {
     'tasks': {'keyboards': 'Кнопки и раскладки', 'input': 'Ввод и формы', 'navigation': 'Возврат и навигация',
-              'inline': 'Inline-поиск', 'polls': 'Опросы и quiz',
+              'inline': 'Inline-поиск', 'polls': 'Опросы и quiz', 'platform': 'Темы и специальные операции',
               'messages': 'Сообщения', 'media': 'Медиа и файлы', 'profiles': 'Профили', 'moderation': 'Группы и модерация',
               'payments': 'Платежные запросы', 'native': 'Native Mini Apps', 'recovery': 'Восстановление операций',
               'bot': 'Композиция бота', 'other': 'Другие API'},
@@ -132,6 +132,7 @@ def build(root: Path = ROOT) -> dict:
         ('dialog_fields_bot.py', 'offline_dialog_fields.py', 'demo-dialog-fields', 'Семь типов полей диалога'),
         ('inline_search_bot.py', 'offline_inline_search.py', 'demo-inline-search', 'Inline-поиск с персональной пагинацией'),
         ('polls_bot.py', 'offline_polls.py', 'demo-polls', 'Опросы, quiz и события голосования'),
+        ('platform_bot.py', 'offline_platform.py', 'demo-platform', 'Темы, реакции, заявки и специальные операции'),
         ('profiles_bot.py', 'offline_profiles.py', 'demo-profiles', 'Профили, фото и локализация бота'),
         ('media_bot.py', 'offline_media.py', 'demo-media', 'Фото, документы, альбомы и скачивание'),
         ('message_text_bot.py', 'offline_message_text.py', 'demo-message-text', 'Безопасные сообщения и разбиение текста'),
@@ -198,6 +199,14 @@ def build(root: Path = ROOT) -> dict:
             records[-1]['source_files'].append('packages/python/src/telegram_patterns/polls_aiogram.py')
             records[-1]['check_files'].append('packages/python/tests/test_polls.py')
             records[-1]['scope'] = 'Actual synthetic Dispatcher and explicit host policy; local cache/cursor/poll observations, not Telegram live/client delivery or a complete voter ledger.'
+        if key == 'demo-platform':
+            records[-1]['summary'] = 'Семь семейств: native rights, host ACL/budget/intent, scoped events и explicit unknown reconciliation'
+            records[-1]['tasks'] = ['platform']
+            records[-1]['contexts'] = ['private', 'group', 'supergroup', 'channel', 'business']
+            records[-1]['keywords'] += ['темы', 'реакции', 'заявки', 'Business', 'stories', 'gifts', 'managed', 'Stars', 'права', 'receipt']
+            records[-1]['source_files'] += ['packages/python/src/telegram_patterns/platform_aiogram.py', 'docs/platform-operations.md']
+            records[-1]['check_files'] += ['packages/python/tests/test_platform.py', 'scripts/verify_platform_recipe.py']
+            records[-1]['scope'] = 'Actual synthetic SDK/Dispatcher/file SQLite and multipart story serialization; no live rights, real media validation, remote atomic charge, settlement or physical Telegram proof.'
     recovery_file = root / 'examples/python/error_recovery.py'
     recovery = subprocess.run([sys.executable, str(recovery_file)], capture_output=True, text=True, encoding='utf-8', env=environment, timeout=60)
     if recovery.returncode: raise ValueError('Recovery fixture failed')
@@ -263,6 +272,14 @@ def build(root: Path = ROOT) -> dict:
         if record['id'] == 'demo-calendar':
             record['execution']['dependencies'].append('tzdata==2026.5 (calendar extra; pinned offline fixture)')
             record['execution']['effects'].append('Temporary file SQLite booking + receipt; both cleaned after normal completion')
+        if record['id'] == 'demo-platform':
+            record['execution']['live_permissions'] = [
+                'Current host ACL/actor/resource/revision plus fresh native chat membership and method-specific forum/reaction/join rights.',
+                'Current enabled Business owner/connection and exact can_reply/read/delete/profile/story/gift/Stars right; managed parent/child/owner binding.',
+                'Explicit financial consent/current quote/atomic local budget; irreversible actions and unknown outcomes require reconciliation, no retry.',
+            ]
+            record['execution']['live_data'] += ['Stable scoped operation ID, original join receive time, current connection/bindings, real validated story uploads and secure managed-token sink']
+            record['execution']['effects'].append('Host-owned file SQLite intent/actor/budget example; fixture temp files cleaned after completion')
     data = {'schema_version': 1, 'library_version': version, 'source_snapshot': api['checked_date'],
             'source_hashes': {'bot_api': api['bot_api']['source_sha256'], 'mini_app': api['mini_app']['source_sha256']},
             'recipes': records, 'navigation': NAVIGATION}
