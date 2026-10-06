@@ -1,0 +1,25 @@
+name: Ошибка
+description: Воспроизводимая проблема в компоненте, примере или скилле.
+title: "[Bug]: "
+body:
+  - type: textarea
+    id: environment
+    attributes:
+      label: Версия и среда
+      description: Версия библиотеки, компонент или скилл, ОС, Python/Node и Telegram-клиент, если он участвует.
+    validations:
+      required: true
+  - type: textarea
+    id: reproduction
+    attributes:
+      label: Шаги воспроизведения
+      description: Минимальный пример с синтетическими данными. Токены и session-файлы не публикуйте.
+    validations:
+      required: true
+  - type: textarea
+    id: result
+    attributes:
+      label: Ожидаемый и фактический результат
+      description: Что ожидали, что произошло, какой лог или скриншот это подтверждает.
+    validations:
+      required: true

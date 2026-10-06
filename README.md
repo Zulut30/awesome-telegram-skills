@@ -1,82 +1,126 @@
+<p align="center">
+  <img src="assets/readme/cover.png" alt="Awesome Telegram Skills — Python bots. TypeScript Mini Apps." width="100%">
+</p>
+
 # Awesome Telegram Skills
 
-[Темы и специальные операции](docs/platform-operations.md): семь семейств и 51 native метод, current rights/ACL, host intent/budget, scoped events, story multipart и managed secrets; [приемка 030](docs/v1-checks/030.json).
+[![Version](https://img.shields.io/badge/version-0.24.0-229ED9)](CHANGELOG.md)
+[![Skills](https://img.shields.io/badge/skills-41-334155)](#skills)
+[![Status](https://img.shields.io/badge/status-experimental-f59e0b)](docs/v1-maturity.md)
+[![Repository checks](https://github.com/Zulut30/awesome-telegram-skills/actions/workflows/repository-checks.yml/badge.svg)](https://github.com/Zulut30/awesome-telegram-skills/actions/workflows/repository-checks.yml)
 
-[Inline-поиск](docs/inline-search.md) и [опросы/quiz](docs/polls.md): shareable articles, scoped pagination, modern poll parameters и доступные собственные события; [приемка 029](docs/v1-checks/029.json).
+**Практические скиллы для ИИ, готовые компоненты и примеры разработки Telegram-ботов и Mini Apps.**
 
-[Профили и локализация](docs/profiles.md): доступные данные пользователя/бота, фотографии и оформление собственного бота с проверкой прав; неизвестные поля сохраняются. [Приемка 028](docs/v1-checks/028.json).
+Скиллы помогают агенту выбрать решение и проверить результат. Библиотека дает переиспользуемый код, а рецепты показывают, как подключить его к вашему проекту. Основной стек — **Python + aiogram для ботов и backend, TypeScript для Mini Apps**.
 
-[Медиа-компоненты](docs/media.md): фото, документы, альбомы, literal подписи, замена и bounded скачивание через существующий Bot.
+[Быстрый старт](#quickstart) · [Пример кнопок](#buttons) · [Галерея](#gallery) · [Все скиллы](#skills) · [План 1.0](docs/library-roadmap-100.md)
 
-Набор навыков для AI-агентов, которые помогают разрабатывать Telegram-ботов и Mini Apps: от выбора архитектуры до проверки работающего приложения.
+> **Версия 0.24.0 — экспериментальная локальная поставка.** Приняты 30 из 100 пунктов плана. Пакеты пока не опубликованы в PyPI/npm; проверка на реальных Telegram-клиентах и платежных провайдерах остается отдельным этапом.
 
-[Безопасные сообщения](docs/message-text.md): literal text/entities, UTF-16 offsets, HTML/MarkdownV2 escaping и lossless split; custom emoji по проверенной host capability.
+## Что внутри
 
-[Расширенные поля диалогов](docs/dialog-fields.md): числа, email, телефон, даты, документ, контакт и геопозиция; текущий автор/шаг, возврат/отмена, подтверждение и повтор той же заявки.
+| Часть | Что получите |
+| --- | --- |
+| **41 скилл** | Архитектура, Bot API, Mini Apps, платежи, профили, безопасность, тестирование и развертывание |
+| **43 группы компонентов** | Клавиатуры, формы, навигация, календари, медиа, состояния и проверка `initData`; [каталог](components.json) |
+| **Python-пакет** | `telegram_patterns`: ядро и отдельные адаптеры aiogram; [API](packages/python/README.md) |
+| **TypeScript-пакет** | `@awesome-telegram/patterns`: bridge, темы, viewport, safe areas, API-клиент, черновики и UI-основа; [API](packages/typescript/README.md) |
+| **310 рецептов + CLI** | Поиск, фильтры, примеры кода, создание заготовок и `doctor`; [инструкция](docs/developer-tools-review.md) |
 
-[Календарь и слоты](docs/calendar-slots.md): выбор даты/времени, явный DST fold, недоступные даты и file SQLite запись с текущими ACL, schedule revision, защитой от пересечения и durable receipts.
+<a id="quickstart"></a>
 
-Каждый навык описывает конкретную задачу, важные ограничения Telegram, ожидаемый результат и способы проверки. Инструкции написаны на русском; названия навыков, библиотек и API сохранены на английском для удобного вызова.
+## Быстрый старт
 
-Основной стек проекта: **Python для ботов и backend, TypeScript для Mini Apps**.
+```powershell
+git clone https://github.com/Zulut30/awesome-telegram-skills.git
+cd awesome-telegram-skills
+```
 
-Есть [общая библиотека готовых компонентов](docs/component-library.md): два импортируемых пакета Python/TypeScript, 43 группы компонентов и работающие примеры. ИИ подключает нужный API через `telegram-code-patterns`; пакеты пока распространяются локально.
+**Для ИИ.** Откройте репозиторий в Codex и вызовите нужный скилл:
 
-[Навигация в одном сообщении](docs/message-navigation.md): экраны, history/back, owner/context/revision guards и explicit восстановление после unknown edit.
+```text
+$telegram-bot-python Сделай бот записи на консультацию.
+$telegram-code-patterns Подключи готовые формы и календарь.
+$telegram-mini-app-architecture Спроектируй Mini App для телефона, планшета и ПК.
+```
 
-[Композиции клавиатур](docs/keyboard-layouts.md): flat списки, шаблоны рядов 2/3/смешанной ширины, styles и явный capability fallback; прежние builders сохраняются.
+Для существующего проекта перенесите нужные каталоги из `.agents/skills/` целиком вместе с `references`. Или используйте [установщик](scripts/install_skills.py):
 
-[Требования и offline запуск](docs/recipe-execution.md): планы всех 310 рецептов и 211 Python fixtures без токена; native references требуют host/аргументов.
+```powershell
+python scripts/install_skills.py --project "C:\path\to\my-bot" --skill telegram-bot-python --skill telegram-code-patterns --dry-run
+```
 
-[Поиск и фильтры галереи](docs/gallery-navigation.md): 310 рецептов, задачи, контекст, SDK/версии, зрелость и доказательства проверки; ссылки на исходники и проверяющий код. Standalone export включает связанные файлы.
+Замените путь на существующий проект. Проверьте список и повторите команду без `--dry-run`, чтобы скопировать навыки. Установка навыков и установка пакетов — отдельные действия.
 
-Проверена локальная поставка 0.24.0: [статус зрелости API](docs/v1-maturity.md) отдельно от SDK/mock/browser/live evidence. Каталог, Python API, CLI и галерея различают experimental/reference; стабильные сценарии 1.0 пока не заявлены.
+**Для Python-разработчика.** Нужен Python 3.11 или новее. Команды ниже для PowerShell; активация окружения не требуется.
 
-[Публичные контракты Python/TypeScript](docs/public-api.md) описывают параметры, результаты, ошибки, побочные эффекты и владение ресурсами для всех документированных API.
+```powershell
+python -m venv .venv
+.\.venv\Scripts\python.exe -m pip install "./packages/python[aiogram]"
+.\.venv\Scripts\python.exe -m telegram_patterns recipes --show two-columns
+.\.venv\Scripts\python.exe examples/python/offline_keyboards.py
+```
 
-[Справочник API](docs/api-reference.md): 239 публичных Python/TypeScript-символов, CLI и CSS; 32 полных пример с импортами и ограничениями. Проверка исполняет код из документации через установленные wheel/tarball в отдельном consumer.
+Последняя команда выполняет пример через тестовый транспорт без токена и обращений к Telegram. [Пошаговый запуск бота и Mini App](docs/quickstart.md).
 
-[Составной выбор](docs/selection-controls.md): toggle, multiselect, количество, фильтры и подтверждение с current server spec, context/revision guards и отдельной бизнес-транзакцией приложения.
+**Для Mini App.** Нужен Node.js 20 или новее. Из корня репозитория:
 
-[Doctor и исправления](docs/doctor.md) объясняет локальные ошибки установки и manifests, показывает команды следующего действия и сохраняет конфигурацию проекта.
+```powershell
+npm.cmd ci
+npm.cmd run demo
+```
 
-[Версии и совместимость](docs/versioning.md): SemVer, migrations, неизменность принятой поставки и окно deprecation стабильного API.
+Откройте **http://127.0.0.1:4173**. Это локальный пример UI и восстановления запросов; для настоящего Mini App подключите Telegram host и свой backend. [Что демонстрирует пример](docs/component-library.md).
 
-[Матрица поддержки](docs/support-matrix.md) отделяет dependency constraints от проверенных версий SDK, runtime, браузера и устройств.
+<a id="buttons"></a>
 
-[Границы Telegram API](docs/telegram-api-boundaries.md): Bot API, Mini App, Business и user-client, launch/rights и специальные guest/bot-to-bot режимы.
+## Две кнопки в ряд — несколькими строками
 
-[Выбор компонентов нового проекта](docs/starter-selection.md): CLI init, dependency closure, preflight conflicts и полный dry-run.
+```python
+from telegram_patterns.aiogram import ActionButton, action_menu
 
-[Групповой бот](docs/group-bot.md): темы, свежие права bot/actor, заявки и временная модерация с подтверждением; SQLite journal и crash recovery без повторной отправки. Код — `examples/group-bot`.
+keyboard = action_menu([
+    ActionButton("Каталог", "catalog", style="primary"),
+    ActionButton("Помощь", "help"),
+    ActionButton("Подтвердить", "confirm", style="success"),
+    ActionButton("Отмена", "cancel", style="danger"),
+], columns=2)
 
-[Магазин с Mini App](docs/shop-example.md): каталог, корзина, серверная цена и доступ после Stars receipt; TypeScript frontend и Python backend в `examples/shop`.
+# В вашем обработчике: await message.answer("Выберите действие", reply_markup=keyboard)
+```
 
-[Сервисный бот](docs/service-bot.md): пример записи и напоминания на реальной SQLite, с проверкой владельца и восстановлением после аварии. Код — `examples/service-bot`, проверка — `scripts/verify_service_bot.py`.
+Для трех кнопок в ряд используйте `columns=3`. [Смешанные ряды, reply-клавиатуры, стили и custom emoji](docs/keyboard-layouts.md). Права, обработку нажатия и доступность оформления проверяет приложение.
 
-[Первый запуск](docs/quickstart.md): локальная установка, offline-бот и экран Mini App без настоящего токена.
+<a id="gallery"></a>
 
-[Контракт поставки](docs/distribution-contract.md): проверенный состав wheel/tarball, exports, typing, CSS и bundled resources.
+## Найти нужный пример
 
-[Модель расширения](docs/extension-model.md): протоколы storage/transport/provider и проверенный custom adapter без обязательной инфраструктуры.
+Откройте **[gallery/index.html](gallery/index.html) локально в браузере**: поиск по задаче, фильтры SDK и контекста, код, источники и команды проверки. Интерфейс показывает отдельно зрелость компонента и способ его проверки.
 
-[Ошибки и восстановление](docs/error-model.md): безопасные категории, unknown outcome и сверка того же operation_id.
+<details>
+<summary>Посмотреть скриншот галереи 0.24.0</summary>
 
-[Структура API и именованные типы](docs/api-structure.md): явные exports, migration wildcard imports и статические consumer-проверки Python/TypeScript.
+![Галерея: поиск цветных кнопок, ограничения, готовый код и offline-команда](assets/readme/gallery-light.png)
 
-В 0.5.0 появились [галерея с поиском по 298 рецептам](gallery/index.html) и CLI `telegram-patterns recipes/init/doctor`: найти код, создать новый проект и проверить окружение. Галерея работает локально без токенов. [Как использовать и что проверено](docs/developer-tools-review.md). Выполнены первые два пункта [плана развития](docs/library-roadmap-25.md).
+Скриншот локальной веб-галереи; превью кнопок иллюстрирует разметку. Отображение в настоящем Telegram проверяется отдельно.
 
-[План к версии 1.0 — 100 пунктов](docs/library-roadmap-100.md): стабильный API, удобные компоненты ботов, архитектура и интерфейс Mini Apps, надежность, платежи, реальные устройства и выпуск. Подтверждены **29/100**: 1–19 и 21–30. [Исследование после 029](docs/library-v1-plan-review-after-029.md) и [последовательность этапов](docs/library-v1-release-sequence.md) отделяют текущую приемку, внешние пользовательские отчеты и предлагаемые решения.
+</details>
 
-[Сценарии и границы 1.0](docs/v1-scope.md) фиксируют целевые примеры и критерии приемки; [регистр выполнения 100 пунктов](docs/v1-progress.json) отражает подтвержденный прогресс. Каждый завершенный пункт оформляется отдельным коммитом.
+| Сценарий | Готовый пример |
+| --- | --- |
+| Клавиатуры и обработка ввода | [Бот](examples/python/keyboards_bot.py) · [offline-запуск](examples/python/offline_keyboards.py) |
+| Запись на услугу и напоминания | [Сервисный бот](docs/service-bot.md) |
+| Темы и модерация групп | [Групповой бот](docs/group-bot.md) |
+| Каталог, корзина и Stars | [Магазин с Mini App](docs/shop-example.md) |
 
-[Рецепты 0.4.0](recipes/README.md): две/три кнопки в ряд, цвета и emoji fallback, reply-клавиатуры, ввод, callback/редактирование и Update events. [Готовый бот](examples/python/keyboards_bot.py) и [offline-сценарий](examples/python/offline_keyboards.py) исполняют одну композицию. [Каталог возможностей](catalog/telegram-capabilities.json) охватывает 185 методов / 400 типов Bot API и 99 native функций / 44 события Mini Apps: request construction и mock verification отмечены отдельно от live сценариев.
+<a id="skills"></a>
 
-[Инструменты ботов 0.2.0](docs/bot-tools-review.md): меню кнопок, пагинация, общие описания команд, polling lifecycle и тесты без Telegram. Есть готовый [offline-бот](examples/python/offline_bot.py). Повторить проверку поставки и Mini App: `python scripts/verify_pattern_packages.py` после `npm.cmd ci`.
+## Скилл под вашу задачу
 
-[Формы 0.3.0](docs/form-tools-review.md): поля с проверкой, возврат/отмена, подтверждение и стабильный ID заявки при повторе после ошибки. [Готовый бот заявки](examples/python/form_bot.py) и [его offline-сценарий](examples/python/offline_form.py) используют одну композицию.
+Начните с `telegram-project-planner` для нового проекта, `telegram-code-patterns` для готового кода или профильного скилла для узкой задачи. Каждый каталог самостоятельный; загружать весь набор не нужно.
 
-## Каталог
+<details>
+<summary><strong>Открыть каталог всех 41 скилла</strong></summary>
 
 | Навык | Когда использовать |
 | --- | --- |
@@ -122,89 +166,12 @@
 | [telegram-yookassa](.agents/skills/telegram-yookassa/SKILL.md) | ЮKassa: API, provider invoices, capture, refunds и уведомления |
 | [telegram-payment-provider](.agents/skills/telegram-payment-provider/SKILL.md) | Stripe, Robokassa и другие провайдеры через отдельный adapter |
 
-## Использование
+</details>
 
-В этом проекте навыки лежат в `.agents/skills`. Codex поддерживает этот каталог для локальных навыков; если новые навыки не появились в списке, перезапустите чат или приложение. Подробности: [официальная документация навыков](https://developers.openai.com/codex/skills/).
+## Качество и границы
 
-Примеры запросов:
+Поставка 0.24.0 прошла 77 этапов приемки: **460 Python-тестов, один пропуск, 26 TypeScript-тестов, 2435 автоматических браузерных проверок и 60 проверок первого запуска**. Собранные wheel/tarball устанавливались в отдельные consumer-проекты. [Отчет приемки](docs/v1-checks/031.json) · [Матрица поддержки](docs/support-matrix.md).
 
-```text
-$telegram-project-planner Спроектируй бот записи на консультации с Mini App.
-$telegram-mini-app-architecture Реализуй структуру Mini App для телефона, планшета и ПК с сохранением формы и надежной навигацией.
-$telegram-mini-app-design-system Создай общие компоненты для нескольких экранов Mini App.
-$telegram-mini-app-performance Найди причину медленной загрузки и сравни результат до/после.
-$telegram-mini-app-device-qa Проверь основной путь в доступных клиентах Telegram.
-$telegram-mini-app-ux Упрости запись и исправление ошибок без потери формы.
-$telegram-mini-app-visual-regression Добавь проверку скриншотов экранов в двух темах.
-$telegram-mini-app-network-recovery Обработай потерянный ответ заказа и восстановление черновика.
-$telegram-web-login Подключи Telegram Login к обычному сайту с Python backend.
-$telegram-admin-panel Сделай поиск и отмену заказа для оператора своего магазина.
-$telegram-media-processing Добавь обработку аудиофайла и закрытую выдачу результата.
-$telegram-subscription-access Реализуй оплаченные периоды, продление и истечение доступа.
-$telegram-python-backend Добавь API записи с правами доступа и безопасными повторами.
-$telegram-notifications Добавь напоминание о записи с возможностью отписаться.
-$telegram-localization Добавь русский и английский с согласованными датами и ценами.
-$telegram-bot-python Сделай обработчики записи на aiogram с PostgreSQL.
-$telegram-dialogs Добавь выбор даты, подтверждение и отмену записи.
-$telegram-mini-app-ui Сделай экран доступных слотов на React.
-$telegram-mini-app-auth Добавь проверку initData в backend.
-$telegram-payments Добавь оплату цифровой подписки через Stars.
-$telegram-debugging Разберись, почему webhook перестал получать updates.
-$telegram-buttons Сделай зеленую кнопку подтверждения с custom emoji.
-$telegram-profiles Добавь доступные данные Premium и фото профиля.
-$telegram-user-client Подготовь чтение выбранных чатов через Telethon.
-$telegram-business-bots Добавь обработку сообщений подключенного аккаунта.
-$telegram-platega Подключи Platega для подходящего платежного сценария.
-```
+Каталог API содержит request-примеры; он не означает, что все возможности Telegram реализованы и испытаны в боевом приложении. Mini App UI — основа для вашего продукта; полная приемка на реальных телефонах, планшетах и ПК еще впереди. Платежные скиллы описывают интеграции Stars, Crypto Pay, Platega и ЮКассы; merchant-настройки и live-проверки относятся к конкретному проекту. Bot API, Mini Apps и пользовательские MTProto-сессии имеют отдельные границы доступа.
 
-Можно описать задачу обычными словами: у каждого навыка есть отдельное описание для автоматического выбора. Для большой задачи агент может использовать несколько подходящих навыков. Доступность автоматического выбора зависит от агента и его настройки.
-
-Общие навыки не привязаны к языку. Для ботов есть отдельный навык Python, для Mini Apps — TypeScript и UI. Уже выбранные библиотеки сохраняются; для нового проекта без предпочтений отправной вариант — aiogram для бота и TypeScript для Mini App. Frontend-фреймворк и Python web-framework выбираются по проекту.
-
-## Подключить к другому проекту
-
-Скопируйте нужные каталоги из `.agents/skills` в такой же каталог проекта бота. Каждый навык переносится целиком вместе со своими references и UI-метаданными. Ссылок на соседние навыки, обязательных MCP-серверов и привязок к этому компьютеру нет.
-
-Или воспользуйтесь установщиком из корня этого набора:
-
-```powershell
-python scripts/install_skills.py --project "C:\path\to\my-bot" --dry-run
-python scripts/install_skills.py --project "C:\path\to\my-bot"
-```
-
-Для отдельных навыков повторяйте аргумент `--skill`:
-
-```powershell
-python scripts/install_skills.py --project "C:\path\to\my-bot" --skill telegram-bot-python --skill telegram-dialogs
-```
-
-Целевой проект должен существовать. Скрипт предварительно проверяет весь выбранный набор и отказывается перезаписывать существующие навыки. Он не меняет глобальные настройки агента. Для других агентов используйте их документированный каталог навыков; совместимость их загрузчиков отдельно не проверена.
-
-## Проверка и развитие набора
-
-Для проверки формата, UI-метаданных, локальных ссылок и синтаксиса Python:
-
-```powershell
-uv run --with "PyYAML>=6,<7" python scripts/validate_skills.py
-python -m unittest discover -s tests -v
-```
-
-Без uv установите `requirements-dev.txt` в отдельное виртуальное окружение и запустите `python scripts/validate_skills.py`.
-
-При добавлении навыка укажите узкую область применения, ссылки на официальные источники и проверяемый результат. Детали, нужные только в части задач, выносите в `references/`. Вспомогательные скрипты добавляйте для повторяющихся операций и проверяйте их поведение.
-
-Источники и порядок обновления: [docs/sources.md](docs/sources.md). Сценарии проверки качества навыков: [docs/evaluation.md](docs/evaluation.md). Результаты проверок: [docs/verification.md](docs/verification.md). Независимая проверка поведения и адаптивных Mini Apps: [docs/quality-review.md](docs/quality-review.md). Проверка восьми новых навыков: [docs/skill-extension-review.md](docs/skill-extension-review.md). Полный повторный аудит 33 навыков до последнего расширения: [docs/skill-quality-audit.md](docs/skill-quality-audit.md). Семь продуктовых навыков и расширение UI: [docs/skill-product-extension-review.md](docs/skill-product-extension-review.md).
-
-Последний [полный аудит всех 40 навыков](docs/skill-full-check.md) содержит отдельный результат каждого навыка, свежие исполняемые пробы, 56 слепых запросов выбора, исправления OIDC/Platega и границы live-проверки.
-
-Набор содержит 41 навык. [Карта возможностей Bot API](.agents/skills/telegram-bot-api/references/features.md) и [машиночитаемый индекс](.agents/skills/telegram-bot-api/references/api-index.json) охватывают 185 методов и 400 типов снимка Bot API 10.3. Индекс содержит имена и поля; конкретные ограничения читаются по официальным ссылкам записей. Для обновления:
-
-```powershell
-python .agents/skills/telegram-bot-api/scripts/update_api_index.py
-```
-
-Работа с пользовательским аккаунтом отделена от обычного Bot API. Telethon использует авторизованную user session; Business/Secretary Bot получает отдельные разрешения владельца. Функции профиля показывают доступные данные, сохраняя различие между отсутствием информации и отрицательным результатом.
-
-Платежные навыки выбирают маршрут по товару и правилам платформы: цифровые товары внутри Telegram используют Stars, а внешние providers применяются к подходящим сценариям. В наборе описаны протоколы интеграции, а production adapters и merchant accounts создаются в конкретном проекте.
-
-Проверка файлов и установщика не означает, что каждый сценарий уже испытан на реальном боте: такие испытания проводятся на отдельном тестовом боте, Mini App и в платежных test environments.
+Для изменений набора: [CONTRIBUTING.md](CONTRIBUTING.md). Источники: [docs/sources.md](docs/sources.md). Развитие: [план из 100 пунктов](docs/library-roadmap-100.md) и [регистр выполнения](docs/v1-progress.json).

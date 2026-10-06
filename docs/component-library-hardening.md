@@ -17,7 +17,7 @@
 | Telegram передает semantic theme colors | Секция, подсказка, разделитель и ошибка использовали прежние fallback colors | Применены соответствующие ThemeParams; native controls получают light/dark color-scheme |
 | Официальный SDK загружен вне Telegram | Одного объекта WebApp было достаточно для insideTelegram=true | Platform unknown дает false; без platform сохранена совместимость прежних адаптеров. Snapshot не устанавливает личность |
 
-Первые прогоны новых regression tests воспроизвели три проблемных Python-сценария и пять TypeScript-сценариев: [Python baseline](../output/pattern-library-0.1.1/baseline-python.log), [TypeScript baseline](../output/pattern-library-0.1.1/baseline-typescript.log). В [UI baseline](../output/pattern-library-0.1.1/browser-baseline/component-contract.json) сохранены ошибочный label focus, игнорируемые semantic colors и color-scheme=normal. Проверка fallback ID добавлена к финальному browser suite.
+Первые прогоны новых regression tests воспроизвели три проблемных Python-сценария и пять TypeScript-сценариев: Python baseline (`output/pattern-library-0.1.1/baseline-python.log`, локальный артефакт), TypeScript baseline (`output/pattern-library-0.1.1/baseline-typescript.log`, локальный артефакт). В UI baseline (`output/pattern-library-0.1.1/browser-baseline/component-contract.json`, локальный артефакт) сохранены ошибочный label focus, игнорируемые semantic colors и color-scheme=normal. Проверка fallback ID добавлена к финальному browser suite.
 
 SQLite callback остается доверенным кодом приложения. Он не должен менять authorizer/режим транзакций, закрывать connection или выполнять внешний сетевой эффект. Authorizer защищает от случайного нарушения контракта; произвольный Python-код он не изолирует. Scope и права проверяются сервисом до эффекта и до replay.
 
@@ -25,13 +25,13 @@ SQLite callback остается доверенным кодом приложе�
 
 | Проверка | Результат | Доказательство |
 | --- | --- | --- |
-| Python core | Wheel установлен в новый venv без aiogram; публичный HMAC import и fixture выполнены | [core-smoke.log](../output/pattern-library-0.1.1/core-smoke.log) |
-| SQLite example | Два отдельных процесса вернули одинаковый booking ID, второй с replayed=true | [Первый вызов](../output/pattern-library-0.1.1/booking-first.log), [повтор](../output/pattern-library-0.1.1/booking-replay.log) |
-| Python SDK consumer | 21/21 тест из установленного финального wheel; aiogram 3.31.0, dependency check прошел | [Тесты](../output/pattern-library-0.1.1/python-tests.log), [pip check](../output/pattern-library-0.1.1/sdk-dependencies.log) |
-| TypeScript consumer | 15/15 Node tests через bare import установленного tarball; реальные локальные HTTP endpoints, timeout/cancel, redirect и обрыв тела | [Тесты](../output/pattern-library-0.1.1/typescript-tests.log) |
-| Публичные types/CSS | Реальный Mini App example прошел strict typecheck против установленных declarations; CSS subpath читается из пакета | [Typecheck](../output/pattern-library-0.1.1/consumer-typecheck.log), [CSS](../output/pattern-library-0.1.1/packaged-style.log) |
-| Browser UI | 141 assertion, 14 viewport/theme cases на Chrome 154.0.8037.97; 14 screenshots | [JSON](../output/pattern-library-0.1.1/browser/report.json), [component contract](../output/pattern-library-0.1.1/browser/component-contract.json) |
-| Переносимый навык | CLI скопировал только telegram-code-patterns в новый временный проект, все три файла совпали побайтово, local reference на месте | [Копирование](../output/pattern-library-0.1.1/skill-install.json) |
+| Python core | Wheel установлен в новый venv без aiogram; публичный HMAC import и fixture выполнены | core-smoke.log (`output/pattern-library-0.1.1/core-smoke.log`, локальный артефакт) |
+| SQLite example | Два отдельных процесса вернули одинаковый booking ID, второй с replayed=true | Первый вызов (`output/pattern-library-0.1.1/booking-first.log`, локальный артефакт), повтор (`output/pattern-library-0.1.1/booking-replay.log`, локальный артефакт) |
+| Python SDK consumer | 21/21 тест из установленного финального wheel; aiogram 3.31.0, dependency check прошел | Тесты (`output/pattern-library-0.1.1/python-tests.log`, локальный артефакт), pip check (`output/pattern-library-0.1.1/sdk-dependencies.log`, локальный артефакт) |
+| TypeScript consumer | 15/15 Node tests через bare import установленного tarball; реальные локальные HTTP endpoints, timeout/cancel, redirect и обрыв тела | Тесты (`output/pattern-library-0.1.1/typescript-tests.log`, локальный артефакт) |
+| Публичные types/CSS | Реальный Mini App example прошел strict typecheck против установленных declarations; CSS subpath читается из пакета | Typecheck (`output/pattern-library-0.1.1/consumer-typecheck.log`, локальный артефакт), CSS (`output/pattern-library-0.1.1/packaged-style.log`, локальный артефакт) |
+| Browser UI | 141 assertion, 14 viewport/theme cases на Chrome 154.0.8037.97; 14 screenshots | JSON (`output/pattern-library-0.1.1/browser/report.json`, локальный артефакт), component contract (`output/pattern-library-0.1.1/browser/component-contract.json`, локальный артефакт) |
+| Переносимый навык | CLI скопировал только telegram-code-patterns в новый временный проект, все три файла совпали побайтово, local reference на месте | Копирование (`output/pattern-library-0.1.1/skill-install.json`, локальный артефакт) |
 | Метаданные/ссылки набора | 41/41 навык, frontmatter/UI metadata, переносимые local references и Python syntax прошли валидатор | [validate_skills.py](../scripts/validate_skills.py) |
 | Помощники набора | 16/16 root tests установщика/индекса, без пропусков | Команда ниже, [tests](../tests) |
 
@@ -43,7 +43,7 @@ Consumer-проекты находятся вне checkout. Проверены i
 
 ## Поставка и воспроизведение
 
-[distribution-report.json](../output/pattern-library-0.1.1/distribution-report.json) содержит итог passed=true, 18 этапов с exit_code=0, путь временных consumers, browser report и SHA256 финальных файлов:
+distribution-report.json (`output/pattern-library-0.1.1/distribution-report.json`, локальный артефакт) содержит итог passed=true, 18 этапов с exit_code=0, путь временных consumers, browser report и SHA256 финальных файлов:
 
 | Артефакт | Байты | SHA256 |
 | --- | --- | --- |
@@ -70,3 +70,5 @@ python -m unittest discover -s tests -v
 Живой Telegram, физические телефоны/планшеты/ПК с Telegram, настоящая soft keyboard, screen reader, payments и native permissions не проверялись. Browser viewport подтверждает локальную геометрию/ввод/темы; реальная inset policy и theme contrast требуют проверки целевых клиентов. Profile/MTProto/payment provider adapters не добавлялись. Mini App example по-прежнему использует loopback mock backend, память и fixture actor; production session/ACL и durable unknown-operation recovery остаются у приложения.
 
 Первичные источники и точный контракт 0.1.1 указаны в [Python README](../packages/python/README.md), [TypeScript README](../packages/typescript/README.md) и [sources.md](sources.md). Дата относится только к перечисленным проверенным контрактам.
+
+Логи и снимки с путями `output/…` — локальные артефакты исторических проверок. Они не входят в Git и не доступны в свежем клоне. Для текущей принятой версии смотрите [сохраненную приемку 031](v1-checks/031.json); для нового прогона выполните `python scripts/verify_pattern_packages.py`.

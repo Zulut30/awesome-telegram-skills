@@ -6,7 +6,7 @@
 
 Три независимых агента сначала прочитали свои навыки без прежних отчетов и ожидаемых ответов, затем выполнили отдельный узкий запрос для каждого. Пробы создавались во временных каталогах. Сверены scope, сохранение существующего стека, серверные проверки, повторы, источники и наблюдаемый результат. Для проектирования результатом является конкретный план; для недоступных устройств — честная QA-матрица, а не фиктивный runtime pass.
 
-[Покрытие чтения](../output/quality-full-check/read-coverage.json): 119/119 файлов, пропусков нет. Исходные hashes и byte snapshot сохранены в [inventory-before.json](../output/quality-full-check/inventory-before.json) и [skills-before.zip](../output/quality-full-check/skills-before.zip). После правок сохранен отдельный финальный снимок; исходный не заменен.
+Покрытие чтения (`output/quality-full-check/read-coverage.json`, локальный артефакт): 119/119 файлов, пропусков нет. Исходные hashes и byte snapshot сохранены в inventory-before.json (`output/quality-full-check/inventory-before.json`, локальный артефакт) и skills-before.zip (`output/quality-full-check/skills-before.zip`, локальный артефакт). После правок сохранен отдельный финальный снимок; исходный не заменен.
 
 | Проверка | Фактический результат |
 | --- | --- |
@@ -29,11 +29,11 @@
 
 **P3 — документация каталога.** В текущем чате видны все 40 имен; устаревшее сообщение о видимости только 33 исправлено. Видимость каталога не подтверждает автоматическое выполнение каждого навыка.
 
-Исправления независимо перечитаны: [post-review](../output/quality-full-check/backend-post-review.json). Первичная дополнительная проба и повтор родителя хранятся отдельно: [independent](../output/quality-full-check/backend-supplemental-independent.json), [parent](../output/quality-full-check/backend-supplemental-parent.json). Только две references навыков изменены; точный [diff](../output/quality-full-check/skill-changes.diff) и [changes.json](../output/quality-full-check/changes.json) сохранены.
+Исправления независимо перечитаны: post-review (`output/quality-full-check/backend-post-review.json`, локальный артефакт). Первичная дополнительная проба и повтор родителя хранятся отдельно: independent (`output/quality-full-check/backend-supplemental-independent.json`, локальный артефакт), parent (`output/quality-full-check/backend-supplemental-parent.json`, локальный артефакт). Только две references навыков изменены; точный diff (`output/quality-full-check/skill-changes.diff`, локальный артефакт) и changes.json (`output/quality-full-check/changes.json`, локальный артефакт) сохранены.
 
 ## Результат каждого навыка
 
-«Проверен» в этой таблице означает прочитанные инструкции и выполненный указанный сценарий. Ограничения не превращены в passed. Полные запросы, критерии, исходящие payloads, результаты и команды находятся в [frontend](../output/quality-full-check/frontend-report.json), [backend](../output/quality-full-check/backend-report.json) и [platform](../output/quality-full-check/platform-report.json) отчетах.
+«Проверен» в этой таблице означает прочитанные инструкции и выполненный указанный сценарий. Ограничения не превращены в passed. Полные запросы, критерии, исходящие payloads, результаты и команды находятся в frontend (`output/quality-full-check/frontend-report.json`, локальный артефакт), backend (`output/quality-full-check/backend-report.json`, локальный артефакт) и platform (`output/quality-full-check/platform-report.json`, локальный артефакт) отчетах.
 
 | Навык | Проверенный результат | Практическая граница |
 | --- | --- | --- |
@@ -80,15 +80,15 @@
 
 ## Выбор навыков
 
-Новый независимый агент получил только names/descriptions и 56 запросов, без bodies и ожидаемых ответов: [routing report](../output/quality-full-check/routing-report.json). Критерии были сохранены заранее. [Сопоставление](../output/quality-full-check/routing-grading.json): 55/56 совпадений основного выбора; во всех 56 наборах присутствует ожидаемый навык, запрещенных расширений нет. Все 40 навыков представлены в выборе.
+Новый независимый агент получил только names/descriptions и 56 запросов, без bodies и ожидаемых ответов: routing report (`output/quality-full-check/routing-report.json`, локальный артефакт). Критерии были сохранены заранее. Сопоставление (`output/quality-full-check/routing-grading.json`, локальный артефакт): 55/56 совпадений основного выбора; во всех 56 наборах присутствует ожидаемый навык, запрещенных расширений нет. Все 40 навыков представлены в выборе.
 
 В запросе stale callback основным выбран debugging, dialogs — дополнительным. Для исправления уже работающего диалога это разумное сочетание; основное имя не объявлено строгим совпадением. Отмечены еще пересечения по scope в исходном отчете. Это проверка различимости описаний, без запуска автоматического загрузчика и без выполнения этих 56 запросов.
 
 ## Доказательства и воспроизведение
 
-Исходники новых проб, snapshots входов, runtime artifacts и неуспешные первые fixtures: [independent-probes.zip](../output/quality-full-check/independent-probes.zip), [manifest](../output/quality-full-check/probe-archive-manifest.json). Зависимости/венвы/node_modules исключены; версии и команды указаны в отчетах. Пробы используют пути этого Windows компьютера; для другой среды нужно настроить interpreter/browser/library paths. Внутри только synthetic/test accounts, keys, payments и contacts.
+Исходники новых проб, snapshots входов, runtime artifacts и неуспешные первые fixtures: independent-probes.zip (`output/quality-full-check/independent-probes.zip`, локальный артефакт), manifest (`output/quality-full-check/probe-archive-manifest.json`, локальный артефакт). Зависимости/венвы/node_modules исключены; версии и команды указаны в отчетах. Пробы используют пути этого Windows компьютера; для другой среды нужно настроить interpreter/browser/library paths. Внутри только synthetic/test accounts, keys, payments и contacts.
 
-Прежний пример Mini App сохранен отдельно: [browser-example.zip](../output/quality-full-check/browser-example.zip), [fresh browser result](../output/quality-full-check/browser-recheck.json). Родитель просмотрел компактную светлую, широкую темную компоновку и error/diff состояния обеих проб. Screenshot comparison подтверждает конкретную среду/состояние; не измеряет субъективную красоту и удобство с участниками.
+Прежний пример Mini App сохранен отдельно: browser-example.zip (`output/quality-full-check/browser-example.zip`, локальный артефакт), fresh browser result (`output/quality-full-check/browser-recheck.json`, локальный артефакт). Родитель просмотрел компактную светлую, широкую темную компоновку и error/diff состояния обеих проб. Screenshot comparison подтверждает конкретную среду/состояние; не измеряет субъективную красоту и удобство с участниками.
 
 Команды репозитория:
 
@@ -107,3 +107,5 @@ uv run --with "PyYAML>=6,<7" python -X utf8 output/quality-full-check/check_coll
 Живой Telegram, BotFather/OIDC exchange, реальные платежные test environments, физические телефоны/планшеты, настоящая клавиатура/bridge/safe areas/fullscreen, screen reader, производительность слабого устройства и deployment выбранного продукта — not-run. Автоматическая активация всех навыков загрузчиком не подтверждена.
 
 Прямая текущая документация Crypto Pay оставалась недоступна; локальная криптографическая проба не решает актуальность полного provider protocol. Сценарии за пределами таблицы и полный перечень [evaluation.md](evaluation.md) не объявляются выполненными. Ошибок или заглушек, мешающих переносу этих 40 навыков, в проверенном снимке не найдено.
+
+Логи и снимки с путями `output/…` — локальные артефакты исторических проверок. Они не входят в Git и не доступны в свежем клоне. Для текущей принятой версии смотрите [сохраненную приемку 031](v1-checks/031.json); для нового прогона выполните `python scripts/verify_pattern_packages.py`.

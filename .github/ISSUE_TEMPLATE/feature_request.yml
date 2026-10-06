@@ -1,0 +1,23 @@
+name: Предложение
+description: Новый сценарий, компонент, рецепт или улучшение скилла.
+title: "[Feature]: "
+body:
+  - type: textarea
+    id: task
+    attributes:
+      label: Пользовательская задача
+      description: Что хотите сделать и чего не хватает в существующих компонентах?
+    validations:
+      required: true
+  - type: textarea
+    id: proposal
+    attributes:
+      label: Предлагаемое решение
+      description: Какой код, пример или инструкция помогли бы решить задачу?
+    validations:
+      required: true
+  - type: textarea
+    id: acceptance
+    attributes:
+      label: Критерий готовности
+      description: По какому проверяемому результату станет понятно, что задача решена?

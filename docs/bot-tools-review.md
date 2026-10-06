@@ -23,18 +23,18 @@
 
 ## Проверка
 
-Финальный wheel/tarball установлен в свежие consumer-проекты вне checkout. Все 19 этапов release helper завершились с exit_code=0: [distribution-report.json](../output/pattern-library-0.2.0/distribution-report.json).
+Финальный wheel/tarball установлен в свежие consumer-проекты вне checkout. Все 19 этапов release helper завершились с exit_code=0: distribution-report.json (`output/pattern-library-0.2.0/distribution-report.json`, локальный артефакт).
 
 | Проверка | Выполненный результат | Доказательство |
 | --- | --- | --- |
-| Python | 39/39 из установленного wheel: 18 новых bot-tool cases и 21 прежний regression case | [Лог](../output/pattern-library-0.2.0/python-tests.log) |
-| Core без SDK | BotSettings и HMAC импортированы/выполнены в отдельном venv без aiogram; SQLite example повторен между процессами | [Core](../output/pattern-library-0.2.0/core-smoke.log), [replay](../output/pattern-library-0.2.0/booking-replay.log) |
-| Offline бот | /start → catalog-page:1 → act:item-4; два ACK, edit и ответ в chat=42; session закрыта | [Лог](../output/pattern-library-0.2.0/offline-bot.log) |
-| TypeScript | 15/15 через установленный tarball; strict typecheck примера и публичный CSS export прошли | [Тесты](../output/pattern-library-0.2.0/typescript-tests.log), [typecheck](../output/pattern-library-0.2.0/consumer-typecheck.log) |
-| Mini App | 141 browser assertion, 14 viewport/theme cases на Chrome 154.0.8037.97; API сохранен | [JSON](../output/pattern-library-0.2.0/browser/report.json) |
-| Навык | CLI установил только telegram-code-patterns в новый временный проект; все четыре файла совпали побайтово, включая bot-recipes | [Копирование](../output/pattern-library-0.2.0/skill-install.json) |
+| Python | 39/39 из установленного wheel: 18 новых bot-tool cases и 21 прежний regression case | Лог (`output/pattern-library-0.2.0/python-tests.log`, локальный артефакт) |
+| Core без SDK | BotSettings и HMAC импортированы/выполнены в отдельном venv без aiogram; SQLite example повторен между процессами | Core (`output/pattern-library-0.2.0/core-smoke.log`, локальный артефакт), replay (`output/pattern-library-0.2.0/booking-replay.log`, локальный артефакт) |
+| Offline бот | /start → catalog-page:1 → act:item-4; два ACK, edit и ответ в chat=42; session закрыта | Лог (`output/pattern-library-0.2.0/offline-bot.log`, локальный артефакт) |
+| TypeScript | 15/15 через установленный tarball; strict typecheck примера и публичный CSS export прошли | Тесты (`output/pattern-library-0.2.0/typescript-tests.log`, локальный артефакт), typecheck (`output/pattern-library-0.2.0/consumer-typecheck.log`, локальный артефакт) |
+| Mini App | 141 browser assertion, 14 viewport/theme cases на Chrome 154.0.8037.97; API сохранен | JSON (`output/pattern-library-0.2.0/browser/report.json`, локальный артефакт) |
+| Навык | CLI установил только telegram-code-patterns в новый временный проект; все четыре файла совпали побайтово, включая bot-recipes | Копирование (`output/pattern-library-0.2.0/skill-install.json`, локальный артефакт) |
 | Набор | 41 skill validation и 16/16 root helper tests прошли без пропусков | [Валидатор](../scripts/validate_skills.py), [tests](../tests) |
-| Entry point без token | Пример завершился с exit_code=1 и Set BOT_TOKEN до сетевого запуска | [Лог](../output/pattern-library-0.2.0/missing-token.log) |
+| Entry point без token | Пример завершился с exit_code=1 и Set BOT_TOKEN до сетевого запуска | Лог (`output/pattern-library-0.2.0/missing-token.log`, локальный артефакт) |
 
 Среда финальных consumers: Windows, Python 3.13.12, aiogram 3.31.0, Node 24.19.0, npm 12.0.2, TypeScript 7.0.2, Playwright 1.63.0. Предварительные Python-пробы использовали 3.12.13. Все версии разрешенного dependency range отдельно не прогонялись.
 
@@ -61,3 +61,5 @@ Release helper собирает wheel/tarball и создает fresh consumers 
 Live Telegram messages, permissions, физические устройства, платежи и native capabilities не проверяются local transport. Меню — builders, handlers и авторизация остаются приложению. Статические commands не заменяют FSM/динамический сервис. Pagination принимает local sequence, без SQL cursor/tenant filtering. BotSettings repr redaction не защищает явный token/asdict от логирования. Run_bot предназначен для эксклюзивного использования одного Dispatcher одним polling entrypoint; commands opt-in устанавливает default scope, а другие scopes/languages и webhook/multibot остаются у SDK. Переданную session после preflight runner закрывает, ее нельзя делить с другим Bot.
 
 Новые инструкции проверяются переносимостью ссылок и соответствующими executable сценариями; новый независимый агентный routing audit и автоматическая активация навыка этим прогоном не заявляются. Частичные официальные источники и проверенная версия SDK указаны в [sources.md](sources.md).
+
+Логи и снимки с путями `output/…` — локальные артефакты исторических проверок. Они не входят в Git и не доступны в свежем клоне. Для текущей принятой версии смотрите [сохраненную приемку 031](v1-checks/031.json); для нового прогона выполните `python scripts/verify_pattern_packages.py`.

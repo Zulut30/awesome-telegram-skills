@@ -18,17 +18,17 @@
 
 | Проверка | Фактический результат | Доказательство |
 | --- | --- | --- |
-| Выбор навыков по descriptions | 32 запроса, подходящие маршруты, включая три запроса без Telegram; существенных ошибочных выборов не обнаружено | [routing-results.json](../output/quality/routing-results.json) |
-| Исходный пример: каталог | 8 размеров × 2 темы, горизонтального переполнения нет | [baseline-browser.json](../output/quality/baseline-browser.json) |
-| Усиленный пример: каталог | Те же 16 комбинаций, горизонтального переполнения нет; широкая компоновка содержит отдельный обзор записи | [improved-browser.json](../output/quality/improved-browser.json) |
+| Выбор навыков по descriptions | 32 запроса, подходящие маршруты, включая три запроса без Telegram; существенных ошибочных выборов не обнаружено | routing-results.json (`output/quality/routing-results.json`, локальный артефакт) |
+| Исходный пример: каталог | 8 размеров × 2 темы, горизонтального переполнения нет | baseline-browser.json (`output/quality/baseline-browser.json`, локальный артефакт) |
+| Усиленный пример: каталог | Те же 16 комбинаций, горизонтального переполнения нет; широкая компоновка содержит отдельный обзор записи | improved-browser.json (`output/quality/improved-browser.json`, локальный артефакт) |
 | Формы в обоих примерах | По 8 размеров; resize, смена темы и возврат сохраняют введенное имя; подтверждение проходит | Те же browser JSON |
-| Малая высота окна | При 390×420 основная кнопка доступна после прокрутки в обоих примерах | Browser JSON и [скриншот формы](../output/playwright/improved-form-low-height.png) |
+| Малая высота окна | При 390×420 основная кнопка доступна после прокрутки в обоих примерах | Browser JSON и скриншот формы (`output/playwright/improved-form-low-height.png`, локальный артефакт) |
 | Ошибка сети и повтор | В усиленном примере ошибка сохраняет форму; последующий повтор дает `DEMO-0001` | improved-browser.json |
-| Контраст и цели нажатия | По 24 текстовых образца на тему в исходном и 27 в усиленном; нарушения выбранного порога не обнаружены, измеренные цели не меньше 44×44 CSS px | [baseline-visual.json](../output/quality/baseline-visual.json), [improved-visual.json](../output/quality/improved-visual.json) |
+| Контраст и цели нажатия | По 24 текстовых образца на тему в исходном и 27 в усиленном; нарушения выбранного порога не обнаружены, измеренные цели не меньше 44×44 CSS px | baseline-visual.json (`output/quality/baseline-visual.json`, локальный артефакт), improved-visual.json (`output/quality/improved-visual.json`, локальный артефакт) |
 | Восстановление страницы | Ошибка исходного примера воспроизведена; после исправления оба проходят проверку callbacks, resize и навигации | Lifecycle JSON ниже |
-| Усиленный пример: код/сборка | Typecheck, 12 тестов и production build прошли; JS 28,87 kB, gzip 10,70 kB | [improved-tests-build.txt](../output/quality/improved-tests-build.txt) |
-| Симуляция медленного устройства | CPU ×4, 1,6 Mbps download, 150 ms latency, cache disabled: каталог демо готов через 1475–1489 ms в трех запусках | [improved-performance.json](../output/quality/improved-performance.json) |
-| Python auth и Crypto Pay | 32 теста прошли; 40 конкурентных уведомлений дали одну выдачу и 39 дублей | [protocol-test-results.txt](../output/quality/protocol-test-results.txt) |
+| Усиленный пример: код/сборка | Typecheck, 12 тестов и production build прошли; JS 28,87 kB, gzip 10,70 kB | improved-tests-build.txt (`output/quality/improved-tests-build.txt`, локальный артефакт) |
+| Симуляция медленного устройства | CPU ×4, 1,6 Mbps download, 150 ms latency, cache disabled: каталог демо готов через 1475–1489 ms в трех запусках | improved-performance.json (`output/quality/improved-performance.json`, локальный артефакт) |
+| Python auth и Crypto Pay | 32 теста прошли; 40 конкурентных уведомлений дали одну выдачу и 39 дублей | protocol-test-results.txt (`output/quality/protocol-test-results.txt`, локальный артефакт) |
 | Сам набор | 25/25 прошли оба валидатора; 16 тестов репозитория; установлены 25 навыков/73 файла с побайтовым совпадением и отказом перезаписи | [verification.md](verification.md) |
 
 Размеры окна: 320×568, 390×844, 768×1024, 1024×768, 1280×800, 1536×864, 480×720 и 390×420 CSS px. Последний размер моделирует ограниченную высоту; он не воспроизводит настоящую экранную клавиатуру Telegram.
@@ -37,21 +37,21 @@ Routing проверял независимый агент, читавший т�
 
 ## Найденная ошибка и изменение навыков
 
-В исходном приложении безусловный cleanup на `pagehide` удалял обработчики, хотя `persisted=true` допускает восстановление документа. После синтетических `pagehide/pageshow` окно уменьшалось с 844 до 420 px, а переменная высоты оставалась 844 px: [до исправления](../output/quality/baseline-lifecycle.json). Проверка была выполнена на приложении, а не выведена только из чтения кода.
+В исходном приложении безусловный cleanup на `pagehide` удалял обработчики, хотя `persisted=true` допускает восстановление документа. После синтетических `pagehide/pageshow` окно уменьшалось с 844 до 420 px, а переменная высоты оставалась 844 px: до исправления (`output/quality/baseline-lifecycle.json`, локальный артефакт). Проверка была выполнена на приложении, а не выведена только из чтения кода.
 
 В TypeScript bridge, архитектурные references и матрицу testing добавлено различие между сохранением страницы и закрытием: сохранить либо восстановить подписки, обновить snapshot на `pageshow`, не создать дубли и очистить ресурсы при фактическом завершении. Затем исправлены оба изолированных примера.
 
-Повтор исходного probe показал актуальную высоту 420 px: [после исправления](../output/quality/baseline-lifecycle-fixed.json). Усиленный пример после двух циклов восстановления сохраняет форму, реагирует на тему/back и подтверждает запись: [improved-lifecycle.json](../output/quality/improved-lifecycle.json). Дополнительные тесты проверяют fake bridge и cleanup. Это синтетические события приложения, а не испытание настоящего BFcache или Telegram-клиента.
+Повтор исходного probe показал актуальную высоту 420 px: после исправления (`output/quality/baseline-lifecycle-fixed.json`, локальный артефакт). Усиленный пример после двух циклов восстановления сохраняет форму, реагирует на тему/back и подтверждает запись: improved-lifecycle.json (`output/quality/improved-lifecycle.json`, локальный артефакт). Дополнительные тесты проверяют fake bridge и cleanup. Это синтетические события приложения, а не испытание настоящего BFcache или Telegram-клиента.
 
 ## Визуальная оценка
 
 Просмотрены скриншоты телефона, широкого экрана и формы при малой высоте для обоих примеров. Иерархия ясная, шрифты и интервалы согласованы, услуги различимы, светлая и темная темы оформлены последовательно. На широком экране дополнительная панель помогает ориентироваться в записи. Оценка красоты субъективна; геометрия и контраст измерены отдельно.
 
-Примеры: [телефон](../output/playwright/improved-390-844-light.png), [планшет](../output/playwright/improved-768-1024-light.png), [ПК, темная тема](../output/playwright/improved-1280-800-dark.png). Контраст проверен на выборке вычисляемых цветов после окончания перехода темы; это не полный аудит WCAG. Для скрытых radio измеряется доступная цель label. Ориентир 44 px выбран набором для удобства касаний.
+Примеры: телефон (`output/playwright/improved-390-844-light.png`, локальный артефакт), планшет (`output/playwright/improved-768-1024-light.png`, локальный артефакт), ПК, темная тема (`output/playwright/improved-1280-800-dark.png`, локальный артефакт). Контраст проверен на выборке вычисляемых цветов после окончания перехода темы; это не полный аудит WCAG. Для скрытых radio измеряется доступная цель label. Ориентир 44 px выбран набором для удобства касаний.
 
 ## Воспроизводимые материалы
 
-Материалы находятся в игнорируемых Git каталогах `output/quality/` и `output/playwright/` этой рабочей копии. JSON содержит фактические измерения, JS — браузерные сценарии. Исходники сохранены в [baseline-app-before.zip](../output/quality/baseline-app-before.zip), [baseline-app-fixed.zip](../output/quality/baseline-app-fixed.zip), [improved-app.zip](../output/quality/improved-app.zip) и [protocol-probe.zip](../output/quality/protocol-probe.zip). Архивы не требуют Telegram credentials; инструкции запуска — внутри.
+Материалы находятся в игнорируемых Git каталогах `output/quality/` и `output/playwright/` этой рабочей копии. JSON содержит фактические измерения, JS — браузерные сценарии. Исходники сохранены в baseline-app-before.zip (`output/quality/baseline-app-before.zip`, локальный артефакт), baseline-app-fixed.zip (`output/quality/baseline-app-fixed.zip`, локальный артефакт), improved-app.zip (`output/quality/improved-app.zip`, локальный артефакт) и protocol-probe.zip (`output/quality/protocol-probe.zip`, локальный артефакт). Архивы не требуют Telegram credentials; инструкции запуска — внутри.
 
 Для усиленного примера после распаковки: `npm.cmd ci`, `npm.cmd test`, `npm.cmd run typecheck`, `npm.cmd run build:demo`, `npm.cmd run preview:demo`. Browser scripts ожидают порты 4177/5182; при другом каталоге измените абсолютный путь сохранения скриншотов. Для Python probe используйте unittest-команду из его README. Воспроизводимые команды набора приведены в verification.md.
 
@@ -62,3 +62,5 @@ Routing проверял независимый агент, читавший т�
 Python probe использует проверяемые подписи/тестовые векторы и fake store; конкурентная проверка не доказывает транзакционность production БД. Не выполнялись live-платежи, авторизация пользовательского аккаунта, deployment или работа нового бота. Platega, ЮKassa и остальные навыки прошли проверку структуры, содержания и выбора по descriptions; отдельные end-to-end интеграции для них не запускались. Ограничение свежести документации Crypto Pay описано в [sources.md](sources.md).
 
 Для приемки конкретного продукта следующий обязательный шаг — тот же основной путь в Telegram на выбранных реальных клиентах, включая клавиатуру, background/возврат и серверные ошибки. Навыки теперь явно требуют сохранять эти результаты отдельно от браузерной симуляции.
+
+Логи и снимки с путями `output/…` — локальные артефакты исторических проверок. Они не входят в Git и не доступны в свежем клоне. Для текущей принятой версии смотрите [сохраненную приемку 031](v1-checks/031.json); для нового прогона выполните `python scripts/verify_pattern_packages.py`.
