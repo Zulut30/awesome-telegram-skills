@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "library_version": "0.23.0",
+  "library_version": "0.24.0",
   "distribution": "local; not published to package registries",
   "packages": {
     "python": {
@@ -681,6 +681,20 @@
       ],
       "maturity": "experimental",
       "maturity_scope": "All public API symbols in this component; local verification is not stable/live acceptance"
+    },
+    {
+      "id": "dialog-restart",
+      "language": "python",
+      "import": "telegram_patterns.aiogram.FSMSnapshot, FSMConflict, SnapshotStore, AtomicFSMStorage, SnapshotFSMStorage, DialogLifetime",
+      "maturity": "experimental",
+      "source": "packages/python/src/telegram_patterns/fsm_storage.py",
+      "example": "examples/python/dialog_restart_bot.py",
+      "contracts": [
+        "Host-owned SnapshotStore persists every StorageKey field, state and JSON data in one CAS revision",
+        "Absolute deadline, form version, accepted step and pending operation identity persist together; pending effects do not expire",
+        "Existing Dispatcher/storage/isolation/foreign data retained; optional atomic capability required for DialogLifetime",
+        "MemoryStorage remains nonpersistent demonstration; no distributed effect/live Telegram guarantee"
+      ]
     }
   ],
   "maturity_policy": "docs/v1-maturity.md",

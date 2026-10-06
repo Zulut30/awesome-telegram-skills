@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "library_version": "0.23.0",
+  "library_version": "0.24.0",
   "symbols": [
     {
       "module": "telegram_patterns",
@@ -466,8 +466,8 @@
       "example": "examples/api-reference/python/core_recipes.py",
       "limits": "Чтение не исполняет recipe code. Maturity отдельно от verification; SDK/mock не доказывают live/device. Preview — независимая копия. Этот пример ищет существующий cookbook recipe two-columns; ref.* — имена справочника API.",
       "intent": "Literal stable/experimental/reference",
-      "example_sha256": "9b0707349545886d231dd21f31430983a1de2a358937708a23ee5a9596b50fb1",
-      "example_source_sha256": "b6271ca7c86140a7b283040b4f9da8ff5065eda1fbbc9297ed9f84c3e1c479b6",
+      "example_sha256": "a1ec5757f974ffff51b64cb9da7ebdd254be6d67a62da1fff82b81343bb8026a",
+      "example_source_sha256": "58e9b8cb6b552d4e3266cc8e23f8ea49a0472911cd5f10780a3c30271ea3863e",
       "kind": "value"
     },
     {
@@ -478,8 +478,8 @@
       "example": "examples/api-reference/python/core_recipes.py",
       "limits": "Чтение не исполняет recipe code. Maturity отдельно от verification; SDK/mock не доказывают live/device. Preview — независимая копия. Этот пример ищет существующий cookbook recipe two-columns; ref.* — имена справочника API.",
       "intent": "Literal sdk/mock/browser/live/not_run",
-      "example_sha256": "9b0707349545886d231dd21f31430983a1de2a358937708a23ee5a9596b50fb1",
-      "example_source_sha256": "b6271ca7c86140a7b283040b4f9da8ff5065eda1fbbc9297ed9f84c3e1c479b6",
+      "example_sha256": "a1ec5757f974ffff51b64cb9da7ebdd254be6d67a62da1fff82b81343bb8026a",
+      "example_source_sha256": "58e9b8cb6b552d4e3266cc8e23f8ea49a0472911cd5f10780a3c30271ea3863e",
       "kind": "value"
     },
     {
@@ -490,8 +490,8 @@
       "example": "examples/api-reference/python/core_recipes.py",
       "limits": "Чтение не исполняет recipe code. Maturity отдельно от verification; SDK/mock не доказывают live/device. Preview — независимая копия. Этот пример ищет существующий cookbook recipe two-columns; ref.* — имена справочника API.",
       "intent": "Неизменяемая запись и копия preview",
-      "example_sha256": "9b0707349545886d231dd21f31430983a1de2a358937708a23ee5a9596b50fb1",
-      "example_source_sha256": "b6271ca7c86140a7b283040b4f9da8ff5065eda1fbbc9297ed9f84c3e1c479b6",
+      "example_sha256": "a1ec5757f974ffff51b64cb9da7ebdd254be6d67a62da1fff82b81343bb8026a",
+      "example_source_sha256": "58e9b8cb6b552d4e3266cc8e23f8ea49a0472911cd5f10780a3c30271ea3863e",
       "kind": "value"
     },
     {
@@ -502,8 +502,8 @@
       "example": "examples/api-reference/python/core_recipes.py",
       "limits": "Чтение не исполняет recipe code. Maturity отдельно от verification; SDK/mock не доказывают live/device. Preview — независимая копия. Этот пример ищет существующий cookbook recipe two-columns; ref.* — имена справочника API.",
       "intent": "Версия, recipes, get/search с фильтрами",
-      "example_sha256": "9b0707349545886d231dd21f31430983a1de2a358937708a23ee5a9596b50fb1",
-      "example_source_sha256": "b6271ca7c86140a7b283040b4f9da8ff5065eda1fbbc9297ed9f84c3e1c479b6",
+      "example_sha256": "a1ec5757f974ffff51b64cb9da7ebdd254be6d67a62da1fff82b81343bb8026a",
+      "example_source_sha256": "58e9b8cb6b552d4e3266cc8e23f8ea49a0472911cd5f10780a3c30271ea3863e",
       "kind": "value"
     },
     {
@@ -2797,11 +2797,83 @@
       "example_sha256": "c5380e35cdc244cbb2bc10710da2ef6e47d04d06987c9095034b4332301f872e",
       "example_source_sha256": "c5380e35cdc244cbb2bc10710da2ef6e47d04d06987c9095034b4332301f872e",
       "kind": "value"
+    },
+    {
+      "module": "telegram_patterns.aiogram",
+      "name": "FSMSnapshot",
+      "import": "from telegram_patterns.aiogram import FSMSnapshot",
+      "recipe": "ref.bot_fsm_storage",
+      "example": "examples/api-reference/python/bot_fsm_storage.py",
+      "limits": "Structural host storage, exact six-field SDK key, one state/data CAS; JSON bound 64 KiB. Example dict is contract-only/nonpersistent; separate file SQLite and three-process proof in dialog restart recipe. Keep event isolation, migrations/tombstones, ACL and business effect dedup; no live/distributed exactly-once promise.",
+      "intent": "Immutable revision and detached JSON answers",
+      "example_sha256": "06d0b21bfa17efef0f50720ac45e7aefef449b4bad78902c67f316dd6668e8cd",
+      "example_source_sha256": "06d0b21bfa17efef0f50720ac45e7aefef449b4bad78902c67f316dd6668e8cd",
+      "kind": "value"
+    },
+    {
+      "module": "telegram_patterns.aiogram",
+      "name": "FSMConflict",
+      "import": "from telegram_patterns.aiogram import FSMConflict",
+      "recipe": "ref.bot_fsm_storage",
+      "example": "examples/api-reference/python/bot_fsm_storage.py",
+      "limits": "Structural host storage, exact six-field SDK key, one state/data CAS; JSON bound 64 KiB. Example dict is contract-only/nonpersistent; separate file SQLite and three-process proof in dialog restart recipe. Keep event isolation, migrations/tombstones, ACL and business effect dedup; no live/distributed exactly-once promise.",
+      "intent": "Stale CAS refused before effects",
+      "example_sha256": "06d0b21bfa17efef0f50720ac45e7aefef449b4bad78902c67f316dd6668e8cd",
+      "example_source_sha256": "06d0b21bfa17efef0f50720ac45e7aefef449b4bad78902c67f316dd6668e8cd",
+      "kind": "value"
+    },
+    {
+      "module": "telegram_patterns.aiogram",
+      "name": "SnapshotStore",
+      "import": "from telegram_patterns.aiogram import SnapshotStore",
+      "recipe": "ref.bot_fsm_storage",
+      "example": "examples/api-reference/python/bot_fsm_storage.py",
+      "limits": "Structural host storage, exact six-field SDK key, one state/data CAS; JSON bound 64 KiB. Example dict is contract-only/nonpersistent; separate file SQLite and three-process proof in dialog restart recipe. Keep event isolation, migrations/tombstones, ACL and business effect dedup; no live/distributed exactly-once promise.",
+      "intent": "Host-owned durable snapshot transaction contract",
+      "example_sha256": "06d0b21bfa17efef0f50720ac45e7aefef449b4bad78902c67f316dd6668e8cd",
+      "example_source_sha256": "06d0b21bfa17efef0f50720ac45e7aefef449b4bad78902c67f316dd6668e8cd",
+      "kind": "value"
+    },
+    {
+      "module": "telegram_patterns.aiogram",
+      "name": "AtomicFSMStorage",
+      "import": "from telegram_patterns.aiogram import AtomicFSMStorage",
+      "recipe": "ref.bot_fsm_storage",
+      "example": "examples/api-reference/python/bot_fsm_storage.py",
+      "limits": "Structural host storage, exact six-field SDK key, one state/data CAS; JSON bound 64 KiB. Example dict is contract-only/nonpersistent; separate file SQLite and three-process proof in dialog restart recipe. Keep event isolation, migrations/tombstones, ACL and business effect dedup; no live/distributed exactly-once promise.",
+      "intent": "Optional atomic capability on current project storage",
+      "example_sha256": "06d0b21bfa17efef0f50720ac45e7aefef449b4bad78902c67f316dd6668e8cd",
+      "example_source_sha256": "06d0b21bfa17efef0f50720ac45e7aefef449b4bad78902c67f316dd6668e8cd",
+      "kind": "value"
+    },
+    {
+      "module": "telegram_patterns.aiogram",
+      "name": "SnapshotFSMStorage",
+      "import": "from telegram_patterns.aiogram import SnapshotFSMStorage",
+      "recipe": "ref.bot_fsm_storage",
+      "example": "examples/api-reference/python/bot_fsm_storage.py",
+      "limits": "Structural host storage, exact six-field SDK key, one state/data CAS; JSON bound 64 KiB. Example dict is contract-only/nonpersistent; separate file SQLite and three-process proof in dialog restart recipe. Keep event isolation, migrations/tombstones, ACL and business effect dedup; no live/distributed exactly-once promise.",
+      "intent": "aiogram BaseStorage facade over supplied host store",
+      "example_sha256": "06d0b21bfa17efef0f50720ac45e7aefef449b4bad78902c67f316dd6668e8cd",
+      "example_source_sha256": "06d0b21bfa17efef0f50720ac45e7aefef449b4bad78902c67f316dd6668e8cd",
+      "kind": "value"
+    },
+    {
+      "module": "telegram_patterns.aiogram",
+      "name": "DialogLifetime",
+      "import": "from telegram_patterns.aiogram import DialogLifetime",
+      "recipe": "ref.bot_fsm_storage",
+      "example": "examples/api-reference/python/bot_fsm_storage.py",
+      "limits": "Structural host storage, exact six-field SDK key, one state/data CAS; JSON bound 64 KiB. Example dict is contract-only/nonpersistent; separate file SQLite and three-process proof in dialog restart recipe. Keep event isolation, migrations/tombstones, ACL and business effect dedup; no live/distributed exactly-once promise.",
+      "intent": "Absolute draft deadline without expiring pending effects",
+      "example_sha256": "06d0b21bfa17efef0f50720ac45e7aefef449b4bad78902c67f316dd6668e8cd",
+      "example_source_sha256": "06d0b21bfa17efef0f50720ac45e7aefef449b4bad78902c67f316dd6668e8cd",
+      "kind": "value"
     }
   ],
-  "python_symbols": 192,
+  "python_symbols": 198,
   "typescript_symbols": 41,
-  "recipes": 31,
+  "recipes": 32,
   "additional_entries": [
     "CLI recipes",
     "CLI init",

@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "library_version": "0.23.0",
+  "library_version": "0.24.0",
   "source_snapshot": "2026-10-04",
   "source_hashes": {
     "bot_api": "29f5f25caa18d303f14ce83af5a4df784eb3094c3076cb040a1ad950c157ad44",
@@ -21150,6 +21150,91 @@
       }
     },
     {
+      "id": "demo-dialog-restart",
+      "title": "Восстановление диалога после рестарта",
+      "summary": "Host storage: atomic step/version/deadline snapshot и тот же pending operation после рестарта",
+      "category": "scenarios",
+      "language": "python",
+      "maturity": "experimental",
+      "keywords": [
+        "бот",
+        "пример",
+        "callback",
+        "меню",
+        "события",
+        "композиция",
+        "бота",
+        "личный",
+        "чат",
+        "рестарт",
+        "восстановление",
+        "состояние",
+        "FSM",
+        "storage",
+        "TTL",
+        "snapshot",
+        "resume",
+        "версия",
+        "unknown"
+      ],
+      "code": "\"\"\"Project-owned file SQLite adapter; attach the form to the existing Dispatcher.\"\"\"\nfrom __future__ import annotations\n\nimport asyncio\nfrom contextlib import closing\nimport json\nfrom pathlib import Path\nimport sqlite3\nfrom typing import Any, Awaitable, Callable, Mapping\n\nfrom aiogram import Dispatcher, Router\nfrom aiogram.fsm.storage.base import StorageKey\nfrom telegram_patterns.aiogram import (AtomicFSMStorage, DialogLifetime, DialogSubmission,\n    EmailField, FSMConflict, FSMSnapshot, NumberField, dialog_form_router)\n\n\nclass ProjectSnapshotStore:\n    \"\"\"Example adapter for the project's database, not a shared host connection.\n\n    The caller explicitly runs initialize as its migration. Every read/write\n    opens and closes an owned connection; CAS covers the whole snapshot. Keep\n    tombstone revisions; no blanket TTL deletion of pending or host data.\n    \"\"\"\n    def __init__(self, database: Path) -> None:\n        supplied = database.absolute()\n        if (not supplied.parent.is_dir() or any(p.is_symlink() or bool(getattr(p, 'is_junction', lambda: False)())\n                for p in (supplied, *supplied.parents))):\n            raise ValueError('Use an explicit project database under an existing non-linked directory')\n        self.database = supplied\n\n    def initialize(self) -> None:\n        with closing(sqlite3.connect(self.database, timeout=5)) as connection:\n            with connection:\n                connection.execute('CREATE TABLE IF NOT EXISTS dialog_snapshots ('\n                    'scope TEXT PRIMARY KEY, state TEXT, data TEXT NOT NULL, revision INTEGER NOT NULL CHECK(revision > 0))')\n\n    @staticmethod\n    def scope(key: StorageKey) -> str:\n        # Never omit bot, topic, Business or destiny from the host's exact key.\n        return json.dumps([key.bot_id, key.chat_id, key.user_id, key.thread_id,\n                           key.business_connection_id, key.destiny], ensure_ascii=False, separators=(',', ':'))\n\n    def _read(self, key: StorageKey) -> FSMSnapshot:\n        with closing(sqlite3.connect(self.database, timeout=5)) as connection:\n            row = connection.execute('SELECT state, data, revision FROM dialog_snapshots WHERE scope=?',\n                                     (self.scope(key),)).fetchone()\n        if row is None:\n            return FSMSnapshot(None, {}, 0)\n        try:\n            return FSMSnapshot(row[0], json.loads(row[1]), row[2])\n        except (ValueError, TypeError):\n            raise RuntimeError('Stored FSM snapshot requires migration or reconciliation') from None\n\n    async def read(self, key: StorageKey) -> FSMSnapshot:\n        return await asyncio.to_thread(self._read, key)\n\n    def _commit(self, key: StorageKey, expected: int, state: str | None, data: Mapping[str, Any]) -> FSMSnapshot:\n        snapshot = FSMSnapshot(state, data, expected + 1)\n        encoded = json.dumps(snapshot.data, ensure_ascii=False, allow_nan=False, separators=(',', ':'))\n        scope = self.scope(key)\n        with closing(sqlite3.connect(self.database, timeout=5)) as connection:\n            with connection:\n                connection.execute('BEGIN IMMEDIATE')\n                row = connection.execute('SELECT revision FROM dialog_snapshots WHERE scope=?', (scope,)).fetchone()\n                current = row[0] if row else 0\n                if current != expected:\n                    raise FSMConflict('Stored FSM revision changed; reload before another transition')\n                connection.execute('INSERT INTO dialog_snapshots(scope,state,data,revision) VALUES(?,?,?,?) '\n                    'ON CONFLICT(scope) DO UPDATE SET state=excluded.state,data=excluded.data,revision=excluded.revision',\n                    (scope, state, encoded, snapshot.revision))\n        return snapshot\n\n    async def compare_and_set(self, key: StorageKey, expected_revision: int,\n                              state: str | None, data: Mapping[str, Any]) -> FSMSnapshot:\n        return await asyncio.to_thread(self._commit, key, expected_revision, state, data)\n\n    async def close(self) -> None:\n        pass  # Per-operation connections are already closed; host DB is retained.\n\n\ndef attach_dialog(dispatcher: Dispatcher, on_submit: Callable[[DialogSubmission], Awaitable[str]], *,\n                  lifetime: DialogLifetime | None = None, schema_version: int = 1) -> Router:\n    \"\"\"Retain current storage/isolation/routers; service owns ACL + durable effect.\"\"\"\n    if not isinstance(dispatcher.fsm.storage, AtomicFSMStorage):\n        raise RuntimeError('The project must supply an AtomicFSMStorage implementation')\n    router = dialog_form_router([\n        EmailField('email', 'Email', 'Введите email.'),\n        NumberField('seats', 'Места', 'Сколько мест?', minimum='1', maximum='10', decimal_places=0),\n    ], on_submit, name='booking', command='booking', schema_version=schema_version,\n       lifetime=lifetime or DialogLifetime(3600))\n    dispatcher.include_router(router)\n    return router\n",
+      "verification": "mock",
+      "scope": "Three actual processes, file SQLite and synthetic Dispatcher/SDK; atomic local state only, no live delivery, physical device, independent acceptance or distributed business exactly-once claim.",
+      "sources": [
+        "https://core.telegram.org/bots/api"
+      ],
+      "preview": null,
+      "code_sha256": "d21099056808671e6abad5ad069dedebda2c5d24b90d576931ba2045e08ad799",
+      "tasks": [
+        "input",
+        "recovery"
+      ],
+      "contexts": [
+        "private"
+      ],
+      "sdk": "aiogram",
+      "sdk_version": "3.31.0",
+      "api_version": "bot:10.3",
+      "source_files": [
+        "examples/python/dialog_restart_bot.py",
+        "packages/python/src/telegram_patterns/fsm_storage.py",
+        "packages/python/src/telegram_patterns/_dialog_storage.py",
+        "docs/dialog-restart.md",
+        "packages/python/src/telegram_patterns/execution.py",
+        "packages/python/src/telegram_patterns/_offline_recipe.py"
+      ],
+      "check_files": [
+        "examples/python/offline_dialog_restart.py",
+        "packages/python/tests/test_fsm_storage.py",
+        "scripts/verify_dialog_restart_recipe.py"
+      ],
+      "execution": {
+        "kind": "dispatcher",
+        "dependencies": [
+          "aiogram==3.31.0"
+        ],
+        "offline_environment": [],
+        "offline_permissions": [],
+        "offline_data": [
+          "Только поставляемые синтетические данные; реальные IDs и secrets не принимаются."
+        ],
+        "live_environment": [
+          "BOT_TOKEN"
+        ],
+        "live_permissions": [
+          "Прикладная авторизация сервиса; fixture actor не доказывает server ACL."
+        ],
+        "live_data": [
+          "Текущий Dispatcher, реальные actor/chat и сервис приложения",
+          "Проверка объекта, автора и состояния до effect/replay"
+        ],
+        "live_review": "Live executor отсутствует. Перед интеграцией проверить источники, ограничения конкретного метода/контекста, auth и ACL; metadata не подтверждает права.",
+        "effects": [
+          "Synthetic Dispatcher + StubSession; временная fixture, без polling"
+        ]
+      }
+    },
+    {
       "id": "demo-dialog-fields",
       "title": "Семь типов полей диалога",
       "summary": "Полная композиция с тем же Dispatcher для offline и polling.",
@@ -21761,7 +21846,7 @@
         "backend"
       ],
       "sdk": "python-core",
-      "sdk_version": "0.23.0",
+      "sdk_version": "0.24.0",
       "api_version": "none",
       "source_files": [
         "examples/python/error_recovery.py",

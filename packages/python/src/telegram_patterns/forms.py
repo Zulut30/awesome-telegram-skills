@@ -1,5 +1,7 @@
 """Small private-chat text forms using the host's aiogram FSM and isolation."""
 from __future__ import annotations
+from .fsm_storage import DialogLifetime
+from ._dialog_storage import _DialogData, _read_form, _save_form, _clear_form, _lifetime_data
 from .errors import ErrorCode, ValidationFailure, InvalidType, InvalidCompletion
 
 from dataclasses import dataclass, field
@@ -94,6 +96,7 @@ def text_form_router(
     fields: Sequence[TextField],
     on_submit: Callable[[FormSubmission], Awaitable[str]],
     *, name: str = "application", command: str = "apply",
+    schema_version: int = 1, lifetime: DialogLifetime | None = None,
 ) -> Router:
     """Private-chat form with review, /back, /cancel and explicit submit button.
 
@@ -102,6 +105,9 @@ def text_form_router(
     on_submit must authorize and durably deduplicate using operation_id. Failure
     preserves that key and freezes edits/cancel/restart until the same operation
     is reconciled by retry. A successful return clears the form BEFORE feedback.
+    With DialogLifetime the existing storage must support atomic snapshots;
+    /apply resumes accepted answers without extending the original draft deadline.
+    Version changes require explicit host migration; pending effects never expire.
     """
     steps = tuple(fields)
     if not 1 <= len(steps) <= 10 or any(not isinstance(item, TextField) for item in steps):
@@ -112,6 +118,10 @@ def text_form_router(
         raise ValidationFailure("Form name must be 1..16 lowercase ASCII characters")
     if not isinstance(command, str) or not re.fullmatch(r"[a-z0-9_]{1,32}", command) or command in {"back", "cancel"}:
         raise ValidationFailure("Use an ASCII command distinct from back/cancel, without '/'")
+    if type(schema_version) is not int or not 1 <= schema_version <= 2**31 - 1:
+        raise ValidationFailure("Use a positive bounded schema_version")
+    if lifetime is not None and not isinstance(lifetime, DialogLifetime):
+        raise InvalidType("Use DialogLifetime or None")
     if not callable(on_submit):
         raise InvalidType("on_submit must be an async callable")
 
@@ -121,7 +131,7 @@ def text_form_router(
     prefix = f"form:{name}:"
     frozen_text = "Отправка уже началась. Нажмите «Отправить» в последней форме, чтобы проверить результат."
     stale_text = f"Кнопка устарела. Откройте актуальную форму командой /{command}."
-    private = (F.chat.type == "private") & (F.business_connection_id == None) & (F.from_user.is_bot == False)
+    private = (F.chat.type == "private") & (F.business_connection_id == None) & (F.from_user.is_bot == False) & (F.message_thread_id == None) & (F.is_topic_message != True)
 
     def require_fsm(dispatcher: Dispatcher, state: FSMContext | None, message: Message, actor: int) -> FSMContext:
         if state is None or isinstance(dispatcher.fsm.events_isolation, DisabledEventIsolation):
@@ -130,11 +140,14 @@ def text_form_router(
             raise RuntimeError("Text forms require an actor-scoped FSM key")
         return state
 
-    async def load(state: FSMContext, message: Message, actor: int) -> dict | None:
-        if await state.get_state() != namespace:
+    async def load(state: FSMContext, message: Message, actor: int) -> _DialogData | None:
+        stored = await _read_form(state, namespace, data_key, lifetime)
+        if stored is None:
             return None
-        stored = (await state.get_data()).get(data_key)
         if (not isinstance(stored, dict) or stored.get("schema") != [step.name for step in steps]
+                or type(stored.get("form_version", 1)) is not int or stored.get("form_version", 1) != schema_version
+                or (lifetime is not None and "form_version" not in stored)
+                or (lifetime is None and "lifetime" in stored)
                 or stored.get("owner") != [_bot_id(message), message.chat.id, actor]
                 or type(stored.get("index")) is not int or not 0 <= stored["index"] <= len(steps)
                 or not isinstance(stored.get("values"), dict)
@@ -148,26 +161,28 @@ def text_form_router(
             # Never silently reset potentially pending identity after a schema
             # change or storage corruption. The host must reconcile/migrate it.
             raise RuntimeError("Stored form requires reconciliation or a schema migration")
-        # No in-place edits of MemoryStorage's shallow snapshots.
-        return {**stored, "values": dict(stored["values"])}
+        if lifetime is not None and lifetime.expired(stored.get("lifetime")) and not stored["submission_started"]:
+            await _clear_form(state, data_key, stored)
+            await message.answer(f"Срок черновика истёк. Начать заново: /{command}.", parse_mode=None)
+            return None
+        return stored
 
-    async def save(state: FSMContext, data: dict) -> None:
-        await state.update_data({data_key: data})
+    async def save(state: FSMContext, data: _DialogData) -> None:
+        await _save_form(state, namespace, data_key, data)
 
-    async def clear(state: FSMContext) -> None:
-        await state.set_state(None)
-        data = await state.get_data()
-        data.pop(data_key, None)
-        await state.set_data(data)  # Preserve unrelated host FSM data.
+    async def clear(state: FSMContext, data: _DialogData | None) -> None:
+        await _clear_form(state, data_key, data)
 
     async def prompt(message: Message, index: int) -> None:
         await message.answer(f"Шаг {index + 1}/{len(steps)}. {steps[index].prompt}\n/back — назад · /cancel — отмена", parse_mode=None)
 
-    async def review(message: Message, state: FSMContext, data: dict) -> None:
+    async def review(message: Message, state: FSMContext, data: _DialogData) -> None:
         text = "Проверьте ответы:\n" + "\n".join(f"{step.label}: {data['values'][step.name]}" for step in steps)
         keyboard = InlineKeyboardMarkup(inline_keyboard=[[
             InlineKeyboardButton(text="Отправить", callback_data=f"{prefix}{data['operation_id']}:submit"),
         ]])
+        data["review_message_id"] = None
+        await save(state, data)  # Reject old review before a potentially unknown send.
         reply = await message.answer(text + "\n/back — исправить · /cancel — отмена", parse_mode=None, reply_markup=keyboard)
         data["review_message_id"] = reply.message_id
         await save(state, data)
@@ -181,13 +196,21 @@ def text_form_router(
             return
         if previous is not None and message.message_id <= previous["last_message_id"]:
             return
-        data = {"owner": [_bot_id(message), message.chat.id, _actor_id(message)],
+        if lifetime is not None and previous is not None:
+            previous["last_message_id"] = message.message_id
+            await save(state, previous)
+            if previous["index"] == len(steps):
+                await review(message, state, previous)
+            else:
+                await prompt(message, previous["index"])
+            return
+        data = _DialogData({"owner": [_bot_id(message), message.chat.id, _actor_id(message)],
                 "schema": [step.name for step in steps],
                 "values": {}, "index": 0, "operation_id": secrets.token_hex(8),
                 "submission_started": False, "review_message_id": None,
-                "last_message_id": message.message_id}
+                "last_message_id": message.message_id, "form_version": schema_version,
+                **_lifetime_data(lifetime)}, previous.snapshot if previous is not None else None)
         await save(state, data)
-        await state.set_state(namespace)
         await prompt(message, 0)
 
     @router.message(private, StateFilter(namespace), Command("cancel"))
@@ -199,7 +222,7 @@ def text_form_router(
             return
         if data is not None and message.message_id <= data["last_message_id"]:
             return
-        await clear(state)
+        await clear(state, data)
         await message.answer(f"Форма отменена. Начать заново: /{command}.", parse_mode=None)
 
     @router.message(private, StateFilter(namespace), Command("back"))
@@ -256,7 +279,8 @@ def text_form_router(
         await query.answer()
         message = query.message
         if (not isinstance(message, Message) or message.chat.type != "private"
-                or message.business_connection_id is not None or query.from_user.is_bot):
+                or message.business_connection_id is not None or message.message_thread_id is not None
+                or message.is_topic_message is True or query.from_user.is_bot):
             return
         state = require_fsm(dispatcher, state, message, query.from_user.id)
         data = await load(state, message, query.from_user.id)
@@ -275,7 +299,7 @@ def text_form_router(
         except Exception:
             await message.answer("Результат отправки пока не подтверждён. Нажмите «Отправить» ещё раз для проверки той же заявки.", parse_mode=None)
             raise  # Host error handling/observability, never raw errors in chat.
-        await clear(state)
+        await clear(state, data)
         await message.answer(text, parse_mode=None)
 
     return router

@@ -94,3 +94,7 @@ Installed Dispatcher workflow проходит date/time/back/month navigation, 
 ### Темы и специальные операции — пункт 030
 
 [030.json](v1-checks/030.json) фиксирует 0.23.0: 75 этапов, 433 Python passed/1 Windows symlink skip, 26 TypeScript, 233 public symbols/31 API groups и 36 source typing files. 56 behavioral tests и выполнение всех 51 native contracts проверяют семь семейств, current rights/ACL, SQLite actor/revision/budget/intent, unknown/cancel/restart/no retry, scoped observers и validated nested story multipart. 309 recipes/210 fixtures/253 linked files; 2379 browser checks плюс 60 matching first-run. Точный copied guide и пять helper operations сохраняют caller files. Real Telegram rights/media/charge/settlement, devices и независимая usability не приняты.
+
+### Восстановление диалога — пункт 031
+
+[031.json](v1-checks/031.json) фиксирует текущую 0.24.0: 77 этапов, 460 Python passed/1 Windows symlink skip, 26 TypeScript, 239 symbols/32 API groups, 38 source typing files и 310 recipes/211 fixtures. 26 behavior tests и три реальных процесса на file SQLite проверяют согласованное сохранение state/step/version/deadline, pending identity, чужие keys/data и отмену writer. MemoryStorage не persistent; distributed/live/device/independent acceptance отдельно.

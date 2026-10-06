@@ -50,7 +50,7 @@ class RecipeTests(unittest.TestCase):
 
     def test_maturity_does_not_promote_evidence_to_stable(self):
         catalog = RecipeCatalog()
-        self.assertEqual(len(catalog.search(maturity='experimental', limit=1000)), 25)
+        self.assertEqual(len(catalog.search(maturity='experimental', limit=1000)), 26)
         self.assertEqual(len(catalog.search(maturity='reference', limit=1000)), 284)
         self.assertEqual(catalog.search(maturity='stable'), ())
         self.assertEqual(catalog.get('api.sendPhoto').maturity, 'reference')
@@ -74,13 +74,13 @@ class RecipeTests(unittest.TestCase):
 
     def test_packaged_catalog_search_ranking_filters_and_scopes(self):
         catalog = RecipeCatalog()
-        self.assertEqual(len(catalog.recipes), 309)
+        self.assertEqual(len(catalog.recipes), 310)
         self.assertEqual(catalog.search('ДВЕ кнопки')[0].id, 'two-columns')
         self.assertEqual(catalog.search('три кнопки')[0].id, 'three-columns')
         self.assertEqual(catalog.search()[0].id, 'two-columns')
         self.assertEqual(len(catalog.search(category='keyboards', limit=1000)), 11)
         self.assertEqual(len(catalog.search(language='typescript', limit=1000)), 99)
-        self.assertEqual(len(catalog.search(verification='mock')), 14)
+        self.assertEqual(len(catalog.search(verification='mock')), 15)
         self.assertEqual(catalog.search(verification='live'), ())
         self.assertEqual(catalog.search('токен_НЕТ_РЕЦЕПТА'), ())
         self.assertEqual(catalog.get('api.sendPhoto').verification, 'sdk')
@@ -234,7 +234,7 @@ class GalleryGeneratorTests(unittest.TestCase):
             output=Path(folder)/'site'
             with patch('sys.argv',['builder','--output-dir',str(output)]),redirect_stdout(io.StringIO()):builder.main()
             self.assertTrue((output/'index.html').is_file());self.assertTrue((output/'gallery.js').is_file())
-            self.assertEqual(len(json.loads((output/'recipes.json').read_text(encoding='utf-8'))['recipes']),309)
+            self.assertEqual(len(json.loads((output/'recipes.json').read_text(encoding='utf-8'))['recipes']),310)
             with patch('sys.argv',['builder','--output-dir',str(output),'--check']),redirect_stdout(io.StringIO()):builder.main()
             (output/'index.html').write_text('drift')
             with patch('sys.argv',['builder','--output-dir',str(output),'--check']),self.assertRaisesRegex(ValueError,'drift'):builder.main()

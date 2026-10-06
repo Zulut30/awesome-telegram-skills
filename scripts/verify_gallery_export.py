@@ -24,19 +24,19 @@ def main() -> int:
     for key in ('PYTHONPATH', 'PYTHONHOME', 'BOT_TOKEN'): environment.pop(key, None)
     environment['PYTHONUTF8'] = '1'
     stages = []
-    def run(label, command, expected=0):
+    def run(label, command, expected=0, *, timeout=90):
         result = subprocess.run(list(map(str, command)), cwd=output, env=environment, capture_output=True,
-                                text=True, encoding='utf-8', timeout=90)
+                                text=True, encoding='utf-8', timeout=timeout)
         (output / (label + '.log')).write_text(result.stdout + result.stderr, encoding='utf-8', newline='\n')
         stages.append({'stage': label, 'exit_code': result.returncode, 'expected_exit': expected})
         if result.returncode != expected: raise RuntimeError(label + ' failed')
         return result.stdout
     builder = ROOT / 'scripts/build_recipe_gallery.py'
-    result = json.loads(run('export', [sys.executable, builder, '--output-dir', gallery]))
-    assert result['recipes'] == 309 and not result['telegram_network']
+    result = json.loads(run('export', [sys.executable, builder, '--output-dir', gallery], timeout=120))
+    assert result['recipes'] == 310 and not result['telegram_network']
     marker = gallery / 'owned.txt'; marker.write_bytes(b'preserve consumer notes\n')
     before = {p.relative_to(gallery): hashlib.sha256(p.read_bytes()).hexdigest() for p in gallery.rglob('*') if p.is_file()}
-    run('check', [sys.executable, builder, '--output-dir', gallery, '--check'])
+    run('check', [sys.executable, builder, '--output-dir', gallery, '--check'], timeout=120)
     assert before == {p.relative_to(gallery): hashlib.sha256(p.read_bytes()).hexdigest() for p in gallery.rglob('*') if p.is_file()}
     data = json.loads((gallery / 'recipes.json').read_text(encoding='utf-8'))
     links = {name for r in data['recipes'] for name in (*r['source_files'], *r['check_files'])}

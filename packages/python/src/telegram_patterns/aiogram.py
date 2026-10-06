@@ -16,6 +16,7 @@ from aiogram.types import BotCommand, CallbackQuery, InlineKeyboardMarkup, Label
 
 from .keyboards import ActionButton, ButtonStyle, MenuPage, _callback_data, action_keyboard, action_menu, page_number, paginated_menu
 from .settings import BotSettings
+from .fsm_storage import FSMSnapshot, FSMConflict, SnapshotStore, AtomicFSMStorage, SnapshotFSMStorage, DialogLifetime
 from .forms import FormSubmission, InvalidField, TextField, text_form_router
 from .dialog_fields import FieldValue, NumberField, EmailField, PhoneField, DateField, FileField, ContactField, LocationField
 from .dialog_forms import DialogSubmission, dialog_form_router
@@ -33,6 +34,7 @@ from .api import MethodSpec, InvalidAPIRequest, method_catalog, build_request
 from .events import UpdatePhase, UpdateTrace, UpdateObserver, update_kinds, event_router
 
 __all__ = [
+    "FSMSnapshot", "FSMConflict", "SnapshotStore", "AtomicFSMStorage", "SnapshotFSMStorage", "DialogLifetime",
     "Action", "ActionResult", "callback_router", "start_router",
     "CommandReply", "command_menu", "command_router", "run_bot", "stars_invoice",
     "ActionButton", "ButtonStyle", "MenuPage", "action_keyboard", "action_menu", "paginated_menu", "page_number",

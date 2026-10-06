@@ -1,6 +1,6 @@
 # Общая библиотека компонентов
 
-Текущая локальная поставка 0.23.0: 42 группы компонентов, 233 публичных Python/TypeScript-символа и 309 рецептов. 210 Python fixtures имеют закрытый executor, 99 native references требуют host/аргументов. [Семь специальных семейств](platform-operations.md) требуют current host policy и durable intent; локальный бюджет не обещает atomic remote debit. [Приемка 030](v1-checks/030.json) привязана к точным wheel/tarball; исторические отчеты сохраняют свои версии.
+Текущая локальная поставка 0.24.0: 43 группы компонентов, 239 публичных Python/TypeScript-символов и 310 рецептов. 211 Python fixtures имеют закрытый executor, 99 native references требуют host/аргументов. [Восстановление диалога](dialog-restart.md) сохраняет atomic step/version/deadline и pending ID; текущие Dispatcher/storage остаются проектными. [Приемка 031](v1-checks/031.json) привязана к matching wheel/tarball; исторические отчеты сохраняют версии.
 
 [Формы 0.3.0](form-tools-review.md) добавляют поля с проверкой, возврат, отмену и подтверждение со стабильным ID заявки. Готовый [бот формы](../examples/python/form_bot.py) и [offline-проверка](../examples/python/offline_form.py) используют один create_app; backend сохраняет заявку и replay result в SQLite.
 

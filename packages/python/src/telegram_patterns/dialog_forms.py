@@ -18,6 +18,8 @@ from aiogram.types import CallbackQuery, InlineKeyboardButton, InlineKeyboardMar
 
 from .dialog_fields import (ContactField, DateField, EmailField, FieldValue, FileField,
                             LocationField, NumberField, PhoneField, _Field)
+from .fsm_storage import DialogLifetime
+from ._dialog_storage import _DialogData, _read_form, _save_form, _clear_form, _lifetime_data
 from .errors import InvalidCompletion, InvalidType, ValidationFailure
 from .forms import InvalidField, TextField, _actor_id, _bot_id, _plain
 from .native_keyboards import input_prompt, remove_keyboard, reply_keyboard
@@ -64,6 +66,7 @@ class DialogSubmission:
 def dialog_form_router(
     fields: Sequence[_Step], on_submit: Callable[[DialogSubmission], Awaitable[str]], *,
     name: str = 'details', command: str = 'collect', schema_version: int = 1,
+    lifetime: DialogLifetime | None = None,
 ) -> Router:
     """Mixed fields with reply correlation, native candidate confirmation and review.
 
@@ -84,6 +87,8 @@ def dialog_form_router(
         raise ValidationFailure('Use an ASCII command distinct from back/cancel')
     if type(schema_version) is not int or not 1 <= schema_version <= 2**31 - 1:
         raise ValidationFailure('Use a positive bounded schema_version')
+    if lifetime is not None and not isinstance(lifetime, DialogLifetime):
+        raise InvalidType("Use DialogLifetime or None")
     if not callable(on_submit):
         raise InvalidType('on_submit must be an async callable')
     signatures = [s.signature() if isinstance(s, _Field) else json.dumps(
@@ -116,13 +121,13 @@ def dialog_form_router(
     def positive(value: object) -> bool:
         return type(value) is int and 0 < value <= 2**63 - 1
 
-    async def load(state: FSMContext, message: Message, actor: int) -> dict | None:
-        if await state.get_state() != namespace:
+    async def load(state: FSMContext, message: Message, actor: int) -> _DialogData | None:
+        stored = await _read_form(state, namespace, data_key, lifetime)
+        if stored is None:
             return None
-        stored = (await state.get_data()).get(data_key)
         try:
             if (not isinstance(stored, dict) or set(stored) != {'schema', 'owner', 'index', 'values', 'operation_id',
-                    'submission_started', 'last_message_id', 'prompt_message_id', 'review_message_id', 'candidate', 'keyboard_active'}
+                    'submission_started', 'last_message_id', 'prompt_message_id', 'review_message_id', 'candidate', 'keyboard_active'} | ({'lifetime'} if lifetime is not None else set())
                     or stored['schema'] != schema or stored['owner'] != [_bot_id(message), message.chat.id, actor]
                     or type(stored['index']) is not int or not 0 <= stored['index'] <= len(steps)
                     or not isinstance(stored['values'], dict)
@@ -146,28 +151,29 @@ def dialog_form_router(
                     raise ValueError
         except (ValueError, TypeError, KeyError, OverflowError):
             raise RuntimeError('Stored dialog requires reconciliation or a schema migration') from None
-        return deepcopy(stored)
+        if lifetime is not None and lifetime.expired(stored.get("lifetime")) and not stored["submission_started"]:
+            await _clear_form(state, data_key, stored)
+            await message.answer(f"Срок черновика истёк. Начать заново: /{command}.", parse_mode=None, reply_markup=remove_keyboard())
+            return None
+        return stored
 
-    async def save(state: FSMContext, data: dict) -> None:
-        await state.update_data({data_key: deepcopy(data)})
+    async def save(state: FSMContext, data: _DialogData) -> None:
+        await _save_form(state, namespace, data_key, data)
 
-    async def clear(state: FSMContext) -> None:
-        await state.set_state(None)
-        data = await state.get_data()
-        data.pop(data_key, None)
-        await state.set_data(data)
+    async def clear(state: FSMContext, data: _DialogData | None) -> None:
+        await _clear_form(state, data_key, data)
 
     def sent_id(reply: Message, message: Message) -> int:
         if not positive(reply.message_id) or reply.chat.id != message.chat.id:
             raise RuntimeError('Expected a prompt in the current chat')
         return reply.message_id
 
-    def keyboard(data: dict, action: str) -> InlineKeyboardMarkup:
+    def keyboard(data: _DialogData, action: str) -> InlineKeyboardMarkup:
         return InlineKeyboardMarkup(inline_keyboard=[[InlineKeyboardButton(
             text='РџРѕРґС‚РІРµСЂРґРёС‚СЊ' if action.startswith('v:') else 'РћС‚РїСЂР°РІРёС‚СЊ',
             callback_data=f"{prefix}{data['operation_id']}:{action}")]])
 
-    async def remove(message: Message, state: FSMContext, data: dict) -> None:
+    async def remove(message: Message, state: FSMContext, data: _DialogData) -> None:
         if data['keyboard_active']:
             await message.answer('РљР»Р°РІРёР°С‚СѓСЂР° РІРІРѕРґР° Р·Р°РєСЂС‹С‚Р°.', parse_mode=None, reply_markup=remove_keyboard())
             data['keyboard_active'] = False
@@ -178,7 +184,7 @@ def dialog_form_router(
         # Bounded plain text; user metadata cannot overflow Telegram's 4096 units.
         return text if _plain(text, 280) else text[:120] + 'вЂ¦'
 
-    async def show(message: Message, state: FSMContext, data: dict) -> None:
+    async def show(message: Message, state: FSMContext, data: _DialogData) -> None:
         data.update(prompt_message_id=None, review_message_id=None, candidate=None)
         await save(state, data)  # Invalidate old UI before a potentially unknown send.
         if data['index'] == len(steps):
@@ -214,12 +220,11 @@ def dialog_form_router(
         if data is not None and message.message_id <= data['last_message_id']:
             return
         if data is None:
-            data = {'schema': schema, 'owner': [_bot_id(message), message.chat.id, _actor_id(message)], 'index': 0,
+            data = _DialogData({'schema': schema, 'owner': [_bot_id(message), message.chat.id, _actor_id(message)], 'index': 0,
                     'values': {}, 'operation_id': secrets.token_hex(16), 'submission_started': False,
                     'last_message_id': message.message_id, 'prompt_message_id': None, 'review_message_id': None,
-                    'candidate': None, 'keyboard_active': False}
+                    'candidate': None, 'keyboard_active': False, **_lifetime_data(lifetime)})
             await save(state, data)
-            await state.set_state(namespace)
         data['last_message_id'] = message.message_id
         await show(message, state, data)  # Explicit resume keeps accepted answers and intent.
 
@@ -237,7 +242,7 @@ def dialog_form_router(
         data['last_message_id'] = message.message_id
         if message.text and message.text.split()[0].split('@')[0] == '/cancel':
             await remove(message, state, data)
-            await clear(state)
+            await clear(state, data)
             await message.answer(f'Р¤РѕСЂРјР° РѕС‚РјРµРЅРµРЅР°. РќР°С‡Р°С‚СЊ Р·Р°РЅРѕРІРѕ: /{command}.', parse_mode=None)
             return
         data['index'] = max(0, data['index'] - 1)
@@ -324,7 +329,7 @@ def dialog_form_router(
         except Exception:
             await message.answer('Р РµР·СѓР»СЊС‚Р°С‚ РѕС‚РїСЂР°РІРєРё РїРѕРєР° РЅРµ РїРѕРґС‚РІРµСЂР¶РґС‘РЅ. РќР°Р¶РјРёС‚Рµ В«РћС‚РїСЂР°РІРёС‚СЊВ» РµС‰С‘ СЂР°Р· РґР»СЏ РїСЂРѕРІРµСЂРєРё С‚РѕР№ Р¶Рµ Р·Р°СЏРІРєРё.', parse_mode=None)
             raise
-        await clear(state)  # Completion is final even if the following feedback is lost.
+        await clear(state, data)  # Completion is final even if the following feedback is lost.
         await message.answer(text, parse_mode=None, reply_markup=remove_keyboard())
 
     return router

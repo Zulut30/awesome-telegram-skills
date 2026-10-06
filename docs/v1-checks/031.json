@@ -1,0 +1,171 @@
+{
+  "roadmap_item": 31,
+  "version": "0.24.0",
+  "checked_date": "2026-10-06",
+  "passed": true,
+  "report": "output/pattern-library-0.24.0/distribution-report.json",
+  "report_sha256": "bb69ff8509d5b74c00d471252e0c421cadb759b6c2778612f6994abf453cc43c",
+  "distribution_stages": 77,
+  "python_tests": {
+    "run": 461,
+    "passed": 460,
+    "skipped": 1
+  },
+  "focused_dialog_storage_tests": 26,
+  "typescript_tests": 26,
+  "root_tests": 34,
+  "skills_checked": 41,
+  "browser_scope": {
+    "example": 141,
+    "gallery": 1058,
+    "export": 1058,
+    "starter": 66,
+    "selected_starter": 76,
+    "api_reference": 36
+  },
+  "browser_total": 2435,
+  "first_run_browser_checks": 60,
+  "public_symbols": {
+    "total": 239,
+    "python": 198,
+    "typescript": 41
+  },
+  "component_groups": 43,
+  "recipes": 310,
+  "python_fixtures": 211,
+  "source_check_files": 260,
+  "source_typing_files": 38,
+  "installed_composition": {
+    "reconciled_operation": "91663325a97793e3f1f884203c9f2820",
+    "business_effects": 1,
+    "expired_draft_removed": true,
+    "expired_pending_preserved": true,
+    "version_refused_without_reset": true,
+    "host_data_preserved": true,
+    "existing_dispatcher_preserved": true,
+    "passed": true,
+    "network": false,
+    "session_closed": true,
+    "processes": 3,
+    "resumed_answers": true,
+    "original_deadline_preserved": true,
+    "operation_ids_match": true,
+    "separate_process_restart": true
+  },
+  "first_run_report": "output/v1-quickstart-031-accepted/report.json",
+  "first_run_report_sha256": "94eab2a16df87c08a11ba89da0640ba1e5f57bdd578fab3f17c315774edba012",
+  "first_run_guide_hash": {
+    "method": "UTF-8 normalized-LF guide executed by verify_quickstart.py",
+    "sha256": "6665b30a3cdd0471206199c3700c26e1abe7ececf8c1e1bd0ed3add60dfd4d07",
+    "source_bytes_sha256": "df2dc5e54b6e001743cbeb5dd8fe6d7c6323c810142f58474acb8839c1a7a3c9"
+  },
+  "artifacts": [
+    {
+      "name": "awesome_telegram_patterns-0.24.0-py3-none-any.whl",
+      "bytes": 293585,
+      "sha256": "89be0aa3ea9e9d265d98be3e80ced9f0a06e72fda10239fe7bb37750f6ebafed"
+    },
+    {
+      "name": "awesome-telegram-patterns-0.24.0.tgz",
+      "bytes": 19530,
+      "sha256": "99c409fd7325d0b784cd5c131e175adf968242c4785cebc75197f10d24527121"
+    }
+  ],
+  "evidence": {
+    "distribution": "docs/v1-checks/031-distribution.json",
+    "first_run": "docs/v1-checks/031-first-run.json",
+    "portable": "docs/v1-checks/031-portable.json"
+  },
+  "source_and_guide_hashes": {
+    "packages/python/src/telegram_patterns/fsm_storage.py": "c55b8a2754c12912b4c823d72a4d02c113350667cb09138ff5bad2ffec9acda0",
+    "packages/python/src/telegram_patterns/_dialog_storage.py": "3fa64a74eada1c8ea25264311ebde8ea21a991c77e5059a356777c138f79d50e",
+    "packages/python/src/telegram_patterns/_offline_recipe.py": "788fda3d79751cd5a79d6d9381edfdf833289f09a7ceea8058f1428c8b5dc5e7",
+    "packages/python/tests/test_execution.py": "c302e6283aebceed211b34524797887dea9c24b06c17c54fb556e715c7e2278d",
+    "packages/python/src/telegram_patterns/forms.py": "debe63cc7016397f32bc24e7076e27fea2d3a57be5ab994acfb7bf8c33172d8b",
+    "packages/python/src/telegram_patterns/dialog_forms.py": "19377786395d5d87ba59d2a17f36ad322a71bed90c85953a5d5db5df399432b0",
+    "packages/python/src/telegram_patterns/aiogram.py": "2b2270a76a607033ef96f89b01fa05574197b073c0a9e82b90e60da2c19ee78e",
+    "packages/python/tests/test_fsm_storage.py": "c275829e59e30fca8b84854c0ade35ff55aae95d31a073fef4e62b28b940cde7",
+    "examples/python/dialog_restart_bot.py": "d21099056808671e6abad5ad069dedebda2c5d24b90d576931ba2045e08ad799",
+    "examples/python/offline_dialog_restart.py": "a35a11e2d740c68224b0e0ee0b8548803eb111443b3e2d76d41dc0cbab1c9f02",
+    "examples/api-reference/python/bot_fsm_storage.py": "06d0b21bfa17efef0f50720ac45e7aefef449b4bad78902c67f316dd6668e8cd",
+    "scripts/verify_dialog_restart_recipe.py": "5c67635a89cac2156c135cf4bb91f1170b5469730b934166b64c86f1dd64ebd6",
+    "scripts/verify_pattern_packages.py": "744b04755297af422248c992391a167295e046a94e8db95af6ae880a7f647ee0",
+    "scripts/verify_gallery_export.py": "ac2187a4dfb7cbfe34d02f8d88e8993acd44dd443d18acd9213307ec3a0d01b8",
+    "scripts/build_recipe_gallery.py": "508791c93cad86436d413a2f20d0d7fc01407e0890f264448a18c9b2aafbd2b0",
+    "tests/gallery-browser.mjs": "b3ef56d350ee85c47a8dbc3ff057ca9af585d07a04ac69a03f27a47cd93a65eb",
+    "docs/dialog-restart-skill-check.md": "6f38970c55bc003f8910262fb26099787b6547afe8271b5b49b7771190f69aa7",
+    "docs/quickstart.md": "df2dc5e54b6e001743cbeb5dd8fe6d7c6323c810142f58474acb8839c1a7a3c9",
+    ".agents/skills/telegram-code-patterns/SKILL.md": "9486771c8abd1a804a8159220fa9e410b6acb01c0617a8789e073b5fe958328e",
+    ".agents/skills/telegram-dialogs/SKILL.md": "748868da9ec92e4a9e210f315f01454096db3fd5ca05610b89e9c7886303e54e",
+    "docs/dialog-restart.md": "2ab6d8f72e508ea61ae4ee21f32457b8f92bfbdaceccdc19b78f4e822dbcab4d",
+    ".agents/skills/telegram-code-patterns/references/dialog-restart.md": "2ab6d8f72e508ea61ae4ee21f32457b8f92bfbdaceccdc19b78f4e822dbcab4d",
+    ".agents/skills/telegram-dialogs/references/dialog-restart.md": "2ab6d8f72e508ea61ae4ee21f32457b8f92bfbdaceccdc19b78f4e822dbcab4d"
+  },
+  "logs": {
+    "output/dialog-031-root-final.log": "34381bdcc1c2133dd42e0e139e57acb713d8eaecd7e28044e7fecdf9542e0057",
+    "output/dialog-031-skills-final.log": "8807a4a6e3207331f403446a458788ef471faa999c4f11c303833c22e58313a2",
+    "output/dialog-031-focused-final.log": "0fdea6dcce8b890438e3755fb944de036317a54e387d1e499ab7472415a714ce",
+    "output/dialog-031-worker-final.log": "b92c35d5152478e1b8c1efea047ff3df7274c541bd674c5d0ad11fa7cbcbfdb3"
+  },
+  "repair_history": {
+    "attempts": [
+      {
+        "distribution": "output/pattern-library-0.24.0-attempt-01/distribution-report.json",
+        "passed": false,
+        "failed_stage": "recipe-execution-consumer",
+        "cause": "runpy fixture inherited the runner --all-python argument",
+        "repair": "Isolate fixture argv and restore caller argv; assert actual three-process restart evidence in worker",
+        "first_run": "output/v1-quickstart-031-attempt-01/report.json",
+        "first_run_status": "passed for superseded first-attempt artifacts; not final acceptance"
+      },
+      {
+        "distribution": "output/pattern-library-0.24.0-attempt-02/distribution-report.json",
+        "passed": false,
+        "failed_stage": "recipe-execution-consumer",
+        "cause": "Restart child processes inherited caller PYTHONPATH and dummy credentials; a canary module shadowed SDK",
+        "repair": "Isolated Python -I/-B, trusted owned bundle bootstrap and explicit environment allowlist; actual worker canary regression",
+        "first_run": "output/v1-quickstart-031-attempt-02/report.json",
+        "first_run_status": "passed for superseded artifacts only"
+      },
+      {
+        "distribution": "output/pattern-library-0.24.0-attempt-03/distribution-report.json",
+        "passed": false,
+        "failed_stage": "gallery-export-consumer",
+        "cause": "Aggregate 180-second deadline left less than 18 seconds for Chrome after export 81.3s, read-only check 76.9s and CLI cases",
+        "repair": "360-second aggregate bound and 120-second individual generation bounds; standalone Chrome actual checks run separately",
+        "python_tests": {
+          "run": 461,
+          "passed": 460,
+          "skipped": 1,
+          "seconds": 353.726
+        },
+        "first_run": "output/v1-quickstart-031-attempt-03/report.json",
+        "first_run_status": "Passed for third-attempt artifact; wheel hash differs after fourth rebuild, so repeat matching first-run"
+      },
+      {
+        "distribution": "output/pattern-library-0.24.0-attempt-04/interrupted.json",
+        "passed": false,
+        "last_stage": "python-tests",
+        "cause": "Execution handle disappeared on turn continuation; no live process or final report",
+        "repair": "Launch verifier as an explicitly tracked hidden background process with durable stdout/stderr",
+        "first_run": "output/v1-quickstart-031-attempt-04/report.json",
+        "first_run_status": "Passed for fourth artifact; final acceptance requires matching final hashes"
+      }
+    ]
+  },
+  "requirement_map": {
+    "storage_contract": "SnapshotStore and optional AtomicFSMStorage; one state/data CAS revision",
+    "project_example": "ProjectSnapshotStore owns per-operation file SQLite connections; explicit migration; no host connection commit",
+    "step_lifetime_version": "Text/mixed forms atomically preserve accepted step, schema version and original absolute deadline",
+    "restart_unknown": "Three actual processes; pending effect keeps same operation ID past expiry; one SQLite business row",
+    "host_compatibility": "Current Dispatcher/routers/isolation/foreign data and exact six-field StorageKey retained",
+    "memory_boundary": "Old API without lifetime remains a nonpersistent MemoryStorage demonstration"
+  },
+  "limits": [
+    "Local experimental packages only; no registry publication or production-ready claim",
+    "Snapshot CAS is not distributed update serialization or remote business exactly-once; points 032–040 remain pending",
+    "Lazy draft cleanup is not physical backup deletion; host owns tombstone/migration/privacy retention",
+    "No live Telegram/physical-device/provider settlement/independent human or AI acceptance; point 020 remains pending",
+    "Inherited malformed Russian feedback in aiogram.callback_router and dialog_forms was detected during source review; point 032 will repair and verify visible text. Snapshot/restart acceptance does not claim complete UI text quality"
+  ]
+}

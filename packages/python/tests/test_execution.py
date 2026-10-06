@@ -16,6 +16,30 @@ import telegram_patterns.execution as execution
 
 
 class ExecutionTests(unittest.TestCase):
+    def test_restart_fixture_does_not_inherit_runner_arguments_and_restores_caller(self):
+        code = '''import json,sys
+from pathlib import Path
+from telegram_patterns._offline_recipe import _execute
+sys.argv=['caller-worker','--all-python','caller-only-argument']
+before=sys.argv[:]
+result=_execute('demo-dialog-restart')
+assert sys.argv==before
+assert result['passed'] and 'three-process-restart' in result['checks']
+assert {p.name for p in Path.cwd().iterdir()}=={'owned.txt','aiogram.py'}
+assert (Path.cwd()/'owned.txt').read_bytes()==b'preserved'
+print(json.dumps(result))
+'''
+        with tempfile.TemporaryDirectory(prefix='worker argv proof ') as folder:
+            root=Path(folder); (root/'owned.txt').write_bytes(b'preserved')
+            (root/'aiogram.py').write_text('raise RuntimeError("PRIVATE_CANARY")',encoding='utf-8')
+            environment=dict(os.environ,PYTHONPATH=str(root),BOT_TOKEN='100:PRIVATE_CANARY',PAYMENT_SECRET='PRIVATE_CANARY')
+            run=subprocess.run([sys.executable,'-I','-B','-c',code],cwd=root,capture_output=True,
+                env=environment,text=True,encoding='utf-8',timeout=90)
+            self.assertEqual(run.returncode,0,run.stdout+run.stderr)
+            self.assertNotIn('PRIVATE_CANARY',run.stdout+run.stderr)
+            self.assertEqual(json.loads(run.stdout)['external_network_attempts'],0)
+            self.assertEqual((root/'owned.txt').read_bytes(),b'preserved')
+
     def test_calendar_data_missing_or_unverified_blocks_before_worker(self):
         original=execution.importlib.metadata.version
         def missing(name):

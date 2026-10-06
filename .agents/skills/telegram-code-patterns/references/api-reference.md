@@ -1,4 +1,4 @@
-# Справочник API 0.23.0
+# Справочник API 0.24.0
 
 Публичные imports, самостоятельные минимальные композиции и границы каждого символа. Все группы experimental. Рецепты ref.* принадлежат этому справочнику; cookbook RecipeCatalog отдельно содержит Telegram requests/layouts. Исполненные fixtures не доказывают live/device/provider acceptance.
 
@@ -245,6 +245,12 @@
 | `platform_events_router` | `from telegram_patterns.aiogram import platform_events_router` | [ref.bot_platform](api-reference-bot.md#ref-bot_platform) | Observers для разрешенных native events в текущем Dispatcher |
 | `StoryPhotoUpload` | `from telegram_patterns.aiogram import StoryPhotoUpload` | [ref.bot_platform](api-reference-bot.md#ref-bot_platform) | Validated new photo InputFile bridge к SDK nested multipart |
 | `StoryVideoUpload` | `from telegram_patterns.aiogram import StoryVideoUpload` | [ref.bot_platform](api-reference-bot.md#ref-bot_platform) | Validated new video InputFile/duration bridge к SDK nested multipart |
+| `FSMSnapshot` | `from telegram_patterns.aiogram import FSMSnapshot` | [ref.bot_fsm_storage](api-reference-bot.md#ref-bot_fsm_storage) | Immutable revision and detached JSON answers |
+| `FSMConflict` | `from telegram_patterns.aiogram import FSMConflict` | [ref.bot_fsm_storage](api-reference-bot.md#ref-bot_fsm_storage) | Stale CAS refused before effects |
+| `SnapshotStore` | `from telegram_patterns.aiogram import SnapshotStore` | [ref.bot_fsm_storage](api-reference-bot.md#ref-bot_fsm_storage) | Host-owned durable snapshot transaction contract |
+| `AtomicFSMStorage` | `from telegram_patterns.aiogram import AtomicFSMStorage` | [ref.bot_fsm_storage](api-reference-bot.md#ref-bot_fsm_storage) | Optional atomic capability on current project storage |
+| `SnapshotFSMStorage` | `from telegram_patterns.aiogram import SnapshotFSMStorage` | [ref.bot_fsm_storage](api-reference-bot.md#ref-bot_fsm_storage) | aiogram BaseStorage facade over supplied host store |
+| `DialogLifetime` | `from telegram_patterns.aiogram import DialogLifetime` | [ref.bot_fsm_storage](api-reference-bot.md#ref-bot_fsm_storage) | Absolute draft deadline without expiring pending effects |
 
 ## CLI и CSS
 

@@ -21,6 +21,7 @@ _FIXTURES = {
     'demo-navigation': ('navigation_bot.py', 'offline_navigation.py'),
     'demo-selection': ('selection_bot.py', 'offline_selection.py'),
     'demo-calendar': ('calendar_bot.py', 'offline_calendar.py'),
+    'demo-dialog-restart': ('dialog_restart_bot.py', 'offline_dialog_restart.py'),
     'demo-dialog-fields': ('dialog_fields_bot.py', 'offline_dialog_fields.py'),
     'demo-message-text': ('message_text_bot.py', 'offline_message_text.py'),
     'demo-media': ('media_bot.py', 'offline_media.py'),
@@ -120,13 +121,16 @@ def _execute(recipe_id: str) -> dict:
             for name in supplied:
                 (Path(folder) / name).write_bytes(files('telegram_patterns').joinpath('resources/offline/' + name + '.txt').read_bytes())
             original_path = sys.path[:]
+            original_argv = sys.argv[:]
             sys.path.insert(0, folder)  # Only the freshly copied trusted bundle.
+            sys.argv = [str(Path(folder) / supplied[-1])]  # Never forward runner/CLI arguments to a fixture.
             output = io.StringIO()
             try:
                 with redirect_stdout(output):
                     runpy.run_path(str(Path(folder) / supplied[-1]), run_name='__main__')
             finally:
                 sys.path[:] = original_path
+                sys.argv[:] = original_argv
         evidence = json.loads(output.getvalue())
         assert evidence['passed'] is True and evidence['network'] is False
         if plan.kind == 'dispatcher':
@@ -138,6 +142,13 @@ def _execute(recipe_id: str) -> dict:
             if recipe_id == 'demo-dialog-fields':
                 assert evidence['business_effects'] == 1 and evidence['field_types'] == 7 and evidence['owner_step_guards'] and evidence['unknown_receipt_same_intent']
                 checks.extend(('seven-dialog-field-types', 'native-candidate-confirmation', 'same-intent-one-sqlite-effect'))
+            if recipe_id == 'demo-dialog-restart':
+                assert evidence['processes'] == 3 and evidence['business_effects'] == 1
+                assert all(evidence[k] for k in ('separate_process_restart', 'resumed_answers',
+                    'original_deadline_preserved', 'operation_ids_match', 'expired_draft_removed',
+                    'expired_pending_preserved', 'version_refused_without_reset', 'host_data_preserved',
+                    'existing_dispatcher_preserved'))
+                checks.extend(('three-process-restart', 'original-step-version-deadline', 'expired-pending-same-operation-id'))
             if recipe_id == 'demo-message-text':
                 assert evidence['chunks'] > 1 and all(evidence[k] for k in ('literal_injection', 'utf16_offsets', 'split_preserves_entities', 'explicit_parse_mode_none', 'emoji_capability_fallback', 'existing_dispatcher_preserved', 'private_context_guards'))
                 checks.extend(('literal-user-insertions', 'utf16-entities-lossless-partition', 'explicit-default-parse-mode-override', 'custom-emoji-fallback'))

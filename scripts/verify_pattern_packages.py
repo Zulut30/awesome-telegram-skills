@@ -98,7 +98,7 @@ from telegram_patterns import BotSettings, validate_init_data, RecipeCatalog, cr
 assert importlib.util.find_spec('aiogram') is None
 assert Path(telegram_patterns.__file__).is_relative_to(Path(sys.argv[1]))
 assert BotSettings.from_env(environ={'BOT_TOKEN':'100:CORE_FIXTURE'}).token=='100:CORE_FIXTURE'
-assert len(RecipeCatalog().recipes)==309
+assert len(RecipeCatalog().recipes)==310
 assert RecipeCatalog().search('две кнопки')[0].id=='two-columns'
 assert RecipeCatalog().get('two-columns').maturity=='experimental'
 assert RecipeCatalog().get('api.sendPhoto').maturity=='reference'
@@ -153,7 +153,9 @@ print(json.dumps({'core_without_sdk':True,'python':sys.version.split()[0]}))
             reference_command.append('--skip-browser')
         report['api_reference'] = json.loads(run('api-reference-consumer', reference_command, consumers))
         run('sdk-origin', [str(python_in(sdk)), '-c', 'import sys,telegram_patterns;from pathlib import Path;assert Path(telegram_patterns.__file__).is_relative_to(Path(sys.argv[1]));print(telegram_patterns.__file__)', str(sdk)], consumers)
-        python_log = run('python-tests', [str(python_in(sdk)), '-m', 'unittest', 'discover', '-s', str(ROOT / 'packages/python/tests'), '-v'], consumers, timeout=300)
+        # Includes bounded real subprocess restart/CLI consumers; keep the suite
+        # deadline distinct from each individual operation's timeout.
+        python_log = run('python-tests', [str(python_in(sdk)), '-m', 'unittest', 'discover', '-s', str(ROOT / 'packages/python/tests'), '-v'], consumers, timeout=450)
         run('sdk-dependencies', [uv, 'pip', 'check', '--python', str(python_in(sdk))])
         offline = json.loads(run('offline-bot', [str(python_in(sdk)), str(ROOT / 'examples/python/offline_bot.py')], consumers))
         if not offline['passed'] or offline['network'] or not offline['session_closed']:
@@ -187,6 +189,13 @@ print(json.dumps({'core_without_sdk':True,'python':sys.version.split()[0]}))
         if not dialog['passed'] or dialog['network'] or not dialog['session_closed'] or dialog['field_types'] != 7 or dialog['business_effects'] != 1 or not all(dialog[k] for k in ('owner_step_guards','native_candidate_confirmation','back_cancel','unknown_receipt_same_intent','existing_dispatcher_preserved','host_data_preserved')):
             raise RuntimeError('Installed seven-field dialog scenario failed')
         report['dialog_fields'] = dialog
+        restart = json.loads(run('dialog-restart', [str(python_in(sdk)), str(ROOT / 'examples/python/offline_dialog_restart.py')], consumers))
+        if (not restart['passed'] or restart['network'] or not restart['session_closed'] or restart['processes'] != 3
+                or restart['business_effects'] != 1 or not all(restart[k] for k in ('separate_process_restart', 'resumed_answers',
+                    'original_deadline_preserved', 'operation_ids_match', 'expired_draft_removed', 'expired_pending_preserved',
+                    'version_refused_without_reset', 'host_data_preserved', 'existing_dispatcher_preserved'))):
+            raise RuntimeError('Installed restart-safe dialog composition failed')
+        report['dialog_restart'] = restart
         message_text = json.loads(run('message-text', [str(python_in(sdk)), str(ROOT / 'examples/python/offline_message_text.py')], consumers))
         if not message_text['passed'] or message_text['network'] or not message_text['session_closed'] or message_text['chunks'] < 2 or not all(message_text[k] for k in ('literal_injection','utf16_offsets','split_preserves_entities','explicit_parse_mode_none','emoji_capability_fallback','existing_dispatcher_preserved','private_context_guards')):
             raise RuntimeError('Installed literal messages and lossless partition failed')
@@ -217,7 +226,8 @@ print(json.dumps({'core_without_sdk':True,'python':sys.version.split()[0]}))
         report['recipe_gallery'] = json.loads(run('recipe-gallery', [str(python_in(sdk)), str(ROOT / 'scripts/build_recipe_gallery.py'), '--check'], consumers))
         gallery_command = [str(python_in(sdk)), str(ROOT / 'scripts/verify_gallery_export.py'), '--output', str(consumers / 'gallery-export')]
         if args.skip_browser: gallery_command.append('--skip-browser')
-        report['gallery_export'] = json.loads(run('gallery-export-consumer', gallery_command, consumers))
+        # Two complete SDK fixture generations plus CLI and browser acceptance.
+        report['gallery_export'] = json.loads(run('gallery-export-consumer', gallery_command, consumers, timeout=360))
         starter_root = consumers / 'starters'
         report['starter_cli'] = json.loads(run('starter-cli', [str(python_in(sdk)), str(ROOT / 'scripts/verify_starter_consumer.py'), '--wheel', str(wheel), '--tarball', str(tarball), '--output', str(starter_root)], consumers))
         # Resolve the generated PEP dependency against the supplied local wheel.
@@ -239,6 +249,7 @@ print(json.dumps({'core_without_sdk':True,'python':sys.version.split()[0]}))
         run('selected-starter-build', [npm, 'run', 'build'], selected_mini)
         copied_skill = consumers / 'portable-skill/telegram-code-patterns'
         shutil.copytree(ROOT / '.agents/skills/telegram-code-patterns', copied_skill)
+        report['portable_dialog_restart_recipe'] = json.loads(run('portable-dialog-restart-recipe', [str(python_in(sdk)), str(ROOT / 'scripts/verify_dialog_restart_recipe.py'), str(copied_skill)], consumers))
         report['portable_platform_recipe'] = json.loads(run('portable-platform-recipe', [str(python_in(sdk)), str(ROOT / 'scripts/verify_platform_recipe.py'), str(copied_skill)], consumers))
         report['portable_inline_search_recipe'] = json.loads(run('portable-inline-search-recipe', [str(python_in(sdk)), str(ROOT / 'scripts/verify_inline_search_recipe.py'), str(copied_skill)], consumers))
         report['portable_poll_recipe'] = json.loads(run('portable-poll-recipe', [str(python_in(sdk)), str(ROOT / 'scripts/verify_poll_recipe.py'), str(copied_skill)], consumers))

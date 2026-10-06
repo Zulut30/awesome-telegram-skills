@@ -129,6 +129,7 @@ def build(root: Path = ROOT) -> dict:
         ('navigation_bot.py', 'offline_navigation.py', 'demo-navigation', 'Экраны и история в одном сообщении'),
         ('selection_bot.py', 'offline_selection.py', 'demo-selection', 'Переключатели, выбор, количество и подтверждение'),
         ('calendar_bot.py', 'offline_calendar.py', 'demo-calendar', 'Календарь и запись на свободное время'),
+        ('dialog_restart_bot.py', 'offline_dialog_restart.py', 'demo-dialog-restart', 'Восстановление диалога после рестарта'),
         ('dialog_fields_bot.py', 'offline_dialog_fields.py', 'demo-dialog-fields', 'Семь типов полей диалога'),
         ('inline_search_bot.py', 'offline_inline_search.py', 'demo-inline-search', 'Inline-поиск с персональной пагинацией'),
         ('polls_bot.py', 'offline_polls.py', 'demo-polls', 'Опросы, quiz и события голосования'),
@@ -160,6 +161,13 @@ def build(root: Path = ROOT) -> dict:
             records[-1]['keywords'] += ['календарь', 'дата', 'время', 'слот', 'запись', 'timezone', 'DST', 'booking', 'receipt']
             records[-1]['source_files'] += ['packages/python/src/telegram_patterns/calendar.py', 'packages/python/src/telegram_patterns/calendar_aiogram.py', 'packages/python/src/telegram_patterns/slots.py']
             records[-1]['check_files'] += ['packages/python/tests/test_calendar.py', 'packages/python/tests/test_calendar_aiogram.py']
+        if key == 'demo-dialog-restart':
+            records[-1]['summary'] = 'Host storage: atomic step/version/deadline snapshot и тот же pending operation после рестарта'
+            records[-1]['tasks'] = ['input', 'recovery']
+            records[-1]['keywords'] += ['рестарт', 'восстановление', 'состояние', 'FSM', 'storage', 'TTL', 'snapshot', 'resume', 'версия', 'unknown']
+            records[-1]['source_files'] += ['packages/python/src/telegram_patterns/fsm_storage.py', 'packages/python/src/telegram_patterns/_dialog_storage.py', 'docs/dialog-restart.md']
+            records[-1]['check_files'] += ['packages/python/tests/test_fsm_storage.py', 'scripts/verify_dialog_restart_recipe.py']
+            records[-1]['scope'] = 'Three actual processes, file SQLite and synthetic Dispatcher/SDK; atomic local state only, no live delivery, physical device, independent acceptance or distributed business exactly-once claim.'
         if key == 'demo-dialog-fields':
             records[-1]['keywords'] += ['поля', 'число', 'email', 'телефон', 'файл', 'контакт', 'геопозиция', 'ForceReply', 'candidate', 'шаг']
             records[-1]['source_files'] += ['packages/python/src/telegram_patterns/dialog_fields.py', 'packages/python/src/telegram_patterns/dialog_forms.py']

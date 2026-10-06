@@ -1,5 +1,11 @@
 # Изменения библиотеки компонентов
 
+## 0.24.0
+
+- Пункт 31: atomic FSM snapshot contract и адаптер текущего project storage; state/data, версия, шаг и абсолютный срок формы согласованно сохраняются в одной CAS записи.
+- Text/mixed формы сохраняют старый API; optional DialogLifetime требует atomic storage, resume не продлевает срок, unknown/pending operation не удаляется по draft TTL. Foreign host data, full StorageKey, Dispatcher и isolation сохраняются.
+- Project-owned SQLite adapter, три отдельных процесса restart/reconcile, самостоятельные copied guide/API/offline recipe. MemoryStorage остается демонстрацией без долговечности; live и distributed effect acceptance отдельно.
+
 ## 0.23.0
 
 - Пункт 30: experimental `platform-operations`, 18 public symbols и 51 reviewed native method — темы, реакции, заявки, Business, stories, gifts, managed bots. Current actor/resource/revision и native rights проверяются отдельно.
