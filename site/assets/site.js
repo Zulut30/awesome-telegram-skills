@@ -1,0 +1,30 @@
+'use strict';
+const root=document.body.dataset.base??'./';
+const base=new URL(root,document.baseURI);
+const normalize=value=>value.normalize('NFKC').toLocaleLowerCase().replaceAll('ё','е');
+const themeButton=document.querySelector('[data-theme-toggle]');
+function updateThemeLabel(){themeButton?.setAttribute('aria-label',document.documentElement.dataset.theme==='dark'?'Включить светлую тему':'Включить темную тему')}
+themeButton?.addEventListener('click',()=>{const theme=document.documentElement.dataset.theme==='dark'?'light':'dark';document.documentElement.dataset.theme=theme;try{localStorage.setItem('telegram-docs-theme',theme)}catch{}updateThemeLabel()});updateThemeLabel();
+const menuButton=document.querySelector('[data-menu-toggle]');
+const sidebar=document.querySelector('#site-navigation');
+function closeMenu(){document.body.dataset.menu='closed';menuButton?.setAttribute('aria-expanded','false');menuButton?.focus()}
+menuButton?.addEventListener('click',()=>{const open=document.body.dataset.menu!=='open';document.body.dataset.menu=open?'open':'closed';menuButton.setAttribute('aria-expanded',String(open));if(open)sidebar?.querySelector('a')?.focus()});
+document.querySelector('[data-close-menu]')?.addEventListener('click',closeMenu);
+sidebar?.addEventListener('keydown',event=>{if(event.key!=='Tab'||document.body.dataset.menu!=='open')return;const items=[...sidebar.querySelectorAll('a[href]')];if(!items.length)return;if(event.shiftKey&&document.activeElement===items[0]){event.preventDefault();items.at(-1).focus()}else if(!event.shiftKey&&document.activeElement===items.at(-1)){event.preventDefault();items[0].focus()}});
+document.addEventListener('keydown',event=>{if(event.key==='Escape'&&document.body.dataset.menu==='open')closeMenu()});
+matchMedia('(min-width: 761px)').addEventListener('change',event=>{if(event.matches){document.body.dataset.menu='closed';menuButton?.setAttribute('aria-expanded','false')}});
+for(const table of document.querySelectorAll('.article table')){const wrap=document.createElement('div');wrap.className='table-scroll';table.before(wrap);wrap.append(table)}
+for(const block of document.querySelectorAll('.article pre')){const code=block.querySelector('code');if(!code)continue;const copy=document.createElement('button');copy.type='button';copy.className='copy-code';copy.textContent='Копировать';copy.addEventListener('click',async()=>{try{await navigator.clipboard.writeText(code.textContent);copy.textContent='Скопировано'}catch{copy.textContent='Выделите код вручную'}setTimeout(()=>copy.textContent='Копировать',2000)});block.append(copy)}
+const filter=document.querySelector('[data-filter]');
+if(filter){const query=filter.querySelector('input'),category=filter.querySelector('select'),cards=[...document.querySelectorAll('[data-search-card]')],status=document.querySelector('[data-filter-status]'),empty=document.querySelector('[data-filter-empty]');function apply(){const terms=normalize(query.value).trim().split(/\s+/).filter(Boolean);let count=0;for(const card of cards){const matches=(!category?.value||card.dataset.category===category.value)&&terms.every(term=>normalize(card.dataset.searchCard).includes(term));card.hidden=!matches;if(matches)count++}status.textContent=`Найдено ${count} из ${cards.length}`;empty.hidden=count!==0}query.addEventListener('input',apply);category?.addEventListener('change',apply);apply()}
+const dialog=document.querySelector('#search-dialog'),input=document.querySelector('#doc-search'),results=document.querySelector('#search-results'),status=document.querySelector('#search-status');
+let indexPromise,searchRevision=0,previousFocus;
+function searchIndex(){return indexPromise??=fetch(new URL('search-index.json',base)).then(response=>{if(!response.ok)throw new Error('Search unavailable');return response.json()}).catch(error=>{indexPromise=undefined;throw error})}
+function resultScore(item,terms){const title=normalize(item.title),text=normalize(item.text);if(!terms.every(term=>title.includes(term)||text.includes(term)))return-1;return terms.reduce((score,term)=>score+(title.includes(term)?10:1),0)}
+async function search(){const revision=++searchRevision;const terms=normalize(input.value).trim().split(/\s+/).filter(Boolean);results.replaceChildren();if(!terms.length){status.textContent='Введите задачу, имя скилла или API';return}status.textContent='Ищем…';try{const index=await searchIndex();if(revision!==searchRevision||!dialog.open)return;const matches=index.map(item=>({item,score:resultScore(item,terms)})).filter(result=>result.score>=0).sort((a,b)=>b.score-a.score).slice(0,24);status.textContent=matches.length?`Показано ${matches.length} результатов`:'Ничего не найдено. Попробуйте другое слово.';for(const {item}of matches){const link=document.createElement('a');link.href=new URL(item.path,base).href;const title=document.createElement('strong');title.textContent=item.title;const excerpt=document.createElement('small');excerpt.textContent=item.summary;link.append(title,excerpt);results.append(link)}}catch{if(revision===searchRevision)status.textContent='Поиск недоступен. Разделы документации доступны через меню.'}}
+function openSearch(){previousFocus=document.activeElement;if(document.body.dataset.menu==='open'){document.body.dataset.menu='closed';menuButton?.setAttribute('aria-expanded','false')}dialog.showModal();input.focus();search()}
+for(const trigger of document.querySelectorAll('[data-open-search]'))trigger.addEventListener('click',openSearch);
+dialog?.querySelector('[data-close-search]')?.addEventListener('click',()=>dialog.close());
+dialog?.addEventListener('close',()=>{searchRevision++;previousFocus?.focus()});
+input?.addEventListener('input',search);
+document.addEventListener('keydown',event=>{if((event.ctrlKey||event.metaKey)&&event.key.toLocaleLowerCase()==='k'){event.preventDefault();if(!dialog.open)openSearch()}});
