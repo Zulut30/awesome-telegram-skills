@@ -61,7 +61,19 @@ def _repair_install() -> list[dict]:
 
 
 def _linked(path: Path) -> bool:
-    return path.is_symlink() or bool(getattr(path, 'is_junction', lambda: False)())
+    """A symlink or junction outside the OS layout; known links are refused.
+
+    Root-owned aliases directly under the filesystem root are trusted: on macOS
+    /var, /tmp and /etc point to /private/..., so every temporary path crosses one.
+    """
+    if not (path.is_symlink() or bool(getattr(path, 'is_junction', lambda: False)())):
+        return False
+    try:
+        system_alias = (os.name != 'nt' and path.is_absolute() and path.parent == Path(path.anchor)
+                        and path.lstat().st_uid == 0)
+    except OSError:
+        system_alias = False
+    return not system_alias
 
 
 def _tool_environment() -> dict[str, str]:

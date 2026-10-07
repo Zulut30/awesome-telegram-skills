@@ -30,7 +30,7 @@ for check in report['checks']:
 
 | Проверка / reason | Действие и предел |
 | --- | --- |
-| `project-unavailable`, `project-not-directory`, `linked-project` | Укажите доступный настоящий каталог проекта. Doctor отказывается читать дерево через известный symbolic link или Windows junction; создание нового проекта не требуется. |
+| `project-unavailable`, `project-not-directory`, `linked-project` | Укажите доступный настоящий каталог проекта. Doctor отказывается читать дерево через известный symbolic link или Windows junction; создание нового проекта не требуется. Системные алиасы root прямо в `/` (на macOS `/var`, `/tmp`, `/etc` ведут в `/private/...`) ссылками не считаются. |
 | `python-too-old` | Выберите Python >=3.11 и отдельное окружение приложения; установка Python не выполняется. |
 | `library-not-installed`, `library-version-invalid` | Установите предоставленный wheel в тот же interpreter. Source import без metadata не считается корректной установкой. |
 | `sdk-missing`, `sdk-incompatible` | Нужен aiogram >=3.31,<4 для нашего starter. План предлагает pip check и предоставленный wheel с extra; ограничения существующего приложения проверяются перед установкой. Если pip отсутствует, первая рекомендация — `python -m ensurepip`. |

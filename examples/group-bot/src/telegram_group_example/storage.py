@@ -40,10 +40,21 @@ async def io_call(action: Callable[P, T], *args: P.args, **kwargs: P.kwargs) -> 
         raise
 
 
+def _linked(path: Path) -> bool:
+    """Known links are refused, except root-owned aliases under / (macOS /var, /tmp -> /private/...)."""
+    if not (path.is_symlink() or bool(getattr(path, 'is_junction', lambda: False)())):
+        return False
+    try:
+        return not (sys.platform != 'win32' and path.is_absolute() and path.parent == Path(path.anchor)
+                    and path.lstat().st_uid == 0)
+    except OSError:
+        return True
+
+
 class ProcessLock:
     def __init__(self, database: Path):
         for p in (database, *database.parents):
-            if p.is_symlink() or bool(getattr(p, 'is_junction', lambda: False)()):
+            if _linked(p):
                 raise ValueError('Database links are not supported')
         path = database.with_name(database.name + '.lock')
         if path.is_symlink():
