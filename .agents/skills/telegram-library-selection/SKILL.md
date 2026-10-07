@@ -1,6 +1,6 @@
 ---
 name: telegram-library-selection
-description: "Выбирает и проверяет библиотеки Telegram-проекта: Python Bot API, Telethon/TDLib, Mini App SDK и платежные wrappers. Используй при выборе зависимости или проверке поддержки новой функции."
+description: "Выбирает и проверяет библиотеки Telegram-проекта: Python Bot API, Telethon/TDLib, Mini App SDK и платежные wrappers. Используй при выборе зависимости или проверке поддержки новой функции. Не для подключения уже выбранной библиотеки паттернов → telegram-code-patterns."
 license: MIT
 metadata:
   version: "0.24.0"

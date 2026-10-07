@@ -1,6 +1,6 @@
 ---
 name: telegram-mini-app-auth
-description: "Реализует серверную проверку Telegram Mini App initData, срок действия и выдачу сессии. Используй при аутентификации backend через данные запуска Mini App."
+description: "Реализует серверную проверку Telegram Mini App initData, срок действия и выдачу сессии. Используй при аутентификации backend через данные запуска Mini App. Не для входа на обычном сайте → telegram-web-login."
 license: MIT
 metadata:
   version: "0.24.0"

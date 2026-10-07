@@ -1,6 +1,6 @@
 ---
 name: telegram-inline-mode
-description: "Создает Telegram inline mode: запросы вида @bot query, результаты поиска, пагинацию и персональный кеш. Используй для inline_query, а не обычных inline-кнопок."
+description: "Создает Telegram inline mode: запросы вида @bot query, результаты поиска, пагинацию и персональный кеш. Используй для inline_query, а не обычных inline-кнопок. Не для кнопок под сообщением → telegram-buttons."
 license: MIT
 metadata:
   version: "0.24.0"

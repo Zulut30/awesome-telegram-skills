@@ -21,6 +21,7 @@ class ValidateSkillsTests(unittest.TestCase):
         self.temp = tempfile.TemporaryDirectory(); self.addCleanup(self.temp.cleanup)
         self.root = Path(self.temp.name)
         (self.root / 'components.json').write_text(json.dumps({'library_version': '9.9.9'}), encoding='utf-8')
+        self.skill('name: telegram-other\ndescription: "Other task. Не для примера → telegram-sample."\nlicense: MIT\nmetadata:\n  version: "9.9.9"', name='telegram-other')
 
     def skill(self, frontmatter, name='telegram-sample'):
         folder = self.root / '.agents/skills' / name
@@ -33,7 +34,8 @@ class ValidateSkillsTests(unittest.TestCase):
     def errors(self):
         return self.validator.validate(self.root)[1]
 
-    BASE = 'name: telegram-sample\ndescription: "Does a sample task. Use it in tests."\nlicense: MIT\nmetadata:\n  version: "9.9.9"'
+    BASE = ('name: telegram-sample\ndescription: "Does a sample task. Use it in tests. Не для другой задачи → telegram-other."'
+            '\nlicense: MIT\nmetadata:\n  version: "9.9.9"')
 
     def test_specification_compliant_skill_passes(self):
         self.skill(self.BASE + '\ncompatibility: "Requires Python 3.11+"\nallowed-tools: Read Bash(git:*)')
@@ -52,7 +54,12 @@ class ValidateSkillsTests(unittest.TestCase):
             'description too long': self.BASE.replace('Does a sample task. Use it in tests.', 'x' * 1025),
             'name mismatch': self.BASE.replace('name: telegram-sample', 'name: telegram-other'),
             'consecutive hyphens': self.BASE.replace('name: telegram-sample', 'name: telegram--sample'),
+            'boundary missing': self.BASE.replace(' Не для другой задачи → telegram-other.', ''),
+            'boundary to unknown skill': self.BASE.replace('telegram-other', 'telegram-missing'),
+            'boundary to itself': self.BASE.replace('→ telegram-other', '→ telegram-sample'),
         }
+        self.skill(self.BASE)
+        self.assertEqual(self.errors(), [], 'the base case is clean, so each error below comes from its rule')
         for label, frontmatter in cases.items():
             with self.subTest(label):
                 self.skill(frontmatter)

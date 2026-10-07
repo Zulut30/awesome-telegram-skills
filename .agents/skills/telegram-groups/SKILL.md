@@ -1,6 +1,6 @@
 ---
 name: telegram-groups
-description: "Реализует Telegram-функции групп, каналов и forum topics: права, membership, заявки и модерацию. Используй для поведения бота вне личного чата."
+description: "Реализует Telegram-функции групп, каналов и forum topics: права, membership, заявки и модерацию. Используй для поведения бота вне личного чата. Не для подключения бота к Business-аккаунту → telegram-business-bots."
 license: MIT
 metadata:
   version: "0.24.0"

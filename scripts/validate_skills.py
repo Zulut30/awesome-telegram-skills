@@ -21,6 +21,7 @@ except ImportError:
 REPO_ROOT = Path(__file__).resolve().parents[1]
 FRONTMATTER = re.compile(r"\A---\n(.*?)\n---(?:\n|\Z)", re.DOTALL)
 NAME_PATTERN = re.compile(r"[a-z0-9]+(?:-[a-z0-9]+)*\Z")
+BOUNDARY = re.compile(r"(?:^|[.;] )Не для ")
 LINK_PATTERN = re.compile(r"!?\[[^\]\n]+\]\(([^)\n]+)\)")
 # Agent Skills specification (agentskills.io/specification), checked 2026-10-07.
 ALLOWED_FIELDS = {"name", "description", "license", "compatibility", "metadata", "allowed-tools"}
@@ -80,6 +81,14 @@ def validate(root: Path) -> tuple[int, list[str]]:
             errors.append(f"{entry}: description must be a nonempty string of at most 1024 chars")
         elif "<" in description or ">" in description:
             errors.append(f"{entry}: description contains angle brackets")
+        if isinstance(description, str):
+            boundary = BOUNDARY.search(description)
+            targets = re.findall(r"→ (telegram-[a-z0-9-]+)", description[boundary.start():]) if boundary else []
+            if not targets:
+                errors.append(f"{entry}: description must say when not to use the skill: 'Не для ... → telegram-<skill>'")
+            for target in targets:
+                if target == folder.name or not (skills_root / target / "SKILL.md").is_file():
+                    errors.append(f"{entry}: boundary points to unknown or same skill: {target}")
         license_value = data.get("license")
         if not isinstance(license_value, str) or not license_value.strip():
             errors.append(f"{entry}: license must name the skill license")

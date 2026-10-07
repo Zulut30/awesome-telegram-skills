@@ -1,6 +1,6 @@
 ---
 name: telegram-payment-provider
-description: "Подключает другие платежные провайдеры к Telegram-проекту: adapter, checkout, проверку уведомлений и reconciliation. Используй для Stripe, Robokassa или нового провайдера без отдельного навыка."
+description: "Подключает другие платежные провайдеры к Telegram-проекту: adapter, checkout, проверку уведомлений и reconciliation. Используй для Stripe, Robokassa или нового провайдера без отдельного навыка. Не для Stars и выбора маршрута → telegram-payments; не для ЮKassa → telegram-yookassa."
 license: MIT
 metadata:
   version: "0.24.0"

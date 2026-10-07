@@ -1,6 +1,6 @@
 ---
 name: telegram-python-backend
-description: "Создает и изменяет Python backend для Telegram-бота и Mini App: HTTP-контракты, БД, миграции, права и транзакции. Используй для серверных прикладных операций и хранения данных, отдельно от обработчиков Bot API."
+description: "Создает и изменяет Python backend для Telegram-бота и Mini App: HTTP-контракты, БД, миграции, права и транзакции. Используй для серверных прикладных операций и хранения данных, отдельно от обработчиков Bot API. Не для обработчиков Bot API → telegram-bot-python."
 license: MIT
 metadata:
   version: "0.24.0"

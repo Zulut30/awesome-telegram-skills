@@ -1,6 +1,6 @@
 ---
 name: telegram-mini-app-architecture
-description: "Проектирует и исправляет архитектуру Telegram Mini App на TypeScript с Python backend: границы модулей, состояние, навигацию и работу на телефонах, планшетах и ПК. Используй при создании приложения или изменении его структуры."
+description: "Проектирует и исправляет архитектуру Telegram Mini App на TypeScript с Python backend: границы модулей, состояние, навигацию и работу на телефонах, планшетах и ПК. Используй при создании приложения или изменении его структуры. Не для нового проекта и выбора стека → telegram-project-planner; не для одного экрана → telegram-mini-app-ui."
 license: MIT
 metadata:
   version: "0.24.0"

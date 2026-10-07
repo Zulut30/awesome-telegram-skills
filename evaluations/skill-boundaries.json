@@ -1,0 +1,375 @@
+{
+  "note": "Negative scenarios for item 37: each request belongs to one skill of a pair that is easy to confuse; 'not' names the skill it must not go to.",
+  "cases": [
+    {
+      "query": "Добавь в бота кнопки Подтвердить и Отмена разных цветов под сообщением",
+      "expected": [
+        "telegram-buttons"
+      ],
+      "not": [
+        "telegram-bot-api"
+      ]
+    },
+    {
+      "query": "Как через Bot API закрепить сообщение и какие права для этого нужны?",
+      "expected": [
+        "telegram-bot-api",
+        "telegram-groups"
+      ],
+      "not": [
+        "telegram-buttons"
+      ]
+    },
+    {
+      "query": "Сделай экран каталога Mini App удобным на телефоне и планшете, с safe areas",
+      "expected": [
+        "telegram-mini-app-ui"
+      ],
+      "not": [
+        "telegram-mini-app-design-system",
+        "telegram-mini-app-ux"
+      ]
+    },
+    {
+      "query": "Нужна общая библиотека кнопок, карточек и токенов цвета для всех экранов Mini App",
+      "expected": [
+        "telegram-mini-app-design-system"
+      ],
+      "not": [
+        "telegram-mini-app-ui"
+      ]
+    },
+    {
+      "query": "Пользователи бросают оформление заказа на втором шаге, разберись, где они путаются",
+      "expected": [
+        "telegram-mini-app-ux"
+      ],
+      "not": [
+        "telegram-mini-app-ui"
+      ]
+    },
+    {
+      "query": "Напиши тесты для обработчика оплаты и повторной доставки update",
+      "expected": [
+        "telegram-testing"
+      ],
+      "not": [
+        "telegram-mini-app-device-qa",
+        "telegram-mini-app-visual-regression"
+      ]
+    },
+    {
+      "query": "Проверь Mini App на реальном iPhone и Android: клавиатура закрывает поле ввода",
+      "expected": [
+        "telegram-mini-app-device-qa"
+      ],
+      "not": [
+        "telegram-testing",
+        "telegram-mini-app-visual-regression"
+      ]
+    },
+    {
+      "query": "Хочу в CI сравнивать скриншоты экранов Mini App со светлой и темной темой",
+      "expected": [
+        "telegram-mini-app-visual-regression"
+      ],
+      "not": [
+        "telegram-mini-app-device-qa"
+      ]
+    },
+    {
+      "query": "Как выбрать между Stars и картой для продажи цифрового товара в боте?",
+      "expected": [
+        "telegram-payments"
+      ],
+      "not": [
+        "telegram-yookassa",
+        "telegram-subscription-access"
+      ]
+    },
+    {
+      "query": "Сделай месячную подписку: продление, истечение и ручное продление админом",
+      "expected": [
+        "telegram-subscription-access"
+      ],
+      "not": [
+        "telegram-payments"
+      ]
+    },
+    {
+      "query": "Подключи ЮKassa с idempotence key и обработкой уведомлений о платеже",
+      "expected": [
+        "telegram-yookassa"
+      ],
+      "not": [
+        "telegram-payments",
+        "telegram-payment-provider"
+      ]
+    },
+    {
+      "query": "Хочу сделать нового бота для записи к врачу, с чего начать и какой стек выбрать?",
+      "expected": [
+        "telegram-project-planner"
+      ],
+      "not": [
+        "telegram-mini-app-architecture"
+      ]
+    },
+    {
+      "query": "В нашем Mini App все состояние в одном файле, разнеси по модулям и навигации",
+      "expected": [
+        "telegram-mini-app-architecture"
+      ],
+      "not": [
+        "telegram-project-planner"
+      ]
+    },
+    {
+      "query": "Проверь initData на сервере и выдай сессию пользователю Mini App",
+      "expected": [
+        "telegram-mini-app-auth"
+      ],
+      "not": [
+        "telegram-web-login"
+      ]
+    },
+    {
+      "query": "Добавь кнопку Войти через Telegram на наш обычный сайт",
+      "expected": [
+        "telegram-web-login"
+      ],
+      "not": [
+        "telegram-mini-app-auth"
+      ]
+    },
+    {
+      "query": "Бот перестал отвечать после деплоя, в логах 409 Conflict",
+      "expected": [
+        "telegram-debugging"
+      ],
+      "not": [
+        "telegram-observability"
+      ]
+    },
+    {
+      "query": "Добавь метрики и связанные логи для бота, backend и воркера",
+      "expected": [
+        "telegram-observability"
+      ],
+      "not": [
+        "telegram-debugging"
+      ]
+    },
+    {
+      "query": "Сделай поиск товаров по запросу @shop_bot iphone в любом чате",
+      "expected": [
+        "telegram-inline-mode"
+      ],
+      "not": [
+        "telegram-buttons"
+      ]
+    },
+    {
+      "query": "Сделай сервер для заказов: таблицы, миграции и HTTP API",
+      "expected": [
+        "telegram-python-backend"
+      ],
+      "not": [
+        "telegram-bot-python"
+      ]
+    },
+    {
+      "query": "Нужно читать историю сообщений из моего личного аккаунта Telegram",
+      "expected": [
+        "telegram-user-client"
+      ],
+      "not": [
+        "telegram-bot-python",
+        "telegram-profiles"
+      ]
+    },
+    {
+      "query": "Сделай красивые кнопки на главном экране Mini App",
+      "expected": [
+        "telegram-mini-app-ui",
+        "telegram-mini-app-design-system"
+      ],
+      "not": [
+        "telegram-buttons"
+      ]
+    },
+    {
+      "query": "Добавь кнопку оплаты звездами за подписку на канал",
+      "expected": [
+        "telegram-payments",
+        "telegram-subscription-access"
+      ],
+      "not": [
+        "telegram-buttons"
+      ]
+    },
+    {
+      "query": "Проведи аудит: правильно ли мы проверяем initData и права на заказы",
+      "expected": [
+        "telegram-security-review"
+      ],
+      "not": [
+        "telegram-mini-app-auth"
+      ]
+    },
+    {
+      "query": "Сообщай пользователю, когда его заказ будет готов, даже если он давно не писал",
+      "expected": [
+        "telegram-notifications"
+      ],
+      "not": [
+        "telegram-bot-python"
+      ]
+    },
+    {
+      "query": "Сделай, чтобы черновик формы в Mini App не терялся при обрыве сети",
+      "expected": [
+        "telegram-mini-app-network-recovery"
+      ],
+      "not": [
+        "telegram-mini-app-performance"
+      ]
+    },
+    {
+      "query": "Mini App открывается 6 секунд, уменьши бандл и ускорь первый экран",
+      "expected": [
+        "telegram-mini-app-performance"
+      ],
+      "not": [
+        "telegram-mini-app-network-recovery"
+      ]
+    },
+    {
+      "query": "Подключи оплату через Stripe Checkout",
+      "expected": [
+        "telegram-payment-provider"
+      ],
+      "not": [
+        "telegram-payments"
+      ]
+    },
+    {
+      "query": "Бот должен отвечать клиентам в личке от имени моего бизнес-аккаунта",
+      "expected": [
+        "telegram-business-bots"
+      ],
+      "not": [
+        "telegram-user-client"
+      ]
+    },
+    {
+      "query": "Поменяй аватар и описание нашего бота программно",
+      "expected": [
+        "telegram-profiles"
+      ],
+      "not": [
+        "telegram-bot-api"
+      ]
+    },
+    {
+      "query": "Пользователи присылают фото, нужно проверить размер, сжать и сделать превью",
+      "expected": [
+        "telegram-media-processing"
+      ],
+      "not": [
+        "telegram-bot-api"
+      ]
+    },
+    {
+      "query": "Отправь пользователю готовый PDF-счет одним сообщением",
+      "expected": [
+        "telegram-bot-api",
+        "telegram-bot-python"
+      ],
+      "not": [
+        "telegram-media-processing"
+      ]
+    },
+    {
+      "query": "Нужно, чтобы меню бота и даты показывались на русском и английском",
+      "expected": [
+        "telegram-localization"
+      ],
+      "not": [
+        "telegram-mini-app-ui"
+      ]
+    },
+    {
+      "query": "Разверни бота на VPS с webhook и HTTPS",
+      "expected": [
+        "telegram-deploy"
+      ],
+      "not": [
+        "telegram-project-planner"
+      ]
+    },
+    {
+      "query": "Какую библиотеку взять для нового бота на Python: aiogram или python-telegram-bot?",
+      "expected": [
+        "telegram-library-selection"
+      ],
+      "not": [
+        "telegram-bot-python"
+      ]
+    },
+    {
+      "query": "Подключи готовый компонент меню из awesome-telegram-patterns в мой бот",
+      "expected": [
+        "telegram-code-patterns"
+      ],
+      "not": [
+        "telegram-bot-python"
+      ]
+    },
+    {
+      "query": "Добавь в группу бота, который удаляет спам и выдает предупреждения",
+      "expected": [
+        "telegram-groups"
+      ],
+      "not": [
+        "telegram-business-bots"
+      ]
+    },
+    {
+      "query": "Сделай анкету из пяти вопросов с кнопкой Назад и сохранением ответов",
+      "expected": [
+        "telegram-dialogs"
+      ],
+      "not": [
+        "telegram-buttons"
+      ]
+    },
+    {
+      "query": "Открой Mini App из кнопки меню бота и передай туда номер заказа",
+      "expected": [
+        "telegram-mini-app-integration"
+      ],
+      "not": [
+        "telegram-mini-app-auth"
+      ]
+    },
+    {
+      "query": "Запроси геолокацию пользователя внутри Mini App и обработай отказ",
+      "expected": [
+        "telegram-mini-app-native-capabilities"
+      ],
+      "not": [
+        "telegram-mini-app-typescript"
+      ]
+    },
+    {
+      "query": "Сделай раздел для операторов: список заказов, роли и журнал действий",
+      "expected": [
+        "telegram-admin-panel"
+      ],
+      "not": [
+        "telegram-mini-app-ui"
+      ]
+    }
+  ]
+}

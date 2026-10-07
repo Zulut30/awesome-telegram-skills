@@ -450,9 +450,13 @@
     {
       "id": 37,
       "title": "Границы в каждом description",
-      "status": "pending",
-      "commit_subject": null,
-      "evidence": [],
+      "status": "done",
+      "commit_subject": "excellence(037): state in every description when the skill is not the right one",
+      "evidence": [
+        "Все 41 description заканчиваются «Не для … → telegram-…» (было 4 из 41 с какой-либо границей); пары из плана: bot-api/buttons, mini-app-ui/design-system/ux, testing/device-qa/visual-regression, payments/subscription-access/yookassa, project-planner/mini-app-architecture, mini-app-auth/web-login, debugging/observability",
+        "validate_skills.py требует границу и проверяет цели (существует, не сам скилл); tests/test_validate_skills.py: отсутствие границы, неизвестная цель и ссылка на себя ловятся, базовый случай чистый",
+        "evaluations/skill-boundaries.json: 40 запросов, для каждой пары негативные сценарии в обе стороны (tests/test_skill_boundaries.py); scripts/eval_skill_selection.py с Claude Code CLI 2.1.292 по списку описаний: haiku и sonnet 40/40 и для новых, и для прежних описаний — измеримого прироста нет, отчет evaluations/reports/skill-boundaries-2026-10-07.json"
+      ],
       "remaining": null
     },
     {

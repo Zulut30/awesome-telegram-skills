@@ -1,6 +1,6 @@
 ---
 name: telegram-user-client
-description: "Разрабатывает Python-клиент пользовательского Telegram-аккаунта через Telethon/MTProto: разрешенные dialogs, историю и новые сообщения. Используй для явно запрошенной работы от имени авторизованного пользователя."
+description: "Разрабатывает Python-клиент пользовательского Telegram-аккаунта через Telethon/MTProto: разрешенные dialogs, историю и новые сообщения. Используй для явно запрошенной работы от имени авторизованного пользователя. Не для обычного бота через Bot API → telegram-bot-python."
 license: MIT
 metadata:
   version: "0.24.0"

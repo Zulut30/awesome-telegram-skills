@@ -1,6 +1,6 @@
 ---
 name: telegram-debugging
-description: "Диагностирует ошибки Telegram-ботов и Mini Apps: пропавшие updates, polling conflicts, API failures, initData и WebView. Используй для конкретного сбоя работающей интеграции."
+description: "Диагностирует ошибки Telegram-ботов и Mini Apps: пропавшие updates, polling conflicts, API failures, initData и WebView. Используй для конкретного сбоя работающей интеграции. Не для внедрения мониторинга → telegram-observability; не для написания тестов → telegram-testing."
 license: MIT
 metadata:
   version: "0.24.0"
