@@ -1100,9 +1100,14 @@
     {
       "id": 86,
       "title": "Полная приемка по расписанию",
-      "status": "pending",
-      "commit_subject": null,
-      "evidence": [],
+      "status": "done",
+      "commit_subject": "excellence(086): run full acceptance nightly and on release tags, open an issue on failure",
+      "evidence": [
+        "New workflow Full acceptance: schedule (nightly), tags v*.*.* and workflow_dispatch; verify_pattern_packages.py on Ubuntu and macOS with Playwright Chromium",
+        "Reports and logs uploaded as run artifacts (30 days); a failed scheduled or tag run opens 'Full acceptance failed' or comments on the open issue",
+        "The manual delivery job and its input are removed from Repository checks; the same verifier steps run on every push in the browser job",
+        "tests/test_ci_workflow.py checks the schedule, tag trigger, artifacts and issue reporting; the first nightly run needs the workflow on main (schedules run from the default branch)"
+      ],
       "remaining": null
     },
     {

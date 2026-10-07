@@ -27,7 +27,7 @@ python scripts/build_release.py --ref v0.24.0 --notes
    git push origin v0.25.0
    ```
 
-4. Workflow Release соберет артефакты из тега и опубликует релиз.
+4. Workflow Release соберет артефакты из тега и опубликует релиз. Тот же тег запускает workflow [Full acceptance](../.github/workflows/full-acceptance.yml): полный `verify_pattern_packages.py` на Ubuntu и macOS с отчетами в артефактах запуска.
 
 ## Релизы для существующих тегов
 

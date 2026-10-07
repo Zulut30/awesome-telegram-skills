@@ -36,8 +36,8 @@ class CiWorkflowTests(unittest.TestCase):
         needs = re.search(r'^  required:\n(?:    .*\n)*?    needs: \[([^\]]+)\]', CHECKS, re.M)
         self.assertIsNotNone(needs)
         listed = [name.strip() for name in needs.group(1).split(',')]
-        # delivery is a manual, opt-in run; everything else must block merging through `required`.
-        self.assertEqual(sorted(listed), sorted(set(names) - {'required', 'delivery'}))
+        # Every other job must block merging through `required`.
+        self.assertEqual(sorted(listed), sorted(set(names) - {'required'}))
         self.assertIn("contains(needs.*.result, 'skipped')", CHECKS)
 
     def test_browser_job_uses_playwright_chromium(self):
@@ -57,6 +57,17 @@ class CiWorkflowTests(unittest.TestCase):
             if generator and "'--check'" in text and script.name not in exempt:
                 with self.subTest(script.name):
                     self.assertIn(f'python scripts/{script.name} --check', block)
+
+    def test_full_acceptance_runs_nightly_on_tags_and_reports_failures(self):
+        text = (ROOT / '.github/workflows/full-acceptance.yml').read_text(encoding='utf-8')
+        self.assertRegex(text, r"schedule:\n    - cron: '\d+ \d+ \* \* \*'")
+        self.assertIn("tags: ['v*.*.*']", text)
+        self.assertIn('python scripts/verify_pattern_packages.py', text)
+        self.assertIn('actions/upload-artifact@', text)
+        self.assertIn("if: failure() && github.event_name != 'workflow_dispatch'", text)
+        self.assertIn('issues: write', text)
+        self.assertIn('gh issue create', text)
+        self.assertIn('gh issue comment', text)
 
 
 if __name__ == '__main__':
