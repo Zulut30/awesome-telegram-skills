@@ -571,9 +571,15 @@
     {
       "id": 46,
       "title": "Русский язык и одна форма обращения",
-      "status": "pending",
-      "commit_subject": null,
-      "evidence": [],
+      "status": "done",
+      "commit_subject": "excellence(046): address the agent with вы and keep skill prose Russian",
+      "evidence": [
+        "All skills and their docs copies use the вы form (SKILL.md were ты); test_skill_language.py rejects singular imperatives",
+        "Seven SKILL.md with 15-20% English prose rewritten in Russian; all skills now <= 13.6% by the documented metric (prose without code, identifiers, names, sources)",
+        "12 English API reference limits translated and split into sentences; English platform bullets in components.md translated",
+        "Stale numbers fixed (240 symbols, 311 recipes, 212 executors, 42 skills); tests/test_current_numbers.py ties README/docs numbers to catalogs",
+        "Descriptions changed, so skill selection rerun: haiku 247/251, sonnet 246/251, negatives 41/41"
+      ],
       "remaining": null
     },
     {

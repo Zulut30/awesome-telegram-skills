@@ -324,7 +324,7 @@ print(json.dumps({'passed': True, 'case': 'core_doctor', 'network': False}))
 
 Файл: `core_selection.py`. Символы: `SelectionOption`, `SelectionSpec`, `SelectionContext`, `SelectionState`, `SelectionResult`, `SelectionMenu`
 
-Границы: Single-process server draft; exact owner/context/revision and confirmation token guards. No automatic business operation, persistence or multiworker guarantee. Current ACL/resource_version/idempotency transaction belongs to host; synthetic transport does not prove live delivery or rendering.
+Границы: Черновик на сервере в одном процессе; точные проверки владельца, контекста, ревизии и токена подтверждения. Бизнес-операция, долговременное хранение и работа нескольких процессов не гарантируются. Текущие права, `resource_version` и идемпотентная транзакция принадлежат приложению; синтетический транспорт не доказывает доставку и отображение в Telegram.
 
 ```python
 """SDK-free server draft: configured values, revisions and bound confirmation."""
@@ -367,7 +367,7 @@ print(json.dumps({'passed':True,'case':'core_selection','network':False,'busines
 
 Файл: `core_calendar.py`. Символы: `CalendarMonth`, `TimeSlot`, `resolve_local_time`, `SlotSchedule`, `SlotBooking`, `SQLiteSlotStore`
 
-Границы: SDK-free; Europe/Warsaw needs host IANA database or optional calendar extra (tested tzdata 2026.5). Current synchronous host ACL inside file SQLite transaction before effect/replay. Publish is trusted host CAS; immutable receipt differs from current booking; no external side effects. Host owns file/migrations/retention and async shutdown work.
+Границы: Без SDK; для Europe/Warsaw нужна база IANA приложения или необязательный extra calendar (проверено с tzdata 2026.5). Текущие права приложения проверяются синхронно внутри транзакции файловой SQLite до эффекта или повтора. Публикация расписания — доверенное приложению сравнение с заменой (CAS); неизменяемая квитанция отличается от текущей записи; внешних побочных эффектов нет. Файл, миграции, срок хранения и асинхронное завершение работы принадлежат приложению.
 
 ```python
 """SDK-free calendar, explicit DST choice, transaction and current booking."""

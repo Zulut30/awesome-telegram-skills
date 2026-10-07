@@ -365,7 +365,7 @@
       "section": "bot",
       "title": "Экраны и история в одном сообщении",
       "example": "examples/api-reference/python/bot_navigation.py",
-      "limits": "Optional aiogram. Owner/bot/chat/thread/message/revision guards, ACK first, unknown edit freeze and explicit same-message recovery. State lives in one process/event loop; restart leaves old buttons stale. Host owns sessions/tasks and business ACL. No automatic resend after unknown initial send; no live UI proof.",
+      "limits": "Нужен extra aiogram. Проверяются владелец, бот, чат, тема, сообщение и ревизия; сначала ответ на callback (ACK), неизвестный результат редактирования замораживает меню, восстановление — явное, в том же сообщении. Состояние живет в одном процессе и цикле событий: после рестарта старые кнопки устаревают. Сессии, задачи и бизнес-права принадлежат приложению. После неизвестного результата первой отправки повтора нет; работа интерфейса в живом Telegram не подтверждена.",
       "api": {
         "telegram_patterns.aiogram": {
           "NavigationScreen": "Immutable plain screen with declared links/layout",
@@ -381,7 +381,7 @@
       "section": "core",
       "title": "Серверные значения и подтверждение выбора",
       "example": "examples/api-reference/python/core_selection.py",
-      "limits": "Single-process server draft; exact owner/context/revision and confirmation token guards. No automatic business operation, persistence or multiworker guarantee. Current ACL/resource_version/idempotency transaction belongs to host; synthetic transport does not prove live delivery or rendering.",
+      "limits": "Черновик на сервере в одном процессе; точные проверки владельца, контекста, ревизии и токена подтверждения. Бизнес-операция, долговременное хранение и работа нескольких процессов не гарантируются. Текущие права, `resource_version` и идемпотентная транзакция принадлежат приложению; синтетический транспорт не доказывает доставку и отображение в Telegram.",
       "api": {
         "telegram_patterns": {
           "SelectionOption": "Immutable keyed option and filter membership",
@@ -398,7 +398,7 @@
       "section": "bot",
       "title": "Составная клавиатура и Router выбора",
       "example": "examples/api-reference/python/bot_selection.py",
-      "limits": "Single-process server draft; exact owner/context/revision and confirmation token guards. No automatic business operation, persistence or multiworker guarantee. Current ACL/resource_version/idempotency transaction belongs to host; synthetic transport does not prove live delivery or rendering.",
+      "limits": "Черновик на сервере в одном процессе; точные проверки владельца, контекста, ревизии и токена подтверждения. Бизнес-операция, долговременное хранение и работа нескольких процессов не гарантируются. Текущие права, `resource_version` и идемпотентная транзакция принадлежат приложению; синтетический транспорт не доказывает доставку и отображение в Telegram.",
       "api": {
         "telegram_patterns.aiogram": {
           "selection_keyboard": "Render toggle/multiselect/quantity/filter and confirmation markup with capability fallback",
@@ -411,7 +411,7 @@
       "section": "core",
       "title": "Календарь, время и транзакционная запись",
       "example": "examples/api-reference/python/core_calendar.py",
-      "limits": "SDK-free; Europe/Warsaw needs host IANA database or optional calendar extra (tested tzdata 2026.5). Current synchronous host ACL inside file SQLite transaction before effect/replay. Publish is trusted host CAS; immutable receipt differs from current booking; no external side effects. Host owns file/migrations/retention and async shutdown work.",
+      "limits": "Без SDK; для Europe/Warsaw нужна база IANA приложения или необязательный extra calendar (проверено с tzdata 2026.5). Текущие права приложения проверяются синхронно внутри транзакции файловой SQLite до эффекта или повтора. Публикация расписания — доверенное приложению сравнение с заменой (CAS); неизменяемая квитанция отличается от текущей записи; внешних побочных эффектов нет. Файл, миграции, срок хранения и асинхронное завершение работы принадлежат приложению.",
       "api": {
         "telegram_patterns": {
           "CalendarMonth": "Immutable Monday-first month, available/blocked dates and plain summary",
@@ -428,7 +428,7 @@
       "section": "bot",
       "title": "Кнопки календаря и времени",
       "example": "examples/api-reference/python/bot_calendar.py",
-      "limits": "Optional aiogram; markup only. Callback data must be owner/context/revision bound by controller; the booking transaction rechecks availability. Default weekday fallback omits unavailable days. disabled_buttons=True requires explicit host-verified support; no live/device claim.",
+      "limits": "Нужен extra aiogram; только разметка. Контроллер обязан привязать callback data к владельцу, контексту и ревизии; транзакция записи заново проверяет доступность. Запасной вариант по умолчанию просто не показывает недоступные дни. `disabled_buttons=True` требует поддержки, явно проверенной приложением; работа в живых клиентах не заявлена.",
       "api": {
         "telegram_patterns.aiogram": {
           "calendar_keyboard": "Available-date fallback or native disabled month grid with explicit navigation",
@@ -441,7 +441,7 @@
       "section": "bot",
       "title": "Число, email, телефон, дата, файл, контакт и геопозиция",
       "example": "examples/api-reference/python/bot_dialog_fields.py",
-      "limits": "Optional aiogram. Ordinary private chat; host FSM/event isolation and durable same-intent business transaction. ForceReply author/step correlation; native candidates require confirmation. Metadata and coordinates do not prove content/identity/presence. No live/device acceptance.",
+      "limits": "Нужен extra aiogram. Обычный личный чат; изоляция FSM и событий и долговечная бизнес-транзакция того же намерения — на стороне приложения. ForceReply связывается с автором и шагом; нативные значения требуют подтверждения. Метаданные и координаты не доказывают содержимое, личность или присутствие. Приемки в живых клиентах нет.",
       "api": {
         "telegram_patterns.aiogram": {
           "FieldValue": "JSON-compatible string or flat metadata",
@@ -462,7 +462,7 @@
       "section": "bot",
       "title": "Медиа, альбомы и ограниченное скачивание",
       "example": "examples/api-reference/python/bot_media.py",
-      "limits": "Optional aiogram; requests do not send. Typed byte upload or same-bot file_id, no codec validation/ACL guarantee. 2..10 compatible album items, 1024 UTF-16 caption, inline upload rejected. Explicit hosted bounded download closes stream; local filesystem/URLs/unique_id conversion and automatic retry are absent. Host preserves native routing/rights and validates actual content.",
+      "limits": "Нужен extra aiogram; запросы ничего не отправляют сами. Типизированная загрузка байтов или `file_id` того же бота; проверки кодека и прав нет. Альбом — от 2 до 10 совместимых элементов, подпись — до 1024 единиц UTF-16, загрузка в inline отклоняется. Явное ограниченное скачивание с серверов Telegram закрывает поток; локальной файловой системы, URL, преобразования `unique_id` и автоматического повтора нет. Приложение сохраняет нативную маршрутизацию и права и проверяет фактическое содержимое.",
       "api": {
         "telegram_patterns.aiogram": {
           "MediaKind": "Literal photo/video/audio/document; исходный тип file_id проверяет host",
@@ -482,7 +482,7 @@
       "section": "bot",
       "title": "Профили и разрешенное оформление собственного бота",
       "example": "examples/api-reference/python/bot_profiles.py",
-      "limits": "Optional aiogram; immutable selected SDK facts, bool/None distinction and source/time do not authorize a user. Explicit native reads preserve visibility/locale fallback. Own-bot writes require fresh identity and current host per-method ACL; None omits, empty string clears locale, avatar global/new bytes. Host owns codec/content, serialization, caches and reconciliation; sequential writes/readback are not atomic, cancellation/rejected await does not undo effects. No Business/MTProto/arbitrary profile editing or live proof.",
+      "limits": "Нужен extra aiogram; неизменяемые выбранные факты SDK, различие `bool`/`None`, источник и время не авторизуют пользователя. Явные нативные чтения сохраняют видимость и запасную локаль. Запись в профиль собственного бота требует свежей личности и текущих прав приложения на каждый метод; `None` пропускает поле, пустая строка очищает локаль, аватар — глобальный, из новых байтов. Кодек и содержимое, сериализация, кеши и сверка — на стороне приложения; последовательные записи и чтение не атомарны, отмена или отклоненный `await` не откатывает эффекты. Business, MTProto, редактирования произвольного профиля и живой проверки нет.",
       "api": {
         "telegram_patterns.aiogram": {
           "ProfileSource": "Literal update/getMe — объявленный источник наблюдения, не authorization proof",
@@ -507,7 +507,7 @@
       "section": "bot",
       "title": "Inline-поиск и shareable results",
       "example": "examples/api-reference/python/bot_inline_search.py",
-      "limits": "Private items default to unshareable; personal Telegram cache is not secrecy of a sent inline message Host owns current ACL, catalog/permission revisions, durable secret, deadlines/concurrency and storage Personal cursors bind actor/bot/query/context/catalog; shared cache is fully public/all-context and actor-agnostic Positive server cache may replay old results without reaching the bot; restricted current-ACL composition uses cache_time=0 Cursor chain expiry does not slide; stale/denied/timeout answers empty personal, not an automatic restart Literal articles and opt-in verified emoji metadata; no native answer retry, chosen feedback or live privacy proof",
+      "limits": "Личные элементы по умолчанию нельзя делиться; персональный кеш Telegram не делает отправленное inline-сообщение секретным. Текущие права, ревизии каталога и прав, долговечный секрет, сроки, конкурентность и хранилище принадлежат приложению. Персональные курсоры привязаны к пользователю, боту, запросу, контексту и каталогу; общий кеш полностью публичный, для всех контекстов и не зависит от пользователя. Положительный серверный кеш может повторить старые результаты, не обращаясь к боту, поэтому выдача с текущими ограничениями прав использует `cache_time=0`. Срок цепочки курсоров не продлевается; устаревший, запрещенный или просроченный запрос получает пустой персональный ответ, а не автоматический перезапуск. Статьи передаются буквально, проверенные метаданные emoji — по явному согласию; повтора нативного ответа, учета выбранных результатов и живой проверки приватности нет.",
       "api": {
         "telegram_patterns.aiogram": {
           "InlineChatType": "Literal inline chat context, including explicit unknown None",
@@ -527,7 +527,7 @@
       "section": "bot",
       "title": "Опросы, quiz и доступные события",
       "example": "examples/api-reference/python/bot_polls.py",
-      "limits": "1..12 initial options, monotonic multi-correct quiz, revoting and SDK rich media; native limits checked separately from local bounds Channel-only members/country restrictions and explicit declared chat/thread/business context, not server permission proof Persistent option IDs and user/chat voter identities; None and reported zero remain raw/possibly unknown Host registers confirmed own SendPoll responses, resolves current binding and persists Update receipt transactionally Unavailable poll_message cannot invent association; anonymous/foreign/unbound events do not give a voter ledger No getPoll API, implicit stopPoll, history scan, vote counting, create retry, media IO or live delivery promise",
+      "limits": "От 1 до 12 начальных вариантов, quiz с несколькими правильными ответами без их сокращения, переголосование и rich media SDK; нативные лимиты проверяются отдельно от локальных. Ограничения «только участники канала» и по странам и явно заявленный контекст чата, темы или Business не доказывают серверных прав. Постоянные ID вариантов и личности голосующих (пользователь или чат); `None` и сообщенный ноль остаются сырыми и, возможно, неизвестными. Приложение регистрирует подтвержденные ответы собственного `SendPoll`, находит текущую привязку и транзакционно сохраняет квитанцию Update. Недоступный `poll_message` не позволяет выдумать связь; анонимные, чужие и непривязанные события не дают реестра голосов. Нет `getPoll`, неявного `stopPoll`, просмотра истории, подсчета голосов, повтора создания, ввода-вывода медиа и обещания живой доставки.",
       "api": {
         "telegram_patterns.aiogram": {
           "PollKind": "Literal regular/quiz",
@@ -556,7 +556,7 @@
       "section": "bot",
       "title": "Темы, реакции, заявки и специальные операции",
       "example": "examples/api-reference/python/bot_platform.py",
-      "limits": "Closed 51-method Bot API allowlist across seven families; native SDK requests and current method-specific rights, not arbitrary MTProto/account history; Host owns current ACL/resource/revision/connection/child bindings, media verification and eligible activity; Write requires an atomic durable sending claim; host budget/consent/quote are rechecked before native I/O; Local reservation and fresh native quote are not a remote atomic debit or financial settlement guarantee; Unknown result/receipt/crash stays the same intent; no automatic retry, rollback, reconciliation or global inbox/outbox promise; Join query uses original receive time and remaining native deadline; private topics support only explicitly permitted methods; Managed creation requires native user confirmation; token repr is hidden but host secret storage/serialization remain explicit; Story upload bridge uses validated SDK nested multipart; codec/dimensions/content and immutable file lifetime remain host duties; Events preserve unknown/anonymous facts; current binding and host dedup/order/revocation, no inferred actor or voter/account history; Experimental author SDK/mock/browser evidence is separate from live permissions, real devices, remote charge or independent human/AI acceptance",
+      "limits": "Закрытый список из 51 метода Bot API в семи семействах; нативные запросы SDK и текущие права конкретного метода, а не произвольный MTProto или история аккаунта. Текущие права, ресурс, ревизия, связи подключений и дочерних ботов, проверка медиа и допустимая активность принадлежат приложению. Запись требует атомарной долговечной заявки на отправку; бюджет, согласие и котировка приложения перепроверяются до нативного ввода-вывода. Локальное резервирование и свежая нативная котировка не гарантируют атомарного удаленного списания или финансовых расчетов. Неизвестный результат, квитанция или падение остаются тем же намерением: без автоматического повтора, отката, сверки и глобального inbox/outbox. Запрос на вступление использует исходное время получения и оставшийся нативный срок; личные темы поддерживают только явно разрешенные методы. Создание управляемого бота требует нативного подтверждения пользователя; repr токена скрыт, но хранение и сериализация секрета в приложении остаются явными. Загрузка историй использует проверенный вложенный multipart SDK; кодек, размеры, содержимое и время жизни файла — обязанности приложения. События сохраняют неизвестные и анонимные факты; текущая привязка, дедупликация, порядок и отзыв — на стороне приложения, без выведенного автора и истории голосов или аккаунта. Экспериментальные доказательства автора (SDK, mock, браузер) отделены от живых прав, реальных устройств, удаленного списания и независимой приемки людьми или ИИ.",
       "api": {
         "telegram_patterns.aiogram": {
           "PlatformContract": "Frozen native метод/семейство/right/version/source/evidence",
@@ -585,7 +585,7 @@
       "section": "bot",
       "title": "Атомарное состояние и восстановление диалога",
       "example": "examples/api-reference/python/bot_fsm_storage.py",
-      "limits": "Structural host storage, exact six-field SDK key, one state/data CAS; JSON bound 64 KiB. Example dict is contract-only/nonpersistent; separate file SQLite and three-process proof in dialog restart recipe. Keep event isolation, migrations/tombstones, ACL and business effect dedup; no live/distributed exactly-once promise.",
+      "limits": "Структурное хранилище приложения, точный шестиполевой ключ SDK, одна CAS-запись состояния и данных (сравнение с заменой); JSON до 64 КиБ. Словарь в примере только показывает контракт и не сохраняется; отдельная файловая SQLite и доказательство с тремя процессами — в рецепте восстановления диалога. Сохраняйте изоляцию событий, миграции и надгробные записи, права и дедупликацию бизнес-эффекта; обещания exactly-once в живой или распределенной системе нет.",
       "api": {
         "telegram_patterns.aiogram": {
           "FSMSnapshot": "Immutable revision and detached JSON answers",

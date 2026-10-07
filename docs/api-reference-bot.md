@@ -305,7 +305,7 @@ print(json.dumps({'passed': True, 'case': 'bot_methods', 'network': False}))
 
 Файл: `bot_navigation.py`. Символы: `NavigationScreen`, `NavigationState`, `NavigationResult`, `MessageNavigation`, `navigation_router`
 
-Границы: Optional aiogram. Owner/bot/chat/thread/message/revision guards, ACK first, unknown edit freeze and explicit same-message recovery. State lives in one process/event loop; restart leaves old buttons stale. Host owns sessions/tasks and business ACL. No automatic resend after unknown initial send; no live UI proof.
+Границы: Нужен extra aiogram. Проверяются владелец, бот, чат, тема, сообщение и ревизия; сначала ответ на callback (ACK), неизвестный результат редактирования замораживает меню, восстановление — явное, в том же сообщении. Состояние живет в одном процессе и цикле событий: после рестарта старые кнопки устаревают. Сессии, задачи и бизнес-права принадлежат приложению. После неизвестного результата первой отправки повтора нет; работа интерфейса в живом Telegram не подтверждена.
 
 ```python
 """Owner/version/history in one bot message; explicit recovery after unknown edit."""
@@ -376,7 +376,7 @@ if __name__ == '__main__': asyncio.run(main())
 
 Файл: `bot_selection.py`. Символы: `selection_keyboard`, `selection_router`
 
-Границы: Single-process server draft; exact owner/context/revision and confirmation token guards. No automatic business operation, persistence or multiworker guarantee. Current ACL/resource_version/idempotency transaction belongs to host; synthetic transport does not prove live delivery or rendering.
+Границы: Черновик на сервере в одном процессе; точные проверки владельца, контекста, ревизии и токена подтверждения. Бизнес-операция, долговременное хранение и работа нескольких процессов не гарантируются. Текущие права, `resource_version` и идемпотентная транзакция принадлежат приложению; синтетический транспорт не доказывает доставку и отображение в Telegram.
 
 ```python
 """SDK UI over a server-owned draft; effect hook is application-owned."""
@@ -434,7 +434,7 @@ if __name__=='__main__':
 
 Файл: `bot_calendar.py`. Символы: `calendar_keyboard`, `time_slot_keyboard`
 
-Границы: Optional aiogram; markup only. Callback data must be owner/context/revision bound by controller; the booking transaction rechecks availability. Default weekday fallback omits unavailable days. disabled_buttons=True requires explicit host-verified support; no live/device claim.
+Границы: Нужен extra aiogram; только разметка. Контроллер обязан привязать callback data к владельцу, контексту и ревизии; транзакция записи заново проверяет доступность. Запасной вариант по умолчанию просто не показывает недоступные дни. `disabled_buttons=True` требует поддержки, явно проверенной приложением; работа в живых клиентах не заявлена.
 
 ```python
 """Markup only: controller and transaction still validate callbacks on the server."""
@@ -459,7 +459,7 @@ print(json.dumps({'passed': True, 'case': 'bot_calendar', 'network': False,
 
 Файл: `bot_dialog_fields.py`. Символы: `FieldValue`, `NumberField`, `EmailField`, `PhoneField`, `DateField`, `FileField`, `ContactField`, `LocationField`, `DialogSubmission`, `dialog_form_router`
 
-Границы: Optional aiogram. Ordinary private chat; host FSM/event isolation and durable same-intent business transaction. ForceReply author/step correlation; native candidates require confirmation. Metadata and coordinates do not prove content/identity/presence. No live/device acceptance.
+Границы: Нужен extra aiogram. Обычный личный чат; изоляция FSM и событий и долговечная бизнес-транзакция того же намерения — на стороне приложения. ForceReply связывается с автором и шагом; нативные значения требуют подтверждения. Метаданные и координаты не доказывают содержимое, личность или присутствие. Приемки в живых клиентах нет.
 
 ```python
 """Public mixed dialog API; synthetic parser/controller construction, no HTTP."""
@@ -498,7 +498,7 @@ print(json.dumps({'passed':True,'case':'bot_dialog_fields','network':False,'fiel
 
 Файл: `bot_media.py`. Символы: `MediaKind`, `MediaSendRequest`, `MediaFile`, `MediaItem`, `DownloadedMedia`, `media_request`, `media_album`, `media_edit`, `download_media`
 
-Границы: Optional aiogram; requests do not send. Typed byte upload or same-bot file_id, no codec validation/ACL guarantee. 2..10 compatible album items, 1024 UTF-16 caption, inline upload rejected. Explicit hosted bounded download closes stream; local filesystem/URLs/unique_id conversion and automatic retry are absent. Host preserves native routing/rights and validates actual content.
+Границы: Нужен extra aiogram; запросы ничего не отправляют сами. Типизированная загрузка байтов или `file_id` того же бота; проверки кодека и прав нет. Альбом — от 2 до 10 совместимых элементов, подпись — до 1024 единиц UTF-16, загрузка в inline отклоняется. Явное ограниченное скачивание с серверов Telegram закрывает поток; локальной файловой системы, URL, преобразования `unique_id` и автоматического повтора нет. Приложение сохраняет нативную маршрутизацию и права и проверяет фактическое содержимое.
 
 ```python
 """All public media symbols against SDK objects and a synthetic byte stream."""
@@ -548,7 +548,7 @@ if __name__=='__main__': asyncio.run(main())
 
 Файл: `bot_profiles.py`. Символы: `ProfileSource`, `ProfileAuthorizer`, `UserProfile`, `ChatProfile`, `ProfilePhotoSize`, `ProfilePhotos`, `BotProfile`, `BotProfilePatch`, `ProfileEditIncomplete`, `user_profile`, `chat_profile`, `read_profile_photos`, `read_bot_profile`, `update_bot_profile`
 
-Границы: Optional aiogram; immutable selected SDK facts, bool/None distinction and source/time do not authorize a user. Explicit native reads preserve visibility/locale fallback. Own-bot writes require fresh identity and current host per-method ACL; None omits, empty string clears locale, avatar global/new bytes. Host owns codec/content, serialization, caches and reconciliation; sequential writes/readback are not atomic, cancellation/rejected await does not undo effects. No Business/MTProto/arbitrary profile editing or live proof.
+Границы: Нужен extra aiogram; неизменяемые выбранные факты SDK, различие `bool`/`None`, источник и время не авторизуют пользователя. Явные нативные чтения сохраняют видимость и запасную локаль. Запись в профиль собственного бота требует свежей личности и текущих прав приложения на каждый метод; `None` пропускает поле, пустая строка очищает локаль, аватар — глобальный, из новых байтов. Кодек и содержимое, сериализация, кеши и сверка — на стороне приложения; последовательные записи и чтение не атомарны, отмена или отклоненный `await` не откатывает эффекты. Business, MTProto, редактирования произвольного профиля и живой проверки нет.
 
 ```python
 """Every public profile symbol, native reads and one explicitly authorized write."""
@@ -613,7 +613,7 @@ if __name__ == '__main__': asyncio.run(main())
 
 Файл: `bot_inline_search.py`. Символы: `InlineChatType`, `InlineAuthorizer`, `InlineSearchProvider`, `InlineCachePolicy`, `InlineItem`, `InlinePage`, `InlineSearch`, `inline_articles`, `inline_query_router`
 
-Границы: Private items default to unshareable; personal Telegram cache is not secrecy of a sent inline message Host owns current ACL, catalog/permission revisions, durable secret, deadlines/concurrency and storage Personal cursors bind actor/bot/query/context/catalog; shared cache is fully public/all-context and actor-agnostic Positive server cache may replay old results without reaching the bot; restricted current-ACL composition uses cache_time=0 Cursor chain expiry does not slide; stale/denied/timeout answers empty personal, not an automatic restart Literal articles and opt-in verified emoji metadata; no native answer retry, chosen feedback or live privacy proof
+Границы: Личные элементы по умолчанию нельзя делиться; персональный кеш Telegram не делает отправленное inline-сообщение секретным. Текущие права, ревизии каталога и прав, долговечный секрет, сроки, конкурентность и хранилище принадлежат приложению. Персональные курсоры привязаны к пользователю, боту, запросу, контексту и каталогу; общий кеш полностью публичный, для всех контекстов и не зависит от пользователя. Положительный серверный кеш может повторить старые результаты, не обращаясь к боту, поэтому выдача с текущими ограничениями прав использует `cache_time=0`. Срок цепочки курсоров не продлевается; устаревший, запрещенный или просроченный запрос получает пустой персональный ответ, а не автоматический перезапуск. Статьи передаются буквально, проверенные метаданные emoji — по явному согласию; повтора нативного ответа, учета выбранных результатов и живой проверки приватности нет.
 
 ```python
 """All public inline symbols with personal pagination and one native answer."""
@@ -664,7 +664,7 @@ if __name__=='__main__': asyncio.run(main())
 
 Файл: `bot_polls.py`. Символы: `PollKind`, `PollChoice`, `PollSpec`, `PollOptionState`, `PollState`, `PollVote`, `PollOptionAddition`, `PollBinding`, `PollLocator`, `PollObservation`, `PollEvent`, `PollObserver`, `PollLookup`, `poll_request`, `poll_state`, `poll_vote`, `poll_option_added`, `poll_events_router`
 
-Границы: 1..12 initial options, monotonic multi-correct quiz, revoting and SDK rich media; native limits checked separately from local bounds Channel-only members/country restrictions and explicit declared chat/thread/business context, not server permission proof Persistent option IDs and user/chat voter identities; None and reported zero remain raw/possibly unknown Host registers confirmed own SendPoll responses, resolves current binding and persists Update receipt transactionally Unavailable poll_message cannot invent association; anonymous/foreign/unbound events do not give a voter ledger No getPoll API, implicit stopPoll, history scan, vote counting, create retry, media IO or live delivery promise
+Границы: От 1 до 12 начальных вариантов, quiz с несколькими правильными ответами без их сокращения, переголосование и rich media SDK; нативные лимиты проверяются отдельно от локальных. Ограничения «только участники канала» и по странам и явно заявленный контекст чата, темы или Business не доказывают серверных прав. Постоянные ID вариантов и личности голосующих (пользователь или чат); `None` и сообщенный ноль остаются сырыми и, возможно, неизвестными. Приложение регистрирует подтвержденные ответы собственного `SendPoll`, находит текущую привязку и транзакционно сохраняет квитанцию Update. Недоступный `poll_message` не позволяет выдумать связь; анонимные, чужие и непривязанные события не дают реестра голосов. Нет `getPoll`, неявного `stopPoll`, просмотра истории, подсчета голосов, повтора создания, ввода-вывода медиа и обещания живой доставки.
 
 ```python
 """All public poll symbols, native quiz and available scoped observations."""
@@ -725,7 +725,7 @@ if __name__=='__main__': asyncio.run(main())
 
 Файл: `bot_platform.py`. Символы: `PlatformContract`, `PlatformScope`, `PlatformPermit`, `PlatformAction`, `PlatformReceipt`, `PlatformResult`, `PlatformHooks`, `SecretToken`, `PlatformEvent`, `PlatformLookup`, `PlatformObserver`, `platform_contracts`, `execute_platform_action`, `managed_bot_link`, `platform_event`, `platform_events_router`, `StoryPhotoUpload`, `StoryVideoUpload`
 
-Границы: Closed 51-method Bot API allowlist across seven families; native SDK requests and current method-specific rights, not arbitrary MTProto/account history; Host owns current ACL/resource/revision/connection/child bindings, media verification and eligible activity; Write requires an atomic durable sending claim; host budget/consent/quote are rechecked before native I/O; Local reservation and fresh native quote are not a remote atomic debit or financial settlement guarantee; Unknown result/receipt/crash stays the same intent; no automatic retry, rollback, reconciliation or global inbox/outbox promise; Join query uses original receive time and remaining native deadline; private topics support only explicitly permitted methods; Managed creation requires native user confirmation; token repr is hidden but host secret storage/serialization remain explicit; Story upload bridge uses validated SDK nested multipart; codec/dimensions/content and immutable file lifetime remain host duties; Events preserve unknown/anonymous facts; current binding and host dedup/order/revocation, no inferred actor or voter/account history; Experimental author SDK/mock/browser evidence is separate from live permissions, real devices, remote charge or independent human/AI acceptance
+Границы: Закрытый список из 51 метода Bot API в семи семействах; нативные запросы SDK и текущие права конкретного метода, а не произвольный MTProto или история аккаунта. Текущие права, ресурс, ревизия, связи подключений и дочерних ботов, проверка медиа и допустимая активность принадлежат приложению. Запись требует атомарной долговечной заявки на отправку; бюджет, согласие и котировка приложения перепроверяются до нативного ввода-вывода. Локальное резервирование и свежая нативная котировка не гарантируют атомарного удаленного списания или финансовых расчетов. Неизвестный результат, квитанция или падение остаются тем же намерением: без автоматического повтора, отката, сверки и глобального inbox/outbox. Запрос на вступление использует исходное время получения и оставшийся нативный срок; личные темы поддерживают только явно разрешенные методы. Создание управляемого бота требует нативного подтверждения пользователя; repr токена скрыт, но хранение и сериализация секрета в приложении остаются явными. Загрузка историй использует проверенный вложенный multipart SDK; кодек, размеры, содержимое и время жизни файла — обязанности приложения. События сохраняют неизвестные и анонимные факты; текущая привязка, дедупликация, порядок и отзыв — на стороне приложения, без выведенного автора и истории голосов или аккаунта. Экспериментальные доказательства автора (SDK, mock, браузер) отделены от живых прав, реальных устройств, удаленного списания и независимой приемки людьми или ИИ.
 
 ```python
 """Public platform API, mandatory host hooks and native multipart story bridge."""
@@ -801,7 +801,7 @@ if __name__=='__main__':asyncio.run(main())
 
 Файл: `bot_fsm_storage.py`. Символы: `FSMSnapshot`, `FSMConflict`, `SnapshotStore`, `AtomicFSMStorage`, `SnapshotFSMStorage`, `DialogLifetime`
 
-Границы: Structural host storage, exact six-field SDK key, one state/data CAS; JSON bound 64 KiB. Example dict is contract-only/nonpersistent; separate file SQLite and three-process proof in dialog restart recipe. Keep event isolation, migrations/tombstones, ACL and business effect dedup; no live/distributed exactly-once promise.
+Границы: Структурное хранилище приложения, точный шестиполевой ключ SDK, одна CAS-запись состояния и данных (сравнение с заменой); JSON до 64 КиБ. Словарь в примере только показывает контракт и не сохраняется; отдельная файловая SQLite и доказательство с тремя процессами — в рецепте восстановления диалога. Сохраняйте изоляцию событий, миграции и надгробные записи, права и дедупликацию бизнес-эффекта; обещания exactly-once в живой или распределенной системе нет.
 
 ```python
 import asyncio

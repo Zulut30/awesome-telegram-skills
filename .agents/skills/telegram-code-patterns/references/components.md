@@ -2,11 +2,11 @@
 
 Текущий каталог содержит 43 группы компонентов. Полный перечень публичных импортов и исполняемых примеров — в локальном [справочнике API](api-reference.md); исторические версии ниже показывают время добавления контрактов.
 
-Именованные типы (с 0.7.0): core `Maturity`, `VerificationLevel`; aiogram `ButtonStyle`, `ChatType`, `UpdatePhase`; testing `Responder`; TypeScript `TextFieldControl`. SDK `Bot`/`Dispatcher` импортируй из aiogram: wildcard library exports теперь явные, существующие документированные function/DTO imports сохранены.
+Именованные типы (с 0.7.0): core `Maturity`, `VerificationLevel`; aiogram `ButtonStyle`, `ChatType`, `UpdatePhase`; testing `Responder`; TypeScript `TextFieldControl`. SDK `Bot`/`Dispatcher` импортируйте из aiogram: wildcard library exports теперь явные, существующие документированные function/DTO imports сохранены.
 
 Все группы пока experimental. [Maturity](maturity.md) наследуется их публичными символами; SDK/mock/browser/live — отдельный уровень доказательств. `RecipeCatalog.search` дополнительно принимает `maturity`, а `Recipe` содержит этот immutable field.
 
-Локальный репозиторий/wheel/tarball; публикация в реестрах не подтверждена. Python >=3.11. TypeScript ESM с declarations; Node >=20 для tooling. Core Python/browser runtime без сторонних dependencies; aiogram extra >=3.31,<4 испытан на 3.31.0. Другую версию SDK проверяй отдельно.
+Локальный репозиторий/wheel/tarball; публикация в реестрах не подтверждена. Python >=3.11. TypeScript ESM с declarations; Node >=20 для tooling. Core Python/browser runtime без сторонних dependencies; aiogram extra >=3.31,<4 испытан на 3.31.0. Другую версию SDK проверяйте отдельно.
 
 В 0.4.0 добавлены `inline_keyboard`, `reply_keyboard`, `input_prompt`, `remove_keyboard` для native rows/input; `method_catalog`, `build_request`, `InvalidAPIRequest`, `MethodSpec` для SDK requests; `event_router`, `UpdateObserver`, `UpdateTrace`, `update_kinds` для native updates. Все импортируются из `telegram_patterns.aiogram`. TypeScript: `TelegramNativeAPI`, `UnsupportedTelegramCapability`, `TELEGRAM_NATIVE_METHODS`, `TELEGRAM_NATIVE_EVENTS`, `TELEGRAM_NATIVE_EVENT_DETAILS` и соответствующие literal union types. Практические примеры/границы — [keyboard-recipes.md](keyboard-recipes.md). Request catalog не является доказательством live поддержки/прав, native call сохраняет unknown результат и callbacks SDK.
 
@@ -33,17 +33,17 @@
 | Черновик | `SelectionDraftStore` из npm-пакета; `new SelectionDraftStore(()=>storage,{namespace,scope,ttlMs})` | Только serviceId/slotId; schema/TTL/серверный scope. read: restored/missing/expired/corrupt/unavailable; write может вернуть false |
 | UI | `createAppShell(host,title), createTextField(document,label,hint)` из npm-пакета; CSS subpath `@awesome-telegram/patterns/styles.css` | Shell content/summary/actions, applyTheme/setInsets/dispose; поля label/hint/error. State/navigation — host |
 
-Для SQLite scope включает проверенный tenant/actor/action. ACL проверяется и для replay. В async-сервисе синхронный storage требует thread boundary. Не заменяй PostgreSQL SQLite ради helper. Ledger не имеет автоматического TTL: retention задается продуктом.
+Для SQLite scope включает проверенный tenant/actor/action. ACL проверяется и для replay. В async-сервисе синхронный storage требует thread boundary. Не заменяйте PostgreSQL SQLite ради helper. Ledger не имеет автоматического TTL: retention задается продуктом.
 
-В 0.1.1 SQLite authorizer блокирует случайные COMMIT/ROLLBACK и неявный commit executescript до сохранения эффекта. Используй execute/executemany; локальные savepoints разрешены. Callback — доверенный код проекта: не меняй authorizer/режим транзакций и не закрывай connection. Защита не изолирует произвольный Python-код и не покрывает внешний сетевой эффект.
+В 0.1.1 SQLite authorizer блокирует случайные COMMIT/ROLLBACK и неявный commit executescript до сохранения эффекта. Используйте execute/executemany; локальные savepoints разрешены. Callback — доверенный код проекта: не меняйте authorizer/режим транзакций и не закрывайте connection. Защита не изолирует произвольный Python-код и не покрывает внешний сетевой эффект.
 
-Импортируй `Action`/`ActionResult` из `telegram_patterns.aiogram`. Status accepted/denied/stale/replayed. Premium нажавшего пользователя не подтверждает emoji entitlement бота. Inline/inaccessible query не гарантирует доступного message/chat. ACK — снятие spinner, не сообщение об успешной записи.
+Импортируйте `Action`/`ActionResult` из `telegram_patterns.aiogram`. Status accepted/denied/stale/replayed. Premium нажавшего пользователя не подтверждает emoji entitlement бота. Inline/inaccessible query не гарантирует доступного message/chat. ACK — снятие spinner, не сообщение об успешной записи.
 
-Для новых bot tools используй [рецепты](bot-recipes.md), сохраняя выбранный SDK и текущую композицию. CommandReply не является ACL/FSM. Run_bot предназначен для одного polling Bot; multibot/webhook/готовый Bot lifecycle остаются у SDK. Handle_as_tasks/concurrency влияют на обработку SDK, не создают durable acceptance. Статические меню не заменяют проверенную actor/tenant identity.
+Для новых bot tools используйте [рецепты](bot-recipes.md), сохраняя выбранный SDK и текущую композицию. CommandReply не является ACL/FSM. Run_bot предназначен для одного polling Bot; multibot/webhook/готовый Bot lifecycle остаются у SDK. Handle_as_tasks/concurrency влияют на обработку SDK, не создают durable acceptance. Статические меню не заменяют проверенную actor/tenant identity.
 
-Для формы прочитай [локальный рецепт](form-recipes.md). Dispatcher должен иметь включенную actor-scoped event isolation. Сервис получает bot_id/actor_id/chat_id, operation_id и immutable values; проверяет права до effect и replay. После ошибки отправки нельзя сменить ID, очистить pending или повторить side effect без сверки. MemoryStorage/SimpleEventIsolation не дают restart/multi-worker гарантий.
+Для формы прочитайте [локальный рецепт](form-recipes.md). Dispatcher должен иметь включенную actor-scoped event isolation. Сервис получает bot_id/actor_id/chat_id, operation_id и immutable values; проверяет права до effect и replay. После ошибки отправки нельзя сменить ID, очистить pending или повторить side effect без сверки. MemoryStorage/SimpleEventIsolation не дают restart/multi-worker гарантий.
 
-API decoder проверяет runtime данные; `as Order` недостаточно. Успешные HEAD/204/205 передают null; decoder должен разрешать этот ответ. Обрыв чтения тела — network, некорректный JSON/decoder — invalid-response. Auth/CSRF headers идут по контракту backend. После unknown сверяй серверную операцию с тем же operation ID. AbortController не отменяет серверный effect. SelectionDraftStore не хранит recovery identity, auth, контакты или цены; retention неизвестной операции организуется отдельно от TTL выбора. Scope не берется из initDataUnsafe. Namespace/scope/TTL фиксируются при создании; смена проверенной сессии требует нового store.
+API decoder проверяет runtime данные; `as Order` недостаточно. Успешные HEAD/204/205 передают null; decoder должен разрешать этот ответ. Обрыв чтения тела — network, некорректный JSON/decoder — invalid-response. Auth/CSRF headers идут по контракту backend. После unknown сверяйте серверную операцию с тем же operation ID. AbortController не отменяет серверный effect. SelectionDraftStore не хранит recovery identity, auth, контакты или цены; retention неизвестной операции организуется отдельно от TTL выбора. Scope не берется из initDataUnsafe. Namespace/scope/TTL фиксируются при создании; смена проверенной сессии требует нового store.
 
 Bridge использует optional platform: при unknown insideTelegram=false; без platform сохранена совместимость с адаптерами по наличию объекта. Флаг подходит только для UI. Ошибка первого subscriber не оставляет его в подписках; частичная неуспешная регистрация SDK очищается, start можно повторить. Shell использует optional семантические цвета ThemeParams и native color-scheme; ID поля/hint/error непрозрачны и проверяются против существующего DOM.
 
@@ -57,7 +57,7 @@ Storage/transport/provider interfaces (с 0.9.0): OnceStore/AsyncTransport/Provi
 
 Core starter (с 0.10.0): StarterComponent, StarterConflict, starter_components; create_starter components keyword и StarterPlan.components/requested_components. Закрытый набор и сценарии — [выбор компонентов](starter-selection.md).
 
-Планы и локальный runner добавлены в 0.13.0: `RecipeRunPlan`, `RecipeRunResult`, `plan_recipe`, `run_recipe_offline` из Python root; [requirements/fixtures/границы](recipe-execution.md). В текущей 0.24.0 есть 210 Python fixtures и 99 native references без executor; offline_ready не означает live разрешение.
+Планы и локальный runner добавлены в 0.13.0: `RecipeRunPlan`, `RecipeRunResult`, `plan_recipe`, `run_recipe_offline` из Python root; [requirements/fixtures/границы](recipe-execution.md). В текущей 0.24.0 есть 212 Python fixtures и 99 native references без executor; offline_ready не означает live разрешение.
 
 С 0.14.0 KeyboardLayout/KeyboardCapabilities и action_layout/inline_layout/reply_layout описаны в [композициях клавиатур](keyboard-layouts.md): flat inputs, width pattern, snapshot/context validation и host capability fallback.
 
@@ -85,15 +85,15 @@ Core starter (с 0.10.0): StarterComponent, StarterConflict, starter_components;
 
 Темы, реакции, заявки, Business, stories, gifts и managed bots с текущими правами и durable host intent. [Контракт и полный пример](platform-operations.md).
 
-- Closed 51-method Bot API allowlist across seven families; native SDK requests and current method-specific rights, not arbitrary MTProto/account history
-- Host owns current ACL/resource/revision/connection/child bindings, media verification and eligible activity
-- Write requires an atomic durable sending claim; host budget/consent/quote are rechecked before native I/O
-- Local reservation and fresh native quote are not a remote atomic debit or financial settlement guarantee
-- Unknown result/receipt/crash stays the same intent; no automatic retry, rollback, reconciliation or global inbox/outbox promise
-- Join query uses original receive time and remaining native deadline; private topics support only explicitly permitted methods
-- Managed creation requires native user confirmation; token repr is hidden but host secret storage/serialization remain explicit
-- Story upload bridge uses validated SDK nested multipart; codec/dimensions/content and immutable file lifetime remain host duties
-- Events preserve unknown/anonymous facts; current binding and host dedup/order/revocation, no inferred actor or voter/account history
-- Experimental author SDK/mock/browser evidence is separate from live permissions, real devices, remote charge or independent human/AI acceptance
+- Закрытый список из 51 метода Bot API в семи семействах: нативные запросы SDK и текущие права конкретного метода, а не произвольный MTProto или история аккаунта.
+- Текущие права, ресурс, ревизия, связи подключений и дочерних ботов, проверка медиа и допустимая активность принадлежат приложению.
+- Запись требует атомарной долговечной заявки на отправку; бюджет, согласие и котировка перепроверяются до нативного ввода-вывода.
+- Локальное резервирование и свежая котировка не гарантируют атомарного удаленного списания или финансовых расчетов.
+- Неизвестный результат, квитанция или падение остаются тем же намерением: без автоматического повтора, отката, сверки и глобального inbox/outbox.
+- Запрос на вступление использует исходное время получения и оставшийся срок; личные темы поддерживают только явно разрешенные методы.
+- Создание управляемого бота требует подтверждения пользователя; repr токена скрыт, но хранение и сериализация секрета остаются на стороне приложения.
+- Загрузка историй использует проверенный вложенный multipart SDK; кодек, размеры, содержимое и время жизни файла — обязанности приложения.
+- События сохраняют неизвестные и анонимные факты; привязка, дедупликация, порядок и отзыв — на стороне приложения, без выведенного автора и истории.
+- Доказательства автора (SDK, mock, браузер) отделены от живых прав, реальных устройств, удаленного списания и независимой приемки.
 
 | Рестарт диалога | `FSMSnapshot`, `FSMConflict`, `SnapshotStore`, `AtomicFSMStorage`, `SnapshotFSMStorage`, `DialogLifetime` из optional aiogram | Project-owned atomic state/data CAS, version/deadline; expired draft ≠ pending effect. [Самостоятельный пример](dialog-restart.md); MemoryStorage неpersistent, distributed/live acceptance отдельно. |

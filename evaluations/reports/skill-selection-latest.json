@@ -3,17 +3,17 @@
   "agent": "Claude Code CLI 2.1.292, claude -p with tools disabled; models haiku and sonnet",
   "cases": "evaluations/skill-selection.json",
   "threshold": 0.95,
-  "descriptions_sha256": "ce7a7163e6762c4e814f325e49d47a20c5422b30f0b23e3d3c67c03d53fa8401",
+  "descriptions_sha256": "5ebb344ad4564f9ab29bdb7cac6ec63e6c7e64616bb1217277fedb597cb397b2",
   "runs": [
     {
       "model": "haiku",
       "cases": 251,
-      "correct": 246,
-      "accuracy": 0.98,
+      "correct": 247,
+      "accuracy": 0.984,
       "by_kind": {
         "positive": {
           "cases": 210,
-          "correct": 205
+          "correct": 206
         },
         "negative": {
           "cases": 41,
@@ -21,13 +21,6 @@
         }
       },
       "misses": [
-        {
-          "query": "initData проходит локально, но на продакшене сервер возвращает 401",
-          "expected": [
-            "telegram-debugging"
-          ],
-          "chosen": "telegram-mini-app-auth"
-        },
         {
           "query": "Публикуй пост в канал от имени бота с кнопкой под ним",
           "expected": [
@@ -63,12 +56,12 @@
     {
       "model": "sonnet",
       "cases": 251,
-      "correct": 248,
-      "accuracy": 0.988,
+      "correct": 246,
+      "accuracy": 0.98,
       "by_kind": {
         "positive": {
           "cases": 210,
-          "correct": 207
+          "correct": 205
         },
         "negative": {
           "cases": 41,
@@ -92,12 +85,26 @@
           "chosen": "telegram-bot-api"
         },
         {
-          "query": "Измени имя и описание бота на разных языках",
+          "query": "Описание и команды бота на русском и английском",
           "expected": [
-            "telegram-profiles",
-            "telegram-localization"
+            "telegram-localization",
+            "telegram-profiles"
           ],
           "chosen": "telegram-bot-api"
+        },
+        {
+          "query": "Как сделать checkout у внешнего провайдера и вернуть пользователя в бота?",
+          "expected": [
+            "telegram-payment-provider"
+          ],
+          "chosen": "telegram-payments"
+        },
+        {
+          "query": "Сверка платежей провайдера с заказами раз в сутки",
+          "expected": [
+            "telegram-payment-provider"
+          ],
+          "chosen": "telegram-python-backend"
         }
       ]
     }
