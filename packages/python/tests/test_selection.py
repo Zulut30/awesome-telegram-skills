@@ -258,9 +258,11 @@ class SelectionRouterTests(unittest.IsolatedAsyncioTestCase):
         first = asyncio.create_task(self.feed(data))
         await started.wait()
         second = asyncio.create_task(self.feed(data))
-        for _ in range(50):
-            if sum(isinstance(c,AnswerCallbackQuery) for c in self.session.calls)==2: break
-            await asyncio.sleep(0)
+        # Bounded by time, not by event-loop iterations: the edit stays blocked until release.
+        async with asyncio.timeout(5):
+            while sum(isinstance(c,AnswerCallbackQuery) for c in self.session.calls)<2:
+                await asyncio.sleep(0.001)
+        self.assertFalse(release.is_set())
         self.assertEqual(sum(isinstance(c,AnswerCallbackQuery) for c in self.session.calls), 2)
         release.set(); await asyncio.gather(first, second)
         self.assertEqual([r.status for r in self.results], ['accepted','stale'])
