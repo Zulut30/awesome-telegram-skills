@@ -2,15 +2,15 @@
 
 Текущая локальная поставка 0.24.0: 51 группа компонентов, 285 публичных Python/TypeScript-символов и 340 рецептов. 241 Python fixtures имеют закрытый executor, 99 native references требуют host/аргументов. [Восстановление диалога](dialog-restart.md) сохраняет atomic step/version/deadline и pending ID; текущие Dispatcher/storage остаются проектными. [Приемка 031](v1-checks/031.json) привязана к matching wheel/tarball; исторические отчеты сохраняют версии.
 
-[Формы 0.3.0](form-tools-review.md) добавляют поля с проверкой, возврат, отмену и подтверждение со стабильным ID заявки. Готовый [бот формы](../examples/python/form_bot.py) и [offline-проверка](../examples/python/offline_form.py) используют один create_app; backend сохраняет заявку и replay result в SQLite.
+[Формы 0.3.0](internal/form-tools-review.md) добавляют поля с проверкой, возврат, отмену и подтверждение со стабильным ID заявки. Готовый [бот формы](../examples/python/form_bot.py) и [offline-проверка](../examples/python/offline_form.py) используют один create_app; backend сохраняет заявку и replay result в SQLite.
 
 Агент импортирует поддерживаемые компоненты и добавляет бизнес-логику проекта. Версия 0.5.0 содержит 24 группы компонентов в двух независимых пакетах. [components.json](../components.json) — каталог; [telegram-code-patterns](../.agents/skills/telegram-code-patterns/SKILL.md) учит агента подключать API. Установка навыка не устанавливает пакеты.
 
-[Галерея и CLI 0.5.0](developer-tools-review.md): поиск 298 рецептов, готовые новые проекты и read-only doctor. [Открыть галерею](../gallery/index.html). Starter Mini App — frontend companion без backend auth; recipe scope различает SDK/mock/reference и live.
+[Галерея и CLI 0.5.0](internal/developer-tools-review.md): поиск 298 рецептов, готовые новые проекты и read-only doctor. [Открыть галерею](../gallery/index.html). Starter Mini App — frontend companion без backend auth; recipe scope различает SDK/mock/reference и live.
 
-[Рецепты 0.4.0](../recipes/README.md) добавляют explicit native rows/reply/input, поиск и request construction всех 185 методов Bot API, UpdateObserver/event_router, native Mini App facade с version/presence gates. [Обзор и границы](telegram-cookbook-review.md). API каталог не объявляет все права/продуктовые сценарии проверенными в Telegram.
+[Рецепты 0.4.0](../recipes/README.md) добавляют explicit native rows/reply/input, поиск и request construction всех 185 методов Bot API, UpdateObserver/event_router, native Mini App facade с version/presence gates. [Обзор и границы](internal/telegram-cookbook-review.md). API каталог не объявляет все права/продуктовые сценарии проверенными в Telegram.
 
-[Инструменты ботов 0.2.0](bot-tools-review.md): меню, команды, пагинация, запуск и локальный тестовый транспорт. [Проверка 0.1.1](component-library-hardening.md) фиксирует исправленные ошибки предыдущей версии; [историческая проверка 0.1.0](component-library-review.md) — независимые consumer-сценарии первого выпуска. Границы live/device проверки указаны в отчетах.
+[Инструменты ботов 0.2.0](internal/bot-tools-review.md): меню, команды, пагинация, запуск и локальный тестовый транспорт. [Проверка 0.1.1](internal/component-library-hardening.md) фиксирует исправленные ошибки предыдущей версии; [историческая проверка 0.1.0](internal/component-library-review.md) — независимые consumer-сценарии первого выпуска. Границы live/device проверки указаны в отчетах.
 
 | Пакет | Что готово | Документация |
 | --- | --- | --- |

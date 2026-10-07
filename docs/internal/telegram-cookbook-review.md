@@ -1,6 +1,6 @@
 # Рецепты и API каталог 0.4.0
 
-4 октября 2026. Два независимых локальных пакета, двадцать одна группа компонентов. Цель выпуска — готовые раскладки клавиатур и ввод, обработка Bot API событий, поиск и построение запросов всех SDK методов, native Mini App API с явными capability gates. [Начать с рецептов](../recipes/README.md).
+4 октября 2026. Два независимых локальных пакета, двадцать одна группа компонентов. Цель выпуска — готовые раскладки клавиатур и ввод, обработка Bot API событий, поиск и построение запросов всех SDK методов, native Mini App API с явными capability gates. [Начать с рецептов](../../recipes/README.md).
 
 ## Что реализовано
 
@@ -49,4 +49,4 @@ uv run --with-editable "./packages/python[aiogram]" python scripts/build_telegra
 
 Источники: [Bot API](https://core.telegram.org/bots/api), [Mini Apps native API](https://core.telegram.org/bots/webapps#initializing-mini-apps), [события](https://core.telegram.org/bots/webapps#events-available-for-mini-apps), установленный aiogram 3.31.0.
 
-Логи и снимки с путями `output/…` — локальные артефакты исторических проверок. Они не входят в Git и не доступны в свежем клоне. Для текущей принятой версии смотрите [сохраненную приемку 031](v1-checks/031.json); для нового прогона выполните `python scripts/verify_pattern_packages.py`.
+Логи и снимки с путями `output/…` — локальные артефакты исторических проверок. Они не входят в Git и не доступны в свежем клоне. Для текущей принятой версии смотрите [сохраненную приемку 031](../v1-checks/031.json); для нового прогона выполните `python scripts/verify_pattern_packages.py`.

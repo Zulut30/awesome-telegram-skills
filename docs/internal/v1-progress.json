@@ -1,7 +1,7 @@
 {
   "schema_version": 1,
   "objective": "Реализовать все 100 пунктов плана к 1.0; после каждого завершенного пункта отдельный коммит",
-  "roadmap": "docs/library-roadmap-100.md",
+  "roadmap": "docs/internal/library-roadmap-100.md",
   "baseline_commit": "73963b2",
   "completion_rule": "Только полный предусмотренный результат и соответствующие проверки; pending не означает исключение из scope",
   "items": [
@@ -716,7 +716,7 @@
         "scripts/verify_pattern_packages.py",
         "scripts/build_recipe_gallery.py",
         "tests/gallery-browser.mjs",
-        "docs/platform-skill-check.md",
+        "docs/internal/platform-skill-check.md",
         "docs/quickstart.md",
         ".agents/skills/telegram-code-patterns/references/quickstart.md",
         ".agents/skills/telegram-code-patterns/SKILL.md",
@@ -763,7 +763,7 @@
         "scripts/verify_gallery_export.py",
         "scripts/build_recipe_gallery.py",
         "tests/gallery-browser.mjs",
-        "docs/dialog-restart-skill-check.md",
+        "docs/internal/dialog-restart-skill-check.md",
         "docs/quickstart.md",
         ".agents/skills/telegram-code-patterns/SKILL.md",
         ".agents/skills/telegram-dialogs/SKILL.md",

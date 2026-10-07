@@ -93,6 +93,7 @@
 - Пункт 88: установка с нуля на каждой ОС. `scripts/verify_fresh_install.py` ставит wheel в чистое виртуальное окружение, требует консольную команду `telegram-patterns`, выполняет `--version` и `init --template bot` в каталог с пробелом, создает отдельное окружение проекта (`pip install .`), запускает `offline.py` (SendMessage, AnswerCallbackQuery, SendMessage, закрытая сессия) и `doctor --json` без токена и без Node.js. Новая задача CI `fresh-install` выполняет это на Ubuntu, Windows и macOS с Python 3.11 и входит в `required`; отчет и логи сохраняются как артефакт. Локально на Linux, Python 3.11.17 проверка прошла за 27 с, а wheel без точки входа консольной команды она отклоняет.
 - Пункт 89: сборка и публикация сайта документации разделены. Тесты `site/tests`, сборка, проверка ссылок и браузерные сценарии сайта теперь в одном reusable workflow `.github/workflows/docs-site.yml`: его вызывают задача `docs-site` в `Repository checks` (входит в `required`, заменяет шаги сайта в задаче `browser`) и `docs-pages.yml`, который больше не запускается на pull request и не повторяет валидатор скиллов и корневые тесты. Публикация из `main` идет в группе concurrency `pages` с `cancel-in-progress: false`, поэтому новый push не прерывает начатый deploy; Pages-artifact загружает только публикующий вызов. `tests/test_ci_workflow.py` проверяет, что шаги сайта есть только в общем workflow, deploy не отменяется, а вызываемый workflow не объявляет своих прав; actionlint 1.7.12 проходит по всем workflow и отклоняет вызов с неизвестным input.
 - Пункт 90: десять отдельных `scripts/verify_*_recipe.py` заменены одним параметризованным `scripts/verify_copied_recipe.py RECIPE COPIED_SKILL` (`--list` перечисляет рецепты). Общий класс `Composition` извлекает единственный блок из скопированного руководства, сверяет проверенные композиции с `examples/python` побайтно, запускает offline-сценарий в процессе или в отдельном интерпретаторе и проверяет отказ на отсутствующем, измененном и повторенном блоке; клавиатурные и developer-рецепты остались функциями в той же таблице. Перезапуск диалога теперь получает окружение из общего `scripts/_environment.py` вместо своего списка переменных. 441 строка вместо 604. Вывод всех десяти рецептов на скопированном навыке совпал со старыми скриптами байт в байт (кроме случайного идентификатора операции), отказы на испорченных копиях сохранились; `verify_pattern_packages.py` вызывает новый скрипт и полностью прошел (579 Python- и 38 TypeScript-тестов, браузер). Рецепт `dialog` дополнительно требует закрытую сессию — его результат и раньше ее содержал. Новый `tests/test_copied_recipe.py` проверяет таблицу, отказы без SDK и вызовы из проверки поставки.
+- Пункт 91: структура документации. 24 внутренних документа (планы и их реестры, исследования приоритетов, обзоры версий 0.1–0.5, аудиты навыков и проверки пунктов) перенесены в `docs/internal/` с индексом `docs/internal/README.md`; все ссылки на них в README, пакетах, CHANGELOG и документах переписаны. `docs/navigation.json` относит каждую из 68 пользовательских страниц к одному из разделов «Обучение», «Как сделать», «Справочник», «Объяснения» и называет ее цель; из него `scripts/build_docs_map.py` собирает карту `docs/README.md` (на сайте — `docs/index.html`) и проверяет, что каждая страница в `docs/` описана, внутренние материалы не перечислены, цели заданы и в меню не больше 25 страниц. Боковое меню сайта строится из манифеста: 25 ссылок в четырех разделах вместо прежних 34 и 42 ссылок на скиллы (они остались в каталоге скиллов); хлебные крошки показывают раздел, внутренние страницы публикуются, но не попадают в меню, поиск и `llms-full.txt`. Проверка карты добавлена в задачу CI `generated-files`; сайт собирается и проходит `verify_docs_site.py` и браузерный тест (232 проверки), новые тесты — `tests/test_docs_structure.py` и тест меню в `site/tests`.
 
 ## 0.24.0
 
@@ -207,13 +208,13 @@
 
 CLI `telegram-patterns recipes/init/doctor` входит в wheel. `init` создает только новый каталог: минимальный aiogram-бот или бот с TypeScript frontend из согласованных локальных wheel/tarball. Поддерживаются dry-run, offline-сценарий и отказ от перезаписи. `doctor` не читает .env, не выводит token, не запускает проект и не обращается к Telegram. Mini App starter пока содержит локальную форму без backend auth.
 
-Каталог содержит 24 группы; навык переиспользования, exports и шаблоны согласованы. Проверка поставки дополнена установленной CLI, созданными проектами, строгой TS-сборкой и Chrome проверками галереи/стартеров. TypeScript runtime API сохранен; версия пакета синхронизирована. [Контракт и проверка](docs/developer-tools-review.md).
+Каталог содержит 24 группы; навык переиспользования, exports и шаблоны согласованы. Проверка поставки дополнена установленной CLI, созданными проектами, строгой TS-сборкой и Chrome проверками галереи/стартеров. TypeScript runtime API сохранен; версия пакета синхронизирована. [Контракт и проверка](docs/internal/developer-tools-review.md).
 
 ## 0.4.0 — 4 октября 2026
 
 Клавиатуры и библиотека рецептов: explicit inline/reply rows (по две/три и смешанные), styles/emoji fallback, request buttons, input prompt/remove, рабочий demo Router с ACK и owner-bound edit. Тот же Dispatcher проверяется offline. SDK method_catalog/build_request охватывает 185 Bot API методов; generated request-only recipes и индекс 400 типов отмечают границы SDK validation. UpdateObserver/event_router работают с native Update kinds без копирования raw данных.
 
-TypeScript: каталог 99 native функций / 44 событий Mini App, TelegramNativeAPI с availability gates, native callback semantics и cleanup, popup/location recipes. Пакеты и переносимый code-patterns навык синхронизированы; release проверяется через wheel/tarball consumers. [Контракты и доказательства](docs/telegram-cookbook-review.md). Live Telegram/device/provider workflows не подменяются SDK/mock проверкой; поставка локальная.
+TypeScript: каталог 99 native функций / 44 событий Mini App, TelegramNativeAPI с availability gates, native callback semantics и cleanup, popup/location recipes. Пакеты и переносимый code-patterns навык синхронизированы; release проверяется через wheel/tarball consumers. [Контракты и доказательства](docs/internal/telegram-cookbook-review.md). Live Telegram/device/provider workflows не подменяются SDK/mock проверкой; поставка локальная.
 
 ## 0.3.0 — 3 октября 2026
 
@@ -221,7 +222,7 @@ TypeScript: каталог 99 native функций / 44 событий Mini App
 
 Неизвестный результат отправки сохраняет operation_id и ответы; редактирование/отмена/рестарт блокируются до сверки той же операции. Авторизация, durable effect/replay, storage retention и восстановление после рестарта принадлежат приложению. Добавлены пример с настоящим SQLite effect и общий offline-сценарий, включая редактирование и повтор подтверждения. Windows SQLite соединения в примере закрываются явно.
 
-Каталог содержит 17 групп. Публичные API 0.2.0 сохранены; API TypeScript без изменений, версия согласована. [Контракт и проверка](docs/form-tools-review.md). Поставка остается локальной.
+Каталог содержит 17 групп. Публичные API 0.2.0 сохранены; API TypeScript без изменений, версия согласована. [Контракт и проверка](docs/internal/form-tools-review.md). Поставка остается локальной.
 
 ## 0.2.0 — 3 октября 2026
 
@@ -229,7 +230,7 @@ TypeScript: каталог 99 native функций / 44 событий Mini App
 
 Меню собирают строки с уникальными action keys и emoji fallback. Статические команды описываются один раз, Router сохраняет фильтрацию mention и plain text; установка command menu явная. Runner сохраняет Dispatcher/инъекции и закрывает Bot session при завершении/ошибке/cancellation. StubSession записывает реальные SDK методы, требует явные responses и не имеет сетевого fallback. Добавлен один Dispatcher-пример для live polling и offline command → page → selection проверки.
 
-API TypeScript не менялся; версия пакета согласована с общей поставкой. [Контракты и проверка](docs/bot-tools-review.md). Registry publication не выполнялась.
+API TypeScript не менялся; версия пакета согласована с общей поставкой. [Контракты и проверка](docs/internal/bot-tools-review.md). Registry publication не выполнялась.
 
 ## 0.1.1 — 3 октября 2026
 
@@ -242,7 +243,7 @@ API TypeScript не менялся; версия пакета согласова
 - Shell использует семантические цвета Telegram и native color-scheme. ID поля/hint/error не конфликтуют с существующим DOM, включая fallback без window/randomUUID.
 - Новый verify_pattern_packages.py собирает wheel/tarball, устанавливает их в свежие consumer-окружения, проверяет публичные imports/declarations/CSS и сохраняет логи, версии и SHA256. Browser matrix хранится отдельно для каждой версии.
 
-[Отчет и границы проверки](docs/component-library-hardening.md). Поставка остается локальной, публикация в реестры не выполнялась.
+[Отчет и границы проверки](docs/internal/component-library-hardening.md). Поставка остается локальной, публикация в реестры не выполнялась.
 
 ## 0.1.0 — 3 октября 2026
 

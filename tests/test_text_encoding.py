@@ -10,7 +10,7 @@ ROOT = Path(__file__).resolve().parents[1]
 MOJIBAKE = re.compile('|'.join(re.escape(ch.encode('utf-8').decode('cp1251')[:2]) for ch in '—анлосиет'))
 TEXT_SUFFIXES = {'.py', '.md', '.json', '.ts', '.mjs', '.js', '.txt', '.yaml', '.yml', '.html', '.css', '.toml'}
 # План описывает саму ошибку и намеренно цитирует пример.
-DOCUMENTED_EXAMPLES = {'docs/excellence-plan-100.md'}
+DOCUMENTED_EXAMPLES = {'docs/internal/excellence-plan-100.md'}
 
 
 class TextEncodingTests(unittest.TestCase):

@@ -40,7 +40,7 @@ QUOTES = [
     ('.claude-plugin/marketplace.json', r'"(\d+) skills for Telegram', ['skills']),
     ('docs/component-library.md', r'(\d+) групп[аы]? компонентов, (\d+) публичных Python/TypeScript-символ(?:а|ов)? и (\d+) рецептов?\. '
      r'(\d+) Python fixtures', ['groups', 'symbols', 'recipes', 'executors']),
-    ('docs/library-roadmap-100.md', r'(\d+) групп[аы]? компонентов, (\d+) публичных Python/TypeScript-символ(?:а|ов)?, (\d+) навыка и (\d+) рецептов?',
+    ('docs/internal/library-roadmap-100.md', r'(\d+) групп[аы]? компонентов, (\d+) публичных Python/TypeScript-символ(?:а|ов)?, (\d+) навыка и (\d+) рецептов?',
      ['groups', 'symbols', 'skills', 'recipes']),
     ('docs/recipe-execution.md', r'У всех (\d+) cookbook-рецептов', ['recipes']),
     ('docs/recipe-execution.md', r'(\d+) Python-рецепт(?:ов|а)? име(?:ют|ет) локальный исполнитель', ['executors']),

@@ -6,10 +6,10 @@
 
 | Область | Результат | Доказательство |
 | --- | --- | --- |
-| Python core/aiogram | 17 unittest cases: published HMAC fixture/SDK, tamper/freshness/duplicates, SQLite concurrency/rollback/process restart, реальные Dispatcher synthetic updates, keyboard/ACK/Stars | [Тесты пакета](../packages/python/tests/test_components.py) |
-| TypeScript | 10 Node tests: реальные HTTP/timeout/cancel/redirect, decoder, неизвестная запись, scopes/TTL/storage, bridge lifecycle | [Тесты пакета](../packages/typescript/tests/core.test.mjs) |
-| Сборка Mini App | Strict tsc для библиотеки и импортирующего примера, exit 0 | [Workspace команды](../package.json) |
-| Browser UI | 136 проверок, 14 viewport/theme cases на Chrome 154.0.8037.97; 14 screenshots | JSON (`output/pattern-library/browser/report.json`, локальный артефакт), [код проверки](../tests/patterns-browser.mjs) |
+| Python core/aiogram | 17 unittest cases: published HMAC fixture/SDK, tamper/freshness/duplicates, SQLite concurrency/rollback/process restart, реальные Dispatcher synthetic updates, keyboard/ACK/Stars | [Тесты пакета](../../packages/python/tests/test_components.py) |
+| TypeScript | 10 Node tests: реальные HTTP/timeout/cancel/redirect, decoder, неизвестная запись, scopes/TTL/storage, bridge lifecycle | [Тесты пакета](../../packages/typescript/tests/core.test.mjs) |
+| Сборка Mini App | Strict tsc для библиотеки и импортирующего примера, exit 0 | [Workspace команды](../../package.json) |
+| Browser UI | 136 проверок, 14 viewport/theme cases на Chrome 154.0.8037.97; 14 screenshots | JSON (`output/pattern-library/browser/report.json`, локальный артефакт), [код проверки](../../tests/patterns-browser.mjs) |
 | Core distribution | Wheel установлен в новый venv без aiogram, auth/SQLite импортированы; второй отдельный процесс вернул replay | Consumer код (`output/pattern-library/core_consumer.py`, локальный артефакт), поставка (`output/pattern-library/final-distribution.json`, локальный артефакт) |
 | Final SDK distribution | Финальный wheel установлен в новый Python 3.13.12 venv с aiogram 3.31.0; все 17 пакетных тестов прошли | Поставка/пути (`output/pattern-library/final-distribution.json`, локальный артефакт) |
 | Final npm distribution | Финальный tarball установлен в новый consumer: strict tsc, публичные runtime imports, CSS и declarations на месте | Поставка/хеши (`output/pattern-library/final-distribution.json`, локальный артефакт), лог (`output/pattern-library/final-consumer.log`, локальный артефакт) |
@@ -40,6 +40,6 @@ Boundary test кнопки исправлен: prefix + key ровно 64 bytes 
 
 SQLiteOnce покрывает только effect в переданном SQLite connection, не сеть/платежи/PostgreSQL. Auth/ACK/invoice builders не предоставляют ACL, платежную выдачу или reconciliation сервиса. SelectionDraftStore хранит только IDs выбора; durable recovery неизвестной операции организуется отдельно. Пример Mini App использует loopback mock backend и память, не production authentication/booking/payment. Исполняемых Crypto Pay/Platega/ЮKassa adapters в первом выпуске нет.
 
-Пакеты построены для локальной поставки; публикация в PyPI/npm не выполнялась. [Инструкция использования и воспроизведения](component-library.md).
+Пакеты построены для локальной поставки; публикация в PyPI/npm не выполнялась. [Инструкция использования и воспроизведения](../component-library.md).
 
-Логи и снимки с путями `output/…` — локальные артефакты исторических проверок. Они не входят в Git и не доступны в свежем клоне. Для текущей принятой версии смотрите [сохраненную приемку 031](v1-checks/031.json); для нового прогона выполните `python scripts/verify_pattern_packages.py`.
+Логи и снимки с путями `output/…` — локальные артефакты исторических проверок. Они не входят в Git и не доступны в свежем клоне. Для текущей принятой версии смотрите [сохраненную приемку 031](../v1-checks/031.json); для нового прогона выполните `python scripts/verify_pattern_packages.py`.

@@ -58,6 +58,7 @@ jobs:
       - run: python scripts/build_native_signatures.py --check
       # Shop client types and decoders from examples/shop/openapi.json.
       - run: python scripts/build_openapi_types.py --check
+      - run: python scripts/build_docs_map.py --check
 
   python-style:
     name: Python library style (ruff)

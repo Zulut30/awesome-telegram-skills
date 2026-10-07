@@ -14,9 +14,9 @@
 
 Скиллы помогают агенту выбрать решение и проверить результат. Библиотека дает переиспользуемый код, а рецепты показывают, как подключить его к вашему проекту. Основной стек — **Python + aiogram для ботов и backend, TypeScript для Mini Apps**.
 
-[English](README.en.md) · [Быстрый старт](#quickstart) · [Пример кнопок](#buttons) · [Галерея](#gallery) · [Все скиллы](#skills) · [План 1.0](docs/library-roadmap-100.md)
+[English](README.en.md) · [Быстрый старт](#quickstart) · [Пример кнопок](#buttons) · [Галерея](#gallery) · [Все скиллы](#skills) · [План 1.0](docs/internal/library-roadmap-100.md)
 
-**[Документация на GitHub Pages](https://zulut30.github.io/awesome-telegram-skills/)** · [Каждый скилл](https://zulut30.github.io/awesome-telegram-skills/skills/) · [Справочник API](https://zulut30.github.io/awesome-telegram-skills/api/) · [Инструкция для ИИ-агента](docs/for-agents.md).
+**[Документация на GitHub Pages](https://zulut30.github.io/awesome-telegram-skills/)** · [Каждый скилл](https://zulut30.github.io/awesome-telegram-skills/skills/) · [Справочник API](https://zulut30.github.io/awesome-telegram-skills/api/) · [Карта документации](docs/README.md) · [Инструкция для ИИ-агента](docs/for-agents.md).
 
 > **Версия 0.24.0 — экспериментальная локальная поставка.** Приняты 30 из 100 пунктов плана. Пакеты пока не опубликованы в PyPI/npm; проверка на реальных Telegram-клиентах и платежных провайдерах остается отдельным этапом. Какие версии Python, Node.js, aiogram и Bot API поддерживаются и до какого срока — в [политике поддержки](docs/versioning.md#политика-поддержки).
 
@@ -41,7 +41,7 @@
 | **51 группа компонентов** | Клавиатуры, формы, навигация, календари, медиа, состояния и проверка `initData`; [каталог](components.json) |
 | **Python-пакет** | `telegram_patterns`: ядро без SDK и адаптеры aiogram и python-telegram-bot; [API](packages/python/README.md) |
 | **TypeScript-пакет** | `@awesome-telegram/patterns`: bridge, темы, viewport, safe areas, API-клиент, черновики и UI-основа; [API](packages/typescript/README.md) |
-| **340 рецептов + CLI** | Поиск, фильтры, примеры кода, создание заготовок и `doctor`; [инструкция](docs/developer-tools-review.md) |
+| **340 рецептов + CLI** | Поиск, фильтры, примеры кода, создание заготовок и `doctor`; [инструкция](docs/gallery-navigation.md) |
 | **Карта возможностей** | 51 возможность Telegram: навык, компонент, сценарий, способ проверки и пробелы; [что умеет бот](docs/capability-map.md) |
 
 <a id="quickstart"></a>
@@ -241,4 +241,4 @@ keyboard = action_menu([
 
 Скиллы, библиотеки и примеры распространяются по лицензии [MIT](LICENSE): их можно использовать, изменять и включать в коммерческие проекты при сохранении уведомления об авторских правах. Файл лицензии входит в Python wheel и npm tarball, а поле `license: MIT` — во frontmatter каждого скилла, поэтому скопированный каталог скилла сохраняет условия.
 
-Для изменений набора: [CONTRIBUTING.md](CONTRIBUTING.md). Уязвимости сообщайте приватно по [SECURITY.md](SECURITY.md). Участники соблюдают [кодекс поведения](CODE_OF_CONDUCT.md). Источники: [docs/sources.md](docs/sources.md). Развитие: [план из 100 пунктов](docs/library-roadmap-100.md) и [регистр выполнения](docs/v1-progress.json).
+Для изменений набора: [CONTRIBUTING.md](CONTRIBUTING.md). Уязвимости сообщайте приватно по [SECURITY.md](SECURITY.md). Участники соблюдают [кодекс поведения](CODE_OF_CONDUCT.md). Источники: [docs/sources.md](docs/sources.md). Развитие: [план из 100 пунктов](docs/internal/library-roadmap-100.md) и [регистр выполнения](docs/internal/v1-progress.json).

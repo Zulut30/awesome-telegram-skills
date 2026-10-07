@@ -32,7 +32,7 @@ Severity ниже — оценка риска для пользовательс�
 
 | Источник | Для чего использован | Ограничение |
 | --- | --- | --- |
-| Локальные [component-library.md](component-library.md), [developer-tools-review.md](developer-tools-review.md), [roadmap-25](library-roadmap-25.md), [evaluation.md](evaluation.md), manifests и report 0.5.0 | Исходная архитектура, выполненные функции, scope evidence | Отчет поставки не заменяет live acceptance |
+| Локальные [component-library.md](../component-library.md), [developer-tools-review.md](developer-tools-review.md), [roadmap-25](library-roadmap-25.md), [evaluation.md](../evaluation.md), manifests и report 0.5.0 | Исходная архитектура, выполненные функции, scope evidence | Отчет поставки не заменяет live acceptance |
 | [Telegram Mini Apps](https://core.telegram.org/bots/webapps) | Launch/auth, темы, native возможности и платформенные ограничения | При реализации каждого модуля заново сверять конкретное поле и SDK; этот просмотр не обновляет даты всего каталога |
 | [Telegram Bot API](https://core.telegram.org/bots/api) | Границы API, клавиатур и событий | Перечень методов не доказывает реализацию workflow |
 | [Telegram Stars](https://core.telegram.org/bots/payments-stars) | Цифровые товары, XTR, pre-checkout и подтверждение/refund | Внешние провайдеры требуют отдельного актуального первичного контракта и допустимого сценария |

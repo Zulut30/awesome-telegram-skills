@@ -13,4 +13,4 @@ uv run --with-editable "./packages/python[aiogram]" python scripts/build_recipe_
 uv run --with-editable "./packages/python[aiogram]" python scripts/build_recipe_gallery.py --check
 ```
 
-Генератор выполняет только собственные known fixtures и четыре offline сценария, не Markdown-код из API каталога и не Telegram HTTP. Сохраняет `catalog/recipe-gallery.json`, wheel resource и HTML с одним снимком. `--output-dir` пишет отдельную галерею и копирует связанные исходники и код проверки в `files/`, поэтому ссылки работают после переноса экспорта. `--check` проверяет совпадение и не перезаписывает файлы. [CLI и полная проверка](../docs/developer-tools-review.md).
+Генератор выполняет только собственные known fixtures и четыре offline сценария, не Markdown-код из API каталога и не Telegram HTTP. Сохраняет `catalog/recipe-gallery.json`, wheel resource и HTML с одним снимком. `--output-dir` пишет отдельную галерею и копирует связанные исходники и код проверки в `files/`, поэтому ссылки работают после переноса экспорта. `--check` проверяет совпадение и не перезаписывает файлы. [CLI и полная проверка](../docs/internal/developer-tools-review.md).

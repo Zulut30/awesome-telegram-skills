@@ -6,17 +6,17 @@
 
 | Навык | Результат и граница |
 | --- | --- |
-| [telegram-mini-app-ux](../.agents/skills/telegram-mini-app-ux/SKILL.md) | Понятный пользовательский путь, форма/checkout и восстановление ошибок. Walkthrough агента отделен от исследования с участниками. |
-| [telegram-mini-app-visual-regression](../.agents/skills/telegram-mini-app-visual-regression/SKILL.md) | Воспроизводимый baseline и expected/actual/diff. Pixel diff не является оценкой красоты или native клиента. |
-| [telegram-mini-app-network-recovery](../.agents/skills/telegram-mini-app-network-recovery/SKILL.md) | Допустимый scoped черновик, cache и сверка неизвестной записи. Backend authorization и dedup не подменены local storage. |
-| [telegram-web-login](../.agents/skills/telegram-web-login/SKILL.md) | OIDC ID token, login transaction и account linking. Протоколы Mini App initData, legacy widget и MTProto разделены. |
-| [telegram-admin-panel](../.agents/skills/telegram-admin-panel/SKILL.md) | Операторские списки/действия с capability, scope, revision и журналом. Frontend confirmation не дает серверного права. |
-| [telegram-media-processing](../.agents/skills/telegram-media-processing/SKILL.md) | Настоящие parser/output, ограничения process, job lifecycle и закрытая выдача. Transform и Telegram send имеют разные исходы. |
-| [telegram-subscription-access](../.agents/skills/telegram-subscription-access/SKILL.md) | Charge ledger, оплаченные интервалы и проверка доступа. Подписка/charge/grant различаются; отмена продления не является возвратом. |
+| [telegram-mini-app-ux](../../.agents/skills/telegram-mini-app-ux/SKILL.md) | Понятный пользовательский путь, форма/checkout и восстановление ошибок. Walkthrough агента отделен от исследования с участниками. |
+| [telegram-mini-app-visual-regression](../../.agents/skills/telegram-mini-app-visual-regression/SKILL.md) | Воспроизводимый baseline и expected/actual/diff. Pixel diff не является оценкой красоты или native клиента. |
+| [telegram-mini-app-network-recovery](../../.agents/skills/telegram-mini-app-network-recovery/SKILL.md) | Допустимый scoped черновик, cache и сверка неизвестной записи. Backend authorization и dedup не подменены local storage. |
+| [telegram-web-login](../../.agents/skills/telegram-web-login/SKILL.md) | OIDC ID token, login transaction и account linking. Протоколы Mini App initData, legacy widget и MTProto разделены. |
+| [telegram-admin-panel](../../.agents/skills/telegram-admin-panel/SKILL.md) | Операторские списки/действия с capability, scope, revision и журналом. Frontend confirmation не дает серверного права. |
+| [telegram-media-processing](../../.agents/skills/telegram-media-processing/SKILL.md) | Настоящие parser/output, ограничения process, job lifecycle и закрытая выдача. Transform и Telegram send имеют разные исходы. |
+| [telegram-subscription-access](../../.agents/skills/telegram-subscription-access/SKILL.md) | Charge ledger, оплаченные интервалы и проверка доступа. Подписка/charge/grant различаются; отмена продления не является возвратом. |
 
 У каждого нового навыка собственные SKILL.md, agents/openai.yaml и тематическая reference; соседние навыки не являются обязательной зависимостью. Всего добавлен 21 файл новых каталогов.
 
-UI и design-system дополнены инструкциями по reduced motion, независимому от animationend cleanup, focus и объявлениям состояния. Отдельная [motion-accessibility.md](../.agents/skills/telegram-mini-app-ui/references/motion-accessibility.md) содержит приемку с keyboard и границу настоящего screen reader. Это восемь новых references вместе с семью тематическими файлами.
+UI и design-system дополнены инструкциями по reduced motion, независимому от animationend cleanup, focus и объявлениям состояния. Отдельная [motion-accessibility.md](../../.agents/skills/telegram-mini-app-ui/references/motion-accessibility.md) содержит приемку с keyboard и границу настоящего screen reader. Это восемь новых references вместе с семью тематическими файлами.
 
 Descriptions разделяют UX, реализацию экрана, библиотеку компонентов и сравнение снимков; OIDC сайта и initData Mini App; платежный protocol и продуктовые права доступа. Общие framework, global services и live actions не добавлены.
 
@@ -81,8 +81,8 @@ python -X utf8 run_checks.py
 
 ## Источники и границы
 
-Использованы текущие первичные источники Telegram, OpenID, W3C/MDN, Playwright, OWASP и FFmpeg. Конкретные проверенные инварианты и даты перечислены в [sources.md](sources.md); локальные ledger, UX flow и матрица снимков являются решениями продукта.
+Использованы текущие первичные источники Telegram, OpenID, W3C/MDN, Playwright, OWASP и FFmpeg. Конкретные проверенные инварианты и даты перечислены в [sources.md](../sources.md); локальные ledger, UX flow и матрица снимков являются решениями продукта.
 
 Эта поставка содержит навыки и материалы проверки. Она не является развернутым Telegram-ботом, регистрацией merchant account или production приложением. Реальные Telegram аккаунты, платежные среды, физические устройства и screen reader требуют отдельного запуска в соответствующей среде.
 
-Логи и снимки с путями `output/…` — локальные артефакты исторических проверок. Они не входят в Git и не доступны в свежем клоне. Для текущей принятой версии смотрите [сохраненную приемку 031](v1-checks/031.json); для нового прогона выполните `python scripts/verify_pattern_packages.py`.
+Логи и снимки с путями `output/…` — локальные артефакты исторических проверок. Они не входят в Git и не доступны в свежем клоне. Для текущей принятой версии смотрите [сохраненную приемку 031](../v1-checks/031.json); для нового прогона выполните `python scripts/verify_pattern_packages.py`.

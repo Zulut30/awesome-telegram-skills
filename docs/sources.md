@@ -229,7 +229,7 @@
 
 ### 2026-10-04 — библиотека 0.5.0: CLI и стартеры
 
-Для CLI/стартеров библиотеки 0.5.0 отдельно 4 октября 2026 просмотрены [PyPA command-line tools](https://packaging.python.org/en/latest/guides/creating-command-line-tools/) — argparse/__main__/project.scripts — и [dependency specifiers](https://packaging.python.org/en/latest/specifications/dependency-specifiers/) — direct file references. Это частичная сверка packaging; даты Telegram API/providers/device QA ей не обновляются. Фактическая установка wheel/tarball и созданных проектов фиксируется в [проверке инструментов](developer-tools-review.md).
+Для CLI/стартеров библиотеки 0.5.0 отдельно 4 октября 2026 просмотрены [PyPA command-line tools](https://packaging.python.org/en/latest/guides/creating-command-line-tools/) — argparse/__main__/project.scripts — и [dependency specifiers](https://packaging.python.org/en/latest/specifications/dependency-specifiers/) — direct file references. Это частичная сверка packaging; даты Telegram API/providers/device QA ей не обновляются. Фактическая установка wheel/tarball и созданных проектов фиксируется в [проверке инструментов](internal/developer-tools-review.md).
 
 Для system theme fallback того же starter 4 октября отдельно сверены [MediaQueryList change](https://developer.mozilla.org/en-US/docs/Web/API/MediaQueryList/change_event) и [color-scheme](https://developer.mozilla.org/en-US/docs/Web/CSS/Reference/Properties/color-scheme): подписка на изменения media query и явный режим оформления native controls. Проверка фактического theme/background и cleanup выполнена в Chrome; это не общая гарантия всех WebView/устройств.
 
@@ -245,7 +245,7 @@
 
 Для ручного verifier проверены [Telegram Login](https://core.telegram.org/bots/telegram-login) и [OIDC Core errata set 2, ID Token Validation](https://openid.net/specs/openid-connect-core-1_0.html#IDTokenValidation): дополнительные недоверенные аудитории отклоняются; правила `azp` зависят от flow/extensions и не вводят универсальную обязательность поля. Это сверка правил и локально подписанных fixtures, без заявления о выпуске таких токенов Telegram.
 
-Другие фактически просмотренные первичные источники и точный scope указаны в независимых отчетах, перечисленных в [skill-full-check.md](skill-full-check.md). Дата этого раздела не обновляет все исторические страницы набора. Свежесть полного протокола Crypto Pay остается ограничением: прямой текущий Help Center не был доступен.
+Другие фактически просмотренные первичные источники и точный scope указаны в независимых отчетах, перечисленных в [skill-full-check.md](internal/skill-full-check.md). Дата этого раздела не обновляет все исторические страницы набора. Свежесть полного протокола Crypto Pay остается ограничением: прямой текущий Help Center не был доступен.
 
 ### 2026-10-03 — семь продуктовых навыков
 
@@ -274,7 +274,7 @@
 | ЮKassa | 24 часа идемпотентности с первого запроса; повтор после этого окна не защищен прежним key. [Формат взаимодействия](https://yookassa.ru/developers/using-api/interaction-format#idempotence). |
 | Platega СБП-подписка | Создание subscription отдельно от списания, получение и отмена, callback с ID списания и SubscriptionId. [Создание](https://docs.platega.io/создать-подписку-40029698e0), [получение](https://docs.platega.io/получить-подписку-40029717e0), [отмена](https://docs.platega.io/отменить-подписку-40029730e0), [callback списания](https://docs.platega.io/callback-по-списанию-40029713e0). |
 
-Прямая документация Crypto Pay снова вернула HTTP 403; индексированный официальный материал не объявлен свежей полной сверкой. Тело отдельной страницы [callback статуса подписки Platega](https://docs.platega.io/callback-по-статусу-подписки-40030962e0) получить не удалось; схема этой ветки остается непроверенной. Полный объем доказательств и ограничения: [skill-quality-audit.md](skill-quality-audit.md).
+Прямая документация Crypto Pay снова вернула HTTP 403; индексированный официальный материал не объявлен свежей полной сверкой. Тело отдельной страницы [callback статуса подписки Platega](https://docs.platega.io/callback-по-статусу-подписки-40030962e0) получить не удалось; схема этой ветки остается непроверенной. Полный объем доказательств и ограничения: [skill-quality-audit.md](internal/skill-quality-audit.md).
 
 ### 2026-10-03 — восемь навыков
 

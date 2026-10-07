@@ -1,8 +1,8 @@
 # Галерея и CLI библиотеки 0.5.0
 
-Исторический обзор 0.5.0 ниже сохраняет свою проверку. Для 0.12.0 актуальна [навигация](gallery-navigation.md): 299 recipes, task/context/SDK/version filters, исходники и executable checks, standalone export с копиями связанных файлов. SDK и maturity/evidence фильтруются независимо.
+Исторический обзор 0.5.0 ниже сохраняет свою проверку. Для 0.12.0 актуальна [навигация](../gallery-navigation.md): 299 recipes, task/context/SDK/version filters, исходники и executable checks, standalone export с копиями связанных файлов. SDK и maturity/evidence фильтруются независимо.
 
-Выполнены первые два пункта плана: поиск готового кода и подготовка нового проекта. Python и TypeScript поставляются локально; реестры PyPI/npm не используются для поиска нашей библиотеки. Галерея — обычные статические файлы: [открыть](../gallery/index.html), [инструкция](../gallery/README.md).
+Выполнены первые два пункта плана: поиск готового кода и подготовка нового проекта. Python и TypeScript поставляются локально; реестры PyPI/npm не используются для поиска нашей библиотеки. Галерея — обычные статические файлы: [открыть](../../gallery/index.html), [инструкция](../../gallery/README.md).
 
 ## Найти подходящий пример
 
@@ -75,4 +75,4 @@ python scripts/verify_pattern_packages.py
 
 Частичная сверка 4 октября 2026: [PyPA command-line tools](https://packaging.python.org/en/latest/guides/creating-command-line-tools/) — console entrypoint/argparse; [dependency specifiers](https://packaging.python.org/en/latest/specifications/dependency-specifiers/) — direct references. Для fallback темы: [MediaQueryList change](https://developer.mozilla.org/en-US/docs/Web/API/MediaQueryList/change_event) и [color-scheme](https://developer.mozilla.org/en-US/docs/Web/CSS/Reference/Properties/color-scheme). Telegram request/native поведение не изменено этим релизом; его источники и scope остаются в [обзоре 0.4.0](telegram-cookbook-review.md).
 
-Логи и снимки с путями `output/…` — локальные артефакты исторических проверок. Они не входят в Git и не доступны в свежем клоне. Для текущей принятой версии смотрите [сохраненную приемку 031](v1-checks/031.json); для нового прогона выполните `python scripts/verify_pattern_packages.py`.
+Логи и снимки с путями `output/…` — локальные артефакты исторических проверок. Они не входят в Git и не доступны в свежем клоне. Для текущей принятой версии смотрите [сохраненную приемку 031](../v1-checks/031.json); для нового прогона выполните `python scripts/verify_pattern_packages.py`.

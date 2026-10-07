@@ -66,6 +66,8 @@ def route_for(name: str) -> str | None:
     path = PurePosixPath(name)
     if name == 'docs/for-agents.md':
         return 'for-agents/index.html'
+    if name == 'docs/README.md':
+        return 'docs/index.html'
     if name == 'README.en.md':
         return 'en/index.html'
     if name == 'packages/python/README.md':
@@ -120,9 +122,9 @@ class DocumentHTML(HTMLParser):
         if name.startswith('../') or name.startswith('/'):
             return None
         destination = self.source / name
-        if destination.is_dir():
+        if destination.is_dir() and name not in self.mapping:
             return f'{REPOSITORY}/tree/main/{quote(name)}'
-        if not destination.is_file():
+        if not destination.is_file() and name not in self.mapping:
             raise ValueError(f'{self.origin}: unavailable document link {target}')
         href = relative(self.mapping.get(name, 'sources/' + name), self.route)
         return href + ('?' + parsed.query if parsed.query else '') + ('#' + parsed.fragment if parsed.fragment else '')
@@ -178,6 +180,9 @@ class Builder:
         accepted = [json.loads(file.read_text(encoding='utf-8')) for file in (source / 'docs/v1-checks').glob('[0-9][0-9][0-9].json')]
         if not any(item.get('version') == self.version and item.get('passed') is True for item in accepted):
             raise ValueError('Publish documentation only for an accepted version; use a clean source snapshot')
+        # Sections, goals and sidebar entries of user pages; docs/internal is published but not navigated or searched.
+        self.navigation = json.loads((source / 'docs/navigation.json').read_text(encoding='utf-8'))
+        self.section_of = {entry['path']: section['title'] for section in self.navigation['sections'] for entry in section['pages']}
         self.skills: list[Skill] = []
         for entry in sorted((source / '.agents/skills').glob('*/SKILL.md')):
             raw = entry.read_text(encoding='utf-8')
@@ -196,14 +201,9 @@ class Builder:
         return relative(self.mapping.get(name, 'sources/' + name), route)
 
     def sidebar(self, route: str) -> str:
-        sections = [
-            ('Начало', [('index.html', 'Обзор'), ('docs/capability-map/index.html', 'Что умеет бот'), ('docs/quickstart/index.html', 'Первый запуск'), ('for-agents/index.html', 'Для ИИ-агента')]),
-            ('Библиотека', [('library/index.html', f"Группы компонентов · {len(self.components['components'])}"), ('library/python/index.html', 'Python / aiogram'), ('library/typescript/index.html', 'TypeScript / Mini Apps'), ('api/index.html', 'Справочник API'), ('docs/public-api/index.html', 'Контракты API'), ('docs/extension-model/index.html', 'Адаптеры проекта')]),
-            ('Боты', [('docs/keyboard-layouts/index.html', 'Клавиатуры и кнопки'), ('docs/message-navigation/index.html', 'Экраны и возврат'), ('docs/selection-controls/index.html', 'Выбор и подтверждение'), ('docs/dialog-fields/index.html', 'Формы и поля'), ('docs/dialog-restart/index.html', 'Состояние после рестарта'), ('docs/calendar-slots/index.html', 'Календарь и время'), ('docs/media/index.html', 'Медиа'), ('docs/profiles/index.html', 'Профили'), ('docs/inline-search/index.html', 'Inline-поиск'), ('docs/polls/index.html', 'Опросы'), ('docs/platform-operations/index.html', 'Специальные операции')]),
-            ('Практика', [('recipes/index.html', 'Галерея рецептов'), ('docs/service-bot/index.html', 'Сервисный бот'), ('docs/group-bot/index.html', 'Групповой бот'), ('docs/shop-example/index.html', 'Магазин и Mini App'), ('docs/doctor/index.html', 'Диагностика'), ('docs/error-model/index.html', 'Ошибки и восстановление')]),
-            ('Качество и развитие', [('docs/support-matrix/index.html', 'Матрица поддержки'), ('docs/telegram-api-boundaries/index.html', 'Границы Telegram API'), ('docs/versioning/index.html', 'Версии и совместимость'), ('docs/library-roadmap-100/index.html', 'План 1.0'), ('docs/evaluation/index.html', 'Сценарии проверки'), ('docs/contributing/index.html', 'Участие в проекте')]),
-            ('Все скиллы', [('skills/index.html', f'Каталог · {len(self.skills)}')] + [(f'skills/{skill.name}/index.html', skill.name.removeprefix('telegram-')) for skill in self.skills]),
-        ]
+        sections = [(section['title'], [(entry.get('route') or self.mapping[entry['path']], entry['title'])
+                                        for entry in section['pages'] if entry.get('nav')])
+                    for section in self.navigation['sections']]
         html = []
         for label, links in sections:
             html.append(f'<section class="nav-group"><p class="nav-label">{text(label)}</p>')
@@ -213,7 +213,7 @@ class Builder:
             html.append('</section>')
         return ''.join(html)
 
-    def render(self, route: str, title: str, content: str, *, section: str = 'Документация', toc: str = '', origin: str = '', summary: str = '', search_text: str = '') -> None:
+    def render(self, route: str, title: str, content: str, *, section: str = 'Документация', toc: str = '', origin: str = '', summary: str = '', search_text: str = '', searchable: bool = True) -> None:
         if route in self.pages:
             raise ValueError(f'Duplicate documentation route: {route}')
         base = relative('index.html', route).removesuffix('index.html') or './'
@@ -232,7 +232,8 @@ class Builder:
         target.parent.mkdir(parents=True, exist_ok=True)
         target.write_bytes(html.encode('utf-8'))
         self.pages[route] = title
-        self.search.append({'path': route, 'title': title, 'summary': description[:190], 'text': re.sub(r'<[^>]+>', ' ', search_text or content)[:14000]})
+        if searchable:
+            self.search.append({'path': route, 'title': title, 'summary': description[:190], 'text': re.sub(r'<[^>]+>', ' ', search_text or content)[:14000]})
 
     def markdown_page(self, name: str, skill: Skill | None = None) -> None:
         raw = (self.source / name).read_text(encoding='utf-8')
@@ -241,7 +242,11 @@ class Builder:
         title, body = title_and_body(raw, PurePosixPath(name).stem)
         md = markdown.Markdown(extensions=['tables', 'fenced_code', 'toc', 'sane_lists'], extension_configs={'toc': {'slugify': slugify_unicode, 'toc_depth': '2-3'}})
         rendered = md.convert(body)
-        parser = DocumentHTML(self.source, name, self.mapping[name], self.mapping)
+        links = self.mapping
+        if name == 'docs/README.md':  # the documentation map links generated pages through their sources
+            links = {**self.mapping, **{entry['path']: entry['route'] for section in self.navigation['sections']
+                                        for entry in section['pages'] if entry.get('route')}}
+        parser = DocumentHTML(self.source, name, self.mapping[name], links)
         parser.feed(rendered)
         content = f'<h1>{text(skill.title if skill else title)}</h1>'
         if skill:
@@ -255,7 +260,9 @@ class Builder:
                 resource_title, _ = title_and_body(file.read_text(encoding='utf-8'), file.stem)
                 content += f'<li><a href="{text(self.link(source_name, self.mapping[name]))}">{text(resource_title)}</a></li>'
             content += '</ul>'
-        self.render(self.mapping[name], skill.title if skill else title, content, section=skill.name if skill else 'Руководства', toc=md.toc, origin=name, summary=skill.description if skill else '', search_text=raw)
+        internal = name.startswith('docs/internal/')
+        section = skill.name if skill else 'Внутренние материалы' if internal else self.section_of.get(name, 'Руководства')
+        self.render(self.mapping[name], skill.title if skill else title, content, section=section, toc=md.toc, origin=name, summary=skill.description if skill else '', search_text=raw, searchable=not internal)
 
     def card(self, route: str, title: str, description: str, target: str, label: str = 'Открыть →', tag: str = '', extra: str = '') -> str:
         return f'<section class="card">{extra}<span class="card-tag">{text(tag)}</span><h3><a href="{text(relative(target, route))}">{text(title)}</a></h3><p>{text(description)}</p><a href="{text(relative(target, route))}">{text(label)}</a></section>'
@@ -346,7 +353,7 @@ class Builder:
         (self.output / '.nojekyll').write_bytes(b'')
         overview = f'# Awesome Telegram Skills\n\n> Самостоятельные AI skills и локальные Python/TypeScript-компоненты для Telegram. Принятая experimental версия {self.version}.\n\nНе считайте сайт установленным пакетом; не загружайте все материалы ради узкой задачи.\n\n## Начать\n\n- [Инструкция для ИИ-агента]({self.site_url}for-agents/): вход, установка, выбор API, требования рецепта и проверка\n- [Каталог скиллов]({self.site_url}skills/): назначение всех {len(self.skills)} навыков\n- [Компоненты]({self.site_url}library/): {len(self.components["components"])} групп\n- [API]({self.site_url}api/): точные импорты и виды exports\n- [Галерея]({self.site_url}recipes/): {len(self.recipes["recipes"])} рецептов\n- [Машинный каталог компонентов]({self.site_url}components.json)\n- [Машинный индекс API]({self.site_url}api-reference-index.json)\n\n## Скиллы\n' + ''.join(f'- [{skill.name}]({self.site_url}skills/{skill.name}/): {skill.description}\n' for skill in self.skills) + f'\n## Полный текст (по необходимости)\n\n- [llms-full.txt]({self.site_url}llms-full.txt): инструкции и guides; не обязателен для одной задачи\n'
         (self.output / 'llms.txt').write_bytes(overview.encode('utf-8'))
-        full = overview + '\n\n' + '\n\n'.join(f'---\nSource: {name}\nURL: {self.site_url + route.removesuffix("index.html")}\n\n{(self.source / name).read_text(encoding="utf-8")}' for name, route in self.mapping.items())
+        full = overview + '\n\n' + '\n\n'.join(f'---\nSource: {name}\nURL: {self.site_url + route.removesuffix("index.html")}\n\n{(self.source / name).read_text(encoding="utf-8")}' for name, route in self.mapping.items() if not name.startswith('docs/internal/'))
         (self.output / 'llms-full.txt').write_bytes(full.encode('utf-8'))
         urls = ''.join(f'<url><loc>{text(self.site_url + route.removesuffix("index.html"))}</loc></url>' for route in sorted(self.pages))
         (self.output / 'sitemap.xml').write_bytes(f'<?xml version="1.0" encoding="UTF-8"?><urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">{urls}</urlset>'.encode('utf-8'))

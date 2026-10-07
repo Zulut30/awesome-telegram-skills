@@ -12,9 +12,9 @@
 
 ## Исполняемый пример
 
-[form_bot.py](../examples/python/form_bot.py) строит реальную композицию Router + Applications.submit + SQLiteOnce. Пользователь создает только свою заявку; сервис повторно проверяет actor/private scope и значения. SQL effect и replay result сохраняются в одной transaction, sync SQLite вынесен через asyncio.to_thread. Отдельный SQLite connection создания схемы и чтения результата закрывается явно, в том числе на Windows.
+[form_bot.py](../../examples/python/form_bot.py) строит реальную композицию Router + Applications.submit + SQLiteOnce. Пользователь создает только свою заявку; сервис повторно проверяет actor/private scope и значения. SQL effect и replay result сохраняются в одной transaction, sync SQLite вынесен через asyncio.to_thread. Отдельный SQLite connection создания схемы и чтения результата закрывается явно, в том числе на Windows.
 
-[offline_form.py](../examples/python/offline_form.py) использует тот же create_app с настоящим Dispatcher и StubSession: invalid input → edit → review → submit → stale confirmation. Проверяется реальная SQLite строка, два ACK и очистка FSM. BOT_TOKEN/Telegram HTTP не нужны. Тестовый live entrypoint с BOT_TOKEN явно заменяет default command menu бота.
+[offline_form.py](../../examples/python/offline_form.py) использует тот же create_app с настоящим Dispatcher и StubSession: invalid input → edit → review → submit → stale confirmation. Проверяется реальная SQLite строка, два ACK и очистка FSM. BOT_TOKEN/Telegram HTTP не нужны. Тестовый live entrypoint с BOT_TOKEN явно заменяет default command menu бота.
 
 ## Проверка
 
@@ -24,7 +24,7 @@
 
 CLI скопировал только telegram-code-patterns в temporary project: все 5 файлов byte-identical, включая локальный form-recipes.md. Python snippet из скопированного recipe подключен к существующему Dispatcher через установленный wheel, /ping сохранился; запись появляется только после подтверждения, повтор оставляет одну строку. Отдельная проверка missing BOT_TOKEN завершилась до создания БД. SHA256 артефактов, source package files и README payload в wheel/tarball совпали с итоговым source: recipe-evidence.json (`output/pattern-library-0.3.0/recipe-evidence.json`, локальный артефакт), воспроизводимая проба (`output/pattern-library-0.3.0/check_release_evidence.py`, локальный артефакт).
 
-Структура всех 41 навыка и 16 root tests прошли. Сценарии навыка обновлены в [evaluation.md](evaluation.md); это исполнение готового recipe/contract, без нового независимого испытания решения агентом по запросу.
+Структура всех 41 навыка и 16 root tests прошли. Сценарии навыка обновлены в [evaluation.md](../evaluation.md); это исполнение готового recipe/contract, без нового независимого испытания решения агентом по запросу.
 
 | Артефакт | Bytes | SHA256 |
 | --- | --- | --- |
@@ -41,4 +41,4 @@ Form Router не выполняет durable acceptance updates, business ACL, в
 
 Для перечисленных FSM контрактов 3 октября 2026 проверены [aiogram FSM](https://docs.aiogram.dev/en/latest/dispatcher/finite_state_machine/index.html), [storage](https://docs.aiogram.dev/en/latest/dispatcher/finite_state_machine/storages.html) и [Dispatcher](https://docs.aiogram.dev/en/latest/_modules/aiogram/dispatcher/dispatcher.html). Код установленного aiogram 3.31.0 подтвердил default DisabledEventIsolation, actor-scoped storage key и чтение raw_state после взятия lock. Общая дата источников других компонентов не обновлялась.
 
-Логи и снимки с путями `output/…` — локальные артефакты исторических проверок. Они не входят в Git и не доступны в свежем клоне. Для текущей принятой версии смотрите [сохраненную приемку 031](v1-checks/031.json); для нового прогона выполните `python scripts/verify_pattern_packages.py`.
+Логи и снимки с путями `output/…` — локальные артефакты исторических проверок. Они не входят в Git и не доступны в свежем клоне. Для текущей принятой версии смотрите [сохраненную приемку 031](../v1-checks/031.json); для нового прогона выполните `python scripts/verify_pattern_packages.py`.

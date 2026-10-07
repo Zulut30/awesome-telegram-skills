@@ -32,8 +32,8 @@ SQLite callback остается доверенным кодом приложе�
 | Публичные types/CSS | Реальный Mini App example прошел strict typecheck против установленных declarations; CSS subpath читается из пакета | Typecheck (`output/pattern-library-0.1.1/consumer-typecheck.log`, локальный артефакт), CSS (`output/pattern-library-0.1.1/packaged-style.log`, локальный артефакт) |
 | Browser UI | 141 assertion, 14 viewport/theme cases на Chrome 154.0.8037.97; 14 screenshots | JSON (`output/pattern-library-0.1.1/browser/report.json`, локальный артефакт), component contract (`output/pattern-library-0.1.1/browser/component-contract.json`, локальный артефакт) |
 | Переносимый навык | CLI скопировал только telegram-code-patterns в новый временный проект, все три файла совпали побайтово, local reference на месте | Копирование (`output/pattern-library-0.1.1/skill-install.json`, локальный артефакт) |
-| Метаданные/ссылки набора | 41/41 навык, frontmatter/UI metadata, переносимые local references и Python syntax прошли валидатор | [validate_skills.py](../scripts/validate_skills.py) |
-| Помощники набора | 16/16 root tests установщика/индекса, без пропусков | Команда ниже, [tests](../tests) |
+| Метаданные/ссылки набора | 41/41 навык, frontmatter/UI metadata, переносимые local references и Python syntax прошли валидатор | [validate_skills.py](../../scripts/validate_skills.py) |
+| Помощники набора | 16/16 root tests установщика/индекса, без пропусков | Команда ниже, [tests](../../tests) |
 
 Финальный consumer run использовал Python 3.13.12, aiogram 3.31.0, Node 24.19.0, npm 12.0.2, TypeScript 7.0.2, Playwright 1.63.0, uv 0.12.3. Это проверенная среда выпуска; все поддерживаемые версии Python/Node отдельно не прогонялись.
 
@@ -59,7 +59,7 @@ uv run --with "PyYAML>=6,<7" python scripts/validate_skills.py
 python -m unittest discover -s tests -v
 ```
 
-[Помощник проверки](../scripts/verify_pattern_packages.py) действительно собирает и устанавливает пакеты в свежие окружения, выполняет примеры/тесты и сохраняет логи каждого этапа. Нужны Python >=3.11, uv, Node/npm и установленный Chrome; можно задать CHROME_PATH. Артефакты лежат в output/pattern-library-0.1.1/dist. Consumer-проекты остаются по пути из JSON для просмотра; helper не удаляет чужие каталоги.
+[Помощник проверки](../../scripts/verify_pattern_packages.py) действительно собирает и устанавливает пакеты в свежие окружения, выполняет примеры/тесты и сохраняет логи каждого этапа. Нужны Python >=3.11, uv, Node/npm и установленный Chrome; можно задать CHROME_PATH. Артефакты лежат в output/pattern-library-0.1.1/dist. Consumer-проекты остаются по пути из JSON для просмотра; helper не удаляет чужие каталоги.
 
 Опция --skip-browser явно записывает browser=skipped. Она проверяет пакетную поставку, UI требует отдельного запуска. Повторный запуск строит новые артефакты и обновляет отчет текущей версии; при несовпадении версий/каталога или неуспешном этапе проверка завершается ошибкой. Исторические артефакты/отчеты 0.1.0 сохранены отдельно.
 
@@ -69,6 +69,6 @@ python -m unittest discover -s tests -v
 
 Живой Telegram, физические телефоны/планшеты/ПК с Telegram, настоящая soft keyboard, screen reader, payments и native permissions не проверялись. Browser viewport подтверждает локальную геометрию/ввод/темы; реальная inset policy и theme contrast требуют проверки целевых клиентов. Profile/MTProto/payment provider adapters не добавлялись. Mini App example по-прежнему использует loopback mock backend, память и fixture actor; production session/ACL и durable unknown-operation recovery остаются у приложения.
 
-Первичные источники и точный контракт 0.1.1 указаны в [Python README](../packages/python/README.md), [TypeScript README](../packages/typescript/README.md) и [sources.md](sources.md). Дата относится только к перечисленным проверенным контрактам.
+Первичные источники и точный контракт 0.1.1 указаны в [Python README](../../packages/python/README.md), [TypeScript README](../../packages/typescript/README.md) и [sources.md](../sources.md). Дата относится только к перечисленным проверенным контрактам.
 
-Логи и снимки с путями `output/…` — локальные артефакты исторических проверок. Они не входят в Git и не доступны в свежем клоне. Для текущей принятой версии смотрите [сохраненную приемку 031](v1-checks/031.json); для нового прогона выполните `python scripts/verify_pattern_packages.py`.
+Логи и снимки с путями `output/…` — локальные артефакты исторических проверок. Они не входят в Git и не доступны в свежем клоне. Для текущей принятой версии смотрите [сохраненную приемку 031](../v1-checks/031.json); для нового прогона выполните `python scripts/verify_pattern_packages.py`.

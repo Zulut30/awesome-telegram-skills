@@ -50,39 +50,39 @@ Backend-аудитор отдельно перечитал семь измене
 
 | Навык | Оценка и существенная особенность |
 | --- | --- |
-| [telegram-bot-api](../.agents/skills/telegram-bot-api/SKILL.md) | Качественный: поиск по API и сверка SDK, ограничения и ошибки доставки. |
-| [telegram-bot-python](../.agents/skills/telegram-bot-python/SKILL.md) | Качественный, уточнен: альтернативные библиотеки, lifecycle и риск polling ACK. |
-| [telegram-business-bots](../.agents/skills/telegram-business-bots/SKILL.md) | Качественный: connection/rights/revoke, ограниченные чаты, изоляция владельцев. |
-| [telegram-buttons](../.agents/skills/telegram-buttons/SKILL.md) | Качественный: оформление, entitlement, payload SDK и действие кнопки. |
-| [telegram-cryptopay](../.agents/skills/telegram-cryptopay/SKILL.md) | Качественный: raw-body HMAC, invoice dedup, режим валюты; давность источника обозначена. |
-| [telegram-debugging](../.agents/skills/telegram-debugging/SKILL.md) | Качественный: локализация конкретного сбоя и проверка подтвержденной причины. |
-| [telegram-deploy](../.agents/skills/telegram-deploy/SKILL.md) | Качественный, исправлен: надежный прием рассмотрен для webhook и polling. |
-| [telegram-dialogs](../.agents/skills/telegram-dialogs/SKILL.md) | Качественный, исправлен: версии состояния, старые кнопки и явный callback ACK. |
-| [telegram-groups](../.agents/skills/telegram-groups/SKILL.md) | Качественный: права бота/инициатора, темы, анонимность и миграция чата. |
-| [telegram-inline-mode](../.agents/skills/telegram-inline-mode/SKILL.md) | Качественный: отдельный inline_query, cursor и персональный кеш. |
-| [telegram-library-selection](../.agents/skills/telegram-library-selection/SKILL.md) | Качественный: первичные источники, совместимость и сохранение выбранного SDK. |
-| [telegram-localization](../.agents/skills/telegram-localization/SKILL.md) | Качественный, исправлен: locale/timezone/валюта разделены; проверки учитывают Python-only задачу. |
-| [telegram-mini-app-architecture](../.agents/skills/telegram-mini-app-architecture/SKILL.md) | Качественный, исправлен: границы, состояние, восстановление и соразмерный план/реализация. |
-| [telegram-mini-app-auth](../.agents/skills/telegram-mini-app-auth/SKILL.md) | Качественный: HMAC/Ed25519 разделены, дубли/freshness и права не подменены подписью. |
-| [telegram-mini-app-design-system](../.agents/skills/telegram-mini-app-design-system/SKILL.md) | Качественный: контракты компонентов, семантика, focus, токены и реальные экраны. |
-| [telegram-mini-app-device-qa](../.agents/skills/telegram-mini-app-device-qa/SKILL.md) | Качественный: версии/launch/evidence и честные blocked/not-run для отсутствующей среды. |
-| [telegram-mini-app-integration](../.agents/skills/telegram-mini-app-integration/SKILL.md) | Качественный: канал ответа зависит от запуска; общий серверный объект. |
-| [telegram-mini-app-native-capabilities](../.agents/skills/telegram-mini-app-native-capabilities/SKILL.md) | Качественный: version/availability/init, callback semantics и полезный fallback. |
-| [telegram-mini-app-performance](../.agents/skills/telegram-mini-app-performance/SKILL.md) | Качественный: baseline, сопоставимое измерение и разграничение метрик. |
-| [telegram-mini-app-typescript](../.agents/skills/telegram-mini-app-typescript/SKILL.md) | Качественный, формулировка уточнена: adapter, runtime JSON и публичная конфигурация. |
-| [telegram-mini-app-ui](../.agents/skills/telegram-mini-app-ui/SKILL.md) | Качественный: визуальная система, responsive, insets и доступность. |
-| [telegram-notifications](../.agents/skills/telegram-notifications/SKILL.md) | Качественный, исправлен: dispatch gate, отмена, lease и политика неизвестной доставки. |
-| [telegram-observability](../.agents/skills/telegram-observability/SKILL.md) | Качественный: корреляция, конечный output, ограниченные labels и отказ sink. |
-| [telegram-payment-provider](../.agents/skills/telegram-payment-provider/SKILL.md) | Качественный: adapter отражает capabilities и собственный протокол провайдера. |
-| [telegram-payments](../.agents/skills/telegram-payments/SKILL.md) | Качественный, исправлен: товар/Stars/provider, выдача, продление и условия покупки. |
-| [telegram-platega](../.agents/skills/telegram-platega/SKILL.md) | Качественный, исправлен: transaction и subscription/charge разделены; неполная ветка обозначена. |
-| [telegram-profiles](../.agents/skills/telegram-profiles/SKILL.md) | Качественный, исправлен: маршруты профиля и реальные BusinessBotRights. |
-| [telegram-project-planner](../.agents/skills/telegram-project-planner/SKILL.md) | Качественный, редакторская правка: MVP и выбор формы продукта без обязательной инфраструктуры. |
-| [telegram-python-backend](../.agents/skills/telegram-python-backend/SKILL.md) | Качественный: права, scoped idempotency, DB constraints, миграции и concurrent sessions. |
-| [telegram-security-review](../.agents/skills/telegram-security-review/SKILL.md) | Качественный, уточнен: фактические границы доверия и разные webhook protocols. |
-| [telegram-testing](../.agents/skills/telegram-testing/SKILL.md) | Качественный: значимые инварианты, реальные гонки и разделение уровней доказательств. |
-| [telegram-user-client](../.agents/skills/telegram-user-client/SKILL.md) | Качественный: user session, allowlist/history/checkpoints без скрытых действий аккаунта. |
-| [telegram-yookassa](../.agents/skills/telegram-yookassa/SKILL.md) | Качественный, исправлен: capture/status/authenticity и ограниченная provider idempotency. |
+| [telegram-bot-api](../../.agents/skills/telegram-bot-api/SKILL.md) | Качественный: поиск по API и сверка SDK, ограничения и ошибки доставки. |
+| [telegram-bot-python](../../.agents/skills/telegram-bot-python/SKILL.md) | Качественный, уточнен: альтернативные библиотеки, lifecycle и риск polling ACK. |
+| [telegram-business-bots](../../.agents/skills/telegram-business-bots/SKILL.md) | Качественный: connection/rights/revoke, ограниченные чаты, изоляция владельцев. |
+| [telegram-buttons](../../.agents/skills/telegram-buttons/SKILL.md) | Качественный: оформление, entitlement, payload SDK и действие кнопки. |
+| [telegram-cryptopay](../../.agents/skills/telegram-cryptopay/SKILL.md) | Качественный: raw-body HMAC, invoice dedup, режим валюты; давность источника обозначена. |
+| [telegram-debugging](../../.agents/skills/telegram-debugging/SKILL.md) | Качественный: локализация конкретного сбоя и проверка подтвержденной причины. |
+| [telegram-deploy](../../.agents/skills/telegram-deploy/SKILL.md) | Качественный, исправлен: надежный прием рассмотрен для webhook и polling. |
+| [telegram-dialogs](../../.agents/skills/telegram-dialogs/SKILL.md) | Качественный, исправлен: версии состояния, старые кнопки и явный callback ACK. |
+| [telegram-groups](../../.agents/skills/telegram-groups/SKILL.md) | Качественный: права бота/инициатора, темы, анонимность и миграция чата. |
+| [telegram-inline-mode](../../.agents/skills/telegram-inline-mode/SKILL.md) | Качественный: отдельный inline_query, cursor и персональный кеш. |
+| [telegram-library-selection](../../.agents/skills/telegram-library-selection/SKILL.md) | Качественный: первичные источники, совместимость и сохранение выбранного SDK. |
+| [telegram-localization](../../.agents/skills/telegram-localization/SKILL.md) | Качественный, исправлен: locale/timezone/валюта разделены; проверки учитывают Python-only задачу. |
+| [telegram-mini-app-architecture](../../.agents/skills/telegram-mini-app-architecture/SKILL.md) | Качественный, исправлен: границы, состояние, восстановление и соразмерный план/реализация. |
+| [telegram-mini-app-auth](../../.agents/skills/telegram-mini-app-auth/SKILL.md) | Качественный: HMAC/Ed25519 разделены, дубли/freshness и права не подменены подписью. |
+| [telegram-mini-app-design-system](../../.agents/skills/telegram-mini-app-design-system/SKILL.md) | Качественный: контракты компонентов, семантика, focus, токены и реальные экраны. |
+| [telegram-mini-app-device-qa](../../.agents/skills/telegram-mini-app-device-qa/SKILL.md) | Качественный: версии/launch/evidence и честные blocked/not-run для отсутствующей среды. |
+| [telegram-mini-app-integration](../../.agents/skills/telegram-mini-app-integration/SKILL.md) | Качественный: канал ответа зависит от запуска; общий серверный объект. |
+| [telegram-mini-app-native-capabilities](../../.agents/skills/telegram-mini-app-native-capabilities/SKILL.md) | Качественный: version/availability/init, callback semantics и полезный fallback. |
+| [telegram-mini-app-performance](../../.agents/skills/telegram-mini-app-performance/SKILL.md) | Качественный: baseline, сопоставимое измерение и разграничение метрик. |
+| [telegram-mini-app-typescript](../../.agents/skills/telegram-mini-app-typescript/SKILL.md) | Качественный, формулировка уточнена: adapter, runtime JSON и публичная конфигурация. |
+| [telegram-mini-app-ui](../../.agents/skills/telegram-mini-app-ui/SKILL.md) | Качественный: визуальная система, responsive, insets и доступность. |
+| [telegram-notifications](../../.agents/skills/telegram-notifications/SKILL.md) | Качественный, исправлен: dispatch gate, отмена, lease и политика неизвестной доставки. |
+| [telegram-observability](../../.agents/skills/telegram-observability/SKILL.md) | Качественный: корреляция, конечный output, ограниченные labels и отказ sink. |
+| [telegram-payment-provider](../../.agents/skills/telegram-payment-provider/SKILL.md) | Качественный: adapter отражает capabilities и собственный протокол провайдера. |
+| [telegram-payments](../../.agents/skills/telegram-payments/SKILL.md) | Качественный, исправлен: товар/Stars/provider, выдача, продление и условия покупки. |
+| [telegram-platega](../../.agents/skills/telegram-platega/SKILL.md) | Качественный, исправлен: transaction и subscription/charge разделены; неполная ветка обозначена. |
+| [telegram-profiles](../../.agents/skills/telegram-profiles/SKILL.md) | Качественный, исправлен: маршруты профиля и реальные BusinessBotRights. |
+| [telegram-project-planner](../../.agents/skills/telegram-project-planner/SKILL.md) | Качественный, редакторская правка: MVP и выбор формы продукта без обязательной инфраструктуры. |
+| [telegram-python-backend](../../.agents/skills/telegram-python-backend/SKILL.md) | Качественный: права, scoped idempotency, DB constraints, миграции и concurrent sessions. |
+| [telegram-security-review](../../.agents/skills/telegram-security-review/SKILL.md) | Качественный, уточнен: фактические границы доверия и разные webhook protocols. |
+| [telegram-testing](../../.agents/skills/telegram-testing/SKILL.md) | Качественный: значимые инварианты, реальные гонки и разделение уровней доказательств. |
+| [telegram-user-client](../../.agents/skills/telegram-user-client/SKILL.md) | Качественный: user session, allowlist/history/checkpoints без скрытых действий аккаунта. |
+| [telegram-yookassa](../../.agents/skills/telegram-yookassa/SKILL.md) | Качественный, исправлен: capture/status/authenticity и ограниченная provider idempotency. |
 
 ## Проверки этого прохода
 
@@ -114,6 +114,6 @@ uv run --with "aiogram==3.31.0" python -X utf8 polling_probe.py
 
 Реальные Android/iOS/планшеты, Telegram Desktop/Web, клавиатура, native permissions, платежные sandbox и живые аккаунты здесь не испытывались. Нет нового свежего Telegram initData vector или исполняемой Ed25519 проверки. Офлайн-модели не измеряют красоту, мобильную производительность или качество конкретного production приложения.
 
-Прямая документация Crypto Pay снова вернула 403; проверка использовала индексированную официальную страницу с обозначенной давностью. Тело Platega callback статуса подписки получить не удалось: перед использованием этой ветки нужна текущая схема. Эти границы сохранены в навыках и [sources.md](sources.md); неизвестные поля не были придуманы.
+Прямая документация Crypto Pay снова вернула 403; проверка использовала индексированную официальную страницу с обозначенной давностью. Тело Platega callback статуса подписки получить не удалось: перед использованием этой ветки нужна текущая схема. Эти границы сохранены в навыках и [sources.md](../sources.md); неизвестные поля не были придуманы.
 
-Логи и снимки с путями `output/…` — локальные артефакты исторических проверок. Они не входят в Git и не доступны в свежем клоне. Для текущей принятой версии смотрите [сохраненную приемку 031](v1-checks/031.json); для нового прогона выполните `python scripts/verify_pattern_packages.py`.
+Логи и снимки с путями `output/…` — локальные артефакты исторических проверок. Они не входят в Git и не доступны в свежем клоне. Для текущей принятой версии смотрите [сохраненную приемку 031](../v1-checks/031.json); для нового прогона выполните `python scripts/verify_pattern_packages.py`.

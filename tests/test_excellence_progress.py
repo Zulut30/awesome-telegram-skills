@@ -5,8 +5,8 @@ import unittest
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
-PLAN = ROOT / 'docs/excellence-plan-100.md'
-PROGRESS = ROOT / 'docs/excellence-progress.json'
+PLAN = ROOT / 'docs/internal/excellence-plan-100.md'
+PROGRESS = ROOT / 'docs/internal/excellence-progress.json'
 
 
 class ExcellenceProgressTests(unittest.TestCase):

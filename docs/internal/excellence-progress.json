@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "plan": "docs/excellence-plan-100.md",
+  "plan": "docs/internal/excellence-plan-100.md",
   "baseline_commit": "042d786",
   "completion_rule": "Пункт done только после проверки его критерия «Готово». Если критерий требует внешнего действия (люди, устройства, учетные записи), статус partial и поле remaining описывает остаток.",
   "items": [
@@ -1166,9 +1166,14 @@
     {
       "id": 91,
       "title": "Структура документации",
-      "status": "pending",
-      "commit_subject": null,
-      "evidence": [],
+      "status": "done",
+      "commit_subject": "excellence(091): Organize documentation into four sections with goals and move internal material to docs/internal",
+      "evidence": [
+        "24 internal documents (plans, registries, research, version reviews, skill audits) moved to docs/internal with an index; every reference rewritten",
+        "docs/navigation.json assigns each of 68 user pages to learn, how-to, reference or explanation with a goal; scripts/build_docs_map.py renders docs/README.md (site docs/index.html) and checks coverage, internal exclusion, goals and the 25-page sidebar limit; --check runs in the generated-files CI job",
+        "Site sidebar built from the manifest: 25 links in four sections; internal pages published but excluded from navigation, search and llms-full.txt; breadcrumbs show the section",
+        "Site build, verify_docs_site and docs-browser (232 checks) pass; tests/test_docs_structure.py and a site sidebar test added; 163 root and 579 library unit tests pass"
+      ],
       "remaining": null
     },
     {
