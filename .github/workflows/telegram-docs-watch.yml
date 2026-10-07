@@ -1,8 +1,9 @@
 name: Telegram docs watch
 
-# Weekly: rebuild the Bot API index from core.telegram.org and compare its content (version,
-# methods, types, field names) with the committed one. The page hash changes on every rebuild,
-# so it is not compared. A real change opens one issue per distinct change (digest in the title).
+# Weekly: rebuild the Bot API and Mini Apps indexes from core.telegram.org and compare their content
+# (Bot API: version, methods, types, field names; Mini Apps: methods and events with min_version,
+# properties) with the committed ones. The page hash changes on every rebuild, so it is not compared.
+# A real change opens one issue per distinct change (digest in the title).
 on:
   schedule:
     - cron: '17 6 * * 1'
@@ -43,6 +44,37 @@ jobs:
           existing=$(gh issue list --repo "$GITHUB_REPOSITORY" --state all --search "$DIGEST in:title" --json number --jq length)
           if [ "$existing" = "0" ]; then
             gh issue create --repo "$GITHUB_REPOSITORY" --title "$TITLE" --body-file "$RUNNER_TEMP/bot-api-issue.md"
+          else
+            echo "An issue for change $DIGEST already exists."
+          fi
+
+  mini-app:
+    name: Mini Apps index
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    permissions:
+      contents: read
+      issues: write
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97 # v7.0.0
+        with:
+          python-version: '3.13'
+      - run: python scripts/mini_app_index.py --output "$RUNNER_TEMP/mini-app-index.json"
+      - id: diff
+        run: >-
+          python scripts/diff_mini_app_index.py catalog/mini-app-index.json "$RUNNER_TEMP/mini-app-index.json"
+          --markdown "$RUNNER_TEMP/mini-app-issue.md" --github-output "$GITHUB_OUTPUT"
+      - name: Open an issue for a new change
+        if: steps.diff.outputs.changed == 'true'
+        env:
+          GH_TOKEN: ${{ github.token }}
+          TITLE: ${{ steps.diff.outputs.title }}
+          DIGEST: ${{ steps.diff.outputs.digest }}
+        run: |
+          existing=$(gh issue list --repo "$GITHUB_REPOSITORY" --state all --search "$DIGEST in:title" --json number --jq length)
+          if [ "$existing" = "0" ]; then
+            gh issue create --repo "$GITHUB_REPOSITORY" --title "$TITLE" --body-file "$RUNNER_TEMP/mini-app-issue.md"
           else
             echo "An issue for change $DIGEST already exists."
           fi

@@ -652,9 +652,14 @@
     {
       "id": 52,
       "title": "То же для Mini Apps",
-      "status": "pending",
-      "commit_subject": null,
-      "evidence": [],
+      "status": "done",
+      "commit_subject": "excellence(052): watch the Mini Apps page weekly and report new methods and events",
+      "evidence": [
+        "scripts/mini_app_index.py: разбор страницы Mini Apps без зависимостей (строгий режим для сборки каталога, режим сверки для неизвестных модулей); build_telegram_catalog.py --check и build_recipe_gallery.py --check дают прежний результат",
+        "scripts/diff_mini_app_index.py: методы и события с min_version, свойства; markdown issue и GITHUB_OUTPUT; задача mini-app в .github/workflows/telegram-docs-watch.yml",
+        "Живая страница 2026-10-07: найдены Serverless.call (версия не указана) и WebApp.Serverless; повторный разбор той же страницы — без изменений; находка записана в журнал docs/sources.md",
+        "tests/test_api_watch.py: 3 теста Mini Apps (новый модуль и событие с версиями, перестроенная страница, CLI и workflow)"
+      ],
       "remaining": null
     },
     {

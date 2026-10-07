@@ -60,7 +60,7 @@ def markdown(result: dict, source: str) -> str:
     version = result['version']
     lines = [f'Еженедельная сверка [{source}]({source}) нашла изменения в индексе Bot API.', '',
              f'- Версия: {version["old"]} → {version["new"]}',
-             f'- Сейчас: {result["counts"]["methods"]} методов, {result["counts"]["types"]} типов', '']
+             f'- Сейчас методов: {result["counts"]["methods"]}, типов: {result["counts"]["types"]}', '']
     for key, label in (('added_methods', 'Новые методы'), ('added_types', 'Новые типы'),
                        ('removed_methods', 'Удаленные методы'), ('removed_types', 'Удаленные типы')):
         if result[key]:
