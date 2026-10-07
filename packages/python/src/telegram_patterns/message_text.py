@@ -225,21 +225,47 @@ def _cuts(text: str, positions: Sequence[int]) -> list[int]:
 
 
 def split_formatted(value: FormattedText, *, limit: int = 4096) -> tuple[FormattedText, ...]:
-    """Lossless text partition; clip styles/code and retain whole links/quotes/custom emoji."""
+    """Lossless partition into sendable parts; clip styles/code, keep links/quotes/emoji whole.
+
+    Prefers a break after a newline, then after whitespace, once at least half of the
+    window is used. A whitespace-only part joins a neighbour; when no arrangement can
+    make every part sendable, ValueError is raised instead of losing text.
+    """
     if not isinstance(value, FormattedText):
         raise TypeError('Expected FormattedText')
     _limit(limit)
-    positions = _positions(value.text)
+    text = value.text
+    positions = _positions(text)
     indices = {position: index for index, position in enumerate(positions)}
-    cuts = _cuts(value.text, positions)
+    total = positions[-1]
+    cuts = _cuts(text, positions)
     atomic = [e for e in value.entities if e.kind in _ATOMIC]
     if any(e.length > limit for e in atomic):
         raise ValueError('An atomic link, quote or emoji exceeds the chunk limit')
     starts = [e.offset for e in atomic]
-    chunks: list[FormattedText] = []
-    start = 0
-    while start < positions[-1]:
+    content = [0]  # non-whitespace scalars before each scalar index
+    for char in text:
+        content.append(content[-1] + (not char.isspace()))
+
+    def has_content(a: int, b: int) -> bool:
+        return content[indices[b]] > content[indices[a]]
+
+    def inside_atomic(cut: int) -> bool:
+        return any(e.offset < cut < e.offset + e.length for e in atomic)
+
+    newline_cuts = [c for c in cuts if c and text[indices[c]-1] == '\n']
+    space_cuts = [c for c in cuts if c and text[indices[c]-1].isspace()]
+    bounds = [0]
+    while bounds[-1] < total:
+        start = bounds[-1]
         end = cuts[bisect_right(cuts, start + limit)-1]
+        if end < total:
+            floor = start + max(1, limit // 2)
+            for preferred in (newline_cuts, space_cuts):
+                index = bisect_right(preferred, end) - 1
+                if index >= 0 and preferred[index] >= floor and has_content(start, preferred[index]):
+                    end = preferred[index]
+                    break
         while end > start:
             index = bisect_right(starts, end-1)-1
             if index < 0 or end >= atomic[index].offset + atomic[index].length:
@@ -247,14 +273,54 @@ def split_formatted(value: FormattedText, *, limit: int = 4096) -> tuple[Formatt
             end = cuts[bisect_right(cuts, atomic[index].offset)-1]
         if end <= start:
             raise ValueError('A preserved Unicode sequence exceeds the chunk limit')
-        entities = tuple(replace(e, offset=max(e.offset,start)-start,
+        if len(bounds) > 256:
+            raise ValueError('Composition exceeds the local 256-chunk bound')
+        bounds.append(end)
+
+    def valid(a: int, b: int) -> bool:
+        return b - a <= limit and has_content(a, b)
+
+    index = 0
+    while index < len(bounds) - 1:
+        a, b = bounds[index], bounds[index+1]
+        if has_content(a, b):
+            index += 1
+            continue
+        if index > 0 and valid(bounds[index-1], b):  # join the previous part
+            del bounds[index]
+            index -= 1
+            continue
+        if index + 2 < len(bounds) and valid(a, bounds[index+2]):  # join the next part
+            del bounds[index+1]
+            continue
+        moved = False
+        if index > 0:  # take the tail of the previous part
+            for cut in reversed(cuts[bisect_right(cuts, bounds[index-1]):bisect_right(cuts, a-1)]):
+                if b - cut > limit:
+                    break
+                if not inside_atomic(cut) and has_content(bounds[index-1], cut) and has_content(cut, a):
+                    bounds[index] = cut
+                    moved = True
+                    break
+        if not moved and index + 2 < len(bounds):  # take the head of the next part
+            following = bounds[index+2]
+            for cut in cuts[bisect_right(cuts, b):bisect_right(cuts, following-1)]:
+                if cut - a > limit:
+                    break
+                if not inside_atomic(cut) and has_content(b, cut) and has_content(cut, following):
+                    bounds[index+1] = cut
+                    moved = True
+                    break
+        if not moved:
+            raise ValueError('A whitespace-only part cannot be sent within the chunk limit; trim the composition')
+    chunks: list[FormattedText] = []
+    for start, end in zip(bounds, bounds[1:]):
+        # Clipping nested ranges of one style can produce identical entities; they are equivalent.
+        entities = tuple(dict.fromkeys(replace(e, offset=max(e.offset,start)-start,
             length=min(e.offset+e.length,end)-max(e.offset,start)) for e in value.entities
-            if e.offset < end and e.offset+e.length > start)
-        chunk = FormattedText(value.text[indices[start]:indices[end]], entities)
+            if e.offset < end and e.offset+e.length > start))
+        chunk = FormattedText(text[indices[start]:indices[end]], entities)
         if len(chunk.entities) > 100:
             raise ValueError('A chunk exceeds the local 100-entity bound; compose smaller sections')
-        if len(chunks) >= 256:
-            raise ValueError('Composition exceeds the local 256-chunk bound')
         chunks.append(chunk)
-        start = end
     return tuple(chunks)

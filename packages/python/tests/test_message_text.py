@@ -151,7 +151,10 @@ class MessageTextTests(unittest.TestCase):
         with self.assertRaises(ValueError): MessageBuilder().style('x'*4097,'text_link',url='https://example.com').build().split()
 
     def test_common_unicode_sequences_not_cut(self):
-        sequences=['e\u0301','👨‍👩‍👧‍👦','👍🏽','🇵🇱','1\ufe0f\u20e3','\r\n','🏴\U000e0067\U000e0062\U000e007f']
+        sequences=['e\u0301','👨‍👩‍👧‍👦','👍🏽','🇵🇱','1\ufe0f\u20e3','🏴\U000e0067\U000e0062\U000e007f']
+        # CRLF is never cut; alone it would be an unsendable whitespace-only part.
+        self.assertEqual([p.text for p in FormattedText('a\r\nb').split(limit=3)],['a\r\n','b'])
+        with self.assertRaises(ValueError): FormattedText('a\r\nb').split(limit=2)
         for sequence in sequences:
             with self.subTest(sequence=sequence):
                 limit=utf16_length(sequence)
@@ -185,6 +188,59 @@ class MessageTextTests(unittest.TestCase):
             after={};shift=0
             for chunk in chunks:
                 json.dumps(chunk.as_kwargs(),ensure_ascii=False).encode('utf-8')
+                after.update({unit+shift:styles for unit,styles in covered(chunk).items()})
+                shift+=utf16_length(chunk.text)
+            self.assertEqual(covered(value),after,case)
+
+    def test_clipped_nested_same_style_is_deduplicated(self):
+        for entities in ((TextEntity('bold',0,10),TextEntity('bold',0,5)),(TextEntity('bold',0,10),TextEntity('bold',5,5))):
+            value=FormattedText('a'*10,entities)
+            chunks=value.split(limit=5)
+            self.assertEqual([c.text for c in chunks],['a'*5,'a'*5])
+            self.assertTrue(all(c.entities==(TextEntity('bold',0,5),) for c in chunks))
+
+    def test_breaks_prefer_newline_then_space_and_never_send_whitespace_only(self):
+        self.assertEqual([c.text for c in FormattedText('hello world foo').split(limit=8)],['hello ','world ','foo'])
+        self.assertEqual([c.text for c in FormattedText('ab\ncd ef gh').split(limit=8)],['ab\ncd ','ef gh'])
+        self.assertEqual([c.text for c in FormattedText('line one\nline two').split(limit=12)],['line one\n','line two'])
+        parts=FormattedText('x'*4096+'\n').split()
+        self.assertEqual([utf16_length(p.text) for p in parts],[4095,2])
+        self.assertTrue(all(p.as_kwargs() for p in parts))
+        self.assertEqual([p.text for p in FormattedText('\n'+'x'*4096).split()],['\n'+'x'*4095,'x'])
+        self.assertEqual([utf16_length(p.text) for p in FormattedText('x'+' '*5000+'y').split()],[4096,906])
+        for impossible in (' '*5000+'x','x'+' '*5000,'x'+' '*9000+'y'):
+            with self.subTest(size=len(impossible)),self.assertRaises(ValueError): FormattedText(impossible).split()
+        # A whitespace part next to an atomic link moves into a neighbour without cutting the link.
+        value=MessageBuilder().text('abc  ').style('LINK','text_link',url='https://example.com').build()
+        self.assertEqual([c.text for c in value.split(limit=5)],['abc  ','LINK'])
+        value=MessageBuilder().text('abcd  ').style('LINKS','text_link',url='https://example.com').build()
+        self.assertEqual([c.text for c in value.split(limit=5)],['abc','d  ','LINKS'])
+
+    def test_ten_thousand_random_compositions_split_into_sendable_lossless_parts(self):
+        rng=random.Random(70001)
+        alphabet=('a','b','Я','😀','e\u0301','👍🏽',' ',' ','\n','\t')
+        for case in range(10_000):
+            limit=rng.randint(8,48)
+            words=[]
+            while sum(map(len,words))<rng.randint(1,180):
+                token=''.join(rng.choice(alphabet[:6]) for _ in range(rng.randint(1,6)))
+                words.append(token+rng.choice((' ','\n',' \n','  ','')))
+            text=''.join(words)
+            size=utf16_length(text)
+            entities=[]
+            for _ in range(rng.randint(0,6)):
+                offset=rng.randint(0,max(0,size-1));length=rng.randint(1,size-offset)
+                candidate=TextEntity(rng.choice(('bold','italic','spoiler','bold')),offset,length)
+                try: FormattedText(text,tuple(entities+[candidate]))
+                except ValueError: continue
+                entities.append(candidate)
+            value=FormattedText(text,tuple(entities))
+            chunks=value.split(limit=limit)
+            self.assertEqual(''.join(c.text for c in chunks),text,case)
+            after={};shift=0
+            for chunk in chunks:
+                self.assertLessEqual(utf16_length(chunk.text),limit,case)
+                chunk.as_kwargs(limit=limit)  # sendable: content, size and entity bounds
                 after.update({unit+shift:styles for unit,styles in covered(chunk).items()})
                 shift+=utf16_length(chunk.text)
             self.assertEqual(covered(value),after,case)

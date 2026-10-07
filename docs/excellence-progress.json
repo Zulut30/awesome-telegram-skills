@@ -82,9 +82,14 @@
     {
       "id": 7,
       "title": "Исправить разбиение длинного текста",
-      "status": "pending",
-      "commit_subject": null,
-      "evidence": [],
+      "status": "done",
+      "commit_subject": "excellence(007): split formatted text into sendable parts",
+      "evidence": [
+        "10 000 случайных композиций (seed 70001, лимиты 8..48, вложенные стили): каждая часть <= лимита, as_kwargs проходит, склейка == исходник, покрытие стилей сохранено",
+        "дедупликация bold(0,10)+bold(0,5)/bold(5,5); 'x'*4096+'\\n' -> [4095,2]; невозможные пробельные серии -> ValueError",
+        "4 новых/измененных теста падают на прежней реализации; test_message_text + sdk: 30 OK",
+        "core_message_text пример, run-recipe demo-message-text --offline, build_* --check: passed"
+      ],
       "remaining": null
     },
     {
