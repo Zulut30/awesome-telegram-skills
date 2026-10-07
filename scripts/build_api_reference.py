@@ -5,7 +5,11 @@ import ast
 import hashlib
 import json
 from pathlib import Path
+import sys
 import re
+
+sys.path.insert(0, str(Path(__file__).resolve().parent))  # shared helpers live next to this script
+from _environment import planted_link  # noqa: E402
 
 ROOT = Path(__file__).resolve().parents[1]
 SPEC = ROOT / 'catalog/api-reference.json'
@@ -78,10 +82,10 @@ def build() -> tuple[dict[str, str], dict]:
             raise ValueError('Invalid/duplicate reference recipe')
         groups.add(identifier)
         supplied = ROOT / group['example']
-        if any(p.is_symlink() or bool(getattr(p, 'is_junction', lambda: False)()) for p in (supplied, *supplied.parents)):
+        if any(planted_link(p) for p in (supplied, *supplied.parents)):
             raise ValueError('Reference source links are not allowed')
         path = supplied.resolve(strict=True)
-        if not path.is_relative_to(ROOT / 'examples/api-reference'):
+        if not path.is_relative_to((ROOT / 'examples/api-reference').resolve()):
             raise ValueError('Reference example path escaped owned directory')
         code = path.read_text(encoding='utf-8')
         fenced_code = code.rstrip() + '\n'
@@ -151,7 +155,7 @@ def main() -> int:
         outputs[ROOT / 'docs' / name] = content
         outputs[ROOT / '.agents/skills/telegram-code-patterns/references' / name] = content
     for path, value in outputs.items():
-        if any(p.is_symlink() or bool(getattr(p, 'is_junction', lambda: False)()) for p in (path, *path.parents)):
+        if any(planted_link(p) for p in (path, *path.parents)):
             raise ValueError('Reference output links are not allowed')
         if args.check:
             if not path.is_file() or path.read_text(encoding='utf-8') != value: raise ValueError('Reference output drift: ' + path.name)

@@ -13,7 +13,7 @@ import tempfile
 import zipfile
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))  # shared helpers live next to this script
-from _environment import minimal_environment  # noqa: E402
+from _environment import minimal_environment, planted_link  # noqa: E402
 
 ROOT=Path(__file__).resolve().parents[1]
 
@@ -24,7 +24,7 @@ def main() -> int:
     parser.add_argument('--output',type=Path,required=True,help='New evidence directory')
     args=parser.parse_args()
     for p in (args.output,*args.output.parents):
-        if p.is_symlink() or bool(getattr(p,'is_junction',lambda:False)()):raise ValueError('Output links are not supported')
+        if planted_link(p):raise ValueError('Output links are not supported')
     wheel=args.wheel.resolve(strict=True)
     if not wheel.is_file() or wheel.suffix!='.whl':raise ValueError('Provide the trusted local pattern wheel')
     output=args.output.resolve();output.mkdir(parents=True)  # parent links were refused above; the leaf must be new

@@ -119,7 +119,7 @@ class DoctorTests(unittest.TestCase):
 
     def test_node_probe_uses_only_fixed_args_and_allowlisted_env_never_echoes_output(self):
         with tempfile.TemporaryDirectory() as folder:
-            root = Path(folder); self.manifest(root)
+            root = Path(folder).resolve(); self.manifest(root)  # doctor reports the canonical project path
             for stdout, code, reason in (('v24.19.0\n', 0, 'node-supported'), ('v18.1.0', 0, 'node-too-old'),
                     (CANARY, 0, 'node-probe-failed'), ('v24.19.0', 1, 'node-probe-failed')):
                 with self.subTest(reason=reason), patch.dict(os.environ, {'BOT_TOKEN': '100:' + CANARY, 'NODE_OPTIONS': CANARY, 'PAYMENT_SECRET': CANARY}), \
@@ -140,7 +140,7 @@ class DoctorTests(unittest.TestCase):
 
     def test_unavailable_target_and_linked_or_unreadable_manifest_are_local_failures(self):
         with tempfile.TemporaryDirectory() as folder:
-            root = Path(folder); self.manifest(root)
+            root = Path(folder).resolve(); self.manifest(root)  # doctor reads the canonical project path
             missing = doctor(root / CANARY)
             self.assertFalse(missing['passed']); self.assert_guidance(missing)
             file = root / 'file'; file.write_text(CANARY)

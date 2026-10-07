@@ -16,6 +16,9 @@ from telegram_patterns import RecipeCatalog
 from telegram_patterns._offline_recipe import _FIXTURES
 from telegram_patterns.aiogram import inline_keyboard, reply_keyboard, input_prompt, remove_keyboard, build_request
 
+sys.path.insert(0, str(Path(__file__).resolve().parent))  # shared helpers live next to this script
+from _environment import planted_link  # noqa: E402
+
 ROOT = Path(__file__).resolve().parents[1]
 API = 'https://core.telegram.org/bots/api'
 WEB = 'https://core.telegram.org/bots/webapps'
@@ -305,12 +308,12 @@ def main():
     parser.add_argument('--output-dir', type=Path, help='Standalone gallery in an explicitly named NEW or existing output directory')
     parser.add_argument('--check', action='store_true')
     args = parser.parse_args()
-    if args.output_dir and any(p.is_symlink() or bool(getattr(p, 'is_junction', lambda: False)()) for p in (args.output_dir, *args.output_dir.parents)):
+    if args.output_dir and any(planted_link(p) for p in (args.output_dir, *args.output_dir.parents)):
         raise ValueError('Output directory links are not allowed')
     data = build()
     encoded = json.dumps(data, ensure_ascii=False, indent=2) + '\n'
     html = render_html(data, 'files/' if args.output_dir else '../')
-    if args.output_dir and (args.output_dir.is_symlink() or bool(getattr(args.output_dir, 'is_junction', lambda: False)())):
+    if args.output_dir and (planted_link(args.output_dir)):
         raise ValueError('Output directory links are not allowed')
     output = args.output_dir.resolve() if args.output_dir else ROOT / 'gallery'
     products = {output / 'index.html': html}
@@ -320,7 +323,7 @@ def main():
         for record in data['recipes']:
             for name in (*record['source_files'], *record['check_files']):
                 source = ROOT / name
-                if any(p.is_symlink() or bool(getattr(p, 'is_junction', lambda: False)()) for p in (source, *source.parents)):
+                if any(planted_link(p) for p in (source, *source.parents)):
                     raise ValueError('Source links are not allowed')
                 products[output / 'files' / name] = source.read_bytes()
     else:
@@ -330,7 +333,7 @@ def main():
         products[ROOT / 'packages/python/src/telegram_patterns/resources/recipes.json'] = encoded
         products[ROOT / 'catalog/recipe-gallery.json'] = encoded
     for path in products:
-        if any(p.is_symlink() or bool(getattr(p, 'is_junction', lambda: False)()) for p in (path, *path.parents)):
+        if any(planted_link(p) for p in (path, *path.parents)):
             raise ValueError('Output links are not allowed')
     for path, content in products.items():
         if args.check:

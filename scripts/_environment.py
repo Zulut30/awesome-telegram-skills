@@ -6,6 +6,7 @@ network proxies and CA bundles; application secrets such as BOT_TOKEN never pass
 from __future__ import annotations
 
 import os
+from pathlib import Path
 from typing import Iterable, Mapping
 
 _ALLOWED = {
@@ -26,3 +27,18 @@ def minimal_environment(extra: Iterable[str] = (), source: Mapping[str, str] | N
     allowed = _ALLOWED | {name.upper() for name in extra}
     values = os.environ if source is None else source
     return {name: value for name, value in values.items() if name.upper() in allowed}
+
+
+def planted_link(path: Path) -> bool:
+    """A symlink or junction outside the OS layout; known links are refused.
+
+    Root-owned aliases directly under / are trusted: on macOS /var, /tmp and /etc
+    point to /private/..., so every temporary directory crosses one.
+    """
+    if not (path.is_symlink() or bool(getattr(path, 'is_junction', lambda: False)())):
+        return False
+    try:
+        return not (os.name != 'nt' and path.is_absolute() and path.parent == Path(path.anchor)
+                    and path.lstat().st_uid == 0)
+    except OSError:
+        return True

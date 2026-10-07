@@ -241,7 +241,7 @@ def main():
     readme += ''.join('| [' + item['name'] + '](methods/' + item['name'] + '.md) | ' + (', '.join(item['required']) or '—') + ' |\n' for item in entries)
     files[ROOT / 'recipes/bot-api/README.md'] = readme
     for path, content in files.items():
-        if not path.resolve().is_relative_to(ROOT): raise ValueError('Output outside repository')
+        if not path.resolve().is_relative_to(ROOT.resolve()): raise ValueError('Output outside repository')
         if args.check:
             if not path.is_file() or path.read_text(encoding='utf-8') != content: raise ValueError('Generated output drift: ' + str(path))
         else:

@@ -117,7 +117,7 @@ class StarterTests(unittest.TestCase):
 
     def test_mini_app_local_path_preserves_spaces_unicode_and_literal_percent(self):
         with tempfile.TemporaryDirectory(prefix='telegram-starter-') as folder:
-            root = Path(folder); source = self.source(root)
+            root = Path(folder).resolve(); source = self.source(root)  # canonical: macOS temp dirs cross /var -> /private/var
             supplied = root / 'local artifacts %20 Пример'; supplied.mkdir()
             tarball = supplied / 'patterns.tgz'
             metadata = json.dumps({'name': '@awesome-telegram/patterns', 'version': '0.5.0'}).encode()
@@ -138,7 +138,7 @@ class StarterTests(unittest.TestCase):
 
     def test_dry_run_new_project_and_exclusive_creation(self):
         with tempfile.TemporaryDirectory(prefix='telegram-starter-') as folder:
-            root=Path(folder); source=self.source(root); target=root/'my bot'
+            root=Path(folder).resolve(); source=self.source(root); target=root/'my bot'
             plan=create_starter(target,library=source,dry_run=True)
             self.assertFalse(plan.created);self.assertFalse(target.exists())
             plan=create_starter(target,library=source)

@@ -16,7 +16,7 @@ import tempfile
 import zipfile
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))  # shared helpers live next to this script
-from _environment import minimal_environment  # noqa: E402
+from _environment import minimal_environment, planted_link  # noqa: E402
 
 ROOT=Path(__file__).resolve().parents[1]
 
@@ -33,7 +33,7 @@ def main() -> int:
     parser.add_argument('--output',type=Path,required=True)
     args=parser.parse_args()
     for p in (args.output,*args.output.parents):
-        if p.is_symlink() or bool(getattr(p,'is_junction',lambda:False)()):raise ValueError('Output links are not supported')
+        if planted_link(p):raise ValueError('Output links are not supported')
     sources=[p.resolve(strict=True) for p in (args.wheel,args.tarball)]
     if any(not p.is_file() for p in sources) or sources[0].suffix!='.whl' or sources[1].suffix!='.tgz':raise ValueError('Provide trusted local wheel/tarball')
     output=args.output.resolve();output.mkdir(parents=True)  # parent links were refused above; the leaf must be new
