@@ -47,6 +47,14 @@ class CiWorkflowTests(unittest.TestCase):
         self.assertIn('python scripts/verify_pattern_packages.py', block)
         self.assertIn('node tests/docs-browser.mjs', block)
 
+    def test_fresh_install_runs_on_three_systems_with_the_oldest_python(self):
+        block = CHECKS.split('\n  fresh-install:\n', 1)[1].split('\n  examples:\n', 1)[0]
+        self.assertIn('os: [ubuntu-latest, windows-latest, macos-latest]', block)
+        self.assertIn("python-version: '3.11'", block)
+        self.assertNotIn('setup-node', block)
+        self.assertIn('python -m build --wheel --outdir dist packages/python', block)
+        self.assertIn('python scripts/verify_fresh_install.py --wheel dist/*.whl', block)
+
     def test_every_generator_with_a_check_mode_runs_in_ci(self):
         block = CHECKS.split('\n  generated-files:\n', 1)[1].split('\n  python-style:\n', 1)[0]
         # The docs site is verified by verify_docs_site.py and the browser job; release builds have no check mode.

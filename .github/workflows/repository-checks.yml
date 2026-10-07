@@ -303,6 +303,34 @@ jobs:
       # PowerShell blocks on Windows, bash blocks on Linux and macOS; Chrome is preinstalled on hosted runners.
       - run: python scripts/verify_quickstart.py --guide '${{ matrix.guide }}' --wheel dist/*.whl --tarball dist/*.tgz --output output/quickstart
 
+  fresh-install:
+    name: Install from scratch, wheel to offline bot (${{ matrix.os }}, Python 3.11)
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, windows-latest, macos-latest]
+    runs-on: ${{ matrix.os }}
+    timeout-minutes: 20
+    defaults:
+      run:
+        shell: bash
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      # The oldest supported Python; no Node.js: a Python bot needs only the wheel.
+      - uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97 # v7.0.0
+        with:
+          python-version: '3.11'
+      - run: python -m pip install -r requirements/build.txt
+      - run: python -m build --wheel --outdir dist packages/python
+      # Clean virtual environments, the telegram-patterns console command, init, offline.py and doctor.
+      - run: python scripts/verify_fresh_install.py --wheel dist/*.whl --output output/fresh-install
+      - if: always()
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        with:
+          name: fresh-install-${{ matrix.os }}
+          path: output/fresh-install
+          if-no-files-found: warn
+
   examples:
     name: Example applications on the current library
     runs-on: ubuntu-latest
@@ -339,7 +367,7 @@ jobs:
     # The one check to mark as required in branch protection: it fails when any job below failed, was
     # cancelled or skipped, so adding a job to `needs` is enough to make it block merging.
     if: always()
-    needs: [skills, generated-files, python-style, python-types, python-unit, python-package, python-coverage, typescript, mini-app-quality, browser, api-compatibility, quickstart, examples, docker]
+    needs: [skills, generated-files, python-style, python-types, python-unit, python-package, python-coverage, typescript, mini-app-quality, browser, api-compatibility, quickstart, fresh-install, examples, docker]
     runs-on: ubuntu-latest
     timeout-minutes: 5
     steps:

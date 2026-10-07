@@ -1126,9 +1126,14 @@
     {
       "id": 88,
       "title": "Установка с нуля на каждой ОС",
-      "status": "pending",
-      "commit_subject": null,
-      "evidence": [],
+      "status": "done",
+      "commit_subject": "excellence(088): Install from scratch on every OS: wheel, console command, init and offline bot in clean environments",
+      "evidence": [
+        "scripts/verify_fresh_install.py: clean venv with only the wheel, telegram-patterns console command, --version, init --template bot into a path with a space, separate project venv, offline.py and doctor without a token or Node.js",
+        "CI job fresh-install on ubuntu/windows/macos with Python 3.11, part of required; report and logs uploaded",
+        "Local Linux Python 3.11.17 run passed in 27 s; a wheel without the console entry point is rejected",
+        "tests/test_ci_workflow.py checks the job; 155 root tests pass"
+      ],
       "remaining": null
     },
     {
