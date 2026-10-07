@@ -1113,10 +1113,15 @@
     {
       "id": 87,
       "title": "Автоматическое обновление зависимостей",
-      "status": "pending",
-      "commit_subject": null,
-      "evidence": [],
-      "remaining": null
+      "status": "partial",
+      "commit_subject": "excellence(087): update pip, npm and Actions dependencies weekly with Dependabot",
+      "evidence": [
+        ".github/dependabot.yml: weekly grouped updates for github-actions (SHA pins and version comments together), pip (requirements/ and requirements-docs.txt) and npm (root lockfile and tools/mini-app-quality)",
+        "CI pins moved from workflow commands to requirements/{sdk,test,coverage,lint,types,build,skills}.txt so Dependabot can read them; every combination resolves with uv pip compile",
+        "Update pull requests run the whole Repository checks workflow, gated by the required job",
+        "tests/test_ci_workflow.py: every action pinned by a 40-character SHA with a version comment, no inline version pins in pip install lines"
+      ],
+      "remaining": "Dependabot runs from the default branch: the first update pull requests and their CI appear after the merge"
     },
     {
       "id": 88,

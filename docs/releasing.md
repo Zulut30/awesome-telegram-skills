@@ -7,7 +7,7 @@
 [`scripts/build_release.py`](../scripts/build_release.py) экспортирует дерево тега через `git archive`, поэтому незакоммиченные файлы рабочей копии в релиз не попадают. `SOURCE_DATE_EPOCH` равен времени коммита, поэтому две сборки одного тега с одинаковыми версиями инструментов дают побайтно одинаковые файлы. Версии зависимостей сборки заданы `package-lock.json` тега и диапазоном setuptools в `pyproject.toml`; `build` закреплен в workflow.
 
 ```bash
-python -m pip install 'build==1.3.0'
+python -m pip install -r requirements/build.txt
 python scripts/build_release.py --ref v0.24.0 --output dist/v0.24.0
 python scripts/build_release.py --ref v0.24.0 --notes
 ```

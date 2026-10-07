@@ -1,0 +1,2 @@
+# Property-based tests (packages/python/tests/test_properties.py).
+hypothesis==6.168.5

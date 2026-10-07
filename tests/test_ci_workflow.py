@@ -69,6 +69,24 @@ class CiWorkflowTests(unittest.TestCase):
         self.assertIn('gh issue create', text)
         self.assertIn('gh issue comment', text)
 
+    def test_dependabot_covers_pins_and_keeps_sha_pinned_actions(self):
+        config = (ROOT / '.github/dependabot.yml').read_text(encoding='utf-8')
+        for ecosystem in ('github-actions', 'pip', 'npm'):
+            self.assertIn(f'package-ecosystem: {ecosystem}', config)
+        self.assertIn('directories: [/, /tools/mini-app-quality]', config)
+        # Every action is pinned by a full commit SHA with a version comment Dependabot can update.
+        for workflow in WORKFLOWS:
+            for line in workflow.read_text(encoding='utf-8').splitlines():
+                if line.strip().startswith(('- uses:', 'uses:')):
+                    with self.subTest(workflow=workflow.name, line=line.strip()):
+                        self.assertRegex(line, r'uses: [\w./-]+@[0-9a-f]{40} # v\d+(\.\d+)*$')
+        # Tool and SDK versions live in requirements files that Dependabot reads, not inline in workflows.
+        for workflow in WORKFLOWS:
+            for line in workflow.read_text(encoding='utf-8').splitlines():
+                if 'pip install' in line and '==' in line:
+                    with self.subTest(workflow=workflow.name, line=line.strip()):
+                        self.assertIn('matrix.aiogram', line, 'move the pin to requirements/*.txt')
+
 
 if __name__ == '__main__':
     unittest.main()

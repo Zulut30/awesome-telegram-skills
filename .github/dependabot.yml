@@ -1,0 +1,44 @@
+# Weekly dependency updates. Every update arrives as a pull request and passes the full Repository checks
+# workflow; only the "Required checks passed" job gates merging.
+version: 2
+updates:
+  # Actions stay pinned by commit SHA: Dependabot replaces the SHA and the "# vX.Y.Z" comment together.
+  - package-ecosystem: github-actions
+    directory: /
+    schedule:
+      interval: weekly
+      day: monday
+    groups:
+      actions:
+        patterns: ['*']
+    commit-message:
+      prefix: ci
+
+  # Exact pins of CI tools and SDKs (requirements/*.txt) and of the documentation build (requirements-docs.txt).
+  # Library ranges in packages/python/pyproject.toml are a compatibility promise and change by hand.
+  - package-ecosystem: pip
+    directory: /
+    schedule:
+      interval: weekly
+      day: monday
+    groups:
+      sdks:
+        patterns: [aiogram, python-telegram-bot, cryptography, tzdata]
+      python-tools:
+        patterns: ['*']
+    commit-message:
+      prefix: deps
+
+  # The root lockfile (library, demo and framework examples) and the Lighthouse/axe tools with their own lockfile.
+  - package-ecosystem: npm
+    directories: [/, /tools/mini-app-quality]
+    schedule:
+      interval: weekly
+      day: monday
+    groups:
+      npm-development:
+        dependency-type: development
+      npm-production:
+        dependency-type: production
+    commit-message:
+      prefix: deps
