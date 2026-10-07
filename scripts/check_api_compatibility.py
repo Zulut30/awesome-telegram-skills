@@ -89,7 +89,9 @@ def _statements(text: str) -> dict[str, str]:
         braced = match.group(1) in {'class', 'interface', 'enum'}
         while index < len(text):
             char = text[index]
-            if char in '{([<':
+            if char == '>' and text[index - 1] == '=':
+                pass  # the arrow of a function type, not a closing angle bracket
+            elif char in '{([<':
                 depth += 1
             elif char in '})]>':
                 depth -= 1
