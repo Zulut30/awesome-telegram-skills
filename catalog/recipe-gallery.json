@@ -21206,7 +21206,7 @@
       "check_files": [
         "examples/python/offline_dialog_restart.py",
         "packages/python/tests/test_fsm_storage.py",
-        "scripts/verify_dialog_restart_recipe.py"
+        "scripts/verify_copied_recipe.py"
       ],
       "execution": {
         "kind": "dispatcher",
@@ -21537,7 +21537,7 @@
       "check_files": [
         "examples/python/offline_platform.py",
         "packages/python/tests/test_platform.py",
-        "scripts/verify_platform_recipe.py"
+        "scripts/verify_copied_recipe.py"
       ],
       "execution": {
         "kind": "dispatcher",

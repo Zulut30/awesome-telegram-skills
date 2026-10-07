@@ -122,7 +122,7 @@ def profile_router(authorize: ProfileAuthorizer) -> Router:
 
 `telegram-patterns plan-recipe demo-profiles` показывает требования; `telegram-patterns run-recipe demo-profiles --offline` запускает закрытый bundled fixture. Настоящий `Dispatcher` на синтетических updates проверяет неизвестные поля, фото только этого бота, пропуск и очистку значения для языка и запасной вариант, отказ пользователю без Premium, права на каждый метод, загрузку нового JPG через multipart и удаление фото, потерянную квитанцию и сверку, а также сохранение справки проекта. Это авторская проверка через SDK и подставной транспорт, а не независимая приемка агентом или пользователем и не доказательство видимости, кодеков, прав и поведения на устройствах в живом Telegram.
 
-После копирования этого навыка `references/profiles.md` самодостаточен; соседние навыки не требуются. Полный repository helper `scripts/verify_profile_recipe.py <copied-skill>` исполняет точный блок и offline composition через установленный пакет.
+После копирования этого навыка `references/profiles.md` самодостаточен; соседние навыки не требуются. Полный repository helper `scripts/verify_copied_recipe.py profile <copied-skill>` исполняет точный блок и offline composition через установленный пакет.
 
 ## Источники — проверенный scope 2026-10-05
 

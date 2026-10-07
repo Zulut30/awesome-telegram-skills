@@ -1152,9 +1152,14 @@
     {
       "id": 90,
       "title": "Объединить похожие скрипты",
-      "status": "pending",
-      "commit_subject": null,
-      "evidence": [],
+      "status": "done",
+      "commit_subject": "excellence(090): Replace ten copied-recipe verifiers with one parameterized script",
+      "evidence": [
+        "scripts/verify_copied_recipe.py RECIPE COPIED_SKILL replaces ten verify_*_recipe.py (441 lines instead of 604); Composition handles block extraction, reviewed-source equality, in-process or separate-interpreter runs and refusal operations",
+        "dialog-restart uses minimal_environment from scripts/_environment.py instead of its own allow-list",
+        "Outputs of all ten recipes on a copied skill are byte-identical to the old scripts (except a random operation id); mutations (duplicate, tampered, missing block, broken link, keyboard layout) are still refused",
+        "verify_pattern_packages.py calls the new script and passed fully (579 Python, 38 TypeScript tests, browser); tests/test_copied_recipe.py checks the table, refusals and callers"
+      ],
       "remaining": null
     },
     {

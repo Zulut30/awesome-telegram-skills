@@ -263,22 +263,22 @@ print(json.dumps({'core_without_sdk':True,'python':sys.version.split()[0]}))
         run('selected-starter-build', [npm, 'run', 'build'], selected_mini)
         copied_skill = consumers / 'portable-skill/telegram-code-patterns'
         shutil.copytree(ROOT / '.agents/skills/telegram-code-patterns', copied_skill)
-        report['portable_dialog_restart_recipe'] = json.loads(run('portable-dialog-restart-recipe', [str(python_in(sdk)), str(ROOT / 'scripts/verify_dialog_restart_recipe.py'), str(copied_skill)], consumers))
-        report['portable_platform_recipe'] = json.loads(run('portable-platform-recipe', [str(python_in(sdk)), str(ROOT / 'scripts/verify_platform_recipe.py'), str(copied_skill)], consumers))
-        report['portable_inline_search_recipe'] = json.loads(run('portable-inline-search-recipe', [str(python_in(sdk)), str(ROOT / 'scripts/verify_inline_search_recipe.py'), str(copied_skill)], consumers))
-        report['portable_poll_recipe'] = json.loads(run('portable-poll-recipe', [str(python_in(sdk)), str(ROOT / 'scripts/verify_poll_recipe.py'), str(copied_skill)], consumers))
+        # One parameterized verifier runs each recipe of the copied skill; the developer recipe needs only the core.
+        def portable_recipe(name: str, environment: Path) -> None:
+            report[f"portable_{name.replace('-', '_')}_recipe"] = json.loads(run(
+                f'portable-{name}-recipe', [str(python_in(environment)), str(ROOT / 'scripts/verify_copied_recipe.py'), name, str(copied_skill)], consumers))
+
+        for name in ('dialog-restart', 'platform', 'inline-search', 'poll'):
+            portable_recipe(name, sdk)
         blocks = re.findall(r'```python\r?\n(.*?)```', (copied_skill / 'references/errors.md').read_text(encoding='utf-8'), re.S)
         if len(blocks) != 1:
             raise RuntimeError('Expected one standalone error handling example')
         error_example = consumers / 'portable_error_example.py'
         error_example.write_text(blocks[0], encoding='utf-8')
         run('portable-error-recipe', [str(python_in(core)), str(error_example)], consumers)
-        report['portable_keyboard_recipe'] = json.loads(run('portable-keyboard-recipe', [str(python_in(sdk)), str(ROOT / 'scripts/verify_keyboard_recipe.py'), str(copied_skill)], consumers))
-        report['portable_dialog_recipe'] = json.loads(run('portable-dialog-recipe', [str(python_in(sdk)), str(ROOT / 'scripts/verify_dialog_recipe.py'), str(copied_skill)], consumers))
-        report['portable_profile_recipe'] = json.loads(run('portable-profile-recipe', [str(python_in(sdk)), str(ROOT / 'scripts/verify_profile_recipe.py'), str(copied_skill)], consumers))
-        report['portable_media_recipe'] = json.loads(run('portable-media-recipe', [str(python_in(sdk)), str(ROOT / 'scripts/verify_media_recipe.py'), str(copied_skill)], consumers))
-        report['portable_message_recipe'] = json.loads(run('portable-message-recipe', [str(python_in(sdk)), str(ROOT / 'scripts/verify_message_recipe.py'), str(copied_skill)], consumers))
-        report['portable_developer_recipe'] = json.loads(run('portable-developer-recipe', [str(python_in(core)), str(ROOT / 'scripts/verify_developer_recipe.py'), str(copied_skill)], consumers))
+        for name in ('keyboard', 'dialog', 'profile', 'media', 'message'):
+            portable_recipe(name, sdk)
+        portable_recipe('developer', core)
 
         client = consumers / 'typescript'
         client.mkdir()

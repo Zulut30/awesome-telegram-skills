@@ -227,7 +227,7 @@ def build(root: Path = ROOT) -> dict:
             records[-1]['tasks'] = ['input', 'recovery']
             records[-1]['keywords'] += ['рестарт', 'восстановление', 'состояние', 'FSM', 'storage', 'TTL', 'snapshot', 'resume', 'версия', 'unknown']
             records[-1]['source_files'] += ['packages/python/src/telegram_patterns/_aiogram/fsm_storage.py', 'packages/python/src/telegram_patterns/_aiogram/dialog_storage.py', 'docs/dialog-restart.md']
-            records[-1]['check_files'] += ['packages/python/tests/test_fsm_storage.py', 'scripts/verify_dialog_restart_recipe.py']
+            records[-1]['check_files'] += ['packages/python/tests/test_fsm_storage.py', 'scripts/verify_copied_recipe.py']
             records[-1]['scope'] = 'Three actual processes, file SQLite and synthetic Dispatcher/SDK; atomic local state only, no live delivery, physical device, independent acceptance or distributed business exactly-once claim.'
         if key == 'demo-dialog-fields':
             records[-1]['keywords'] += ['поля', 'число', 'email', 'телефон', 'файл', 'контакт', 'геопозиция', 'ForceReply', 'candidate', 'шаг']
@@ -340,7 +340,7 @@ def build(root: Path = ROOT) -> dict:
             records[-1]['contexts'] = ['private', 'group', 'supergroup', 'channel', 'business']
             records[-1]['keywords'] += ['темы', 'реакции', 'заявки', 'Business', 'stories', 'gifts', 'managed', 'Stars', 'права', 'receipt']
             records[-1]['source_files'] += ['packages/python/src/telegram_patterns/_aiogram/platform_operations.py', 'docs/platform-operations.md']
-            records[-1]['check_files'] += ['packages/python/tests/test_platform.py', 'scripts/verify_platform_recipe.py']
+            records[-1]['check_files'] += ['packages/python/tests/test_platform.py', 'scripts/verify_copied_recipe.py']
             records[-1]['scope'] = 'Actual synthetic SDK/Dispatcher/file SQLite and multipart story serialization; no live rights, real media validation, remote atomic charge, settlement or physical Telegram proof.'
     ptb_version = importlib.metadata.version('python-telegram-bot')
     if ptb_version != PTB_VERSION: raise ValueError('Installed python-telegram-bot differs from the checked variants')
