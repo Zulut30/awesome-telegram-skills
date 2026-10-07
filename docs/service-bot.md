@@ -1,6 +1,6 @@
 # Сервисный бот: запись и напоминание
 
-Пример пункта 017 использует публичные API локальной библиотеки 0.13.0 и aiogram 3.31.0: BotSettings, SQLiteOnce, TextField/text_form_router, command_router/command_menu, run_bot и StubSession. Это отдельное приложение `awesome-telegram-service-example` 0.1.0; его классы не входят в публичный API библиотеки. Python >=3.11; фактическая приемка — Windows/Python 3.13.12.
+Пример пункта 017 использует публичные API локальной библиотеки 0.24.0 и aiogram 3.31.0: BotSettings, SQLiteOnce, TextField/text_form_router, command_router/command_menu, run_bot и StubSession. Это отдельное приложение `awesome-telegram-service-example` 0.1.0; его классы не входят в публичный API библиотеки. Python >=3.11; приемка — Windows/Python 3.13.12 и Linux/Python 3.13 с библиотекой 0.24.0; CI проверяет пример на текущей версии библиотеки.
 
 Сценарий: `/start` → `/slots` → `/book` → код слота → комментарий → проверка → подтверждение → `/status`. Две услуги и четыре слота создаются один раз для демонстрации. Время показано в UTC; свободные слоты и срок проверяются сервером внутри транзакции. Рестарт не создаёт новые слоты вместо занятых. Для рабочего расписания подключите свой календарь; timezone UX — отдельная задача.
 
@@ -11,20 +11,31 @@ SQLite хранит шаг диалога, operation ID, записи, согл�
 В новом окружении укажите предоставленный wheel библиотеки и каталог этого примера:
 
 ```powershell
-$patternWheel = 'C:\provided\awesome_telegram_patterns-0.13.0-py3-none-any.whl'
+$patternWheel = 'C:\provided\awesome_telegram_patterns-0.24.0-py3-none-any.whl'
 $serviceProject = 'C:\provided\service-bot'
 python -m venv .venv
 & .\.venv\Scripts\python.exe -m pip install "${patternWheel}[aiogram]" 'aiogram==3.31.0' $serviceProject
+```
+
+```bash
+PATTERN_WHEEL=~/provided/awesome_telegram_patterns-0.24.0-py3-none-any.whl
+SERVICE_PROJECT=~/provided/service-bot
+python3 -m venv .venv
+.venv/bin/python -m pip install "${PATTERN_WHEEL}[aiogram]" 'aiogram==3.31.0' "$SERVICE_PROJECT"
 ```
 
 Пакеты пока локальные; installation может получать SDK из registry. Для существующего приложения сохраняйте его SDK/БД: используйте service contract и соответствующий адаптер проекта. SQLite и этот aiogram пример не требуют смены уже принятого стека.
 
 ## Проверка без Telegram
 
-Из checkout библиотеки:
+Из checkout библиотеки соберите wheel текущей версии и проверьте пример с ним:
 
-```powershell
-python scripts/verify_service_bot.py --wheel output/pattern-library-0.13.0/dist/awesome_telegram_patterns-0.13.0-py3-none-any.whl --output output/service-bot-017-new
+```bash
+python scripts/build_release.py --ref HEAD --output output/release
+```
+
+```bash
+python scripts/verify_service_bot.py --wheel output/release/awesome_telegram_patterns-0.24.0-py3-none-any.whl --output output/service-bot-check
 ```
 
 Output должен быть новым каталогом. Скрипт собирает и устанавливает приложение с wheel библиотеки в отдельный consumer вне репозитория. Проверяет origin, типы, восемь тестов, живые SQLite-транзакции, отдельные процессы диалога, аварийный выход после commit, повтор того же подтверждения и напоминание после рестарта. Получатель напоминания сопоставляется с владельцем записи. Второй процесс на ту же базу отклоняется; после аварии OS освобождает lock. Project shadow modules/.env не исполняются и не читаются. Synthetic SDK/StubSession не имеет HTTP fallback; реальные Telegram delivery/device proof отсутствуют.
@@ -35,6 +46,10 @@ Output должен быть новым каталогом. Скрипт соб�
 
 ```powershell
 & .\.venv\Scripts\telegram-service-example.exe --database 'C:\service-data\service.sqlite'
+```
+
+```bash
+.venv/bin/telegram-service-example --database ~/service-data/service.sqlite
 ```
 
 Parent каталога БД должен существовать. Один процесс владеет одной базой и `.lock` файлом на локальном диске; известные links отклоняются. Дополнительные workers/сетевой диск не поддержаны. Процесс держит OS file lock до остановки уведомлений и FSM; память используется только для взаимного исключения событий в этом процессе. Состояние диалога хранится в SQLite без TTL, который мог бы уничтожить pending ID. Не удаляйте базу или данные неизвестной операции для повторного старта. При schema/corrupt данных выполните сверку и явную миграцию.

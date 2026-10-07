@@ -1,6 +1,6 @@
 # Групповой бот: темы, права, заявки и модерация
 
-Самостоятельное приложение `examples/group-bot`, distribution `awesome-telegram-group-example` 0.1.0, использует предоставленный Python wheel библиотеки 0.13.0 и aiogram. Это пример композиции `BotSettings`, `build_request`, `event_router`, `ActionButton` и `action_menu`. Его `Application`, `Store`, `ProcessLock` и `Context` принадлежат приложению, не являются новыми публичными exports библиотеки и не требуют сервисного/магазинного примера.
+Самостоятельное приложение `examples/group-bot`, distribution `awesome-telegram-group-example` 0.1.0, использует предоставленный Python wheel библиотеки 0.24.0 и aiogram; CI проверяет пример на текущей версии библиотеки. Это пример композиции `BotSettings`, `build_request`, `event_router`, `ActionButton` и `action_menu`. Его `Application`, `Store`, `ProcessLock` и `Context` принадлежат приложению, не являются новыми публичными exports библиотеки и не требуют сервисного/магазинного примера.
 
 ## Что попробовать
 
@@ -23,8 +23,12 @@
 
 Из предоставленного checkout:
 
-```powershell
-python scripts/verify_group_bot.py --wheel output/pattern-library-0.13.0/dist/awesome_telegram_patterns-0.13.0-py3-none-any.whl --output output/group-019-new
+```bash
+python scripts/build_release.py --ref HEAD --output output/release
+```
+
+```bash
+python scripts/verify_group_bot.py --wheel output/release/awesome_telegram_patterns-0.24.0-py3-none-any.whl --output output/group-bot-check
 ```
 
 Output должен быть новым каталогом, существующие каталоги и известные links отклоняются до build/install. Helper собирает отдельный app wheel и проверяет его source bytes, RECORD и entrypoint. В новом consumer вне репозитория устанавливает предоставленную библиотеку и приложение, проверяет installed origins, console `--help`, Mypy, 19 тестов с SDK Dispatcher и настоящей file SQLite, четыре отдельные процессные фазы и OS lock. Фазы: сохранение предпросмотра → подтверждение после рестарта → реальный `os._exit(77)` после synthetic createForumTopic до сохранения результата → восстановление unknown без повторной отправки. Shadow modules/.env текущего проекта не читаются и не исполняются.
@@ -41,12 +45,22 @@ uv pip install --python .venv\Scripts\python.exe '<PATTERN_WHEEL>[aiogram]' '<GR
 & .\.venv\Scripts\telegram-group-example.exe --help
 ```
 
+```bash
+uv venv .venv
+uv pip install --python .venv/bin/python '<PATTERN_WHEEL>[aiogram]' '<GROUP_EXAMPLE_WHEEL>'
+.venv/bin/telegram-group-example --help
+```
+
 Для существующего проекта сохраняйте его SDK/Dispatcher/storage: переносите нужную композицию, не создавайте второй polling consumer ради helper. Диапазон Python — >=3.11 по metadata; реально проверенная версия и SDK указаны в отчёте, не весь диапазон.
 
 Live запуск выполняется отдельно владельцем в тестовой группе после настройки `BOT_TOKEN` в окружении, проверки действующего webhook/getUpdates consumer, минимальных прав и постоянной локальной БД. Parent каталога БД должен существовать. Например, для выбранного владельцем ID:
 
 ```powershell
 & .\.venv\Scripts\telegram-group-example.exe --database 'C:\group-data\group.sqlite' --chat -1001234567890
+```
+
+```bash
+.venv/bin/telegram-group-example --database ~/group-data/group.sqlite --chat -1001234567890
 ```
 
 Повторяйте `--chat` для каждой разрешённой группы. Пример запускает polling; webhook и pending updates автоматически не удаляются. `resolve_used_update_types()` включает message, callback_query, chat_join_request, chat_member и my_chat_member. Доставка membership/join updates требует настроек и прав Telegram; отсутствие события не считается отсутствием пользователя/заявки. При миграции group → supergroup приложение сохраняет старый/новый 64-bit ID и блокирует старые предпросмотры. Новый ID нужно явно добавить в `--chat`; сохранённое подтверждение на него не переносится. Mapping остаётся в БД для сверки старых ссылок.

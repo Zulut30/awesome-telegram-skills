@@ -9,7 +9,7 @@ description = "Reviewed group operations with current permissions and crash reco
 readme = "README.md"
 requires-python = ">=3.11"
 license = "MIT"
-dependencies = ["awesome-telegram-patterns[aiogram]>=0.13,<0.14"]
+dependencies = ["awesome-telegram-patterns[aiogram]>=0.24,<0.25"]
 
 [project.scripts]
 telegram-group-example = "telegram_group_example.bot:main"

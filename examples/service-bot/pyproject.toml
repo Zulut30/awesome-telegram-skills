@@ -9,7 +9,7 @@ description = "Persistent single-process service bot example"
 readme = "README.md"
 requires-python = ">=3.11"
 license = "MIT"
-dependencies = ["awesome-telegram-patterns[aiogram]>=0.13,<0.14"]
+dependencies = ["awesome-telegram-patterns[aiogram]>=0.24,<0.25"]
 
 [project.scripts]
 telegram-service-example = "telegram_service_example.bot:main"

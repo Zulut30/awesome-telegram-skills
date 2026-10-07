@@ -21,6 +21,11 @@ from _environment import minimal_environment  # noqa: E402
 ROOT=Path(__file__).resolve().parents[1]
 
 
+def library_version() -> str:
+    """Version of the pattern library in this checkout; examples must use the current one."""
+    return re.search(r'^version\s*=\s*"([^"]+)"', (ROOT/'packages/python/pyproject.toml').read_text(encoding='utf-8'), re.M).group(1)
+
+
 def main() -> int:
     parser=argparse.ArgumentParser(description=__doc__)
     parser.add_argument('--wheel',type=Path,required=True,help='Previously accepted local pattern wheel')
@@ -62,7 +67,7 @@ def main() -> int:
     python=venv/('Scripts/python.exe' if os.name=='nt' else 'bin/python')
     run('install',[uv,'pip','install','--python',python,str(wheel)+'[aiogram]',example,'aiogram==3.31.0','mypy==2.4.0'])
     origin=json.loads(run('origin',[python,'-I','-c',"import sys,json,telegram_patterns,telegram_group_example,importlib.metadata as m;print(json.dumps({'prefix':sys.prefix,'library':telegram_patterns.__file__,'example':telegram_group_example.__file__,'library_version':m.version('awesome-telegram-patterns'),'aiogram':m.version('aiogram'),'python':sys.version.split()[0]}))"]))
-    assert all(Path(origin[k]).is_relative_to(Path(origin['prefix'])) for k in ('library','example')) and origin['library_version']=='0.13.0'
+    assert all(Path(origin[k]).is_relative_to(Path(origin['prefix'])) for k in ('library','example')) and origin['library_version']==library_version()
     console=python.parent/('telegram-group-example.exe' if os.name=='nt' else 'telegram-group-example')
     help_text=run('entrypoint-help',[console,'--help']);assert '--database' in help_text and '--chat' in help_text
     run('typecheck',[python,'-m','mypy','--check-untyped-defs','--warn-unused-ignores',ROOT/'examples/group-bot/src'])
