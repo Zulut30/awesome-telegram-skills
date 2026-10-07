@@ -25,7 +25,7 @@ Root экспортирует `Maturity`, `VerificationLevel`; aiogram — `Butt
 
 [Медиа](../../docs/media.md): `MediaFile`/`MediaItem`, `media_request`, `media_album`, `media_edit`, `download_media` и typed результаты. Byte upload, same-bot file_id, literal caption/entities, совместимый альбом и bounded explicit download через текущий Bot. Host проверяет codec/content, ACL и delivery; downloader не записывает файлы и не закрывает host session.
 
-[Галерея 311 рецептов](../../gallery/index.html) работает без токенов и сети. В wheel входят `RecipeCatalog`, шаблоны новых проектов и CLI `telegram-patterns recipes/init/doctor`. [Использование и границы](../../docs/developer-tools-review.md).
+[Галерея 340 рецептов](../../gallery/index.html) работает без токенов и сети. В wheel входят `RecipeCatalog`, шаблоны новых проектов и CLI `telegram-patterns recipes/init/doctor`. Версию установленного пакета показывают `telegram-patterns --version` и `telegram_patterns.__version__`; обе совпадают с метаданными wheel. [Использование и границы](../../docs/developer-tools-review.md).
 
 Новое: [клавиатуры и ввод](../../recipes/bot-api/keyboards.md), [отслеживание Update](../../recipes/bot-api/events.md), [185 Bot API request-рецептов](../../recipes/bot-api/README.md). [Бот-пример](../../examples/python/keyboards_bot.py) показывает строки/цвета, обработку/редактирование и input UI; [offline-сценарий](../../examples/python/offline_keyboards.py) проверяет ту же композицию. Native SDK выполняет транспорт; request-only рецепты содержат искусственные данные, не отправляйте их без замены.
 

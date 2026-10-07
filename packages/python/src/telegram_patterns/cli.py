@@ -11,6 +11,7 @@ from importlib.resources import files
 from pathlib import Path
 from typing import Any
 
+from . import __version__
 from .diagnostics import diagnose
 from .errors import OperationKind, PatternError, safe_error_report
 from .execution import plan_recipe, run_recipe_offline
@@ -98,6 +99,7 @@ def _report(payload: dict[str, Any], *, as_json: bool) -> None:
 
 def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument('--version', action='version', version=f'telegram-patterns {__version__}')
     common = argparse.ArgumentParser(add_help=False)
     common.add_argument('--json', action='store_true', help='Print errors as one ASCII JSON object on stderr')
     commands = parser.add_subparsers(dest='command', required=True)

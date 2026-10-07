@@ -821,9 +821,14 @@
     {
       "id": 65,
       "title": "Версия пакета в коде",
-      "status": "pending",
-      "commit_subject": null,
-      "evidence": [],
+      "status": "done",
+      "commit_subject": "excellence(065): expose __version__ and telegram-patterns --version",
+      "evidence": [
+        "packages/python/src/telegram_patterns/__init__.py: __version__ (outside __all__)",
+        "packages/python/src/telegram_patterns/cli.py: --version prints 'telegram-patterns 0.24.0'",
+        "packages/python/tests/test_catalog_cli.py::test_version_matches_pyproject_and_cli; tests/test_distribution_contract.py::test_module_version_must_match_pyproject",
+        "verify_pattern_packages stages version-cli/version-metadata: 'telegram-patterns 0.24.0', metadata 0.24.0 == __version__ 0.24.0; PASS 0.24.0, 542 Python tests, browser=passed"
+      ],
       "remaining": null
     },
     {

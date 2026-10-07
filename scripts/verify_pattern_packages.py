@@ -129,6 +129,12 @@ print(json.dumps({'core_without_sdk':True,'python':sys.version.split()[0]}))
         report['core_cli'] = json.loads(run('core-cli', [str(core_console), 'recipes', 'две кнопки'], consumers))
         if report['core_cli']['recipes'][0]['id'] != 'two-columns':
             raise RuntimeError('Core console recipe search failed')
+        cli_version = run('version-cli', [str(core_console), '--version'], consumers).strip()
+        installed = run('version-metadata', [str(python_in(core)), '-c', "import importlib.metadata as m, telegram_patterns as t; "
+                                             "print(m.version('awesome-telegram-patterns'), t.__version__)"], consumers).split()
+        if cli_version != f'telegram-patterns {version}' or installed != [version, version]:
+            raise RuntimeError('Installed metadata, telegram_patterns.__version__ and --version differ')
+        report['version'] = {'cli': cli_version, 'metadata': installed[0], 'module': installed[1]}
         report['maturity_cli'] = json.loads(run('maturity-cli', [str(core_console), 'recipes', '--maturity', 'experimental'], consumers))
         if len(report['maturity_cli']['recipes']) != 20 or any(item['maturity'] != 'experimental' for item in report['maturity_cli']['recipes']):
             raise RuntimeError('Installed maturity CLI filter failed')

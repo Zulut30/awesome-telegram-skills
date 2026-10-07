@@ -292,6 +292,19 @@ class StarterTests(unittest.TestCase):
 
 
 class CLITests(unittest.TestCase):
+    def test_version_matches_pyproject_and_cli(self):
+        import tomllib
+
+        import telegram_patterns
+
+        project = tomllib.loads((ROOT / 'packages/python/pyproject.toml').read_text(encoding='utf-8'))['project']
+        self.assertEqual(telegram_patterns.__version__, project['version'])
+        self.assertNotIn('__version__', telegram_patterns.__all__)
+        with redirect_stdout(io.StringIO()) as output, self.assertRaises(SystemExit) as stop:
+            main(['--version'])
+        self.assertEqual(stop.exception.code, 0)
+        self.assertEqual(output.getvalue(), f"telegram-patterns {project['version']}\n")
+
     def test_maturity_filter_and_show_are_visible_to_consumer(self):
         with redirect_stdout(io.StringIO()) as output:
             self.assertEqual(main(['recipes', '--maturity', 'reference', '--verification', 'mock']), 0)

@@ -24,7 +24,7 @@ class DistributionContractTests(unittest.TestCase):
         self.wheel = self.root / 'fixture.whl'
         self.tarball = self.root / 'fixture.tgz'
         self.prefix = 'awesome_telegram_patterns-0.9.0.dist-info/'
-        self.py_source = {'telegram_patterns/__init__.py':b'__all__=[]\n', 'telegram_patterns/py.typed':b'',
+        self.py_source = {'telegram_patterns/__init__.py':b"__version__ = '0.9.0'\n__all__=[]\n", 'telegram_patterns/py.typed':b'',
                           'telegram_patterns/resources/recipes.json':b'{"library_version":"0.9.0"}\n'}
         self.license = b'MIT License\nfixture\n'
         self.ts_manifest = {'name':'@awesome-telegram/patterns','version':'0.9.0','type':'module','license':'MIT','sideEffects':['**/*.css'],
@@ -140,6 +140,12 @@ class DistributionContractTests(unittest.TestCase):
         with self.assertRaisesRegex(DistributionViolation,'identity mismatch'): self.verify()
         self.zip(lambda values:values.update({self.prefix+'METADATA':values[self.prefix+'METADATA'].replace(b'\n\n',b'\nRequires-Dist: unexpected\n\n')}))
         with self.assertRaisesRegex(DistributionViolation,'dependency boundary'): self.verify()
+
+    def test_module_version_must_match_pyproject(self):
+        self.write('packages/python/src/telegram_patterns/__init__.py', b"__version__ = '9.9.9'\n__all__=[]\n")
+        with self.assertRaisesRegex(DistributionViolation, r'__version__ differs'): self.verify()
+        self.write('packages/python/src/telegram_patterns/__init__.py', b'__all__=[]\n')
+        with self.assertRaisesRegex(DistributionViolation, r'__version__ differs'): self.verify()
 
 
 if __name__=='__main__': unittest.main()

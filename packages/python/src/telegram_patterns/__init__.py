@@ -1,5 +1,9 @@
 """Core components; importing these does not require a Telegram SDK."""
 
+# Same value as [project].version in pyproject.toml and the installed distribution metadata;
+# verify_distribution_contract.py and the wheel consumer check all three.
+__version__ = '0.24.0'
+
 from .calendar_core import CalendarMonth, TimeSlot, resolve_local_time
 from .ephemeral import EphemeralMessageRef, EphemeralNotAllowed, EphemeralTrigger, ephemeral_parameters
 from .errors import (

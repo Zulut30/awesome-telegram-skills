@@ -104,6 +104,9 @@ def verify_distributions(root: Path, wheel: Path, tarball: Path) -> dict:
     ts = json.loads((ts_path / 'package.json').read_text(encoding='utf-8'))
     version = python['version']
     _require(ts['version'] == version, 'Package versions differ')
+    init = (root / 'packages/python/src/telegram_patterns/__init__.py').read_text(encoding='utf-8')
+    declared = re.search(r"^__version__ = '([^']+)'$", init, re.M)
+    _require(declared is not None and declared.group(1) == version, 'telegram_patterns.__version__ differs from pyproject.toml')
     normalized = re.sub(r'[-_.]+', '_', python['name']).lower()
     prefix = f'{normalized}-{version}.dist-info/'
     py_files = _read_archive(wheel, wheel=True)
