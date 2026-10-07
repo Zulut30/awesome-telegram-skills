@@ -47,6 +47,17 @@ class CiWorkflowTests(unittest.TestCase):
         self.assertIn('python scripts/verify_pattern_packages.py', block)
         self.assertIn('node tests/docs-browser.mjs', block)
 
+    def test_every_generator_with_a_check_mode_runs_in_ci(self):
+        block = CHECKS.split('\n  generated-files:\n', 1)[1].split('\n  python-style:\n', 1)[0]
+        # The docs site is verified by verify_docs_site.py and the browser job; release builds have no check mode.
+        exempt = {'build_docs_site.py'}
+        for script in sorted((ROOT / 'scripts').glob('*.py')):
+            text = script.read_text(encoding='utf-8')
+            generator = script.name.startswith('build_') or script.name in {'sync_skill_references.py', 'add_terms_lines.py'}
+            if generator and "'--check'" in text and script.name not in exempt:
+                with self.subTest(script.name):
+                    self.assertIn(f'python scripts/{script.name} --check', block)
+
 
 if __name__ == '__main__':
     unittest.main()

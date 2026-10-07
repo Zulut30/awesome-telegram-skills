@@ -1074,9 +1074,14 @@
     {
       "id": 84,
       "title": "Проверять свежесть сгенерированных файлов",
-      "status": "pending",
-      "commit_subject": null,
-      "evidence": [],
+      "status": "done",
+      "commit_subject": "excellence(084): check every generated file in a required CI job",
+      "evidence": [
+        "New job generated-files with the SDKs: sync_skill_references, add_terms_lines, build_api_reference, build_telegram_catalog, build_recipe_gallery, build_capability_map, build_native_signatures, build_openapi_types, all --check on the real tree",
+        "api reference, native-catalog.ts, gallery/index.html and resources/recipes.json/request-fixtures.json were not checked in CI before; all pass locally",
+        "Mutation: one appended space in native-catalog.ts, gallery/index.html, resources/recipes.json or docs/api-reference-core.md makes the matching check exit 1",
+        "tests/test_ci_workflow.py fails when a generator with a check mode is missing from the job (verified by removing one)"
+      ],
       "remaining": null
     },
     {
