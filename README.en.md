@@ -57,7 +57,7 @@ python3 scripts/install_skills.py --project ~/projects/my-bot --skill telegram-b
 python scripts/install_skills.py --project "C:\path\to\my-bot" --skill telegram-bot-python --skill telegram-code-patterns --dry-run
 ```
 
-Check the list, then repeat without `--dry-run`. Skills go to `.agents/skills/`, which Codex and GitHub Copilot read. For Claude Code add `--agent claude`: it only reads `.claude/skills/`, and the installed skill becomes `/telegram-bot-python`. Installing skills and installing packages are separate steps.
+Check the list, then repeat without `--dry-run`. Skills go to `.agents/skills/`, which Codex, GitHub Copilot, Cursor and Gemini CLI read. For Claude Code add `--agent claude`: it only reads `.claude/skills/`, and the installed skill becomes `/telegram-bot-python`. `--agent all` installs into both directories, `--agent copilot|cursor|gemini` into that agent's own directory, and `--user` instead of `--project` into your home directory for every project. Installing skills and installing packages are separate steps.
 
 **For Python developers.** Python 3.11 or newer; no venv activation needed.
 

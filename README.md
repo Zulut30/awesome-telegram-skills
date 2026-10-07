@@ -74,7 +74,7 @@ python scripts/install_skills.py --project "C:\path\to\my-bot" --skill telegram-
 python3 scripts/install_skills.py --project ~/projects/my-bot --skill telegram-bot-python --skill telegram-code-patterns --dry-run
 ```
 
-Замените путь на существующий проект. Проверьте список и повторите команду без `--dry-run`, чтобы скопировать навыки. Навыки копируются в `.agents/skills/` — его читают Codex и GitHub Copilot. Для Claude Code добавьте `--agent claude`: он читает только `.claude/skills/`, и после установки скилл доступен как `/telegram-bot-python`. Установка навыков и установка пакетов — отдельные действия.
+Замените путь на существующий проект. Проверьте список и повторите команду без `--dry-run`, чтобы скопировать навыки. Навыки копируются в `.agents/skills/` — его читают Codex, GitHub Copilot, Cursor и Gemini CLI. Для Claude Code добавьте `--agent claude`: он читает только `.claude/skills/`, и после установки скилл доступен как `/telegram-bot-python`. `--agent all` ставит в оба каталога сразу, `--agent copilot|cursor|gemini` — в собственный каталог агента, а `--user` вместо `--project` — в домашний каталог для всех проектов. Установка навыков и установка пакетов — отдельные действия.
 
 **Для Python-разработчика.** Нужен Python 3.11 или новее; активация окружения не требуется.
 

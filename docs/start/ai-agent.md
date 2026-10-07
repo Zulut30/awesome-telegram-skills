@@ -14,7 +14,18 @@ python3 scripts/install_skills.py --project ~/projects/my-bot --skill telegram-b
 python scripts/install_skills.py --project "C:\projects\my-bot" --skill telegram-bot-python --skill telegram-code-patterns --dry-run
 ```
 
-Скиллы копируются в `.agents/skills/` проекта — этот каталог читают Codex и GitHub Copilot. Claude Code читает только `.claude/skills/`: добавьте к команде `--agent claude`. Каждый скилл самостоятелен: берите только нужные.
+Скиллы копируются в `.agents/skills/` проекта — этот каталог читают Codex, GitHub Copilot, Cursor и Gemini CLI. Claude Code читает только `.claude/skills/`: добавьте к команде `--agent claude` или `--agent all` (оба каталога). Каждый скилл самостоятелен: берите только нужные.
+
+| Агент | `--agent` | Каталог в проекте | С `--user` |
+| --- | --- | --- | --- |
+| Codex | `codex` (по умолчанию) | `.agents/skills/` | `~/.agents/skills/` |
+| Claude Code | `claude` | `.claude/skills/` | `~/.claude/skills/` |
+| GitHub Copilot | `copilot` | `.github/skills/` | `~/.copilot/skills/` |
+| Cursor | `cursor` | `.cursor/skills/` | `~/.cursor/skills/` |
+| Gemini CLI | `gemini` | `.gemini/skills/` | `~/.gemini/skills/` |
+| Все сразу | `all` | `.agents/skills/` и `.claude/skills/` | то же в `~` |
+
+Copilot и Cursor читают и `.agents/skills/`, и `.claude/skills/`, поэтому после `all` они видят две одинаковые копии.
 
 ## 2. Попросите агента
 

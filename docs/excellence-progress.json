@@ -387,9 +387,13 @@
     {
       "id": 32,
       "title": "Установщик для всех агентов",
-      "status": "pending",
-      "commit_subject": null,
-      "evidence": [],
+      "status": "done",
+      "commit_subject": "excellence(032): install skills for every agent and for the user",
+      "evidence": [
+        "install_skills.py --agent codex|claude|copilot|cursor|gemini|all и --user; каталоги сверены 2026-10-07 с документацией: Codex (learn.chatgpt.com/docs/build-skills: .agents/skills, $HOME/.agents/skills), Claude Code (.claude/skills, ~/.claude/skills), Copilot (.github|.claude|.agents/skills, ~/.copilot|~/.agents/skills), Cursor (.agents|.cursor/skills + совместимость .claude/.codex), Gemini CLI (.gemini/skills, алиас .agents/skills)",
+        "tests/test_install_skills.py: каждый из 6 вариантов --agent в режимах проекта и --user во временных каталогах (точный набор созданных каталогов и байтовые копии references), конфликт в .claude/skills при all не оставляет частичной установки в .agents/skills, CLI --user с подменой HOME, --user и --project взаимоисключающие — 19 тестов OK",
+        "Настоящий Claude Code 2.1.292: после --user --agent all в отдельном HOME telegram-payments есть в slash_commands и skills; CLI Codex, Copilot, Cursor и Gemini в среде нет — для них проверены пути по документации и тестами файловой системы"
+      ],
       "remaining": null
     },
     {
