@@ -61,6 +61,32 @@ jobs:
       - run: python scripts/build_docs_map.py --check
       - run: python scripts/build_acceptance_history.py --check
 
+  history:
+    name: Commit messages and CHANGELOG against tags
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          fetch-depth: 0
+          fetch-tags: true
+      - uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97 # v7.0.0
+        with:
+          python-version: '3.13'
+      - run: python scripts/check_changelog.py
+      # Pull requests: their own commits. Pushes to main were checked in their pull request (a squash commit
+      # carries the pull request text), manual runs check the branch against main.
+      - env:
+          EVENT: ${{ github.event_name }}
+          BASE: ${{ github.event.pull_request.base.sha }}
+          HEAD: ${{ github.event.pull_request.head.sha }}
+        run: |
+          case "$EVENT" in
+            pull_request) python scripts/check_commit_messages.py --range "$BASE..$HEAD" ;;
+            push) echo 'Commit messages of main were checked in their pull requests' ;;
+            *) git fetch --no-tags origin main && python scripts/check_commit_messages.py --range origin/main..HEAD ;;
+          esac
+
   python-style:
     name: Python library style (ruff)
     runs-on: ubuntu-latest
@@ -369,7 +395,7 @@ jobs:
     # The one check to mark as required in branch protection: it fails when any job below failed, was
     # cancelled or skipped, so adding a job to `needs` is enough to make it block merging.
     if: always()
-    needs: [skills, generated-files, python-style, python-types, python-unit, python-package, python-coverage, typescript, mini-app-quality, browser, docs-site, api-compatibility, quickstart, fresh-install, examples, docker]
+    needs: [skills, generated-files, history, python-style, python-types, python-unit, python-package, python-coverage, typescript, mini-app-quality, browser, docs-site, api-compatibility, quickstart, fresh-install, examples, docker]
     runs-on: ubuntu-latest
     timeout-minutes: 5
     steps:

@@ -1,0 +1,11 @@
+# область: что делает изменение, в повелительном наклонении, до 72 символов
+# Пример: dialog: keep the operation id after a restart
+
+# Что изменено и зачем: один-три абзаца, строки до 100 символов.
+# Объясните задачу пользователя или причину, а не пересказ диффа.
+
+# Проверено: команды и их результат, например
+# Проверено: python -m unittest discover -s tests (163 OK), verify_pattern_packages.py PASS
+
+# Строки, начинающиеся с #, git удаляет. Подключить шаблон: git config commit.template .gitmessage
+# Формат проверяет python scripts/check_commit_messages.py (в CI — задача history).

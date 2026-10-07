@@ -1192,9 +1192,14 @@
     {
       "id": 93,
       "title": "Понятная история изменений",
-      "status": "pending",
-      "commit_subject": null,
-      "evidence": [],
+      "status": "done",
+      "commit_subject": "excellence(093): Check commit messages and the changelog against tags in CI",
+      "evidence": [
+        ".gitmessage template and a CONTRIBUTING section: area and action up to 72 characters, what and why, a Проверено line with checks and results",
+        "scripts/check_commit_messages.py checks pull request commits (merges, bots and history before ce1508b exempt); scripts/check_changelog.py checks section order and that every vX.Y.Z tag has a section",
+        "CHANGELOG legacy Unreleased section split into 0.6.0-0.13.0 by the tag each item shipped in; the old file would fail with 11 tags without sections",
+        "Required CI job history runs both checks; the Release workflow refuses a tag without its section; tests/test_history_checks.py; this commit passes the new check"
+      ],
       "remaining": null
     },
     {

@@ -95,6 +95,7 @@
 - Пункт 90: десять отдельных `scripts/verify_*_recipe.py` заменены одним параметризованным `scripts/verify_copied_recipe.py RECIPE COPIED_SKILL` (`--list` перечисляет рецепты). Общий класс `Composition` извлекает единственный блок из скопированного руководства, сверяет проверенные композиции с `examples/python` побайтно, запускает offline-сценарий в процессе или в отдельном интерпретаторе и проверяет отказ на отсутствующем, измененном и повторенном блоке; клавиатурные и developer-рецепты остались функциями в той же таблице. Перезапуск диалога теперь получает окружение из общего `scripts/_environment.py` вместо своего списка переменных. 441 строка вместо 604. Вывод всех десяти рецептов на скопированном навыке совпал со старыми скриптами байт в байт (кроме случайного идентификатора операции), отказы на испорченных копиях сохранились; `verify_pattern_packages.py` вызывает новый скрипт и полностью прошел (579 Python- и 38 TypeScript-тестов, браузер). Рецепт `dialog` дополнительно требует закрытую сессию — его результат и раньше ее содержал. Новый `tests/test_copied_recipe.py` проверяет таблицу, отказы без SDK и вызовы из проверки поставки.
 - Пункт 91: структура документации. 24 внутренних документа (планы и их реестры, исследования приоритетов, обзоры версий 0.1–0.5, аудиты навыков и проверки пунктов) перенесены в `docs/internal/` с индексом `docs/internal/README.md`; все ссылки на них в README, пакетах, CHANGELOG и документах переписаны. `docs/navigation.json` относит каждую из 68 пользовательских страниц к одному из разделов «Обучение», «Как сделать», «Справочник», «Объяснения» и называет ее цель; из него `scripts/build_docs_map.py` собирает карту `docs/README.md` (на сайте — `docs/index.html`) и проверяет, что каждая страница в `docs/` описана, внутренние материалы не перечислены, цели заданы и в меню не больше 25 страниц. Боковое меню сайта строится из манифеста: 25 ссылок в четырех разделах вместо прежних 34 и 42 ссылок на скиллы (они остались в каталоге скиллов); хлебные крошки показывают раздел, внутренние страницы публикуются, но не попадают в меню, поиск и `llms-full.txt`. Проверка карты добавлена в задачу CI `generated-files`; сайт собирается и проходит `verify_docs_site.py` и браузерный тест (232 проверки), новые тесты — `tests/test_docs_structure.py` и тест меню в `site/tests`.
 - Пункт 92: отчеты приемки вне рабочего дерева. 83 файла `docs/v1-checks` (2,1 МБ) удалены из дерева; их содержимое остается в истории Git, и каждая из 203 ссылок в README, документах и каталогах ведет на постоянную ссылку на коммит `fe16ba3` (блоб на GitHub сверен с локальным файлом). В дереве осталась сводка `docs/acceptance-history.json` (38 КБ: версия, результат, дата, этапы, тесты, размер и SHA-256 каждого отчета) и таблица `docs/acceptance-history.md`; `scripts/build_acceptance_history.py` собирает таблицу, в CI проверяет ее актуальность и формат ссылок и не дает вернуть `docs/v1-checks`, а `--add` добавляет строку для нового отчета без копирования файла. Новые полные отчеты становятся файлами релиза: задача `release-report` в `Full acceptance` на теге прикладывает `distribution-report.json` к релизу с отдельным правом записи. Сайт документации проверяет принятую версию по сводке. Шаг описан в «Выпуске версии»; тесты — `tests/test_acceptance_history.py` и проверка workflow.
+- Пункт 93: понятная история изменений. Шаблон `.gitmessage` и раздел «Сообщение коммита» в CONTRIBUTING задают формат: область и действие до 72 символов, пустая строка, что изменено и зачем, строка `Проверено:` с командами и результатом. `scripts/check_commit_messages.py` проверяет коммиты pull request (слияния, коммиты ботов и история до `ce1508b` не проверяются; `--message-file` подходит для хука `commit-msg`), `scripts/check_changelog.py` — что первым идет «Не выпущено», разделы версий идут от новых к старым без повторов и у каждого тега `vX.Y.Z` есть свой раздел. Раздел «Unreleased — подготовка 1.0» разложен по версиям 0.6.0–0.13.0 по тому, в какой тег вошел каждый пункт (017–019 — в 0.14.0); на прежнем CHANGELOG проверка нашла бы 11 тегов без раздела. Новая обязательная задача CI `history` запускает обе проверки, workflow Release отказывается выпускать тег без своего раздела. Тесты — `tests/test_history_checks.py`.
 
 ## 0.24.0
 
@@ -159,49 +160,64 @@
 - Unknown edit останавливает переходы; explicit owner /menu перерисовывает тот же message_id с новой revision. Unknown initial send не повторяется автоматически; local discard — отдельное решение host. State одного процесса, restart отклоняет старые tokens; durable FSM/multiworker не обещаются.
 - Runnable composition, closed offline recipe и API reference через публичные exports; обычная локальная поставка Python/TypeScript, без публикации.
 
-## 0.14.0 — пункт 021
+## 0.14.0 — пункты 017–019 и 021
 
 - KeyboardLayout и KeyboardCapabilities, action_layout/inline_layout/reply_layout: flat buttons, mixed widths, last/cycle tail, immutable snapshot и проверка native context/actions до presentation fallback. Default новых helpers убирает непроверенные styles/emoji, сохраняя labels/actions; прежние builders не меняются. Entitlement/client hints передаёт host, live проверка не подменяется.
 - Новые публичные exports, API reference/контракты, gallery layouts и installed SDK composition согласованы. Python/TypeScript поставка локальная; исторические applications используют принятые артефакты 0.13.0.
-
-## Unreleased — подготовка 1.0
-
+- Пункт 017: отдельное приложение `examples/service-bot` / `awesome-telegram-service-example` 0.1.0 использует принятую библиотеку 0.13.0. Меню, запись через text_form_router, file SQLite FSM, owner-scoped доступ, transactional replay, согласие и durable намерение напоминания. Actual crash после commit сохраняет один эффект; crash после synthetic отправки оставляет unknown без автоматического дубля. OS process lock и join SQLite work при отмене предотвращают продолжение записи после освобождения базы. Внешний consumer устанавливает оба wheel, проверяет типы, восемь domain/lifecycle тестов и семь отдельных restart/crash фаз. Synthetic SDK transport не подтверждает live Telegram; общая библиотека и её public exports не изменились.
+- Пункт 018: отдельный `examples/shop` / application 0.1.0 связывает установленную библиотеку 0.13.0, TypeScript каталог/корзину и Python/aiohttp backend с реальной SQLite. Signed initData → hashed session/CSRF → owner ACL; цена/валюта/terms и order operation — серверные. Stars invoice, pre-checkout и атомарный receipt/paid/access подключены через публичные компоненты и trusted SDK Router. Invoice callback не выдаёт доступ. Pending ID переживает reload, unknown invoice не пересоздаётся; duplicate/second receipt сохраняются без двойной выдачи. Separate consumer tests и Chrome проверяют композицию; transport/native/launch остаются synthetic, live Stars/device acceptance отдельно. Пакеты библиотеки и их публичные exports не изменены.
 - Пункт 019: самостоятельное приложение `examples/group-bot` / `awesome-telegram-group-example` 0.1.0. Темы, свежие права bot/actor, context-bound confirmation, обычные/assigned заявки и десятиминутная модерация; file SQLite journal, миграции и membership invalidation. Повтор и crash после synthetic API-запроса не отправляют действие заново. Внешний consumer проверяет wheel/RECORD/entrypoint, типы, 19 тестов и четыре реальные процессные фазы. Live права/delivery не объявлены проверенными; публичный API библиотеки 0.13.0 не изменился.
 
-- Пункт 018: отдельный `examples/shop` / application 0.1.0 связывает установленную библиотеку 0.13.0, TypeScript каталог/корзину и Python/aiohttp backend с реальной SQLite. Signed initData → hashed session/CSRF → owner ACL; цена/валюта/terms и order operation — серверные. Stars invoice, pre-checkout и атомарный receipt/paid/access подключены через публичные компоненты и trusted SDK Router. Invoice callback не выдаёт доступ. Pending ID переживает reload, unknown invoice не пересоздаётся; duplicate/second receipt сохраняются без двойной выдачи. Separate consumer tests и Chrome проверяют композицию; transport/native/launch остаются synthetic, live Stars/device acceptance отдельно. Пакеты библиотеки и их публичные exports не изменены.
-
-- Пункт 017: отдельное приложение `examples/service-bot` / `awesome-telegram-service-example` 0.1.0 использует принятую библиотеку 0.13.0. Меню, запись через text_form_router, file SQLite FSM, owner-scoped доступ, transactional replay, согласие и durable намерение напоминания. Actual crash после commit сохраняет один эффект; crash после synthetic отправки оставляет unknown без автоматического дубля. OS process lock и join SQLite work при отмене предотвращают продолжение записи после освобождения базы. Внешний consumer устанавливает оба wheel, проверяет типы, восемь domain/lifecycle тестов и семь отдельных restart/crash фаз. Synthetic SDK transport не подтверждает live Telegram; общая библиотека и её public exports не изменились.
+## 0.13.0 — пункт 016
 
 - Пункт 016, 0.13.0: у всех 299 cookbook recipes появились execution requirements. Публичные frozen RecipeRunPlan/RecipeRunResult, plan_recipe/run_recipe_offline и CLI run-recipe сначала показывают план, затем по --offline запускают закрытый fixture из установленного пакета. 200 Python сценариев выполняются без токена: 185 SDK requests, 11 markup builders, три Dispatcher-композиции и один SQLite lost-response. 99 native references дают явный отказ без host/аргументов.
-
   Изолированный child получает только системный env, owns temporary files и не выполняет recipe.code/user application. Real SDK HTTP и внешний Python DNS/connect запрещены; доверенный fixture worker не является OS sandbox. Сессия/FSM явно закрываются. Requirements panel отделяет offline readiness от live auth/ACL/entitlement; SDK can_* hints не объявляются полным permission engine. Предыдущие API/schema defaults сохранены; maturity/evidence не повышены. Каталог: 29 групп, справочник: 120 символов и 19 полных примеров. Поставка локальная.
 
-- Пункт 015, 0.12.0: галерея и SDK-free RecipeCatalog/CLI ищут по задаче, контексту, SDK/снимку и версии API независимо от maturity/evidence. Источники и executable проверки связаны с каждой записью; standalone export копирует связанные файлы byte-exact. Добавлен существующий SQLite lost-response пример: 299 recipes, 15 experimental, 284 reference; 196 SDK / 4 mock / 99 not_run. Schema 1 и прежние defaults/imports сохраняются; unknown context не означает все чаты. На телефоне дополнительные фильтры и пояснения свернуты.
+## 0.12.0 — пункт 015
 
+- Пункт 015, 0.12.0: галерея и SDK-free RecipeCatalog/CLI ищут по задаче, контексту, SDK/снимку и версии API независимо от maturity/evidence. Источники и executable проверки связаны с каждой записью; standalone export копирует связанные файлы byte-exact. Добавлен существующий SQLite lost-response пример: 299 recipes, 15 experimental, 284 reference; 196 SDK / 4 mock / 99 not_run. Schema 1 и прежние defaults/imports сохраняются; unknown context не означает все чаты. На телефоне дополнительные фильтры и пояснения свернуты.
   При проверке новой поставки воспроизведен timeout первого изолированного SDK import в свежем Windows consumer: старый лимит 10s заменен на 30s. Ошибки и превышение лимита сохраняют fail; проверки timeout и отсутствия секретов проходят. Consumer harness сохраняет причины/время tool probes для расследования таких сбоев.
+
+## 0.11.1 — пункт 014
 
 - Пункт 014, 0.11.1: поименный API-справочник, 116 публичных символов и CLI/CSS, 18 полных примеров core/bot/Mini App. Переносимые references автономны. Генератор обнаруживает незадокументированные exports; отдельный consumer проверяет точные блоки документации, installed types, CLI, ESM и DOM. Runtime API не изменен; patch нужен для новых package README bytes.
 
+## 0.11.0 — пункт 013
+
 - Пункт 013 / поставка 0.11.0: doctor сообщает машинные причины и команды исправления без исполнения рекомендаций. Ожидаемые ошибки target/manifest становятся failed checks, JSON shape проверяется, чтение ограничено и известные links отклоняются. Node probe получает системный env allowlist и не отражает raw output. Рекомендованные wheel/tarball repairs проверяются отдельно в новом окружении.
+
+## 0.10.0 — пункт 012
 
 - Пункт 012 / поставка 0.10.0: выбор из 15 starter групп, auto-dependencies, минимальная версия API и preflight конфликтов шаблона/артефактов/файлов/команд/prefix. Выбранные модули исполняются через установленную библиотеку; generated Python distribution включает подключенные модули. Dry-run перечисляет все файлы, повторный запуск сохраняет пользовательский код.
 
-- Пункт 011 / поставка 0.9.2: короткий первый запуск из локальных wheel/tarball 0.9.2 с offline-ботом и адаптивной формой. Команды руководства проверяются в новом внешнем consumer с пробелами в путях; переносимая копия навыка совпадает с руководством. Исправлен npm file spec для путей с пробелами: прежний percent-encoded URI приводил к ENOENT; Python URI и config URI сохранены. Browser preview и установка dependencies отделены от реального Telegram и backend auth.
+## 0.9.2 — пункты 010–011
 
 - Пункт 010: фиксированы identity/launch/rights границы Bot API, Mini App, Business/Secretary и user-client; добавлена переносимая инструкция и SDK/native probes. Учтены современные guest/bot-to-bot исключения и расхождения FAQ/rights naming; пользовательская session не подключается автоматически. Runtime API и артефакты 0.9.1 сохранены.
+- Пункт 011 / поставка 0.9.2: короткий первый запуск из локальных wheel/tarball 0.9.2 с offline-ботом и адаптивной формой. Команды руководства проверяются в новом внешнем consumer с пробелами в путях; переносимая копия навыка совпадает с руководством. Исправлен npm file spec для путей с пробелами: прежний percent-encoded URI приводил к ENOENT; Python URI и config URI сохранены. Browser preview и установка dependencies отделены от реального Telegram и backend auth.
+
+## 0.9.1 — пункт 009
 
 - Пункт 009 / поставка 0.9.1: обязательный read-only archive contract — source/resources/RECORD, extra/CLI и полный набор JS/declarations/CSS/export map. Проверки подмены/пропуска/лишних файлов и небезопасных archive entries выполняются в настоящих temporary archives; installed consumers остаются отдельным runtime evidence. API 0.9.0 сохранен.
 
+## 0.9.0 — пункт 008
+
 - Пункт 008 / исходники 0.9.0: структурные OnceStore/AsyncTransport/ProviderAdapter и optional RefundProvider; публичные TS KeyValueStorage/StorageFactory/FetchTransport без изменения прежних методов. Рабочий custom adapter проверяет SQLite replay, lost response и tampered fixture event; реальные provider workflows остаются отдельными задачами.
+
+## 0.8.0 — пункт 007
 
 - Пункт 007 / исходники 0.8.0: единые ErrorReport/code/category/outcome/recovery в Python/TypeScript; безопасные сообщения, совместимые исключения и различимые preflight/permission/unsupported/timeout. Неизвестный результат записи требует сверки того же ключа; HTTP/отмена/ошибка feedback не запускают retry. Добавлены installed-core пример и проверки сохранения pending identity формы.
 
-- Пункт 001: определены сценарии и границы 1.0, пользовательские задачи, точки входа и критерии приемки; добавлен регистр выполнения всех 100 пунктов.
-- Пункт 002 / исходники 0.6.0: maturity групп и recipes, независимый фильтр RecipeCatalog/CLI/галереи, совместимое чтение старых records и переносимые инструкции. SDK/mock/browser evidence не повышает статус до stable автоматически.
+## 0.7.0 — пункты 003–006
+
 - Пункт 003: полные семантические контракты root/aiogram/testing/CLI и TypeScript exports, включая DTO/types, ошибки, ресурсы и обязанности host.
 - Пункт 004: правила SemVer, миграций, неизменности релиза и deprecation stable API (два minor и 90 дней); RC identity различает Python/npm форматы.
 - Пункт 005: опубликованы support matrix и JSON snapshot с точными проверенными версиями, пропуском Windows symlink и явно непроверенными OS/Telegram clients.
 - Пункт 006 / исходники 0.7.0: явные Python/TypeScript exports, Literal aliases и TextFieldControl, устранены 19 ошибок Mypy в SDK guards/middleware; consumer type checks проверяют wheel/tarball, migration случайных wildcard SDK imports документирована.
+
+## 0.6.0 — пункты 001–002
+
+- Пункт 001: определены сценарии и границы 1.0, пользовательские задачи, точки входа и критерии приемки; добавлен регистр выполнения всех 100 пунктов.
+- Пункт 002 / исходники 0.6.0: maturity групп и recipes, независимый фильтр RecipeCatalog/CLI/галереи, совместимое чтение старых records и переносимые инструкции. SDK/mock/browser evidence не повышает статус до stable автоматически.
 
 ## 0.5.0 — 4 октября 2026
 
