@@ -639,9 +639,14 @@
     {
       "id": 51,
       "title": "Автоматически отслеживать изменения Bot API",
-      "status": "pending",
-      "commit_subject": null,
-      "evidence": [],
+      "status": "done",
+      "commit_subject": "excellence(051): watch the Bot API index weekly and open an issue on change",
+      "evidence": [
+        ".github/workflows/telegram-docs-watch.yml: понедельник 06:17 UTC и ручной запуск; update_api_index.py → scripts/diff_api_index.py → gh issue create с проверкой дубля по digest",
+        "scripts/diff_api_index.py: сравнение версии, методов, типов и полей; SHA страницы и порядок полей игнорируются; markdown issue и GITHUB_OUTPUT",
+        "Прогон 2026-10-07 на измененной копии официального HTML: найдены 10.3→10.4, sendTestFeature, User.has_test_badge; живая страница: changed=false при другом SHA",
+        "tests/test_api_watch.py: 4 теста (пересборка без изменений API, новые/удаленные методы, типы и поля, CLI, workflow)"
+      ],
       "remaining": null
     },
     {
