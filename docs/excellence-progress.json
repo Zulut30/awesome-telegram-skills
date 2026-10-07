@@ -70,9 +70,13 @@
     {
       "id": 6,
       "title": "Ограничить таймаут и оборачивать ранние ошибки",
-      "status": "pending",
-      "commit_subject": null,
-      "evidence": [],
+      "status": "done",
+      "commit_subject": "excellence(006): bound timeout and type pre-fetch failures in ApiClient",
+      "evidence": [
+        "core.test.mjs: timeoutMs 3e9/2^31/Infinity/0/-1/NaN отклонены, 2147483647 принят; headers() throw и неверное имя заголовка -> internal/rejected без текста; BigInt/цикл/функция/Symbol/toJSON throw -> ValidationFailure; транспорт не вызван",
+        "новый тест падает на прежней реализации; npm test 30/30",
+        "public-types.ts компилируется против tarball; build_api_reference --check passed"
+      ],
       "remaining": null
     },
     {

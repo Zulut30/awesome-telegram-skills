@@ -3,6 +3,8 @@ import type {FetchTransport} from './adapters.js';
 
 export type FailureKind = 'http' | 'network' | 'timeout' | 'aborted' | 'invalid-response';
 const MAX_RETRY_AFTER_MS = 86_400_000;
+/** setTimeout fires immediately for larger delays. */
+const MAX_TIMEOUT_MS = 2_147_483_647;
 
 /** HTTP status → error code. The response body is never parsed for classification. */
 function httpErrorCode(status: number): ErrorCode {
@@ -102,13 +104,20 @@ export class ApiClient {
     const outcome = method === 'GET' || method === 'HEAD' ? 'read-failed' : 'unknown';
     const rejected = options.rejectedBeforeEffect === undefined ? this.rejected : statusSet(options.rejectedBeforeEffect);
     const timeout = options.timeoutMs ?? 10000;
-    if (!Number.isFinite(timeout) || timeout <= 0) throw new ValidationFailure('Positive timeout required');
-    const headers = new Headers(this.options.headers?.());
+    if (!Number.isFinite(timeout) || timeout <= 0 || timeout > MAX_TIMEOUT_MS) {
+      throw new ValidationFailure('Timeout must be positive and at most 2147483647 ms');
+    }
+    let headers: Headers;
+    // Nothing was sent yet: report a rejected attempt without the callback's own message.
+    try { headers = new Headers(this.options.headers?.()); }
+    catch { throw new PatternError('internal', 'rejected', 'Request headers callback failed'); }
     headers.set('Accept', 'application/json');
     let body: string | undefined;
     if (options.body !== undefined) {
       if (method === 'GET' || method === 'HEAD') throw new ValidationFailure('Read method cannot have a body');
-      body = JSON.stringify(options.body);
+      try { body = JSON.stringify(options.body); }
+      catch { throw new ValidationFailure('Request body must be JSON-serializable'); }
+      if (body === undefined) throw new ValidationFailure('Request body must be JSON-serializable');
       headers.set('Content-Type', 'application/json');
     }
     const controller = new AbortController();

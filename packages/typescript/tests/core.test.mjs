@@ -100,6 +100,32 @@ test('Retry-After accepts seconds and HTTP dates, is bounded and ignores garbage
   }
 });
 
+test('oversized timeout, failing headers and non-JSON bodies are typed rejections before transport', async () => {
+  let calls=0;
+  const transport=async()=>{calls++;return Response.json({});};
+  const api=new ApiClient({baseUrl:'https://x.test',fetch:transport});
+  for (const timeoutMs of [3e9,2_147_483_648,Infinity,0,-1,NaN]) {
+    await assert.rejects(api.request('/r',x=>x,{timeoutMs}),ValidationFailure,String(timeoutMs));
+  }
+  await api.request('/r',x=>x,{timeoutMs:2_147_483_647});assert.equal(calls,1);calls=0;
+  for (const headers of [()=>{throw Error('PRIVATE header secret');},()=>({'bad header':'x'})]) {
+    const failing=new ApiClient({baseUrl:'https://x.test',fetch:transport,headers});
+    await assert.rejects(failing.request('/w',x=>x,{method:'POST',body:{}}),error=>{
+      assert.equal(error instanceof PatternError,true);
+      assert.deepEqual([error.code,error.outcome],['internal','rejected']);
+      assert.equal(String(error).includes('PRIVATE'),false);assert.equal(error.cause,undefined);
+      return true;
+    });
+  }
+  const cyclic={};cyclic.self=cyclic;
+  for (const body of [10n,cyclic,()=>1,Symbol('x'),{toJSON(){throw Error('PRIVATE');}}]) {
+    await assert.rejects(api.request('/w',x=>x,{method:'POST',body}),error=>{
+      assert.equal(error instanceof ValidationFailure,true);assert.equal(String(error).includes('PRIVATE'),false);return true;
+    });
+  }
+  assert.equal(calls,0);
+});
+
 test('API preflight rejection is actionable and happens before transport', async () => {
   let calls=0;
   const api=new ApiClient({baseUrl:'https://example.test',fetch:async()=>{calls++;return Response.json({});}});
