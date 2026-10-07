@@ -718,9 +718,14 @@
     {
       "id": 76,
       "title": "Обновить примеры до текущей версии",
-      "status": "pending",
-      "commit_subject": null,
-      "evidence": [],
+      "status": "done",
+      "commit_subject": "excellence(076): run the example applications on the current library",
+      "evidence": [
+        "service-bot, group-bot и shop переведены на awesome-telegram-patterns >=0.24,<0.25 (frontend 0.24.0) без изменений кода; скрипты проверки берут версию из pyproject.toml",
+        "Первый прогон job examples (run 37562753783) упал: верификаторы не создавали отсутствующий output/; исправлено в ed6fc29 (mkdir с parents после проверки links)",
+        "CI run 37564299086 на 27f9b76: job 'Example applications on the current library' success — verify_service_bot, verify_group_bot и verify_shop_example (с Chrome) на wheel/tarball текущей версии",
+        "Локально на Linux все три верификатора passed с wheel 0.24.0, в том числе group-bot в трехуровневый несуществующий каталог"
+      ],
       "remaining": null
     },
     {
