@@ -533,9 +533,14 @@
     {
       "id": 43,
       "title": "Один источник для повторяющихся references",
-      "status": "pending",
-      "commit_subject": null,
-      "evidence": [],
+      "status": "done",
+      "commit_subject": "excellence(043): generate skill copies of shared docs pages from one source",
+      "evidence": [
+        "catalog/skill-references.json: 26 docs/ sources -> 35 skill copies",
+        "scripts/sync_skill_references.py writes copies byte for byte; --check fails on drift or on an unlisted copy of a docs/ page",
+        "CI skills job runs the --check step; tests/test_skill_reference_sync.py covers repository state, edit-without-sync failure, repair and unlisted copies; demonstrated on docs/media.md",
+        "AGENTS.md and CONTRIBUTING.md: edit docs/, then run the sync script"
+      ],
       "remaining": null
     },
     {

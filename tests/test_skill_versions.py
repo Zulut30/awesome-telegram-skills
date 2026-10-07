@@ -66,13 +66,6 @@ class SkillVersionLabelTests(unittest.TestCase):
                             self.assertIn(symbol, exported, f'{name}: {symbol} is not exported by {CURRENT}')
         self.assertGreaterEqual(len(seen), 30)
 
-    def test_copies_of_docs_pages_are_identical(self):
-        for path in sorted((ROOT / '.agents/skills').glob('*/references/*.md')):
-            source = ROOT / 'docs' / path.name
-            if source.is_file():
-                with self.subTest(copy=path.relative_to(ROOT).as_posix()):
-                    self.assertEqual(path.read_bytes(), source.read_bytes())
-
 
 if __name__ == '__main__':
     unittest.main()

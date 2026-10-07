@@ -1,0 +1,93 @@
+{
+  "schema_version": 1,
+  "note": "Pages kept in docs/ and copied byte-for-byte into skills; edit the docs/ source, then run python scripts/sync_skill_references.py.",
+  "copies": {
+    "docs/api-reference-bot.md": [
+      ".agents/skills/telegram-code-patterns/references/api-reference-bot.md"
+    ],
+    "docs/api-reference-core.md": [
+      ".agents/skills/telegram-code-patterns/references/api-reference-core.md"
+    ],
+    "docs/api-reference-typescript.md": [
+      ".agents/skills/telegram-code-patterns/references/api-reference-typescript.md"
+    ],
+    "docs/api-reference.md": [
+      ".agents/skills/telegram-code-patterns/references/api-reference.md"
+    ],
+    "docs/calendar-slots.md": [
+      ".agents/skills/telegram-code-patterns/references/calendar-slots.md"
+    ],
+    "docs/dialog-fields.md": [
+      ".agents/skills/telegram-code-patterns/references/dialog-fields.md",
+      ".agents/skills/telegram-dialogs/references/dialog-fields.md"
+    ],
+    "docs/dialog-restart.md": [
+      ".agents/skills/telegram-code-patterns/references/dialog-restart.md",
+      ".agents/skills/telegram-dialogs/references/dialog-restart.md"
+    ],
+    "docs/doctor.md": [
+      ".agents/skills/telegram-code-patterns/references/doctor.md"
+    ],
+    "docs/gallery-navigation.md": [
+      ".agents/skills/telegram-code-patterns/references/gallery-navigation.md"
+    ],
+    "docs/group-bot.md": [
+      ".agents/skills/telegram-code-patterns/references/group-bot.md"
+    ],
+    "docs/inline-search.md": [
+      ".agents/skills/telegram-code-patterns/references/inline-search.md",
+      ".agents/skills/telegram-inline-mode/references/inline-search.md"
+    ],
+    "docs/keyboard-layouts.md": [
+      ".agents/skills/telegram-code-patterns/references/keyboard-layouts.md"
+    ],
+    "docs/media.md": [
+      ".agents/skills/telegram-bot-api/references/media.md",
+      ".agents/skills/telegram-code-patterns/references/media.md"
+    ],
+    "docs/message-navigation.md": [
+      ".agents/skills/telegram-code-patterns/references/message-navigation.md"
+    ],
+    "docs/message-text.md": [
+      ".agents/skills/telegram-bot-api/references/message-text.md",
+      ".agents/skills/telegram-code-patterns/references/message-text.md"
+    ],
+    "docs/platform-operations.md": [
+      ".agents/skills/telegram-business-bots/references/platform-operations.md",
+      ".agents/skills/telegram-code-patterns/references/platform-operations.md",
+      ".agents/skills/telegram-groups/references/platform-operations.md"
+    ],
+    "docs/polls.md": [
+      ".agents/skills/telegram-bot-api/references/polls.md",
+      ".agents/skills/telegram-code-patterns/references/polls.md"
+    ],
+    "docs/profiles.md": [
+      ".agents/skills/telegram-code-patterns/references/profiles.md",
+      ".agents/skills/telegram-profiles/references/profiles.md"
+    ],
+    "docs/quickstart.md": [
+      ".agents/skills/telegram-code-patterns/references/quickstart.md"
+    ],
+    "docs/recipe-execution.md": [
+      ".agents/skills/telegram-code-patterns/references/recipe-execution.md"
+    ],
+    "docs/selection-controls.md": [
+      ".agents/skills/telegram-code-patterns/references/selection-controls.md"
+    ],
+    "docs/service-bot.md": [
+      ".agents/skills/telegram-code-patterns/references/service-bot.md"
+    ],
+    "docs/shop-example.md": [
+      ".agents/skills/telegram-code-patterns/references/shop-example.md"
+    ],
+    "docs/starter-selection.md": [
+      ".agents/skills/telegram-code-patterns/references/starter-selection.md"
+    ],
+    "docs/test-environment.md": [
+      ".agents/skills/telegram-code-patterns/references/test-environment.md"
+    ],
+    "docs/troubleshooting.md": [
+      ".agents/skills/telegram-debugging/references/troubleshooting.md"
+    ]
+  }
+}

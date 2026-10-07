@@ -30,6 +30,8 @@ jobs:
           python-version: '3.13'
       - run: python -m pip install 'PyYAML>=6,<7' 'skills-ref==0.1.1'
       - run: python scripts/validate_skills.py
+      # Shared docs/ pages and their skill copies: edit the source, then run the script without --check.
+      - run: python scripts/sync_skill_references.py --check
       # Reference validator of the Agent Skills specification (agentskills.io).
       - run: for skill in .agents/skills/*/; do agentskills validate "$skill"; done
       - run: python -m unittest discover -s tests -v
