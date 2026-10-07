@@ -1229,10 +1229,14 @@
     {
       "id": 96,
       "title": "Исследование удобства",
-      "status": "pending",
-      "commit_subject": null,
-      "evidence": [],
-      "remaining": null
+      "status": "partial",
+      "commit_subject": "excellence(096): Add a usability study protocol with recorded rounds and comparison",
+      "evidence": [
+        "docs/usability-study.md: 5-8 participants across four levels, quickstart and AI-agent keyboard tasks, time, errors, outcome, Single Ease Question, problems with severity and page, anonymous ids",
+        "scripts/usability_study.py records rounds in docs/internal/usability, validates participants, sessions, dates, version, private data and the fix list, summarizes per task and compares rounds (faster, fewer errors, completion not lower)",
+        "tests/test_usability_study.py uses synthetic fixtures only"
+      ],
+      "remaining": "No sessions with developers have been run: the first round, the fixes it finds and the repeated measurement need real participants"
     },
     {
       "id": 97,
