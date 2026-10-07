@@ -46,8 +46,9 @@ def create_app(store: Store, bot: Bot, frontend: Path, *, origin: str, terms: st
             response=await handler(request)
         except InvalidInitData:response=web.json_response({'error':'authentication-required'},status=401)
         except PermissionDenied:response=web.json_response({'error':'permission-denied'},status=403)
-        except (ValidationFailure,ValueError,TypeError,json.JSONDecodeError):response=web.json_response({'error':'validation-failed'},status=422)
+        # Before ValueError: OperationConflict is a ConflictFailure, which is also a ValueError.
         except OperationConflict:response=web.json_response({'error':'operation-conflict'},status=409)
+        except (ValidationFailure,ValueError,TypeError,json.JSONDecodeError):response=web.json_response({'error':'validation-failed'},status=422)
         except UnknownInvoice:response=web.json_response({'error':'invoice-outcome-unknown'},status=503)
         except web.HTTPException as error:response=web.json_response({'error':'request-rejected'},status=error.status)
         except Exception:response=web.json_response({'error':'service-unavailable'},status=503)

@@ -73,7 +73,7 @@ def main() -> int:
     help_text=run('entrypoint-help',[console,'--help']);assert all(option in help_text for option in ('--origin','--terms-version','--database','--support'))
     run('typecheck',[python,'-m','mypy','--check-untyped-defs','--warn-unused-ignores',ROOT/'examples/shop/src'])
     run('tests',[python,'-I','-m','unittest','discover','-s',ROOT/'examples/shop/tests','-v'])
-    test_log=(output/'tests.log').read_text(encoding='utf-8');unit_tests=int(re.search(r'Ran (\d+) tests',test_log).group(1));assert unit_tests==10 and test_log.rstrip().endswith('OK')
+    test_log=(output/'tests.log').read_text(encoding='utf-8');unit_tests=int(re.search(r'Ran (\d+) tests',test_log).group(1));assert unit_tests==11 and test_log.rstrip().endswith('OK')
     frontend=consumer/'frontend';shutil.copytree(ROOT/'examples/shop/frontend',frontend,ignore=shutil.ignore_patterns('node_modules','dist'))
     supplied=consumer/'provided artifacts';supplied.mkdir();tarball=supplied/sources[1].name;shutil.copyfile(sources[1],tarball)
     package_json=frontend/'package.json';data=json.loads(package_json.read_text());data['dependencies']['@awesome-telegram/patterns']='file:'+tarball.as_posix();package_json.write_text(json.dumps(data,indent=2)+'\n')

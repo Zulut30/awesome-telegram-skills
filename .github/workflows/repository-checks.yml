@@ -37,6 +37,8 @@ jobs:
       # docs/capability-map.md is generated from catalog/capability-map.json and the recipe/component catalogs.
       - run: python scripts/build_capability_map.py --check
       - run: python scripts/build_native_signatures.py --check
+      # Shop client types and decoders follow examples/shop/openapi.json; the server side is checked by the shop tests.
+      - run: python scripts/build_openapi_types.py --check
       # Reference validator of the Agent Skills specification (agentskills.io).
       - run: for skill in .agents/skills/*/; do agentskills validate "$skill"; done
       - run: python -m unittest discover -s tests -v

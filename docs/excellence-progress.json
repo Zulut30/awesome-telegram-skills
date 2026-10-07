@@ -1023,9 +1023,14 @@
     {
       "id": 80,
       "title": "Контракт backend API для Mini App",
-      "status": "pending",
-      "commit_subject": null,
-      "evidence": [],
+      "status": "done",
+      "commit_subject": "excellence(080): add an OpenAPI contract for the shop API with generated client types",
+      "evidence": [
+        "examples/shop/openapi.json (OpenAPI 3.1): nine operations, request bodies, 200 schemas, error codes, bearer session",
+        "scripts/build_openapi_types.py generates frontend/src/api-types.ts: interfaces, full runtime decoders and callApi over ApiClient; refuses unchecked keywords (format, open objects); own generator because openapi-typescript needs TypeScript 5",
+        "Drift fails CI three ways: build_openapi_types.py --check (skills job), tsc of the client (shop build) and test_routes_and_responses_follow_the_openapi_contract (routes and every real response incl. 401/403/404/409/422); mutation renaming Order.total failed all three",
+        "The contract test found a bug: a reused operation with other items answered 422 instead of 409 (OperationConflict is a ValueError); fixed; verify_shop_example PASS (11 unit tests, 165 browser checks)"
+      ],
       "remaining": null
     },
     {
