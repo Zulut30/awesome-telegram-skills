@@ -29,7 +29,7 @@ try {
       page.on('request', request => { if (!request.url().startsWith(new URL(url).origin)) external.push(request.url()); });
       await page.goto(url); await page.waitForFunction(() => window.referenceReport?.passed === true, undefined, {timeout: 20000});
       const proof = await page.evaluate(() => ({report: window.referenceReport,
-        css: [...document.styleSheets].some(s => s.href?.endsWith('/src/styles.css') && s.cssRules.length > 0),
+        css: [...document.styleSheets].some(s => s.href?.endsWith('/dist/styles.css') && s.cssRules.length > 0),
         scripts: [...document.querySelectorAll('script[type="module"]')].length,
         clean: document.querySelectorAll('.tp-shell').length === 0}));
       for (const accepted of [proof.report.cases.length === 6, proof.css, proof.scripts === 1, proof.clean, failures.length === 0, external.length === 0]) {

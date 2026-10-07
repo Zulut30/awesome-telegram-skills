@@ -155,7 +155,8 @@ def verify_distributions(root: Path, wheel: Path, tarball: Path) -> dict:
     ts_expected = {'package/package.json': (ts_path / 'package.json').read_bytes(),
                    'package/README.md': (ts_path / 'README.md').read_bytes(),
                    'package/LICENSE': (ts_path / 'LICENSE').read_bytes(),
-                   'package/src/styles.css': (ts_path / 'src/styles.css').read_bytes()}
+                   'package/dist/styles.css': (ts_path / 'src/styles.css').read_bytes(),
+                   'package/dist/styles.css.d.ts': (ts_path / 'dist/styles.css.d.ts').read_bytes()}
     sources = list((ts_path / 'src').rglob('*.ts'))
     for source in sources:
         module = source.relative_to(ts_path / 'src').with_suffix('').as_posix()
@@ -167,7 +168,9 @@ def verify_distributions(root: Path, wheel: Path, tarball: Path) -> dict:
     _require(all(ts_files[name] == value for name, value in ts_expected.items()), 'Tarball bytes differ from built package')
     manifest = json.loads(ts_files['package/package.json'])
     _require(manifest['type'] == 'module' and not manifest.get('dependencies'), 'TypeScript runtime dependency/ESM contract changed')
-    _require(manifest['exports'] == {'.': {'types': './dist/index.d.ts', 'import': './dist/index.js'}, './styles.css': './src/styles.css'},
+    _require(manifest['exports'] == {'.': {'types': './dist/index.d.ts', 'default': './dist/index.js'},
+                                     './styles.css': {'types': './dist/styles.css.d.ts', 'default': './dist/styles.css'},
+                                     './package.json': './package.json'} and manifest.get('types') == './dist/index.d.ts',
              'TypeScript public export map changed')
     _require('**/*.css' in manifest.get('sideEffects', []), 'CSS must remain a declared side effect')
     _require(manifest.get('license') == 'MIT', 'TypeScript package license changed')

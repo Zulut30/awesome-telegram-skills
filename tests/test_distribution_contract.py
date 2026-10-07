@@ -28,15 +28,19 @@ class DistributionContractTests(unittest.TestCase):
                           'telegram_patterns/resources/recipes.json':b'{"library_version":"0.9.0"}\n'}
         self.license = b'MIT License\nfixture\n'
         self.ts_manifest = {'name':'@awesome-telegram/patterns','version':'0.9.0','type':'module','license':'MIT','sideEffects':['**/*.css'],
-            'exports':{'.':{'types':'./dist/index.d.ts','import':'./dist/index.js'},'./styles.css':'./src/styles.css'}}
+            'types':'./dist/index.d.ts',
+            'exports':{'.':{'types':'./dist/index.d.ts','default':'./dist/index.js'},
+                       './styles.css':{'types':'./dist/styles.css.d.ts','default':'./dist/styles.css'},'./package.json':'./package.json'}}
         self.ts_files = {'package/package.json':json.dumps(self.ts_manifest).encode(),'package/README.md':b'fixture\n','package/LICENSE':self.license,
-                        'package/src/styles.css':b'.fixture{color:red}\n','package/dist/index.js':b'export const fixture=1;\n',
+                        'package/dist/styles.css':b'.fixture{color:red}\n','package/dist/styles.css.d.ts':b'export {};\n',
+                        'package/dist/index.js':b'export const fixture=1;\n',
                         'package/dist/index.d.ts':b'export declare const fixture: number;\n'}
         self.write('packages/python/pyproject.toml', b'[project]\nname="awesome-telegram-patterns"\nversion="0.9.0"\nrequires-python=">=3.11"\nlicense="MIT"\nlicense-files=["LICENSE"]\ndependencies=[]\n[project.scripts]\ntelegram-patterns="telegram_patterns.cli:main"\n')
         self.write('packages/python/LICENSE',self.license)
         for name, value in self.py_source.items(): self.write('packages/python/src/'+name,value)
         for name, value in self.ts_files.items(): self.write('packages/typescript/'+name.removeprefix('package/'),value)
         self.write('packages/typescript/src/index.ts',b'export const fixture=1;\n')
+        self.write('packages/typescript/src/styles.css',self.ts_files['package/dist/styles.css'])
         self.zip()
         self.tar()
 
@@ -107,11 +111,11 @@ class DistributionContractTests(unittest.TestCase):
         with self.assertRaisesRegex(DistributionViolation,'RECORD digest'): self.verify()
 
     def test_css_declaration_missing_and_stale_dist_module_are_rejected(self):
-        for change in (lambda values:values.pop('package/src/styles.css'),lambda values:values.pop('package/dist/index.d.ts'),
+        for change in (lambda values:values.pop('package/dist/styles.css'),lambda values:values.pop('package/dist/index.d.ts'),
                        lambda values:values.update({'package/dist/removed.js':b'old module'})):
             self.tar(change)
             with self.assertRaisesRegex(DistributionViolation,'undeclared'): self.verify()
-        self.tar(lambda values:values.update({'package/src/styles.css':b'wrong CSS'}))
+        self.tar(lambda values:values.update({'package/dist/styles.css':b'wrong CSS'}))
         with self.assertRaisesRegex(DistributionViolation,'bytes differ'): self.verify()
 
     def test_traversal_duplicates_links_and_special_members_are_rejected(self):

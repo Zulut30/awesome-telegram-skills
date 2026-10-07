@@ -83,7 +83,7 @@ def main() -> int:
     copied_files=0
     for p in (installed/'dist').rglob('*'):
         if p.is_file():assert p.read_bytes()==(frontend/'dist/assets/vendor'/p.relative_to(installed/'dist')).read_bytes();copied_files+=1
-    assert (installed/'src/styles.css').read_bytes()==(frontend/'dist/assets/vendor/styles.css').read_bytes();copied_files+=1
+    assert (frontend/'dist/assets/vendor/styles.css').is_file()  # the stylesheet ships in the library's dist
     caller=consumer/'caller project';caller.mkdir();(caller/'aiogram.py').write_text("raise RuntimeError('PRIVATE_CANARY')");(caller/'.env').write_text('BOT_TOKEN=100:PRIVATE_CANARY');(caller/'owned.txt').write_text('preserve caller')
     before={p.name:hashlib.sha256(p.read_bytes()).hexdigest() for p in caller.iterdir()}
     run('browser',[node,ROOT/'scripts/check_shop_browser.mjs',python,frontend/'dist',output/'browser',caller],timeout=480)

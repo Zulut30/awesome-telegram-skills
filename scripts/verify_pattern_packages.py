@@ -301,6 +301,31 @@ print(json.dumps({'core_without_sdk':True,'python':sys.version.split()[0]}))
         (client / 'native-recipes-consumer.mjs').write_text((ROOT / 'tests/native-recipes-consumer.mjs').read_text(encoding='utf-8'), encoding='utf-8')
         report['native_recipes'] = json.loads(run('native-example-test', [node, 'native-recipes-consumer.mjs'], client))
         run('packaged-style', [node, '--input-type=module', '-e', "import {readFile} from 'node:fs/promises';const css=await readFile(new URL(import.meta.resolve('@awesome-telegram/patterns/styles.css')),'utf8');if(!css.trim())throw Error('empty style');console.log('public CSS export works')"], client)
+        # Export map consumers: require(esm), the package.json subpath and TypeScript bundler/node16 resolution.
+        node_version = tuple(int(part) for part in run('node-version', [node, '-p', 'process.versions.node'], client).strip().split('.')[:2])
+        if node_version >= (22, 12) or (20, 19) <= node_version < (21, 0):
+            report['require_esm'] = json.loads(run('require-esm', [node, '-e', (
+                "const esm=require('@awesome-telegram/patterns');const meta=require('@awesome-telegram/patterns/package.json');"
+                "if(typeof esm.ApiClient!=='function'||typeof esm.TelegramBridge!=='function')throw Error('require(esm) lost exports');"
+                f"if(meta.version!=='{version}')throw Error('package.json export');"
+                "console.log(JSON.stringify({passed:true,exports:Object.keys(esm).length,node:process.versions.node}))")], client))
+        else:
+            report['require_esm'] = {'passed': None, 'skipped': 'require(esm) needs Node 20.19+ or 22.12+'}
+        for resolution, module_kind in (('bundler', 'ESNext'), ('node16', 'Node16')):
+            folder = client / f'resolution-{resolution}'
+            folder.mkdir()
+            (folder / 'consumer.ts').write_text(
+                "import {ApiClient, TelegramBridge} from '@awesome-telegram/patterns';\n"
+                "import '@awesome-telegram/patterns/styles.css';\n"
+                "export const exported: [typeof ApiClient, typeof TelegramBridge] = [ApiClient, TelegramBridge];\n", encoding='utf-8')
+            (folder / 'tsconfig.json').write_text(json.dumps({'compilerOptions': {
+                'target': 'ES2022', 'module': module_kind, 'moduleResolution': resolution, 'lib': ['ES2022', 'DOM'], 'strict': True,
+                'noUncheckedSideEffectImports': True, 'noEmit': True, 'skipLibCheck': False, 'types': []},
+                'include': ['consumer.ts']}), encoding='utf-8')
+            if resolution == 'node16':
+                (folder / 'package.json').write_text(json.dumps({'type': 'module', 'private': True}), encoding='utf-8')
+            run(f'typescript-{resolution}', [node, str(client / 'node_modules/typescript/bin/tsc'), '-p', str(folder / 'tsconfig.json')], client)
+        report['typescript_resolutions'] = ['nodenext', 'bundler', 'node16']
         if not args.skip_browser:
             run('browser-tests', [npm, 'run', 'test:browser'])
             report['browser'] = json.loads((output / 'browser/report.json').read_text(encoding='utf-8'))

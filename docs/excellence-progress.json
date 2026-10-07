@@ -904,9 +904,14 @@
     {
       "id": 71,
       "title": "Корректные `exports`",
-      "status": "pending",
-      "commit_subject": null,
-      "evidence": [],
+      "status": "done",
+      "commit_subject": "excellence(071): fix the TypeScript export map for require, types and dist CSS",
+      "evidence": [
+        "packages/typescript/package.json: '.' types+default, './styles.css' -> dist/styles.css with dist/styles.css.d.ts, './package.json', top-level types; tarball holds dist, README, LICENSE",
+        "reproduced ERR_PACKAGE_PATH_NOT_EXPORTED for require() and ./package.json on the old map; without the CSS types condition tsc reports TS2882 under noUncheckedSideEffectImports",
+        "verify_pattern_packages stages require-esm (Node 22.22, 22 exports, package.json version) and typescript-bundler/typescript-node16 next to nodenext and ESM import; PASS 0.24.0, 571 Python and 35 TypeScript tests, browser=passed",
+        "verify_shop_example passed; starter template, API reference consumer and contract use dist/styles.css; Node docs: require(esm) unflagged in 20.19 and 22.12"
+      ],
       "remaining": null
     },
     {
