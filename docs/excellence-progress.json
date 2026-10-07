@@ -1,0 +1,812 @@
+{
+  "schema_version": 1,
+  "plan": "docs/excellence-plan-100.md",
+  "baseline_commit": "042d786",
+  "completion_rule": "Пункт done только после проверки его критерия «Готово». Если критерий требует внешнего действия (люди, устройства, учетные записи), статус partial и поле remaining описывает остаток.",
+  "items": [
+    {
+      "id": 1,
+      "title": "Вернуть шаблон `.env.example` стартера",
+      "status": "done",
+      "commit_subject": "excellence(001): restore starter env template excluded by gitignore",
+      "evidence": [
+        "wheel из файлов git содержит resources/starter/.env.example.txt",
+        "telegram_patterns init my-bot на этом wheel: exit 0, 7 файлов",
+        "tests.test_catalog_cli + tests.test_starter_components: 24 OK (было 5 ERROR)"
+      ],
+      "remaining": null
+    },
+    {
+      "id": 2,
+      "title": "Исправить испорченную кодировку сообщений",
+      "status": "pending",
+      "commit_subject": null,
+      "evidence": [],
+      "remaining": null
+    },
+    {
+      "id": 3,
+      "title": "Закрыть утечку токена в `download_media`",
+      "status": "pending",
+      "commit_subject": null,
+      "evidence": [],
+      "remaining": null
+    },
+    {
+      "id": 4,
+      "title": "Сохранять путь `baseUrl` в `ApiClient`",
+      "status": "pending",
+      "commit_subject": null,
+      "evidence": [],
+      "remaining": null
+    },
+    {
+      "id": 5,
+      "title": "Точно классифицировать ответы сервера в `ApiClient`",
+      "status": "pending",
+      "commit_subject": null,
+      "evidence": [],
+      "remaining": null
+    },
+    {
+      "id": 6,
+      "title": "Ограничить таймаут и оборачивать ранние ошибки",
+      "status": "pending",
+      "commit_subject": null,
+      "evidence": [],
+      "remaining": null
+    },
+    {
+      "id": 7,
+      "title": "Исправить разбиение длинного текста",
+      "status": "pending",
+      "commit_subject": null,
+      "evidence": [],
+      "remaining": null
+    },
+    {
+      "id": 8,
+      "title": "Строгая канонизация payload в `SQLiteOnce`",
+      "status": "pending",
+      "commit_subject": null,
+      "evidence": [],
+      "remaining": null
+    },
+    {
+      "id": 9,
+      "title": "Полностью неизменяемый `VerifiedLaunch`",
+      "status": "pending",
+      "commit_subject": null,
+      "evidence": [],
+      "remaining": null
+    },
+    {
+      "id": 10,
+      "title": "Читаемые ошибки CLI",
+      "status": "pending",
+      "commit_subject": null,
+      "evidence": [],
+      "remaining": null
+    },
+    {
+      "id": 11,
+      "title": "Добавить лицензию",
+      "status": "pending",
+      "commit_subject": null,
+      "evidence": [],
+      "remaining": null
+    },
+    {
+      "id": 12,
+      "title": "Добавить `SECURITY.md`",
+      "status": "pending",
+      "commit_subject": null,
+      "evidence": [],
+      "remaining": null
+    },
+    {
+      "id": 13,
+      "title": "Ставить git-теги и выпускать GitHub Releases",
+      "status": "pending",
+      "commit_subject": null,
+      "evidence": [],
+      "remaining": null
+    },
+    {
+      "id": 14,
+      "title": "Устанавливать пакеты из registry",
+      "status": "pending",
+      "commit_subject": null,
+      "evidence": [],
+      "remaining": null
+    },
+    {
+      "id": 15,
+      "title": "Закрепить имена пакетов",
+      "status": "pending",
+      "commit_subject": null,
+      "evidence": [],
+      "remaining": null
+    },
+    {
+      "id": 16,
+      "title": "Добавить `CODE_OF_CONDUCT.md`",
+      "status": "pending",
+      "commit_subject": null,
+      "evidence": [],
+      "remaining": null
+    },
+    {
+      "id": 17,
+      "title": "Автоматически проверять совместимость API",
+      "status": "pending",
+      "commit_subject": null,
+      "evidence": [],
+      "remaining": null
+    },
+    {
+      "id": 18,
+      "title": "Выпускать SBOM, контрольные суммы и attestations",
+      "status": "pending",
+      "commit_subject": null,
+      "evidence": [],
+      "remaining": null
+    },
+    {
+      "id": 19,
+      "title": "Опубликовать политику поддержки",
+      "status": "pending",
+      "commit_subject": null,
+      "evidence": [],
+      "remaining": null
+    },
+    {
+      "id": 20,
+      "title": "Честный статус за 30 секунд",
+      "status": "pending",
+      "commit_subject": null,
+      "evidence": [],
+      "remaining": null
+    },
+    {
+      "id": 21,
+      "title": "Команды для всех ОС",
+      "status": "pending",
+      "commit_subject": null,
+      "evidence": [],
+      "remaining": null
+    },
+    {
+      "id": 22,
+      "title": "Убрать допущения «только Windows» из скриптов",
+      "status": "pending",
+      "commit_subject": null,
+      "evidence": [],
+      "remaining": null
+    },
+    {
+      "id": 23,
+      "title": "Англоязычный вход",
+      "status": "pending",
+      "commit_subject": null,
+      "evidence": [],
+      "remaining": null
+    },
+    {
+      "id": 24,
+      "title": "Пути по ролям",
+      "status": "pending",
+      "commit_subject": null,
+      "evidence": [],
+      "remaining": null
+    },
+    {
+      "id": 25,
+      "title": "Бот за одну минуту",
+      "status": "pending",
+      "commit_subject": null,
+      "evidence": [],
+      "remaining": null
+    },
+    {
+      "id": 26,
+      "title": "Docker как опция",
+      "status": "pending",
+      "commit_subject": null,
+      "evidence": [],
+      "remaining": null
+    },
+    {
+      "id": 27,
+      "title": "Диагностика webhook в `doctor`",
+      "status": "pending",
+      "commit_subject": null,
+      "evidence": [],
+      "remaining": null
+    },
+    {
+      "id": 28,
+      "title": "Тестовое окружение Telegram",
+      "status": "pending",
+      "commit_subject": null,
+      "evidence": [],
+      "remaining": null
+    },
+    {
+      "id": 29,
+      "title": "Страница «Частые проблемы»",
+      "status": "pending",
+      "commit_subject": null,
+      "evidence": [],
+      "remaining": null
+    },
+    {
+      "id": 30,
+      "title": "Галерея на сайте как главный вход",
+      "status": "pending",
+      "commit_subject": null,
+      "evidence": [],
+      "remaining": null
+    },
+    {
+      "id": 31,
+      "title": "Поддержать Claude Code",
+      "status": "pending",
+      "commit_subject": null,
+      "evidence": [],
+      "remaining": null
+    },
+    {
+      "id": 32,
+      "title": "Установщик для всех агентов",
+      "status": "pending",
+      "commit_subject": null,
+      "evidence": [],
+      "remaining": null
+    },
+    {
+      "id": 33,
+      "title": "Установка одной командой",
+      "status": "pending",
+      "commit_subject": null,
+      "evidence": [],
+      "remaining": null
+    },
+    {
+      "id": 34,
+      "title": "Метаданные по стандарту Agent Skills",
+      "status": "pending",
+      "commit_subject": null,
+      "evidence": [],
+      "remaining": null
+    },
+    {
+      "id": 35,
+      "title": "Сократить `telegram-code-patterns`",
+      "status": "pending",
+      "commit_subject": null,
+      "evidence": [],
+      "remaining": null
+    },
+    {
+      "id": 36,
+      "title": "Убрать копии библиотечных абзацев",
+      "status": "pending",
+      "commit_subject": null,
+      "evidence": [],
+      "remaining": null
+    },
+    {
+      "id": 37,
+      "title": "Границы в каждом description",
+      "status": "pending",
+      "commit_subject": null,
+      "evidence": [],
+      "remaining": null
+    },
+    {
+      "id": 38,
+      "title": "Измерять точность выбора скилла",
+      "status": "pending",
+      "commit_subject": null,
+      "evidence": [],
+      "remaining": null
+    },
+    {
+      "id": 39,
+      "title": "Доказывать пользу скиллов",
+      "status": "pending",
+      "commit_subject": null,
+      "evidence": [],
+      "remaining": null
+    },
+    {
+      "id": 40,
+      "title": "Новый скилл: ИИ-бот в Telegram",
+      "status": "pending",
+      "commit_subject": null,
+      "evidence": [],
+      "remaining": null
+    },
+    {
+      "id": 41,
+      "title": "Метка проверки в каждом скилле",
+      "status": "pending",
+      "commit_subject": null,
+      "evidence": [],
+      "remaining": null
+    },
+    {
+      "id": 42,
+      "title": "Согласовать версии пакета в скиллах",
+      "status": "pending",
+      "commit_subject": null,
+      "evidence": [],
+      "remaining": null
+    },
+    {
+      "id": 43,
+      "title": "Один источник для повторяющихся references",
+      "status": "pending",
+      "commit_subject": null,
+      "evidence": [],
+      "remaining": null
+    },
+    {
+      "id": 44,
+      "title": "Расширить валидатор скиллов",
+      "status": "pending",
+      "commit_subject": null,
+      "evidence": [],
+      "remaining": null
+    },
+    {
+      "id": 45,
+      "title": "Единые переводы строк",
+      "status": "pending",
+      "commit_subject": null,
+      "evidence": [],
+      "remaining": null
+    },
+    {
+      "id": 46,
+      "title": "Русский язык и одна форма обращения",
+      "status": "pending",
+      "commit_subject": null,
+      "evidence": [],
+      "remaining": null
+    },
+    {
+      "id": 47,
+      "title": "Объяснять термины простыми словами",
+      "status": "pending",
+      "commit_subject": null,
+      "evidence": [],
+      "remaining": null
+    },
+    {
+      "id": 48,
+      "title": "Усилить тонкие скиллы",
+      "status": "pending",
+      "commit_subject": null,
+      "evidence": [],
+      "remaining": null
+    },
+    {
+      "id": 49,
+      "title": "Единый шаблон `SKILL.md`",
+      "status": "pending",
+      "commit_subject": null,
+      "evidence": [],
+      "remaining": null
+    },
+    {
+      "id": 50,
+      "title": "Навести порядок в `docs/sources.md`",
+      "status": "pending",
+      "commit_subject": null,
+      "evidence": [],
+      "remaining": null
+    },
+    {
+      "id": 51,
+      "title": "Автоматически отслеживать изменения Bot API",
+      "status": "pending",
+      "commit_subject": null,
+      "evidence": [],
+      "remaining": null
+    },
+    {
+      "id": 52,
+      "title": "То же для Mini Apps",
+      "status": "pending",
+      "commit_subject": null,
+      "evidence": [],
+      "remaining": null
+    },
+    {
+      "id": 53,
+      "title": "Проверка `initData` без токена бота (Ed25519)",
+      "status": "pending",
+      "commit_subject": null,
+      "evidence": [],
+      "remaining": null
+    },
+    {
+      "id": 54,
+      "title": "Rich messages (Bot API 10.1–10.3)",
+      "status": "pending",
+      "commit_subject": null,
+      "evidence": [],
+      "remaining": null
+    },
+    {
+      "id": 55,
+      "title": "Эфемерные сообщения (10.2–10.3)",
+      "status": "pending",
+      "commit_subject": null,
+      "evidence": [],
+      "remaining": null
+    },
+    {
+      "id": 56,
+      "title": "Communities (10.2–10.3)",
+      "status": "pending",
+      "commit_subject": null,
+      "evidence": [],
+      "remaining": null
+    },
+    {
+      "id": 57,
+      "title": "Подписки на бота",
+      "status": "pending",
+      "commit_subject": null,
+      "evidence": [],
+      "remaining": null
+    },
+    {
+      "id": 58,
+      "title": "Остальные новинки 10.0–10.3",
+      "status": "pending",
+      "commit_subject": null,
+      "evidence": [],
+      "remaining": null
+    },
+    {
+      "id": 59,
+      "title": "Карта «что умеет бот»",
+      "status": "pending",
+      "commit_subject": null,
+      "evidence": [],
+      "remaining": null
+    },
+    {
+      "id": 60,
+      "title": "python-telegram-bot как второй SDK",
+      "status": "pending",
+      "commit_subject": null,
+      "evidence": [],
+      "remaining": null
+    },
+    {
+      "id": 61,
+      "title": "Стиль кода",
+      "status": "pending",
+      "commit_subject": null,
+      "evidence": [],
+      "remaining": null
+    },
+    {
+      "id": 62,
+      "title": "`mypy --strict` без ошибок",
+      "status": "pending",
+      "commit_subject": null,
+      "evidence": [],
+      "remaining": null
+    },
+    {
+      "id": 63,
+      "title": "Понятные имена модулей",
+      "status": "pending",
+      "commit_subject": null,
+      "evidence": [],
+      "remaining": null
+    },
+    {
+      "id": 64,
+      "title": "Без импорта приватных функций между модулями",
+      "status": "pending",
+      "commit_subject": null,
+      "evidence": [],
+      "remaining": null
+    },
+    {
+      "id": 65,
+      "title": "Версия пакета в коде",
+      "status": "pending",
+      "commit_subject": null,
+      "evidence": [],
+      "remaining": null
+    },
+    {
+      "id": 66,
+      "title": "Переопределяемые тексты компонентов",
+      "status": "pending",
+      "commit_subject": null,
+      "evidence": [],
+      "remaining": null
+    },
+    {
+      "id": 67,
+      "title": "Быстрые тесты",
+      "status": "pending",
+      "commit_subject": null,
+      "evidence": [],
+      "remaining": null
+    },
+    {
+      "id": 68,
+      "title": "Покрытие кода",
+      "status": "pending",
+      "commit_subject": null,
+      "evidence": [],
+      "remaining": null
+    },
+    {
+      "id": 69,
+      "title": "Property-based и fuzz-тесты парсеров",
+      "status": "pending",
+      "commit_subject": null,
+      "evidence": [],
+      "remaining": null
+    },
+    {
+      "id": 70,
+      "title": "Совместимость с диапазоном версий aiogram",
+      "status": "pending",
+      "commit_subject": null,
+      "evidence": [],
+      "remaining": null
+    },
+    {
+      "id": 71,
+      "title": "Корректные `exports`",
+      "status": "pending",
+      "commit_subject": null,
+      "evidence": [],
+      "remaining": null
+    },
+    {
+      "id": 72,
+      "title": "Типизированный native API",
+      "status": "pending",
+      "commit_subject": null,
+      "evidence": [],
+      "remaining": null
+    },
+    {
+      "id": 73,
+      "title": "Надежный bridge",
+      "status": "pending",
+      "commit_subject": null,
+      "evidence": [],
+      "remaining": null
+    },
+    {
+      "id": 74,
+      "title": "Адаптеры фреймворков (опционально)",
+      "status": "pending",
+      "commit_subject": null,
+      "evidence": [],
+      "remaining": null
+    },
+    {
+      "id": 75,
+      "title": "Шаблон Mini App с быстрым циклом разработки",
+      "status": "pending",
+      "commit_subject": null,
+      "evidence": [],
+      "remaining": null
+    },
+    {
+      "id": 76,
+      "title": "Обновить примеры до текущей версии",
+      "status": "pending",
+      "commit_subject": null,
+      "evidence": [],
+      "remaining": null
+    },
+    {
+      "id": 77,
+      "title": "Проверить сессию магазина в Telegram Web",
+      "status": "pending",
+      "commit_subject": null,
+      "evidence": [],
+      "remaining": null
+    },
+    {
+      "id": 78,
+      "title": "Скорость и доступность Mini App в CI",
+      "status": "pending",
+      "commit_subject": null,
+      "evidence": [],
+      "remaining": null
+    },
+    {
+      "id": 79,
+      "title": "Проверка на реальных устройствах при каждом релизе",
+      "status": "pending",
+      "commit_subject": null,
+      "evidence": [],
+      "remaining": null
+    },
+    {
+      "id": 80,
+      "title": "Контракт backend API для Mini App",
+      "status": "pending",
+      "commit_subject": null,
+      "evidence": [],
+      "remaining": null
+    },
+    {
+      "id": 81,
+      "title": "Запускать тесты `packages/python` в CI",
+      "status": "pending",
+      "commit_subject": null,
+      "evidence": [],
+      "remaining": null
+    },
+    {
+      "id": 82,
+      "title": "Матрица версий и ОС",
+      "status": "pending",
+      "commit_subject": null,
+      "evidence": [],
+      "remaining": null
+    },
+    {
+      "id": 83,
+      "title": "Браузерные тесты в CI",
+      "status": "pending",
+      "commit_subject": null,
+      "evidence": [],
+      "remaining": null
+    },
+    {
+      "id": 84,
+      "title": "Проверять свежесть сгенерированных файлов",
+      "status": "pending",
+      "commit_subject": null,
+      "evidence": [],
+      "remaining": null
+    },
+    {
+      "id": 85,
+      "title": "Сверять каталог с кодом",
+      "status": "pending",
+      "commit_subject": null,
+      "evidence": [],
+      "remaining": null
+    },
+    {
+      "id": 86,
+      "title": "Полная приемка по расписанию",
+      "status": "pending",
+      "commit_subject": null,
+      "evidence": [],
+      "remaining": null
+    },
+    {
+      "id": 87,
+      "title": "Автоматическое обновление зависимостей",
+      "status": "pending",
+      "commit_subject": null,
+      "evidence": [],
+      "remaining": null
+    },
+    {
+      "id": 88,
+      "title": "Установка с нуля на каждой ОС",
+      "status": "pending",
+      "commit_subject": null,
+      "evidence": [],
+      "remaining": null
+    },
+    {
+      "id": 89,
+      "title": "Разделить сборку и публикацию сайта",
+      "status": "pending",
+      "commit_subject": null,
+      "evidence": [],
+      "remaining": null
+    },
+    {
+      "id": 90,
+      "title": "Объединить похожие скрипты",
+      "status": "pending",
+      "commit_subject": null,
+      "evidence": [],
+      "remaining": null
+    },
+    {
+      "id": 91,
+      "title": "Структура документации",
+      "status": "pending",
+      "commit_subject": null,
+      "evidence": [],
+      "remaining": null
+    },
+    {
+      "id": 92,
+      "title": "Отчеты приемки вне основного дерева",
+      "status": "pending",
+      "commit_subject": null,
+      "evidence": [],
+      "remaining": null
+    },
+    {
+      "id": 93,
+      "title": "Понятная история изменений",
+      "status": "pending",
+      "commit_subject": null,
+      "evidence": [],
+      "remaining": null
+    },
+    {
+      "id": 94,
+      "title": "Витрина реальных проектов",
+      "status": "pending",
+      "commit_subject": null,
+      "evidence": [],
+      "remaining": null
+    },
+    {
+      "id": 95,
+      "title": "Живая приемка в тестовом окружении Telegram",
+      "status": "pending",
+      "commit_subject": null,
+      "evidence": [],
+      "remaining": null
+    },
+    {
+      "id": 96,
+      "title": "Исследование удобства",
+      "status": "pending",
+      "commit_subject": null,
+      "evidence": [],
+      "remaining": null
+    },
+    {
+      "id": 97,
+      "title": "Канал поддержки",
+      "status": "pending",
+      "commit_subject": null,
+      "evidence": [],
+      "remaining": null
+    },
+    {
+      "id": 98,
+      "title": "Руководство для контрибьюторов",
+      "status": "pending",
+      "commit_subject": null,
+      "evidence": [],
+      "remaining": null
+    },
+    {
+      "id": 99,
+      "title": "Ежеквартальная сверка внешних источников",
+      "status": "pending",
+      "commit_subject": null,
+      "evidence": [],
+      "remaining": null
+    },
+    {
+      "id": 100,
+      "title": "Публичное табло качества",
+      "status": "pending",
+      "commit_subject": null,
+      "evidence": [],
+      "remaining": null
+    }
+  ]
+}

@@ -1,5 +1,9 @@
 # Изменения библиотеки компонентов
 
+## Не выпущено
+
+- План из 100 пунктов, пункт 1: шаблон стартера `resources/starter/.env.example.txt` снова входит в git и wheel. Правило `.env.*` в `.gitignore` скрывало его, поэтому `telegram-patterns init` падал с `FileNotFoundError` на любом свежем клоне.
+
 ## 0.24.0
 
 - Пункт 31: atomic FSM snapshot contract и адаптер текущего project storage; state/data, версия, шаг и абсолютный срок формы согласованно сохраняются в одной CAS записи.
