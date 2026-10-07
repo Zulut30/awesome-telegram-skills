@@ -30,7 +30,9 @@ class DistributionContractTests(unittest.TestCase):
         self.ts_manifest = {'name':'@awesome-telegram/patterns','version':'0.9.0','type':'module','license':'MIT','sideEffects':['**/*.css'],
             'types':'./dist/index.d.ts',
             'exports':{'.':{'types':'./dist/index.d.ts','default':'./dist/index.js'},
-                       './styles.css':{'types':'./dist/styles.css.d.ts','default':'./dist/styles.css'},'./package.json':'./package.json'}}
+                       **{f'./{n}':{'types':f'./dist/frameworks/{n}.d.ts','default':f'./dist/frameworks/{n}.js'} for n in ('react','vue','svelte')},
+                       './styles.css':{'types':'./dist/styles.css.d.ts','default':'./dist/styles.css'},'./package.json':'./package.json'},
+            'peerDependencies':{'react':'>=18','vue':'>=3.3'},'peerDependenciesMeta':{'react':{'optional':True},'vue':{'optional':True}}}
         self.ts_files = {'package/package.json':json.dumps(self.ts_manifest).encode(),'package/README.md':b'fixture\n','package/LICENSE':self.license,
                         'package/dist/styles.css':b'.fixture{color:red}\n','package/dist/styles.css.d.ts':b'export {};\n',
                         'package/dist/index.js':b'export const fixture=1;\n',

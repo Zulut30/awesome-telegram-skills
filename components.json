@@ -335,6 +335,21 @@
       "maturity_scope": "All public API symbols in this component; local verification is not a stable 1.0 promise"
     },
     {
+      "id": "framework-adapters",
+      "language": "typescript",
+      "import": "@awesome-telegram/patterns/react: useTelegramBridge; @awesome-telegram/patterns/vue: useTelegramBridge; @awesome-telegram/patterns/svelte: telegramBridgeStore",
+      "intent": "Показать тему, отступы и высоту Telegram в компонентах React, Vue или Svelte без своей подписки на bridge",
+      "source": "packages/typescript/src/frameworks/source.ts",
+      "example": "examples/frameworks/react/App.tsx",
+      "boundaries": [
+        "separate subpaths; react and vue are optional peers, the core entry point imports no framework",
+        "one bridge subscription per TelegramBridge, released after the last component unsubscribes",
+        "the host still calls bridge.start() once and bridge.dispose(); adapters never establish identity"
+      ],
+      "maturity": "experimental",
+      "maturity_scope": "All public API symbols in this component; local verification is not a stable 1.0 promise"
+    },
+    {
       "id": "api-client",
       "language": "typescript",
       "import": "ApiClient",

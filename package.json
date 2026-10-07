@@ -3,12 +3,19 @@
   "private": true,
   "license": "MIT",
   "type": "module",
-  "workspaces": ["packages/typescript", "examples/mini-app"],
+  "workspaces": [
+    "packages/typescript",
+    "examples/mini-app",
+    "examples/frameworks"
+  ],
   "scripts": {
-    "build": "npm run build -w @awesome-telegram/patterns && npm run build -w @awesome-telegram/mini-app-example",
+    "build": "npm run build -w @awesome-telegram/patterns && npm run build -w @awesome-telegram/mini-app-example && npm run build -w @awesome-telegram/framework-examples",
     "test": "npm test -w @awesome-telegram/patterns",
     "demo": "npm run build && node examples/mini-app/server.mjs",
-    "test:browser": "npm run build && node tests/patterns-browser.mjs"
+    "test:browser": "npm run build && node tests/patterns-browser.mjs",
+    "test:frameworks": "npm test -w @awesome-telegram/framework-examples"
   },
-  "devDependencies": {"playwright": "1.63.0"}
+  "devDependencies": {
+    "playwright": "1.63.0"
+  }
 }

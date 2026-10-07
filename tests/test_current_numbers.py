@@ -30,7 +30,7 @@ QUOTES = [
      ['recipes', 'sdk', 'mock', 'reference']),
     ('README.md', r'\*\*(\d+) рецептов', ['recipes']),
     ('README.md', r'\*\*(\d+) групп[аы]? компонентов\*\*', ['groups']),
-    ('.agents/skills/telegram-code-patterns/references/components.md', r'Текущий каталог содержит (\d+) групп[аы]? компонентов', ['groups']),
+    ('.agents/skills/telegram-code-patterns/references/components.md', r'Текущий каталог содержит (\d+) групп[аыу]? компонентов', ['groups']),
     ('.agents/skills/telegram-code-patterns/references/maturity.md', r'В поставке [\d.]+: (\d+) групп[аы]? experimental', ['groups']),
     ('README.en.md', r'skills-(\d+)-', ['skills']),
     ('README.en.md', r'\| (\d+) skills for AI agents', ['skills']),

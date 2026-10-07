@@ -112,6 +112,9 @@
     "docs/component-texts.md": [
       ".agents/skills/telegram-code-patterns/references/component-texts.md"
     ],
+    "docs/framework-adapters.md": [
+      ".agents/skills/telegram-code-patterns/references/framework-adapters.md"
+    ],
     "docs/starter-selection.md": [
       ".agents/skills/telegram-code-patterns/references/starter-selection.md"
     ],

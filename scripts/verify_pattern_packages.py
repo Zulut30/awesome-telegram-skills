@@ -289,7 +289,11 @@ print(json.dumps({'core_without_sdk':True,'python':sys.version.split()[0]}))
             suite = source.read_text(encoding='utf-8')
             if suite.count(needle) != 1:
                 raise RuntimeError('Update the public-package test entrypoint: ' + source.name)
-            (client / source.name).write_text(suite.replace(needle, "from '@awesome-telegram/patterns'"), encoding='utf-8')
+            suite = re.sub(r"from '\.\./dist/frameworks/(react|vue|svelte)\.js'", r"from '@awesome-telegram/patterns/\1'",
+                           suite.replace(needle, "from '@awesome-telegram/patterns'"))
+            if '../dist/' in suite:
+                raise RuntimeError('Public-package tests may import only public entry points: ' + source.name)
+            (client / source.name).write_text(suite, encoding='utf-8')
         ts_log = run('typescript-tests', [node, '--test', '--test-reporter=tap', *(source.name for source in suites)], client)
         # Compile the real composition example against the INSTALLED declarations.
         (client / 'index.ts').write_text((ROOT / 'examples/mini-app/src/index.ts').read_text(encoding='utf-8'), encoding='utf-8')

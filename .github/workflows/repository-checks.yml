@@ -130,6 +130,8 @@ jobs:
       - run: npm ci
       - run: npm test
       - run: npm run build
+      # React, Vue and Svelte examples over the bridge adapters: build and server-side render.
+      - run: npm run test:frameworks
 
   api-compatibility:
     name: Public API compatibility and CHANGELOG

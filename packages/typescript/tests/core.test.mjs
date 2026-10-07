@@ -5,6 +5,7 @@ import { ApiClient, ApiError, TelegramBridge, SelectionDraftStore, TelegramNativ
          TELEGRAM_NATIVE_METHODS, TELEGRAM_NATIVE_EVENTS, PatternError, ValidationFailure,
          InvalidType, PermissionDenied, AuthenticationRequired, UnsupportedCapability,
          UnknownOutcome, safeErrorReport } from '../dist/index.js';
+import { telegramBridgeStore } from '../dist/frameworks/svelte.js';
 
 test('safe error reports preserve recovery decisions without exception or payload secrets', () => {
   const secret = 'BOT_TOKEN=100:PRIVATE initData=SIGNED_BODY';
@@ -425,4 +426,26 @@ test('bridge and native API agree on running inside Telegram', () => {
     assert.equal(new TelegramBridge(app,undefined).snapshot().insideTelegram,false);
     assert.equal(new TelegramNativeAPI(app).supports('ready'),false);
   }
+});
+
+test('framework store keeps one stable snapshot per change and releases the bridge', () => {
+  const app=new FakeApp();app.platform='ios';
+  const bridge=new TelegramBridge(app,undefined);bridge.start();
+  let active=0;const subscribe=bridge.subscribe.bind(bridge);
+  bridge.subscribe=listener=>{active++;const stop=subscribe(listener);return ()=>{active--;stop();};};
+  const first=[],second=[];
+  const a=telegramBridgeStore(bridge).subscribe(value=>first.push(value));
+  const b=telegramBridgeStore(bridge).subscribe(value=>second.push(value));
+  assert.equal(active,1,'one bridge subscription for every store of the bridge');
+  assert.equal(app.count(),4,'the bridge listens once to the client');
+  assert.equal(first[0],second[0],'stores share the snapshot object');
+  app.emit('viewportChanged');assert.equal(first.length,1,'no visible change, no notification');
+  app.colorScheme='dark';app.emit('themeChanged');
+  assert.equal(first.length,2);assert.equal(first[1],second[1]);assert.equal(first[1].colorScheme,'dark');
+  a();b();assert.equal(active,0,'released after the last unsubscribe');
+  app.colorScheme='light';app.emit('themeChanged');assert.equal(first.length,2);
+  const seen=[];const stop=telegramBridgeStore(bridge).subscribe(value=>seen.push(value.colorScheme));
+  app.colorScheme='dark';app.emit('themeChanged');stop();
+  assert.deepEqual(seen,['light','dark'],'a new subscriber reads the bridge, not a stale value');
+  bridge.dispose();
 });

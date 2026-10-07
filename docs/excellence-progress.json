@@ -943,9 +943,14 @@
     {
       "id": 74,
       "title": "Адаптеры фреймворков (опционально)",
-      "status": "pending",
-      "commit_subject": null,
-      "evidence": [],
+      "status": "done",
+      "commit_subject": "excellence(074): add React, Vue and Svelte adapters over the bridge",
+      "evidence": [
+        "packages/typescript/src/frameworks/{source,react,vue,svelte}.ts: one bridge subscription per bridge, stable snapshot object per visible change, released after the last unsubscribe",
+        "exports ./react ./vue ./svelte; react and vue are optional peers, the core entry stays dependency-free (verify_distribution_contract.py)",
+        "examples/frameworks: React 19.3, Vue 3.5.43 and Svelte 5.57.2 apps; npm run test:frameworks renders all three with SSR and checks Vue/Svelte reactivity",
+        "verify_pattern_packages.py PASS (public-package tests import ./svelte through the installed tarball)"
+      ],
       "remaining": null
     },
     {

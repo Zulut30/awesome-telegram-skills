@@ -168,10 +168,16 @@ def verify_distributions(root: Path, wheel: Path, tarball: Path) -> dict:
     _require(all(ts_files[name] == value for name, value in ts_expected.items()), 'Tarball bytes differ from built package')
     manifest = json.loads(ts_files['package/package.json'])
     _require(manifest['type'] == 'module' and not manifest.get('dependencies'), 'TypeScript runtime dependency/ESM contract changed')
-    _require(manifest['exports'] == {'.': {'types': './dist/index.d.ts', 'default': './dist/index.js'},
+    frameworks = {f'./{name}': {'types': f'./dist/frameworks/{name}.d.ts', 'default': f'./dist/frameworks/{name}.js'}
+                  for name in ('react', 'vue', 'svelte')}
+    _require(manifest['exports'] == {'.': {'types': './dist/index.d.ts', 'default': './dist/index.js'}, **frameworks,
                                      './styles.css': {'types': './dist/styles.css.d.ts', 'default': './dist/styles.css'},
                                      './package.json': './package.json'} and manifest.get('types') == './dist/index.d.ts',
              'TypeScript public export map changed')
+    peers = manifest.get('peerDependencies', {})
+    _require(set(peers) <= {'react', 'vue'} and all(manifest.get('peerDependenciesMeta', {}).get(name, {}).get('optional')
+                                                    for name in peers),
+             'Framework peers must stay optional; the core entry point has no dependencies')
     _require('**/*.css' in manifest.get('sideEffects', []), 'CSS must remain a declared side effect')
     _require(manifest.get('license') == 'MIT', 'TypeScript package license changed')
     return {'passed': True, 'version': version, 'network': False, 'extracts_files': False,
