@@ -27,6 +27,9 @@ jobs:
     timeout-minutes: 90
     permissions:
       contents: write
+      id-token: write
+      attestations: write
+      artifact-metadata: write
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
@@ -70,17 +73,29 @@ jobs:
             tags=$(git tag --list 'v*.*.*' --sort=v:refname | grep -vxF -f <(printf '%s\n' "$published") || true)
           fi
           echo "tags=$(echo $tags)" >> "$GITHUB_OUTPUT"
-      - name: Build from each tag and publish
+      - name: Build from each tag
         env:
-          GH_TOKEN: ${{ github.token }}
           TAGS: ${{ steps.select.outputs.tags }}
         run: |
+          mkdir -p dist
           for tag in $TAGS; do
             if ! [[ "$tag" =~ ^v[0-9]+\.[0-9]+\.[0-9]+$ ]] || ! git rev-parse --verify --quiet "refs/tags/$tag" >/dev/null; then
               echo "::error::Not an existing release tag: $tag"; exit 1
             fi
             python scripts/build_release.py --ref "$tag" --output "dist/$tag"
             python scripts/build_release.py --ref "$tag" --notes > "dist/$tag.md"
+          done
+      - name: Attest build provenance
+        if: steps.select.outputs.tags != ''
+        uses: actions/attest@1e69f48acb82d1966a394da916b4c1698aa569d6 # v4.2.2
+        with:
+          subject-path: 'dist/*/*.whl, dist/*/*.tgz, dist/*/*.cdx.json'
+      - name: Publish GitHub Releases
+        env:
+          GH_TOKEN: ${{ github.token }}
+          TAGS: ${{ steps.select.outputs.tags }}
+        run: |
+          for tag in $TAGS; do
             if gh release view "$tag" >/dev/null 2>&1; then
               gh release upload "$tag" dist/"$tag"/* --clobber
             else

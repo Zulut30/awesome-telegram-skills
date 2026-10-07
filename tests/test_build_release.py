@@ -20,11 +20,26 @@ class BuildReleaseTests(unittest.TestCase):
         self.assertTrue(text.startswith(f'awesome-telegram-patterns и @awesome-telegram/patterns {version}.'))
         self.assertIn('sha256sum -c SHA256SUMS', text)
 
+    def test_sbom_lists_both_artifacts_with_hashes_license_and_extras(self):
+        sums = {'awesome_telegram_patterns-%s-py3-none-any.whl' % build_release._version('HEAD'): 'a' * 64,
+                'awesome-telegram-patterns-%s.tgz' % build_release._version('HEAD'): 'b' * 64}
+        bom = build_release.sbom(ROOT, '0' * 40, 0, sums)
+        self.assertEqual((bom['bomFormat'], bom['specVersion'], bom['metadata']['timestamp']), ('CycloneDX', '1.6', '1970-01-01T00:00:00Z'))
+        python, npm, *optional = bom['components']
+        self.assertEqual((python['purl'], python['hashes'][0]['content'], python['licenses']),
+                         ('pkg:pypi/awesome-telegram-patterns@' + build_release._version('HEAD'), 'a' * 64, [{'license': {'id': 'MIT'}}]))
+        self.assertTrue(npm['purl'].startswith('pkg:npm/%40awesome-telegram/patterns@'))
+        self.assertEqual({c['name'] for c in optional}, {'aiogram', 'tzdata'})
+        self.assertTrue(all(c['scope'] == 'optional' for c in optional))
+        self.assertEqual(bom, build_release.sbom(ROOT, '0' * 40, 0, sums), 'deterministic')
+
     def test_workflow_validates_tags_and_publishes_prereleases(self):
         workflow = (ROOT / '.github/workflows/release.yml').read_text(encoding='utf-8')
         self.assertIn('^v[0-9]+\\.[0-9]+\\.[0-9]+$', workflow)
         self.assertIn('--prerelease', workflow)
         self.assertIn('scripts/build_release.py --ref "$tag"', workflow)
+        self.assertIn('actions/attest@', workflow)
+        self.assertIn('attestations: write', workflow)
         for line in re.findall(r'uses: (\S+)', workflow):
             self.assertRegex(line, r'@[0-9a-f]{40}$', 'actions are pinned by commit SHA')
 

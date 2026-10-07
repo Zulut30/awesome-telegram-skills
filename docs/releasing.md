@@ -12,6 +12,8 @@ python scripts/build_release.py --ref v0.24.0 --output dist/v0.24.0
 python scripts/build_release.py --ref v0.24.0 --notes
 ```
 
+Вместе с пакетами создается `awesome-telegram-patterns-X.Y.Z.cdx.json` — CycloneDX 1.6 SBOM: оба артефакта с SHA-256, лицензией из `pyproject.toml` тега и необязательные зависимости extras (aiogram, tzdata). Он детерминирован и входит в `SHA256SUMS`. Workflow создает для всех трех файлов подписанную attestation происхождения сборки (`actions/attest`, Sigstore).
+
 Заметки к релизу берутся из текущего `CHANGELOG.md`: раздел `## X.Y.Z` либо пункты вида `Пункт NNN, X.Y.Z: …`. Все релизы 0.x помечаются как prerelease.
 
 ## Выпустить новую версию
@@ -46,6 +48,7 @@ python scripts/build_release.py --ref v0.24.0 --notes
 
 ```bash
 sha256sum -c SHA256SUMS
+gh attestation verify awesome_telegram_patterns-0.24.0-py3-none-any.whl --repo Zulut30/awesome-telegram-skills
 python -m pip install ./awesome_telegram_patterns-0.24.0-py3-none-any.whl
 npm install ./awesome-telegram-patterns-0.24.0.tgz
 ```

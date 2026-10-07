@@ -215,10 +215,14 @@
     {
       "id": 18,
       "title": "Выпускать SBOM, контрольные суммы и attestations",
-      "status": "pending",
-      "commit_subject": null,
-      "evidence": [],
-      "remaining": null
+      "status": "partial",
+      "commit_subject": "excellence(018): add SBOM and build provenance to releases",
+      "evidence": [
+        "SBOM CycloneDX 1.6 для HEAD и 0.5.0 проходит JsonStrictValidator (cyclonedx-python-lib 11.12.0) без ошибок; для версии без поля license лицензия не заявляется",
+        "две сборки HEAD с SBOM дают одинаковый SHA256SUMS (SBOM включен)",
+        "workflow Release: actions/attest v4.2.2 (SHA-pin) для wheel/tgz/cdx.json; права id-token/attestations/artifact-metadata сверены с документацией actions/attest"
+      ],
+      "remaining": "Attestation создается только при запуске Release на GitHub; проверить gh attestation verify после первого релиза (пункт 13)."
     },
     {
       "id": 19,

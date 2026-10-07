@@ -21,6 +21,8 @@ import subprocess
 import sys
 import tarfile
 import tempfile
+import tomllib
+import uuid
 
 ROOT = Path(__file__).resolve().parents[1]
 NPM = 'npm.cmd' if os.name == 'nt' else 'npm'
@@ -42,14 +44,52 @@ def _sha256(path: Path) -> str:
     return hashlib.sha256(path.read_bytes()).hexdigest()
 
 
+REPOSITORY = 'https://github.com/Zulut30/awesome-telegram-skills'
+
+
+def sbom(tree: Path, commit: str, epoch: int, sums: dict[str, str]) -> dict:
+    """Deterministic CycloneDX 1.6 inventory of the two artifacts and their declared dependencies."""
+    project = tomllib.loads((tree / 'packages/python/pyproject.toml').read_text(encoding='utf-8'))['project']
+    package = json.loads((tree / 'packages/typescript/package.json').read_text(encoding='utf-8'))
+    version = project['version']
+    licenses = [{'license': {'id': project['license']}}] if isinstance(project.get('license'), str) else []
+    python_ref = f"pkg:pypi/{project['name']}@{version}"
+    npm_ref = 'pkg:npm/' + package['name'].replace('@', '%40', 1) + f'@{version}'
+    wheel = f"{project['name'].replace('-', '_')}-{version}-py3-none-any.whl"
+    tarball = f"{package['name'].lstrip('@').replace('/', '-')}-{version}.tgz"
+    optional = []
+    for extra, requirements in sorted(project.get('optional-dependencies', {}).items()):
+        for requirement in requirements:
+            name = re.match(r'[A-Za-z0-9_.-]+', requirement).group(0).lower()
+            optional.append({'type': 'library', 'bom-ref': f'pkg:pypi/{name}', 'name': name, 'scope': 'optional',
+                             'purl': f'pkg:pypi/{name}',
+                             'properties': [{'name': 'python:requirement', 'value': f'{requirement}; extra == "{extra}"'}]})
+    runtime = [{'type': 'library', 'bom-ref': f'pkg:npm/{name}', 'name': name, 'purl': 'pkg:npm/' + name.replace('@', '%40', 1),
+                'properties': [{'name': 'npm:range', 'value': value}]} for name, value in sorted(package.get('dependencies', {}).items())]
+    def component(ref: str, name: str, artifact: str) -> dict:
+        return {'type': 'library', 'bom-ref': ref, 'name': name, 'version': version, 'purl': ref, 'licenses': licenses,
+                'hashes': [{'alg': 'SHA-256', 'content': sums[artifact]}],
+                'externalReferences': [{'type': 'vcs', 'url': f'{REPOSITORY}/tree/{commit}'}]}
+    from datetime import datetime, timezone
+    return {'bomFormat': 'CycloneDX', 'specVersion': '1.6', 'version': 1,
+            'serialNumber': 'urn:uuid:' + str(uuid.uuid5(uuid.NAMESPACE_URL, f'{REPOSITORY}@{commit}')),
+            'metadata': {'timestamp': datetime.fromtimestamp(epoch, timezone.utc).strftime('%Y-%m-%dT%H:%M:%SZ'),
+                         'tools': {'components': [{'type': 'application', 'name': 'scripts/build_release.py'}]}},
+            'components': [component(python_ref, project['name'], wheel), component(npm_ref, package['name'], tarball),
+                           *optional, *runtime],
+            'dependencies': [{'ref': python_ref, 'dependsOn': [c['bom-ref'] for c in optional]},
+                             {'ref': npm_ref, 'dependsOn': [c['bom-ref'] for c in runtime]},
+                             *({'ref': c['bom-ref'], 'dependsOn': []} for c in optional + runtime)]}
+
+
 def build(ref: str, output: Path) -> dict[str, str]:
     commit = _git('rev-parse', f'{ref}^{{commit}}').decode().strip()
     version = _version(commit)
     if output.exists() and any(output.iterdir()):
         raise SystemExit(f'{output} is not empty')
     output.mkdir(parents=True, exist_ok=True)
-    environment = {**os.environ, 'SOURCE_DATE_EPOCH': _git('log', '-1', '--format=%ct', commit).decode().strip(),
-                   'PYTHONHASHSEED': '0'}
+    epoch = int(_git('log', '-1', '--format=%ct', commit).decode().strip())
+    environment = {**os.environ, 'SOURCE_DATE_EPOCH': str(epoch), 'PYTHONHASHSEED': '0'}
     with tempfile.TemporaryDirectory(prefix='release-tree-') as temporary:
         tree = Path(temporary) / 'tree'
         tree.mkdir()
@@ -60,11 +100,14 @@ def build(ref: str, output: Path) -> dict[str, str]:
         subprocess.run([NPM, 'ci', '--no-audit', '--no-fund'], cwd=tree, env=environment, check=True, stdout=subprocess.DEVNULL)
         subprocess.run([NPM, 'pack', '-w', '@awesome-telegram/patterns', '--pack-destination', str(output.resolve())],
                        cwd=tree, env=environment, check=True, stdout=subprocess.DEVNULL)
-    artifacts = sorted(p for p in output.iterdir() if p.suffix in {'.whl', '.tgz'})
-    expected = {f'awesome_telegram_patterns-{version}-py3-none-any.whl', f'awesome-telegram-patterns-{version}.tgz'}
-    if {p.name for p in artifacts} != expected:
-        raise SystemExit(f'{ref}: unexpected artifacts {[p.name for p in artifacts]}')
-    sums = {p.name: _sha256(p) for p in artifacts}
+        artifacts = sorted(p for p in output.iterdir() if p.suffix in {'.whl', '.tgz'})
+        expected = {f'awesome_telegram_patterns-{version}-py3-none-any.whl', f'awesome-telegram-patterns-{version}.tgz'}
+        if {p.name for p in artifacts} != expected:
+            raise SystemExit(f'{ref}: unexpected artifacts {[p.name for p in artifacts]}')
+        sums = {p.name: _sha256(p) for p in artifacts}
+        bom = output / f'awesome-telegram-patterns-{version}.cdx.json'
+        bom.write_text(json.dumps(sbom(tree, commit, epoch, sums), indent=2, sort_keys=True) + '\n', encoding='utf-8')
+        sums[bom.name] = _sha256(bom)
     (output / 'SHA256SUMS').write_text(''.join(f'{digest}  {name}\n' for name, digest in sums.items()), encoding='utf-8')
     return {'ref': ref, 'commit': commit, 'version': version, **sums}
 
