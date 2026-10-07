@@ -438,9 +438,13 @@
     {
       "id": 36,
       "title": "Убрать копии библиотечных абзацев",
-      "status": "pending",
-      "commit_subject": null,
-      "evidence": [],
+      "status": "done",
+      "commit_subject": "excellence(036): point to shared references instead of copying library paragraphs",
+      "evidence": [
+        "telegram-dialogs, telegram-bot-api, telegram-groups, telegram-business-bots, telegram-inline-mode, telegram-profiles: библиотечные абзацы (с версиями 0.18–0.22) заменены одной строкой-указателем на собственную копию reference; специфичные детали остаются в этих references; validate_skills (standalone links) проходит",
+        "scripts/check_duplicate_paragraphs.py: абзацы > 2 предложений, сходство ≥ 0,8 (SequenceMatcher) между разными SKILL.md; на дереве после пункта 34 — 3 пары (абзац о специальных операциях в business-bots, groups и code-patterns), сейчас — 0",
+        "tests/test_duplicate_paragraphs.py: точная и почти точная копия ловятся, короткие указатели и разный текст проходят, репозиторий без дубликатов"
+      ],
       "remaining": null
     },
     {

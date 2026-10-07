@@ -15,9 +15,7 @@ metadata:
 
 Обновление снимка без credentials: `python scripts/update_api_index.py` из каталога этого навыка. Проверь дату, version и diff индекса; изменение имени поля не доказывает поддержку новой версии SDK.
 
-Если используется локальный пакет awesome-telegram-patterns 0.19.0, [безопасный конструктор сообщений](references/message-text.md) дает literal text/entities, UTF-16 offsets и lossless split; escape helpers выбираются по HTML/MarkdownV2 context. Другой SDK/проект сохраняй; навык не требует пакета или соседних навыков.
-
-Для фото, документов, альбомов, подписей, замены и скачивания в локальном пакете 0.20.0 прочитайте [медиа-компоненты](references/media.md). Byte upload и file_id различаются; bound и SDK construction не подтверждают content/codec, ACL или live delivery. Сохраняйте Bot/Dispatcher проекта.
+С библиотекой awesome-telegram-patterns, если она уже есть в проекте: [текст и entities](references/message-text.md), [медиа](references/media.md), [опросы и quiz](references/polls.md). Пакет для навыка не обязателен.
 
 ## Построить операцию
 
@@ -40,5 +38,3 @@ Polling и webhook взаимоисключающие. Тестовое окру
 ## Источники
 
 [Telegram Bot API](https://core.telegram.org/bots/api), [FAQ](https://core.telegram.org/bots/faq). Для новой функции сопоставь changelog API с поддержкой установленного SDK.
-
-Для локального пакета 0.22.0 прочитайте [опросы и quiz](references/polls.md): полная композиция, доступные события, права и ограничения проверки. Существующий SDK/storage сохраняйте; навык не требует соседних навыков или установки из реестра.

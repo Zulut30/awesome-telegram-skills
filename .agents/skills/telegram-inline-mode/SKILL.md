@@ -32,4 +32,4 @@ metadata:
 
 [Inline bots](https://core.telegram.org/bots/inline), [answerInlineQuery](https://core.telegram.org/bots/api#answerinlinequery). Перед реализацией проверь параметры выбранного типа результата.
 
-Для локального пакета 0.22.0 прочитайте [inline-поиск](references/inline-search.md): полная композиция, доступные события, права и ограничения проверки. Существующий SDK/storage сохраняйте; навык не требует соседних навыков или установки из реестра.
+С библиотекой awesome-telegram-patterns, если она уже есть в проекте: [inline-поиск с пагинацией](references/inline-search.md).
