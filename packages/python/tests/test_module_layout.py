@@ -11,6 +11,8 @@ import sys
 import unittest
 from pathlib import Path
 
+from _support import integration
+
 PACKAGE = Path(importlib.import_module('telegram_patterns').__file__).parent
 SDK_FACADES = {'aiogram', 'testing', 'ptb'}  # public adapter modules that need their extra
 
@@ -47,6 +49,7 @@ print(json.dumps({'imported': imported, 'refused': refused}))
 
 
 class ModuleLayoutTests(unittest.TestCase):
+    @integration
     def test_every_core_module_imports_without_sdks(self):
         core = _core()
         sdk = ['aiogram', 'testing', 'ptb', '_aiogram.keyboards', '_aiogram.events', 'keyboards']

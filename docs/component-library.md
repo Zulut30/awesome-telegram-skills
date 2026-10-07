@@ -95,7 +95,8 @@ python scripts/verify_pattern_packages.py
 На машине без Chrome допустим `python scripts/verify_pattern_packages.py --skip-browser`: отчет явно содержит browser=skipped. Такая проверка подтверждает поставку пакетов, UI требует отдельного запуска. Для итерационной разработки:
 
 ```powershell
-uv run --with-editable "./packages/python[aiogram]" python -m unittest discover -s packages/python/tests -v
+uv run --with-editable "./packages/python[aiogram,ptb,signature,calendar]" python scripts/run_python_tests.py --unit
+uv run --with-editable "./packages/python[aiogram,ptb,signature,calendar]" python scripts/run_python_tests.py
 npm.cmd test
 npm.cmd run build
 npm.cmd run test:browser

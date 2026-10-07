@@ -848,9 +848,16 @@
     {
       "id": 67,
       "title": "Быстрые тесты",
-      "status": "pending",
-      "commit_subject": null,
-      "evidence": [],
+      "status": "done",
+      "commit_subject": "excellence(067): split unit and integration tests and run them in parallel shards",
+      "evidence": [
+        "scripts/run_python_tests.py: shards with one SDK import each; --unit skips @integration tests and fails on any child process; --budget, --jobs, --json, --verbose",
+        "packages/python/tests/_support.py: integration marker on 19 tests (subprocess, multiprocessing, generators)",
+        "unit scope: 549 tests (20 skipped) in 11.4-12.0 s on 4 shards, 16.3 s in one process; full suite 131.9-137.3 s instead of 265 s",
+        "RecipeCatalog validates the bundled catalog once per content; test HTTP servers poll every 10 ms",
+        "CI job python-unit with --budget 30; verify_pattern_packages python-tests stage uses the runner (PASS 0.24.0, 549 Python, browser=passed)",
+        "tests/test_python_test_runner.py on temporary directories; check_api_compatibility passes after naming PlatformLookup/PollObserver/FileField and others"
+      ],
       "remaining": null
     },
     {

@@ -13,6 +13,8 @@ from contextlib import redirect_stderr, redirect_stdout
 from pathlib import Path
 from unittest.mock import patch
 
+from _support import integration
+
 from telegram_patterns import RecipeCatalog, create_starter
 from telegram_patterns.cli import doctor, main
 
@@ -267,6 +269,7 @@ class StarterTests(unittest.TestCase):
             self.assertRaises(FileExistsError, create_starter, target, library=source)
             self.assertEqual((real / 'keep.txt').read_text(), 'owned')
 
+    @integration
     def test_generated_bot_same_dispatcher_runs_without_network(self):
         with tempfile.TemporaryDirectory(prefix='telegram-generated-') as folder:
             root = Path(folder)
@@ -385,6 +388,7 @@ class CLITests(unittest.TestCase):
         legacy.flush()
         self.assertIn(b'\\u041e', legacy.buffer.getvalue())
 
+    @integration
     def test_doctor_local_read_only_and_token_never_printed(self):
         with tempfile.TemporaryDirectory(prefix='telegram-doctor-') as folder:
             root = Path(folder)
@@ -401,6 +405,7 @@ class CLITests(unittest.TestCase):
             self.assertFalse(report['passed'])
             self.assertEqual(before, {p.name: p.read_bytes() for p in root.iterdir()})
 
+    @integration
     def test_doctor_invalid_project_data_is_controlled(self):
         with tempfile.TemporaryDirectory(prefix='telegram-doctor-') as folder:
             root = Path(folder)
@@ -417,6 +422,7 @@ class GalleryGeneratorTests(unittest.TestCase):
         spec.loader.exec_module(module)
         return module
 
+    @integration
     def test_real_generation_in_temp_directory_check_and_drift(self):
         builder = self.module()
         with tempfile.TemporaryDirectory(prefix='telegram-gallery-') as folder:

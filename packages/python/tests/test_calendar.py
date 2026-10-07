@@ -11,6 +11,8 @@ from pathlib import Path
 from unittest.mock import patch
 from zoneinfo import ZoneInfo, ZoneInfoNotFoundError
 
+from _support import integration
+
 from telegram_patterns import (
     CalendarMonth,
     ConflictFailure,
@@ -361,15 +363,18 @@ class SlotStoreTests(unittest.TestCase):
             queue.close()
             queue.join_thread()
 
+    @integration
     def test_separate_processes_cannot_book_one_slot_twice(self):
         self.assertEqual(['conflict', 'ok'], sorted(row[0] for row in self.race()))
 
+    @integration
     def test_separate_processes_replay_identical_intent_once(self):
         results = self.race(same_operation=True)
         self.assertEqual(['ok', 'ok'], [row[0] for row in results])
         self.assertEqual([False, True], sorted(row[1] for row in results))
         self.assertEqual(results[0][2], results[1][2])
 
+    @integration
     def test_separate_processes_cannot_book_overlapping_aliases(self):
         self.assertEqual(['conflict', 'ok'], sorted(row[0] for row in self.race(overlapping=True)))
 

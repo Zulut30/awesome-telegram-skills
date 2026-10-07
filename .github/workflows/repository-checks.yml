@@ -67,6 +67,22 @@ jobs:
       - run: python -m pip install 'mypy==2.4.0' 'aiogram==3.31.0' 'python-telegram-bot==22.8' 'cryptography==50.0.2' 'tzdata==2026.5'
       - run: python -m mypy --strict --follow-imports=silent packages/python/src/telegram_patterns
 
+  python-unit:
+    name: Python library unit tests (30 s budget)
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97 # v7.0.0
+        with:
+          python-version: '3.13'
+      - run: python -m pip install 'aiogram==3.31.0' 'python-telegram-bot==22.8' 'cryptography==50.0.2' 'tzdata==2026.5'
+      # In-process tests in parallel shards; any child process fails the run. The delivery job runs the
+      # integration tests (subprocesses, generators, multiprocessing) against the built wheel.
+      - run: python scripts/run_python_tests.py --unit --budget 30
+        env:
+          PYTHONPATH: ${{ github.workspace }}/packages/python/src
+
   typescript:
     name: TypeScript tests and Mini App build
     runs-on: ubuntu-latest

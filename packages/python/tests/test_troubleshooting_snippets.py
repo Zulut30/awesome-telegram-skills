@@ -8,11 +8,14 @@ import tempfile
 import unittest
 from pathlib import Path
 
+from _support import integration
+
 ROOT = Path(__file__).resolve().parents[3]
 PAGE = ROOT / 'docs/troubleshooting.md'
 
 
 class TroubleshootingSnippetTests(unittest.TestCase):
+    @integration
     def test_runnable_snippets_print_documented_output(self):
         text = PAGE.read_text(encoding='utf-8')
         blocks = re.findall(r'<!-- troubleshooting:run -->\n```python\n(.*?)\n```', text, re.S)
@@ -32,6 +35,7 @@ class TroubleshootingSnippetTests(unittest.TestCase):
                 self.assertTrue(expected, 'each runnable check documents its output')
                 self.assertEqual([line.strip() for line in done.stdout.splitlines()], expected)
 
+    @integration
     def test_read_only_tool_refuses_unsafe_methods_without_network(self):
         text = PAGE.read_text(encoding='utf-8')
         code = re.search(r'<!-- troubleshooting:tg.py -->\n```python\n(.*?)\n```', text, re.S).group(1)

@@ -12,6 +12,7 @@ from datetime import datetime, timezone
 from pathlib import Path
 from unittest.mock import patch
 
+from _support import integration
 from aiogram import Bot, Dispatcher
 from aiogram.methods import GetMe
 from aiogram.types import (
@@ -176,6 +177,7 @@ class CatalogTests(unittest.TestCase):
         spec.loader.exec_module(module)
         return module
 
+    @integration
     def test_generator_real_operations_in_temporary_repository_and_drift(self):
         module = self.builder()
         with tempfile.TemporaryDirectory(prefix='telegram-catalog-fixture-') as directory:

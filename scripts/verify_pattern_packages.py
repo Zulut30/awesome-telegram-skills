@@ -164,7 +164,8 @@ print(json.dumps({'core_without_sdk':True,'python':sys.version.split()[0]}))
         run('sdk-origin', [str(python_in(sdk)), '-c', 'import sys,telegram_patterns;from pathlib import Path;assert Path(telegram_patterns.__file__).resolve().is_relative_to(Path(sys.argv[1]).resolve());print(telegram_patterns.__file__)', str(sdk)], consumers)
         # Includes bounded real subprocess restart/CLI consumers; keep the suite
         # deadline distinct from each individual operation's timeout.
-        python_log = run('python-tests', [str(python_in(sdk)), '-m', 'unittest', 'discover', '-s', str(ROOT / 'packages/python/tests'), '-v'], consumers, timeout=450)
+        # Parallel shards of the installed library's whole suite (unit and integration), unittest -v per shard.
+        python_log = run('python-tests', [str(python_in(sdk)), str(ROOT / 'scripts/run_python_tests.py'), '--json', '--verbose', '--timeout', '400'], consumers, timeout=450)
         run('sdk-dependencies', [uv, 'pip', 'check', '--python', str(python_in(sdk))])
         offline = json.loads(run('offline-bot', [str(python_in(sdk)), str(ROOT / 'examples/python/offline_bot.py')], consumers))
         if not offline['passed'] or offline['network'] or not offline['session_closed']:
@@ -308,7 +309,9 @@ print(json.dumps({'core_without_sdk':True,'python':sys.version.split()[0]}))
             report['starter_browser'] = json.loads((output / 'starter-browser/report.json').read_text(encoding='utf-8'))
             run('selected-starter-browser', [node, str(ROOT / 'tests/selected-starter-browser.mjs'), str(selected_mini)])
             report['selected_starter_browser'] = json.loads((output / 'selected-starter-browser/report.json').read_text(encoding='utf-8'))
-        report['python_tests'] = int(re.search(r'Ran (\d+) tests?', python_log).group(1))
+        python_report = json.loads(next(line for line in python_log.splitlines() if line.startswith('{"passed"')))
+        report['python_tests'] = python_report['tests']
+        report['python_test_seconds'] = python_report['seconds']
         report['typescript_tests'] = int(re.search(r'# tests (\d+)', ts_log).group(1))
         report['artifacts'] = [{'name': file.name, 'bytes': file.stat().st_size, 'sha256': hashlib.sha256(file.read_bytes()).hexdigest()} for file in (wheel, tarball)]
         report['passed'] = True

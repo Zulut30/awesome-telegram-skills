@@ -7,10 +7,13 @@ import tempfile
 import unittest
 from pathlib import Path
 
+from _support import integration
+
 ROOT = Path(__file__).resolve().parents[3]
 
 
 class StartGuideTests(unittest.TestCase):
+    @integration
     def test_existing_aiogram_bot_snippet_prints_the_documented_output(self):
         page = (ROOT / 'docs/start/existing-aiogram-bot.md').read_text(encoding='utf-8')
         code = re.search(r'<!-- start:existing-bot -->\n```python\n(.*?)\n```', page, re.S).group(1)

@@ -10,6 +10,8 @@ from dataclasses import FrozenInstanceError
 from pathlib import Path
 from unittest.mock import patch
 
+from _support import integration
+
 import telegram_patterns.execution as execution
 from telegram_patterns import (
     InvalidCompletion,
@@ -26,6 +28,7 @@ from telegram_patterns.cli import main
 
 
 class ExecutionTests(unittest.TestCase):
+    @integration
     def test_restart_fixture_does_not_inherit_runner_arguments_and_restores_caller(self):
         code = '''import json,sys
 from pathlib import Path
@@ -135,6 +138,7 @@ print(json.dumps(result))
         ):
             run_recipe_offline('demo-recovery')
 
+    @integration
     def test_isolated_installed_core_and_sdk_runs_ignore_caller_directory_and_credentials(self):
         with tempfile.TemporaryDirectory() as folder:
             root = Path(folder)
@@ -158,6 +162,7 @@ print(json.dumps(result))
             self.assertFalse(marker.exists())
             self.assertEqual(len(list(root.iterdir())), 2)
 
+    @integration
     def test_cli_emits_plan_before_result_and_never_runs_without_explicit_offline(self):
         with (
             patch.object(execution.subprocess, 'run', side_effect=AssertionError('implicit execution forbidden')),

@@ -10,6 +10,7 @@ from datetime import datetime, timezone
 from pathlib import Path
 from urllib.parse import parse_qsl, urlencode
 
+from _support import integration
 from aiogram import Bot, Dispatcher, Router
 from aiogram.client.session.base import BaseSession
 from aiogram.methods import AnswerCallbackQuery, SendMessage
@@ -241,6 +242,7 @@ class OnceTests(unittest.TestCase):
         self.assertEqual(self.count(), 1)
         self.assertEqual(self.store.run('a', 'key', {}, self.effect).value, result.value)
 
+    @integration
     def test_process_restart_returns_persisted_result(self):
         self.store.run('a', 'key', {}, self.effect)
         code = (

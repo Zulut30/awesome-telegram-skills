@@ -12,6 +12,8 @@ from contextlib import redirect_stderr, redirect_stdout
 from pathlib import Path
 from unittest.mock import patch
 
+from _support import integration
+
 import telegram_patterns.diagnostics as diagnostics
 from telegram_patterns.cli import doctor, main
 
@@ -115,6 +117,7 @@ class DoctorTests(unittest.TestCase):
                 self.assert_guidance(optional)
                 self.assert_guidance(required)
 
+    @integration
     def test_manifest_shapes_missing_oversized_and_malformed_are_reported_without_payload(self):
         with tempfile.TemporaryDirectory() as folder:
             root = Path(folder)
@@ -184,6 +187,7 @@ class DoctorTests(unittest.TestCase):
                 self.assertEqual(self.by_name(report, 'node')['reason'], 'node-probe-failed')
                 self.assert_guidance(report)
 
+    @integration
     def test_unavailable_target_and_linked_or_unreadable_manifest_are_local_failures(self):
         with tempfile.TemporaryDirectory() as folder:
             root = Path(folder).resolve()

@@ -13,6 +13,8 @@ from dataclasses import FrozenInstanceError, replace
 from pathlib import Path
 from unittest.mock import patch
 
+from _support import integration
+
 from telegram_patterns import StarterComponent, StarterConflict, StarterPlan, create_starter, starter_components
 from telegram_patterns.cli import main
 
@@ -174,6 +176,7 @@ class StarterComponentTests(unittest.TestCase):
             self.assertEqual(main(['init', '--list-components', '--dry-run', '--json']), 2)
         self.assertEqual(json.loads(error.getvalue())['reason'], 'listing-input')
 
+    @integration
     def test_each_python_feature_and_full_composition_execute_real_dispatcher(self):
         choices = ['native-keyboards', 'paginated-menu', 'text-form', 'update-events']
         with tempfile.TemporaryDirectory() as folder:
