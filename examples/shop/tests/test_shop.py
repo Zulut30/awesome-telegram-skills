@@ -33,18 +33,19 @@ class ShopTests(unittest.IsolatedAsyncioTestCase):
 
     async def test_launch_validation_crosschecks_sdk_and_hashes_session_secrets(self):
         raw=signed(42,timestamp=self.clock[0]);self.assertEqual(safe_parse_webapp_init_data(TOKEN,raw).user.id,42)
-        session=self.store.session(raw);self.assertEqual(self.store.authenticate(session['token'],session['csrf']),42)
+        session=self.store.session(raw);self.assertEqual(self.store.authenticate(session['token']),42);self.assertEqual(set(session),{'token','scope'})
         for invalid in (raw.replace('offline-launch','tampered'),raw+'&auth_date=1',signed(42,timestamp=self.clock[0]-3600),signed(42,timestamp=self.clock[0]+60),signed(42,token='101:WRONG_BOT'),'user=x'):
             with self.assertRaises(InvalidInitData):self.store.session(invalid)
         with connection(self.database) as db:
             data=str(tuple(db.execute('SELECT * FROM shop_sessions').fetchone()))
-        self.assertNotIn(session['token'],data);self.assertNotIn(session['csrf'],data);self.assertNotIn(raw,data)
+        self.assertNotIn(session['token'],data);self.assertNotIn(raw,data)
 
-    async def test_session_expiry_and_wrong_csrf_refuse_access(self):
+    async def test_session_expiry_and_unknown_token_refuse_access(self):
         s=self.store.session(signed(42,timestamp=self.clock[0]))
-        with self.assertRaises(PermissionDenied):self.store.authenticate(s['token'],'wrong')
+        for token in ('','wrong',s['token']+'x','x'*129,None):
+            with self.assertRaises(PermissionDenied):self.store.authenticate(token)
         self.clock[0]+=600
-        with self.assertRaises(PermissionDenied):self.store.authenticate(s['token'],s['csrf'])
+        with self.assertRaises(PermissionDenied):self.store.authenticate(s['token'])
 
     async def test_order_price_replay_conflict_and_owner_scope_survive_restart(self):
         key=str(uuid.uuid4());row=self.create(key=key)
@@ -116,7 +117,7 @@ class ShopTests(unittest.IsolatedAsyncioTestCase):
         self.assertEqual(self.store.order(42,other['id'])['status'],'review')
         with self.assertRaises(ValidationFailure):self.create(items=['bot-kit'])
 
-    async def test_http_api_has_real_sessions_csrf_price_acl_and_no_receipt_ingress(self):
+    async def test_http_api_has_bearer_sessions_price_acl_and_no_receipt_ingress(self):
         frontend=self.root/'frontend';(frontend/'assets').mkdir(parents=True);(frontend/'index.html').write_text('<html><!-- telegram-sdk --></html>')
         sock=socket.socket();sock.bind(('127.0.0.1',0));port=sock.getsockname()[1];sock.listen();sock.setblocking(False)
         origin=f'http://127.0.0.1:{port}';session=stub();bot=Bot(TOKEN,session=session);dp=Dispatcher();runner=None
@@ -128,20 +129,28 @@ class ShopTests(unittest.IsolatedAsyncioTestCase):
                 async with client.get(origin+'/api/content/bot-kit') as response:self.assertEqual(response.status,401)
                 async with client.post(origin+'/api/session',json={'initData':signed(42)},headers={'Origin':'https://foreign.invalid'}) as response:self.assertEqual(response.status,403)
                 async with client.post(origin+'/api/session',json={'initData':signed(42)},headers={'Origin':origin}) as response:
-                    self.assertEqual(response.status,200);csrf=(await response.json())['csrf'];self.assertIn('HttpOnly',response.headers['Set-Cookie'])
-                payload={'operation':str(uuid.uuid4()),'items':['bot-kit'],'terms':'demo-v1'};headers={'Origin':origin,'X-Shop-CSRF':csrf}
-                async with client.post(origin+'/api/orders',json=payload,headers={'Origin':origin}) as response:self.assertEqual(response.status,401)
+                    self.assertEqual(response.status,200);token=(await response.json())['token']
+                    self.assertNotIn('Set-Cookie',response.headers);self.assertEqual(response.headers['Cache-Control'],'no-store')
+                self.assertEqual(len(client.cookie_jar),0)  # nothing ambient: the browser never sends the session on its own
+                owner={'Authorization':'Bearer '+token}
+                payload={'operation':str(uuid.uuid4()),'items':['bot-kit'],'terms':'demo-v1'};headers={'Origin':origin}|owner
+                for refused in ({'Origin':origin},{'Origin':origin,'Authorization':token},{'Origin':origin,'Authorization':'Bearer wrong'}):
+                    async with client.post(origin+'/api/orders',json=payload,headers=refused) as response:self.assertEqual(response.status,401)
+                async with client.post(origin+'/api/orders',json=payload,headers=owner|{'Origin':'https://foreign.invalid'}) as response:self.assertEqual(response.status,403)
                 for extra in ({'price':1},{'user_id':77},{'paid':True}):
                     async with client.post(origin+'/api/orders',json=payload|extra,headers=headers) as response:self.assertEqual(response.status,422)
                 async with client.post(origin+'/api/orders',json=payload,headers=headers) as response:self.assertEqual(response.status,200);row=await response.json()
                 async with client.post(origin+'/api/orders/'+row['id']+'/invoice',json={},headers=headers) as response:self.assertEqual(response.status,200)
-                async with client.get(origin+'/api/content/bot-kit') as response:self.assertEqual(response.status,403)
+                async with client.get(origin+'/api/content/bot-kit',headers=owner) as response:self.assertEqual(response.status,403)
                 async with client.post(origin+'/api/receipt',json={'paid':True},headers=headers) as response:self.assertEqual(response.status,404)
                 await dp.feed_update(bot,update(self.store,row))
-                async with client.get(origin+'/api/content/bot-kit') as response:self.assertEqual(response.status,200)
-                async with client.post(origin+'/api/session',json={'initData':signed(77)},headers={'Origin':origin}) as response:self.assertEqual(response.status,200)
-                async with client.get(origin+'/api/orders/'+row['id']) as response:self.assertEqual(response.status,403)
-                async with client.get(origin+'/api/content/bot-kit') as response:self.assertEqual(response.status,403)
+                async with client.get(origin+'/api/content/bot-kit',headers=owner) as response:self.assertEqual(response.status,200)
+                async with client.get(origin+'/api/content/bot-kit') as response:self.assertEqual(response.status,401)
+                async with client.post(origin+'/api/session',json={'initData':signed(77)},headers={'Origin':origin}) as response:
+                    self.assertEqual(response.status,200);other={'Authorization':'Bearer '+(await response.json())['token']}
+                async with client.get(origin+'/api/orders/'+row['id'],headers=other) as response:self.assertEqual(response.status,403)
+                async with client.get(origin+'/api/content/bot-kit',headers=other) as response:self.assertEqual(response.status,403)
+                async with client.get(origin+'/api/content/bot-kit',headers=owner) as response:self.assertEqual(response.status,200)
         finally:
             if runner is not None:await runner.cleanup()
             else:sock.close()

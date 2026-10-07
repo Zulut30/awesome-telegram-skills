@@ -13,9 +13,11 @@ const string=(v:unknown)=>{if(typeof v!=='string')throw Error('Invalid response'
 const strings=(v:unknown)=>{if(!Array.isArray(v)||v.some(s=>typeof s!=='string'))throw Error('Invalid response');return v as string[];};
 const integer=(v:unknown)=>{if(typeof v!=='number'||!Number.isSafeInteger(v)||v<=0)throw Error('Invalid response');return v;};
 function order(v:unknown):Order{const o=record(v);if(o.currency!=='XTR'||!['awaiting','paid','review'].includes(string(o.status))||!['none','creating','ready','unknown'].includes(string(o.invoice_state)))throw Error('Invalid order');return {id:string(o.id),operation:string(o.operation),items:strings(o.items),total:integer(o.total),currency:'XTR',status:o.status as Order['status'],invoice_state:o.invoice_state as Order['invoice_state']};}
-let csrf='',scope='',products:Product[]=[],termsVersion='',pending:Pending|null=null,current:Order|null=null,busy=false,blocked=false,mode='catalog';
+// Session token lives only in memory (never storage): it goes in the Authorization header, which also works
+// inside Telegram Web's cross-site iframe where SameSite cookies are not sent. Reload signs in again with initData.
+let token='',scope='',products:Product[]=[],termsVersion='',pending:Pending|null=null,current:Order|null=null,busy=false,blocked=false,mode='catalog';
 const cart=new Set<string>();
-const api=new ApiClient({baseUrl:location.origin,headers:()=>({'X-Shop-CSRF':csrf})});
+const api=new ApiClient({baseUrl:location.origin,headers:():Record<string,string>=>token?{Authorization:'Bearer '+token}:{}});
 const nav=node('nav');nav.className='shop-nav';nav.setAttribute('aria-label','Разделы магазина');
 const catalogButton=button('Каталог',()=>show('catalog')),purchasesButton=button('Мои покупки',()=>{show('orders');void purchases();});
 nav.append(catalogButton,purchasesButton);shell.content.append(nav);
@@ -44,13 +46,13 @@ function render(){
   list.replaceChildren();for(const id of current?.items??[...cart])list.append(node('li',products.find(p=>p.id===id)?.title??id));
   if(!list.children.length)list.append(node('li','Пока пусто. Добавьте материал из каталога.'));
   const sum=current?.total??products.filter(p=>cart.has(p.id)).reduce((s,p)=>s+p.stars,0);total.replaceChildren(node('span',current?'Заказ':'Итого'),node('span',`${sum} ★`));
-  checkout.hidden=pending!==null||current!==null;checkout.disabled=blocked||busy||cart.size===0||!csrf||!consent.checked;
+  checkout.hidden=pending!==null||current!==null;checkout.disabled=blocked||busy||cart.size===0||!token||!consent.checked;
   consent.disabled=busy||pending!==null||current!==null;
   pay.hidden=!current||current.status!=='awaiting'||current.invoice_state==='unknown'||current.invoice_state==='creating';pay.disabled=busy;
   check.hidden=!pending&&!current;check.disabled=busy;again.hidden=current?.status!=='paid';again.disabled=busy;
 }
-consent.addEventListener('change',()=>{checkout.disabled=blocked||busy||!csrf||cart.size===0||!consent.checked;});
-async function purchases(){if(!csrf){orders.replaceChildren(node('h2','Мои покупки'),node('p','Откройте магазин из Telegram, чтобы войти.'));return;}
+consent.addEventListener('change',()=>{checkout.disabled=blocked||busy||!token||cart.size===0||!consent.checked;});
+async function purchases(){if(!token){orders.replaceChildren(node('h2','Мои покупки'),node('p','Откройте магазин из Telegram, чтобы войти.'));return;}
   orders.replaceChildren(node('h2','Мои покупки'),node('p','Проверяем покупки…'));
   try{const values=await api.request('/api/orders',v=>{const a=record(v).orders;if(!Array.isArray(a))throw Error();return a.map(order);});orders.replaceChildren(node('h2','Мои покупки'));if(!values.length)orders.append(node('p','Покупок пока нет. Выберите материал в каталоге.'));
     for(const o of values){const card=node('article');card.className='shop-card';card.append(node('h3',`Заказ ${o.id.slice(0,8)}`),node('p',`${o.total} ★ · ${o.status==='paid'?'Оплата подтверждена сервером':o.status==='review'?'Требует сверки с поддержкой':'Ожидает оплаты'}`));
@@ -59,11 +61,11 @@ async function purchases(){if(!csrf){orders.replaceChildren(node('h2','Мои п
   }catch{orders.replaceChildren(node('h2','Мои покупки'),node('p','Покупки не удалось загрузить.'),button('Обновить покупки',()=>{void purchases();}));}}
 async function readContent(sku:string,parent:HTMLElement){try{const content=await api.request(`/api/content/${encodeURIComponent(sku)}`,v=>string(record(v).text));parent.querySelector('pre')?.remove();const pre=node('pre',content);pre.className='shop-content';parent.append(pre);}catch{status.textContent='Доступ не подтверждён. Обновите покупки или обратитесь в поддержку.';}}
 function received(o:Order){current=o;if(o.status==='paid'){pending=null;save();status.textContent='Оплата подтверждена сервером. Материалы доступны в «Мои покупки».';void purchases();}else status.textContent=(o.invoice_state==='unknown'||o.invoice_state==='creating')?'Подготовка оплаты не подтверждена. Новую ссылку не создаём; обратитесь в поддержку.':'Заказ создан. Оплатите Stars или проверьте статус позднее.';render();}
-async function submit(){if(blocked||busy||!csrf||!consent.checked||cart.size===0||current)return;
+async function submit(){if(blocked||busy||!token||!consent.checked||cart.size===0||current)return;
   if(!pending){pending={operation:crypto.randomUUID(),items:[...cart].sort(),terms:termsVersion};if(!save()){pending=null;status.textContent='Не удалось сохранить номер операции. Заказ не отправлен; разрешите локальное хранение.';return;}}
   busy=true;render();status.textContent='Создаём заказ…';
   try{received(await api.request('/api/orders',order,{method:'POST',body:pending}));}catch{status.textContent='Результат неизвестен. Проверьте тот же заказ; номер операции сохранён.';}finally{busy=false;render();}}
-async function reconcile(){if(busy||!csrf||(!pending&&!current))return;busy=true;render();
+async function reconcile(){if(busy||!token||(!pending&&!current))return;busy=true;render();
   try{received(await api.request(current?`/api/orders/${current.id}`:`/api/operations/${pending!.operation}`,order));}
   catch(error){if(!current&&pending&&error instanceof ApiError&&error.status===404){status.textContent='Заказ с этим номером пока не найден. Повторяем запрос с тем же номером.';try{received(await api.request('/api/orders',order,{method:'POST',body:pending}));}catch{status.textContent='Результат ещё неизвестен. Сохранён прежний номер заказа.';}}else status.textContent='Статус недоступен. Откройте магазин заново или проверьте позднее; заказ не пересоздаётся.';}
   finally{busy=false;render();}}
@@ -77,13 +79,13 @@ async function boot(){
   try{products=await api.request('/api/catalog',v=>{const items=record(v).items;if(!Array.isArray(items))throw Error();return items.map(item=>{const p=record(item);return {id:string(p.id),title:string(p.title),description:string(p.description),category:string(p.category),stars:integer(p.stars)};});});
     const p=await api.request('/api/policy',record);termsVersion=string(p.version);policyText.textContent=string(p.terms);support.textContent=string(p.support);render();
     if(!host?.initData){status.textContent='Каталог доступен. Для покупки откройте Mini App из Telegram.';return;}
-    const session=await api.request('/api/session',record,{method:'POST',body:{initData:host.initData}});csrf=string(session.csrf);scope=string(session.scope);
+    const session=await api.request('/api/session',record,{method:'POST',body:{initData:host.initData}});token=string(session.token);scope=string(session.scope);
     try{const raw=localStorage.getItem(key());if(raw){const saved=record(JSON.parse(raw));const op=string(saved.operation),items=strings(saved.items),terms=string(saved.terms);if(!/^[a-f0-9-]{36}$/.test(op)||!items.length||items.some(s=>!products.some(p=>p.id===s)))throw Error();pending={operation:op,items,terms};for(const id of items)cart.add(id);consent.checked=true;}}
     catch{blocked=true;status.textContent='Сохранённый заказ требует проверки. Используйте «Мои покупки»; новая операция заблокирована.';render();return;}
     status.textContent='Выберите материалы. Итоговую цену подтвердит сервер.';render();if(pending)await reconcile();
   }catch{status.textContent='Не удалось загрузить магазин или войти. Откройте Mini App заново; сохранённый заказ не удалён.';render();}}
 function hide(){releaseBack?.();releaseBack=undefined;}
-function resume(){connectBack();show(mode);if(csrf&&(pending||current))void reconcile();}
+function resume(){connectBack();show(mode);if(token&&(pending||current))void reconcile();}
 window.addEventListener('pagehide',hide);window.addEventListener('pageshow',resume);
 connectBack();show('catalog');bridge.start();render();void boot();
 export function dispose(){hide();release();bridge.dispose();native.dispose();media.removeEventListener('change',systemTheme);window.removeEventListener('pagehide',hide);window.removeEventListener('pageshow',resume);shell.dispose();}

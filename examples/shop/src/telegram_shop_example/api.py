@@ -61,8 +61,10 @@ def create_app(store: Store, bot: Bot, frontend: Path, *, origin: str, terms: st
     def same_origin(request: web.Request) -> None:
         if request.headers.get('Origin')!=origin:raise PermissionDenied()
     async def identity(request: web.Request, *, write: bool = False) -> int:
+        # Bearer token from memory, not a cookie: Telegram Web runs the Mini App in a cross-site iframe.
         if write:same_origin(request)
-        try:return await io_call(store.authenticate,request.cookies.get('shop_session',''),request.headers.get('X-Shop-CSRF','') if write else None)
+        scheme,_,token=request.headers.get('Authorization','').partition(' ')
+        try:return await io_call(store.authenticate,token if scheme=='Bearer' else '')
         except PermissionDenied:raise web.HTTPUnauthorized() from None
     async def body(request: web.Request, fields: set[str]) -> dict:
         if request.content_type!='application/json':raise ValidationFailure()
@@ -73,9 +75,7 @@ def create_app(store: Store, bot: Bot, frontend: Path, *, origin: str, terms: st
     async def session(request: web.Request):
         same_origin(request);data=await body(request,{'initData'})
         result=await io_call(store.session,data['initData'])
-        response=web.json_response({'csrf':result['csrf'],'scope':result['scope']})
-        response.set_cookie('shop_session',result['token'],max_age=600,httponly=True,secure=not loopback_dev,samesite='Strict',path='/api')
-        return response
+        return web.json_response({'token':result['token'],'scope':result['scope'],'expires_in':600})
     async def catalog(request):return web.json_response({'items':list(CATALOG.values()),'currency':'XTR'})
     async def policy(request):return web.json_response({'version':store.terms_version,'terms':terms,'support':support})
     async def create(request):

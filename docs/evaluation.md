@@ -201,7 +201,7 @@ Installed API reference core_recipes и scripts/verify_gallery_export.py про�
 | Задача | Ожидаемый результат | Недопустимая подмена |
 | --- | --- | --- |
 | «Каталог, корзина, заказ и Stars» | Installed wheel/tarball + отдельное приложение; server catalog/amount/XTR/terms, owner order и реальный HTTP | Frontend price/paid/user_id, checkout внешней крипто/карточной оплатой для digital |
-| «Войти по данным запуска» | HMAC/freshness/bot validation, server session/CSRF, точный HTTPS origin; iframe/WebView cookies отдельно | initDataUnsafe/query user как разрешение, secrets в localStorage |
+| «Войти по данным запуска» | HMAC/freshness/bot validation, серверная сессия с bearer-токеном в памяти (работает во фрейме Telegram Web) или cookie с CSRF и отдельной проверкой в Telegram Web, точный HTTPS origin | initDataUnsafe/query user как разрешение, secrets в localStorage, cookie SameSite=Strict без проверки во фрейме |
 | «Потерял ответ после POST / перезагрузил» | Pending key до отправки, тот же payload и owner scope, lookup; один order/effect | Новый UUID после unknown; удаление pending по TTL сессии |
 | «Платёжное окно вернуло paid» | Получить server status; выдача лишь после trusted successful_payment | Callback как платёж, публичный HTTP grant endpoint |
 | «Чужой заказ / другая сумма» | ACL до чтения/effect/replay; precheckout сверяет bot/owner/payload/currency/amount | Подмена chat/user/order ID в клиентском payload |

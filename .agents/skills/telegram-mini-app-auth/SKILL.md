@@ -30,7 +30,7 @@ Backend Mini App должен установить личность пользо
 
 ### Сессия и полномочия
 
-После валидации извлекайте личность из подписанных данных и загружайте серверные права. Создайте ограниченную серверную сессию по модели проекта. Для cookie-сессии проверьте CSRF и поведение cookies в целевых WebView; для bearer-сессии ограничьте срок и хранение.
+После валидации извлекайте личность из подписанных данных и загружайте серверные права. Создайте ограниченную серверную сессию по модели проекта. Telegram Web открывает Mini App во фрейме чужого сайта: cookie `SameSite=Strict`/`Lax` там не отправляются, а сторонние cookie браузеры ограничивают. Поэтому по умолчанию выбирайте bearer-токен в заголовке `Authorization`, который хранится только в памяти и обновляется по initData; CSRF-токен ему не нужен, ограничьте срок. Cookie-сессию оставляйте, только если проект проверил ее в Telegram Web и целевых WebView, и защищайте CSRF.
 
 Владение заказом, разрешение на действие и цена проверяются отдельно. Подпись не делает произвольное действие авторизованным. Не записывайте токен, исходную initData или полное персональное содержимое в логи.
 
@@ -50,6 +50,6 @@ Backend Mini App должен установить личность пользо
 
 ## Источники
 
-[Проверка данных Mini App](https://core.telegram.org/bots/webapps#validating-data-received-via-the-mini-app), [Проверка третьей стороной](https://core.telegram.org/bots/webapps#validating-data-for-third-party-use), [WebAppInitData](https://core.telegram.org/bots/webapps#webappinitdata).
+[Проверка данных Mini App](https://core.telegram.org/bots/webapps#validating-data-received-via-the-mini-app), [Проверка третьей стороной](https://core.telegram.org/bots/webapps#validating-data-for-third-party-use), [WebAppInitData](https://core.telegram.org/bots/webapps#webappinitdata), [Set-Cookie: SameSite](https://developer.mozilla.org/en-US/docs/Web/HTTP/Reference/Headers/Set-Cookie), [Third-party cookies](https://developer.mozilla.org/en-US/docs/Web/Privacy/Guides/Third-party_cookies).
 
 Проверено: 2026-10-07, Telegram Mini Apps (Bot API 10.3).

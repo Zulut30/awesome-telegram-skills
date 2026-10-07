@@ -956,7 +956,7 @@
     {
       "id": 75,
       "title": "Шаблон Mini App с быстрым циклом разработки",
-      "status": "done",
+      "status": "partial",
       "commit_subject": "excellence(075): add a Vite Mini App starter with a test-environment dev loop",
       "evidence": [
         "bot-mini-app starter: Vite 8.3.3 dev server with HMR (import.meta.hot.dispose(disposeApp)), /api proxy to mini_app_server.py, official telegram-web-app.js in <head>; npm run build serves dist from the same backend",
@@ -966,7 +966,7 @@
         "test_mini_app_starter.py (7 tests), doctor node-too-old-for-vite, verify_quickstart ru and en PASS with vite preview",
         "Limit: a real Telegram client is not opened in CI; account and @BotFather steps are estimated"
       ],
-      "remaining": null
+      "remaining": "Opening the Mini App in a real Telegram client (steps 1, 2 and 7 of the 15-minute guide: test account, test @BotFather, menu button) needs the owner; the machine part (init, install, Vite, backend, signed initData, HMR) is measured in the verifier"
     },
     {
       "id": 76,
@@ -984,10 +984,15 @@
     {
       "id": 77,
       "title": "Проверить сессию магазина в Telegram Web",
-      "status": "pending",
-      "commit_subject": null,
-      "evidence": [],
-      "remaining": null
+      "status": "partial",
+      "commit_subject": "excellence(077): move the shop session to an in-memory bearer token for Telegram Web",
+      "evidence": [
+        "Reproduced in Chromium 141: shop in a cross-site iframe (top page localhost, shop 127.0.0.1) got 200 from POST /api/session, no SameSite=Strict cookie stored, POST /api/orders 401",
+        "POST /api/session returns {token, scope, expires_in}; the frontend keeps the token in memory and sends Authorization: Bearer; no cookie and no CSRF token, writes still require the exact Origin; schema stays version 1",
+        "check_shop_browser.mjs telegram-web-iframe case: browser refuses a SameSite=Strict cookie in the iframe, order, payment, content and re-login after reload work; every case checks the token is never in storage or cookies; verify_shop_example PASS (10 unit tests, 165 browser checks, 7 cases)",
+        "Choice documented in docs/shop-example.md; telegram-mini-app-auth now recommends an in-memory bearer token by default; sources in docs/sources.md"
+      ],
+      "remaining": "Live login in real Telegram Web, Desktop, iOS and Android clients needs a test account, a test bot and an HTTPS deployment, which the owner has to run; here Telegram Web is emulated by a cross-site iframe in Chromium"
     },
     {
       "id": 78,
