@@ -192,10 +192,13 @@
     {
       "id": 16,
       "title": "Добавить `CODE_OF_CONDUCT.md`",
-      "status": "pending",
-      "commit_subject": null,
-      "evidence": [],
-      "remaining": null
+      "status": "partial",
+      "commit_subject": "excellence(016): add a code of conduct with moderation rules",
+      "evidence": [
+        "CODE_OF_CONDUCT.md: обещание, недопустимое поведение, таблица модерации, каналы сообщения, шкала последствий, атрибуция Contributor Covenant 2.1 (ссылки 200)",
+        "API community/profile для main на 2026-10-07: health 57, code_of_conduct и license отсутствуют — их добавляют пункты 11 и 16 в этой ветке"
+      ],
+      "remaining": "Community Standards считается по ветке по умолчанию: после слияния проверить /community и включить Settings → Moderation → Accept content reports."
     },
     {
       "id": 17,

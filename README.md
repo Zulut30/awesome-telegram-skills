@@ -190,4 +190,4 @@ keyboard = action_menu([
 
 Скиллы, библиотеки и примеры распространяются по лицензии [MIT](LICENSE): их можно использовать, изменять и включать в коммерческие проекты при сохранении уведомления об авторских правах. Файл лицензии входит в Python wheel и npm tarball, а поле `license: MIT` — во frontmatter каждого скилла, поэтому скопированный каталог скилла сохраняет условия.
 
-Для изменений набора: [CONTRIBUTING.md](CONTRIBUTING.md). Уязвимости сообщайте приватно по [SECURITY.md](SECURITY.md). Источники: [docs/sources.md](docs/sources.md). Развитие: [план из 100 пунктов](docs/library-roadmap-100.md) и [регистр выполнения](docs/v1-progress.json).
+Для изменений набора: [CONTRIBUTING.md](CONTRIBUTING.md). Уязвимости сообщайте приватно по [SECURITY.md](SECURITY.md). Участники соблюдают [кодекс поведения](CODE_OF_CONDUCT.md). Источники: [docs/sources.md](docs/sources.md). Развитие: [план из 100 пунктов](docs/library-roadmap-100.md) и [регистр выполнения](docs/v1-progress.json).
