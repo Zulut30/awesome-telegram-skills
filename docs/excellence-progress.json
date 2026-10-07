@@ -348,9 +348,14 @@
     {
       "id": 29,
       "title": "Страница «Частые проблемы»",
-      "status": "pending",
-      "commit_subject": null,
-      "evidence": [],
+      "status": "done",
+      "commit_subject": "excellence(029): add a troubleshooting page with 37 checked situations",
+      "evidence": [
+        "docs/troubleshooting.md и байт-в-байт копия в telegram-debugging/references: 37 ситуаций (симптом → причина → проверка → решение), в том числе бот молчит, оба 409 Conflict, privacy mode, initData (подпись и срок), message is not modified, 429, entities, длина, callback, BUTTON_DATA_INVALID, файлы 20/50 МБ, Mini App, Stars",
+        "У каждой ситуации есть команда или код проверки: tests/test_troubleshooting.py проверяет нумерацию, наличие причины, блока кода в проверке и решения; 12 фрагментов python исполняет packages/python/tests/test_troubleshooting_snippets.py и сравнивает stdout с пометками '# → ...' (мутация 78→79 ловится)",
+        "tg.py: только методы get* из закрытого списка без getUpdates; против настоящего Bot API через прокси: фиктивный токен → 401 Unauthorized (код выхода 1), неверный формат → 404, TELEGRAM_TEST_ENVIRONMENT из .env → тестовое окружение",
+        "Факты сверены 2026-10-07 по скачанной странице Bot API 10.3 (лимиты 4096/1024/64 байта/20 МБ/50 МБ, 10 с на pre-checkout, allowed_updates, ResponseParameters, progress bar) и aiogram 3.31.0; validate_skills, корневые тесты, сборка и проверка сайта (39766 ссылок) прошли"
+      ],
       "remaining": null
     },
     {
