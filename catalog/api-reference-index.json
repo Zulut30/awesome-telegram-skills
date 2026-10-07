@@ -184,6 +184,78 @@
     },
     {
       "module": "telegram_patterns",
+      "name": "RichMessageBuilder",
+      "import": "from telegram_patterns import RichMessageBuilder",
+      "recipe": "ref.core_rich_message",
+      "example": "examples/api-reference/python/core_rich_message.py",
+      "limits": "Строит InputRichMessage для sendRichMessage (Bot API 10.1+) без зависимости от SDK: заголовки, абзацы, списки и чек-листы, таблицы, ряды кнопок, обычные и сворачиваемые цитаты, details, документы по file_id или URL, код, разделитель и подвал. build() проверяет опубликованные лимиты: 500 блоков с вложенными, 16 уровней, 50 медиа, 20 столбцов, 32768 символов, 1–8 кнопок в ряду. Ссылки только HTTP(S). Запасной вариант — FormattedText и inline-клавиатура для sendMessage. Отображение в клиентах, право отправлять rich-сообщения от имени Business и загрузку новых файлов проверяет проект.",
+      "intent": "Блоки по порядку; вложенное содержимое details берется из другого конструктора",
+      "example_sha256": "e3f7cede626964a05a0f751891272398e04d63be9d6f1739701cbb00065fca68",
+      "example_source_sha256": "e3f7cede626964a05a0f751891272398e04d63be9d6f1739701cbb00065fca68",
+      "kind": "value"
+    },
+    {
+      "module": "telegram_patterns",
+      "name": "RichMessage",
+      "import": "from telegram_patterns import RichMessage",
+      "recipe": "ref.core_rich_message",
+      "example": "examples/api-reference/python/core_rich_message.py",
+      "limits": "Строит InputRichMessage для sendRichMessage (Bot API 10.1+) без зависимости от SDK: заголовки, абзацы, списки и чек-листы, таблицы, ряды кнопок, обычные и сворачиваемые цитаты, details, документы по file_id или URL, код, разделитель и подвал. build() проверяет опубликованные лимиты: 500 блоков с вложенными, 16 уровней, 50 медиа, 20 столбцов, 32768 символов, 1–8 кнопок в ряду. Ссылки только HTTP(S). Запасной вариант — FormattedText и inline-клавиатура для sendMessage. Отображение в клиентах, право отправлять rich-сообщения от имени Business и загрузку новых файлов проверяет проект.",
+      "intent": "Готовое сообщение: as_input(), счетчики блоков и медиа, fallback() и fallback_keyboard()",
+      "example_sha256": "e3f7cede626964a05a0f751891272398e04d63be9d6f1739701cbb00065fca68",
+      "example_source_sha256": "e3f7cede626964a05a0f751891272398e04d63be9d6f1739701cbb00065fca68",
+      "kind": "value"
+    },
+    {
+      "module": "telegram_patterns",
+      "name": "RichButton",
+      "import": "from telegram_patterns import RichButton",
+      "recipe": "ref.core_rich_message",
+      "example": "examples/api-reference/python/core_rich_message.py",
+      "limits": "Строит InputRichMessage для sendRichMessage (Bot API 10.1+) без зависимости от SDK: заголовки, абзацы, списки и чек-листы, таблицы, ряды кнопок, обычные и сворачиваемые цитаты, details, документы по file_id или URL, код, разделитель и подвал. build() проверяет опубликованные лимиты: 500 блоков с вложенными, 16 уровней, 50 медиа, 20 столбцов, 32768 символов, 1–8 кнопок в ряду. Ссылки только HTTP(S). Запасной вариант — FormattedText и inline-клавиатура для sendMessage. Отображение в клиентах, право отправлять rich-сообщения от имени Business и загрузку новых файлов проверяет проект.",
+      "intent": "Кнопка rich-сообщения: url или callback_data, стиль, link только для callback",
+      "example_sha256": "e3f7cede626964a05a0f751891272398e04d63be9d6f1739701cbb00065fca68",
+      "example_source_sha256": "e3f7cede626964a05a0f751891272398e04d63be9d6f1739701cbb00065fca68",
+      "kind": "value"
+    },
+    {
+      "module": "telegram_patterns",
+      "name": "RichButtonStyle",
+      "import": "from telegram_patterns import RichButtonStyle",
+      "recipe": "ref.core_rich_message",
+      "example": "examples/api-reference/python/core_rich_message.py",
+      "limits": "Строит InputRichMessage для sendRichMessage (Bot API 10.1+) без зависимости от SDK: заголовки, абзацы, списки и чек-листы, таблицы, ряды кнопок, обычные и сворачиваемые цитаты, details, документы по file_id или URL, код, разделитель и подвал. build() проверяет опубликованные лимиты: 500 блоков с вложенными, 16 уровней, 50 медиа, 20 столбцов, 32768 символов, 1–8 кнопок в ряду. Ссылки только HTTP(S). Запасной вариант — FormattedText и inline-клавиатура для sendMessage. Отображение в клиентах, право отправлять rich-сообщения от имени Business и загрузку новых файлов проверяет проект.",
+      "intent": "Literal стиля: danger, success, primary, link",
+      "example_sha256": "e3f7cede626964a05a0f751891272398e04d63be9d6f1739701cbb00065fca68",
+      "example_source_sha256": "e3f7cede626964a05a0f751891272398e04d63be9d6f1739701cbb00065fca68",
+      "kind": "value"
+    },
+    {
+      "module": "telegram_patterns",
+      "name": "RichSpan",
+      "import": "from telegram_patterns import RichSpan",
+      "recipe": "ref.core_rich_message",
+      "example": "examples/api-reference/python/core_rich_message.py",
+      "limits": "Строит InputRichMessage для sendRichMessage (Bot API 10.1+) без зависимости от SDK: заголовки, абзацы, списки и чек-листы, таблицы, ряды кнопок, обычные и сворачиваемые цитаты, details, документы по file_id или URL, код, разделитель и подвал. build() проверяет опубликованные лимиты: 500 блоков с вложенными, 16 уровней, 50 медиа, 20 столбцов, 32768 символов, 1–8 кнопок в ряду. Ссылки только HTTP(S). Запасной вариант — FormattedText и inline-клавиатура для sendMessage. Отображение в клиентах, право отправлять rich-сообщения от имени Business и загрузку новых файлов проверяет проект.",
+      "intent": "Встроенное форматирование: bold, italic, code или ссылка HTTP(S)",
+      "example_sha256": "e3f7cede626964a05a0f751891272398e04d63be9d6f1739701cbb00065fca68",
+      "example_source_sha256": "e3f7cede626964a05a0f751891272398e04d63be9d6f1739701cbb00065fca68",
+      "kind": "value"
+    },
+    {
+      "module": "telegram_patterns",
+      "name": "RichText",
+      "import": "from telegram_patterns import RichText",
+      "recipe": "ref.core_rich_message",
+      "example": "examples/api-reference/python/core_rich_message.py",
+      "limits": "Строит InputRichMessage для sendRichMessage (Bot API 10.1+) без зависимости от SDK: заголовки, абзацы, списки и чек-листы, таблицы, ряды кнопок, обычные и сворачиваемые цитаты, details, документы по file_id или URL, код, разделитель и подвал. build() проверяет опубликованные лимиты: 500 блоков с вложенными, 16 уровней, 50 медиа, 20 столбцов, 32768 символов, 1–8 кнопок в ряду. Ссылки только HTTP(S). Запасной вариант — FormattedText и inline-клавиатура для sendMessage. Отображение в клиентах, право отправлять rich-сообщения от имени Business и загрузку новых файлов проверяет проект.",
+      "intent": "Строка, RichSpan или их последовательность",
+      "example_sha256": "e3f7cede626964a05a0f751891272398e04d63be9d6f1739701cbb00065fca68",
+      "example_source_sha256": "e3f7cede626964a05a0f751891272398e04d63be9d6f1739701cbb00065fca68",
+      "kind": "value"
+    },
+    {
+      "module": "telegram_patterns",
       "name": "OnceResult",
       "import": "from telegram_patterns import OnceResult",
       "recipe": "ref.core_storage",
@@ -490,8 +562,8 @@
       "example": "examples/api-reference/python/core_recipes.py",
       "limits": "Чтение не исполняет recipe code. Maturity отдельно от verification; SDK/mock не доказывают live/device. Preview — независимая копия. Этот пример ищет существующий cookbook recipe two-columns; ref.* — имена справочника API.",
       "intent": "Literal-зрелость: stable, experimental или reference",
-      "example_sha256": "56fb799776fea231e058db0d81a23e3b0b10cfc92e6bf07114e36a1047ea4897",
-      "example_source_sha256": "56fb799776fea231e058db0d81a23e3b0b10cfc92e6bf07114e36a1047ea4897",
+      "example_sha256": "9ff4444df532f89b54e10100382870626ca0e2ad531f56b8b674193b0d292a78",
+      "example_source_sha256": "9ff4444df532f89b54e10100382870626ca0e2ad531f56b8b674193b0d292a78",
       "kind": "value"
     },
     {
@@ -502,8 +574,8 @@
       "example": "examples/api-reference/python/core_recipes.py",
       "limits": "Чтение не исполняет recipe code. Maturity отдельно от verification; SDK/mock не доказывают live/device. Preview — независимая копия. Этот пример ищет существующий cookbook recipe two-columns; ref.* — имена справочника API.",
       "intent": "Literal-уровень проверки: sdk, mock, browser, live или not_run",
-      "example_sha256": "56fb799776fea231e058db0d81a23e3b0b10cfc92e6bf07114e36a1047ea4897",
-      "example_source_sha256": "56fb799776fea231e058db0d81a23e3b0b10cfc92e6bf07114e36a1047ea4897",
+      "example_sha256": "9ff4444df532f89b54e10100382870626ca0e2ad531f56b8b674193b0d292a78",
+      "example_source_sha256": "9ff4444df532f89b54e10100382870626ca0e2ad531f56b8b674193b0d292a78",
       "kind": "value"
     },
     {
@@ -514,8 +586,8 @@
       "example": "examples/api-reference/python/core_recipes.py",
       "limits": "Чтение не исполняет recipe code. Maturity отдельно от verification; SDK/mock не доказывают live/device. Preview — независимая копия. Этот пример ищет существующий cookbook recipe two-columns; ref.* — имена справочника API.",
       "intent": "Неизменяемая запись и копия preview",
-      "example_sha256": "56fb799776fea231e058db0d81a23e3b0b10cfc92e6bf07114e36a1047ea4897",
-      "example_source_sha256": "56fb799776fea231e058db0d81a23e3b0b10cfc92e6bf07114e36a1047ea4897",
+      "example_sha256": "9ff4444df532f89b54e10100382870626ca0e2ad531f56b8b674193b0d292a78",
+      "example_source_sha256": "9ff4444df532f89b54e10100382870626ca0e2ad531f56b8b674193b0d292a78",
       "kind": "value"
     },
     {
@@ -526,8 +598,8 @@
       "example": "examples/api-reference/python/core_recipes.py",
       "limits": "Чтение не исполняет recipe code. Maturity отдельно от verification; SDK/mock не доказывают live/device. Preview — независимая копия. Этот пример ищет существующий cookbook recipe two-columns; ref.* — имена справочника API.",
       "intent": "Версия, recipes, get/search с фильтрами",
-      "example_sha256": "56fb799776fea231e058db0d81a23e3b0b10cfc92e6bf07114e36a1047ea4897",
-      "example_source_sha256": "56fb799776fea231e058db0d81a23e3b0b10cfc92e6bf07114e36a1047ea4897",
+      "example_sha256": "9ff4444df532f89b54e10100382870626ca0e2ad531f56b8b674193b0d292a78",
+      "example_source_sha256": "9ff4444df532f89b54e10100382870626ca0e2ad531f56b8b674193b0d292a78",
       "kind": "value"
     },
     {
@@ -2979,9 +3051,9 @@
       "kind": "value"
     }
   ],
-  "python_symbols": 201,
+  "python_symbols": 207,
   "typescript_symbols": 47,
-  "recipes": 33,
+  "recipes": 34,
   "additional_entries": [
     "CLI recipes",
     "CLI init",

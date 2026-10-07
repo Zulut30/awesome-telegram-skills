@@ -29,6 +29,12 @@
 | `escape_html` | `from telegram_patterns import escape_html` | [ref.core_message_text](api-reference-core.md#ref-core_message_text) | Экранирование буквального текста и атрибутов для HTML |
 | `escape_markdown_v2` | `from telegram_patterns import escape_markdown_v2` | [ref.core_message_text](api-reference-core.md#ref-core_message_text) | Literal escaping в text/code/link контексте |
 | `split_formatted` | `from telegram_patterns import split_formatted` | [ref.core_message_text](api-reference-core.md#ref-core_message_text) | Разбиение без потерь: стили и код обрезаются по границе, ссылки, цитаты и emoji не делятся |
+| `RichMessageBuilder` | `from telegram_patterns import RichMessageBuilder` | [ref.core_rich_message](api-reference-core.md#ref-core_rich_message) | Блоки по порядку; вложенное содержимое details берется из другого конструктора |
+| `RichMessage` | `from telegram_patterns import RichMessage` | [ref.core_rich_message](api-reference-core.md#ref-core_rich_message) | Готовое сообщение: as_input(), счетчики блоков и медиа, fallback() и fallback_keyboard() |
+| `RichButton` | `from telegram_patterns import RichButton` | [ref.core_rich_message](api-reference-core.md#ref-core_rich_message) | Кнопка rich-сообщения: url или callback_data, стиль, link только для callback |
+| `RichButtonStyle` | `from telegram_patterns import RichButtonStyle` | [ref.core_rich_message](api-reference-core.md#ref-core_rich_message) | Literal стиля: danger, success, primary, link |
+| `RichSpan` | `from telegram_patterns import RichSpan` | [ref.core_rich_message](api-reference-core.md#ref-core_rich_message) | Встроенное форматирование: bold, italic, code или ссылка HTTP(S) |
+| `RichText` | `from telegram_patterns import RichText` | [ref.core_rich_message](api-reference-core.md#ref-core_rich_message) | Строка, RichSpan или их последовательность |
 | `OnceResult` | `from telegram_patterns import OnceResult` | [ref.core_storage](api-reference-core.md#ref-core_storage) | Результат эффекта с replay flag |
 | `OperationConflict` | `from telegram_patterns import OperationConflict` | [ref.core_storage](api-reference-core.md#ref-core_storage) | Тот же scoped key с другим payload |
 | `SQLiteOnce` | `from telegram_patterns import SQLiteOnce` | [ref.core_storage](api-reference-core.md#ref-core_storage) | Инициализация и атомарный run в файле SQLite |

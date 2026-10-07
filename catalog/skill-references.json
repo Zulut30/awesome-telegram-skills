@@ -76,6 +76,10 @@
     "docs/recipe-execution.md": [
       ".agents/skills/telegram-code-patterns/references/recipe-execution.md"
     ],
+    "docs/rich-messages.md": [
+      ".agents/skills/telegram-bot-api/references/rich-messages.md",
+      ".agents/skills/telegram-code-patterns/references/rich-messages.md"
+    ],
     "docs/selection-controls.md": [
       ".agents/skills/telegram-code-patterns/references/selection-controls.md"
     ],

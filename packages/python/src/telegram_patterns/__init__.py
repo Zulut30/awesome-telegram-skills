@@ -5,6 +5,7 @@ from .calendar import CalendarMonth, TimeSlot, resolve_local_time
 from .slots import SlotBooking, SlotSchedule, SQLiteSlotStore
 from .settings import BotSettings
 from .message_text import EntityKind, TextEntity, TextPayload, FormattedText, MessageBuilder, utf16_length, escape_html, escape_markdown_v2, split_formatted
+from .rich_message import RichButton, RichButtonStyle, RichMessage, RichMessageBuilder, RichSpan, RichText
 from .selection import SelectionOption, SelectionSpec, SelectionContext, SelectionState, SelectionResult, SelectionMenu
 from .recipes import Maturity, Recipe, RecipeCatalog, VerificationLevel
 from .execution import RecipeRunPlan, RecipeRunResult, plan_recipe, run_recipe_offline
@@ -20,6 +21,7 @@ from .errors import (
 __all__ = [
     "BotSettings", "InvalidInitData", "VerifiedLaunch", "validate_init_data", "validate_init_data_signature", "TELEGRAM_PUBLIC_KEYS",
     "EntityKind", "TextEntity", "TextPayload", "FormattedText", "MessageBuilder", "utf16_length", "escape_html", "escape_markdown_v2", "split_formatted",
+    "RichMessageBuilder", "RichMessage", "RichButton", "RichButtonStyle", "RichSpan", "RichText",
     "SelectionOption", "SelectionSpec", "SelectionContext", "SelectionState", "SelectionResult", "SelectionMenu",
     "OnceResult", "OperationConflict", "SQLiteOnce",
     "CalendarMonth", "TimeSlot", "resolve_local_time", "SlotBooking", "SlotSchedule", "SQLiteSlotStore",

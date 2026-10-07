@@ -21901,6 +21901,92 @@
       }
     },
     {
+      "id": "demo-rich-message",
+      "title": "Rich-сообщение: карточка заказа и запасной текст",
+      "summary": "sendRichMessage: заголовок, компактная таблица, чек-лист, сворачиваемая цитата, details, документ и кнопки; тот же текст для sendMessage",
+      "category": "scenarios",
+      "language": "python",
+      "maturity": "experimental",
+      "keywords": [
+        "бот",
+        "пример",
+        "callback",
+        "меню",
+        "события",
+        "композиция",
+        "бота",
+        "личный",
+        "чат",
+        "rich",
+        "sendRichMessage",
+        "таблица",
+        "список",
+        "заголовок",
+        "цитата",
+        "details",
+        "документ",
+        "кнопки",
+        "карточка",
+        "заказ",
+        "блоки",
+        "форматирование",
+        "чек-лист"
+      ],
+      "code": "\"\"\"Send an order card as a rich message, or the same content as ordinary text; no polling on import.\"\"\"\nfrom typing import Callable, Sequence\n\nfrom aiogram import Dispatcher, F, Router\nfrom aiogram.filters import Command\nfrom aiogram.methods import SendMessage, SendRichMessage\nfrom aiogram.types import CallbackQuery, Message\nfrom telegram_patterns import RichButton, RichMessage, RichMessageBuilder, RichSpan\n\nTERMS_URL = 'https://core.telegram.org/bots/api'\n\n\ndef order_card(order_id: int, items: Sequence[tuple[str, int, str]], total: str, receipt_file_id: str | None) -> RichMessage:\n    \"\"\"One card: heading, compact table, checklist, collapsible note, details, receipt and a button row.\"\"\"\n    rows = [['Товар', 'Кол-во', 'Цена'], *([name, str(count), price] for name, count, price in items)]\n    delivery = RichMessageBuilder().paragraph('Курьер привезет заказ в течение двух дней.').bullets(['Сверьте состав', 'Подпишите акт'])\n    card = (RichMessageBuilder()\n            .heading(f'Заказ №{order_id}', size=1)\n            .paragraph(['Статус: ', RichSpan('bold', 'оплачен'), '. Подробнее — в ', RichSpan('url', 'условиях', url=TERMS_URL), '.'])\n            .table(rows, compact=True, caption=f'Итого: {total}')\n            .checklist([('Оплата получена', True), ('Передан в доставку', False)])\n            .quote('Оставьте у двери, позвоните за час до приезда.', credit='Комментарий покупателя', expandable=True)\n            .details('Как проходит доставка', delivery))\n    if receipt_file_id is not None:\n        card = card.document(receipt_file_id, caption='Чек')  # file_id this bot received earlier\n    return card.buttons([RichButton('Подтвердить', callback_data=f'order:confirm:{order_id}', style='success'),\n                         RichButton('Отменить', callback_data=f'order:cancel:{order_id}', style='link')]).build()\n\n\ndef attach_order_cards(dispatcher: Dispatcher, *, receipt_file_id: str | None = None,\n                       rich_supported: Callable[[Message], bool] = lambda message: message.business_connection_id is None) -> Router:\n    \"\"\"The host decides where rich messages are allowed; elsewhere the same card goes as text and an inline keyboard.\"\"\"\n    router = Router(name='order-card')\n\n    @router.message(Command('order'), F.chat.type == 'private')\n    async def show(message: Message) -> None:\n        # Example data; a real handler loads the order of message.from_user and checks access first.\n        card = order_card(42, [('Книга', 1, '500 ₽'), ('Ручка', 2, '100 ₽')], '700 ₽', receipt_file_id)\n        if rich_supported(message):\n            # SDK models validate the JSON before anything is sent.\n            await message.bot(SendRichMessage.model_validate({'chat_id': message.chat.id, 'rich_message': card.as_input()}))\n            return\n        parts = card.fallback().split()\n        keyboard = card.fallback_keyboard()\n        for index, part in enumerate(parts):\n            extra = {'reply_markup': {'inline_keyboard': keyboard}} if keyboard and index == len(parts) - 1 else {}\n            await message.bot(SendMessage.model_validate({'chat_id': message.chat.id, **part.as_kwargs(), **extra}))\n\n    @router.callback_query(F.data.startswith('order:'))\n    async def act(query: CallbackQuery) -> None:\n        # ACK only; the service checks the user and the order before confirming or cancelling it.\n        await query.answer('Запрос принят')\n\n    dispatcher.include_router(router)\n    return router\n",
+      "verification": "mock",
+      "scope": "Actual synthetic Dispatcher/StubSession and SDK serialization of sendRichMessage and its text fallback; Telegram rendering of rich blocks and client support unconfirmed.",
+      "sources": [
+        "https://core.telegram.org/bots/api"
+      ],
+      "preview": null,
+      "code_sha256": "e9fac781db91b5ceecb6e93bb0b18bfd035e9eab391783109729797b1bbf82a0",
+      "tasks": [
+        "messages",
+        "bot"
+      ],
+      "contexts": [
+        "private"
+      ],
+      "sdk": "aiogram",
+      "sdk_version": "3.31.0",
+      "api_version": "bot:10.3",
+      "source_files": [
+        "examples/python/rich_message_bot.py",
+        "packages/python/src/telegram_patterns/rich_message.py",
+        "packages/python/src/telegram_patterns/execution.py",
+        "packages/python/src/telegram_patterns/_offline_recipe.py"
+      ],
+      "check_files": [
+        "examples/python/offline_rich_message.py",
+        "packages/python/tests/test_rich_message.py"
+      ],
+      "execution": {
+        "kind": "dispatcher",
+        "dependencies": [
+          "aiogram==3.31.0"
+        ],
+        "offline_environment": [],
+        "offline_permissions": [],
+        "offline_data": [
+          "Только поставляемые синтетические данные; реальные IDs и secrets не принимаются."
+        ],
+        "live_environment": [
+          "BOT_TOKEN"
+        ],
+        "live_permissions": [
+          "Прикладная авторизация сервиса; fixture actor не доказывает server ACL."
+        ],
+        "live_data": [
+          "Текущий Dispatcher, реальные actor/chat и сервис приложения",
+          "Проверка объекта, автора и состояния до effect/replay"
+        ],
+        "live_review": "Live executor отсутствует. Перед интеграцией проверить источники, ограничения конкретного метода/контекста, auth и ACL; metadata не подтверждает права.",
+        "effects": [
+          "Synthetic Dispatcher + StubSession; временная fixture, без polling"
+        ]
+      }
+    },
+    {
       "id": "demo-recovery",
       "title": "Потерянный ответ: сверка той же операции",
       "summary": "SQLite effect уже сохранен; unknown outcome сверяется тем же scoped ID без второго заказа.",

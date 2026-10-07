@@ -679,9 +679,14 @@
     {
       "id": 54,
       "title": "Rich messages (Bot API 10.1–10.3)",
-      "status": "pending",
-      "commit_subject": null,
-      "evidence": [],
+      "status": "done",
+      "commit_subject": "excellence(054): build rich messages from blocks with a text fallback",
+      "evidence": [
+        "packages/python/src/telegram_patterns/rich_message.py: RichMessageBuilder, RichMessage, RichButton, RichButtonStyle, RichSpan, RichText; лимиты Telegram в build()",
+        "Офлайн-рецепт demo-rich-message (examples/python/rich_message_bot.py, offline_rich_message.py): JSON на проводе aiogram совпадает с as_input(), запасной текст и клавиатура, ACK, лимиты",
+        "packages/python/tests/test_rich_message.py: 5 тестов (формы блоков, неизменяемость и подсчет блоков, лимиты, кнопки и ссылки, запасной вариант)",
+        "docs/rich-messages.md → скиллы telegram-bot-api и telegram-code-patterns; справочник API 254 символа, components.json 45 групп, галерея 312 рецептов"
+      ],
       "remaining": null
     },
     {

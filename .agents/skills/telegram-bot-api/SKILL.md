@@ -25,6 +25,8 @@ metadata:
 
 Обновление снимка без credentials: `python scripts/update_api_index.py` из каталога этого навыка. Проверьте дату, version и diff индекса; изменение имени поля не доказывает поддержку новой версии SDK.
 
+Для rich-сообщений (`sendRichMessage`: заголовки, таблицы, цитаты, кнопки внутри сообщения) прочитайте [references/rich-messages.md](references/rich-messages.md): блоки, лимиты Telegram и запасной вариант обычным текстом.
+
 С библиотекой awesome-telegram-patterns, если она уже есть в проекте: [текст и entities](references/message-text.md), [медиа](references/media.md), [опросы и quiz](references/polls.md). Пакет для навыка не обязателен.
 
 ### Построить операцию

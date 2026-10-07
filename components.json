@@ -601,6 +601,21 @@
       "maturity_scope": "All public API symbols in this component; local verification is not a stable 1.0 promise"
     },
     {
+      "id": "rich-message",
+      "language": "python",
+      "import": "telegram_patterns.RichMessageBuilder, RichMessage, RichButton, RichButtonStyle, RichSpan, RichText",
+      "intent": "Собрать rich-сообщение из блоков для sendRichMessage с проверкой лимитов Telegram и запасным текстом для sendMessage",
+      "source": "packages/python/src/telegram_patterns/rich_message.py",
+      "example": "examples/python/rich_message_bot.py",
+      "boundaries": [
+        "SDK-free JSON; SDK models validate before sending, Telegram rendering is not proven offline",
+        "published limits checked locally: 500 blocks, 16 levels, 50 media, 20 columns, 32768 characters, 1-8 buttons per row",
+        "host chooses where rich messages are allowed and owns uploads, business rights and callbacks"
+      ],
+      "maturity": "experimental",
+      "maturity_scope": "All public API symbols in this component; local verification is not a stable 1.0 promise"
+    },
+    {
       "id": "media",
       "language": "python",
       "import": "telegram_patterns.aiogram.MediaKind, MediaSendRequest, MediaFile, MediaItem, DownloadedMedia, media_request, media_album, media_edit, download_media",

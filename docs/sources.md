@@ -85,6 +85,10 @@
 
 ## Журнал проверок
 
+### 2026-10-07 — пункт 54
+
+Прочитаны [sendRichMessage](https://core.telegram.org/bots/api#sendrichmessage), [InputRichMessage](https://core.telegram.org/bots/api#inputrichmessage), типы `InputRichBlock*` (абзац, заголовок, список и пункт, таблица и ячейка `RichBlockTableCell`, кнопки и `RichMessageButton`, цитаты, `details`, документ, код, разделитель, подвал), `RichText` и [Rich Message Formatting Options](https://core.telegram.org/bots/api#rich-message-formatting-options) с лимитами: 32768 символов, 500 блоков, 16 уровней, 50 медиа, 20 столбцов. В установленном aiogram 3.31.0 сверены модели и сериализация `SendRichMessage`: обязательные `align` и `valign` у ячейки и `parse_mode` по умолчанию, который aiogram добавляет в объект документа.
+
 ### 2026-10-07 — пункт 53
 
 Прочитан раздел [Validating data for Third-Party Use](https://core.telegram.org/bots/webapps#validating-data-for-third-party-use): подпись Ed25519 поля `signature` в base64url, строка `<bot_id>:WebAppData` и поля без `hash` и `signature`, ключи тестового (`40055058…72ec`) и боевого (`e7bf03a2…242d`) окружений, обязательная проверка `auth_date`. Сверены `aiogram.utils.web_app_signature` в установленном aiogram 3.31.0 и [тесты aiogram](https://github.com/aiogram/aiogram/blob/dev-3.x/tests/test_utils/test_web_app_signature.py) (независимый вектор с их ключом), extra `signature` aiogram (`cryptography>=46`) и [cryptography](https://pypi.org/project/cryptography/) 50.0.2 на PyPI. WebCrypto Ed25519 проверен в Node 22.

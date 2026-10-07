@@ -5,7 +5,7 @@
 Календарь и UTC/DST: `CalendarMonth`, `TimeSlot`, `resolve_local_time`; current ACL и atomic booking/replay: `SlotSchedule`, `SlotBooking`, `SQLiteSlotStore`; optional aiogram: `calendar_keyboard`, `time_slot_keyboard`. IANA data на Windows — extra `calendar` (проверено tzdata 2026.5). [Контракт и пример](../../docs/calendar-slots.md). UI snapshot не резервирует ресурс; receipt отличается от current booking status.
 
 
-`plan_recipe` / `run_recipe_offline` и CLI `run-recipe` показывают требования всех 311 cookbook recipes и запускают 210 известных Python fixtures без токена. Core SQLite работает без SDK; 99 native references отклоняются без host/аргументов. [План, effects и ограничения](../../docs/recipe-execution.md). Требуется установленный пакет; runner не выполняет найденный recipe.code.
+`plan_recipe` / `run_recipe_offline` и CLI `run-recipe` показывают требования всех 312 cookbook recipes и запускают 210 известных Python fixtures без токена. Core SQLite работает без SDK; 99 native references отклоняются без host/аргументов. [План, effects и ограничения](../../docs/recipe-execution.md). Требуется установленный пакет; runner не выполняет найденный recipe.code.
 
 RecipeCatalog.search добавляет optional task/context/sdk/sdk_version/api_version. Recipe хранит immutable metadata и repository source/check links; legacy schema 1 defaults сохранены. Поиск SDK-free, без исполнения: [навигация рецептов](../../docs/gallery-navigation.md).
 
@@ -216,6 +216,8 @@ Aiogram протестирован на 3.31.0. Кнопочный entitlement �
 ## Безопасные сообщения
 
 `MessageBuilder/FormattedText/TextEntity` и `EntityKind/TextPayload` доступны из SDK-free `telegram_patterns`; там же `utf16_length`, `escape_html`, `escape_markdown_v2`, `split_formatted`. [Контракты и пример](../../docs/message-text.md): literal insertions, explicit parse_mode=None, validated ranges/nesting, lossless split и default regular emoji fallback. Delivery, link trust, sticker metadata и eligibility проверяет проект; full Unicode UAX29 и live rendering не заявлены.
+
+Rich-сообщения (Bot API 10.1+): `RichMessageBuilder` из того же SDK-free ядра собирает блоки для `sendRichMessage` — заголовки, абзацы, списки и чек-листы, таблицы (`compact=True` дает `is_compact`), ряды кнопок `RichButton`, обычные и сворачиваемые цитаты, `details`, документы по `file_id` или URL, код, разделитель и подвал; `RichSpan` — жирный, курсив, код и HTTP(S)-ссылка. `build()` проверяет лимиты Telegram (500 блоков, 16 уровней, 50 медиа, 20 столбцов, 32768 символов, 1–8 кнопок в ряду) и возвращает `RichMessage`: `as_input()` для поля `rich_message`, `fallback()` и `fallback_keyboard()` для обычного `sendMessage`. Рецепт: `telegram-patterns run-recipe demo-rich-message --offline`; подробности — [rich-сообщения](../../docs/rich-messages.md).
 
 [Профили](../../docs/profiles.md): nullable факты, фотографии и локализованные own-bot изменения с текущими правами; без MTProto/Business login.
 

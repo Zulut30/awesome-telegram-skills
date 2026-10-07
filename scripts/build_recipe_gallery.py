@@ -141,6 +141,7 @@ def build(root: Path = ROOT) -> dict:
         ('media_bot.py', 'offline_media.py', 'demo-media', 'Фото, документы, альбомы и скачивание'),
         ('message_text_bot.py', 'offline_message_text.py', 'demo-message-text', 'Безопасные сообщения и разбиение текста'),
         ('ai_stream_bot.py', 'offline_ai_stream.py', 'demo-ai-stream', 'ИИ-ответ потоком с остановкой генерации'),
+        ('rich_message_bot.py', 'offline_rich_message.py', 'demo-rich-message', 'Rich-сообщение: карточка заказа и запасной текст'),
     ):
         result = subprocess.run([sys.executable, str(root / 'examples/python' / offline)], capture_output=True,
                                 text=True, encoding='utf-8', env=environment, timeout=60)
@@ -216,6 +217,13 @@ def build(root: Path = ROOT) -> dict:
             records[-1]['tasks'] = ['messages', 'bot']
             records[-1]['keywords'] += ['ИИ', 'LLM', 'нейросеть', 'стриминг', 'поток', 'черновик', 'sendMessageDraft', 'остановка', 'генерация', 'can_stop', 'нейросети', 'ответа', 'ChatGPT', 'GPT', 'ассистент', 'модели', 'остановить', 'стоп', 'генерацию', 'стриминга']
             records[-1]['scope'] = 'Actual synthetic Dispatcher/StubSession and a scripted model stream; Telegram draft rendering, the client stop button, real model latency and cost unconfirmed.'
+        if key == 'demo-rich-message':
+            records[-1]['summary'] = 'sendRichMessage: заголовок, компактная таблица, чек-лист, сворачиваемая цитата, details, документ и кнопки; тот же текст для sendMessage'
+            records[-1]['tasks'] = ['messages', 'bot']
+            records[-1]['keywords'] += ['rich', 'sendRichMessage', 'таблица', 'список', 'заголовок', 'цитата', 'details', 'документ', 'кнопки', 'карточка', 'заказ', 'блоки', 'форматирование', 'чек-лист']
+            records[-1]['source_files'] += ['packages/python/src/telegram_patterns/rich_message.py']
+            records[-1]['check_files'] += ['packages/python/tests/test_rich_message.py']
+            records[-1]['scope'] = 'Actual synthetic Dispatcher/StubSession and SDK serialization of sendRichMessage and its text fallback; Telegram rendering of rich blocks and client support unconfirmed.'
         if key == 'demo-platform':
             records[-1]['summary'] = 'Семь семейств: native rights, host ACL/budget/intent, scoped events и explicit unknown reconciliation'
             records[-1]['tasks'] = ['platform']

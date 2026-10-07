@@ -86,6 +86,44 @@ assert emoji.as_kwargs(custom_emoji_entitlement_verified=True)['entities'][0]['t
 print(json.dumps({'case':'core_message_text','passed':True,'network':False,'chunks':len(parts)}))
 ```
 
+<a id="ref-core_rich_message"></a>
+
+## Rich-сообщения и запасной текст — ref.core_rich_message
+
+Файл: `core_rich_message.py`. Символы: `RichMessageBuilder`, `RichMessage`, `RichButton`, `RichButtonStyle`, `RichSpan`, `RichText`
+
+Границы: Строит InputRichMessage для sendRichMessage (Bot API 10.1+) без зависимости от SDK: заголовки, абзацы, списки и чек-листы, таблицы, ряды кнопок, обычные и сворачиваемые цитаты, details, документы по file_id или URL, код, разделитель и подвал. build() проверяет опубликованные лимиты: 500 блоков с вложенными, 16 уровней, 50 медиа, 20 столбцов, 32768 символов, 1–8 кнопок в ряду. Ссылки только HTTP(S). Запасной вариант — FormattedText и inline-клавиатура для sendMessage. Отображение в клиентах, право отправлять rich-сообщения от имени Business и загрузку новых файлов проверяет проект.
+
+```python
+"""SDK-free rich message blocks and their text fallback; no network and no Telegram rendering proof."""
+import json
+from telegram_patterns import (FormattedText, RichButton, RichButtonStyle, RichMessage, RichMessageBuilder, RichSpan,
+                               RichText)
+
+style: RichButtonStyle = 'success'
+status: RichText = ['Статус: ', RichSpan('bold', 'оплачен')]
+details = RichMessageBuilder().paragraph('Возврат в течение 14 дней.')
+message: RichMessage = (RichMessageBuilder().heading('Заказ №42', size=1).paragraph(status)
+                        .table([['Товар', 'Цена'], ['Книга', '500 ₽']], compact=True)
+                        .checklist([('Оплата', True), ('Доставка', False)])
+                        .quote('Длинный комментарий', expandable=True).details('Подробнее', details)
+                        .document('FIXTURE_FILE_ID', caption='Чек')
+                        .buttons([RichButton('Подтвердить', callback_data='order:confirm:42', style=style)]).build())
+payload = message.as_input()  # rich_message для sendRichMessage; SDK модели проверяют ее перед отправкой
+assert [block['type'] for block in payload['blocks']][:3] == ['heading', 'paragraph', 'table']
+assert payload['blocks'][2]['is_compact'] is True and message.media_count == 1
+fallback: FormattedText = message.fallback()  # тот же текст для sendMessage, где rich-сообщение недоступно
+assert 'Товар | Цена' in fallback.text and fallback.split()[0].as_kwargs()['parse_mode'] is None
+assert message.fallback_keyboard()[0][0]['callback_data'] == 'order:confirm:42'
+try:
+    RichMessageBuilder().table([['x'] * 21])
+except ValueError:
+    pass
+else:
+    raise AssertionError('Telegram allows at most 20 table columns')
+print(json.dumps({'case': 'core_rich_message', 'passed': True, 'network': False, 'blocks': message.block_count}))
+```
+
 <a id="ref-core_storage"></a>
 
 ## SQLite effect и повтор — ref.core_storage
@@ -231,7 +269,7 @@ catalog = RecipeCatalog()
 recipe: Recipe = catalog.search('две кнопки', maturity=maturity, verification=verification,
                                task='keyboards', context='private', sdk='aiogram', sdk_version='3.31.0', api_version='bot:10.3')[0]
 assert recipe.id == 'two-columns' and catalog.get(recipe.id) == recipe
-assert len(catalog.recipes) == 311 and catalog.library_version
+assert len(catalog.recipes) == 312 and catalog.library_version
 assert recipe.source_files and recipe.check_files and 'keyboards' in recipe.tasks
 lost = catalog.search('потерянный ответ', task='recovery', context='backend')[0]
 assert lost.id == 'demo-recovery' and lost.sdk == 'python-core' and lost.api_version == 'none'
