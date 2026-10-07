@@ -85,11 +85,30 @@ jobs:
         with:
           python-version: '3.13'
       - run: python -m pip install "aiogram==${{ matrix.aiogram }}" 'python-telegram-bot==22.8' 'cryptography==50.0.2' 'tzdata==2026.5' 'hypothesis==6.168.5'
-      # In-process tests in parallel shards; any child process fails the run. The delivery job runs the
-      # integration tests (subprocesses, generators, multiprocessing) against the built wheel.
+      # In-process tests in parallel shards; any child process fails the run. The python-package job runs
+      # every test, integration included, against a real install of the package.
       - run: python scripts/run_python_tests.py --unit --budget 30
         env:
           PYTHONPATH: ${{ github.workspace }}/packages/python/src
+
+  python-package:
+    name: Installed Python package, every test
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97 # v7.0.0
+        with:
+          python-version: '3.13'
+      # A real (non-editable) install with every extra: packaging mistakes such as a missing resource
+      # file or entry point fail here, which source-tree runs with PYTHONPATH cannot notice.
+      - run: python -m venv "$RUNNER_TEMP/package-env"
+      - run: '"$RUNNER_TEMP/package-env/bin/python" -m pip install "./packages/python[aiogram,calendar,ptb,signature]" "hypothesis==6.168.5"'
+      - name: The library comes from site-packages, not the checkout
+        run: |
+          "$RUNNER_TEMP/package-env/bin/python" -I -c "import telegram_patterns as t; assert 'site-packages' in t.__file__, t.__file__; print(t.__file__, t.__version__)"
+      # Unit and integration tests (subprocesses, CLI, starters, multiprocessing) in parallel shards.
+      - run: python scripts/run_python_tests.py --python "$RUNNER_TEMP/package-env/bin/python" --timeout 400
 
   python-coverage:
     name: Python library coverage (90% statements, full branches of guarded modules)

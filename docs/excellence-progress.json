@@ -1036,9 +1036,14 @@
     {
       "id": 81,
       "title": "Запускать тесты `packages/python` в CI",
-      "status": "pending",
-      "commit_subject": null,
-      "evidence": [],
+      "status": "done",
+      "commit_subject": "excellence(081): run every package test against an installed packages/python in CI",
+      "evidence": [
+        "New required job python-package: non-editable install of packages/python[aiogram,calendar,ptb,signature] into a clean venv, asserts telegram_patterns loads from site-packages, runs all 579 tests incl. integration with scripts/run_python_tests.py",
+        "Local run in a clean venv: 579 tests (2 skipped by aiogram version) in 133 s on 4 shards",
+        "Mutation: dropping resources/starter/mini-app/*.txt from package-data made test_catalog_cli and test_mini_app_starter fail against the installed wheel (source-tree runs with PYTHONPATH pass)",
+        "CONTRIBUTING.md and the python-unit comment describe where each scope runs"
+      ],
       "remaining": null
     },
     {
