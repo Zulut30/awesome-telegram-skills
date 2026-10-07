@@ -1,7 +1,8 @@
 import json
 import unittest
 
-from aiogram.types import CopyTextButton, DisabledButton, KeyboardButton, WebAppInfo
+from _support import requires_aiogram
+from aiogram.types import CopyTextButton, KeyboardButton, WebAppInfo
 from aiogram.types import InlineKeyboardButton as Button
 
 from telegram_patterns import (
@@ -35,7 +36,10 @@ def wire(markup):
 
 
 class MarkupTests(unittest.TestCase):
+    @requires_aiogram((3, 31), 'DisabledButton (Bot API 10.3)')
     def test_same_json_as_the_aiogram_builders(self):
+        from aiogram.types import DisabledButton
+
         items = [inline_button(str(n), callback_data=f'item:{n}') for n in range(1, 7)]
         native = [Button(text=str(n), callback_data=f'item:{n}') for n in range(1, 7)]
         for widths in ((2,), (3,), (1, 2, 3)):

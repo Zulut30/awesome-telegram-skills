@@ -23,6 +23,10 @@ from ._shared import env_flag, read_env_file
 from .settings import BotSettings
 
 _MAX_MANIFEST_BYTES = 256 * 1024
+# Supported aiogram: the CI matrix runs the unit tests on each tested release (docs/aiogram-compatibility.md).
+AIOGRAM_MINIMUM = (3, 29)
+AIOGRAM_FULL_API = (3, 31)  # Bot API 10.3: DisabledButton and the offline recipe fixtures
+AIOGRAM_TESTED = ('3.29.1', '3.30.0', '3.31.0')
 _VERSION = re.compile(r'\d+\.\d+\.\d+')
 _SYSTEM_ENV = {'PATH', 'PATHEXT', 'SYSTEMROOT', 'WINDIR', 'TEMP', 'TMP', 'COMSPEC'}
 _SDK_PROBE = (
@@ -566,23 +570,34 @@ def diagnose(
         )
     else:
         match = _VERSION.fullmatch(sdk) if isinstance(sdk, str) else None
-        supported = bool(match and tuple(map(int, sdk.split('.')[:2])) >= (3, 31) and sdk.split('.')[0] == '3')
+        minor = tuple(map(int, sdk.split('.')[:2])) if match else (0, 0)
+        supported = bool(match and minor >= AIOGRAM_MINIMUM and sdk.split('.')[0] == '3')
         check(
             'aiogram',
             'pass' if supported else 'fail',
             'sdk-supported' if supported else 'sdk-incompatible',
             sdk if match else 'Версия SDK не распознана.',
-            fix='' if supported else 'Нужен aiogram >=3.31,<4. Проверьте ограничения приложения перед изменением SDK.',
+            fix='' if supported else 'Нужен aiogram >=3.29,<4. Проверьте ограничения приложения перед изменением SDK.',
             commands=[] if supported else _repair_install(),
         )
         if supported:
-            if sdk != '3.31.0':
+            if sdk not in AIOGRAM_TESTED:
                 check(
                     'sdk-tested-version',
                     'warn',
                     'sdk-not-tested',
-                    'Эта поставка проверена на aiogram 3.31.0.',
+                    'Эта поставка проверена на aiogram ' + ', '.join(AIOGRAM_TESTED) + '.',
                     fix='Проверьте выбранную версию своими тестами; смена SDK не выполняется автоматически.',
+                    commands=[_command(['python', '-m', 'pip', 'check'])],
+                )
+            if minor < AIOGRAM_FULL_API:
+                check(
+                    'sdk-bot-api',
+                    'warn',
+                    'sdk-older-bot-api',
+                    f'aiogram {sdk} не знает Bot API 10.3: неактивные кнопки календаря отказывают '
+                    'UnsupportedCapability, offline-рецепты требуют aiogram 3.31.0.',
+                    fix='Остальные компоненты работают; для возможностей Bot API 10.3 обновите aiogram до 3.31.',
                     commands=[_command(['python', '-m', 'pip', 'check'])],
                 )
             try:

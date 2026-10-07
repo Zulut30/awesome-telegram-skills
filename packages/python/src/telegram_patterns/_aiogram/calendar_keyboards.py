@@ -5,11 +5,11 @@ from __future__ import annotations
 from datetime import date
 from typing import Callable, Sequence
 
-from aiogram.types import DisabledButton, InlineKeyboardButton, InlineKeyboardMarkup
+from aiogram.types import InlineKeyboardButton, InlineKeyboardMarkup
 
 from .._shared import resolve_zone
 from ..calendar_core import CalendarMonth, TimeSlot
-from ..errors import InvalidType, ValidationFailure
+from ..errors import InvalidType, UnsupportedCapability, ValidationFailure
 from ..texts import Texts
 from .keyboard_layouts import KeyboardCapabilities, KeyboardLayout, inline_layout
 from .native_keyboards import inline_keyboard
@@ -44,6 +44,10 @@ def calendar_keyboard(
     weekdays = texts.weekdays()
     rows: list[list[InlineKeyboardButton]] = []
     if disabled_buttons:
+        try:
+            from aiogram.types import DisabledButton  # Bot API 10.3
+        except ImportError:
+            raise UnsupportedCapability('Disabled calendar cells need aiogram 3.31+ (Bot API 10.3)') from None
         rows.append([InlineKeyboardButton(text=label, disabled=DisabledButton()) for label in weekdays])
         for week in month.weeks:
             rows.append(

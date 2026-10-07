@@ -104,7 +104,8 @@ def inline_keyboard(
                 raise InvalidType('Use aiogram InlineKeyboardButton models')
             button = source.model_copy(deep=True)
             _presentation(button, emoji_entitlement_verified)
-            actions = [name for name in INLINE_ACTIONS if getattr(button, name) is not None]
+            # getattr default: aiogram before 3.31 (Bot API 10.3) has no `disabled` field.
+            actions = [name for name in INLINE_ACTIONS if getattr(button, name, None) is not None]
             if len(actions) != 1:
                 raise ValidationFailure('Inline button must have exactly one action')
             action = actions[0]
@@ -183,7 +184,7 @@ def reply_keyboard(
             _presentation(button, emoji_entitlement_verified)
             if button.request_user is not None:
                 raise ValidationFailure('Use modern request_users instead of deprecated request_user')
-            actions = [name for name in REPLY_ACTIONS if getattr(button, name) not in (None, False)]
+            actions = [name for name in REPLY_ACTIONS if getattr(button, name, None) not in (None, False)]
             if len(actions) > 1:
                 raise ValidationFailure('Reply button must have at most one request action')
             if actions and chat_type != 'private':

@@ -26,7 +26,7 @@ from aiogram.types import (
 
 from ..errors import InvalidCompletion, InvalidType, ValidationFailure
 from ..texts import Texts
-from .common import fits_text, message_actor_id, message_bot_id
+from .common import fits_text, message_actor_id, message_bot_id, owning_dispatcher
 from .dialog_fields import (
     ContactField,
     DateField,
@@ -153,7 +153,8 @@ def dialog_form_router(
     frozen_text = say('form.submit_started')
     stale_text = say('dialog.stale_action', command=command)
 
-    def require(dispatcher: Dispatcher, state: FSMContext | None, message: Message, actor: int) -> FSMContext:
+    def require(dispatcher: Dispatcher | None, state: FSMContext | None, message: Message, actor: int) -> FSMContext:
+        dispatcher = owning_dispatcher(router, dispatcher)
         if state is None or isinstance(dispatcher.fsm.events_isolation, DisabledEventIsolation):
             raise RuntimeError('Dialogs require enabled FSM and events_isolation on the existing Dispatcher')
         if (state.key.bot_id, state.key.chat_id, state.key.user_id) != (
@@ -313,7 +314,7 @@ def dialog_form_router(
         await save(state, data)
 
     @router.message(private, StateFilter(None, namespace), Command(command))
-    async def start(message: Message, dispatcher: Dispatcher, state: FSMContext | None = None) -> None:
+    async def start(message: Message, state: FSMContext | None = None, dispatcher: Dispatcher | None = None) -> None:
         state = require(dispatcher, state, message, message_actor_id(message))
         data = await load(state, message, message_actor_id(message))
         if data is not None and data['submission_started']:
@@ -343,7 +344,7 @@ def dialog_form_router(
         await show(message, state, data)  # Explicit resume keeps accepted answers and intent.
 
     @router.message(private, StateFilter(namespace), Command('back', 'cancel'))
-    async def navigate(message: Message, dispatcher: Dispatcher, state: FSMContext | None = None) -> None:
+    async def navigate(message: Message, state: FSMContext | None = None, dispatcher: Dispatcher | None = None) -> None:
         state = require(dispatcher, state, message, message_actor_id(message))
         data = await load(state, message, message_actor_id(message))
         if data is None:
@@ -365,7 +366,7 @@ def dialog_form_router(
         await show(message, state, data)
 
     @router.message(private, StateFilter(namespace), lambda event: not event.text or not event.text.startswith('/'))
-    async def receive(message: Message, dispatcher: Dispatcher, state: FSMContext | None = None) -> None:
+    async def receive(message: Message, state: FSMContext | None = None, dispatcher: Dispatcher | None = None) -> None:
         state = require(dispatcher, state, message, message_actor_id(message))
         data = await load(state, message, message_actor_id(message))
         if data is None:
@@ -419,7 +420,9 @@ def dialog_form_router(
             await show(message, state, data)
 
     @router.callback_query(F.data.startswith(prefix))
-    async def confirm(query: CallbackQuery, dispatcher: Dispatcher, state: FSMContext | None = None) -> None:
+    async def confirm(
+        query: CallbackQuery, state: FSMContext | None = None, dispatcher: Dispatcher | None = None
+    ) -> None:
         await query.answer()  # ACK foreign/stale/inaccessible actions before any work.
         message = query.message
         if (

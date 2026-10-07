@@ -5,15 +5,20 @@
   "maturity": "experimental",
   "declared": {
     "python": ">=3.11",
-    "aiogram": "aiogram>=3.31,<4",
+    "aiogram": "aiogram>=3.29,<4",
     "node": ">=20",
     "module": "ESM",
     "runtime_typescript_dependencies": [],
-    "calendar": "optional tzdata>=2026.5,<2027; UTC works without it"
+    "calendar": "optional tzdata>=2026.5; UTC works without it"
   },
   "verified": {
     "python": "3.13.12",
     "aiogram": "3.31.0",
+    "aiogram_unit_matrix": [
+      "3.29.1",
+      "3.30.0",
+      "3.31.0"
+    ],
     "node": "24.19.0",
     "npm": "12.0.2",
     "typescript": "7.0.2",

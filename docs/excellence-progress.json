@@ -890,9 +890,15 @@
     {
       "id": 70,
       "title": "Совместимость с диапазоном версий aiogram",
-      "status": "pending",
-      "commit_subject": null,
-      "evidence": [],
+      "status": "done",
+      "commit_subject": "excellence(070): support aiogram 3.29 to 3.31 with a CI matrix and justified bounds",
+      "evidence": [
+        "extra aiogram>=3.29,<4; CI python-unit matrix on 3.29.1, 3.30.0, 3.31.0: unit suites pass (571 tests; 30/30/21 skipped)",
+        "calendar_keyboard imports DisabledButton lazily (UnsupportedCapability below 3.31); inline_keyboard tolerates the missing disabled field; forms resolve the Dispatcher through the router chain (aiogram <3.31 injects it only in polling)",
+        "doctor: AIOGRAM_MINIMUM/FULL_API/TESTED, sdk-not-tested and new sdk-older-bot-api warnings; tzdata>=2026.5 without <2027",
+        "docs/versioning.md 'Границы зависимостей Python' justifies every bound incl. exact aiogram 3.31.0/tzdata 2026.5 for offline recipes; tests/test_aiogram_matrix.py keeps matrix, constants and extra in sync",
+        "verify_pattern_packages PASS 0.24.0, 571 Python tests, browser=passed; docs site verified (471 pages)"
+      ],
       "remaining": null
     },
     {

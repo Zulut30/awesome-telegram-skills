@@ -17,7 +17,7 @@ from aiogram.types import CallbackQuery, InlineKeyboardButton, InlineKeyboardMar
 
 from ..errors import ErrorCode, InvalidCompletion, InvalidType, ValidationFailure
 from ..texts import Texts
-from .common import fits_text, message_actor_id, message_bot_id
+from .common import fits_text, message_actor_id, message_bot_id, owning_dispatcher
 from .dialog_storage import DialogData, clear_form, lifetime_data, read_form, save_form
 from .fsm_storage import DialogLifetime
 
@@ -155,7 +155,10 @@ def text_form_router(
         & F.is_topic_message.is_not(True)
     )
 
-    def require_fsm(dispatcher: Dispatcher, state: FSMContext | None, message: Message, actor: int) -> FSMContext:
+    def require_fsm(
+        dispatcher: Dispatcher | None, state: FSMContext | None, message: Message, actor: int
+    ) -> FSMContext:
+        dispatcher = owning_dispatcher(router, dispatcher)
         if state is None or isinstance(dispatcher.fsm.events_isolation, DisabledEventIsolation):
             raise RuntimeError("Text forms require enabled FSM and events_isolation on the existing Dispatcher")
         if (state.key.bot_id, state.key.chat_id, state.key.user_id) != (
@@ -227,7 +230,7 @@ def text_form_router(
         await save(state, data)
 
     @router.message(private, StateFilter(None, namespace), Command(command))
-    async def start(message: Message, dispatcher: Dispatcher, state: FSMContext | None = None) -> None:
+    async def start(message: Message, state: FSMContext | None = None, dispatcher: Dispatcher | None = None) -> None:
         state = require_fsm(dispatcher, state, message, message_actor_id(message))
         previous = await load(state, message, message_actor_id(message))
         if previous is not None and previous["submission_started"]:
@@ -262,7 +265,7 @@ def text_form_router(
         await prompt(message, 0)
 
     @router.message(private, StateFilter(namespace), Command("cancel"))
-    async def cancel(message: Message, dispatcher: Dispatcher, state: FSMContext | None = None) -> None:
+    async def cancel(message: Message, state: FSMContext | None = None, dispatcher: Dispatcher | None = None) -> None:
         state = require_fsm(dispatcher, state, message, message_actor_id(message))
         data = await load(state, message, message_actor_id(message))
         if data is not None and data["submission_started"]:
@@ -274,7 +277,7 @@ def text_form_router(
         await message.answer(say("form.cancelled", command=command), parse_mode=None)
 
     @router.message(private, StateFilter(namespace), Command("back"))
-    async def back(message: Message, dispatcher: Dispatcher, state: FSMContext | None = None) -> None:
+    async def back(message: Message, state: FSMContext | None = None, dispatcher: Dispatcher | None = None) -> None:
         state = require_fsm(dispatcher, state, message, message_actor_id(message))
         data = await load(state, message, message_actor_id(message))
         if data is None:
@@ -292,7 +295,7 @@ def text_form_router(
         await prompt(message, data["index"])
 
     @router.message(private, StateFilter(namespace), lambda event: not event.text or not event.text.startswith("/"))
-    async def receive(message: Message, dispatcher: Dispatcher, state: FSMContext | None = None) -> None:
+    async def receive(message: Message, state: FSMContext | None = None, dispatcher: Dispatcher | None = None) -> None:
         state = require_fsm(dispatcher, state, message, message_actor_id(message))
         data = await load(state, message, message_actor_id(message))
         if data is None:
@@ -322,7 +325,9 @@ def text_form_router(
             await prompt(message, data["index"])
 
     @router.callback_query(F.data.startswith(prefix))
-    async def submit(query: CallbackQuery, dispatcher: Dispatcher, state: FSMContext | None = None) -> None:
+    async def submit(
+        query: CallbackQuery, state: FSMContext | None = None, dispatcher: Dispatcher | None = None
+    ) -> None:
         # All matching callbacks, including inaccessible/foreign/stale ones, ACK.
         await query.answer()
         message = query.message

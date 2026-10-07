@@ -137,7 +137,7 @@ def verify_distributions(root: Path, wheel: Path, tarball: Path) -> dict:
     # to the explicitly enabled SDK (aiogram or python-telegram-bot), IANA-data or Ed25519 extras. No mandatory core deps.
     _require(not python.get('dependencies'), 'Update the contract for a new core dependency')
     requirements = metadata.get_all('Requires-Dist', [])
-    expected_requirements = {r'aiogram<4,>=3\.31;\s*extra == "aiogram"', r'tzdata<2027,>=2026\.5;\s*extra == "calendar"',
+    expected_requirements = {r'aiogram<4,>=3\.29;\s*extra == "aiogram"', r'tzdata>=2026\.5;\s*extra == "calendar"',
                              r'cryptography<52,>=46;\s*extra == "signature"', r'python-telegram-bot<23,>=22\.8;\s*extra == "ptb"'}
     _require(len(requirements) == 4 and all(sum(re.fullmatch(pattern, value) is not None for value in requirements) == 1 for pattern in expected_requirements),
              'Wheel extra dependency boundary changed')

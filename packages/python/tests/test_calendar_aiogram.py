@@ -1,6 +1,7 @@
 import unittest
 from datetime import date, datetime, timedelta, timezone
 
+from _support import AIOGRAM, requires_aiogram
 from aiogram import Bot, Dispatcher
 from aiogram.client.default import DefaultBotProperties
 from aiogram.methods import AnswerCallbackQuery, EditMessageText
@@ -14,6 +15,7 @@ from telegram_patterns import (
     SelectionOption,
     SelectionSpec,
     TimeSlot,
+    UnsupportedCapability,
     ValidationFailure,
     resolve_local_time,
 )
@@ -39,9 +41,16 @@ class CalendarMarkupTests(unittest.TestCase):
         view = calendar_keyboard(month, callback)
         self.assertEqual([date(2026, 10, 6)], calls)
         self.assertEqual('Вт 6', view.inline_keyboard[0][0].text)
-        self.assertIsNone(view.inline_keyboard[0][0].disabled)
+        self.assertIsNone(getattr(view.inline_keyboard[0][0], 'disabled', None))
         self.assertEqual('date:2026-10-06', view.inline_keyboard[0][0].callback_data)
 
+    @unittest.skipIf(AIOGRAM >= (3, 31), 'aiogram 3.31+ has DisabledButton')
+    def test_full_grid_is_refused_without_bot_api_10_3(self):
+        month = CalendarMonth(2026, 10, 'UTC', [date(2026, 10, 6)])
+        with self.assertRaisesRegex(UnsupportedCapability, 'aiogram 3.31'):
+            calendar_keyboard(month, lambda day: 'date:' + day.isoformat(), disabled_buttons=True)
+
+    @requires_aiogram((3, 31), 'DisabledButton (Bot API 10.3)')
     def test_full_grid_uses_real_disabled_actions_and_only_allowed_dates_callback(self):
         month = CalendarMonth(2026, 10, 'UTC', [date(2026, 10, 6)])
         view = calendar_keyboard(month, lambda day: 'date:' + day.isoformat(), disabled_buttons=True)

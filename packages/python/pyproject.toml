@@ -16,8 +16,8 @@ dependencies = []
 telegram-patterns = "telegram_patterns.cli:main"
 
 [project.optional-dependencies]
-aiogram = ["aiogram>=3.31,<4"]
-calendar = ["tzdata>=2026.5,<2027"]
+aiogram = ["aiogram>=3.29,<4"]
+calendar = ["tzdata>=2026.5"]
 signature = ["cryptography>=46,<52"]
 ptb = ["python-telegram-bot>=22.8,<23"]
 

@@ -7,10 +7,12 @@ import unittest
 from datetime import datetime, timezone
 from pathlib import Path
 
+import aiogram.types as types_module
+from _support import requires_aiogram
 from aiogram import Bot, Dispatcher
 from aiogram.exceptions import TelegramRetryAfter
 from aiogram.methods import SendMessage, SendMessageDraft
-from aiogram.types import Chat, Message, MessageGenerationStopped, Update, User
+from aiogram.types import Chat, Message, Update, User
 
 from telegram_patterns.testing import StubSession
 
@@ -41,7 +43,9 @@ def ask(chat: int, text: str, message_id: int) -> Update:
 def stopped(chat: int, draft_id: int) -> Update:
     return Update(
         update_id=500 + draft_id,
-        stopped_message_generation=MessageGenerationStopped(chat=Chat(id=chat, type='private'), draft_id=draft_id),
+        stopped_message_generation=types_module.MessageGenerationStopped(
+            chat=Chat(id=chat, type='private'), draft_id=draft_id
+        ),
     )
 
 
@@ -50,6 +54,7 @@ async def settle() -> None:
         await asyncio.sleep(0)
 
 
+@requires_aiogram((3, 31), 'MessageGenerationStopped (Bot API 10.3)')
 class AiStreamReferenceTests(unittest.IsolatedAsyncioTestCase):
     async def asyncSetUp(self):
         self.example = load_example()

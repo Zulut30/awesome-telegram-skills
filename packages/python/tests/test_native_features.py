@@ -12,7 +12,7 @@ from datetime import datetime, timezone
 from pathlib import Path
 from unittest.mock import patch
 
-from _support import integration
+from _support import integration, requires_aiogram
 from aiogram import Bot, Dispatcher
 from aiogram.methods import GetMe
 from aiogram.types import (
@@ -20,7 +20,6 @@ from aiogram.types import (
     CallbackQuery,
     Chat,
     CopyTextButton,
-    DisabledButton,
     KeyboardButtonRequestChat,
     KeyboardButtonRequestUsers,
     Message,
@@ -86,7 +85,10 @@ class KeyboardTests(unittest.TestCase):
             with self.subTest(field=field), self.assertRaises(ValueError):
                 inline_keyboard([[Inline(text='A', callback_data='a', **field)]])
 
+    @requires_aiogram((3, 31), 'DisabledButton (Bot API 10.3)')
     def test_exact_action_utf8_and_copy_limits(self):
+        from aiogram.types import DisabledButton
+
         for button in (
             Inline(text='A'),
             Inline(text='A', callback_data='a', url='https://example.invalid'),
@@ -220,6 +222,7 @@ class CatalogTests(unittest.TestCase):
         html += '<h4>FutureModule</h4><table><tr><td>show()</td><td>Function</td></tr></table>'
         self.assertRaisesRegex(ValueError, 'Unmapped', module.mini_index, html)
 
+    @requires_aiogram((3, 31), 'The Bot API 10.3 request snapshot')
     def test_all_generated_requests_and_recipes_validate_and_serialize(self):
         module = self.builder()
         fixtures = json.loads((ROOT / 'catalog/bot-api-request-fixtures.json').read_text(encoding='utf-8'))['methods']

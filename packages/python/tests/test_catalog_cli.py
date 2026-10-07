@@ -13,7 +13,7 @@ from contextlib import redirect_stderr, redirect_stdout
 from pathlib import Path
 from unittest.mock import patch
 
-from _support import integration
+from _support import integration, requires_aiogram
 
 from telegram_patterns import RecipeCatalog, create_starter
 from telegram_patterns.cli import doctor, main
@@ -442,6 +442,7 @@ class GalleryGeneratorTests(unittest.TestCase):
                 builder.main()
             self.assertEqual((output / 'index.html').read_text(), 'drift')
 
+    @requires_aiogram((3, 31), 'The gallery builder imports the Bot API 10.3 offline fixtures')
     def test_script_closing_tag_is_escaped_without_corrupting_json(self):
         payload = {'schema_version': 1, 'recipes': [{'title': '</script><img src=x onerror=alert(1)>'}]}
         html = self.module().render_html(payload)

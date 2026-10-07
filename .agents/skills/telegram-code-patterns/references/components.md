@@ -8,7 +8,7 @@
 
 Все группы пока experimental. [Maturity](maturity.md) наследуется их публичными символами; SDK/mock/browser/live — отдельный уровень доказательств. `RecipeCatalog.search` дополнительно принимает `maturity`, а `Recipe` содержит этот immutable field.
 
-Локальный репозиторий/wheel/tarball; публикация в реестрах не подтверждена. Python >=3.11. TypeScript ESM с declarations; Node >=20 для tooling. Core Python/browser runtime без сторонних dependencies; aiogram extra >=3.31,<4 испытан на 3.31.0. Другую версию SDK проверяйте отдельно.
+Локальный репозиторий/wheel/tarball; публикация в реестрах не подтверждена. Python >=3.11. TypeScript ESM с declarations; Node >=20 для tooling. Core Python/browser runtime без сторонних dependencies; aiogram extra >=3.29,<4 испытан на 3.29.1, 3.30.0 и 3.31.0; возможности Bot API 10.3 требуют 3.31. Другую версию SDK проверяйте отдельно.
 
 В 0.4.0 добавлены `inline_keyboard`, `reply_keyboard`, `input_prompt`, `remove_keyboard` для native rows/input; `method_catalog`, `build_request`, `InvalidAPIRequest`, `MethodSpec` для SDK requests; `event_router`, `UpdateObserver`, `UpdateTrace`, `update_kinds` для native updates. Все импортируются из `telegram_patterns.aiogram`. TypeScript: `TelegramNativeAPI`, `UnsupportedTelegramCapability`, `TELEGRAM_NATIVE_METHODS`, `TELEGRAM_NATIVE_EVENTS`, `TELEGRAM_NATIVE_EVENT_DETAILS` и соответствующие literal union types. Практические примеры/границы — [keyboard-recipes.md](keyboard-recipes.md). Request catalog не является доказательством live поддержки/прав, native call сохраняет unknown результат и callbacks SDK.
 

@@ -8,6 +8,7 @@ from __future__ import annotations
 import re
 from typing import Protocol, Sequence, TypeVar
 
+from aiogram import Dispatcher, Router
 from aiogram.types import Message
 
 from ..errors import InvalidType, ValidationFailure
@@ -77,3 +78,16 @@ def message_actor_id(message: Message) -> int:
     if user is None:
         raise RuntimeError('Forms require a user author')
     return user.id
+
+
+def owning_dispatcher(router: Router, injected: Dispatcher | None) -> Dispatcher:
+    """The Dispatcher that includes router. aiogram 3.31+ injects it into every handler; older releases do it
+    only in polling, so feed_update and webhooks reach the handler without it."""
+    if isinstance(injected, Dispatcher):
+        return injected
+    node = router
+    while node.parent_router is not None:
+        node = node.parent_router
+    if not isinstance(node, Dispatcher):
+        raise RuntimeError('Include the router in the Dispatcher that receives the updates')
+    return node
