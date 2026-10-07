@@ -6,6 +6,7 @@ and the Mini App index (catalog/telegram-capabilities.json). Unknown names are l
 person to review; many are legitimately outside Telegram (Python, SDK or provider names).
 With --online each page linked from SKILL.md is fetched once and core.telegram.org anchors are
 checked; a 401/403 answer is reported as unverified (bot protection), not as a broken link.
+With --table docs/sources.md the per-skill table in that page is rebuilt from the same sections.
 """
 from __future__ import annotations
 
@@ -66,6 +67,31 @@ def offline(skills_root: Path) -> dict:
     return report
 
 
+CHECKED = re.compile(r'^Проверено: (\d{4}-\d{2}-\d{2}), (.+?)\.?$', re.M)
+TABLE_START, TABLE_END = '<!-- skills-table:start -->', '<!-- skills-table:end -->'
+
+
+def skills_table(skills_root: Path) -> str:
+    """One row per skill from its sources section: when it was checked, against what, and the primary links."""
+    rows = ['| Скилл | Проверено | Что сверено | Первичные источники |', '| --- | --- | --- | --- |']
+    for skill in sorted(path.parent for path in skills_root.glob('*/SKILL.md')):
+        section = body(skill / 'SKILL.md').split('\n## Источники\n', 1)[1]
+        checked, scope = CHECKED.search(section).groups()
+        links = ', '.join(f'[{text}]({url})' for text, url in re.findall(r'\[([^\]]+)\]\((https?://[^)\s]+)\)', section))
+        rows.append(f'| `{skill.name}` | {checked} | {scope} | {links} |')
+    return '\n'.join(rows) + '\n'
+
+
+def write_table(document: Path, table: str) -> bool:
+    """Replace the marked block; returns whether the file changed."""
+    text = document.read_text(encoding='utf-8')
+    start, end = text.index(TABLE_START) + len(TABLE_START), text.index(TABLE_END)
+    updated = text[:start] + '\n' + table + text[end:]
+    if updated != text:
+        document.write_text(updated, encoding='utf-8', newline='\n')
+    return updated != text
+
+
 def fetch(page: str) -> tuple[int | None, str]:
     for _ in range(3):  # one retry pair for a dropped connection; a 4xx/5xx answer is final
         try:
@@ -99,7 +125,13 @@ def main() -> int:
     parser.add_argument('--skills', type=Path, default=ROOT / '.agents/skills')
     parser.add_argument('--online', action='store_true', help='fetch every link once and check Telegram anchors')
     parser.add_argument('--output', type=Path)
+    parser.add_argument('--table', type=Path, metavar='DOC',
+                        help='rewrite the per-skill table between the skills-table markers of DOC (docs/sources.md) and exit')
     args = parser.parse_args()
+    if args.table:
+        changed = write_table(args.table, skills_table(args.skills))
+        print(json.dumps({'table': args.table.as_posix(), 'changed': changed}))
+        return 0
     report = {'skills': offline(args.skills)}
     if args.online:
         urls = sorted({url for entry in report['skills'].values() for url in entry['links']})

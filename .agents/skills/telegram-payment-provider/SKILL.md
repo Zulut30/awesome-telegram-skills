@@ -98,4 +98,4 @@ async def notification_endpoint(provider: PaymentProvider, db, headers: dict[str
 
 [Bot Payments](https://core.telegram.org/bots/payments), [Telegram Stars](https://core.telegram.org/bots/payments-stars), [Stripe Webhooks](https://docs.stripe.com/webhooks), [Stripe API](https://docs.stripe.com/api), [Robokassa](https://docs.robokassa.ru/).
 
-Проверено: 2026-10-07, Bot API 10.3; поля и статусы провайдера сверяйте по его документации.
+Проверено: 2026-10-07, Bot API 10.3, документация Robokassa и Stripe; поля другого провайдера сверяйте по его документации.

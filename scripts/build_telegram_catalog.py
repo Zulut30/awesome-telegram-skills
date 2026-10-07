@@ -214,7 +214,7 @@ def main():
                            'update_kinds': [name for name in Update.model_fields if name != 'update_id']}, 'mini_app': mini,
                'scope': 'All documented Bot API methods/types and native Mini App calls; SDK request recipes are not live workflow tests',
                'external_payments': {'status': 'skills; provider implementations require own API/testing',
-                                     'skills': ['telegram-cryptopay', 'telegram-platega', 'telegram-yookassa']},
+                                     'skills': ['telegram-cryptopay', 'telegram-payment-provider', 'telegram-platega', 'telegram-yookassa']},
                'user_account': {'status': 'separate MTProto task/session; never substituted for Bot API', 'skill': 'telegram-user-client'}}
     files[ROOT / 'catalog/telegram-capabilities.json'] = json.dumps(catalog, ensure_ascii=False, indent=2) + '\n'
     files[ROOT / 'catalog/bot-api-request-fixtures.json'] = json.dumps({'scope': 'SDK-only synthetic requests; never send unchanged', 'methods': recipes}, ensure_ascii=False, indent=2) + '\n'

@@ -626,9 +626,14 @@
     {
       "id": 50,
       "title": "Навести порядок в `docs/sources.md`",
-      "status": "pending",
-      "commit_subject": null,
-      "evidence": [],
+      "status": "done",
+      "commit_subject": "excellence(050): split sources into a per-skill table and a dated journal",
+      "evidence": [
+        "docs/sources.md: таблица «Скиллы» (42 строки из разделов «Источники»), общие источники, правила обновления, журнал из 36 записей от новых к старым; весь прежний текст перенесен",
+        "scripts/check_skill_sources.py --table docs/sources.md пересобирает таблицу; tests/test_skill_sources.py сверяет ее, порядок журнала и платежные скиллы каталога",
+        "Ссылка Codex: developers.openai.com/codex/skills → learn.chatgpt.com/docs/build-skills (перенаправление проверено 2026-10-07)",
+        "catalog/telegram-capabilities.json: external_payments включает telegram-payment-provider; build_telegram_catalog.py --check проходит"
+      ],
       "remaining": null
     },
     {
