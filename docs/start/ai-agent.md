@@ -14,7 +14,7 @@ python3 scripts/install_skills.py --project ~/projects/my-bot --skill telegram-b
 python scripts/install_skills.py --project "C:\projects\my-bot" --skill telegram-bot-python --skill telegram-code-patterns --dry-run
 ```
 
-Скиллы копируются в `.agents/skills/` проекта — этот каталог читают Codex и GitHub Copilot. Claude Code читает `.claude/skills/`: скопируйте туда те же каталоги целиком. Каждый скилл самостоятелен: берите только нужные.
+Скиллы копируются в `.agents/skills/` проекта — этот каталог читают Codex и GitHub Copilot. Claude Code читает только `.claude/skills/`: добавьте к команде `--agent claude`. Каждый скилл самостоятелен: берите только нужные.
 
 ## 2. Попросите агента
 
@@ -24,7 +24,7 @@ $telegram-mini-app-auth Проверь initData на backend и создай с�
 $telegram-payments Подключи оплату Stars с выдачей доступа только после successful_payment.
 ```
 
-В Claude Code скилл вызывается как `/telegram-bot-python`. Если агент не видит скилл, перезапустите его в каталоге проекта.
+В Claude Code скилл вызывается как `/telegram-bot-python`. Если агент не видит скилл, проверьте, что каталог лежит в `.claude/skills/`, и перезапустите агента в каталоге проекта.
 
 ## 3. Проверьте результат
 

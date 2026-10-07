@@ -374,9 +374,14 @@
     {
       "id": 31,
       "title": "Поддержать Claude Code",
-      "status": "pending",
-      "commit_subject": null,
-      "evidence": [],
+      "status": "done",
+      "commit_subject": "excellence(031): install skills where Claude Code reads them",
+      "evidence": [
+        "scripts/install_skills.py --agent claude копирует в .claude/skills (по документации Claude Code проектные скиллы — .claude/skills/<name>/SKILL.md, .agents/skills не читается; сверено 2026-10-07 на code.claude.com/docs/en/skills)",
+        "Настоящий Claude Code 2.1.292 в headless-режиме во временном проекте: после install --agent claude init-событие содержит telegram-bot-python и в slash_commands, и в skills; после установки в .agents/skills — ни там, ни там",
+        "tests/test_install_skills.py: установка в .claude/skills без .agents, независимость двух каталогов, отказ от неизвестного агента до записи, ссылка .claude не перенаправляет установку, CLI --agent claude --dry-run — 16 тестов OK",
+        "README.md, README.en.md и docs/start/ai-agent.md: флаг --agent claude вместо ручного копирования"
+      ],
       "remaining": null
     },
     {

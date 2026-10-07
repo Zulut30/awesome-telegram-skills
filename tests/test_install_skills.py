@@ -6,6 +6,7 @@ import importlib.util
 import os
 from pathlib import Path
 import subprocess
+import sys
 import tempfile
 import unittest
 
@@ -100,6 +101,31 @@ class InstallSkillsTests(unittest.TestCase):
         destinations = installer.install_skills(self.sources, self.project, ["telegram-alpha"])
         self.assertFalse((destinations[0] / "__pycache__").exists())
 
+    def test_claude_agent_installs_into_claude_skills_only(self) -> None:
+        destinations = installer.install_skills(self.sources, self.project, ["telegram-alpha"], agent="claude")
+        self.assertEqual(destinations, [self.project.resolve() / ".claude" / "skills" / "telegram-alpha"])
+        self.assertEqual((destinations[0] / "SKILL.md").read_bytes(),
+                         (self.sources / "telegram-alpha" / "SKILL.md").read_bytes())
+        self.assertFalse((self.project / ".agents").exists())
+        # Codex and Claude Code directories are independent: both can hold the same skill.
+        installer.install_skills(self.sources, self.project, ["telegram-alpha"])
+        self.assertTrue((self.project / ".agents" / "skills" / "telegram-alpha" / "SKILL.md").is_file())
+
+    def test_unknown_agent_is_rejected_before_any_write(self) -> None:
+        with self.assertRaises(installer.InstallError):
+            installer.install_skills(self.sources, self.project, agent="unknown")
+        self.assertEqual(list(self.project.iterdir()), [])
+
+    def test_cli_agent_option(self) -> None:
+        result = subprocess.run(
+            [sys.executable, str(SCRIPT), "--project", str(self.project), "--agent", "claude",
+             "--skill", "telegram-bot-python", "--dry-run"],
+            capture_output=True, text=True, encoding="utf-8", timeout=30,
+        )
+        self.assertEqual(result.returncode, 0, result.stderr)
+        self.assertIn(str(Path(".claude") / "skills" / "telegram-bot-python"), result.stdout)
+        self.assertFalse((self.project / ".claude").exists())
+
     def make_symlink(self, link: Path, target: Path, *, directory: bool = True) -> None:
         try:
             link.symlink_to(target, target_is_directory=directory)
@@ -123,6 +149,14 @@ class InstallSkillsTests(unittest.TestCase):
         self.make_symlink(self.project / ".agents", outside)
         with self.assertRaises(installer.InstallError):
             installer.install_skills(self.sources, self.project)
+        self.assertEqual(list(outside.iterdir()), [])
+
+    def test_claude_destination_link_cannot_redirect_installation(self) -> None:
+        outside = self.root / "outside claude"
+        outside.mkdir()
+        self.make_symlink(self.project / ".claude", outside)
+        with self.assertRaises(installer.InstallError):
+            installer.install_skills(self.sources, self.project, agent="claude")
         self.assertEqual(list(outside.iterdir()), [])
 
     def test_link_in_source_is_rejected_before_copy(self) -> None:

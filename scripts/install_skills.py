@@ -1,4 +1,4 @@
-"""Copy selected standalone skills into an existing project's .agents/skills."""
+"""Copy selected standalone skills into the skill directory an agent reads in an existing project."""
 
 from __future__ import annotations
 
@@ -13,6 +13,11 @@ import sys
 
 SOURCE_ROOT = Path(__file__).resolve().parents[1] / ".agents" / "skills"
 NAME_PATTERN = re.compile(r"[a-z0-9]+(?:-[a-z0-9]+)*\Z")
+# Project skill directory per agent. Claude Code reads .claude/skills and never .agents/skills.
+AGENT_DIRECTORIES = {
+    "codex": (".agents", "skills"),
+    "claude": (".claude", "skills"),
+}
 
 
 class InstallError(ValueError):
@@ -46,7 +51,10 @@ def install_skills(
     names: list[str] | None = None,
     *,
     dry_run: bool = False,
+    agent: str = "codex",
 ) -> list[Path]:
+    if agent not in AGENT_DIRECTORIES:
+        raise InstallError(f"Unknown agent: {agent}; choose one of {', '.join(AGENT_DIRECTORIES)}")
     if not source_root.is_dir():
         raise InstallError(f"Skill source directory does not exist: {source_root}")
     if is_link(source_root):
@@ -68,8 +76,9 @@ def install_skills(
             raise InstallError(f"Unknown or invalid skill name: {name}")
         check_source_tree(available[name])
 
-    destination_root = project / ".agents" / "skills"
-    for parent in (project / ".agents", destination_root):
+    base, leaf = AGENT_DIRECTORIES[agent]
+    destination_root = project / base / leaf
+    for parent in (project / base, destination_root):
         if is_link(parent):
             raise InstallError(f"Destination links are unsupported: {parent}")
         if parent.exists() and not parent.is_dir():
@@ -106,10 +115,12 @@ def main() -> int:
     parser.add_argument("--project", required=True, type=Path, help="Existing target project")
     parser.add_argument("--skill", action="append", dest="names", help="Skill to copy; repeatable")
     parser.add_argument("--dry-run", action="store_true", help="Check selection without writing")
+    parser.add_argument("--agent", choices=sorted(AGENT_DIRECTORIES), default="codex",
+                        help="codex: .agents/skills (default); claude: .claude/skills for Claude Code")
     args = parser.parse_args()
     try:
         destinations = install_skills(
-            SOURCE_ROOT, args.project.expanduser(), args.names, dry_run=args.dry_run,
+            SOURCE_ROOT, args.project.expanduser(), args.names, dry_run=args.dry_run, agent=args.agent,
         )
     except (InstallError, OSError) as exc:
         print(f"ERROR: {exc}", file=sys.stderr)
