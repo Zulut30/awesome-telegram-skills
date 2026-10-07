@@ -1,9 +1,10 @@
 """Known links stay refused; OS aliases under / (macOS /var, /tmp -> /private/...) are trusted."""
+
 import os
-from pathlib import Path
 import stat
 import tempfile
 import unittest
+from pathlib import Path
 from unittest.mock import patch
 
 import telegram_patterns.diagnostics as diagnostics
@@ -17,8 +18,10 @@ def fake_stat(uid):
 class LinkPortabilityTests(unittest.TestCase):
     def test_user_links_are_refused_everywhere(self):
         with tempfile.TemporaryDirectory() as folder:
-            target = Path(folder) / 'target'; target.mkdir()
-            link = Path(folder) / 'link'; link.symlink_to(target, target_is_directory=True)
+            target = Path(folder) / 'target'
+            target.mkdir()
+            link = Path(folder) / 'link'
+            link.symlink_to(target, target_is_directory=True)
             for module in (diagnostics, starter):
                 with self.subTest(module=module.__name__):
                     self.assertTrue(module._linked(link))
@@ -38,8 +41,10 @@ class LinkPortabilityTests(unittest.TestCase):
 
     def test_nested_root_owned_link_is_still_refused(self):
         nested = Path('/var-alias-fixture/inner')
-        with patch.object(Path, 'is_symlink', lambda self: self == nested), \
-                patch.object(Path, 'lstat', lambda self: fake_stat(0)):
+        with (
+            patch.object(Path, 'is_symlink', lambda self: self == nested),
+            patch.object(Path, 'lstat', lambda self: fake_stat(0)),
+        ):
             self.assertTrue(diagnostics._linked(nested))
             self.assertTrue(starter._linked(nested))
 

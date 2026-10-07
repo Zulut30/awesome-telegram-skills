@@ -1,4 +1,5 @@
 """Optional aiogram test transport; strictly local, never falls back to HTTP."""
+
 from __future__ import annotations
 
 import inspect
@@ -20,6 +21,7 @@ class StubSession(BaseSession):
 
     Fixtures are artificial API responses, not evidence of live Telegram behavior.
     """
+
     def __init__(self, *, api: TelegramAPIServer = PRODUCTION) -> None:
         super().__init__(api=api)  # api=TEST mirrors a test-environment session offline
         self.calls: list[TelegramMethod[Any]] = []
@@ -48,9 +50,14 @@ class StubSession(BaseSession):
     async def close(self) -> None:
         self.closed = True
 
-    async def stream_content(self, url: str, headers: dict[str, Any] | None = None,
-                             timeout: int = 30, chunk_size: int = 65536,
-                             raise_for_status: bool = True) -> AsyncGenerator[bytes, None]:
+    async def stream_content(
+        self,
+        url: str,
+        headers: dict[str, Any] | None = None,
+        timeout: int = 30,
+        chunk_size: int = 65536,
+        raise_for_status: bool = True,
+    ) -> AsyncGenerator[bytes, None]:
         # Keep an async-generator signature while rejecting unsupported file I/O.
         if False:
             yield b''

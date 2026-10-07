@@ -1,10 +1,13 @@
 """Internal form transitions; old MemoryStorage path remains a demonstration."""
+
 from __future__ import annotations
 
 from copy import deepcopy
 from typing import Any
+
 from aiogram.fsm.context import FSMContext
-from .fsm_storage import AtomicFSMStorage, DialogLifetime, FSMSnapshot, FSMConflict
+
+from .fsm_storage import AtomicFSMStorage, DialogLifetime, FSMConflict, FSMSnapshot
 
 
 class _DialogData(dict):
@@ -15,8 +18,9 @@ class _DialogData(dict):
         self.snapshot = snapshot
 
 
-async def _read_form(state: FSMContext, namespace: str, key: str,
-                     lifetime: DialogLifetime | None) -> _DialogData | None:
+async def _read_form(
+    state: FSMContext, namespace: str, key: str, lifetime: DialogLifetime | None
+) -> _DialogData | None:
     atomic = isinstance(state.storage, AtomicFSMStorage)
     if lifetime is not None and not atomic:
         raise RuntimeError('Durable dialog lifetime requires AtomicFSMStorage on the existing Dispatcher')

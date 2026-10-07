@@ -1,16 +1,17 @@
 """Bounded shareable inline search, context-bound cursors and explicit cache policy."""
+
 from __future__ import annotations
 
 import asyncio
 import base64
-from dataclasses import dataclass, field
-from datetime import datetime, timezone
 import hashlib
 import hmac
 import json
 import math
 import re
 import struct
+from dataclasses import dataclass, field
+from datetime import datetime, timezone
 from typing import Awaitable, Callable, Literal, Sequence, TypeAlias, cast
 
 from aiogram import Bot, Router
@@ -26,8 +27,17 @@ InlineSearchProvider: TypeAlias = Callable[[InlineQuery], Awaitable['InlineSearc
 _Context: TypeAlias = tuple[int, int, str, str, InlineChatType]
 _CHAT_TYPES = ('sender', 'private', 'group', 'supergroup', 'channel', None)
 
-__all__ = ['InlineChatType', 'InlineAuthorizer', 'InlineSearchProvider', 'InlineCachePolicy',
-           'InlineItem', 'InlinePage', 'InlineSearch', 'inline_articles', 'inline_query_router']
+__all__ = [
+    'InlineChatType',
+    'InlineAuthorizer',
+    'InlineSearchProvider',
+    'InlineCachePolicy',
+    'InlineItem',
+    'InlinePage',
+    'InlineSearch',
+    'inline_articles',
+    'inline_query_router',
+]
 
 
 def _text(value: str, maximum: int, *, empty: bool = False) -> str:
@@ -65,7 +75,13 @@ def _query(value: InlineQuery, bot_id: int) -> _Context:
     _text(value.id, 256)
     if value.chat_type not in _CHAT_TYPES:
         raise ValidationFailure('Unsupported inline chat type')
-    return (bot_id, value.from_user.id, value.id, _text(value.query, 256, empty=True).strip().casefold(), cast(InlineChatType, value.chat_type))
+    return (
+        bot_id,
+        value.from_user.id,
+        value.id,
+        _text(value.query, 256, empty=True).strip().casefold(),
+        cast(InlineChatType, value.chat_type),
+    )
 
 
 def _time(value: datetime | None) -> int:
@@ -73,14 +89,17 @@ def _time(value: datetime | None) -> int:
     if not isinstance(value, datetime) or value.tzinfo is None or value.utcoffset() is None:
         raise ValidationFailure('Cursor time must be timezone-aware')
     result = int(value.timestamp())
-    _integer(result, 0, 2**32-86401)
+    _integer(result, 0, 2**32 - 86401)
     return result
 
 
 def _entities(value: FormattedText, entitlement: bool) -> list[MessageEntity]:
     _bool(entitlement)
-    return [MessageEntity.model_validate(entity.as_dict()) for entity in value.entities
-            if entity.kind != 'custom_emoji' or entitlement]
+    return [
+        MessageEntity.model_validate(entity.as_dict())
+        for entity in value.entities
+        if entity.kind != 'custom_emoji' or entitlement
+    ]
 
 
 @dataclass(frozen=True, slots=True)
@@ -137,16 +156,26 @@ class InlinePage:
             raise InvalidType('Expected InlineCachePolicy')
         object.__setattr__(self, 'items', items)
 
-    def answer_request(self, query: InlineQuery, *, bot_id: int,
-                       custom_emoji_entitlement_verified: bool = False) -> AnswerInlineQuery:
+    def answer_request(
+        self, query: InlineQuery, *, bot_id: int, custom_emoji_entitlement_verified: bool = False
+    ) -> AnswerInlineQuery:
         if _query(query, bot_id) != self._context:
             raise PermissionDenied('Inline page belongs to a different query context')
-        return AnswerInlineQuery(inline_query_id=query.id,
-            results=[item for item in inline_articles(self, custom_emoji_entitlement_verified=custom_emoji_entitlement_verified)],
-            next_offset=self.next_offset, cache_time=self.cache.cache_time, is_personal=self.cache.is_personal)
+        return AnswerInlineQuery(
+            inline_query_id=query.id,
+            results=[
+                item
+                for item in inline_articles(self, custom_emoji_entitlement_verified=custom_emoji_entitlement_verified)
+            ],
+            next_offset=self.next_offset,
+            cache_time=self.cache.cache_time,
+            is_personal=self.cache.is_personal,
+        )
 
 
-def inline_articles(page: InlinePage, *, custom_emoji_entitlement_verified: bool = False) -> list[InlineQueryResultArticle]:
+def inline_articles(
+    page: InlinePage, *, custom_emoji_entitlement_verified: bool = False
+) -> list[InlineQueryResultArticle]:
     """Fresh native models with literal text; server cache never grants data privacy."""
     if not isinstance(page, InlinePage):
         raise InvalidType('Expected InlinePage')
@@ -154,21 +183,48 @@ def inline_articles(page: InlinePage, *, custom_emoji_entitlement_verified: bool
     results = []
     for item in page.items:
         assert isinstance(item.content, FormattedText)
-        results.append(InlineQueryResultArticle(id=item.id, title=item.title, description=item.description or None,
-            input_message_content=InputTextMessageContent(message_text=item.content.text, parse_mode=None,
-                entities=_entities(item.content, custom_emoji_entitlement_verified))))
+        results.append(
+            InlineQueryResultArticle(
+                id=item.id,
+                title=item.title,
+                description=item.description or None,
+                input_message_content=InputTextMessageContent(
+                    message_text=item.content.text,
+                    parse_mode=None,
+                    entities=_entities(item.content, custom_emoji_entitlement_verified),
+                ),
+            )
+        )
     return results
 
 
 class InlineSearch:
     """Immutable bounded catalog snapshot; host persists/rotates its own cursor secret."""
-    __slots__ = ('_items', '_secret', '_revision', '_fingerprint', '_page_size', '_cursor_ttl',
-                 '_cache', '_public_catalog', '_allowed_chat_types')
 
-    def __init__(self, items: Sequence[InlineItem], *, secret: bytes, revision: str,
-                 page_size: int = 20, cursor_ttl: int = 300,
-                 cache: InlineCachePolicy = InlineCachePolicy(), public_catalog: bool = False,
-                 allowed_chat_types: Sequence[InlineChatType] | None = None) -> None:
+    __slots__ = (
+        '_items',
+        '_secret',
+        '_revision',
+        '_fingerprint',
+        '_page_size',
+        '_cursor_ttl',
+        '_cache',
+        '_public_catalog',
+        '_allowed_chat_types',
+    )
+
+    def __init__(
+        self,
+        items: Sequence[InlineItem],
+        *,
+        secret: bytes,
+        revision: str,
+        page_size: int = 20,
+        cursor_ttl: int = 300,
+        cache: InlineCachePolicy = InlineCachePolicy(),
+        public_catalog: bool = False,
+        allowed_chat_types: Sequence[InlineChatType] | None = None,
+    ) -> None:
         if isinstance(items, (str, bytes)) or not isinstance(items, Sequence):
             raise InvalidType('Expected a bounded sequence of InlineItem')
         records = tuple(items)
@@ -188,21 +244,40 @@ class InlineSearch:
             raise ValidationFailure('Shared server cache requires an explicitly public catalog')
         if cache.cache_time > cursor_ttl:
             raise ValidationFailure('Cache lifetime must not exceed cursor lifetime')
-        if allowed_chat_types is not None and (isinstance(allowed_chat_types, (str, bytes))
-                                               or not isinstance(allowed_chat_types, Sequence)):
+        if allowed_chat_types is not None and (
+            isinstance(allowed_chat_types, (str, bytes)) or not isinstance(allowed_chat_types, Sequence)
+        ):
             raise InvalidType('Expected a sequence of inline chat types')
-        contexts = tuple(allowed_chat_types) if allowed_chat_types is not None else (_CHAT_TYPES if public_catalog else ('sender',))
-        if not contexts or any(context not in _CHAT_TYPES for context in contexts) or len(set(contexts)) != len(contexts):
+        contexts = (
+            tuple(allowed_chat_types)
+            if allowed_chat_types is not None
+            else (_CHAT_TYPES if public_catalog else ('sender',))
+        )
+        if (
+            not contexts
+            or any(context not in _CHAT_TYPES for context in contexts)
+            or len(set(contexts)) != len(contexts)
+        ):
             raise ValidationFailure('Invalid or repeated inline chat contexts')
         if not cache.is_personal and set(contexts) != set(_CHAT_TYPES):
             raise ValidationFailure('Shared Telegram cache requires a public catalog allowed in every inline context')
         fingerprint = []
         for item in records:
             assert isinstance(item.content, FormattedText)
-            fingerprint.append([item.id, item.title, item.description, item.content.text,
-                                [entity.as_dict() for entity in item.content.entities], item.shareable])
+            fingerprint.append(
+                [
+                    item.id,
+                    item.title,
+                    item.description,
+                    item.content.text,
+                    [entity.as_dict() for entity in item.content.entities],
+                    item.shareable,
+                ]
+            )
         self._items, self._secret, self._revision = records, secret, revision
-        self._fingerprint = hashlib.sha256(json.dumps(fingerprint, ensure_ascii=False, separators=(',', ':')).encode()).hexdigest()
+        self._fingerprint = hashlib.sha256(
+            json.dumps(fingerprint, ensure_ascii=False, separators=(',', ':')).encode()
+        ).hexdigest()
         self._page_size, self._cursor_ttl, self._cache = page_size, cursor_ttl, cache
         self._public_catalog, self._allowed_chat_types = public_catalog, contexts
 
@@ -220,32 +295,54 @@ class InlineSearch:
         # another actor/context. Only a fully public catalog can omit this scope.
         actor_scope = actor_id if self._cache.is_personal else None
         chat_scope = chat_type if self._cache.is_personal else None
-        scope = json.dumps([bot_id, actor_scope, query, chat_scope, self._revision,
-                            self._fingerprint, permission_revision, self._page_size],
-                           ensure_ascii=False, separators=(',', ':')).encode()
-        return hmac.new(self._secret, b'telegram-inline-v1\0'+payload+b'\0'+scope, hashlib.sha256).digest()[:16]
+        scope = json.dumps(
+            [
+                bot_id,
+                actor_scope,
+                query,
+                chat_scope,
+                self._revision,
+                self._fingerprint,
+                permission_revision,
+                self._page_size,
+            ],
+            ensure_ascii=False,
+            separators=(',', ':'),
+        ).encode()
+        return hmac.new(self._secret, b'telegram-inline-v1\0' + payload + b'\0' + scope, hashlib.sha256).digest()[:16]
 
     def _seal(self, position: int, expires: int, context: _Context, revision: str) -> str:
         payload = struct.pack('>BII', 1, position, expires)
-        return base64.urlsafe_b64encode(payload+self._mac(payload, context, revision)).decode().rstrip('=')
+        return base64.urlsafe_b64encode(payload + self._mac(payload, context, revision)).decode().rstrip('=')
 
     def _open(self, token: str, now: int, context: _Context, revision: str) -> tuple[int, int]:
         try:
             if not isinstance(token, str) or not re.fullmatch(r'[A-Za-z0-9_-]{34}', token):
                 raise ValueError
-            raw = base64.urlsafe_b64decode(token+'==')
+            raw = base64.urlsafe_b64decode(token + '==')
             payload, signature = raw[:9], raw[9:]
             version, position, expires = struct.unpack('>BII', payload)
-            if (version != 1 or position >= len(self._items) or now >= expires
-                    or base64.urlsafe_b64encode(raw).decode().rstrip('=') != token
-                    or not hmac.compare_digest(signature, self._mac(payload, context, revision))):
+            if (
+                version != 1
+                or position >= len(self._items)
+                or now >= expires
+                or base64.urlsafe_b64encode(raw).decode().rstrip('=') != token
+                or not hmac.compare_digest(signature, self._mac(payload, context, revision))
+            ):
                 raise ValueError
             return position, expires
         except (ValueError, struct.error):
             raise ConflictFailure('Inline cursor is invalid, expired or belongs to a different context') from None
 
-    async def page(self, query: InlineQuery, *, bot_id: int, authorize: InlineAuthorizer | None = None,
-                   permission_revision: str = '0', now: datetime | None = None) -> InlinePage:
+    async def page(
+        self,
+        query: InlineQuery,
+        *,
+        bot_id: int,
+        authorize: InlineAuthorizer | None = None,
+        permission_revision: str = '0',
+        now: datetime | None = None,
+    ) -> InlinePage:
         context = _query(query, bot_id)
         _text(permission_revision, 128)
         if context[-1] not in self._allowed_chat_types:
@@ -257,13 +354,20 @@ class InlineSearch:
         if not self._public_catalog and not callable(authorize):
             raise PermissionDenied('Personal inline search requires current host authorization')
         clock = _time(now)
-        start, expires = self._open(query.offset, clock, context, permission_revision) if query.offset else (0, clock+self._cursor_ttl)
+        start, expires = (
+            self._open(query.offset, clock, context, permission_revision)
+            if query.offset
+            else (0, clock + self._cursor_ttl)
+        )
         chosen: list[InlineItem] = []
         next_offset = ''
         for position in range(start, len(self._items)):
             item = self._items[position]
             assert isinstance(item.content, FormattedText)
-            if not item.shareable or context[3] not in (item.title+' '+item.description+' '+item.content.text).casefold():
+            if (
+                not item.shareable
+                or context[3] not in (item.title + ' ' + item.description + ' ' + item.content.text).casefold()
+            ):
                 continue
             if authorize is not None and await authorize(context[1], item) is not True:
                 continue
@@ -274,9 +378,14 @@ class InlineSearch:
         return InlinePage(tuple(chosen), next_offset, self._cache, context)
 
 
-def inline_query_router(search: InlineSearch | InlineSearchProvider, *, authorize: InlineAuthorizer | None = None,
-                        permission_revision: Callable[[int], Awaitable[str]] | None = None,
-                        search_timeout: float = 2.0, custom_emoji_entitlement_verified: bool = False) -> Router:
+def inline_query_router(
+    search: InlineSearch | InlineSearchProvider,
+    *,
+    authorize: InlineAuthorizer | None = None,
+    permission_revision: Callable[[int], Awaitable[str]] | None = None,
+    search_timeout: float = 2.0,
+    custom_emoji_entitlement_verified: bool = False,
+) -> Router:
     """Attach to host Dispatcher; timeout covers provider/ACL, never retries native answer."""
     if not isinstance(search, InlineSearch) and not callable(search):
         raise InvalidType('Expected InlineSearch or an async host provider')
@@ -305,8 +414,12 @@ def inline_query_router(search: InlineSearch | InlineSearchProvider, *, authoriz
                     raise ConflictFailure('Inline permissions changed during search')
         except (ConflictFailure, PermissionDenied, TimeoutError):
             page = InlinePage((), '', InlineCachePolicy(), context)
-        completed = await bot(page.answer_request(query, bot_id=bot.id,
-            custom_emoji_entitlement_verified=custom_emoji_entitlement_verified))
+        completed = await bot(
+            page.answer_request(
+                query, bot_id=bot.id, custom_emoji_entitlement_verified=custom_emoji_entitlement_verified
+            )
+        )
         if completed is not True:
             raise InvalidCompletion('Telegram did not confirm the inline answer')
+
     return router

@@ -26,3 +26,14 @@ where = ["src"]
 
 [tool.setuptools.package-data]
 telegram_patterns = ["py.typed", "resources/*.json", "resources/offline/*.txt", "resources/starter/*.txt", "resources/starter/mini-app/*.txt", "resources/starter/mini-app/src/*.txt", "resources/starter/.*.txt", "resources/starter/components/*.txt", "resources/starter/components/mini-app/src/*.txt"]
+
+[tool.ruff]
+line-length = 120
+target-version = "py311"
+
+[tool.ruff.format]
+# The library mixes single and double quotes; the formatter keeps each literal as written.
+quote-style = "preserve"
+
+[tool.ruff.lint]
+select = ["E", "F", "W", "I"]

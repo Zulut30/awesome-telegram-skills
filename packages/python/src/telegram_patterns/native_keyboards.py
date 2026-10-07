@@ -1,19 +1,44 @@
 """Explicit row layouts using native aiogram button models and context checks."""
+
 from __future__ import annotations
-from .errors import ValidationFailure, InvalidType
 
 from typing import Literal, Sequence
 from urllib.parse import urlsplit
 
-from aiogram.types import (ForceReply, InlineKeyboardButton, InlineKeyboardMarkup,
-                           KeyboardButton, ReplyKeyboardMarkup, ReplyKeyboardRemove)
+from aiogram.types import (
+    ForceReply,
+    InlineKeyboardButton,
+    InlineKeyboardMarkup,
+    KeyboardButton,
+    ReplyKeyboardMarkup,
+    ReplyKeyboardRemove,
+)
+
+from .errors import InvalidType, ValidationFailure
 
 ChatType = Literal['private', 'group', 'supergroup', 'channel']
-INLINE_ACTIONS = ('url', 'callback_data', 'web_app', 'login_url', 'switch_inline_query',
-                  'switch_inline_query_current_chat', 'switch_inline_query_chosen_chat',
-                  'copy_text', 'callback_game', 'pay', 'disabled')
-REPLY_ACTIONS = ('request_users', 'request_chat', 'request_managed_bot', 'request_contact',
-                 'request_location', 'request_poll', 'web_app')
+INLINE_ACTIONS = (
+    'url',
+    'callback_data',
+    'web_app',
+    'login_url',
+    'switch_inline_query',
+    'switch_inline_query_current_chat',
+    'switch_inline_query_chosen_chat',
+    'copy_text',
+    'callback_game',
+    'pay',
+    'disabled',
+)
+REPLY_ACTIONS = (
+    'request_users',
+    'request_chat',
+    'request_managed_bot',
+    'request_contact',
+    'request_location',
+    'request_poll',
+    'web_app',
+)
 
 
 def _context(chat_type: ChatType, business: bool) -> None:
@@ -70,9 +95,15 @@ def _https(url: str) -> None:
         raise ValidationFailure('Use a valid HTTPS app/login URL without embedded credentials')
 
 
-def inline_keyboard(rows: Sequence[Sequence[InlineKeyboardButton]], *,
-                    chat_type: ChatType = 'private', business: bool = False, invoice: bool = False,
-                    force_reply: bool = False, emoji_entitlement_verified: bool = False) -> InlineKeyboardMarkup:
+def inline_keyboard(
+    rows: Sequence[Sequence[InlineKeyboardButton]],
+    *,
+    chat_type: ChatType = 'private',
+    business: bool = False,
+    invoice: bool = False,
+    force_reply: bool = False,
+    emoji_entitlement_verified: bool = False,
+) -> InlineKeyboardMarkup:
     """Snapshot explicit rows; caller supplies actual context and verified capability.
 
     URL/copy/switch-inline/disabled buttons do not emit callback_query. Login,
@@ -102,8 +133,10 @@ def inline_keyboard(rows: Sequence[Sequence[InlineKeyboardButton]], *,
             if action == 'callback_data':
                 if button.callback_data is None:
                     raise ValidationFailure('Missing callback data')
-                try: length = len(button.callback_data.encode('utf-8'))
-                except UnicodeError: length = 0
+                try:
+                    length = len(button.callback_data.encode('utf-8'))
+                except UnicodeError:
+                    length = 0
                 if not 1 <= length <= 64:
                     raise ValidationFailure('Callback data must contain 1..64 UTF-8 bytes')
             if action == 'copy_text':
@@ -132,25 +165,37 @@ def inline_keyboard(rows: Sequence[Sequence[InlineKeyboardButton]], *,
     return InlineKeyboardMarkup(inline_keyboard=result, force_reply=True if force_reply else None)
 
 
-def reply_keyboard(rows: Sequence[Sequence[str | KeyboardButton]], *,
-                   chat_type: ChatType = 'private', business: bool = False,
-                   resize: bool = True, one_time: bool = False, persistent: bool = False,
-                   placeholder: str | None = None, selective: bool = False, force_reply: bool = False,
-                   emoji_entitlement_verified: bool = False) -> ReplyKeyboardMarkup:
+def reply_keyboard(
+    rows: Sequence[Sequence[str | KeyboardButton]],
+    *,
+    chat_type: ChatType = 'private',
+    business: bool = False,
+    resize: bool = True,
+    one_time: bool = False,
+    persistent: bool = False,
+    placeholder: str | None = None,
+    selective: bool = False,
+    force_reply: bool = False,
+    emoji_entitlement_verified: bool = False,
+) -> ReplyKeyboardMarkup:
     """Reply buttons send text or requested service data, never callback_query."""
     _context(chat_type, business)
     if chat_type == 'channel' or business:
         raise ValidationFailure('Reply keyboard is unavailable in channels/Business messages')
     if any(type(flag) is not bool for flag in (resize, one_time, persistent, selective, force_reply)):
         raise ValidationFailure('Keyboard flags must be bool')
-    if placeholder is not None: _text(placeholder, limit=64)
+    if placeholder is not None:
+        _text(placeholder, limit=64)
     result, request_ids = [], set()
     for row in _rows(rows):
         buttons = []
         for source in row:
-            if isinstance(source, str): button = KeyboardButton(text=source)
-            elif isinstance(source, KeyboardButton): button = source.model_copy(deep=True)
-            else: raise InvalidType('Use text or aiogram KeyboardButton models')
+            if isinstance(source, str):
+                button = KeyboardButton(text=source)
+            elif isinstance(source, KeyboardButton):
+                button = source.model_copy(deep=True)
+            else:
+                raise InvalidType('Use text or aiogram KeyboardButton models')
             _presentation(button, emoji_entitlement_verified)
             if button.request_user is not None:
                 raise ValidationFailure('Use modern request_users instead of deprecated request_user')
@@ -162,24 +207,34 @@ def reply_keyboard(rows: Sequence[Sequence[str | KeyboardButton]], *,
             for name in ('request_users', 'request_chat', 'request_managed_bot'):
                 request = getattr(button, name)
                 if request is not None:
-                    if not -(2 ** 31) <= request.request_id < 2 ** 31 or request.request_id in request_ids:
+                    if not -(2**31) <= request.request_id < 2**31 or request.request_id in request_ids:
                         raise ValidationFailure('Request IDs must be unique signed 32-bit integers')
                     request_ids.add(request.request_id)
-            if button.web_app is not None: _https(button.web_app.url)
+            if button.web_app is not None:
+                _https(button.web_app.url)
             buttons.append(button)
         result.append(buttons)
-    return ReplyKeyboardMarkup(keyboard=result, resize_keyboard=resize, one_time_keyboard=one_time,
-        is_persistent=persistent, input_field_placeholder=placeholder, selective=selective,
-        force_reply=True if force_reply else None)
+    return ReplyKeyboardMarkup(
+        keyboard=result,
+        resize_keyboard=resize,
+        one_time_keyboard=one_time,
+        is_persistent=persistent,
+        input_field_placeholder=placeholder,
+        selective=selective,
+        force_reply=True if force_reply else None,
+    )
 
 
 def input_prompt(placeholder: str | None = None, *, selective: bool = False) -> ForceReply:
     """Request the client's reply UI; the host binds/validates the actual response."""
-    if placeholder is not None: _text(placeholder, limit=64)
-    if type(selective) is not bool: raise ValidationFailure('Selective flag must be bool')
+    if placeholder is not None:
+        _text(placeholder, limit=64)
+    if type(selective) is not bool:
+        raise ValidationFailure('Selective flag must be bool')
     return ForceReply(force_reply=True, input_field_placeholder=placeholder, selective=selective)
 
 
 def remove_keyboard(*, selective: bool = False) -> ReplyKeyboardRemove:
-    if type(selective) is not bool: raise ValidationFailure('Selective flag must be bool')
+    if type(selective) is not bool:
+        raise ValidationFailure('Selective flag must be bool')
     return ReplyKeyboardRemove(remove_keyboard=True, selective=selective)

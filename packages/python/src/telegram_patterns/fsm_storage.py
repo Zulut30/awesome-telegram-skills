@@ -1,12 +1,13 @@
 """Optional aiogram snapshot adapter; persistence and migrations belong to host."""
+
 from __future__ import annotations
 
 import asyncio
-from dataclasses import dataclass, field
-import json
 import inspect
+import json
 import math
 import time
+from dataclasses import dataclass, field
 from typing import Any, Awaitable, Callable, Mapping, Protocol, TypeVar, runtime_checkable
 
 from aiogram.fsm.state import State
@@ -31,6 +32,7 @@ def _json_data(data: Mapping[str, Any]) -> str:
             raise ValidationFailure('FSM data must contain plain JSON values')
         elif type(value) is float and not math.isfinite(value):
             raise ValidationFailure('FSM JSON numbers must be finite')
+
     if not isinstance(data, Mapping):
         raise ValidationFailure('FSM data must be a JSON object')
     check(data)
@@ -46,6 +48,7 @@ def _json_data(data: Mapping[str, Any]) -> str:
 @dataclass(frozen=True, slots=True, init=False)
 class FSMSnapshot:
     """One state/data revision; data returns a detached JSON copy, repr hides it."""
+
     state: str | None
     revision: int
     _json: str = field(repr=False)
@@ -77,18 +80,22 @@ class SnapshotStore(Protocol):
     reset revisions (ABA); retention/migration and business effects are separate.
     close releases only resources owned by this adapter, never host connections.
     """
+
     async def read(self, key: StorageKey) -> FSMSnapshot: ...
-    async def compare_and_set(self, key: StorageKey, expected_revision: int,
-                              state: str | None, data: Mapping[str, Any]) -> FSMSnapshot: ...
+    async def compare_and_set(
+        self, key: StorageKey, expected_revision: int, state: str | None, data: Mapping[str, Any]
+    ) -> FSMSnapshot: ...
     async def close(self) -> None: ...
 
 
 @runtime_checkable
 class AtomicFSMStorage(Protocol):
     """Optional capability for existing project BaseStorage implementations."""
+
     async def read_snapshot(self, key: StorageKey) -> FSMSnapshot: ...
-    async def commit_snapshot(self, key: StorageKey, snapshot: FSMSnapshot,
-                              state: str | None, data: Mapping[str, Any]) -> FSMSnapshot: ...
+    async def commit_snapshot(
+        self, key: StorageKey, snapshot: FSMSnapshot, state: str | None, data: Mapping[str, Any]
+    ) -> FSMSnapshot: ...
 
 
 _T = TypeVar('_T')
@@ -119,6 +126,7 @@ class SnapshotFSMStorage(BaseStorage):
     SDK calls are not one transition. Forms use commit_snapshot. No retry, new
     infrastructure, event isolation or business exactly-once guarantee is added.
     """
+
     def __init__(self, store: SnapshotStore) -> None:
         self.store = store
 
@@ -128,8 +136,9 @@ class SnapshotFSMStorage(BaseStorage):
             raise RuntimeError('SnapshotStore returned an invalid snapshot')
         return result
 
-    async def commit_snapshot(self, key: StorageKey, snapshot: FSMSnapshot,
-                              state: str | None, data: Mapping[str, Any]) -> FSMSnapshot:
+    async def commit_snapshot(
+        self, key: StorageKey, snapshot: FSMSnapshot, state: str | None, data: Mapping[str, Any]
+    ) -> FSMSnapshot:
         expected = FSMSnapshot(state, data, snapshot.revision + 1)
         result = await _settled(self.store.compare_and_set(key, snapshot.revision, state, expected.data))
         if result != expected:
@@ -164,12 +173,18 @@ class SnapshotFSMStorage(BaseStorage):
 @dataclass(frozen=True, slots=True)
 class DialogLifetime:
     """Absolute draft deadline; changes/resume do not extend it, pending survives."""
+
     seconds: int = 3600
     clock: Callable[[], float] = field(default=time.time, repr=False, compare=False)
 
     def __post_init__(self) -> None:
-        if (type(self.seconds) is not int or not 1 <= self.seconds <= 2592000 or not callable(self.clock)
-                or inspect.iscoroutinefunction(self.clock) or inspect.iscoroutinefunction(getattr(self.clock, '__call__', None))):
+        if (
+            type(self.seconds) is not int
+            or not 1 <= self.seconds <= 2592000
+            or not callable(self.clock)
+            or inspect.iscoroutinefunction(self.clock)
+            or inspect.iscoroutinefunction(getattr(self.clock, '__call__', None))
+        ):
             raise ValidationFailure('Use a 1..2592000 second lifetime and a wall clock')
 
     def now(self) -> float:
@@ -183,8 +198,11 @@ class DialogLifetime:
         return {'created_at': created, 'expires_at': created + self.seconds}
 
     def expired(self, metadata: object) -> bool:
-        if (not isinstance(metadata, dict) or set(metadata) != {'created_at', 'expires_at'}
-                or any(type(v) not in (int, float) or not 0 <= v < 2**53 or not math.isfinite(v) for v in metadata.values())
-                or not 0 < metadata['expires_at'] - metadata['created_at'] <= 2592000):
+        if (
+            not isinstance(metadata, dict)
+            or set(metadata) != {'created_at', 'expires_at'}
+            or any(type(v) not in (int, float) or not 0 <= v < 2**53 or not math.isfinite(v) for v in metadata.values())
+            or not 0 < metadata['expires_at'] - metadata['created_at'] <= 2592000
+        ):
             raise RuntimeError('Stored dialog lifetime requires migration or reconciliation')
         return self.now() >= metadata['expires_at']

@@ -1,15 +1,17 @@
 """Observe received Bot API updates without copying their contents into logs."""
+
 from __future__ import annotations
-from .errors import ValidationFailure, InvalidType
 
 import asyncio
-from dataclasses import dataclass
 import logging
+from dataclasses import dataclass
 from typing import Any, Awaitable, Callable, Literal, Mapping, TypeAlias
 
 from aiogram import BaseMiddleware, Router
 from aiogram.dispatcher.event.bases import UNHANDLED
 from aiogram.types import Message, TelegramObject, Update
+
+from .errors import InvalidType, ValidationFailure
 
 log = logging.getLogger(__name__)
 
@@ -36,16 +38,39 @@ def _trace(update: Update, phase: UpdatePhase, identifiers: bool) -> UpdateTrace
     event = getattr(update, kind, None)
     detail = None
     if isinstance(event, Message):
-        detail = next((name for name in ('contact', 'location', 'users_shared', 'chat_shared', 'web_app_data',
-                                        'successful_payment', 'refunded_payment', 'photo', 'video', 'document')
-                       if getattr(event, name, None) is not None), None)
-        if detail is None and event.text is not None: detail = 'command' if event.text.startswith('/') else 'text'
+        detail = next(
+            (
+                name
+                for name in (
+                    'contact',
+                    'location',
+                    'users_shared',
+                    'chat_shared',
+                    'web_app_data',
+                    'successful_payment',
+                    'refunded_payment',
+                    'photo',
+                    'video',
+                    'document',
+                )
+                if getattr(event, name, None) is not None
+            ),
+            None,
+        )
+        if detail is None and event.text is not None:
+            detail = 'command' if event.text.startswith('/') else 'text'
     actor = getattr(event, 'from_user', None) or getattr(event, 'user', None)
     chat = getattr(event, 'chat', None)
-    if chat is None: chat = getattr(getattr(event, 'message', None), 'chat', None)
-    return UpdateTrace(update.update_id, kind, phase, detail,
-                       getattr(actor, 'id', None) if identifiers else None,
-                       getattr(chat, 'id', None) if identifiers else None)
+    if chat is None:
+        chat = getattr(getattr(event, 'message', None), 'chat', None)
+    return UpdateTrace(
+        update.update_id,
+        kind,
+        phase,
+        detail,
+        getattr(actor, 'id', None) if identifiers else None,
+        getattr(chat, 'id', None) if identifiers else None,
+    )
 
 
 class UpdateObserver(BaseMiddleware):
@@ -55,6 +80,7 @@ class UpdateObserver(BaseMiddleware):
     No message text, callback data, contacts, initData or exception strings are
     recorded. IDs are opt-in. This is not durable audit/inbox/idempotence.
     """
+
     def __init__(self, record: Callable[[UpdateTrace], Awaitable[None]], *, include_ids: bool = False) -> None:
         if not callable(record) or type(include_ids) is not bool:
             raise InvalidType('Use an async recorder and a bool include_ids flag')
@@ -66,7 +92,9 @@ class UpdateObserver(BaseMiddleware):
         except Exception as error:
             log.warning('Update recorder failed (%s)', type(error).__name__)
 
-    async def __call__(self, handler: Callable[..., Awaitable[Any]], event: TelegramObject, data: dict[str, Any]) -> Any:
+    async def __call__(
+        self, handler: Callable[..., Awaitable[Any]], event: TelegramObject, data: dict[str, Any]
+    ) -> Any:
         if not isinstance(event, Update):
             raise InvalidType('Register UpdateObserver on dispatcher.update, not a message observer')
         await self.emit(_trace(event, 'received', self.include_ids))
@@ -92,7 +120,12 @@ def event_router(handlers: Mapping[str, Callable[..., Awaitable[Any]]]) -> Route
     if not isinstance(handlers, Mapping) or not handlers:
         raise ValidationFailure('Provide at least one native update handler')
     for kind, handler in handlers.items():
-        if kind not in Update.model_fields or kind == 'update_id' or kind not in router.observers or not callable(handler):
+        if (
+            kind not in Update.model_fields
+            or kind == 'update_id'
+            or kind not in router.observers
+            or not callable(handler)
+        ):
             raise ValidationFailure('Use a supported Update kind and a callable handler')
         router.observers[kind].register(handler)
     return router

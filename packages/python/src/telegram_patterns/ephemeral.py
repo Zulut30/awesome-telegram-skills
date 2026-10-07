@@ -6,6 +6,7 @@ button press or the ephemeral_message_id of an incoming ephemeral message (an ep
 administrator bot may write to any non-bot member at any time. Delivery is never guaranteed, messages may
 disappear, and an ephemeral_message_id can be reused after its message is deleted or expires.
 """
+
 from __future__ import annotations
 
 from dataclasses import dataclass
@@ -19,12 +20,14 @@ _GROUPS = ('group', 'supergroup')
 
 class EphemeralNotAllowed(ValidationFailure):
     """The message cannot be ephemeral here; the reason is safe to log, the host picks another channel."""
+
     code: ErrorCode = 'validation-failed'
 
 
 @dataclass(frozen=True, slots=True)
 class EphemeralTrigger:
     """The user's action an ephemeral answer refers to, with the host clock time it was received."""
+
     kind: Literal['callback', 'ephemeral_message']
     received_at: float
     callback_query_id: str | None = None
@@ -35,10 +38,18 @@ class EphemeralTrigger:
         if isinstance(self.received_at, bool) or not isinstance(self.received_at, (int, float)) or self.received_at < 0:
             raise ValidationFailure('received_at must be a nonnegative clock reading')
         if self.kind == 'callback':
-            if not isinstance(self.callback_query_id, str) or not self.callback_query_id or self.ephemeral_message_id is not None:
+            if (
+                not isinstance(self.callback_query_id, str)
+                or not self.callback_query_id
+                or self.ephemeral_message_id is not None
+            ):
                 raise ValidationFailure('A callback trigger has a callback_query_id only')
         elif self.kind == 'ephemeral_message':
-            if type(self.ephemeral_message_id) is not int or self.ephemeral_message_id <= 0 or self.callback_query_id is not None:
+            if (
+                type(self.ephemeral_message_id) is not int
+                or self.ephemeral_message_id <= 0
+                or self.callback_query_id is not None
+            ):
                 raise ValidationFailure('An ephemeral message trigger has a positive ephemeral_message_id only')
             if self.from_ephemeral_message:
                 raise ValidationFailure('from_ephemeral_message describes callback triggers')
@@ -48,9 +59,13 @@ class EphemeralTrigger:
             raise ValidationFailure('from_ephemeral_message must be a boolean')
 
     @classmethod
-    def callback(cls, callback_query_id: str, received_at: float, *, from_ephemeral_message: bool = False) -> EphemeralTrigger:
+    def callback(
+        cls, callback_query_id: str, received_at: float, *, from_ephemeral_message: bool = False
+    ) -> EphemeralTrigger:
         """A button press; from_ephemeral_message is True when the button sits on an ephemeral message."""
-        return cls('callback', received_at, callback_query_id=callback_query_id, from_ephemeral_message=from_ephemeral_message)
+        return cls(
+            'callback', received_at, callback_query_id=callback_query_id, from_ephemeral_message=from_ephemeral_message
+        )
 
     @classmethod
     def reply_to(cls, ephemeral_message_id: int, received_at: float) -> EphemeralTrigger:
@@ -58,8 +73,16 @@ class EphemeralTrigger:
         return cls('ephemeral_message', received_at, ephemeral_message_id=ephemeral_message_id)
 
 
-def ephemeral_parameters(*, chat_type: str, receiver_user_id: int, receiver_is_bot: bool = False, bot_is_admin: bool = False,
-                         trigger: EphemeralTrigger | None = None, now: float, replace_original: bool = False) -> dict[str, Any]:
+def ephemeral_parameters(
+    *,
+    chat_type: str,
+    receiver_user_id: int,
+    receiver_is_bot: bool = False,
+    bot_is_admin: bool = False,
+    trigger: EphemeralTrigger | None = None,
+    now: float,
+    replace_original: bool = False,
+) -> dict[str, Any]:
     """Keyword arguments to add to sendMessage and other send* methods, or EphemeralNotAllowed with the reason.
 
     The result holds ephemeral_message_parameters and, for an answer to an ephemeral message, reply_parameters.
@@ -71,7 +94,11 @@ def ephemeral_parameters(*, chat_type: str, receiver_user_id: int, receiver_is_b
         raise EphemeralNotAllowed('Ephemeral messages exist only in groups and supergroups')
     if type(receiver_user_id) is not int or receiver_user_id <= 0:
         raise ValidationFailure('receiver_user_id must be a positive user id')
-    for name, flag in (('receiver_is_bot', receiver_is_bot), ('bot_is_admin', bot_is_admin), ('replace_original', replace_original)):
+    for name, flag in (
+        ('receiver_is_bot', receiver_is_bot),
+        ('bot_is_admin', bot_is_admin),
+        ('replace_original', replace_original),
+    ):
         if type(flag) is not bool:
             raise ValidationFailure(f'{name} must be a boolean')
     if isinstance(now, bool) or not isinstance(now, (int, float)) or now < 0:
@@ -103,6 +130,7 @@ def ephemeral_parameters(*, chat_type: str, receiver_user_id: int, receiver_is_b
 @dataclass(frozen=True, slots=True)
 class EphemeralMessageRef:
     """Address of a sent ephemeral message for editEphemeralMessage* and deleteEphemeralMessage."""
+
     chat_id: int
     receiver_user_id: int
     ephemeral_message_id: int
@@ -117,4 +145,8 @@ class EphemeralMessageRef:
 
     def target(self) -> dict[str, int]:
         """chat_id, receiver_user_id and ephemeral_message_id for an edit or delete request."""
-        return {'chat_id': self.chat_id, 'receiver_user_id': self.receiver_user_id, 'ephemeral_message_id': self.ephemeral_message_id}
+        return {
+            'chat_id': self.chat_id,
+            'receiver_user_id': self.receiver_user_id,
+            'ephemeral_message_id': self.ephemeral_message_id,
+        }

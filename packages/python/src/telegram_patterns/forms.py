@@ -1,13 +1,11 @@
 """Small private-chat text forms using the host's aiogram FSM and isolation."""
-from __future__ import annotations
-from .fsm_storage import DialogLifetime
-from ._dialog_storage import _DialogData, _read_form, _save_form, _clear_form, _lifetime_data
-from .errors import ErrorCode, ValidationFailure, InvalidType, InvalidCompletion
 
-from dataclasses import dataclass, field
+from __future__ import annotations
+
+import inspect
 import re
 import secrets
-import inspect
+from dataclasses import dataclass, field
 from types import MappingProxyType
 from typing import Awaitable, Callable, Mapping, Sequence
 
@@ -16,6 +14,10 @@ from aiogram.filters import Command, StateFilter
 from aiogram.fsm.context import FSMContext
 from aiogram.fsm.storage.memory import DisabledEventIsolation
 from aiogram.types import CallbackQuery, InlineKeyboardButton, InlineKeyboardMarkup, Message
+
+from ._dialog_storage import _clear_form, _DialogData, _lifetime_data, _read_form, _save_form
+from .errors import ErrorCode, InvalidCompletion, InvalidType, ValidationFailure
+from .fsm_storage import DialogLifetime
 
 
 def _plain(text: str, limit: int) -> bool:
@@ -27,6 +29,7 @@ def _plain(text: str, limit: int) -> bool:
 
 class InvalidField(ValidationFailure):
     """A bounded, user-facing validation message; never include secrets here."""
+
     code: ErrorCode = 'invalid-field'
 
     def __init__(self, message: str = "Проверьте значение и попробуйте ещё раз.") -> None:
@@ -64,8 +67,11 @@ class TextField:
             raise ValidationFailure("Use a label up to 64 and a prompt up to 512 UTF-16 units")
         if type(self.max_length) is not int or not 1 <= self.max_length <= 256:
             raise ValidationFailure("Field max_length must be 1..256 UTF-16 units")
-        if self.validate is not None and (not callable(self.validate) or inspect.iscoroutinefunction(self.validate)
-                                         or inspect.iscoroutinefunction(getattr(self.validate, '__call__', None))):
+        if self.validate is not None and (
+            not callable(self.validate)
+            or inspect.iscoroutinefunction(self.validate)
+            or inspect.iscoroutinefunction(getattr(self.validate, '__call__', None))
+        ):
             raise InvalidType("Field validator must be a synchronous callable")
 
     def read(self, text: str) -> str:
@@ -82,6 +88,7 @@ class TextField:
 @dataclass(frozen=True, slots=True)
 class FormSubmission:
     """Server-derived identity and stable retry key; service still owns ACL/effect."""
+
     bot_id: int
     actor_id: int
     chat_id: int
@@ -95,8 +102,11 @@ class FormSubmission:
 def text_form_router(
     fields: Sequence[TextField],
     on_submit: Callable[[FormSubmission], Awaitable[str]],
-    *, name: str = "application", command: str = "apply",
-    schema_version: int = 1, lifetime: DialogLifetime | None = None,
+    *,
+    name: str = "application",
+    command: str = "apply",
+    schema_version: int = 1,
+    lifetime: DialogLifetime | None = None,
 ) -> Router:
     """Private-chat form with review, /back, /cancel and explicit submit button.
 
@@ -131,7 +141,13 @@ def text_form_router(
     prefix = f"form:{name}:"
     frozen_text = "Отправка уже началась. Нажмите «Отправить» в последней форме, чтобы проверить результат."
     stale_text = f"Кнопка устарела. Откройте актуальную форму командой /{command}."
-    private = (F.chat.type == "private") & (F.business_connection_id == None) & (F.from_user.is_bot == False) & (F.message_thread_id == None) & (F.is_topic_message != True)
+    private = (
+        (F.chat.type == "private")
+        & F.business_connection_id.is_(None)
+        & F.from_user.is_bot.is_(False)
+        & F.message_thread_id.is_(None)
+        & F.is_topic_message.is_not(True)
+    )
 
     def require_fsm(dispatcher: Dispatcher, state: FSMContext | None, message: Message, actor: int) -> FSMContext:
         if state is None or isinstance(dispatcher.fsm.events_isolation, DisabledEventIsolation):
@@ -144,20 +160,25 @@ def text_form_router(
         stored = await _read_form(state, namespace, data_key, lifetime)
         if stored is None:
             return None
-        if (not isinstance(stored, dict) or stored.get("schema") != [step.name for step in steps]
-                or type(stored.get("form_version", 1)) is not int or stored.get("form_version", 1) != schema_version
-                or (lifetime is not None and "form_version" not in stored)
-                or (lifetime is None and "lifetime" in stored)
-                or stored.get("owner") != [_bot_id(message), message.chat.id, actor]
-                or type(stored.get("index")) is not int or not 0 <= stored["index"] <= len(steps)
-                or not isinstance(stored.get("values"), dict)
-                or set(stored["values"]) != {step.name for step in steps[:stored["index"]]}
-                or not isinstance(stored.get("operation_id"), str)
-                or not re.fullmatch(r"[a-f0-9]{16}", stored["operation_id"])
-                or type(stored.get("submission_started")) is not bool
-                or type(stored.get("last_message_id")) is not int
-                or (stored.get("review_message_id") is not None and type(stored["review_message_id"]) is not int)
-                or any(not _plain(stored["values"][step.name], step.max_length) for step in steps[:stored["index"]])):
+        if (
+            not isinstance(stored, dict)
+            or stored.get("schema") != [step.name for step in steps]
+            or type(stored.get("form_version", 1)) is not int
+            or stored.get("form_version", 1) != schema_version
+            or (lifetime is not None and "form_version" not in stored)
+            or (lifetime is None and "lifetime" in stored)
+            or stored.get("owner") != [_bot_id(message), message.chat.id, actor]
+            or type(stored.get("index")) is not int
+            or not 0 <= stored["index"] <= len(steps)
+            or not isinstance(stored.get("values"), dict)
+            or set(stored["values"]) != {step.name for step in steps[: stored["index"]]}
+            or not isinstance(stored.get("operation_id"), str)
+            or not re.fullmatch(r"[a-f0-9]{16}", stored["operation_id"])
+            or type(stored.get("submission_started")) is not bool
+            or type(stored.get("last_message_id")) is not int
+            or (stored.get("review_message_id") is not None and type(stored["review_message_id"]) is not int)
+            or any(not _plain(stored["values"][step.name], step.max_length) for step in steps[: stored["index"]])
+        ):
             # Never silently reset potentially pending identity after a schema
             # change or storage corruption. The host must reconcile/migrate it.
             raise RuntimeError("Stored form requires reconciliation or a schema migration")
@@ -174,16 +195,24 @@ def text_form_router(
         await _clear_form(state, data_key, data)
 
     async def prompt(message: Message, index: int) -> None:
-        await message.answer(f"Шаг {index + 1}/{len(steps)}. {steps[index].prompt}\n/back — назад · /cancel — отмена", parse_mode=None)
+        await message.answer(
+            f"Шаг {index + 1}/{len(steps)}. {steps[index].prompt}\n/back — назад · /cancel — отмена", parse_mode=None
+        )
 
     async def review(message: Message, state: FSMContext, data: _DialogData) -> None:
         text = "Проверьте ответы:\n" + "\n".join(f"{step.label}: {data['values'][step.name]}" for step in steps)
-        keyboard = InlineKeyboardMarkup(inline_keyboard=[[
-            InlineKeyboardButton(text="Отправить", callback_data=f"{prefix}{data['operation_id']}:submit"),
-        ]])
+        keyboard = InlineKeyboardMarkup(
+            inline_keyboard=[
+                [
+                    InlineKeyboardButton(text="Отправить", callback_data=f"{prefix}{data['operation_id']}:submit"),
+                ]
+            ]
+        )
         data["review_message_id"] = None
         await save(state, data)  # Reject old review before a potentially unknown send.
-        reply = await message.answer(text + "\n/back — исправить · /cancel — отмена", parse_mode=None, reply_markup=keyboard)
+        reply = await message.answer(
+            text + "\n/back — исправить · /cancel — отмена", parse_mode=None, reply_markup=keyboard
+        )
         data["review_message_id"] = reply.message_id
         await save(state, data)
 
@@ -204,12 +233,21 @@ def text_form_router(
             else:
                 await prompt(message, previous["index"])
             return
-        data = _DialogData({"owner": [_bot_id(message), message.chat.id, _actor_id(message)],
+        data = _DialogData(
+            {
+                "owner": [_bot_id(message), message.chat.id, _actor_id(message)],
                 "schema": [step.name for step in steps],
-                "values": {}, "index": 0, "operation_id": secrets.token_hex(8),
-                "submission_started": False, "review_message_id": None,
-                "last_message_id": message.message_id, "form_version": schema_version,
-                **_lifetime_data(lifetime)}, previous.snapshot if previous is not None else None)
+                "values": {},
+                "index": 0,
+                "operation_id": secrets.token_hex(8),
+                "submission_started": False,
+                "review_message_id": None,
+                "last_message_id": message.message_id,
+                "form_version": schema_version,
+                **_lifetime_data(lifetime),
+            },
+            previous.snapshot if previous is not None else None,
+        )
         await save(state, data)
         await prompt(message, 0)
 
@@ -238,7 +276,7 @@ def text_form_router(
         if message.message_id <= data["last_message_id"]:
             return
         data["index"] = max(0, data["index"] - 1)
-        data["values"] = {step.name: data["values"][step.name] for step in steps[:data["index"]]}
+        data["values"] = {step.name: data["values"][step.name] for step in steps[: data["index"]]}
         data.update(operation_id=secrets.token_hex(8), review_message_id=None, last_message_id=message.message_id)
         await save(state, data)
         await prompt(message, data["index"])
@@ -278,26 +316,39 @@ def text_form_router(
         # All matching callbacks, including inaccessible/foreign/stale ones, ACK.
         await query.answer()
         message = query.message
-        if (not isinstance(message, Message) or message.chat.type != "private"
-                or message.business_connection_id is not None or message.message_thread_id is not None
-                or message.is_topic_message is True or query.from_user.is_bot):
+        if (
+            not isinstance(message, Message)
+            or message.chat.type != "private"
+            or message.business_connection_id is not None
+            or message.message_thread_id is not None
+            or message.is_topic_message is True
+            or query.from_user.is_bot
+        ):
             return
         state = require_fsm(dispatcher, state, message, query.from_user.id)
         data = await load(state, message, query.from_user.id)
-        if (data is None or data["index"] != len(steps) or message.message_id != data["review_message_id"]
-                or query.data != f"{prefix}{data['operation_id']}:submit"):
+        if (
+            data is None
+            or data["index"] != len(steps)
+            or message.message_id != data["review_message_id"]
+            or query.data != f"{prefix}{data['operation_id']}:submit"
+        ):
             await message.answer(stale_text, parse_mode=None)
             return
         data["submission_started"] = True
         await save(state, data)  # Keep stable identity even after unknown outcome.
-        submission = FormSubmission(_bot_id(message), query.from_user.id, message.chat.id,
-                                    data["operation_id"], data["values"])
+        submission = FormSubmission(
+            _bot_id(message), query.from_user.id, message.chat.id, data["operation_id"], data["values"]
+        )
         try:
             text = await on_submit(submission)
             if not _plain(text, 4096):
                 raise InvalidCompletion("on_submit must return nonempty plain text up to 4096 UTF-16 units")
         except Exception:
-            await message.answer("Результат отправки пока не подтверждён. Нажмите «Отправить» ещё раз для проверки той же заявки.", parse_mode=None)
+            await message.answer(
+                "Результат отправки пока не подтверждён. Нажмите «Отправить» ещё раз для проверки той же заявки.",
+                parse_mode=None,
+            )
             raise  # Host error handling/observability, never raw errors in chat.
         await clear(state, data)
         await message.answer(text, parse_mode=None)

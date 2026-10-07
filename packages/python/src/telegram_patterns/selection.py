@@ -1,12 +1,13 @@
 """Server-owned selection drafts; synchronous atomic state, no SDK or effects."""
+
 from __future__ import annotations
 
-from dataclasses import dataclass, field, replace
 import math
 import re
 import secrets
 import threading
 import time
+from dataclasses import dataclass, field, replace
 from types import MappingProxyType
 from typing import Any, Literal, Mapping, Sequence
 
@@ -25,9 +26,12 @@ def _key(value: str) -> None:
 
 def _label(value: str, limit: int = 40) -> None:
     try:
-        valid = (isinstance(value, str) and bool(value.strip()) and
-                 not any(ord(c) < 32 or ord(c) == 127 for c in value) and
-                 len(value.encode('utf-16-le')) // 2 <= limit)
+        valid = (
+            isinstance(value, str)
+            and bool(value.strip())
+            and not any(ord(c) < 32 or ord(c) == 127 for c in value)
+            and len(value.encode('utf-16-le')) // 2 <= limit
+        )
     except UnicodeError:
         valid = False
     if not valid:
@@ -69,6 +73,7 @@ class SelectionOption:
 @dataclass(frozen=True, slots=True)
 class SelectionSpec:
     """Snapshot of the current server rules; replace it when resource_version changes."""
+
     options: Sequence[SelectionOption]
     toggles: Mapping[str, str] = field(default_factory=dict)
     filters: Mapping[str, str] = field(default_factory=lambda: {'all': 'Все'})
@@ -90,13 +95,19 @@ class SelectionSpec:
         toggles, filters = _labels(self.toggles), _labels(self.filters)
         if 'all' not in filters or any(k not in filters for o in options for k in o.filters):
             raise ValidationFailure('Declare all option filters, including the all filter')
-        if (type(self.quantity_min) is not int or type(self.quantity_max) is not int or
-                not 0 <= self.quantity_min <= self.quantity_max <= 1_000_000):
+        if (
+            type(self.quantity_min) is not int
+            or type(self.quantity_max) is not int
+            or not 0 <= self.quantity_min <= self.quantity_max <= 1_000_000
+        ):
             raise ValidationFailure('Use integer quantity bounds in 0..1000000')
         maximum = len(options) if self.max_selected is None else self.max_selected
-        if (type(maximum) is not int or type(self.min_selected) is not int or
-                not 0 <= self.min_selected <= maximum <= len(options) or
-                self.min_selected > sum(o.enabled for o in options)):
+        if (
+            type(maximum) is not int
+            or type(self.min_selected) is not int
+            or not 0 <= self.min_selected <= maximum <= len(options)
+            or self.min_selected > sum(o.enabled for o in options)
+        ):
             raise ValidationFailure('Selection bounds must fit the available server options')
         _label(self.confirm_text, 48)
         _label(self.resource_version, 64)
@@ -113,6 +124,7 @@ class SelectionSpec:
 @dataclass(frozen=True, slots=True)
 class SelectionContext:
     """Host-derived Bot API identity; callback strings are never an identity source."""
+
     bot_id: int
     owner_id: int
     chat_id: int
@@ -124,13 +136,16 @@ class SelectionContext:
             raise ValidationFailure('Bot, owner and message IDs must be positive integers')
         if type(self.chat_id) is not int or self.chat_id == 0:
             raise ValidationFailure('Chat ID must be a nonzero integer')
-        if self.message_thread_id is not None and (type(self.message_thread_id) is not int or self.message_thread_id <= 0):
+        if self.message_thread_id is not None and (
+            type(self.message_thread_id) is not int or self.message_thread_id <= 0
+        ):
             raise ValidationFailure('Thread ID must be a positive integer or None')
 
 
 @dataclass(frozen=True, slots=True)
 class SelectionState:
     """Immutable view, not an externally supplied authoritative draft or grant."""
+
     session_id: str
     prefix: str
     context: SelectionContext
@@ -148,9 +163,14 @@ class SelectionState:
 
     def callback(self, action: str) -> str:
         """Bounded wire code; constructing it does not authorize an action."""
-        if (not isinstance(action, str) or not _ACTION.fullmatch(action) or
-                not _PREFIX.fullmatch(self.prefix) or not re.fullmatch(r'[0-9a-f]{16}', self.session_id) or
-                type(self.revision) is not int or not 0 <= self.revision <= _MAX_REVISION):
+        if (
+            not isinstance(action, str)
+            or not _ACTION.fullmatch(action)
+            or not _PREFIX.fullmatch(self.prefix)
+            or not re.fullmatch(r'[0-9a-f]{16}', self.session_id)
+            or type(self.revision) is not int
+            or not 0 <= self.revision <= _MAX_REVISION
+        ):
             raise ValidationFailure('Invalid selection callback fields')
         data = f'{self.prefix}{self.session_id}:{self.revision}:{action}'
         if len(data.encode('utf-8')) > 64:
@@ -161,10 +181,23 @@ class SelectionState:
         labels = {o.key: o.label for o in self.spec.options}
         selected = ', '.join(labels[k] for k in self.selected) or 'ничего'
         flags = '\n'.join(f'{self.spec.toggles[k]}: {"да" if v else "нет"}' for k, v in self.toggles)
-        phase = {'editing': 'Выберите варианты.', 'confirming': f'Проверьте выбор: {self.spec.confirm_text}.',
-                 'confirmed': 'Выбор подтвержден.', 'cancelled': 'Выбор отменен.'}[self.phase]
-        return '\n'.join(part for part in (phase, f'Выбрано: {selected}', f'Количество: {self.quantity}',
-                         f'Фильтр: {self.spec.filters[self.filter_key]}', flags) if part)
+        phase = {
+            'editing': 'Выберите варианты.',
+            'confirming': f'Проверьте выбор: {self.spec.confirm_text}.',
+            'confirmed': 'Выбор подтвержден.',
+            'cancelled': 'Выбор отменен.',
+        }[self.phase]
+        return '\n'.join(
+            part
+            for part in (
+                phase,
+                f'Выбрано: {selected}',
+                f'Количество: {self.quantity}',
+                f'Фильтр: {self.spec.filters[self.filter_key]}',
+                flags,
+            )
+            if part
+        )
 
 
 @dataclass(frozen=True, slots=True)
@@ -181,10 +214,19 @@ class SelectionMenu:
     consumes a local intent once and returns operation_id/resource_version for
     the host's own current-ACL, idempotent transaction. It does not execute it.
     """
-    def __init__(self, spec: SelectionSpec, context: SelectionContext, *, prefix: str = 'sel:',
-                 selected: Sequence[str] = (), toggles: Mapping[str, bool] | None = None,
-                 quantity: int | None = None, ttl_seconds: float = 1800,
-                 confirmation_ttl_seconds: float = 60) -> None:
+
+    def __init__(
+        self,
+        spec: SelectionSpec,
+        context: SelectionContext,
+        *,
+        prefix: str = 'sel:',
+        selected: Sequence[str] = (),
+        toggles: Mapping[str, bool] | None = None,
+        quantity: int | None = None,
+        ttl_seconds: float = 1800,
+        confirmation_ttl_seconds: float = 60,
+    ) -> None:
         if not isinstance(spec, SelectionSpec) or not isinstance(context, SelectionContext):
             raise InvalidType('Use SelectionSpec and SelectionContext')
         if not isinstance(prefix, str) or not _PREFIX.fullmatch(prefix):
@@ -196,19 +238,34 @@ class SelectionMenu:
             raise InvalidType('Use a sequence of selected option keys')
         keys = tuple(selected)
         allowed = {o.key for o in spec.options if o.enabled}
-        if any(not isinstance(k, str) or k not in allowed for k in keys) or len(set(keys)) != len(keys) or len(keys) > spec.selection_limit:
+        if (
+            any(not isinstance(k, str) or k not in allowed for k in keys)
+            or len(set(keys)) != len(keys)
+            or len(keys) > spec.selection_limit
+        ):
             raise ValidationFailure('Initial selected keys must be distinct available options within the limit')
         values = {} if toggles is None else toggles
-        if not isinstance(values, Mapping) or any(k not in spec.toggles or type(v) is not bool for k, v in values.items()):
+        if not isinstance(values, Mapping) or any(
+            k not in spec.toggles or type(v) is not bool for k, v in values.items()
+        ):
             raise ValidationFailure('Use declared toggle keys and bool values')
         amount = spec.quantity_min if quantity is None else quantity
         if type(amount) is not int or not spec.quantity_min <= amount <= spec.quantity_max:
             raise ValidationFailure('Initial quantity is outside server bounds')
         self._lock = threading.RLock()
         self._ttl, self._confirm_ttl = float(ttl_seconds), float(confirmation_ttl_seconds)
-        self._state = SelectionState(secrets.token_hex(8), prefix, context, spec, 0,
-            tuple(o.key for o in spec.options if o.key in keys), tuple((k, values.get(k, False)) for k in spec.toggles),
-            amount, 'all', time.monotonic() + self._ttl)
+        self._state = SelectionState(
+            secrets.token_hex(8),
+            prefix,
+            context,
+            spec,
+            0,
+            tuple(o.key for o in spec.options if o.key in keys),
+            tuple((k, values.get(k, False)) for k in spec.toggles),
+            amount,
+            'all',
+            time.monotonic() + self._ttl,
+        )
         self._pattern = re.compile(re.escape(prefix) + r'([0-9a-f]{16}):(0|[1-9][0-9]{0,9}):(.+)')
 
     @property
@@ -225,9 +282,14 @@ class SelectionMenu:
         if context != state.context:
             return SelectionResult('stale', 'Кнопка относится к другому сообщению или контексту.')
         match = self._pattern.fullmatch(data) if isinstance(data, str) and len(data) <= 64 else None
-        if (match is None or not _ACTION.fullmatch(match[3]) or match[1] != state.session_id or
-                int(match[2]) != state.revision or time.monotonic() >= state.expires_at or
-                state.phase in {'confirmed', 'cancelled'}):
+        if (
+            match is None
+            or not _ACTION.fullmatch(match[3])
+            or match[1] != state.session_id
+            or int(match[2]) != state.revision
+            or time.monotonic() >= state.expires_at
+            or state.phase in {'confirmed', 'cancelled'}
+        ):
             return SelectionResult('stale', 'Кнопка устарела. Откройте актуальный выбор.', state)
         return None
 
@@ -239,8 +301,9 @@ class SelectionMenu:
     def _commit(self, **changes) -> SelectionState:
         if self._state.revision >= _MAX_REVISION:
             raise ConflictFailure('Selection revision limit reached; create a new authenticated menu')
-        self._state = replace(self._state, revision=self._state.revision + 1,
-                              expires_at=time.monotonic() + self._ttl, **changes)
+        self._state = replace(
+            self._state, revision=self._state.revision + 1, expires_at=time.monotonic() + self._ttl, **changes
+        )
         return self._state
 
     def replace_spec(self, spec: SelectionSpec) -> SelectionState:
@@ -259,13 +322,20 @@ class SelectionMenu:
             if state.phase in {'confirmed', 'cancelled'}:
                 raise ConflictFailure('Closed selection retains its original intent; create a new menu')
             values = dict(state.toggles)
-            chosen = tuple(o.key for o in spec.options if o.enabled and o.key in state.selected)[:spec.selection_limit]
+            chosen = tuple(o.key for o in spec.options if o.enabled and o.key in state.selected)[: spec.selection_limit]
             # Host configuration refresh invalidates wire revisions without renewing an expired draft.
             expires_at = state.expires_at
-            self._commit(spec=spec, selected=chosen, toggles=tuple((k, values.get(k, False)) for k in spec.toggles),
+            self._commit(
+                spec=spec,
+                selected=chosen,
+                toggles=tuple((k, values.get(k, False)) for k in spec.toggles),
                 quantity=min(max(state.quantity, spec.quantity_min), spec.quantity_max),
                 filter_key=state.filter_key if state.filter_key in spec.filters else 'all',
-                phase='editing', confirmation_id=None, confirmation_expires_at=None, operation_id=None)
+                phase='editing',
+                confirmation_id=None,
+                confirmation_expires_at=None,
+                operation_id=None,
+            )
             self._state = replace(self._state, expires_at=expires_at)
             return self._state
 
@@ -276,14 +346,22 @@ class SelectionMenu:
                 return refused
             state, spec = self._state, self._state.spec
             action = data.split(':', 3)[3]
-            if state.phase == 'confirming' and action not in {'back', 'cancel', 'refresh'} and not action.startswith('y:'):
+            if (
+                state.phase == 'confirming'
+                and action not in {'back', 'cancel', 'refresh'}
+                and not action.startswith('y:')
+            ):
                 return SelectionResult('stale', 'Сначала вернитесь к редактированию выбора.', state)
             changes: dict = {'confirmation_id': None, 'confirmation_expires_at': None, 'phase': 'editing'}
             status: Literal['accepted', 'confirming', 'confirmed', 'cancelled'] = 'accepted'
             if action.startswith('s:'):
                 key = action[2:]
                 option = next((o for o in spec.options if o.key == key), None)
-                if option is None or not option.enabled or (state.filter_key != 'all' and state.filter_key not in option.filters):
+                if (
+                    option is None
+                    or not option.enabled
+                    or (state.filter_key != 'all' and state.filter_key not in option.filters)
+                ):
                     return SelectionResult('invalid', 'Этот вариант сейчас недоступен.', state)
                 chosen = set(state.selected)
                 if key in chosen:
@@ -314,11 +392,18 @@ class SelectionMenu:
                 if len(state.selected) < spec.min_selected:
                     return SelectionResult('invalid', 'Выберите необходимое число вариантов.', state)
                 status = 'confirming'
-                changes.update(phase='confirming', confirmation_id=secrets.token_hex(8),
-                               confirmation_expires_at=min(state.expires_at, time.monotonic() + self._confirm_ttl))
+                changes.update(
+                    phase='confirming',
+                    confirmation_id=secrets.token_hex(8),
+                    confirmation_expires_at=min(state.expires_at, time.monotonic() + self._confirm_ttl),
+                )
             elif action.startswith('y:'):
-                if (state.phase != 'confirming' or action[2:] != state.confirmation_id or
-                        state.confirmation_expires_at is None or time.monotonic() >= state.confirmation_expires_at):
+                if (
+                    state.phase != 'confirming'
+                    or action[2:] != state.confirmation_id
+                    or state.confirmation_expires_at is None
+                    or time.monotonic() >= state.confirmation_expires_at
+                ):
                     return SelectionResult('stale', 'Подтверждение истекло или относится к другому выбору.', state)
                 status = 'confirmed'
                 changes.update(phase='confirmed', operation_id=f'selection-{state.session_id}-{state.confirmation_id}')
@@ -328,8 +413,12 @@ class SelectionMenu:
             elif action == 'back' and state.phase != 'confirming':
                 return SelectionResult('stale', 'Подтверждение еще не открыто.', state)
             current = self._commit(**changes)
-            text = {'accepted': 'Выбор обновлен.', 'confirming': 'Проверьте выбор перед подтверждением.',
-                    'confirmed': 'Выбор подтвержден.', 'cancelled': 'Выбор отменен.'}[status]
+            text = {
+                'accepted': 'Выбор обновлен.',
+                'confirming': 'Проверьте выбор перед подтверждением.',
+                'confirmed': 'Выбор подтвержден.',
+                'cancelled': 'Выбор отменен.',
+            }[status]
             return SelectionResult(status, text, current)
 
 
@@ -339,6 +428,7 @@ def selection_markup(state: SelectionState, *, columns: int = 2, styles: bool = 
     Without styles it matches telegram_patterns.aiogram.selection_keyboard with default capabilities.
     """
     from .markup import inline_button, inline_markup, layout_rows
+
     if not isinstance(state, SelectionState):
         raise InvalidType('Use the server SelectionState')
     if type(styles) is not bool:
@@ -348,20 +438,35 @@ def selection_markup(state: SelectionState, *, columns: int = 2, styles: bool = 
 
     def button(text: str, action: str, style: Literal['primary', 'success', 'danger'] | None = None) -> dict[str, Any]:
         return inline_button(text, callback_data=state.callback(action), style=style if styles else None)
+
     rows: list[list[dict[str, Any]]] = []
     if state.phase == 'confirming':
         if state.confirmation_id is None:
             raise ValidationFailure('Confirming view needs its server confirmation ID')
-        rows = [[button('Да: ' + state.spec.confirm_text, 'y:' + state.confirmation_id, 'danger')],
-                [button('Изменить выбор', 'back'), button('Отмена', 'cancel')]]
+        rows = [
+            [button('Да: ' + state.spec.confirm_text, 'y:' + state.confirmation_id, 'danger')],
+            [button('Изменить выбор', 'back'), button('Отмена', 'cancel')],
+        ]
     else:
-        choices = [button(('✓ ' if o.key in state.selected else '□ ') + o.label, 's:' + o.key, 'success' if o.key in state.selected else None)
-                   for o in state.spec.options if o.enabled and (state.filter_key == 'all' or state.filter_key in o.filters)]
+        choices = [
+            button(
+                ('✓ ' if o.key in state.selected else '□ ') + o.label,
+                's:' + o.key,
+                'success' if o.key in state.selected else None,
+            )
+            for o in state.spec.options
+            if o.enabled and (state.filter_key == 'all' or state.filter_key in o.filters)
+        ]
         if choices:
             rows.extend(layout_rows(choices, (columns,)))
-        rows.extend([[button(('✓ ' if value else '□ ') + state.spec.toggles[key], 't:' + key)] for key, value in state.toggles])
+        rows.extend(
+            [[button(('✓ ' if value else '□ ') + state.spec.toggles[key], 't:' + key)] for key, value in state.toggles]
+        )
         rows.append([button('−1', 'q:dec'), button(str(state.quantity) + ' ↻', 'refresh'), button('+1', 'q:inc')])
-        filters = [button(('✓ ' if key == state.filter_key else '') + label, 'f:' + key) for key, label in state.spec.filters.items()]
+        filters = [
+            button(('✓ ' if key == state.filter_key else '') + label, 'f:' + key)
+            for key, label in state.spec.filters.items()
+        ]
         rows.extend(layout_rows(filters, (2,)))
         rows.append([button(state.spec.confirm_text, 'ask', 'danger'), button('Отмена', 'cancel')])
     return inline_markup(rows)

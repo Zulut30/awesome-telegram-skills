@@ -1,12 +1,13 @@
 """Bounded message fields for the optional aiogram dialog adapter; no HTTP."""
+
 from __future__ import annotations
 
-from dataclasses import asdict, dataclass
-from datetime import date
-from decimal import Decimal, InvalidOperation
 import json
 import math
 import re
+from dataclasses import asdict, dataclass
+from datetime import date
+from decimal import Decimal, InvalidOperation
 from typing import ClassVar, Mapping, TypeAlias
 
 from aiogram.types import Message
@@ -75,6 +76,7 @@ def _decimal(value: object) -> Decimal:
 @dataclass(frozen=True, slots=True)
 class NumberField(_Field):
     """Exact decimal string (comma/dot); no float, exponent or silent rounding."""
+
     minimum: str | int | Decimal | None = None
     maximum: str | int | Decimal | None = None
     decimal_places: int = 2
@@ -101,8 +103,9 @@ class NumberField(_Field):
         if '.' in text and len(text.split('.')[1]) > self.decimal_places:
             raise InvalidField(f'Допустимо до {self.decimal_places} знаков после разделителя.')
         number = Decimal(text)
-        if ((self.minimum is not None and number < _decimal(self.minimum)) or
-                (self.maximum is not None and number > _decimal(self.maximum))):
+        if (self.minimum is not None and number < _decimal(self.minimum)) or (
+            self.maximum is not None and number > _decimal(self.maximum)
+        ):
             raise InvalidField('Число вне разрешенного диапазона.')
         canonical = format(number, 'f')
         if '.' in canonical:
@@ -113,6 +116,7 @@ class NumberField(_Field):
 @dataclass(frozen=True, slots=True)
 class EmailField(_Field):
     """ASCII dot-atom mailbox; lowercase domain, preserved local case; no DNS."""
+
     kind: ClassVar[str] = 'email'
 
     def restore(self, value: object) -> str:
@@ -121,9 +125,15 @@ class EmailField(_Field):
             raise InvalidField('Введите email в формате name@example.com.')
         local, domain = text.split('@')
         labels = domain.split('.')
-        if (not 1 <= len(local) <= 64 or local.startswith('.') or local.endswith('.') or '..' in local or
-                not re.fullmatch(r"[A-Za-z0-9!#$%&'*+/=?^_`{|}~.-]+", local) or len(labels) < 2 or
-                any(not re.fullmatch(r'[A-Za-z0-9](?:[A-Za-z0-9-]{0,61}[A-Za-z0-9])?', part) for part in labels)):
+        if (
+            not 1 <= len(local) <= 64
+            or local.startswith('.')
+            or local.endswith('.')
+            or '..' in local
+            or not re.fullmatch(r"[A-Za-z0-9!#$%&'*+/=?^_`{|}~.-]+", local)
+            or len(labels) < 2
+            or any(not re.fullmatch(r'[A-Za-z0-9](?:[A-Za-z0-9-]{0,61}[A-Za-z0-9])?', part) for part in labels)
+        ):
             raise InvalidField('Введите email без пробелов, с корректным именем и доменом.')
         return local + '@' + domain.lower()
 
@@ -131,6 +141,7 @@ class EmailField(_Field):
 @dataclass(frozen=True, slots=True)
 class PhoneField(_Field):
     """Explicit international number, 7..15 digits (component policy), not identity."""
+
     kind: ClassVar[str] = 'phone'
 
     def restore(self, value: object) -> str:
@@ -146,6 +157,7 @@ class PhoneField(_Field):
 @dataclass(frozen=True, slots=True)
 class DateField(_Field):
     """Calendar date YYYY-MM-DD; no implicit locale, time or timezone."""
+
     minimum: str | None = None
     maximum: str | None = None
     kind: ClassVar[str] = 'date'
@@ -170,8 +182,7 @@ class DateField(_Field):
             result = date.fromisoformat(text).isoformat()
         except ValueError:
             raise InvalidField('Введите существующую дату в формате ГГГГ-ММ-ДД.') from None
-        if ((self.minimum is not None and result < self.minimum) or
-                (self.maximum is not None and result > self.maximum)):
+        if (self.minimum is not None and result < self.minimum) or (self.maximum is not None and result > self.maximum):
             raise InvalidField('Дата вне разрешенного диапазона.')
         return result
 
@@ -179,6 +190,7 @@ class DateField(_Field):
 @dataclass(frozen=True, slots=True)
 class FileField(_Field):
     """Opaque document reference and metadata, never downloaded or used as path."""
+
     max_bytes: int = 10 * 1024 * 1024
     mime_types: tuple[str, ...] = ()
     kind: ClassVar[str] = 'file'
@@ -189,7 +201,10 @@ class FileField(_Field):
             raise ValidationFailure('Use a positive bounded metadata byte limit')
         if not isinstance(self.mime_types, (tuple, list)) or len(self.mime_types) > 32:
             raise ValidationFailure('Use at most 32 MIME strings')
-        if any(not isinstance(m, str) or len(m) > 127 or not re.fullmatch(r'[A-Za-z0-9.+-]+/[A-Za-z0-9.+-]+', m) for m in self.mime_types):
+        if any(
+            not isinstance(m, str) or len(m) > 127 or not re.fullmatch(r'[A-Za-z0-9.+-]+/[A-Za-z0-9.+-]+', m)
+            for m in self.mime_types
+        ):
             raise ValidationFailure('Use bounded explicit MIME strings')
         object.__setattr__(self, 'mime_types', tuple(self.mime_types))
 
@@ -210,8 +225,12 @@ class FileField(_Field):
         document = message.document
         if document is None or message.media_group_id is not None:
             raise InvalidField('Отправьте один документ ответом на текущий вопрос.')
-        return self.restore({name: getattr(document, name) for name in
-                             ('file_id', 'file_unique_id', 'file_name', 'mime_type', 'file_size')})
+        return self.restore(
+            {
+                name: getattr(document, name)
+                for name in ('file_id', 'file_unique_id', 'file_name', 'mime_type', 'file_size')
+            }
+        )
 
     def display(self, value: FieldValue) -> str:
         assert isinstance(value, Mapping)
@@ -221,6 +240,7 @@ class FileField(_Field):
 @dataclass(frozen=True, slots=True)
 class ContactField(_Field):
     """Native contact candidate; default requires contact.user_id == current author."""
+
     own: bool = True
     kind: ClassVar[str] = 'contact'
     native: ClassVar[bool] = True
@@ -236,7 +256,9 @@ class ContactField(_Field):
             result[key] = _text(result[key], maximum)
         if result['last_name'] is not None:
             result['last_name'] = _text(result['last_name'], 64)
-        if result['user_id'] is not None and (type(result['user_id']) is not int or not 0 < result['user_id'] <= 2**63 - 1):
+        if result['user_id'] is not None and (
+            type(result['user_id']) is not int or not 0 < result['user_id'] <= 2**63 - 1
+        ):
             raise InvalidField('Контакт имеет некорректный user_id.')
         if self.own and result['user_id'] is None:
             raise InvalidField('Поделитесь своим контактом через кнопку.')
@@ -244,10 +266,17 @@ class ContactField(_Field):
 
     def read(self, message: Message) -> dict:
         contact, author = message.contact, message.from_user
-        if contact is None or message.forward_origin is not None or (self.own and
-                (author is None or contact.user_id != author.id)):
-            raise InvalidField('Поделитесь своим контактом через кнопку.' if self.own else 'Отправьте контакт без пересылки.')
-        return self.restore({name: getattr(contact, name) for name in ('phone_number', 'first_name', 'last_name', 'user_id')})
+        if (
+            contact is None
+            or message.forward_origin is not None
+            or (self.own and (author is None or contact.user_id != author.id))
+        ):
+            raise InvalidField(
+                'Поделитесь своим контактом через кнопку.' if self.own else 'Отправьте контакт без пересылки.'
+            )
+        return self.restore(
+            {name: getattr(contact, name) for name in ('phone_number', 'first_name', 'last_name', 'user_id')}
+        )
 
     def display(self, value: FieldValue) -> str:
         assert isinstance(value, Mapping)
@@ -257,6 +286,7 @@ class ContactField(_Field):
 @dataclass(frozen=True, slots=True)
 class LocationField(_Field):
     """Static coordinate candidate; does not prove physical presence/permission."""
+
     kind: ClassVar[str] = 'location'
     native: ClassVar[bool] = True
 
@@ -268,7 +298,9 @@ class LocationField(_Field):
                 raise InvalidField('Координаты вне разрешенного диапазона.')
             result[key] = float(number)
         accuracy = result['horizontal_accuracy']
-        if accuracy is not None and (type(accuracy) not in (int, float) or not 0 <= accuracy <= 1500 or not math.isfinite(accuracy)):
+        if accuracy is not None and (
+            type(accuracy) not in (int, float) or not 0 <= accuracy <= 1500 or not math.isfinite(accuracy)
+        ):
             raise InvalidField('Некорректная точность геопозиции.')
         result['horizontal_accuracy'] = float(accuracy) if accuracy is not None else None
         return result
@@ -277,7 +309,9 @@ class LocationField(_Field):
         location = message.location
         if location is None or location.live_period is not None or message.forward_origin is not None:
             raise InvalidField('Отправьте обычную статичную геопозицию без пересылки.')
-        return self.restore({name: getattr(location, name) for name in ('latitude', 'longitude', 'horizontal_accuracy')})
+        return self.restore(
+            {name: getattr(location, name) for name in ('latitude', 'longitude', 'horizontal_accuracy')}
+        )
 
     def display(self, value: FieldValue) -> str:
         assert isinstance(value, Mapping)

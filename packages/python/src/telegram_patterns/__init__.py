@@ -1,44 +1,173 @@
 """Core components; importing these does not require a Telegram SDK."""
-from .initdata import TELEGRAM_PUBLIC_KEYS, InvalidInitData, VerifiedLaunch, validate_init_data, validate_init_data_signature
-from .sqlite_once import OnceResult, OperationConflict, SQLiteOnce
+
 from .calendar import CalendarMonth, TimeSlot, resolve_local_time
-from .slots import SlotBooking, SlotSchedule, SQLiteSlotStore
-from .settings import BotSettings
-from .message_text import EntityKind, TextEntity, TextPayload, FormattedText, MessageBuilder, utf16_length, escape_html, escape_markdown_v2, split_formatted
-from .rich_message import RichButton, RichButtonStyle, RichMessage, RichMessageBuilder, RichSpan, RichText
 from .ephemeral import EphemeralMessageRef, EphemeralNotAllowed, EphemeralTrigger, ephemeral_parameters
-from .stars_subscription import STARS_SUBSCRIPTION_PERIOD, RenewalState, StarsCharge, StarsSubscription, SubscriptionEventRejected
-from .markup import (MarkupPage, force_reply_markup, inline_button, inline_markup, layout_rows, markup_page_number, paginated_markup,
-                     remove_markup, reply_button, reply_markup)
-from .selection import SelectionOption, SelectionSpec, SelectionContext, SelectionState, SelectionResult, SelectionMenu, selection_markup
-from .recipes import Maturity, Recipe, RecipeCatalog, VerificationLevel
+from .errors import (
+    AuthenticationRequired,
+    ConflictFailure,
+    ErrorCategory,
+    ErrorCode,
+    ErrorOutcome,
+    ErrorReport,
+    InvalidCompletion,
+    InvalidType,
+    OperationKind,
+    PatternError,
+    PermissionDenied,
+    RecoveryAction,
+    TimeoutFailure,
+    TransportFailure,
+    UnknownOutcome,
+    UnsupportedCapability,
+    ValidationFailure,
+    safe_error_report,
+)
 from .execution import RecipeRunPlan, RecipeRunResult, plan_recipe, run_recipe_offline
+from .extensions import AsyncTransport, OnceStore, ProviderAdapter, RefundProvider
+from .initdata import (
+    TELEGRAM_PUBLIC_KEYS,
+    InvalidInitData,
+    VerifiedLaunch,
+    validate_init_data,
+    validate_init_data_signature,
+)
+from .markup import (
+    MarkupPage,
+    force_reply_markup,
+    inline_button,
+    inline_markup,
+    layout_rows,
+    markup_page_number,
+    paginated_markup,
+    remove_markup,
+    reply_button,
+    reply_markup,
+)
+from .message_text import (
+    EntityKind,
+    FormattedText,
+    MessageBuilder,
+    TextEntity,
+    TextPayload,
+    escape_html,
+    escape_markdown_v2,
+    split_formatted,
+    utf16_length,
+)
+from .recipes import Maturity, Recipe, RecipeCatalog, VerificationLevel
+from .rich_message import RichButton, RichButtonStyle, RichMessage, RichMessageBuilder, RichSpan, RichText
+from .selection import (
+    SelectionContext,
+    SelectionMenu,
+    SelectionOption,
+    SelectionResult,
+    SelectionSpec,
+    SelectionState,
+    selection_markup,
+)
+from .settings import BotSettings
+from .slots import SlotBooking, SlotSchedule, SQLiteSlotStore
+from .sqlite_once import OnceResult, OperationConflict, SQLiteOnce
+from .stars_subscription import (
+    STARS_SUBSCRIPTION_PERIOD,
+    RenewalState,
+    StarsCharge,
+    StarsSubscription,
+    SubscriptionEventRejected,
+)
 from .starter import StarterPlan, create_starter
 from .starter_components import StarterComponent, StarterConflict, starter_components
-from .extensions import AsyncTransport, OnceStore, ProviderAdapter, RefundProvider
-from .errors import (
-    AuthenticationRequired, ConflictFailure, ErrorCategory, ErrorCode, ErrorOutcome, ErrorReport,
-    InvalidCompletion, InvalidType, OperationKind, PatternError, PermissionDenied, RecoveryAction,
-    TimeoutFailure, TransportFailure, UnknownOutcome, UnsupportedCapability, ValidationFailure, safe_error_report,
-)
 
 __all__ = [
-    "BotSettings", "InvalidInitData", "VerifiedLaunch", "validate_init_data", "validate_init_data_signature", "TELEGRAM_PUBLIC_KEYS",
-    "EntityKind", "TextEntity", "TextPayload", "FormattedText", "MessageBuilder", "utf16_length", "escape_html", "escape_markdown_v2", "split_formatted",
-    "RichMessageBuilder", "RichMessage", "RichButton", "RichButtonStyle", "RichSpan", "RichText",
-    "EphemeralTrigger", "EphemeralMessageRef", "EphemeralNotAllowed", "ephemeral_parameters",
-    "StarsSubscription", "StarsCharge", "RenewalState", "SubscriptionEventRejected", "STARS_SUBSCRIPTION_PERIOD",
-    "inline_button", "reply_button", "layout_rows", "inline_markup", "reply_markup", "force_reply_markup", "remove_markup",
-    "paginated_markup", "MarkupPage", "markup_page_number",
-    "SelectionOption", "SelectionSpec", "SelectionContext", "SelectionState", "SelectionResult", "SelectionMenu", "selection_markup",
-    "OnceResult", "OperationConflict", "SQLiteOnce",
-    "CalendarMonth", "TimeSlot", "resolve_local_time", "SlotBooking", "SlotSchedule", "SQLiteSlotStore",
-    "Maturity", "VerificationLevel", "Recipe", "RecipeCatalog",
-    "RecipeRunPlan", "RecipeRunResult", "plan_recipe", "run_recipe_offline",
-    "StarterPlan", "create_starter",
-    "StarterComponent", "StarterConflict", "starter_components",
-    "AsyncTransport", "OnceStore", "ProviderAdapter", "RefundProvider",
-    "AuthenticationRequired", "ConflictFailure", "ErrorCategory", "ErrorCode", "ErrorOutcome", "ErrorReport",
-    "InvalidCompletion", "InvalidType", "OperationKind", "PatternError", "PermissionDenied", "RecoveryAction",
-    "TimeoutFailure", "TransportFailure", "UnknownOutcome", "UnsupportedCapability", "ValidationFailure", "safe_error_report",
+    "BotSettings",
+    "InvalidInitData",
+    "VerifiedLaunch",
+    "validate_init_data",
+    "validate_init_data_signature",
+    "TELEGRAM_PUBLIC_KEYS",
+    "EntityKind",
+    "TextEntity",
+    "TextPayload",
+    "FormattedText",
+    "MessageBuilder",
+    "utf16_length",
+    "escape_html",
+    "escape_markdown_v2",
+    "split_formatted",
+    "RichMessageBuilder",
+    "RichMessage",
+    "RichButton",
+    "RichButtonStyle",
+    "RichSpan",
+    "RichText",
+    "EphemeralTrigger",
+    "EphemeralMessageRef",
+    "EphemeralNotAllowed",
+    "ephemeral_parameters",
+    "StarsSubscription",
+    "StarsCharge",
+    "RenewalState",
+    "SubscriptionEventRejected",
+    "STARS_SUBSCRIPTION_PERIOD",
+    "inline_button",
+    "reply_button",
+    "layout_rows",
+    "inline_markup",
+    "reply_markup",
+    "force_reply_markup",
+    "remove_markup",
+    "paginated_markup",
+    "MarkupPage",
+    "markup_page_number",
+    "SelectionOption",
+    "SelectionSpec",
+    "SelectionContext",
+    "SelectionState",
+    "SelectionResult",
+    "SelectionMenu",
+    "selection_markup",
+    "OnceResult",
+    "OperationConflict",
+    "SQLiteOnce",
+    "CalendarMonth",
+    "TimeSlot",
+    "resolve_local_time",
+    "SlotBooking",
+    "SlotSchedule",
+    "SQLiteSlotStore",
+    "Maturity",
+    "VerificationLevel",
+    "Recipe",
+    "RecipeCatalog",
+    "RecipeRunPlan",
+    "RecipeRunResult",
+    "plan_recipe",
+    "run_recipe_offline",
+    "StarterPlan",
+    "create_starter",
+    "StarterComponent",
+    "StarterConflict",
+    "starter_components",
+    "AsyncTransport",
+    "OnceStore",
+    "ProviderAdapter",
+    "RefundProvider",
+    "AuthenticationRequired",
+    "ConflictFailure",
+    "ErrorCategory",
+    "ErrorCode",
+    "ErrorOutcome",
+    "ErrorReport",
+    "InvalidCompletion",
+    "InvalidType",
+    "OperationKind",
+    "PatternError",
+    "PermissionDenied",
+    "RecoveryAction",
+    "TimeoutFailure",
+    "TransportFailure",
+    "UnknownOutcome",
+    "UnsupportedCapability",
+    "ValidationFailure",
+    "safe_error_report",
 ]

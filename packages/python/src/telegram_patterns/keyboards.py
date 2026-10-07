@@ -1,12 +1,14 @@
 """Optional aiogram action keyboards and local pagination builders."""
-from __future__ import annotations
-from .errors import ValidationFailure, InvalidType
 
-from dataclasses import dataclass
+from __future__ import annotations
+
 import re
+from dataclasses import dataclass
 from typing import Literal, Sequence
 
 from aiogram.types import InlineKeyboardButton, InlineKeyboardMarkup
+
+from .errors import InvalidType, ValidationFailure
 
 ButtonStyle = Literal["primary", "success", "danger"]
 
@@ -34,23 +36,35 @@ class ActionButton:
             raise ValidationFailure("Button label required")
         if self.style not in {None, "primary", "success", "danger"}:
             raise ValidationFailure("Unknown button style")
-        if self.custom_emoji_id is not None and (not isinstance(self.custom_emoji_id, str) or not re.fullmatch(r"[0-9]+", self.custom_emoji_id)):
+        if self.custom_emoji_id is not None and (
+            not isinstance(self.custom_emoji_id, str) or not re.fullmatch(r"[0-9]+", self.custom_emoji_id)
+        ):
             raise ValidationFailure("Custom emoji ID must be a decimal string")
         _callback_data(self.key, "act:")
 
 
 def _button(button: ActionButton, prefix: str, verified: bool) -> InlineKeyboardButton:
-    return InlineKeyboardButton(text=button.text, callback_data=_callback_data(button.key, prefix),
-                                style=button.style,
-                                icon_custom_emoji_id=button.custom_emoji_id if verified else None)
+    return InlineKeyboardButton(
+        text=button.text,
+        callback_data=_callback_data(button.key, prefix),
+        style=button.style,
+        icon_custom_emoji_id=button.custom_emoji_id if verified else None,
+    )
 
 
-def action_keyboard(text: str, key: str, *, prefix: str = "act:",
-                    style: ButtonStyle | None = None, custom_emoji_id: str | None = None,
-                    emoji_entitlement_verified: bool = False) -> InlineKeyboardMarkup:
+def action_keyboard(
+    text: str,
+    key: str,
+    *,
+    prefix: str = "act:",
+    style: ButtonStyle | None = None,
+    custom_emoji_id: str | None = None,
+    emoji_entitlement_verified: bool = False,
+) -> InlineKeyboardMarkup:
     """Entitlement is a server-verified capability for the target chat/context."""
-    return InlineKeyboardMarkup(inline_keyboard=[[_button(
-        ActionButton(text, key, style, custom_emoji_id), prefix, emoji_entitlement_verified)]])
+    return InlineKeyboardMarkup(
+        inline_keyboard=[[_button(ActionButton(text, key, style, custom_emoji_id), prefix, emoji_entitlement_verified)]]
+    )
 
 
 def _columns(columns: int) -> None:
@@ -67,16 +81,19 @@ def _items(buttons: Sequence[ActionButton]) -> tuple[ActionButton, ...]:
     return items
 
 
-def action_menu(buttons: Sequence[ActionButton], *, columns: int = 2, prefix: str = "act:",
-                emoji_entitlement_verified: bool = False) -> InlineKeyboardMarkup:
+def action_menu(
+    buttons: Sequence[ActionButton], *, columns: int = 2, prefix: str = "act:", emoji_entitlement_verified: bool = False
+) -> InlineKeyboardMarkup:
     """Build up to 100 buttons; empty input produces an empty keyboard."""
     _columns(columns)
     _callback_data("k", prefix)
     items = _items(buttons)
     if len(items) > 100:
         raise ValidationFailure("Use pagination for more than 100 buttons")
-    rows = [[_button(item, prefix, emoji_entitlement_verified) for item in items[offset:offset + columns]]
-            for offset in range(0, len(items), columns)]
+    rows = [
+        [_button(item, prefix, emoji_entitlement_verified) for item in items[offset : offset + columns]]
+        for offset in range(0, len(items), columns)
+    ]
     return InlineKeyboardMarkup(inline_keyboard=rows)
 
 
@@ -88,9 +105,16 @@ class MenuPage:
     total_items: int
 
 
-def paginated_menu(buttons: Sequence[ActionButton], *, page: int = 0, page_size: int = 6,
-                   columns: int = 2, action_prefix: str = "act:", page_prefix: str = "page:",
-                   emoji_entitlement_verified: bool = False) -> MenuPage:
+def paginated_menu(
+    buttons: Sequence[ActionButton],
+    *,
+    page: int = 0,
+    page_size: int = 6,
+    columns: int = 2,
+    action_prefix: str = "act:",
+    page_prefix: str = "page:",
+    emoji_entitlement_verified: bool = False,
+) -> MenuPage:
     """Zero-based local view, clamped after list shrink; never grants object access."""
     _columns(columns)
     _callback_data("k", action_prefix)
@@ -107,9 +131,12 @@ def paginated_menu(buttons: Sequence[ActionButton], *, page: int = 0, page_size:
         _callback_data(item.key, action_prefix)
     count = max(1, (len(items) + page_size - 1) // page_size)
     current = min(page, count - 1)
-    markup = action_menu(items[current * page_size:(current + 1) * page_size],
-                         columns=columns, prefix=action_prefix,
-                         emoji_entitlement_verified=emoji_entitlement_verified)
+    markup = action_menu(
+        items[current * page_size : (current + 1) * page_size],
+        columns=columns,
+        prefix=action_prefix,
+        emoji_entitlement_verified=emoji_entitlement_verified,
+    )
     navigation = []
     if current > 0:
         navigation.append(_button(ActionButton("← Назад", str(current - 1)), page_prefix, False))
@@ -125,7 +152,7 @@ def page_number(data: str | None, *, prefix: str = "page:") -> int | None:
     _callback_data("0", prefix)
     if not isinstance(data, str) or not data.startswith(prefix):
         return None
-    key = data[len(prefix):]
+    key = data[len(prefix) :]
     try:
         _callback_data(key, prefix)
     except ValueError:

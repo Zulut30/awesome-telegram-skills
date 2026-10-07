@@ -1,10 +1,11 @@
 """SDK-free calendar snapshots and explicit local-time resolution."""
+
 from __future__ import annotations
 
 import calendar as _calendar
+import re
 from dataclasses import dataclass, field
 from datetime import date, datetime, timedelta, timezone, tzinfo
-import re
 from itertools import islice
 from typing import Iterable
 from zoneinfo import ZoneInfo, ZoneInfoNotFoundError
@@ -13,8 +14,20 @@ from .errors import InvalidType, UnsupportedCapability, ValidationFailure
 
 _KEY = re.compile(r'[A-Za-z0-9_-]{1,24}\Z', re.ASCII)
 _EPOCH = datetime(1970, 1, 1, tzinfo=timezone.utc)
-_MONTHS = ('Январь', 'Февраль', 'Март', 'Апрель', 'Май', 'Июнь',
-           'Июль', 'Август', 'Сентябрь', 'Октябрь', 'Ноябрь', 'Декабрь')
+_MONTHS = (
+    'Январь',
+    'Февраль',
+    'Март',
+    'Апрель',
+    'Май',
+    'Июнь',
+    'Июль',
+    'Август',
+    'Сентябрь',
+    'Октябрь',
+    'Ноябрь',
+    'Декабрь',
+)
 _WEEKDAYS = ('Пн', 'Вт', 'Ср', 'Чт', 'Пт', 'Сб', 'Вс')
 
 
@@ -28,7 +41,9 @@ def _zone(key: str) -> tzinfo:
     except ValueError:
         raise ValidationFailure('Use a normalized IANA time-zone key') from None
     except ZoneInfoNotFoundError:
-        raise UnsupportedCapability('Unknown time zone or missing IANA database; install the calendar extra when needed') from None
+        raise UnsupportedCapability(
+            'Unknown time zone or missing IANA database; install the calendar extra when needed'
+        ) from None
 
 
 def _utc(value: datetime) -> datetime:
@@ -89,6 +104,7 @@ def resolve_local_time(local: datetime, time_zone: str, *, fold: int | None = No
 @dataclass(frozen=True, slots=True)
 class TimeSlot:
     """Half-open [start, end) UTC interval; one resource is supplied by the host."""
+
     key: str
     start: datetime
     end: datetime
@@ -112,9 +128,11 @@ class TimeSlot:
             start, end = self.start.astimezone(zone), self.end.astimezone(zone)
         except (OverflowError, ValueError):
             raise ValidationFailure('Display time is outside the supported range') from None
+
         def offset_label(value: datetime) -> str:
             raw = value.strftime('%z')
             return raw[:3] + ':' + raw[3:5] + (':' + raw[5:] if len(raw) > 5 else '')
+
         offset = offset_label(start)
         end_label = end.strftime('%H:%M') if start.date() == end.date() else end.strftime('%d.%m %H:%M')
         if start.utcoffset() != end.utcoffset():
@@ -129,6 +147,7 @@ class CalendarMonth:
     Host derives available dates from current server slots in the display zone.
     This snapshot does not grant permission or reserve a slot.
     """
+
     year: int
     month: int
     time_zone: str = 'UTC'
@@ -138,7 +157,12 @@ class CalendarMonth:
     weeks: tuple[tuple[date | None, ...], ...] = field(init=False)
 
     def __post_init__(self) -> None:
-        if type(self.year) is not int or not 1 <= self.year <= 9999 or type(self.month) is not int or not 1 <= self.month <= 12:
+        if (
+            type(self.year) is not int
+            or not 1 <= self.year <= 9999
+            or type(self.month) is not int
+            or not 1 <= self.month <= 12
+        ):
             raise ValidationFailure('Use year 1..9999 and month 1..12')
         _zone(self.time_zone)
         values = []
@@ -149,7 +173,9 @@ class CalendarMonth:
                 snapshot = tuple(islice(iter(dates), 367))
             except TypeError:
                 raise InvalidType('Use an iterable of dates') from None
-            if len(snapshot) > 366 or any(type(d) is not date or d.year != self.year or d.month != self.month for d in snapshot):
+            if len(snapshot) > 366 or any(
+                type(d) is not date or d.year != self.year or d.month != self.month for d in snapshot
+            ):
                 raise ValidationFailure('Use at most 366 dates belonging to this month')
             values.append(frozenset(snapshot))
         available, blocked = values
@@ -157,13 +183,18 @@ class CalendarMonth:
         object.__setattr__(self, 'blocked_dates', blocked)
         object.__setattr__(self, 'allowed_dates', available - blocked)
         numbers = _calendar.Calendar(firstweekday=0).monthdayscalendar(self.year, self.month)
-        object.__setattr__(self, 'weeks', tuple(tuple(date(self.year, self.month, n) if n else None for n in row) for row in numbers))
+        object.__setattr__(
+            self, 'weeks', tuple(tuple(date(self.year, self.month, n) if n else None for n in row) for row in numbers)
+        )
 
     def allows(self, day: date) -> bool:
         return type(day) is date and day in self.allowed_dates
 
     def text(self) -> str:
         rows = [f'{_MONTHS[self.month - 1]} {self.year} · {self.time_zone}', ' '.join(_WEEKDAYS)]
-        rows.extend(' '.join('  ' if day is None else f'{day.day:2}' if self.allows(day) else ' ·' for day in week) for week in self.weeks)
+        rows.extend(
+            ' '.join('  ' if day is None else f'{day.day:2}' if self.allows(day) else ' ·' for day in week)
+            for week in self.weeks
+        )
         rows.append('· — недоступно. Дату выбирайте кнопкой ниже.' if self.allowed_dates else 'Нет доступных дат.')
         return '\n'.join(rows)

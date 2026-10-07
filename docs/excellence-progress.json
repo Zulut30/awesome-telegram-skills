@@ -770,9 +770,14 @@
     {
       "id": 61,
       "title": "Стиль кода",
-      "status": "pending",
-      "commit_subject": null,
-      "evidence": [],
+      "status": "done",
+      "commit_subject": "excellence(061): format the Python library with ruff",
+      "evidence": [
+        "packages/python/pyproject.toml [tool.ruff]: line-length 120, quote-style preserve, rules E/F/W/I; ruff check and ruff format --check pass for src and tests (81 files)",
+        "long strings split into adjacent literals, compound one-line statements split, imports sorted, unused removed; aiogram magic filters use is_(None)/is_(False)/is_not(True)",
+        "CI job «Python library style (ruff)» in repository-checks; CONTRIBUTING documents the commands",
+        "537 package tests and mypy pass; public signatures unchanged (check_api_compatibility); verify_pattern_packages PASS with 35 TypeScript tests, browser passed"
+      ],
       "remaining": null
     },
     {

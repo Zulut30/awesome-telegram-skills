@@ -1,16 +1,28 @@
 """SDK-free composition of plain text and validated outgoing entity ranges."""
+
 from __future__ import annotations
 
-from bisect import bisect_right
-from dataclasses import dataclass, replace
 import html
 import re
-from typing import Literal, Sequence, TypedDict
 import unicodedata
+from bisect import bisect_right
+from dataclasses import dataclass, replace
+from typing import Literal, Sequence, TypedDict
 from urllib.parse import urlsplit
 
-EntityKind = Literal['bold', 'italic', 'underline', 'strikethrough', 'spoiler', 'code', 'pre',
-                     'text_link', 'custom_emoji', 'blockquote', 'expandable_blockquote']
+EntityKind = Literal[
+    'bold',
+    'italic',
+    'underline',
+    'strikethrough',
+    'spoiler',
+    'code',
+    'pre',
+    'text_link',
+    'custom_emoji',
+    'blockquote',
+    'expandable_blockquote',
+]
 _STYLES = frozenset({'bold', 'italic', 'underline', 'strikethrough', 'spoiler'})
 _KINDS = _STYLES | {'code', 'pre', 'text_link', 'custom_emoji', 'blockquote', 'expandable_blockquote'}
 _ATOMIC = frozenset({'text_link', 'custom_emoji', 'blockquote', 'expandable_blockquote'})
@@ -61,8 +73,14 @@ def _url(value: str) -> None:
         raise ValueError('Invalid link destination')
     try:
         parts = urlsplit(value)
-        if (parts.scheme not in {'http', 'https'} or not parts.hostname or parts.username is not None
-                or parts.password is not None or parts.port is not None and not 1 <= parts.port <= 65535):
+        if (
+            parts.scheme not in {'http', 'https'}
+            or not parts.hostname
+            or parts.username is not None
+            or parts.password is not None
+            or parts.port is not None
+            and not 1 <= parts.port <= 65535
+        ):
             raise ValueError
     except ValueError:
         raise ValueError('Expected an absolute HTTP(S) URL without credentials') from None
@@ -89,11 +107,18 @@ class TextEntity:
         elif self.url is not None:
             raise ValueError('url is only valid for text_link')
         if self.language is not None:
-            if self.kind != 'pre' or not isinstance(self.language, str) or not re.fullmatch(r'[a-zA-Z0-9_+.-]{1,64}', self.language):
+            if (
+                self.kind != 'pre'
+                or not isinstance(self.language, str)
+                or not re.fullmatch(r'[a-zA-Z0-9_+.-]{1,64}', self.language)
+            ):
                 raise ValueError('language is only valid for pre')
         if self.kind == 'custom_emoji':
-            if (not isinstance(self.custom_emoji_id, str) or not re.fullmatch(r'[1-9][0-9]{0,31}', self.custom_emoji_id)
-                    or self.length > 32):
+            if (
+                not isinstance(self.custom_emoji_id, str)
+                or not re.fullmatch(r'[1-9][0-9]{0,31}', self.custom_emoji_id)
+                or self.length > 32
+            ):
                 raise ValueError('Expected a custom emoji identifier and bounded fallback')
         elif self.custom_emoji_id is not None:
             raise ValueError('custom_emoji_id is only valid for custom_emoji')
@@ -160,8 +185,13 @@ class FormattedText:
             raise ValueError('Split before creating a single-message payload')
         if len(self.entities) > 100:
             raise ValueError('Single payload exceeds the local 100-entity bound')
-        return {'text': self.text, 'parse_mode': None, 'entities': [e.as_dict() for e in self.entities
-                if e.kind != 'custom_emoji' or custom_emoji_entitlement_verified]}
+        return {
+            'text': self.text,
+            'parse_mode': None,
+            'entities': [
+                e.as_dict() for e in self.entities if e.kind != 'custom_emoji' or custom_emoji_entitlement_verified
+            ],
+        }
 
     def split(self, *, limit: int = 4096) -> tuple[FormattedText, ...]:
         return split_formatted(self, limit=limit)
@@ -179,15 +209,24 @@ class MessageBuilder:
         if not isinstance(value, FormattedText):
             raise TypeError('Expected FormattedText')
         shift = utf16_length(self.value.text)
-        joined = FormattedText(self.value.text + value.text,
-            self.value.entities + tuple(replace(e, offset=e.offset + shift) for e in value.entities))
+        joined = FormattedText(
+            self.value.text + value.text,
+            self.value.entities + tuple(replace(e, offset=e.offset + shift) for e in value.entities),
+        )
         return MessageBuilder(joined)
 
     def text(self, value: str) -> MessageBuilder:
         return self.append(FormattedText(value))
 
-    def style(self, value: str, kind: EntityKind, *, url: str | None = None,
-              language: str | None = None, custom_emoji_id: str | None = None) -> MessageBuilder:
+    def style(
+        self,
+        value: str,
+        kind: EntityKind,
+        *,
+        url: str | None = None,
+        language: str | None = None,
+        custom_emoji_id: str | None = None,
+    ) -> MessageBuilder:
         entity = TextEntity(kind, 0, utf16_length(value), url=url, language=language, custom_emoji_id=custom_emoji_id)
         return self.append(FormattedText(value, (entity,)))
 
@@ -209,14 +248,21 @@ def _cuts(text: str, positions: Sequence[int]) -> list[int]:
     cuts = [0]
     regional_run = 0
     for index in range(1, len(text)):
-        before, after = text[index-1], text[index]
+        before, after = text[index - 1], text[index]
         previous, following = ord(before), ord(after)
         regional_run = regional_run + 1 if 0x1F1E6 <= previous <= 0x1F1FF else 0
-        forbidden = (unicodedata.category(after).startswith('M') or following in {0xFE0E,0xFE0F,0x200D,0x200C}
-            or previous in {0x200D,0x200C} or unicodedata.combining(before) == 9
-            or 0x1F3FB <= following <= 0x1F3FF or 0xE0020 <= following <= 0xE007F
-            or before == '\r' and after == '\n'
-            or regional_run % 2 == 1 and 0x1F1E6 <= following <= 0x1F1FF)
+        forbidden = (
+            unicodedata.category(after).startswith('M')
+            or following in {0xFE0E, 0xFE0F, 0x200D, 0x200C}
+            or previous in {0x200D, 0x200C}
+            or unicodedata.combining(before) == 9
+            or 0x1F3FB <= following <= 0x1F3FF
+            or 0xE0020 <= following <= 0xE007F
+            or before == '\r'
+            and after == '\n'
+            or regional_run % 2 == 1
+            and 0x1F1E6 <= following <= 0x1F1FF
+        )
         if not forbidden:
             cuts.append(positions[index])
     if text:
@@ -253,12 +299,12 @@ def split_formatted(value: FormattedText, *, limit: int = 4096) -> tuple[Formatt
     def inside_atomic(cut: int) -> bool:
         return any(e.offset < cut < e.offset + e.length for e in atomic)
 
-    newline_cuts = [c for c in cuts if c and text[indices[c]-1] == '\n']
-    space_cuts = [c for c in cuts if c and text[indices[c]-1].isspace()]
+    newline_cuts = [c for c in cuts if c and text[indices[c] - 1] == '\n']
+    space_cuts = [c for c in cuts if c and text[indices[c] - 1].isspace()]
     bounds = [0]
     while bounds[-1] < total:
         start = bounds[-1]
-        end = cuts[bisect_right(cuts, start + limit)-1]
+        end = cuts[bisect_right(cuts, start + limit) - 1]
         if end < total:
             floor = start + max(1, limit // 2)
             for preferred in (newline_cuts, space_cuts):
@@ -267,10 +313,10 @@ def split_formatted(value: FormattedText, *, limit: int = 4096) -> tuple[Formatt
                     end = preferred[index]
                     break
         while end > start:
-            index = bisect_right(starts, end-1)-1
+            index = bisect_right(starts, end - 1) - 1
             if index < 0 or end >= atomic[index].offset + atomic[index].length:
                 break
-            end = cuts[bisect_right(cuts, atomic[index].offset)-1]
+            end = cuts[bisect_right(cuts, atomic[index].offset) - 1]
         if end <= start:
             raise ValueError('A preserved Unicode sequence exceeds the chunk limit')
         if len(bounds) > 256:
@@ -282,33 +328,33 @@ def split_formatted(value: FormattedText, *, limit: int = 4096) -> tuple[Formatt
 
     index = 0
     while index < len(bounds) - 1:
-        a, b = bounds[index], bounds[index+1]
+        a, b = bounds[index], bounds[index + 1]
         if has_content(a, b):
             index += 1
             continue
-        if index > 0 and valid(bounds[index-1], b):  # join the previous part
+        if index > 0 and valid(bounds[index - 1], b):  # join the previous part
             del bounds[index]
             index -= 1
             continue
-        if index + 2 < len(bounds) and valid(a, bounds[index+2]):  # join the next part
-            del bounds[index+1]
+        if index + 2 < len(bounds) and valid(a, bounds[index + 2]):  # join the next part
+            del bounds[index + 1]
             continue
         moved = False
         if index > 0:  # take the tail of the previous part
-            for cut in reversed(cuts[bisect_right(cuts, bounds[index-1]):bisect_right(cuts, a-1)]):
+            for cut in reversed(cuts[bisect_right(cuts, bounds[index - 1]) : bisect_right(cuts, a - 1)]):
                 if b - cut > limit:
                     break
-                if not inside_atomic(cut) and has_content(bounds[index-1], cut) and has_content(cut, a):
+                if not inside_atomic(cut) and has_content(bounds[index - 1], cut) and has_content(cut, a):
                     bounds[index] = cut
                     moved = True
                     break
         if not moved and index + 2 < len(bounds):  # take the head of the next part
-            following = bounds[index+2]
-            for cut in cuts[bisect_right(cuts, b):bisect_right(cuts, following-1)]:
+            following = bounds[index + 2]
+            for cut in cuts[bisect_right(cuts, b) : bisect_right(cuts, following - 1)]:
                 if cut - a > limit:
                     break
                 if not inside_atomic(cut) and has_content(b, cut) and has_content(cut, following):
-                    bounds[index+1] = cut
+                    bounds[index + 1] = cut
                     moved = True
                     break
         if not moved:
@@ -316,10 +362,16 @@ def split_formatted(value: FormattedText, *, limit: int = 4096) -> tuple[Formatt
     chunks: list[FormattedText] = []
     for start, end in zip(bounds, bounds[1:]):
         # Clipping nested ranges of one style can produce identical entities; they are equivalent.
-        entities = tuple(dict.fromkeys(replace(e, offset=max(e.offset,start)-start,
-            length=min(e.offset+e.length,end)-max(e.offset,start)) for e in value.entities
-            if e.offset < end and e.offset+e.length > start))
-        chunk = FormattedText(text[indices[start]:indices[end]], entities)
+        entities = tuple(
+            dict.fromkeys(
+                replace(
+                    e, offset=max(e.offset, start) - start, length=min(e.offset + e.length, end) - max(e.offset, start)
+                )
+                for e in value.entities
+                if e.offset < end and e.offset + e.length > start
+            )
+        )
+        chunk = FormattedText(text[indices[start] : indices[end]], entities)
         if len(chunk.entities) > 100:
             raise ValueError('A chunk exceeds the local 100-entity bound; compose smaller sections')
         chunks.append(chunk)

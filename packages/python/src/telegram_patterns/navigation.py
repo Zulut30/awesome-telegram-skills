@@ -1,12 +1,13 @@
 """Owner-bound, revisioned screens in one bot message (single-process state)."""
+
 from __future__ import annotations
 
 import asyncio
-from dataclasses import dataclass, field, replace
 import math
 import re
 import secrets
 import time
+from dataclasses import dataclass, field, replace
 from typing import Awaitable, Callable, Literal, Sequence
 
 from aiogram import Bot, F, Router
@@ -48,6 +49,7 @@ def _identity(bot_id: int, owner_id: int, chat_id: int, thread_id: int | None) -
 @dataclass(frozen=True, slots=True)
 class NavigationScreen:
     """Plain-text screen; ActionButton.key points to another declared screen."""
+
     key: str
     text: str
     buttons: Sequence[ActionButton] = ()
@@ -71,6 +73,7 @@ class NavigationScreen:
 @dataclass(frozen=True, slots=True)
 class NavigationState:
     """Immutable snapshot; expires_at is process monotonic time, not persistence."""
+
     session_id: str
     bot_id: int
     owner_id: int
@@ -87,6 +90,7 @@ class NavigationState:
 @dataclass(frozen=True, slots=True)
 class NavigationResult:
     """Safe feedback; denied/foreign scope never exposes another owner's state."""
+
     status: Literal['accepted', 'denied', 'stale', 'unavailable', 'unknown']
     text: str
     state: NavigationState | None = None
@@ -108,10 +112,19 @@ class MessageNavigation:
     no known message ID and is NEVER resent automatically; discard() requires
     the host's separate deliberate decision. The engine never owns Bot/session.
     """
-    def __init__(self, screens: Sequence[NavigationScreen], *, prefix: str = 'nav:',
-                 capabilities: KeyboardCapabilities = KeyboardCapabilities(),
-                 ttl_seconds: float = 1800, max_sessions: int = 1000, max_history: int = 50,
-                 back_text: str = 'Назад', refresh_text: str = 'Обновить') -> None:
+
+    def __init__(
+        self,
+        screens: Sequence[NavigationScreen],
+        *,
+        prefix: str = 'nav:',
+        capabilities: KeyboardCapabilities = KeyboardCapabilities(),
+        ttl_seconds: float = 1800,
+        max_sessions: int = 1000,
+        max_history: int = 50,
+        back_text: str = 'Назад',
+        refresh_text: str = 'Обновить',
+    ) -> None:
         if isinstance(screens, (str, bytes)) or not isinstance(screens, Sequence):
             raise InvalidType('Use NavigationScreen sequences')
         items = tuple(screens)
@@ -128,7 +141,12 @@ class MessageNavigation:
             raise InvalidType('Use KeyboardCapabilities')
         if capabilities.business or capabilities.chat_type == 'channel':
             raise ValidationFailure('Navigation supports ordinary bot messages in private/group/supergroup')
-        if isinstance(ttl_seconds, bool) or not isinstance(ttl_seconds, (int, float)) or not math.isfinite(ttl_seconds) or ttl_seconds <= 0:
+        if (
+            isinstance(ttl_seconds, bool)
+            or not isinstance(ttl_seconds, (int, float))
+            or not math.isfinite(ttl_seconds)
+            or ttl_seconds <= 0
+        ):
             raise ValidationFailure('TTL must be finite and positive')
         if type(max_sessions) is not int or not 1 <= max_sessions <= 100_000:
             raise ValidationFailure('Use max_sessions in 1..100000')
@@ -161,10 +179,19 @@ class MessageNavigation:
     def _markup(self, screen: NavigationScreen, token: str, revision: int, back: bool) -> InlineKeyboardMarkup:
         def data(key: str) -> str:
             return f'{self.prefix}{token}:{revision}:{key}'
-        buttons = [InlineKeyboardButton(text=b.text, callback_data=data(b.key), style=b.style,
-                                       icon_custom_emoji_id=b.custom_emoji_id) for b in screen.buttons]
+
+        buttons = [
+            InlineKeyboardButton(
+                text=b.text, callback_data=data(b.key), style=b.style, icon_custom_emoji_id=b.custom_emoji_id
+            )
+            for b in screen.buttons
+        ]
         # Screen links keep the declared layout. Navigation controls have their own row.
-        markup = inline_layout(buttons, screen.layout, capabilities=self._capabilities) if buttons else InlineKeyboardMarkup(inline_keyboard=[])
+        markup = (
+            inline_layout(buttons, screen.layout, capabilities=self._capabilities)
+            if buttons
+            else InlineKeyboardMarkup(inline_keyboard=[])
+        )
         controls = []
         if back:
             controls.append(InlineKeyboardButton(text=self._back_text, callback_data=data('_back')))
@@ -173,7 +200,9 @@ class MessageNavigation:
         markup.inline_keyboard.extend(control_markup.inline_keyboard)
         return markup
 
-    def get_state(self, bot_id: int, owner_id: int, chat_id: int, *, message_thread_id: int | None = None) -> NavigationState | None:
+    def get_state(
+        self, bot_id: int, owner_id: int, chat_id: int, *, message_thread_id: int | None = None
+    ) -> NavigationState | None:
         """Host-side scoped snapshot; authenticate caller before exposing it."""
         _identity(bot_id, owner_id, chat_id, message_thread_id)
         entry = self._entries.get((bot_id, owner_id, chat_id, message_thread_id))
@@ -209,8 +238,9 @@ class MessageNavigation:
             self._remove(scope, entry)
             return True
 
-    async def open(self, bot: Bot, owner_id: int, chat_id: int, *, screen: str | None = None,
-                   message_thread_id: int | None = None) -> NavigationState:
+    async def open(
+        self, bot: Bot, owner_id: int, chat_id: int, *, screen: str | None = None, message_thread_id: int | None = None
+    ) -> NavigationState:
         """First send or explicit reopen/recovery by the authenticated owner."""
         self._event_loop()
         _identity(bot.id, owner_id, chat_id, message_thread_id)
@@ -227,8 +257,21 @@ class MessageNavigation:
             token = secrets.token_hex(8)
             while token in self._tokens:
                 token = secrets.token_hex(8)
-            entry = _Entry(NavigationState(token, bot.id, owner_id, chat_id, message_thread_id, None,
-                                           key, (), 0, time.monotonic() + self._ttl, 'opening'))
+            entry = _Entry(
+                NavigationState(
+                    token,
+                    bot.id,
+                    owner_id,
+                    chat_id,
+                    message_thread_id,
+                    None,
+                    key,
+                    (),
+                    0,
+                    time.monotonic() + self._ttl,
+                    'opening',
+                )
+            )
             self._entries[scope] = entry
             self._tokens[token] = entry
         async with entry.lock:
@@ -236,9 +279,13 @@ class MessageNavigation:
                 raise ConflictFailure('Menu was discarded; open again explicitly')
             if created:
                 try:
-                    sent = await bot.send_message(chat_id, self._screens[key].text, parse_mode=None,
+                    sent = await bot.send_message(
+                        chat_id,
+                        self._screens[key].text,
+                        parse_mode=None,
                         message_thread_id=message_thread_id,
-                        reply_markup=self._markup(self._screens[key], entry.state.session_id, 0, False))
+                        reply_markup=self._markup(self._screens[key], entry.state.session_id, 0, False),
+                    )
                     self._verify_message(sent, entry.state, initial=True)
                 except TelegramBadRequest:
                     self._remove(scope, entry)
@@ -246,18 +293,32 @@ class MessageNavigation:
                 except BaseException:
                     entry.state = replace(entry.state, phase='unknown')
                     raise
-                entry.state = replace(entry.state, message_id=sent.message_id, phase='ready', expires_at=time.monotonic() + self._ttl)
+                entry.state = replace(
+                    entry.state, message_id=sent.message_id, phase='ready', expires_at=time.monotonic() + self._ttl
+                )
                 return entry.state
             if entry.state.message_id is None:
                 raise UnknownOutcome('Initial message send is uncertain; no automatic resend')
             return await self._edit(bot, entry, key, ())
 
     def _verify_message(self, message: Message | bool, state: NavigationState, *, initial: bool = False) -> None:
-        if not isinstance(message, Message) or message.message_id <= 0 or message.date.timestamp() <= 0 or message.chat.id != state.chat_id or message.message_thread_id != state.message_thread_id or message.chat.type != self._capabilities.chat_type:
+        if (
+            not isinstance(message, Message)
+            or message.message_id <= 0
+            or message.date.timestamp() <= 0
+            or message.chat.id != state.chat_id
+            or message.message_thread_id != state.message_thread_id
+            or message.chat.type != self._capabilities.chat_type
+        ):
             raise UnknownOutcome('Unexpected navigation response context')
         if not initial and message.message_id != state.message_id:
             raise UnknownOutcome('Unexpected navigation response target')
-        if message.from_user is None or not message.from_user.is_bot or message.from_user.id != state.bot_id or message.business_connection_id is not None:
+        if (
+            message.from_user is None
+            or not message.from_user.is_bot
+            or message.from_user.id != state.bot_id
+            or message.business_connection_id is not None
+        ):
             raise UnknownOutcome('Unexpected navigation response sender')
 
     async def _edit(self, bot: Bot, entry: _Entry, key: str, history: tuple[str, ...]) -> NavigationState:
@@ -266,9 +327,13 @@ class MessageNavigation:
         entry.issued_revision += 1  # Never reuse a revision whose markup may have reached Telegram.
         candidate = replace(entry.state, screen=key, history=history, revision=entry.issued_revision, phase='ready')
         try:
-            edited = await bot.edit_message_text(self._screens[key].text, chat_id=candidate.chat_id,
-                message_id=candidate.message_id, parse_mode=None,
-                reply_markup=self._markup(self._screens[key], candidate.session_id, candidate.revision, bool(history)))
+            edited = await bot.edit_message_text(
+                self._screens[key].text,
+                chat_id=candidate.chat_id,
+                message_id=candidate.message_id,
+                parse_mode=None,
+                reply_markup=self._markup(self._screens[key], candidate.session_id, candidate.revision, bool(history)),
+            )
             self._verify_message(edited, candidate)
         except TelegramBadRequest:
             # Explicit API rejection leaves the prior confirmed state, including unknown.
@@ -284,13 +349,26 @@ class MessageNavigation:
         if query.from_user.id != state.owner_id:
             return NavigationResult('denied', 'Это меню другого пользователя.')
         message = query.message
-        if (bot.id != state.bot_id or not isinstance(message, Message) or query.inline_message_id is not None
-            or message.date.timestamp() == 0 or message.chat.id != state.chat_id or message.message_thread_id != state.message_thread_id
-            or message.message_id != state.message_id or message.business_connection_id is not None
-            or message.from_user is None or not message.from_user.is_bot or message.from_user.id != state.bot_id
-            or message.chat.type != self._capabilities.chat_type):
+        if (
+            bot.id != state.bot_id
+            or not isinstance(message, Message)
+            or query.inline_message_id is not None
+            or message.date.timestamp() == 0
+            or message.chat.id != state.chat_id
+            or message.message_thread_id != state.message_thread_id
+            or message.message_id != state.message_id
+            or message.business_connection_id is not None
+            or message.from_user is None
+            or not message.from_user.is_bot
+            or message.from_user.id != state.bot_id
+            or message.chat.type != self._capabilities.chat_type
+        ):
             return NavigationResult('stale', 'Это сообщение не относится к активному меню.')
-        if self._tokens.get(state.session_id) is not entry or time.monotonic() >= state.expires_at or revision != state.revision:
+        if (
+            self._tokens.get(state.session_id) is not entry
+            or time.monotonic() >= state.expires_at
+            or revision != state.revision
+        ):
             return NavigationResult('stale', 'Кнопка устарела. Откройте меню командой /menu.')
         if state.phase != 'ready':
             return NavigationResult('unknown', 'Экран требует восстановления. Откройте /menu.', state)
@@ -330,7 +408,9 @@ class MessageNavigation:
                 return NavigationResult('stale', 'Такого перехода на текущем экране нет.', state)
             elif target != state.screen:
                 if len(history) >= self._history_limit:
-                    return NavigationResult('unavailable', 'История заполнена. Вернитесь назад или откройте /menu.', state)
+                    return NavigationResult(
+                        'unavailable', 'История заполнена. Вернитесь назад или откройте /menu.', state
+                    )
                 history = (*history, state.screen)
             try:
                 current = await self._edit(bot, entry, target, history)
@@ -341,12 +421,17 @@ class MessageNavigation:
             except ConflictFailure:
                 return NavigationResult('unavailable', 'Переход недоступен. Откройте новое меню.', entry.state)
             except Exception:
-                return NavigationResult('unknown', 'Ответ не подтвержден. Откройте /menu для восстановления.', entry.state)
+                return NavigationResult(
+                    'unknown', 'Ответ не подтвержден. Откройте /menu для восстановления.', entry.state
+                )
             return NavigationResult('accepted', 'Экран обновлен.', current)
 
 
-def navigation_router(navigation: MessageNavigation, *,
-                      on_result: Callable[[CallbackQuery, NavigationResult], Awaitable[None]] | None = None) -> Router:
+def navigation_router(
+    navigation: MessageNavigation,
+    *,
+    on_result: Callable[[CallbackQuery, NavigationResult], Awaitable[None]] | None = None,
+) -> Router:
     """Attach to an existing Dispatcher; host chooses safe feedback/error hooks."""
     if not isinstance(navigation, MessageNavigation):
         raise InvalidType('Use MessageNavigation')

@@ -6,11 +6,12 @@ The checks mirror telegram_patterns.aiogram.inline_keyboard/reply_keyboard: one 
 callback_data of 1..64 UTF-8 bytes, HTTPS Mini App URLs only in private chats, 1..8 buttons per row and at most
 100 buttons, custom emoji icons only with a verified entitlement. Rights and callback authorization stay with the host.
 """
+
 from __future__ import annotations
 
+import re
 from collections.abc import Sequence
 from dataclasses import dataclass
-import re
 from typing import Any, Literal
 from urllib.parse import urlsplit
 
@@ -20,7 +21,15 @@ ChatType = Literal['private', 'group', 'supergroup', 'channel']
 ButtonStyle = Literal['primary', 'success', 'danger']
 Button = dict[str, Any]
 _CHATS = ('private', 'group', 'supergroup', 'channel')
-_INLINE_ACTIONS = ('url', 'callback_data', 'web_app', 'copy_text', 'switch_inline_query', 'switch_inline_query_current_chat', 'disabled')
+_INLINE_ACTIONS = (
+    'url',
+    'callback_data',
+    'web_app',
+    'copy_text',
+    'switch_inline_query',
+    'switch_inline_query_current_chat',
+    'disabled',
+)
 
 
 def _text(value: object, *, limit: int | None = None) -> str:
@@ -59,16 +68,33 @@ def _https(url: object) -> str:
     return str(url)
 
 
-def inline_button(text: str, *, callback_data: str | None = None, url: str | None = None, web_app: str | None = None,
-                  copy_text: str | None = None, switch_inline_query: str | None = None,
-                  switch_inline_query_current_chat: str | None = None, disabled: bool = False,
-                  style: ButtonStyle | None = None, icon_custom_emoji_id: str | None = None) -> Button:
+def inline_button(
+    text: str,
+    *,
+    callback_data: str | None = None,
+    url: str | None = None,
+    web_app: str | None = None,
+    copy_text: str | None = None,
+    switch_inline_query: str | None = None,
+    switch_inline_query_current_chat: str | None = None,
+    disabled: bool = False,
+    style: ButtonStyle | None = None,
+    icon_custom_emoji_id: str | None = None,
+) -> Button:
     """One inline button with exactly one action; web_app is the HTTPS URL of the Mini App."""
     button: Button = {'text': _text(text)}
     _presentation(button, style, icon_custom_emoji_id)
-    actions = {'callback_data': callback_data, 'url': url, 'web_app': web_app, 'copy_text': copy_text,
-               'switch_inline_query': switch_inline_query, 'switch_inline_query_current_chat': switch_inline_query_current_chat}
-    chosen = [name for name, value in actions.items() if value is not None] + (['disabled'] if _flag(disabled, 'disabled') else [])
+    actions = {
+        'callback_data': callback_data,
+        'url': url,
+        'web_app': web_app,
+        'copy_text': copy_text,
+        'switch_inline_query': switch_inline_query,
+        'switch_inline_query_current_chat': switch_inline_query_current_chat,
+    }
+    chosen = [name for name, value in actions.items() if value is not None] + (
+        ['disabled'] if _flag(disabled, 'disabled') else []
+    )
     if len(chosen) != 1:
         raise ValidationFailure('Inline button must have exactly one action')
     action = chosen[0]
@@ -82,7 +108,11 @@ def inline_button(text: str, *, callback_data: str | None = None, url: str | Non
         button['callback_data'] = callback_data
     elif action == 'url':
         parsed = urlsplit(url) if isinstance(url, str) else None
-        if parsed is None or parsed.scheme not in ('http', 'https', 'tg') or (parsed.scheme != 'tg' and not parsed.hostname):
+        if (
+            parsed is None
+            or parsed.scheme not in ('http', 'https', 'tg')
+            or (parsed.scheme != 'tg' and not parsed.hostname)
+        ):
             raise ValidationFailure('Use an HTTP(S) or tg:// button URL')
         button['url'] = url
     elif action == 'web_app':
@@ -98,14 +128,27 @@ def inline_button(text: str, *, callback_data: str | None = None, url: str | Non
     return button
 
 
-def reply_button(text: str, *, request_contact: bool = False, request_location: bool = False, web_app: str | None = None,
-                 style: ButtonStyle | None = None, icon_custom_emoji_id: str | None = None) -> Button:
+def reply_button(
+    text: str,
+    *,
+    request_contact: bool = False,
+    request_location: bool = False,
+    web_app: str | None = None,
+    style: ButtonStyle | None = None,
+    icon_custom_emoji_id: str | None = None,
+) -> Button:
     """A reply keyboard button: plain text or one request (contact, location, Mini App)."""
     button: Button = {'text': _text(text)}
     _presentation(button, style, icon_custom_emoji_id)
-    requests = [name for name, value in (('request_contact', _flag(request_contact, 'request_contact')),
-                                         ('request_location', _flag(request_location, 'request_location')),
-                                         ('web_app', web_app is not None)) if value]
+    requests = [
+        name
+        for name, value in (
+            ('request_contact', _flag(request_contact, 'request_contact')),
+            ('request_location', _flag(request_location, 'request_location')),
+            ('web_app', web_app is not None),
+        )
+        if value
+    ]
     if len(requests) > 1:
         raise ValidationFailure('A reply button requests at most one thing')
     if requests == ['web_app']:
@@ -116,7 +159,7 @@ def reply_button(text: str, *, request_contact: bool = False, request_location: 
 
 
 def layout_rows(items: Sequence[Any], widths: Sequence[int] = (2,), *, repeat: bool = False) -> list[list[Any]]:
-    """Split a flat list into rows: widths 1..8 in order, repeat cycles them, otherwise the last width fills the tail."""
+    """Rows from a flat list: widths 1..8 in order; repeat cycles them, otherwise the last width fills the tail."""
     if isinstance(items, (str, bytes)) or isinstance(widths, (str, bytes)):
         raise InvalidType('Use sequences of buttons and widths')
     values, sizes = list(items), tuple(widths)
@@ -128,7 +171,7 @@ def layout_rows(items: Sequence[Any], widths: Sequence[int] = (2,), *, repeat: b
     rows, offset, index = [], 0, 0
     while offset < len(values):
         width = sizes[index % len(sizes) if repeat else min(index, len(sizes) - 1)]
-        rows.append(values[offset:offset + width])
+        rows.append(values[offset : offset + width])
         offset, index = offset + width, index + 1
     return rows
 
@@ -162,8 +205,13 @@ def _finish(button: Button, verified: bool) -> Button:
     return copied
 
 
-def inline_markup(rows: Sequence[Sequence[Button]], *, chat_type: ChatType = 'private', business: bool = False,
-                  emoji_entitlement_verified: bool = False) -> dict[str, Any]:
+def inline_markup(
+    rows: Sequence[Sequence[Button]],
+    *,
+    chat_type: ChatType = 'private',
+    business: bool = False,
+    emoji_entitlement_verified: bool = False,
+) -> dict[str, Any]:
     """InlineKeyboardMarkup JSON from rows of inline_button results, checked against the chat context."""
     _context(chat_type, business)
     verified = _flag(emoji_entitlement_verified, 'emoji_entitlement_verified')
@@ -179,16 +227,26 @@ def inline_markup(rows: Sequence[Sequence[Button]], *, chat_type: ChatType = 'pr
             if actions[0] == 'web_app' and (chat_type != 'private' or business):
                 raise ValidationFailure('Web App button requires an ordinary private bot chat')
             if actions[0] in ('switch_inline_query', 'switch_inline_query_current_chat') and (
-                    business or (actions[0] == 'switch_inline_query_current_chat' and chat_type == 'channel')):
+                business or (actions[0] == 'switch_inline_query_current_chat' and chat_type == 'channel')
+            ):
                 raise ValidationFailure('Inline switch action is unavailable in this context')
             buttons.append(_finish(button, verified))
         result.append(buttons)
     return {'inline_keyboard': result}
 
 
-def reply_markup(rows: Sequence[Sequence[str | Button]], *, chat_type: ChatType = 'private', business: bool = False,
-                 resize: bool = True, one_time: bool = False, persistent: bool = False, placeholder: str | None = None,
-                 selective: bool = False, emoji_entitlement_verified: bool = False) -> dict[str, Any]:
+def reply_markup(
+    rows: Sequence[Sequence[str | Button]],
+    *,
+    chat_type: ChatType = 'private',
+    business: bool = False,
+    resize: bool = True,
+    one_time: bool = False,
+    persistent: bool = False,
+    placeholder: str | None = None,
+    selective: bool = False,
+    emoji_entitlement_verified: bool = False,
+) -> dict[str, Any]:
     """ReplyKeyboardMarkup JSON; strings become text buttons. Requests and Mini Apps need a private chat."""
     _context(chat_type, business)
     verified = _flag(emoji_entitlement_verified, 'emoji_entitlement_verified')
@@ -200,12 +258,18 @@ def reply_markup(rows: Sequence[Sequence[str | Button]], *, chat_type: ChatType 
                 button = reply_button(button)
             if not isinstance(button, dict) or 'text' not in button:
                 raise InvalidType('Use strings or reply_button results')
-            if any(name in button for name in ('request_contact', 'request_location', 'web_app')) and (chat_type != 'private' or business):
+            if any(name in button for name in ('request_contact', 'request_location', 'web_app')) and (
+                chat_type != 'private' or business
+            ):
                 raise ValidationFailure('Contact, location and Mini App requests need an ordinary private chat')
             buttons.append(_finish(button, verified))
         result.append(buttons)
-    markup: dict[str, Any] = {'keyboard': result, 'is_persistent': _flag(persistent, 'persistent'), 'resize_keyboard': _flag(resize, 'resize'),
-                              'one_time_keyboard': _flag(one_time, 'one_time')}
+    markup: dict[str, Any] = {
+        'keyboard': result,
+        'is_persistent': _flag(persistent, 'persistent'),
+        'resize_keyboard': _flag(resize, 'resize'),
+        'one_time_keyboard': _flag(one_time, 'one_time'),
+    }
     if placeholder is not None:
         markup['input_field_placeholder'] = _text(placeholder, limit=64)
     markup['selective'] = _flag(selective, 'selective')
@@ -239,14 +303,23 @@ def _callback(prefix: str, key: str) -> str:
 @dataclass(frozen=True, slots=True)
 class MarkupPage:
     """One page of a long menu: markup JSON and where the page is."""
+
     markup: dict[str, Any]
     page: int
     page_count: int
     total_items: int
 
 
-def paginated_markup(items: Sequence[tuple[str, str]], *, page: int = 0, page_size: int = 6, columns: int = 2,
-                     action_prefix: str = 'act:', page_prefix: str = 'page:', style: ButtonStyle | None = None) -> MarkupPage:
+def paginated_markup(
+    items: Sequence[tuple[str, str]],
+    *,
+    page: int = 0,
+    page_size: int = 6,
+    columns: int = 2,
+    action_prefix: str = 'act:',
+    page_prefix: str = 'page:',
+    style: ButtonStyle | None = None,
+) -> MarkupPage:
     """(text, key) items as pages of callback buttons with ← Назад / Далее →; a page past the end shows the last one.
 
     The same layout and callback data as telegram_patterns.aiogram.paginated_menu.
@@ -270,8 +343,8 @@ def paginated_markup(items: Sequence[tuple[str, str]], *, page: int = 0, page_si
         raise ValidationFailure('Action keys must be unique within a menu')
     count = max(1, (len(buttons) + page_size - 1) // page_size)
     current = min(page, count - 1)
-    shown = buttons[current * page_size:(current + 1) * page_size]
-    rows = [shown[offset:offset + columns] for offset in range(0, len(shown), columns)]
+    shown = buttons[current * page_size : (current + 1) * page_size]
+    rows = [shown[offset : offset + columns] for offset in range(0, len(shown), columns)]
     navigation = []
     if current > 0:
         navigation.append(inline_button('← Назад', callback_data=_callback(page_prefix, str(current - 1))))
@@ -287,7 +360,7 @@ def markup_page_number(data: str | None, *, prefix: str = 'page:') -> int | None
     _callback(prefix, '0')
     if not isinstance(data, str) or not data.startswith(prefix):
         return None
-    key = data[len(prefix):]
+    key = data[len(prefix) :]
     if not re.fullmatch(r'0|[1-9][0-9]{0,47}', key):
         return None
     return int(key)

@@ -1,36 +1,48 @@
 """Local CLI: recipe discovery, NEW project scaffolding and read-only diagnostics."""
+
 from __future__ import annotations
+
 import argparse
 import json
-from pathlib import Path
 import sys
 import tarfile
-from typing import Any
 import zipfile
-
 from importlib.resources import files
+from pathlib import Path
+from typing import Any
 
 from .diagnostics import diagnose
 from .errors import OperationKind, PatternError, safe_error_report
-from .recipes import RecipeCatalog
 from .execution import plan_recipe, run_recipe_offline
+from .recipes import RecipeCatalog
 from .starter import create_starter
 from .starter_components import StarterConflict, starter_components
 
 
-def doctor(target: str | Path = '.', *, require_token: bool = False, webhook: bool = False,
-           expect: str | None = None, webhook_secret_env: str = 'WEBHOOK_SECRET') -> dict:
+def doctor(
+    target: str | Path = '.',
+    *,
+    require_token: bool = False,
+    webhook: bool = False,
+    expect: str | None = None,
+    webhook_secret_env: str = 'WEBHOOK_SECRET',
+) -> dict:
     """Local read-only checks; webhook=True adds one getWebhookInfo request and reads BOT_TOKEN from .env too."""
-    return diagnose(target, require_token=require_token, webhook=webhook, expect=expect,
-                    webhook_secret_env=webhook_secret_env)
+    return diagnose(
+        target, require_token=require_token, webhook=webhook, expect=expect, webhook_secret_env=webhook_secret_env
+    )
 
 
 _PROBLEMS = {
-    'installation': ('Пакет установлен не полностью: нет встроенного ресурса.',
-                     'Переустановите awesome-telegram-patterns из полного wheel или checkout.'),
+    'installation': (
+        'Пакет установлен не полностью: нет встроенного ресурса.',
+        'Переустановите awesome-telegram-patterns из полного wheel или checkout.',
+    ),
     'target-exists': ('Каталог проекта уже существует.', 'init создает только новый каталог: укажите другой путь.'),
-    'artifact': ('Переданный wheel или tarball поврежден или не является архивом пакета.',
-                 'Укажите файл, собранный из awesome-telegram-patterns, или каталог packages/python.'),
+    'artifact': (
+        'Переданный wheel или tarball поврежден или не является архивом пакета.',
+        'Укажите файл, собранный из awesome-telegram-patterns, или каталог packages/python.',
+    ),
     'filesystem': ('Не удалось прочитать или записать файл.', 'Проверьте путь и права доступа.'),
     'input': ('Команда получила неподходящие данные.', 'Проверьте аргументы: telegram-patterns <команда> --help.'),
 }
@@ -90,22 +102,48 @@ def main(argv: list[str] | None = None) -> int:
     common.add_argument('--json', action='store_true', help='Print errors as one ASCII JSON object on stderr')
     commands = parser.add_subparsers(dest='command', required=True)
     recipes = commands.add_parser('recipes', parents=[common], help='Search bundled recipes; never executes them')
-    recipes.add_argument('query', nargs='?', default=''); recipes.add_argument('--category'); recipes.add_argument('--language')
-    recipes.add_argument('--verification'); recipes.add_argument('--limit', type=int, default=20); recipes.add_argument('--show')
+    recipes.add_argument('query', nargs='?', default='')
+    recipes.add_argument('--category')
+    recipes.add_argument('--language')
+    recipes.add_argument('--verification')
+    recipes.add_argument('--limit', type=int, default=20)
+    recipes.add_argument('--show')
     recipes.add_argument('--maturity', choices=('stable', 'experimental', 'reference'))
     for field in ('task', 'context', 'sdk', 'sdk-version', 'api-version'):
         recipes.add_argument('--' + field, help='Exact catalog metadata; not permission/compatibility proof')
     init = commands.add_parser('init', parents=[common], help='Create a NEW project; no install/network/overwrite')
-    init.add_argument('target', nargs='?'); init.add_argument('--library'); init.add_argument('--template', choices=('bot', 'bot-mini-app'), default='bot')
-    init.add_argument('--typescript'); init.add_argument('--dry-run', action='store_true')
-    init.add_argument('--component', action='append', help='Repeat a selectable component ID; dependencies are included')
-    init.add_argument('--list-components', action='store_true', help='List the closed starter registry; no filesystem or network')
-    diagnostics = commands.add_parser('doctor', parents=[common], help='Read-only diagnostics; never prints token; network only with --webhook')
-    diagnostics.add_argument('target', nargs='?', default='.'); diagnostics.add_argument('--require-token', action='store_true')
-    diagnostics.add_argument('--webhook', action='store_true', help='Also call read-only getWebhookInfo; BOT_TOKEN from environment or project .env')
-    diagnostics.add_argument('--expect', choices=('polling', 'webhook'), help='How this bot receives updates; turns a mismatch into a failed check')
-    diagnostics.add_argument('--webhook-secret-env', default='WEBHOOK_SECRET', help='Variable holding the secret_token passed to setWebhook')
-    run_recipe = commands.add_parser('run-recipe', parents=[common], help='Show prerequisites; --offline runs only a bundled fixture')
+    init.add_argument('target', nargs='?')
+    init.add_argument('--library')
+    init.add_argument('--template', choices=('bot', 'bot-mini-app'), default='bot')
+    init.add_argument('--typescript')
+    init.add_argument('--dry-run', action='store_true')
+    init.add_argument(
+        '--component', action='append', help='Repeat a selectable component ID; dependencies are included'
+    )
+    init.add_argument(
+        '--list-components', action='store_true', help='List the closed starter registry; no filesystem or network'
+    )
+    diagnostics = commands.add_parser(
+        'doctor', parents=[common], help='Read-only diagnostics; never prints token; network only with --webhook'
+    )
+    diagnostics.add_argument('target', nargs='?', default='.')
+    diagnostics.add_argument('--require-token', action='store_true')
+    diagnostics.add_argument(
+        '--webhook',
+        action='store_true',
+        help='Also call read-only getWebhookInfo; BOT_TOKEN from environment or project .env',
+    )
+    diagnostics.add_argument(
+        '--expect',
+        choices=('polling', 'webhook'),
+        help='How this bot receives updates; turns a mismatch into a failed check',
+    )
+    diagnostics.add_argument(
+        '--webhook-secret-env', default='WEBHOOK_SECRET', help='Variable holding the secret_token passed to setWebhook'
+    )
+    run_recipe = commands.add_parser(
+        'run-recipe', parents=[common], help='Show prerequisites; --offline runs only a bundled fixture'
+    )
     run_recipe.add_argument('recipe_id')
     run_recipe.add_argument('--offline', action='store_true')
     run_recipe.add_argument('--timeout', type=float, default=60.0)
@@ -117,18 +155,56 @@ def main(argv: list[str] | None = None) -> int:
                 recipe = catalog.get(args.show)
                 print(f'{recipe.title}\n{recipe.maturity} / {recipe.verification}: {recipe.scope}\n\n{recipe.code}')
             else:
-                found = catalog.search(args.query, category=args.category, language=args.language, verification=args.verification, maturity=args.maturity, limit=args.limit,
-                                       task=args.task, context=args.context, sdk=args.sdk, sdk_version=args.sdk_version, api_version=args.api_version)
-                print(json.dumps({'version': catalog.library_version, 'matches': len(found), 'recipes': [
-                    {'id': item.id, 'title': item.title, 'category': item.category, 'maturity': item.maturity, 'verification': item.verification, 'scope': item.scope,
-                     'tasks': item.tasks, 'contexts': item.contexts, 'sdk': item.sdk, 'sdk_version': item.sdk_version, 'api_version': item.api_version,
-                     'source_files': item.source_files, 'check_files': item.check_files} for item in found]}, ensure_ascii=False))
+                found = catalog.search(
+                    args.query,
+                    category=args.category,
+                    language=args.language,
+                    verification=args.verification,
+                    maturity=args.maturity,
+                    limit=args.limit,
+                    task=args.task,
+                    context=args.context,
+                    sdk=args.sdk,
+                    sdk_version=args.sdk_version,
+                    api_version=args.api_version,
+                )
+                print(
+                    json.dumps(
+                        {
+                            'version': catalog.library_version,
+                            'matches': len(found),
+                            'recipes': [
+                                {
+                                    'id': item.id,
+                                    'title': item.title,
+                                    'category': item.category,
+                                    'maturity': item.maturity,
+                                    'verification': item.verification,
+                                    'scope': item.scope,
+                                    'tasks': item.tasks,
+                                    'contexts': item.contexts,
+                                    'sdk': item.sdk,
+                                    'sdk_version': item.sdk_version,
+                                    'api_version': item.api_version,
+                                    'source_files': item.source_files,
+                                    'check_files': item.check_files,
+                                }
+                                for item in found
+                            ],
+                        },
+                        ensure_ascii=False,
+                    )
+                )
         elif args.command == 'run-recipe':
             from dataclasses import asdict
+
             execution_plan = plan_recipe(args.recipe_id)
             # -I ignores PYTHONUTF8 on Windows; ASCII JSON preserves every Unicode
             # value while remaining decodable across redirected console encodings.
-            print(json.dumps({'stage': 'plan', **asdict(execution_plan), 'offline_ready': execution_plan.offline_ready}), flush=True)
+            print(
+                json.dumps({'stage': 'plan', **asdict(execution_plan), 'offline_ready': execution_plan.offline_ready}),
+                flush=True,
+            )
             if args.offline:
                 result = run_recipe_offline(args.recipe_id, timeout=args.timeout)
                 print(json.dumps({'stage': 'result', **asdict(result)}))
@@ -137,35 +213,84 @@ def main(argv: list[str] | None = None) -> int:
                 if args.target or args.library or args.typescript or args.component or args.dry_run:
                     raise StarterConflict('listing-input')
                 from dataclasses import asdict
-                print(json.dumps({'components': [asdict(item) for item in starter_components()], 'network': False}, ensure_ascii=False))
+
+                print(
+                    json.dumps(
+                        {'components': [asdict(item) for item in starter_components()], 'network': False},
+                        ensure_ascii=False,
+                    )
+                )
                 return 0
-            if not args.target or not args.library: raise StarterConflict('missing-input')
-            plan = create_starter(args.target, library=args.library, template=args.template, typescript=args.typescript,
-                                  dry_run=args.dry_run, components=args.component)
-            print(json.dumps({'created': plan.created, 'target': str(plan.target), 'template': plan.template,
-                              'library_version': plan.library_version, 'files': plan.files, 'components': plan.components,
-                              'requested_components': plan.requested_components, 'network': False}))
+            if not args.target or not args.library:
+                raise StarterConflict('missing-input')
+            plan = create_starter(
+                args.target,
+                library=args.library,
+                template=args.template,
+                typescript=args.typescript,
+                dry_run=args.dry_run,
+                components=args.component,
+            )
+            print(
+                json.dumps(
+                    {
+                        'created': plan.created,
+                        'target': str(plan.target),
+                        'template': plan.template,
+                        'library_version': plan.library_version,
+                        'files': plan.files,
+                        'components': plan.components,
+                        'requested_components': plan.requested_components,
+                        'network': False,
+                    }
+                )
+            )
         else:
             if (args.expect or args.webhook_secret_env != 'WEBHOOK_SECRET') and not args.webhook:
                 parser.error('--expect and --webhook-secret-env require --webhook')
-            report = doctor(args.target, require_token=args.require_token, webhook=args.webhook,
-                            expect=args.expect, webhook_secret_env=args.webhook_secret_env)
-            print(json.dumps(report)); return 0 if report['passed'] else 1
+            report = doctor(
+                args.target,
+                require_token=args.require_token,
+                webhook=args.webhook,
+                expect=args.expect,
+                webhook_secret_env=args.webhook_secret_env,
+            )
+            print(json.dumps(report))
+            return 0 if report['passed'] else 1
     except StarterConflict as error:
-        _report({'passed': False, 'error': 'StarterConflict', 'problem': 'input', 'reason': error.reason,
-                 'detail': str(error), 'failure': safe_error_report(error, operation='read').as_dict(),
-                 'supported_components': [item.id for item in starter_components()]}, as_json=args.json)
+        _report(
+            {
+                'passed': False,
+                'error': 'StarterConflict',
+                'problem': 'input',
+                'reason': error.reason,
+                'detail': str(error),
+                'failure': safe_error_report(error, operation='read').as_dict(),
+                'supported_components': [item.id for item in starter_components()],
+            },
+            as_json=args.json,
+        )
         return 2
     except (PatternError, ValueError, OSError, KeyError, TypeError, zipfile.BadZipFile, tarfile.TarError) as error:
         # Do not expose config/env payloads or arbitrary exception text.
         problem = _problem(error)
-        operation: OperationKind = 'write' if args.command == 'init' and not args.dry_run and problem != 'installation' else 'read'
-        _report({'passed': False, 'error': type(error).__name__, 'problem': problem,
-                 'failure': safe_error_report(error, operation=operation).as_dict(),
-                 'detail': 'Invalid input, existing target or unavailable local artifact. No existing files replaced; failed new project creation may leave partial files.'},
-                as_json=args.json)
+        operation: OperationKind = (
+            'write' if args.command == 'init' and not args.dry_run and problem != 'installation' else 'read'
+        )
+        _report(
+            {
+                'passed': False,
+                'error': type(error).__name__,
+                'problem': problem,
+                'failure': safe_error_report(error, operation=operation).as_dict(),
+                'detail': 'Invalid input, existing target or unavailable local artifact. No existing files '
+                'replaced; failed new project creation may leave partial files.',
+            },
+            as_json=args.json,
+        )
         return 2
     return 0
 
 
-if __name__ == '__main__': raise SystemExit(main())
+if __name__ == '__main__':
+    raise SystemExit(main())

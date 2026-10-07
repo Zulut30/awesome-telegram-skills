@@ -57,6 +57,8 @@ python3 scripts/verify_pattern_packages.py
 
 Полная проверка строит wheel/tarball, устанавливает их в отдельные проекты и запускает проверки Python, TypeScript и браузера. Проверка работает на Windows, Linux и macOS, в том числе за прокси: дочерние процессы получают только системные переменные, прокси и CA-сертификаты из `scripts/_environment.py`, но не `BOT_TOKEN` и другие секреты. Нужен Chrome либо `CHROME_PATH` (путь к Chrome или Chromium); `--skip-browser` оставляет UI непроверенным. Отчеты сохраняются в `output/pattern-library-<version>`.
 
+Стиль кода Python-библиотеки проверяет ruff (настройки — в `packages/python/pyproject.toml`: строки до 120 символов, кавычки сохраняются, правила E, F, W и I): `ruff check packages/python` и `ruff format --check packages/python`; исправляет `ruff format packages/python`. CI запускает обе команды.
+
 При изменении публичного API синхронизируйте exports, [components.json](components.json), документацию и [CHANGELOG.md](CHANGELOG.md). `python scripts/check_api_compatibility.py --base auto` сравнивает публичные символы Python и TypeScript с предыдущим тегом (в pull request — с базовой веткой): каждый удаленный или измененный символ нужно назвать в обратных кавычках в верхнем разделе CHANGELOG, иначе CI падает. Различайте SDK/mock/browser/live evidence и статусы experimental/reference/stable. Проверка в браузере не заменяет испытания в Telegram и на реальных устройствах.
 
 ## Выпуск версии

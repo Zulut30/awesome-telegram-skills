@@ -5,10 +5,11 @@ stars_subscription, sqlite_once, initdata) works the same under python-telegram-
 its JSON to PTB objects and lets an Application run without Telegram. Fields that the installed PTB release does
 not know yet (for example `disabled` buttons of Bot API 10.3) travel in api_kwargs and reach the wire unchanged.
 """
+
 from __future__ import annotations
 
-from collections.abc import Callable, Mapping
 import json
+from collections.abc import Callable, Mapping
 from typing import Any
 
 from telegram import ForceReply, InlineKeyboardMarkup, MessageEntity, ReplyKeyboardMarkup, ReplyKeyboardRemove
@@ -22,8 +23,12 @@ __all__ = ['ptb_markup', 'ptb_inline_markup', 'ptb_text', 'StubRequest', 'offlin
 
 Markup = InlineKeyboardMarkup | ReplyKeyboardMarkup | ReplyKeyboardRemove | ForceReply
 Responder = Callable[[dict[str, Any]], Any]
-_KINDS: tuple[tuple[str, type[Markup]], ...] = (('inline_keyboard', InlineKeyboardMarkup), ('keyboard', ReplyKeyboardMarkup),
-                                               ('remove_keyboard', ReplyKeyboardRemove), ('force_reply', ForceReply))
+_KINDS: tuple[tuple[str, type[Markup]], ...] = (
+    ('inline_keyboard', InlineKeyboardMarkup),
+    ('keyboard', ReplyKeyboardMarkup),
+    ('remove_keyboard', ReplyKeyboardRemove),
+    ('force_reply', ForceReply),
+)
 
 
 def ptb_markup(markup: Mapping[str, Any]) -> Markup:
@@ -52,11 +57,13 @@ def ptb_inline_markup(markup: Mapping[str, Any]) -> InlineKeyboardMarkup:
 
 
 def ptb_text(formatted: FormattedText) -> dict[str, Any]:
-    """text, entities and parse_mode=None for send_message/edit_message_text: the text stays literal under any Defaults."""
+    """text, entities and parse_mode=None for send_message/edit_message_text: literal text under any Defaults."""
     if not isinstance(formatted, FormattedText):
         raise InvalidType('Expected FormattedText from MessageBuilder or split()')
     data = formatted.as_kwargs()
-    entities = tuple(entity for entity in (MessageEntity.de_json(item, None) for item in data['entities']) if entity is not None)
+    entities = tuple(
+        entity for entity in (MessageEntity.de_json(item, None) for item in data['entities']) if entity is not None
+    )
     return {'text': data['text'], 'entities': entities, 'parse_mode': None}
 
 
@@ -69,7 +76,9 @@ class StubRequest(BaseRequest):
     def __init__(self, *, me: Mapping[str, Any] | None = None) -> None:
         self.calls: list[tuple[str, dict[str, Any]]] = []
         self.closed = False
-        self._responses: dict[str, Any] = {'getMe': dict(me or {'id': 1, 'is_bot': True, 'first_name': 'Fixture', 'username': 'fixture_bot'})}
+        self._responses: dict[str, Any] = {
+            'getMe': dict(me or {'id': 1, 'is_bot': True, 'first_name': 'Fixture', 'username': 'fixture_bot'})
+        }
 
     def respond(self, method: str, response: Any | Responder) -> StubRequest:
         """response is the `result` value or a callable that receives the parameters and returns it."""
@@ -93,8 +102,16 @@ class StubRequest(BaseRequest):
     async def shutdown(self) -> None:
         self.closed = True
 
-    async def do_request(self, url: str, method: str, request_data: RequestData | None = None, read_timeout: Any = None,
-                         write_timeout: Any = None, connect_timeout: Any = None, pool_timeout: Any = None) -> tuple[int, bytes]:
+    async def do_request(
+        self,
+        url: str,
+        method: str,
+        request_data: RequestData | None = None,
+        read_timeout: Any = None,
+        write_timeout: Any = None,
+        connect_timeout: Any = None,
+        pool_timeout: Any = None,
+    ) -> tuple[int, bytes]:
         name = url.rsplit('/', 1)[-1]
         parameters = dict(request_data.parameters) if request_data is not None else {}
         if name != 'getMe':
@@ -103,8 +120,9 @@ class StubRequest(BaseRequest):
             raise AssertionError(f'No offline response registered for {name}')
         response = self._responses[name]
         if isinstance(response, _Failure):
-            return response.error_code, json.dumps({'ok': False, 'error_code': response.error_code,
-                                                    'description': response.description}).encode()
+            return response.error_code, json.dumps(
+                {'ok': False, 'error_code': response.error_code, 'description': response.description}
+            ).encode()
         result = response(parameters) if callable(response) else response
         return 200, json.dumps({'ok': True, 'result': result}).encode()
 
@@ -114,8 +132,9 @@ class _Failure:
         self.error_code, self.description = error_code, description
 
 
-def offline_application(token: str = '1:OFFLINE_FIXTURE', *, request: StubRequest | None = None,
-                        defaults: Defaults | None = None) -> tuple[Application[Any, Any, Any, Any, Any, Any], StubRequest]:
+def offline_application(
+    token: str = '1:OFFLINE_FIXTURE', *, request: StubRequest | None = None, defaults: Defaults | None = None
+) -> tuple[Application[Any, Any, Any, Any, Any, Any], StubRequest]:
     """An Application whose bot talks only to StubRequest and that has no updater; feed it with process_update.
 
     defaults are the project's Defaults (parse_mode and others), so a test sees what production would send.

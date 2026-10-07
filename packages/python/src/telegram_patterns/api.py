@@ -1,6 +1,6 @@
 """Discover and construct ALL methods supported by the installed aiogram SDK."""
+
 from __future__ import annotations
-from .errors import ErrorCode, ValidationFailure
 
 from dataclasses import dataclass
 from functools import lru_cache
@@ -10,9 +10,12 @@ import aiogram.methods as methods
 from aiogram.methods.base import TelegramMethod
 from pydantic import ValidationError
 
+from .errors import ErrorCode, ValidationFailure
+
 
 class InvalidAPIRequest(ValidationFailure):
     """Controlled failure with no payload values, secrets or SDK error dump."""
+
     code: ErrorCode = 'invalid-api-request'
 
 
@@ -27,17 +30,27 @@ class MethodSpec:
 
 @lru_cache(maxsize=1)
 def _methods() -> Mapping[str, type[TelegramMethod[Any]]]:
-    return {value.__api_method__: value for value in vars(methods).values()
-            if isinstance(value, type) and issubclass(value, TelegramMethod)
-            and isinstance(getattr(value, '__api_method__', None), str)}
+    return {
+        value.__api_method__: value
+        for value in vars(methods).values()
+        if isinstance(value, type)
+        and issubclass(value, TelegramMethod)
+        and isinstance(getattr(value, '__api_method__', None), str)
+    }
 
 
 def method_catalog() -> tuple[MethodSpec, ...]:
     """Runtime SDK capabilities; never a statement of server rights/live testing."""
-    return tuple(MethodSpec(name, model.__name__, tuple(model.model_fields),
-                            tuple(key for key, field in model.model_fields.items() if field.is_required()),
-                            'https://core.telegram.org/bots/api#' + name.lower())
-                 for name, model in sorted(_methods().items()))
+    return tuple(
+        MethodSpec(
+            name,
+            model.__name__,
+            tuple(model.model_fields),
+            tuple(key for key, field in model.model_fields.items() if field.is_required()),
+            'https://core.telegram.org/bots/api#' + name.lower(),
+        )
+        for name, model in sorted(_methods().items())
+    )
 
 
 def build_request(name: str, parameters: Mapping[str, Any] | None = None) -> TelegramMethod[Any]:

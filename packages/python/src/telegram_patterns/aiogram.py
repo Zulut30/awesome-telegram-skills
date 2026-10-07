@@ -1,11 +1,11 @@
 """Optional aiogram 3 adapters; no SDK import in the core package."""
+
 from __future__ import annotations
-from .errors import AuthenticationRequired, InvalidType, PatternError, TransportFailure, ValidationFailure
 
 import asyncio
-from dataclasses import dataclass
 import math
 import re
+from dataclasses import dataclass
 from typing import Any, Awaitable, Callable, Literal, Mapping, Sequence
 
 from aiogram import Bot, Dispatcher, F, Router
@@ -17,54 +17,251 @@ from aiogram.filters import Command, CommandStart
 from aiogram.methods import CreateInvoiceLink
 from aiogram.types import BotCommand, CallbackQuery, InlineKeyboardMarkup, LabeledPrice, Message
 
-from .keyboards import ActionButton, ButtonStyle, MenuPage, _callback_data, action_keyboard, action_menu, page_number, paginated_menu
-from .settings import BotSettings
-from .fsm_storage import FSMSnapshot, FSMConflict, SnapshotStore, AtomicFSMStorage, SnapshotFSMStorage, DialogLifetime
-from .forms import FormSubmission, InvalidField, TextField, text_form_router
-from .dialog_fields import FieldValue, NumberField, EmailField, PhoneField, DateField, FileField, ContactField, LocationField
-from .dialog_forms import DialogSubmission, dialog_form_router
-from .native_keyboards import ChatType, inline_keyboard, reply_keyboard, input_prompt, remove_keyboard
-from .keyboard_layouts import KeyboardLayout, KeyboardCapabilities, action_layout, inline_layout, reply_layout
-from .navigation import NavigationScreen, NavigationState, NavigationResult, MessageNavigation, navigation_router
-from .selection_aiogram import selection_keyboard, selection_router
+from .api import InvalidAPIRequest, MethodSpec, build_request, method_catalog
 from .calendar_aiogram import calendar_keyboard, time_slot_keyboard
-from .media_aiogram import MediaKind, MediaSendRequest, MediaFile, MediaItem, DownloadedMedia, media_request, media_album, media_edit, download_media
-from .profiles_aiogram import ProfileSource, ProfileAuthorizer, UserProfile, ChatProfile, ProfilePhotoSize, ProfilePhotos, BotProfile, BotProfilePatch, ProfileEditIncomplete, user_profile, chat_profile, read_profile_photos, read_bot_profile, update_bot_profile
-from .inline_mode_aiogram import InlineChatType, InlineAuthorizer, InlineSearchProvider, InlineCachePolicy, InlineItem, InlinePage, InlineSearch, inline_articles, inline_query_router
-from .polls_aiogram import PollKind, PollChoice, PollSpec, PollOptionState, PollState, PollVote, PollOptionAddition, PollBinding, PollLocator, PollObservation, PollEvent, PollObserver, PollLookup, poll_request, poll_state, poll_vote, poll_option_added, poll_events_router
-from .platform_aiogram import PlatformContract, PlatformScope, PlatformPermit, PlatformAction, PlatformReceipt, PlatformResult, PlatformHooks, SecretToken, PlatformEvent, PlatformLookup, PlatformObserver, platform_contracts, execute_platform_action, managed_bot_link, platform_event, platform_events_router, StoryPhotoUpload, StoryVideoUpload
-from .api import MethodSpec, InvalidAPIRequest, method_catalog, build_request
-from .events import UpdatePhase, UpdateTrace, UpdateObserver, update_kinds, event_router
+from .dialog_fields import (
+    ContactField,
+    DateField,
+    EmailField,
+    FieldValue,
+    FileField,
+    LocationField,
+    NumberField,
+    PhoneField,
+)
+from .dialog_forms import DialogSubmission, dialog_form_router
+from .errors import AuthenticationRequired, InvalidType, PatternError, TransportFailure, ValidationFailure
+from .events import UpdateObserver, UpdatePhase, UpdateTrace, event_router, update_kinds
+from .forms import FormSubmission, InvalidField, TextField, text_form_router
+from .fsm_storage import AtomicFSMStorage, DialogLifetime, FSMConflict, FSMSnapshot, SnapshotFSMStorage, SnapshotStore
+from .inline_mode_aiogram import (
+    InlineAuthorizer,
+    InlineCachePolicy,
+    InlineChatType,
+    InlineItem,
+    InlinePage,
+    InlineSearch,
+    InlineSearchProvider,
+    inline_articles,
+    inline_query_router,
+)
+from .keyboard_layouts import KeyboardCapabilities, KeyboardLayout, action_layout, inline_layout, reply_layout
+from .keyboards import (
+    ActionButton,
+    ButtonStyle,
+    MenuPage,
+    _callback_data,
+    action_keyboard,
+    action_menu,
+    page_number,
+    paginated_menu,
+)
+from .media_aiogram import (
+    DownloadedMedia,
+    MediaFile,
+    MediaItem,
+    MediaKind,
+    MediaSendRequest,
+    download_media,
+    media_album,
+    media_edit,
+    media_request,
+)
+from .native_keyboards import ChatType, inline_keyboard, input_prompt, remove_keyboard, reply_keyboard
+from .navigation import MessageNavigation, NavigationResult, NavigationScreen, NavigationState, navigation_router
+from .platform_aiogram import (
+    PlatformAction,
+    PlatformContract,
+    PlatformEvent,
+    PlatformHooks,
+    PlatformLookup,
+    PlatformObserver,
+    PlatformPermit,
+    PlatformReceipt,
+    PlatformResult,
+    PlatformScope,
+    SecretToken,
+    StoryPhotoUpload,
+    StoryVideoUpload,
+    execute_platform_action,
+    managed_bot_link,
+    platform_contracts,
+    platform_event,
+    platform_events_router,
+)
+from .polls_aiogram import (
+    PollBinding,
+    PollChoice,
+    PollEvent,
+    PollKind,
+    PollLocator,
+    PollLookup,
+    PollObservation,
+    PollObserver,
+    PollOptionAddition,
+    PollOptionState,
+    PollSpec,
+    PollState,
+    PollVote,
+    poll_events_router,
+    poll_option_added,
+    poll_request,
+    poll_state,
+    poll_vote,
+)
+from .profiles_aiogram import (
+    BotProfile,
+    BotProfilePatch,
+    ChatProfile,
+    ProfileAuthorizer,
+    ProfileEditIncomplete,
+    ProfilePhotos,
+    ProfilePhotoSize,
+    ProfileSource,
+    UserProfile,
+    chat_profile,
+    read_bot_profile,
+    read_profile_photos,
+    update_bot_profile,
+    user_profile,
+)
+from .selection_aiogram import selection_keyboard, selection_router
+from .settings import BotSettings
 
 __all__ = [
-    "FSMSnapshot", "FSMConflict", "SnapshotStore", "AtomicFSMStorage", "SnapshotFSMStorage", "DialogLifetime",
-    "Action", "ActionResult", "callback_router", "start_router",
-    "CommandReply", "command_menu", "command_router", "create_bot", "run_bot", "stars_invoice",
-    "ActionButton", "ButtonStyle", "MenuPage", "action_keyboard", "action_menu", "paginated_menu", "page_number",
-    "FormSubmission", "InvalidField", "TextField", "text_form_router",
-    "FieldValue", "NumberField", "EmailField", "PhoneField", "DateField", "FileField", "ContactField", "LocationField",
-    "DialogSubmission", "dialog_form_router",
-    "ChatType", "inline_keyboard", "reply_keyboard", "input_prompt", "remove_keyboard",
-    "KeyboardLayout", "KeyboardCapabilities", "action_layout", "inline_layout", "reply_layout",
-    "NavigationScreen", "NavigationState", "NavigationResult", "MessageNavigation", "navigation_router",
-    "selection_keyboard", "selection_router",
-    "calendar_keyboard", "time_slot_keyboard",
-    "MediaKind", "MediaSendRequest", "MediaFile", "MediaItem", "DownloadedMedia",
-    "media_request", "media_album", "media_edit", "download_media",
-    "ProfileSource", "ProfileAuthorizer", "UserProfile", "ChatProfile", "ProfilePhotoSize", "ProfilePhotos",
-    "BotProfile", "BotProfilePatch", "ProfileEditIncomplete", "user_profile", "chat_profile",
-    "read_profile_photos", "read_bot_profile", "update_bot_profile",
-    "InlineChatType", "InlineAuthorizer", "InlineSearchProvider", "InlineCachePolicy", "InlineItem", "InlinePage",
-    "InlineSearch", "inline_articles", "inline_query_router",
-    "PollKind", "PollChoice", "PollSpec", "PollOptionState", "PollState", "PollVote", "PollOptionAddition",
-    "PollBinding", "PollLocator", "PollObservation", "PollEvent", "PollObserver", "PollLookup",
-    "poll_request", "poll_state", "poll_vote", "poll_option_added", "poll_events_router",
-    "PlatformContract", "PlatformScope", "PlatformPermit", "PlatformAction", "PlatformReceipt", "PlatformResult",
-    "PlatformHooks", "SecretToken", "PlatformEvent", "PlatformLookup", "PlatformObserver", "platform_contracts",
-    "execute_platform_action", "managed_bot_link", "platform_event", "platform_events_router",
-    "StoryPhotoUpload", "StoryVideoUpload",
-    "MethodSpec", "InvalidAPIRequest", "method_catalog", "build_request",
-    "UpdatePhase", "UpdateTrace", "UpdateObserver", "update_kinds", "event_router",
+    "FSMSnapshot",
+    "FSMConflict",
+    "SnapshotStore",
+    "AtomicFSMStorage",
+    "SnapshotFSMStorage",
+    "DialogLifetime",
+    "Action",
+    "ActionResult",
+    "callback_router",
+    "start_router",
+    "CommandReply",
+    "command_menu",
+    "command_router",
+    "create_bot",
+    "run_bot",
+    "stars_invoice",
+    "ActionButton",
+    "ButtonStyle",
+    "MenuPage",
+    "action_keyboard",
+    "action_menu",
+    "paginated_menu",
+    "page_number",
+    "FormSubmission",
+    "InvalidField",
+    "TextField",
+    "text_form_router",
+    "FieldValue",
+    "NumberField",
+    "EmailField",
+    "PhoneField",
+    "DateField",
+    "FileField",
+    "ContactField",
+    "LocationField",
+    "DialogSubmission",
+    "dialog_form_router",
+    "ChatType",
+    "inline_keyboard",
+    "reply_keyboard",
+    "input_prompt",
+    "remove_keyboard",
+    "KeyboardLayout",
+    "KeyboardCapabilities",
+    "action_layout",
+    "inline_layout",
+    "reply_layout",
+    "NavigationScreen",
+    "NavigationState",
+    "NavigationResult",
+    "MessageNavigation",
+    "navigation_router",
+    "selection_keyboard",
+    "selection_router",
+    "calendar_keyboard",
+    "time_slot_keyboard",
+    "MediaKind",
+    "MediaSendRequest",
+    "MediaFile",
+    "MediaItem",
+    "DownloadedMedia",
+    "media_request",
+    "media_album",
+    "media_edit",
+    "download_media",
+    "ProfileSource",
+    "ProfileAuthorizer",
+    "UserProfile",
+    "ChatProfile",
+    "ProfilePhotoSize",
+    "ProfilePhotos",
+    "BotProfile",
+    "BotProfilePatch",
+    "ProfileEditIncomplete",
+    "user_profile",
+    "chat_profile",
+    "read_profile_photos",
+    "read_bot_profile",
+    "update_bot_profile",
+    "InlineChatType",
+    "InlineAuthorizer",
+    "InlineSearchProvider",
+    "InlineCachePolicy",
+    "InlineItem",
+    "InlinePage",
+    "InlineSearch",
+    "inline_articles",
+    "inline_query_router",
+    "PollKind",
+    "PollChoice",
+    "PollSpec",
+    "PollOptionState",
+    "PollState",
+    "PollVote",
+    "PollOptionAddition",
+    "PollBinding",
+    "PollLocator",
+    "PollObservation",
+    "PollEvent",
+    "PollObserver",
+    "PollLookup",
+    "poll_request",
+    "poll_state",
+    "poll_vote",
+    "poll_option_added",
+    "poll_events_router",
+    "PlatformContract",
+    "PlatformScope",
+    "PlatformPermit",
+    "PlatformAction",
+    "PlatformReceipt",
+    "PlatformResult",
+    "PlatformHooks",
+    "SecretToken",
+    "PlatformEvent",
+    "PlatformLookup",
+    "PlatformObserver",
+    "platform_contracts",
+    "execute_platform_action",
+    "managed_bot_link",
+    "platform_event",
+    "platform_events_router",
+    "StoryPhotoUpload",
+    "StoryVideoUpload",
+    "MethodSpec",
+    "InvalidAPIRequest",
+    "method_catalog",
+    "build_request",
+    "UpdatePhase",
+    "UpdateTrace",
+    "UpdateObserver",
+    "update_kinds",
+    "event_router",
 ]
 
 
@@ -83,7 +280,8 @@ class ActionResult:
 def callback_router(
     execute: Callable[[Action], Awaitable[ActionResult]],
     notify: Callable[[CallbackQuery, ActionResult], Awaitable[None]],
-    *, prefix: str = "act:",
+    *,
+    prefix: str = "act:",
 ) -> Router:
     """ACK first; execute enforces object owner/version/idempotence itself.
 
@@ -96,7 +294,7 @@ def callback_router(
     @router.callback_query(F.data.startswith(prefix))
     async def handle(query: CallbackQuery) -> None:
         await query.answer()  # Spinner ACK; no assertion of business success.
-        key = (query.data or "")[len(prefix):]
+        key = (query.data or "")[len(prefix) :]
         try:
             _callback_data(key, prefix)
         except ValueError:
@@ -122,6 +320,7 @@ def start_router(text: str, keyboard: InlineKeyboardMarkup | None = None) -> Rou
 @dataclass(frozen=True, slots=True)
 class CommandReply:
     """One stateless plain-text command; no implied authorization or dialog."""
+
     command: str
     description: str
     text: str
@@ -129,11 +328,17 @@ class CommandReply:
 
     def __post_init__(self) -> None:
         if not isinstance(self.command, str) or not re.fullmatch(r"[a-z0-9_]{1,32}", self.command):
-            raise ValidationFailure("Command must contain 1..32 lowercase ASCII letters/digits/underscores, without '/'")
+            raise ValidationFailure(
+                "Command must contain 1..32 lowercase ASCII letters/digits/underscores, without '/'"
+            )
         if not isinstance(self.description, str) or not self.description.strip() or len(self.description) > 256:
             raise ValidationFailure("Command description must contain 1..256 characters")
         try:
-            valid_text = isinstance(self.text, str) and bool(self.text.strip()) and len(self.text.encode('utf-16-le')) // 2 <= 4096
+            valid_text = (
+                isinstance(self.text, str)
+                and bool(self.text.strip())
+                and len(self.text.encode('utf-16-le')) // 2 <= 4096
+            )
         except UnicodeError:
             valid_text = False
         if not valid_text:
@@ -190,13 +395,20 @@ def create_bot(settings: BotSettings, *, session: BaseSession | None = None) -> 
     return Bot(token=settings.token, session=session)
 
 
-async def run_bot(dispatcher: Dispatcher, settings: BotSettings, *,
-                  commands: Sequence[BotCommand] | None = None,
-                  session: BaseSession | None = None,
-                  workflow_data: Mapping[str, Any] | None = None,
-                  polling_timeout: int = 10, handle_signals: bool = True,
-                  handle_as_tasks: bool = True, tasks_concurrency_limit: int | None = None,
-                  shutdown_timeout: float = 10.0, verify_token: bool = True) -> None:
+async def run_bot(
+    dispatcher: Dispatcher,
+    settings: BotSettings,
+    *,
+    commands: Sequence[BotCommand] | None = None,
+    session: BaseSession | None = None,
+    workflow_data: Mapping[str, Any] | None = None,
+    polling_timeout: int = 10,
+    handle_signals: bool = True,
+    handle_as_tasks: bool = True,
+    tasks_concurrency_limit: int | None = None,
+    shutdown_timeout: float = 10.0,
+    verify_token: bool = True,
+) -> None:
     """One polling bot; owns/always closes its session after successful preflight.
 
     No webhook deletion or update dropping. Commands=None preserves existing menu;
@@ -213,13 +425,25 @@ async def run_bot(dispatcher: Dispatcher, settings: BotSettings, *,
         raise ValidationFailure("Polling timeout must be a positive integer")
     if type(handle_signals) is not bool or type(handle_as_tasks) is not bool or type(verify_token) is not bool:
         raise ValidationFailure("Polling flags must be bool")
-    if tasks_concurrency_limit is not None and (type(tasks_concurrency_limit) is not int or tasks_concurrency_limit <= 0):
+    if tasks_concurrency_limit is not None and (
+        type(tasks_concurrency_limit) is not int or tasks_concurrency_limit <= 0
+    ):
         raise ValidationFailure("Concurrency limit must be a positive integer")
     if type(shutdown_timeout) not in {int, float} or not math.isfinite(shutdown_timeout) or shutdown_timeout <= 0:
         raise ValidationFailure("Shutdown timeout must be positive and finite")
     data = dict(workflow_data or {})
-    reserved = {'bot', 'bots', 'dispatcher', 'close_bot_session', 'handle_signals', 'handle_as_tasks',
-                'polling_timeout', 'tasks_concurrency_limit', 'backoff_config', 'allowed_updates'}
+    reserved = {
+        'bot',
+        'bots',
+        'dispatcher',
+        'close_bot_session',
+        'handle_signals',
+        'handle_as_tasks',
+        'polling_timeout',
+        'tasks_concurrency_limit',
+        'backoff_config',
+        'allowed_updates',
+    }
     if reserved.intersection(data):
         raise ValidationFailure("Workflow data must not override SDK polling parameters")
     menu = list(commands) if commands is not None else None
@@ -234,18 +458,27 @@ async def run_bot(dispatcher: Dispatcher, settings: BotSettings, *,
             except TelegramUnauthorizedError:
                 failure = AuthenticationRequired(
                     'Telegram test environment rejected the bot token: it is separate from the main one, '
-                    'create a test bot with @BotFather from a test account' if settings.test_environment else
-                    'Telegram rejected the bot token: check BOT_TOKEN or issue a new one with @BotFather')
+                    'create a test bot with @BotFather from a test account'
+                    if settings.test_environment
+                    else 'Telegram rejected the bot token: check BOT_TOKEN or issue a new one with @BotFather'
+                )
             except TelegramNetworkError:
                 failure = TransportFailure('Telegram Bot API is unreachable: check the network, proxy or API server')
             if failure is not None:
                 raise failure  # outside the handler: the SDK error may carry the token URL
         if menu is not None:
             await bot.set_my_commands(menu)
-        polling = asyncio.create_task(dispatcher.start_polling(
-            bot, close_bot_session=False, polling_timeout=polling_timeout,
-            handle_signals=handle_signals, handle_as_tasks=handle_as_tasks,
-            tasks_concurrency_limit=tasks_concurrency_limit, **data))
+        polling = asyncio.create_task(
+            dispatcher.start_polling(
+                bot,
+                close_bot_session=False,
+                polling_timeout=polling_timeout,
+                handle_signals=handle_signals,
+                handle_as_tasks=handle_as_tasks,
+                tasks_concurrency_limit=tasks_concurrency_limit,
+                **data,
+            )
+        )
         try:
             # Cancelling SDK's outer task directly can orphan its polling children.
             await asyncio.shield(polling)
@@ -254,8 +487,7 @@ async def run_bot(dispatcher: Dispatcher, settings: BotSettings, *,
             try:
                 # Startup failure can complete polling without setting SDK's
                 # stopped signal. Race both tasks rather than wait indefinitely.
-                await asyncio.wait({polling, stopping}, timeout=shutdown_timeout,
-                                   return_when=asyncio.FIRST_COMPLETED)
+                await asyncio.wait({polling, stopping}, timeout=shutdown_timeout, return_when=asyncio.FIRST_COMPLETED)
             finally:
                 for task in (polling, stopping):
                     if not task.done():
@@ -266,8 +498,9 @@ async def run_bot(dispatcher: Dispatcher, settings: BotSettings, *,
         await bot.session.close()
 
 
-def stars_invoice(title: str, description: str, payload: str, stars: int,
-                  *, monthly_subscription: bool = False) -> CreateInvoiceLink:
+def stars_invoice(
+    title: str, description: str, payload: str, stars: int, *, monthly_subscription: bool = False
+) -> CreateInvoiceLink:
     """Construct a request; consent, order validation and grant are server duties."""
     if not isinstance(title, str) or not 1 <= len(title) <= 32:
         raise ValidationFailure("Title must contain 1..32 characters")
@@ -278,7 +511,11 @@ def stars_invoice(title: str, description: str, payload: str, stars: int,
     if type(stars) is not int or stars <= 0 or (monthly_subscription and stars > 10000):
         raise ValidationFailure("Invalid Stars amount")
     return CreateInvoiceLink(
-        title=title, description=description, payload=payload, currency="XTR",
-        provider_token="", prices=[LabeledPrice(label=title, amount=stars)],
+        title=title,
+        description=description,
+        payload=payload,
+        currency="XTR",
+        provider_token="",
+        prices=[LabeledPrice(label=title, amount=stars)],
         subscription_period=2592000 if monthly_subscription else None,
     )

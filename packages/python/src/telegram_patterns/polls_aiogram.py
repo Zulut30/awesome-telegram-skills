@@ -1,30 +1,55 @@
 """Current poll/quiz requests and immutable, scoped observations of available updates."""
+
 from __future__ import annotations
 
+import math
+import re
 from dataclasses import dataclass, field
 from datetime import datetime, timezone
-import re
-import math
 from types import MappingProxyType
 from typing import Awaitable, Callable, Literal, Mapping, Sequence, TypeAlias, cast
 
 from aiogram import Bot, F, Router
 from aiogram.methods import SendPoll
-from aiogram.types import (InputPollMediaUnion, InputPollOption, InputPollOptionMediaUnion,
-                          Message, MessageEntity, Poll, PollAnswer, Update)
+from aiogram.types import (
+    InputPollMediaUnion,
+    InputPollOption,
+    InputPollOptionMediaUnion,
+    Message,
+    MessageEntity,
+    Poll,
+    PollAnswer,
+    Update,
+)
 
 from .errors import InvalidType, PermissionDenied, ValidationFailure
 from .message_text import FormattedText, utf16_length
 from .native_keyboards import ChatType
 
 PollKind: TypeAlias = Literal['regular', 'quiz']
-__all__ = ['PollKind', 'PollChoice', 'PollSpec', 'PollOptionState', 'PollState', 'PollVote',
-           'PollOptionAddition', 'PollBinding', 'PollLocator', 'PollObservation', 'PollEvent',
-           'PollObserver', 'PollLookup', 'poll_request', 'poll_state', 'poll_vote',
-           'poll_option_added', 'poll_events_router']
+__all__ = [
+    'PollKind',
+    'PollChoice',
+    'PollSpec',
+    'PollOptionState',
+    'PollState',
+    'PollVote',
+    'PollOptionAddition',
+    'PollBinding',
+    'PollLocator',
+    'PollObservation',
+    'PollEvent',
+    'PollObserver',
+    'PollLookup',
+    'poll_request',
+    'poll_state',
+    'poll_vote',
+    'poll_option_added',
+    'poll_events_router',
+]
 
 
-def _integer(value: int, low: int = 0, high: int = 2**52-1) -> None:
+def _integer(value: int, low: int = 0, high: int = 2**52 - 1) -> None:
     if type(value) is not int or not low <= value <= high:
         raise ValidationFailure('Expected a bounded integer')
 
@@ -50,8 +75,9 @@ def _text(value: str, maximum: int = 256, *, empty: bool = False) -> None:
         raise ValidationFailure('Poll text exceeds the declared character bound')
 
 
-def _formatted(value: FormattedText | str, maximum: int, *, empty: bool = False,
-               custom_only: bool = False) -> FormattedText:
+def _formatted(
+    value: FormattedText | str, maximum: int, *, empty: bool = False, custom_only: bool = False
+) -> FormattedText:
     result = FormattedText(value) if isinstance(value, str) else value
     if not isinstance(result, FormattedText):
         raise InvalidType('Use literal text or FormattedText')
@@ -62,8 +88,11 @@ def _formatted(value: FormattedText | str, maximum: int, *, empty: bool = False,
 
 
 def _entities(value: FormattedText, entitlement: bool) -> list[MessageEntity]:
-    return [MessageEntity.model_validate(entity.as_dict()) for entity in value.entities
-            if entity.kind != 'custom_emoji' or entitlement]
+    return [
+        MessageEntity.model_validate(entity.as_dict())
+        for entity in value.entities
+        if entity.kind != 'custom_emoji' or entitlement
+    ]
 
 
 def _sequence(value: Sequence[object], maximum: int = 1024) -> tuple[object, ...]:
@@ -135,15 +164,24 @@ class PollSpec:
 
     def __post_init__(self) -> None:
         object.__setattr__(self, 'question', _formatted(self.question, 300, custom_only=True))
-        options = tuple(value if isinstance(value, PollChoice) else PollChoice(cast(FormattedText | str, value))
-                        for value in _sequence(self.options, 12))
+        options = tuple(
+            value if isinstance(value, PollChoice) else PollChoice(cast(FormattedText | str, value))
+            for value in _sequence(self.options, 12)
+        )
         if not 1 <= len(options) <= 12:
             raise ValidationFailure('Current native polls require 1..12 initial options')
         object.__setattr__(self, 'options', options)
         if self.kind not in ('regular', 'quiz'):
             raise ValidationFailure('Unsupported poll kind')
-        for value in (self.is_anonymous, self.allows_multiple_answers, self.shuffle_options,
-                      self.allow_adding_options, self.hide_results_until_closes, self.members_only, self.is_closed):
+        for value in (
+            self.is_anonymous,
+            self.allows_multiple_answers,
+            self.shuffle_options,
+            self.allow_adding_options,
+            self.hide_results_until_closes,
+            self.members_only,
+            self.is_closed,
+        ):
             _bool(value)
         if self.allows_revoting is not None:
             _bool(self.allows_revoting)
@@ -152,7 +190,7 @@ class PollSpec:
         if self.correct_option_ids is not None:
             indices = tuple(cast(int, index) for index in _sequence(self.correct_option_ids, 12))
             for index in indices:
-                _integer(index, 0, len(options)-1)
+                _integer(index, 0, len(options) - 1)
             if not indices or list(indices) != sorted(set(indices)) or self.kind != 'quiz':
                 raise ValidationFailure('Quiz answers must be nonempty, unique and monotonically increasing')
             object.__setattr__(self, 'correct_option_ids', indices)
@@ -167,7 +205,9 @@ class PollSpec:
             object.__setattr__(self, 'description', _formatted(self.description, 1024, empty=True))
         if self.country_codes is not None:
             codes = _sequence(self.country_codes, 12)
-            if any(not isinstance(code, str) or not re.fullmatch('[A-Z]{2}', code) for code in codes) or len(set(codes)) != len(codes):
+            if any(not isinstance(code, str) or not re.fullmatch('[A-Z]{2}', code) for code in codes) or len(
+                set(codes)
+            ) != len(codes):
                 raise ValidationFailure('Use unique uppercase two-letter country codes, including FT when needed')
             object.__setattr__(self, 'country_codes', codes)
         if self.open_period is not None:
@@ -178,10 +218,18 @@ class PollSpec:
             raise ValidationFailure('open_period and close_date are mutually exclusive')
 
 
-def poll_request(spec: PollSpec, *, chat_id: int | str, chat_type: ChatType = 'private',
-                 message_thread_id: int | None = None, business_connection_id: str | None = None,
-                 media: InputPollMediaUnion | None = None, explanation_media: InputPollMediaUnion | None = None,
-                 custom_emoji_entitlement_verified: bool = False, now: datetime | None = None) -> SendPoll:
+def poll_request(
+    spec: PollSpec,
+    *,
+    chat_id: int | str,
+    chat_type: ChatType = 'private',
+    message_thread_id: int | None = None,
+    business_connection_id: str | None = None,
+    media: InputPollMediaUnion | None = None,
+    explanation_media: InputPollMediaUnion | None = None,
+    custom_emoji_entitlement_verified: bool = False,
+    now: datetime | None = None,
+) -> SendPoll:
     """One native request, no send/rights lookup; explicit SDK rich media stays host-owned."""
     if not isinstance(spec, PollSpec):
         raise InvalidType('Expected PollSpec')
@@ -204,31 +252,57 @@ def poll_request(spec: PollSpec, *, chat_id: int | str, chat_type: ChatType = 'p
     if explanation_media is not None and spec.kind != 'quiz':
         raise ValidationFailure('Explanation media requires a quiz')
     if spec.close_date is not None:
-        deadline = (spec.close_date-_aware(datetime.now(timezone.utc) if now is None else now)).total_seconds()
+        deadline = (spec.close_date - _aware(datetime.now(timezone.utc) if now is None else now)).total_seconds()
         if not 5 <= deadline <= 2628000:
             raise ValidationFailure('Poll close date must be within 5..2628000 seconds')
     assert isinstance(spec.question, FormattedText)
     options: list[InputPollOption | str] = []
     for choice in spec.options:
         assert isinstance(choice, PollChoice)
-        options.append(InputPollOption(text=choice.text.text, text_parse_mode=None,
-            text_entities=_entities(choice.text, custom_emoji_entitlement_verified), media=choice.media))
+        options.append(
+            InputPollOption(
+                text=choice.text.text,
+                text_parse_mode=None,
+                text_entities=_entities(choice.text, custom_emoji_entitlement_verified),
+                media=choice.media,
+            )
+        )
     explanation = spec.explanation if isinstance(spec.explanation, FormattedText) else None
     description = spec.description if isinstance(spec.description, FormattedText) else None
-    request = SendPoll(chat_id=chat_id, message_thread_id=message_thread_id, business_connection_id=business_connection_id,
-        question=spec.question.text, question_parse_mode=None,
-        question_entities=_entities(spec.question, custom_emoji_entitlement_verified), options=options,
-        type=spec.kind, is_anonymous=spec.is_anonymous, allows_multiple_answers=spec.allows_multiple_answers,
-        allows_revoting=spec.allows_revoting, shuffle_options=spec.shuffle_options, allow_adding_options=spec.allow_adding_options,
-        hide_results_until_closes=spec.hide_results_until_closes, members_only=spec.members_only,
+    request = SendPoll(
+        chat_id=chat_id,
+        message_thread_id=message_thread_id,
+        business_connection_id=business_connection_id,
+        question=spec.question.text,
+        question_parse_mode=None,
+        question_entities=_entities(spec.question, custom_emoji_entitlement_verified),
+        options=options,
+        type=spec.kind,
+        is_anonymous=spec.is_anonymous,
+        allows_multiple_answers=spec.allows_multiple_answers,
+        allows_revoting=spec.allows_revoting,
+        shuffle_options=spec.shuffle_options,
+        allow_adding_options=spec.allow_adding_options,
+        hide_results_until_closes=spec.hide_results_until_closes,
+        members_only=spec.members_only,
         country_codes=list(spec.country_codes) if spec.country_codes is not None else None,
         correct_option_ids=list(spec.correct_option_ids) if spec.correct_option_ids is not None else None,
-        explanation=explanation.text if explanation is not None else None, explanation_parse_mode=None,
-        explanation_entities=_entities(explanation, custom_emoji_entitlement_verified) if explanation is not None else None,
-        description=description.text if description is not None else None, description_parse_mode=None,
-        description_entities=_entities(description, custom_emoji_entitlement_verified) if description is not None else None,
-        media=media, explanation_media=explanation_media,
-        open_period=spec.open_period, close_date=spec.close_date, is_closed=spec.is_closed)
+        explanation=explanation.text if explanation is not None else None,
+        explanation_parse_mode=None,
+        explanation_entities=_entities(explanation, custom_emoji_entitlement_verified)
+        if explanation is not None
+        else None,
+        description=description.text if description is not None else None,
+        description_parse_mode=None,
+        description_entities=_entities(description, custom_emoji_entitlement_verified)
+        if description is not None
+        else None,
+        media=media,
+        explanation_media=explanation_media,
+        open_period=spec.open_period,
+        close_date=spec.close_date,
+        is_closed=spec.is_closed,
+    )
     return request.model_copy(deep=True)
 
 
@@ -262,7 +336,13 @@ class PollState:
         _text(self.poll_id)
         if self.kind not in ('regular', 'quiz'):
             raise ValidationFailure('Unsupported poll kind')
-        for flag in (self.is_closed, self.is_anonymous, self.allows_multiple_answers, self.allows_revoting, self.members_only):
+        for flag in (
+            self.is_closed,
+            self.is_anonymous,
+            self.allows_multiple_answers,
+            self.allows_revoting,
+            self.members_only,
+        ):
             _bool(flag)
         _integer(self.reported_total_voter_count)
         options = tuple(_sequence(self.options))
@@ -273,7 +353,7 @@ class PollState:
         if self.correct_option_ids is not None:
             indices = tuple(cast(int, index) for index in _sequence(self.correct_option_ids))
             for index in indices:
-                _integer(index, 0, len(options)-1)
+                _integer(index, 0, len(options) - 1)
             if self.kind != 'quiz' or list(indices) != sorted(set(indices)):
                 raise ValidationFailure('Invalid observed correct options')
             object.__setattr__(self, 'correct_option_ids', indices)
@@ -285,9 +365,19 @@ def poll_state(value: Poll) -> PollState:
     if not isinstance(value, Poll):
         raise InvalidType('Expected native Poll')
     options = tuple(PollOptionState(option.persistent_id, option.text, option.voter_count) for option in value.options)
-    return PollState(value.id, options, value.total_voter_count, value.is_closed, value.is_anonymous,
-        cast(PollKind, value.type), value.allows_multiple_answers, value.allows_revoting, value.members_only,
-        tuple(value.correct_option_ids) if value.correct_option_ids is not None else None, _details(value))
+    return PollState(
+        value.id,
+        options,
+        value.total_voter_count,
+        value.is_closed,
+        value.is_anonymous,
+        cast(PollKind, value.type),
+        value.allows_multiple_answers,
+        value.allows_revoting,
+        value.members_only,
+        tuple(value.correct_option_ids) if value.correct_option_ids is not None else None,
+        _details(value),
+    )
 
 
 @dataclass(frozen=True, slots=True)
@@ -306,7 +396,11 @@ class PollVote:
             _integer(cast(int, index), 0, 1023)
         for identity in persistent:
             _text(cast(str, identity))
-        if len(indices) != len(persistent) or len(set(indices)) != len(indices) or len(set(persistent)) != len(persistent):
+        if (
+            len(indices) != len(persistent)
+            or len(set(indices)) != len(indices)
+            or len(set(persistent)) != len(persistent)
+        ):
             raise ValidationFailure('Vote option identities must be consistent and unique')
         if (self.voter_user_id is None) == (self.voter_chat_id is None):
             raise ValidationFailure('Vote must preserve exactly one native voter identity kind')
@@ -325,8 +419,13 @@ class PollVote:
 def poll_vote(value: PollAnswer) -> PollVote:
     if not isinstance(value, PollAnswer):
         raise InvalidType('Expected native PollAnswer')
-    return PollVote(value.poll_id, tuple(value.option_ids), tuple(value.option_persistent_ids),
-        value.user.id if value.user is not None else None, value.voter_chat.id if value.voter_chat is not None else None)
+    return PollVote(
+        value.poll_id,
+        tuple(value.option_ids),
+        tuple(value.option_persistent_ids),
+        value.user.id if value.user is not None else None,
+        value.voter_chat.id if value.voter_chat is not None else None,
+    )
 
 
 @dataclass(frozen=True, slots=True)
@@ -360,9 +459,15 @@ def poll_option_added(message: Message) -> PollOptionAddition:
     value = message.poll_option_added
     original = value.poll_message
     identity = original.poll.id if isinstance(original, Message) and original.poll is not None else None
-    return PollOptionAddition(value.option_persistent_id, value.option_text, identity,
-        original.chat.id if original is not None else None, original.message_id if original is not None else None,
-        message.business_connection_id, cast(Mapping[str, object], _freeze(value.model_dump(mode='json'))))
+    return PollOptionAddition(
+        value.option_persistent_id,
+        value.option_text,
+        identity,
+        original.chat.id if original is not None else None,
+        original.message_id if original is not None else None,
+        message.business_connection_id,
+        cast(Mapping[str, object], _freeze(value.model_dump(mode='json'))),
+    )
 
 
 @dataclass(frozen=True, slots=True)
@@ -401,8 +506,16 @@ class PollBinding:
         if sender is None and message.chat.type != 'channel':
             raise PermissionDenied('Own-bot response has no matching sender')
         state = poll_state(message.poll)
-        return cls(bot_id, state.poll_id, message.chat.id, message.message_id, state.is_anonymous, state.kind,
-                   message.message_thread_id, message.business_connection_id)
+        return cls(
+            bot_id,
+            state.poll_id,
+            message.chat.id,
+            message.message_id,
+            state.is_anonymous,
+            state.kind,
+            message.message_thread_id,
+            message.business_connection_id,
+        )
 
 
 @dataclass(frozen=True, slots=True)
@@ -436,7 +549,9 @@ class PollEvent:
 
     def __post_init__(self) -> None:
         _integer(self.update_id)
-        if not isinstance(self.binding, PollBinding) or not isinstance(self.observation, (PollState, PollVote, PollOptionAddition)):
+        if not isinstance(self.binding, PollBinding) or not isinstance(
+            self.observation, (PollState, PollVote, PollOptionAddition)
+        ):
             raise InvalidType('Expected a binding and normalized poll observation')
         if self.observation.poll_id is not None and self.observation.poll_id != self.binding.poll_id:
             raise PermissionDenied('Poll observation does not match its binding')
@@ -464,15 +579,25 @@ def poll_events_router(lookup: PollLookup, observe: PollObserver) -> Router:
             return
         if not isinstance(binding, PollBinding):
             raise InvalidType('Host lookup returned an invalid binding')
-        if (binding.bot_id != bot.id or locator.poll_id is not None and locator.poll_id != binding.poll_id
-                or locator.chat_id is not None and (locator.chat_id, locator.message_id) != (binding.chat_id, binding.message_id)):
+        if (
+            binding.bot_id != bot.id
+            or locator.poll_id is not None
+            and locator.poll_id != binding.poll_id
+            or locator.chat_id is not None
+            and (locator.chat_id, locator.message_id) != (binding.chat_id, binding.message_id)
+        ):
             return
-        if isinstance(observation, PollState) and (observation.is_anonymous != binding.is_anonymous or observation.kind != binding.kind):
+        if isinstance(observation, PollState) and (
+            observation.is_anonymous != binding.is_anonymous or observation.kind != binding.kind
+        ):
             return
         if isinstance(observation, PollVote) and binding.is_anonymous:
             return
-        if message is not None and (message.chat.id != binding.chat_id or message.message_thread_id != binding.message_thread_id
-                                    or message.business_connection_id != binding.business_connection_id):
+        if message is not None and (
+            message.chat.id != binding.chat_id
+            or message.message_thread_id != binding.message_thread_id
+            or message.business_connection_id != binding.business_connection_id
+        ):
             return
         await observe(PollEvent(update.update_id, binding, observation))
 

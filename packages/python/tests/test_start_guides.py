@@ -1,4 +1,5 @@
 """Code on the role start pages runs as written and prints the documented result."""
+
 import re
 import subprocess
 import sys
@@ -15,8 +16,9 @@ class StartGuideTests(unittest.TestCase):
         code = re.search(r'<!-- start:existing-bot -->\n```python\n(.*?)\n```', page, re.S).group(1)
         expected = re.search(r'Ожидаемый вывод: `([^`]+)`', page).group(1)
         with tempfile.TemporaryDirectory() as folder:
-            done = subprocess.run([sys.executable, '-c', code], cwd=folder, capture_output=True, text=True,
-                                  encoding='utf-8', timeout=60)
+            done = subprocess.run(
+                [sys.executable, '-c', code], cwd=folder, capture_output=True, text=True, encoding='utf-8', timeout=60
+            )
         self.assertEqual(done.returncode, 0, done.stderr)
         self.assertEqual(done.stdout.strip(), expected)
 

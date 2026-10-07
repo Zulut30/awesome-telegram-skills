@@ -1,15 +1,16 @@
 """Atomic SQLite-local effect and replay result, across process restarts."""
-from __future__ import annotations
-from .errors import ConflictFailure
-from .errors import ValidationFailure
 
-from dataclasses import dataclass
+from __future__ import annotations
+
 import hashlib
 import json
 import math
-from pathlib import Path
 import sqlite3
-from typing import Callable, Any
+from dataclasses import dataclass
+from pathlib import Path
+from typing import Any, Callable
+
+from .errors import ConflictFailure, ValidationFailure
 
 
 class OperationConflict(ConflictFailure):
@@ -23,8 +24,7 @@ class OnceResult:
 
 
 def _json(value: Any) -> str:
-    return json.dumps(value, ensure_ascii=False, sort_keys=True,
-                      separators=(",", ":"), allow_nan=False)
+    return json.dumps(value, ensure_ascii=False, sort_keys=True, separators=(",", ":"), allow_nan=False)
 
 
 _MAX_PAYLOAD_DEPTH = 64
@@ -50,7 +50,9 @@ def _check_payload(value: Any, depth: int = 0) -> None:
                 raise ValidationFailure("Operation payload keys must be strings")
             _check_payload(item, depth + 1)
         return
-    raise ValidationFailure("Operation payload must contain only dict with str keys, list, str, int, float, bool or None")
+    raise ValidationFailure(
+        "Operation payload must contain only dict with str keys, list, str, int, float, bool or None"
+    )
 
 
 def _payload_digest(payload: Any) -> str:
@@ -71,9 +73,15 @@ class SQLiteOnce:
     External network calls, COMMIT/ROLLBACK and other databases are not covered.
     Call through an appropriate thread boundary from an async application.
     """
+
     def __init__(self, database: str | Path, *, timeout: float = 5.0):
-        if (not str(database) or str(database) == ":memory:" or type(timeout) not in (int, float)
-                or not math.isfinite(timeout) or timeout <= 0):
+        if (
+            not str(database)
+            or str(database) == ":memory:"
+            or type(timeout) not in (int, float)
+            or not math.isfinite(timeout)
+            or timeout <= 0
+        ):
             raise ValidationFailure("Use a file database and a positive finite timeout")
         self.database = str(database)
         self.timeout = timeout
@@ -93,8 +101,9 @@ class SQLiteOnce:
         finally:
             connection.close()
 
-    def run(self, scope: str, operation_key: str, payload: Any,
-            apply: Callable[[sqlite3.Connection], Any]) -> OnceResult:
+    def run(
+        self, scope: str, operation_key: str, payload: Any, apply: Callable[[sqlite3.Connection], Any]
+    ) -> OnceResult:
         for value in (scope, operation_key):
             if not isinstance(value, str) or not value or len(value.encode("utf-8")) > 256:
                 raise ValidationFailure("Scope and operation key must be nonempty bounded strings")

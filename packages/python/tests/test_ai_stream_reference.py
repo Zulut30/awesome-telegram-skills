@@ -1,15 +1,17 @@
 """The standalone aiogram example in telegram-ai-bot streams drafts, stops on request and persists the answer."""
+
 import asyncio
-from datetime import datetime, timezone
-from pathlib import Path
 import re
 import types
 import unittest
+from datetime import datetime, timezone
+from pathlib import Path
 
 from aiogram import Bot, Dispatcher
 from aiogram.exceptions import TelegramRetryAfter
 from aiogram.methods import SendMessage, SendMessageDraft
 from aiogram.types import Chat, Message, MessageGenerationStopped, Update, User
+
 from telegram_patterns.testing import StubSession
 
 ROOT = Path(__file__).resolve().parents[3]
@@ -24,14 +26,23 @@ def load_example() -> types.ModuleType:
 
 
 def ask(chat: int, text: str, message_id: int) -> Update:
-    return Update(update_id=message_id, message=Message(
-        message_id=message_id, date=datetime(2026, 10, 7, tzinfo=timezone.utc), chat=Chat(id=chat, type='private'),
-        from_user=User(id=chat, is_bot=False, first_name='U'), text=text))
+    return Update(
+        update_id=message_id,
+        message=Message(
+            message_id=message_id,
+            date=datetime(2026, 10, 7, tzinfo=timezone.utc),
+            chat=Chat(id=chat, type='private'),
+            from_user=User(id=chat, is_bot=False, first_name='U'),
+            text=text,
+        ),
+    )
 
 
 def stopped(chat: int, draft_id: int) -> Update:
-    return Update(update_id=500 + draft_id, stopped_message_generation=MessageGenerationStopped(
-        chat=Chat(id=chat, type='private'), draft_id=draft_id))
+    return Update(
+        update_id=500 + draft_id,
+        stopped_message_generation=MessageGenerationStopped(chat=Chat(id=chat, type='private'), draft_id=draft_id),
+    )
 
 
 async def settle() -> None:
@@ -64,8 +75,12 @@ class AiStreamReferenceTests(unittest.IsolatedAsyncioTestCase):
 
         def on_message(method):
             self.sent.append((method.chat_id, method.text, method.parse_mode))
-            return {'message_id': 900 + len(self.sent), 'date': 1, 'chat': {'id': method.chat_id, 'type': 'private'},
-                    'text': method.text}
+            return {
+                'message_id': 900 + len(self.sent),
+                'date': 1,
+                'chat': {'id': method.chat_id, 'type': 'private'},
+                'text': method.text,
+            }
 
         self.session = StubSession().respond(SendMessageDraft, on_draft).respond(SendMessage, on_message)
         self.bot = Bot('100:AI_REFERENCE_FIXTURE', session=self.session)

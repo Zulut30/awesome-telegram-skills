@@ -5,10 +5,11 @@ button rows, plain and expandable quotations, details, documents, code, dividers
 checks Telegram's published limits and returns a RichMessage: as_input() is the InputRichMessage JSON,
 fallback() and fallback_keyboard() describe the same content for an ordinary sendMessage.
 """
+
 from __future__ import annotations
 
-from dataclasses import dataclass
 import json
+from dataclasses import dataclass
 from typing import Any, Literal, Sequence, TypeAlias, Union
 
 from .message_text import EntityKind, FormattedText, MessageBuilder, utf16_length
@@ -30,6 +31,7 @@ MAX_ROW_BUTTONS = 8
 @dataclass(frozen=True, slots=True)
 class RichSpan:
     """Inline formatting inside rich text: bold, italic, code or an HTTP(S) link."""
+
     kind: SpanKind
     text: str
     url: str | None = None
@@ -57,6 +59,7 @@ RichText: TypeAlias = Union[str, RichSpan, Sequence[Union[str, RichSpan]]]
 @dataclass(frozen=True, slots=True)
 class RichButton:
     """One rich message button: exactly one of url and callback_data; 'link' style only for callbacks."""
+
     text: str
     url: str | None = None
     callback_data: str | None = None
@@ -66,8 +69,9 @@ class RichButton:
         _text(self.text)
         if (self.url is None) == (self.callback_data is None):
             raise ValueError('A button has exactly one action: url or callback_data')
-        if self.callback_data is not None and (not isinstance(self.callback_data, str)
-                                               or not 1 <= len(self.callback_data.encode('utf-8')) <= 64):
+        if self.callback_data is not None and (
+            not isinstance(self.callback_data, str) or not 1 <= len(self.callback_data.encode('utf-8')) <= 64
+        ):
             raise ValueError('callback_data must be 1-64 bytes')
         if self.url is not None:
             MessageBuilder().style(self.text, 'text_link', url=self.url)
@@ -128,9 +132,9 @@ def _styled(builder: MessageBuilder, parts: tuple[str | RichSpan, ...]) -> Messa
 
 @dataclass(frozen=True, slots=True)
 class _Block:
-    data: str            # canonical JSON of one InputRichBlock
-    blocks: int          # blocks Telegram counts here, nested ones included
-    depth: int           # nesting levels below the message
+    data: str  # canonical JSON of one InputRichBlock
+    blocks: int  # blocks Telegram counts here, nested ones included
+    depth: int  # nesting levels below the message
     media: int
     characters: int
     fallback: FormattedText
@@ -140,6 +144,7 @@ class _Block:
 @dataclass(frozen=True, slots=True)
 class RichMessage:
     """Immutable result of RichMessageBuilder.build(); every limit is already checked."""
+
     blocks: tuple[_Block, ...]
     is_rtl: bool = False
     skip_entity_detection: bool = False
@@ -175,8 +180,16 @@ class RichMessage:
         rows = []
         for block in self.blocks:
             for row in block.buttons:
-                rows.append([{key: value for key, value in button.as_dict().items() if not (key == 'style' and value == 'link')}
-                             for button in row])
+                rows.append(
+                    [
+                        {
+                            key: value
+                            for key, value in button.as_dict().items()
+                            if not (key == 'style' and value == 'link')
+                        }
+                        for button in row
+                    ]
+                )
         return rows
 
 
@@ -189,23 +202,47 @@ class RichMessageBuilder:
         self._blocks: list[_Block] = []
         self._rtl, self._skip = rtl, skip_entity_detection
 
-    def _add(self, data: dict[str, Any], fallback: FormattedText, *, blocks: int = 1, depth: int = 1, media: int = 0,
-             characters: int = 0, buttons: tuple[tuple[RichButton, ...], ...] = ()) -> RichMessageBuilder:
-        self._blocks.append(_Block(json.dumps(data, ensure_ascii=False, sort_keys=True), blocks, depth, media, characters,
-                                   fallback, buttons))
+    def _add(
+        self,
+        data: dict[str, Any],
+        fallback: FormattedText,
+        *,
+        blocks: int = 1,
+        depth: int = 1,
+        media: int = 0,
+        characters: int = 0,
+        buttons: tuple[tuple[RichButton, ...], ...] = (),
+    ) -> RichMessageBuilder:
+        self._blocks.append(
+            _Block(
+                json.dumps(data, ensure_ascii=False, sort_keys=True),
+                blocks,
+                depth,
+                media,
+                characters,
+                fallback,
+                buttons,
+            )
+        )
         return self
 
     def heading(self, text: RichText, *, size: int = 2) -> RichMessageBuilder:
         if type(size) is not int or not 1 <= size <= 6:
             raise ValueError('Heading size is 1-6, 1 is the largest')
         parts = _parts(text)
-        return self._add({'type': 'heading', 'text': _json(parts), 'size': size},
-                         MessageBuilder().style(_plain(parts), 'bold').text('\n').build(), characters=len(_plain(parts)))
+        return self._add(
+            {'type': 'heading', 'text': _json(parts), 'size': size},
+            MessageBuilder().style(_plain(parts), 'bold').text('\n').build(),
+            characters=len(_plain(parts)),
+        )
 
     def paragraph(self, text: RichText) -> RichMessageBuilder:
         parts = _parts(text)
-        return self._add({'type': 'paragraph', 'text': _json(parts)}, _styled(MessageBuilder(), parts).text('\n').build(),
-                         characters=len(_plain(parts)))
+        return self._add(
+            {'type': 'paragraph', 'text': _json(parts)},
+            _styled(MessageBuilder(), parts).text('\n').build(),
+            characters=len(_plain(parts)),
+        )
 
     def _list(self, items: Sequence[tuple[RichText, bool | None]], label: RichListLabel | None) -> RichMessageBuilder:
         if isinstance(items, (str, RichSpan)) or not items:
@@ -226,8 +263,13 @@ class RichMessageBuilder:
             fallback = _styled(fallback.text(marker), parts).text('\n')
             characters += len(_plain(parts))
         # The list, each item and each item paragraph are blocks.
-        return self._add({'type': 'list', 'items': entries}, fallback.build(), blocks=1 + 2 * len(entries), depth=3,
-                         characters=characters)
+        return self._add(
+            {'type': 'list', 'items': entries},
+            fallback.build(),
+            blocks=1 + 2 * len(entries),
+            depth=3,
+            characters=characters,
+        )
 
     def bullets(self, items: Sequence[RichText]) -> RichMessageBuilder:
         return self._list([(item, None) for item in _sequence(items)], None)
@@ -243,9 +285,17 @@ class RichMessageBuilder:
             raise ValueError('Expected (text, checked) pairs')
         return self._list(list(pairs), None)
 
-    def table(self, rows: Sequence[Sequence[RichText]], *, header: bool = True, compact: bool = False,
-              bordered: bool = True, striped: bool = False, caption: RichText | None = None,
-              align: RichAlign = 'left') -> RichMessageBuilder:
+    def table(
+        self,
+        rows: Sequence[Sequence[RichText]],
+        *,
+        header: bool = True,
+        compact: bool = False,
+        bordered: bool = True,
+        striped: bool = False,
+        caption: RichText | None = None,
+        align: RichAlign = 'left',
+    ) -> RichMessageBuilder:
         table_rows = [list(_sequence(row)) for row in _sequence(rows)]
         width = max(len(row) for row in table_rows)
         if width > MAX_COLUMNS:
@@ -257,7 +307,14 @@ class RichMessageBuilder:
             line = []
             for cell in row:
                 parts = _parts(cell)
-                line.append({'text': _json(parts), 'align': align, 'valign': 'top', **({'is_header': True} if header and index == 0 else {})})
+                line.append(
+                    {
+                        'text': _json(parts),
+                        'align': align,
+                        'valign': 'top',
+                        **({'is_header': True} if header and index == 0 else {}),
+                    }
+                )
                 characters += len(_plain(parts))
             cells.append(line)
             text = ' | '.join(_plain(_parts(cell)) for cell in row) + '\n'
@@ -299,8 +356,13 @@ class RichMessageBuilder:
         if credit is not None:
             data['credit'] = _json(_parts(credit))
         kind: EntityKind = 'expandable_blockquote' if expandable else 'blockquote'
-        return self._add(data, MessageBuilder().style(body, kind).text('\n').build(), blocks=1 if expandable else 2,
-                         depth=1 if expandable else 2, characters=len(body))
+        return self._add(
+            data,
+            MessageBuilder().style(body, kind).text('\n').build(),
+            blocks=1 if expandable else 2,
+            depth=1 if expandable else 2,
+            characters=len(body),
+        )
 
     def details(self, summary: RichText, content: RichMessageBuilder, *, open: bool = False) -> RichMessageBuilder:
         if not isinstance(content, RichMessageBuilder) or content is self or not content._blocks:
@@ -316,10 +378,15 @@ class RichMessageBuilder:
         fallback = MessageBuilder().style(_plain(parts), 'bold').text('\n')
         if hidden:
             fallback = fallback.style(hidden, 'expandable_blockquote').text('\n')
-        return self._add(data, fallback.build(), blocks=1 + inner.block_count,
-                         depth=1 + max(block.depth for block in inner.blocks), media=inner.media_count,
-                         characters=len(_plain(parts)) + sum(block.characters for block in inner.blocks),
-                         buttons=tuple(row for block in inner.blocks for row in block.buttons))
+        return self._add(
+            data,
+            fallback.build(),
+            blocks=1 + inner.block_count,
+            depth=1 + max(block.depth for block in inner.blocks),
+            media=inner.media_count,
+            characters=len(_plain(parts)) + sum(block.characters for block in inner.blocks),
+            buttons=tuple(row for block in inner.blocks for row in block.buttons),
+        )
 
     def document(self, media: str, *, caption: RichText | None = None) -> RichMessageBuilder:
         """A file by file_id or HTTP(S) URL; uploading new bytes belongs to the SDK request."""
@@ -339,15 +406,20 @@ class RichMessageBuilder:
         if language is not None:
             _text(language)
             data['language'] = language
-        return self._add(data, MessageBuilder().style(text, 'pre', language=language).text('\n').build(), characters=len(text))
+        return self._add(
+            data, MessageBuilder().style(text, 'pre', language=language).text('\n').build(), characters=len(text)
+        )
 
     def divider(self) -> RichMessageBuilder:
         return self._add({'type': 'divider'}, MessageBuilder().text('———\n').build())
 
     def footer(self, text: RichText) -> RichMessageBuilder:
         parts = _parts(text)
-        return self._add({'type': 'footer', 'text': _json(parts)}, MessageBuilder().style(_plain(parts), 'italic').text('\n').build(),
-                         characters=len(_plain(parts)))
+        return self._add(
+            {'type': 'footer', 'text': _json(parts)},
+            MessageBuilder().style(_plain(parts), 'italic').text('\n').build(),
+            characters=len(_plain(parts)),
+        )
 
     def build(self) -> RichMessage:
         """Check Telegram's limits and freeze the blocks."""
@@ -379,8 +451,21 @@ def _label(kind: str, number: int) -> str:
             text = chr(ord('a') + rest) + text
         return text if kind == 'a' else text.upper()
     if kind in ('i', 'I'):
-        numerals = ((1000, 'm'), (900, 'cm'), (500, 'd'), (400, 'cd'), (100, 'c'), (90, 'xc'), (50, 'l'), (40, 'xl'),
-                    (10, 'x'), (9, 'ix'), (5, 'v'), (4, 'iv'), (1, 'i'))
+        numerals = (
+            (1000, 'm'),
+            (900, 'cm'),
+            (500, 'd'),
+            (400, 'cd'),
+            (100, 'c'),
+            (90, 'xc'),
+            (50, 'l'),
+            (40, 'xl'),
+            (10, 'x'),
+            (9, 'ix'),
+            (5, 'v'),
+            (4, 'iv'),
+            (1, 'i'),
+        )
         text, value = '', number
         for amount, symbol in numerals:
             count, value = divmod(value, amount)

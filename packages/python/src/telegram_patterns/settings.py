@@ -1,12 +1,14 @@
 """Small environment configuration independent of any Telegram SDK."""
-from __future__ import annotations
-from .errors import ValidationFailure
 
-from dataclasses import dataclass, field
+from __future__ import annotations
+
 import os
-from pathlib import Path
 import re
+from dataclasses import dataclass, field
+from pathlib import Path
 from typing import Mapping
+
+from .errors import ValidationFailure
 
 _ENV_FILE_LIMIT = 65536
 _KEY = re.compile(r"[A-Za-z_][A-Za-z0-9_]*")
@@ -46,6 +48,7 @@ def _flag(value: str, name: str) -> bool:
 @dataclass(frozen=True, slots=True)
 class BotSettings:
     """Token is excluded from repr; this does not make serialization safe."""
+
     token: str = field(repr=False)
     test_environment: bool = False  # True routes Bot API calls to https://api.telegram.org/bot<token>/test/<method>
 
@@ -59,10 +62,14 @@ class BotSettings:
             raise ValidationFailure("Invalid bot token format")
 
     @classmethod
-    def from_env(cls, token_var: str = "BOT_TOKEN", *,
-                 environ: Mapping[str, str] | None = None,
-                 env_file: str | Path | None = None,
-                 test_environment_var: str = "TELEGRAM_TEST_ENVIRONMENT") -> BotSettings:
+    def from_env(
+        cls,
+        token_var: str = "BOT_TOKEN",
+        *,
+        environ: Mapping[str, str] | None = None,
+        env_file: str | Path | None = None,
+        test_environment_var: str = "TELEGRAM_TEST_ENVIRONMENT",
+    ) -> BotSettings:
         """Read the token from the environment; an optional .env file fills only missing values.
 
         The file is parsed as plain KEY=VALUE lines and never changes os.environ.

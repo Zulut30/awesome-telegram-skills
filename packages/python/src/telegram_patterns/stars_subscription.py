@@ -7,6 +7,7 @@ so the payload must name the subscription). Each recurring SuccessfulPayment is 
 time. A RefundedPayment withdraws the period of its own charge. The host stores the state (as_dict/from_dict)
 and checks has_access(now) on every protected action.
 """
+
 from __future__ import annotations
 
 from collections.abc import Mapping
@@ -22,12 +23,14 @@ _STATES = ('active', 'canceled', 'failed')
 
 class SubscriptionEventRejected(ValidationFailure):
     """The event does not belong to this subscription or contradicts a stored charge; nothing was applied."""
+
     code: ErrorCode = 'validation-failed'
 
 
 @dataclass(frozen=True, slots=True)
 class StarsCharge:
     """One recurring payment and the period it pays for."""
+
     charge_id: str
     paid_at: int
     expires_at: int
@@ -63,6 +66,7 @@ def _positive(value: Any, name: str) -> int:
 @dataclass(frozen=True, slots=True)
 class StarsSubscription:
     """Immutable state of one subscription; every record_* returns the next state or raises."""
+
     user_id: int
     invoice_payload: str
     charges: tuple[StarsCharge, ...] = ()
@@ -101,8 +105,13 @@ class StarsSubscription:
         expires_at = _positive(payment.get('subscription_expiration_date'), 'subscription_expiration_date')
         if expires_at <= paid_at:
             raise SubscriptionEventRejected('subscription_expiration_date must be after the payment')
-        charge = StarsCharge(_text(payment, 'telegram_payment_charge_id'), paid_at, expires_at,
-                             _positive(payment.get('total_amount'), 'total_amount'), payment.get('is_first_recurring') is True)
+        charge = StarsCharge(
+            _text(payment, 'telegram_payment_charge_id'),
+            paid_at,
+            expires_at,
+            _positive(payment.get('total_amount'), 'total_amount'),
+            payment.get('is_first_recurring') is True,
+        )
         charge = replace(charge, refunded=charge.charge_id in self.refunds_before_payment)
         for stored in self.charges:
             if stored.charge_id == charge.charge_id:
@@ -111,8 +120,12 @@ class StarsSubscription:
                 return self
         # A successful charge shows renewal works again; a user's cancellation stays until "active" arrives.
         renewal: RenewalState = 'active' if self.renewal in ('pending', 'failed') else self.renewal
-        return replace(self, charges=(*self.charges, charge), renewal=renewal,
-                       refunds_before_payment=self.refunds_before_payment - {charge.charge_id})
+        return replace(
+            self,
+            charges=(*self.charges, charge),
+            renewal=renewal,
+            refunds_before_payment=self.refunds_before_payment - {charge.charge_id},
+        )
 
     def record_update(self, update: Mapping[str, Any]) -> StarsSubscription:
         """Apply BotSubscriptionUpdated: the renewal changes, paid periods stay as they are."""
@@ -134,8 +147,12 @@ class StarsSubscription:
         charge_id = _text(refund, 'telegram_payment_charge_id')
         if not any(charge.charge_id == charge_id for charge in self.charges):
             return replace(self, refunds_before_payment=self.refunds_before_payment | {charge_id})
-        return replace(self, charges=tuple(replace(charge, refunded=True) if charge.charge_id == charge_id else charge
-                                           for charge in self.charges))
+        return replace(
+            self,
+            charges=tuple(
+                replace(charge, refunded=True) if charge.charge_id == charge_id else charge for charge in self.charges
+            ),
+        )
 
     def has_access(self, now: float) -> bool:
         """True while a charge that was not refunded covers now; renewal state does not matter."""
@@ -160,10 +177,24 @@ class StarsSubscription:
 
     def as_dict(self) -> dict[str, Any]:
         """JSON-ready state for the host's storage."""
-        return {'version': 1, 'user_id': self.user_id, 'invoice_payload': self.invoice_payload, 'renewal': self.renewal,
-                'refunds_before_payment': sorted(self.refunds_before_payment),
-                'charges': [{'charge_id': c.charge_id, 'paid_at': c.paid_at, 'expires_at': c.expires_at, 'amount': c.amount,
-                             'first': c.first, 'refunded': c.refunded} for c in self.charges]}
+        return {
+            'version': 1,
+            'user_id': self.user_id,
+            'invoice_payload': self.invoice_payload,
+            'renewal': self.renewal,
+            'refunds_before_payment': sorted(self.refunds_before_payment),
+            'charges': [
+                {
+                    'charge_id': c.charge_id,
+                    'paid_at': c.paid_at,
+                    'expires_at': c.expires_at,
+                    'amount': c.amount,
+                    'first': c.first,
+                    'refunded': c.refunded,
+                }
+                for c in self.charges
+            ],
+        }
 
     @classmethod
     def from_dict(cls, data: Mapping[str, Any]) -> StarsSubscription:
@@ -171,6 +202,12 @@ class StarsSubscription:
             raise ValidationFailure('Unsupported subscription state')
         try:
             charges = tuple(StarsCharge(**charge) for charge in data['charges'])
-            return cls(data['user_id'], data['invoice_payload'], charges, data['renewal'], frozenset(data['refunds_before_payment']))
+            return cls(
+                data['user_id'],
+                data['invoice_payload'],
+                charges,
+                data['renewal'],
+                frozenset(data['refunds_before_payment']),
+            )
         except (KeyError, TypeError) as error:
             raise ValidationFailure('Malformed subscription state') from error

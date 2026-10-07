@@ -1,20 +1,23 @@
 """Mini App initData validation: bot-owner HMAC (`hash`) and third-party Ed25519 (`signature`). Not OIDC."""
+
 from __future__ import annotations
-from .errors import ErrorCode, UnsupportedCapability, ValidationFailure
 
 import base64
-from dataclasses import dataclass
 import hmac
 import json
 import re
 import time
+from dataclasses import dataclass
 from types import MappingProxyType
 from typing import Any, Literal, Mapping
 from urllib.parse import parse_qsl
 
+from .errors import ErrorCode, UnsupportedCapability, ValidationFailure
+
 
 class InvalidInitData(ValidationFailure):
     """Untrusted launch data; messages do not include raw input or secrets."""
+
     code: ErrorCode = 'invalid-init-data'
 
 
@@ -42,6 +45,7 @@ def _reject_constant(name: str) -> Any:
 @dataclass(frozen=True)
 class VerifiedLaunch:
     """Signed launch fields; nested JSON values are read-only (mappings and tuples)."""
+
     user_id: int
     auth_date: int
     user: Mapping[str, object]
@@ -63,17 +67,22 @@ class VerifiedLaunch:
         return result
 
 
-# Telegram's Ed25519 keys for third-party validation (core.telegram.org/bots/webapps#validating-data-for-third-party-use).
-TELEGRAM_PUBLIC_KEYS: Mapping[str, bytes] = MappingProxyType({
-    'production': bytes.fromhex('e7bf03a2fa4602af4580703d88dda5bb59f32ed8b02a56c187fe7d34caed242d'),
-    'test': bytes.fromhex('40055058a4ee38156a06562e52eece92a771bcd8346a8c4615cb7376eddf72ec'),
-})
+# Telegram's Ed25519 keys for third-party validation:
+# core.telegram.org/bots/webapps#validating-data-for-third-party-use
+TELEGRAM_PUBLIC_KEYS: Mapping[str, bytes] = MappingProxyType(
+    {
+        'production': bytes.fromhex('e7bf03a2fa4602af4580703d88dda5bb59f32ed8b02a56c187fe7d34caed242d'),
+        'test': bytes.fromhex('40055058a4ee38156a06562e52eece92a771bcd8346a8c4615cb7376eddf72ec'),
+    }
+)
 
 
 def _check_policy(max_age_seconds: int, future_tolerance_seconds: int, max_length: int, now: int | None) -> None:
-    for name, value, minimum in [("max_age_seconds", max_age_seconds, 1),
-                                 ("future_tolerance_seconds", future_tolerance_seconds, 0),
-                                 ("max_length", max_length, 1)]:
+    for name, value, minimum in [
+        ("max_age_seconds", max_age_seconds, 1),
+        ("future_tolerance_seconds", future_tolerance_seconds, 0),
+        ("max_length", max_length, 1),
+    ]:
         if type(value) is not int or value < minimum:
             raise ValidationFailure(f"Invalid {name}")
     if now is not None and (type(now) is not int or now < 0):
@@ -87,8 +96,9 @@ def _fields(raw: str, max_length: int) -> dict[str, str]:
     if re.search(r"%(?![0-9a-fA-F]{2})", raw):
         raise InvalidInitData("Invalid URL encoding")
     try:
-        pairs = parse_qsl(raw, keep_blank_values=True, strict_parsing=True,
-                          encoding="utf-8", errors="strict", max_num_fields=64)
+        pairs = parse_qsl(
+            raw, keep_blank_values=True, strict_parsing=True, encoding="utf-8", errors="strict", max_num_fields=64
+        )
     except (ValueError, UnicodeError):
         raise InvalidInitData("Invalid launch encoding") from None
     if not pairs or any(not k for k, _ in pairs) or len({k for k, _ in pairs}) != len(pairs):
@@ -103,7 +113,9 @@ def _check_string(data: Mapping[str, str], prefix: str = "") -> bytes:
         raise InvalidInitData("Invalid launch encoding") from None
 
 
-def _launch(data: Mapping[str, str], now: int | None, max_age_seconds: int, future_tolerance_seconds: int) -> VerifiedLaunch:
+def _launch(
+    data: Mapping[str, str], now: int | None, max_age_seconds: int, future_tolerance_seconds: int
+) -> VerifiedLaunch:
     """Freshness and signed identity of fields whose signature is already verified."""
     if not re.fullmatch(r"[0-9]{1,20}", data.get("auth_date", "")):
         raise InvalidInitData("Invalid auth_date")
@@ -131,17 +143,26 @@ def _launch(data: Mapping[str, str], now: int | None, max_age_seconds: int, futu
     if can_send_after is not None and not re.fullmatch(r"[0-9]{1,10}", can_send_after):
         raise InvalidInitData("Invalid can_send_after")
     return VerifiedLaunch(
-        user_id=user["id"], auth_date=auth_date, user=_frozen(user),
-        query_id=data.get("query_id"), chat_type=data.get("chat_type"),
-        chat_instance=data.get("chat_instance"), start_param=data.get("start_param"),
+        user_id=user["id"],
+        auth_date=auth_date,
+        user=_frozen(user),
+        query_id=data.get("query_id"),
+        chat_type=data.get("chat_type"),
+        chat_instance=data.get("chat_instance"),
+        start_param=data.get("start_param"),
         can_send_after=None if can_send_after is None else int(can_send_after),
         chat=None if objects["chat"] is None else _frozen(objects["chat"]),
-        receiver=None if objects["receiver"] is None else _frozen(objects["receiver"]))
+        receiver=None if objects["receiver"] is None else _frozen(objects["receiver"]),
+    )
 
 
 def validate_init_data(
-    raw: str, bot_token: str, *, max_age_seconds: int = 3600,
-    future_tolerance_seconds: int = 30, now: int | None = None,
+    raw: str,
+    bot_token: str,
+    *,
+    max_age_seconds: int = 3600,
+    future_tolerance_seconds: int = 30,
+    now: int | None = None,
     max_length: int = 16384,
 ) -> VerifiedLaunch:
     """Validate raw URL-encoded initData; require a signed user identity.
@@ -165,9 +186,15 @@ def validate_init_data(
 
 
 def validate_init_data_signature(
-    raw: str, bot_id: int, *, environment: Literal['production', 'test'] = 'production',
-    public_key: bytes | None = None, max_age_seconds: int = 3600,
-    future_tolerance_seconds: int = 30, now: int | None = None, max_length: int = 16384,
+    raw: str,
+    bot_id: int,
+    *,
+    environment: Literal['production', 'test'] = 'production',
+    public_key: bytes | None = None,
+    max_age_seconds: int = 3600,
+    future_tolerance_seconds: int = 30,
+    now: int | None = None,
+    max_length: int = 16384,
 ) -> VerifiedLaunch:
     """Validate raw initData without the bot token: the Ed25519 `signature` field and Telegram's public key.
 

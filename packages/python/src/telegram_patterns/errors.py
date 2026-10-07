@@ -1,15 +1,47 @@
 """Safe error metadata; classification never retries or changes business state."""
+
 from __future__ import annotations
 
 import asyncio
 from dataclasses import asdict, dataclass
 from typing import Literal, TypeAlias, cast
 
-ErrorCategory: TypeAlias = Literal['validation', 'permission', 'unsupported', 'timeout', 'network', 'conflict', 'cancelled', 'internal', 'unknown-outcome', 'rate-limit', 'server']
+ErrorCategory: TypeAlias = Literal[
+    'validation',
+    'permission',
+    'unsupported',
+    'timeout',
+    'network',
+    'conflict',
+    'cancelled',
+    'internal',
+    'unknown-outcome',
+    'rate-limit',
+    'server',
+]
 ErrorOutcome: TypeAlias = Literal['rejected', 'read-failed', 'unknown']
-RecoveryAction: TypeAlias = Literal['fix-input', 'authenticate', 'check-permissions', 'use-fallback', 'retry-read', 'retry-later', 'reconcile', 'none']
+RecoveryAction: TypeAlias = Literal[
+    'fix-input', 'authenticate', 'check-permissions', 'use-fallback', 'retry-read', 'retry-later', 'reconcile', 'none'
+]
 OperationKind: TypeAlias = Literal['read', 'write']
-ErrorCode: TypeAlias = Literal['validation-failed', 'invalid-init-data', 'invalid-api-request', 'invalid-field', 'authentication-required', 'permission-denied', 'unsupported-capability', 'timeout', 'network', 'operation-conflict', 'cancelled', 'internal', 'unknown-outcome', 'invalid-response', 'rate-limited', 'server-error']
+ErrorCode: TypeAlias = Literal[
+    'validation-failed',
+    'invalid-init-data',
+    'invalid-api-request',
+    'invalid-field',
+    'authentication-required',
+    'permission-denied',
+    'unsupported-capability',
+    'timeout',
+    'network',
+    'operation-conflict',
+    'cancelled',
+    'internal',
+    'unknown-outcome',
+    'invalid-response',
+    'rate-limited',
+    'server-error',
+]
 
 _DESCRIPTORS: dict[str, tuple[ErrorCategory, RecoveryAction, str]] = {
     'validation-failed': ('validation', 'fix-input', 'Проверьте входные данные.'),
@@ -45,6 +77,7 @@ class ErrorReport:
 
 class PatternError(Exception):
     """Developer exception text is not copied to the public ErrorReport."""
+
     code: ErrorCode = 'internal'
     _known_outcome: ErrorOutcome | None = None
 
@@ -54,12 +87,14 @@ class PatternError(Exception):
 
 class ValidationFailure(PatternError, ValueError):
     """Known local/pre-effect validation rejection, not arbitrary remote failure."""
+
     code: ErrorCode = 'validation-failed'
     _known_outcome = 'rejected'
 
 
 class PermissionDenied(PatternError):
     """Host verified rejection before effect; remote denial needs its contract."""
+
     code: ErrorCode = 'permission-denied'
     _known_outcome = 'rejected'
 
@@ -123,7 +158,11 @@ def safe_error_report(error: BaseException, *, operation: OperationKind = 'read'
         code = 'cancelled'
     elif isinstance(error, PermissionError):
         code = 'permission-denied'
-    outcome: ErrorOutcome = known if isinstance(known, str) and known in {'rejected', 'read-failed', 'unknown'} else ('unknown' if operation == 'write' else 'read-failed')
+    outcome: ErrorOutcome = (
+        known
+        if isinstance(known, str) and known in {'rejected', 'read-failed', 'unknown'}
+        else ('unknown' if operation == 'write' else 'read-failed')
+    )
     category, recovery, message = _DESCRIPTORS[code]
     if outcome == 'unknown':
         recovery = 'reconcile'
