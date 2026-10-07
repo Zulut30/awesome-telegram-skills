@@ -6,6 +6,10 @@
 
 Каждая выпущенная версия отмечена аннотированным тегом `vX.Y.Z` на коммите, который ее ввел, начиная с 0.5.0. Артефакты релиза воспроизводимо собираются из тега; порядок описан в [releasing.md](releasing.md).
 
+## Автоматическая проверка
+
+`scripts/check_api_compatibility.py` сравнивает сигнатуры публичных символов Python (функции, конструкторы, публичные методы, значения `Literal`) и декларации экспортов TypeScript с предыдущим тегом или базовой веткой pull request. Удаленный или измененный символ без упоминания в верхнем разделе CHANGELOG валит CI. Проверка не решает, совместимо ли изменение: это по-прежнему определяют правила ниже.
+
 ## Что входит в обещание совместимости
 
 Документированные import paths/exports, constructors/functions и обязательные/optional параметры, return types и shapes, exception classes/kinds/outcome, side effects, ресурсное владение, CLI commands/exit codes/JSON fields, CSS subpath и публичные style tokens. Для сохраняемого состояния также важны schema version, scope и восстановление operation identity. Текст diagnostics, сгенерированные DOM IDs, приватные helpers и случайные SDK reexports не являются стабильным контрактом. Нельзя полагаться на приватное имя вместо публичного API.

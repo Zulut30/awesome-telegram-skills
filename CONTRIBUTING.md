@@ -38,7 +38,7 @@ python scripts/verify_pattern_packages.py
 
 Полная проверка строит wheel/tarball, устанавливает их в отдельные проекты и запускает проверки Python, TypeScript и браузера. Нужен Chrome либо `CHROME_PATH`; `--skip-browser` оставляет UI непроверенным. Отчеты сохраняются в `output/pattern-library-<version>`.
 
-При изменении публичного API синхронизируйте exports, [components.json](components.json), документацию и [CHANGELOG.md](CHANGELOG.md). Различайте SDK/mock/browser/live evidence и статусы experimental/reference/stable. Проверка в браузере не заменяет испытания в Telegram и на реальных устройствах.
+При изменении публичного API синхронизируйте exports, [components.json](components.json), документацию и [CHANGELOG.md](CHANGELOG.md). `python scripts/check_api_compatibility.py --base auto` сравнивает публичные символы Python и TypeScript с предыдущим тегом (в pull request — с базовой веткой): каждый удаленный или измененный символ нужно назвать в обратных кавычках в верхнем разделе CHANGELOG, иначе CI падает. Различайте SDK/mock/browser/live evidence и статусы experimental/reference/stable. Проверка в браузере не заменяет испытания в Telegram и на реальных устройствах.
 
 ## Выпуск версии
 
@@ -46,4 +46,4 @@ python scripts/verify_pattern_packages.py
 
 ## Область GitHub Actions
 
-Workflow `Repository checks` проверяет упаковку навыков, корневые тесты, TypeScript-тесты и сборку Mini App. Он не выполняет полную приемку поставки, не обращается к Telegram и не публикует пакеты.
+Workflow `Repository checks` проверяет упаковку навыков, корневые тесты, TypeScript-тесты, сборку Mini App и совместимость публичного API с записью в CHANGELOG. Он не выполняет полную приемку поставки, не обращается к Telegram и не публикует пакеты.

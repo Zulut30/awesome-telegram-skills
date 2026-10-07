@@ -203,9 +203,13 @@
     {
       "id": 17,
       "title": "Автоматически проверять совместимость API",
-      "status": "pending",
-      "commit_subject": null,
-      "evidence": [],
+      "status": "done",
+      "commit_subject": "excellence(017): check public API changes against the changelog",
+      "evidence": [
+        "scripts/check_api_compatibility.py против main (042d786): 239 символов, 11 изменены, 9 не названы в CHANGELOG -> exit 1; после дополнения записи пункта 5 -> exit 0",
+        "tests/test_api_compatibility.py: разбор .d.ts (тела, перегрузки), removed/changed/added и требование упоминания",
+        "job api-compatibility в Repository checks (fetch-depth 0, aiogram, npm ci, --base auto)"
+      ],
       "remaining": null
     },
     {
