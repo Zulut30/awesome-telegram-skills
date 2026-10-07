@@ -33,6 +33,10 @@
     "docs/doctor.md": [
       ".agents/skills/telegram-code-patterns/references/doctor.md"
     ],
+    "docs/ephemeral-messages.md": [
+      ".agents/skills/telegram-code-patterns/references/ephemeral-messages.md",
+      ".agents/skills/telegram-groups/references/ephemeral-messages.md"
+    ],
     "docs/gallery-navigation.md": [
       ".agents/skills/telegram-code-patterns/references/gallery-navigation.md"
     ],

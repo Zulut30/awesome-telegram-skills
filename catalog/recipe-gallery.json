@@ -21987,6 +21987,91 @@
       }
     },
     {
+      "id": "demo-ephemeral",
+      "title": "Эфемерный ответ на кнопку в группе",
+      "summary": "Ответ на нажатие кнопки, который видит только нажавший: callback_query_id, замена панели, изменение и удаление по ephemeral_message_id, окно 15 секунд",
+      "category": "scenarios",
+      "language": "python",
+      "maturity": "experimental",
+      "keywords": [
+        "бот",
+        "пример",
+        "callback",
+        "меню",
+        "события",
+        "композиция",
+        "бота",
+        "личный",
+        "чат",
+        "эфемерное",
+        "эфемерные",
+        "ephemeral",
+        "только мне",
+        "видит только",
+        "личный ответ",
+        "группа",
+        "супергруппа",
+        "кнопка",
+        "callback",
+        "скрыть",
+        "обновить"
+      ],
+      "code": "\"\"\"In a group, answer a button press with a message only the presser sees; no polling on import.\"\"\"\nimport time\nfrom typing import Awaitable, Callable\n\nfrom aiogram import Dispatcher, F, Router\nfrom aiogram.filters import Command\nfrom aiogram.methods import DeleteEphemeralMessage, EditEphemeralMessageText, SendMessage\nfrom aiogram.types import CallbackQuery, InlineKeyboardButton, InlineKeyboardMarkup, Message\nfrom telegram_patterns import EphemeralMessageRef, EphemeralNotAllowed, EphemeralTrigger, ephemeral_parameters\n\nGROUPS = ('group', 'supergroup')\nPANEL = InlineKeyboardMarkup(inline_keyboard=[[InlineKeyboardButton(text='Мой статус', callback_data='me:status'),\n                                               InlineKeyboardButton(text='Статус вместо панели', callback_data='me:replace')]])\nOWN = InlineKeyboardMarkup(inline_keyboard=[[InlineKeyboardButton(text='Обновить', callback_data='me:refresh'),\n                                             InlineKeyboardButton(text='Скрыть', callback_data='me:hide')]])\n\n\ndef attach_ephemeral_status(dispatcher: Dispatcher, *, status: Callable[[int, int], Awaitable[str]],\n                            clock: Callable[[], float] = time.monotonic, bot_is_admin: bool = False) -> Router:\n    \"\"\"status(chat_id, user_id) is the service call; it checks the user's access and returns the text.\"\"\"\n    router = Router(name='ephemeral-status')\n\n    @router.message(Command('panel'), F.chat.type.in_(GROUPS))\n    async def panel(message: Message) -> None:\n        await message.bot(SendMessage(chat_id=message.chat.id, text='Нажмите — ответ увидите только вы.', reply_markup=PANEL))\n\n    @router.callback_query(F.data.in_({'me:status', 'me:replace'}))\n    async def show(query: CallbackQuery) -> None:\n        received = clock()\n        message = query.message\n        if not isinstance(message, Message) or message.chat.type not in GROUPS:\n            await query.answer('Эта кнопка работает в группе', show_alert=True)\n            return\n        text = await status(message.chat.id, query.from_user.id)\n        try:\n            extra = ephemeral_parameters(chat_type=message.chat.type, receiver_user_id=query.from_user.id,\n                                         receiver_is_bot=query.from_user.is_bot, bot_is_admin=bot_is_admin,\n                                         trigger=EphemeralTrigger.callback(query.id, received), now=clock(),\n                                         replace_original=query.data == 'me:replace')\n        except EphemeralNotAllowed:\n            # The 15-second window passed: an alert is also seen only by the presser.\n            await query.answer(text[:200], show_alert=True)\n            return\n        # The answer names this press by callback_query_id; delivery is not guaranteed, nothing is retried.\n        await query.bot(SendMessage.model_validate({'chat_id': message.chat.id, 'text': text, 'reply_markup': OWN, **extra}))\n        await query.answer()\n\n    @router.callback_query(F.data.in_({'me:refresh', 'me:hide'}))\n    async def own(query: CallbackQuery) -> None:\n        message = query.message\n        if not isinstance(message, Message) or message.ephemeral_message_id is None:\n            await query.answer()\n            return\n        # Buttons on an ephemeral message are answered by editing or deleting it, never by replacing.\n        ref = EphemeralMessageRef(message.chat.id, query.from_user.id, message.ephemeral_message_id)\n        if query.data == 'me:hide':\n            await query.bot(DeleteEphemeralMessage(**ref.target()))\n        else:\n            text = await status(message.chat.id, query.from_user.id)\n            await query.bot(EditEphemeralMessageText(**ref.target(), text=text, reply_markup=OWN))\n        await query.answer()\n\n    dispatcher.include_router(router)\n    return router\n",
+      "verification": "mock",
+      "scope": "Actual synthetic Dispatcher/StubSession and SDK serialization of ephemeral send/edit/delete; delivery to real clients, disappearance and administrator rights unconfirmed.",
+      "sources": [
+        "https://core.telegram.org/bots/api"
+      ],
+      "preview": null,
+      "code_sha256": "5c9ee879a9de94ec15e4ad99a66268fce5f5d4b83b3bd9df36ab499bed460768",
+      "tasks": [
+        "messages",
+        "bot"
+      ],
+      "contexts": [
+        "group",
+        "supergroup"
+      ],
+      "sdk": "aiogram",
+      "sdk_version": "3.31.0",
+      "api_version": "bot:10.3",
+      "source_files": [
+        "examples/python/ephemeral_bot.py",
+        "packages/python/src/telegram_patterns/ephemeral.py",
+        "packages/python/src/telegram_patterns/execution.py",
+        "packages/python/src/telegram_patterns/_offline_recipe.py"
+      ],
+      "check_files": [
+        "examples/python/offline_ephemeral.py",
+        "packages/python/tests/test_ephemeral.py"
+      ],
+      "execution": {
+        "kind": "dispatcher",
+        "dependencies": [
+          "aiogram==3.31.0"
+        ],
+        "offline_environment": [],
+        "offline_permissions": [],
+        "offline_data": [
+          "Только поставляемые синтетические данные; реальные IDs и secrets не принимаются."
+        ],
+        "live_environment": [
+          "BOT_TOKEN"
+        ],
+        "live_permissions": [
+          "Прикладная авторизация сервиса; fixture actor не доказывает server ACL."
+        ],
+        "live_data": [
+          "Текущий Dispatcher, реальные actor/chat и сервис приложения",
+          "Проверка объекта, автора и состояния до effect/replay"
+        ],
+        "live_review": "Live executor отсутствует. Перед интеграцией проверить источники, ограничения конкретного метода/контекста, auth и ACL; metadata не подтверждает права.",
+        "effects": [
+          "Synthetic Dispatcher + StubSession; временная fixture, без polling"
+        ]
+      }
+    },
+    {
       "id": "demo-recovery",
       "title": "Потерянный ответ: сверка той же операции",
       "summary": "SQLite effect уже сохранен; unknown outcome сверяется тем же scoped ID без второго заказа.",

@@ -616,6 +616,21 @@
       "maturity_scope": "All public API symbols in this component; local verification is not a stable 1.0 promise"
     },
     {
+      "id": "ephemeral-messages",
+      "language": "python",
+      "import": "telegram_patterns.ephemeral_parameters, EphemeralTrigger, EphemeralMessageRef, EphemeralNotAllowed",
+      "intent": "Ответить в группе сообщением, которое видит только один участник, изменить и удалить его",
+      "source": "packages/python/src/telegram_patterns/ephemeral.py",
+      "example": "examples/python/ephemeral_bot.py",
+      "boundaries": [
+        "groups and supergroups only; a human receiver",
+        "non-administrator bots answer within 15 seconds and name the callback or ephemeral message",
+        "delivery is not guaranteed and ids may be reused; administrator rights and event time come from the host"
+      ],
+      "maturity": "experimental",
+      "maturity_scope": "All public API symbols in this component; local verification is not a stable 1.0 promise"
+    },
+    {
       "id": "media",
       "language": "python",
       "import": "telegram_patterns.aiogram.MediaKind, MediaSendRequest, MediaFile, MediaItem, DownloadedMedia, media_request, media_album, media_edit, download_media",

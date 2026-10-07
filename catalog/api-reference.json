@@ -58,6 +58,21 @@
       }
     },
     {
+      "id": "core_ephemeral",
+      "section": "core",
+      "title": "Эфемерные сообщения в группах",
+      "example": "examples/api-reference/python/core_ephemeral.py",
+      "limits": "Правила Bot API 10.2+ без SDK: эфемерное сообщение видит один участник группы или супергруппы и бот. Бот без прав администратора отвечает в течение 15 секунд и называет повод: callback_query_id нажатия или ephemeral_message_id эфемерной команды; администратор пишет любому участнику-человеку в любое время. Замена исходного сообщения — только для свежего нажатия на обычном сообщении. Доставка не гарантирована, ID может повториться после удаления или истечения; права администратора и время события проект передает сам.",
+      "api": {
+        "telegram_patterns": {
+          "ephemeral_parameters": "Параметры ephemeral_message_parameters и reply_parameters для send* или отказ с причиной",
+          "EphemeralTrigger": "Повод ответа: нажатие кнопки или эфемерная команда и время получения",
+          "EphemeralMessageRef": "Адрес отправленного эфемерного сообщения для editEphemeralMessage* и deleteEphemeralMessage",
+          "EphemeralNotAllowed": "Отказ: не группа, получатель-бот, окно 15 секунд прошло или замена недоступна"
+        }
+      }
+    },
+    {
       "id": "core_storage",
       "section": "core",
       "title": "SQLite effect и повтор",

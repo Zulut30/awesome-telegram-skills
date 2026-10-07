@@ -256,6 +256,54 @@
     },
     {
       "module": "telegram_patterns",
+      "name": "ephemeral_parameters",
+      "import": "from telegram_patterns import ephemeral_parameters",
+      "recipe": "ref.core_ephemeral",
+      "example": "examples/api-reference/python/core_ephemeral.py",
+      "limits": "Правила Bot API 10.2+ без SDK: эфемерное сообщение видит один участник группы или супергруппы и бот. Бот без прав администратора отвечает в течение 15 секунд и называет повод: callback_query_id нажатия или ephemeral_message_id эфемерной команды; администратор пишет любому участнику-человеку в любое время. Замена исходного сообщения — только для свежего нажатия на обычном сообщении. Доставка не гарантирована, ID может повториться после удаления или истечения; права администратора и время события проект передает сам.",
+      "intent": "Параметры ephemeral_message_parameters и reply_parameters для send* или отказ с причиной",
+      "example_sha256": "557f781dd6987673fc7548a984c629503e8eba4ea311c5b7fbabd20c73fb1427",
+      "example_source_sha256": "557f781dd6987673fc7548a984c629503e8eba4ea311c5b7fbabd20c73fb1427",
+      "kind": "value"
+    },
+    {
+      "module": "telegram_patterns",
+      "name": "EphemeralTrigger",
+      "import": "from telegram_patterns import EphemeralTrigger",
+      "recipe": "ref.core_ephemeral",
+      "example": "examples/api-reference/python/core_ephemeral.py",
+      "limits": "Правила Bot API 10.2+ без SDK: эфемерное сообщение видит один участник группы или супергруппы и бот. Бот без прав администратора отвечает в течение 15 секунд и называет повод: callback_query_id нажатия или ephemeral_message_id эфемерной команды; администратор пишет любому участнику-человеку в любое время. Замена исходного сообщения — только для свежего нажатия на обычном сообщении. Доставка не гарантирована, ID может повториться после удаления или истечения; права администратора и время события проект передает сам.",
+      "intent": "Повод ответа: нажатие кнопки или эфемерная команда и время получения",
+      "example_sha256": "557f781dd6987673fc7548a984c629503e8eba4ea311c5b7fbabd20c73fb1427",
+      "example_source_sha256": "557f781dd6987673fc7548a984c629503e8eba4ea311c5b7fbabd20c73fb1427",
+      "kind": "value"
+    },
+    {
+      "module": "telegram_patterns",
+      "name": "EphemeralMessageRef",
+      "import": "from telegram_patterns import EphemeralMessageRef",
+      "recipe": "ref.core_ephemeral",
+      "example": "examples/api-reference/python/core_ephemeral.py",
+      "limits": "Правила Bot API 10.2+ без SDK: эфемерное сообщение видит один участник группы или супергруппы и бот. Бот без прав администратора отвечает в течение 15 секунд и называет повод: callback_query_id нажатия или ephemeral_message_id эфемерной команды; администратор пишет любому участнику-человеку в любое время. Замена исходного сообщения — только для свежего нажатия на обычном сообщении. Доставка не гарантирована, ID может повториться после удаления или истечения; права администратора и время события проект передает сам.",
+      "intent": "Адрес отправленного эфемерного сообщения для editEphemeralMessage* и deleteEphemeralMessage",
+      "example_sha256": "557f781dd6987673fc7548a984c629503e8eba4ea311c5b7fbabd20c73fb1427",
+      "example_source_sha256": "557f781dd6987673fc7548a984c629503e8eba4ea311c5b7fbabd20c73fb1427",
+      "kind": "value"
+    },
+    {
+      "module": "telegram_patterns",
+      "name": "EphemeralNotAllowed",
+      "import": "from telegram_patterns import EphemeralNotAllowed",
+      "recipe": "ref.core_ephemeral",
+      "example": "examples/api-reference/python/core_ephemeral.py",
+      "limits": "Правила Bot API 10.2+ без SDK: эфемерное сообщение видит один участник группы или супергруппы и бот. Бот без прав администратора отвечает в течение 15 секунд и называет повод: callback_query_id нажатия или ephemeral_message_id эфемерной команды; администратор пишет любому участнику-человеку в любое время. Замена исходного сообщения — только для свежего нажатия на обычном сообщении. Доставка не гарантирована, ID может повториться после удаления или истечения; права администратора и время события проект передает сам.",
+      "intent": "Отказ: не группа, получатель-бот, окно 15 секунд прошло или замена недоступна",
+      "example_sha256": "557f781dd6987673fc7548a984c629503e8eba4ea311c5b7fbabd20c73fb1427",
+      "example_source_sha256": "557f781dd6987673fc7548a984c629503e8eba4ea311c5b7fbabd20c73fb1427",
+      "kind": "value"
+    },
+    {
+      "module": "telegram_patterns",
       "name": "OnceResult",
       "import": "from telegram_patterns import OnceResult",
       "recipe": "ref.core_storage",
@@ -562,8 +610,8 @@
       "example": "examples/api-reference/python/core_recipes.py",
       "limits": "Чтение не исполняет recipe code. Maturity отдельно от verification; SDK/mock не доказывают live/device. Preview — независимая копия. Этот пример ищет существующий cookbook recipe two-columns; ref.* — имена справочника API.",
       "intent": "Literal-зрелость: stable, experimental или reference",
-      "example_sha256": "9ff4444df532f89b54e10100382870626ca0e2ad531f56b8b674193b0d292a78",
-      "example_source_sha256": "9ff4444df532f89b54e10100382870626ca0e2ad531f56b8b674193b0d292a78",
+      "example_sha256": "c309e4418a4f3e15b6386fb167aae706e5472f53572ecdf5b69fff4b366a14ad",
+      "example_source_sha256": "c309e4418a4f3e15b6386fb167aae706e5472f53572ecdf5b69fff4b366a14ad",
       "kind": "value"
     },
     {
@@ -574,8 +622,8 @@
       "example": "examples/api-reference/python/core_recipes.py",
       "limits": "Чтение не исполняет recipe code. Maturity отдельно от verification; SDK/mock не доказывают live/device. Preview — независимая копия. Этот пример ищет существующий cookbook recipe two-columns; ref.* — имена справочника API.",
       "intent": "Literal-уровень проверки: sdk, mock, browser, live или not_run",
-      "example_sha256": "9ff4444df532f89b54e10100382870626ca0e2ad531f56b8b674193b0d292a78",
-      "example_source_sha256": "9ff4444df532f89b54e10100382870626ca0e2ad531f56b8b674193b0d292a78",
+      "example_sha256": "c309e4418a4f3e15b6386fb167aae706e5472f53572ecdf5b69fff4b366a14ad",
+      "example_source_sha256": "c309e4418a4f3e15b6386fb167aae706e5472f53572ecdf5b69fff4b366a14ad",
       "kind": "value"
     },
     {
@@ -586,8 +634,8 @@
       "example": "examples/api-reference/python/core_recipes.py",
       "limits": "Чтение не исполняет recipe code. Maturity отдельно от verification; SDK/mock не доказывают live/device. Preview — независимая копия. Этот пример ищет существующий cookbook recipe two-columns; ref.* — имена справочника API.",
       "intent": "Неизменяемая запись и копия preview",
-      "example_sha256": "9ff4444df532f89b54e10100382870626ca0e2ad531f56b8b674193b0d292a78",
-      "example_source_sha256": "9ff4444df532f89b54e10100382870626ca0e2ad531f56b8b674193b0d292a78",
+      "example_sha256": "c309e4418a4f3e15b6386fb167aae706e5472f53572ecdf5b69fff4b366a14ad",
+      "example_source_sha256": "c309e4418a4f3e15b6386fb167aae706e5472f53572ecdf5b69fff4b366a14ad",
       "kind": "value"
     },
     {
@@ -598,8 +646,8 @@
       "example": "examples/api-reference/python/core_recipes.py",
       "limits": "Чтение не исполняет recipe code. Maturity отдельно от verification; SDK/mock не доказывают live/device. Preview — независимая копия. Этот пример ищет существующий cookbook recipe two-columns; ref.* — имена справочника API.",
       "intent": "Версия, recipes, get/search с фильтрами",
-      "example_sha256": "9ff4444df532f89b54e10100382870626ca0e2ad531f56b8b674193b0d292a78",
-      "example_source_sha256": "9ff4444df532f89b54e10100382870626ca0e2ad531f56b8b674193b0d292a78",
+      "example_sha256": "c309e4418a4f3e15b6386fb167aae706e5472f53572ecdf5b69fff4b366a14ad",
+      "example_source_sha256": "c309e4418a4f3e15b6386fb167aae706e5472f53572ecdf5b69fff4b366a14ad",
       "kind": "value"
     },
     {
@@ -3051,9 +3099,9 @@
       "kind": "value"
     }
   ],
-  "python_symbols": 207,
+  "python_symbols": 211,
   "typescript_symbols": 47,
-  "recipes": 34,
+  "recipes": 35,
   "additional_entries": [
     "CLI recipes",
     "CLI init",

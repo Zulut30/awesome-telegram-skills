@@ -692,9 +692,14 @@
     {
       "id": 55,
       "title": "Эфемерные сообщения (10.2–10.3)",
-      "status": "pending",
-      "commit_subject": null,
-      "evidence": [],
+      "status": "done",
+      "commit_subject": "excellence(055): answer group button presses with ephemeral messages",
+      "evidence": [
+        "packages/python/src/telegram_patterns/ephemeral.py, packages/python/tests/test_ephemeral.py",
+        "examples/python/ephemeral_bot.py, offline_ephemeral.py: run-recipe demo-ephemeral --offline passed on a real Dispatcher",
+        "docs/ephemeral-messages.md in telegram-groups and telegram-code-patterns",
+        "verify_pattern_packages PASS: 523 Python and 35 TypeScript tests, browser passed"
+      ],
       "remaining": null
     },
     {

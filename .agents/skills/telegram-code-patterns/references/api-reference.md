@@ -35,6 +35,10 @@
 | `RichButtonStyle` | `from telegram_patterns import RichButtonStyle` | [ref.core_rich_message](api-reference-core.md#ref-core_rich_message) | Literal стиля: danger, success, primary, link |
 | `RichSpan` | `from telegram_patterns import RichSpan` | [ref.core_rich_message](api-reference-core.md#ref-core_rich_message) | Встроенное форматирование: bold, italic, code или ссылка HTTP(S) |
 | `RichText` | `from telegram_patterns import RichText` | [ref.core_rich_message](api-reference-core.md#ref-core_rich_message) | Строка, RichSpan или их последовательность |
+| `ephemeral_parameters` | `from telegram_patterns import ephemeral_parameters` | [ref.core_ephemeral](api-reference-core.md#ref-core_ephemeral) | Параметры ephemeral_message_parameters и reply_parameters для send* или отказ с причиной |
+| `EphemeralTrigger` | `from telegram_patterns import EphemeralTrigger` | [ref.core_ephemeral](api-reference-core.md#ref-core_ephemeral) | Повод ответа: нажатие кнопки или эфемерная команда и время получения |
+| `EphemeralMessageRef` | `from telegram_patterns import EphemeralMessageRef` | [ref.core_ephemeral](api-reference-core.md#ref-core_ephemeral) | Адрес отправленного эфемерного сообщения для editEphemeralMessage* и deleteEphemeralMessage |
+| `EphemeralNotAllowed` | `from telegram_patterns import EphemeralNotAllowed` | [ref.core_ephemeral](api-reference-core.md#ref-core_ephemeral) | Отказ: не группа, получатель-бот, окно 15 секунд прошло или замена недоступна |
 | `OnceResult` | `from telegram_patterns import OnceResult` | [ref.core_storage](api-reference-core.md#ref-core_storage) | Результат эффекта с replay flag |
 | `OperationConflict` | `from telegram_patterns import OperationConflict` | [ref.core_storage](api-reference-core.md#ref-core_storage) | Тот же scoped key с другим payload |
 | `SQLiteOnce` | `from telegram_patterns import SQLiteOnce` | [ref.core_storage](api-reference-core.md#ref-core_storage) | Инициализация и атомарный run в файле SQLite |

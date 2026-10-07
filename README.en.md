@@ -24,7 +24,7 @@ Skills help an AI coding agent choose a solution and verify the result. The libr
 | 42 skills for AI agents | 🟢 Ready to use | They are instructions: the agent applies them to your code, you keep the decisions and the review |
 | Python components (36 groups) | 🟡 Experimental | Tested with real aiogram and a test transport; the API may change in the next minor version |
 | TypeScript components (7 groups) | 🟡 Experimental | Checked in Chrome at several screen sizes, not inside Telegram on a phone |
-| Recipes (312) | 🟡 Verified without Telegram | 196 run on the real SDK offline, 17 on stubs, 99 are reference snippets that were not executed |
+| Recipes (313) | 🟡 Verified without Telegram | 196 run on the real SDK offline, 18 on stubs, 99 are reference snippets that were not executed |
 | Example applications | 🟡 Educational | Show how to build a service bot, a shop and a group bot; not finished products |
 | Real Telegram clients, devices and payments | 🔴 Not verified | No live acceptance on Telegram clients or payment providers yet |
 

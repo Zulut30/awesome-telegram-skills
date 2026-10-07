@@ -142,6 +142,7 @@ def build(root: Path = ROOT) -> dict:
         ('message_text_bot.py', 'offline_message_text.py', 'demo-message-text', 'Безопасные сообщения и разбиение текста'),
         ('ai_stream_bot.py', 'offline_ai_stream.py', 'demo-ai-stream', 'ИИ-ответ потоком с остановкой генерации'),
         ('rich_message_bot.py', 'offline_rich_message.py', 'demo-rich-message', 'Rich-сообщение: карточка заказа и запасной текст'),
+        ('ephemeral_bot.py', 'offline_ephemeral.py', 'demo-ephemeral', 'Эфемерный ответ на кнопку в группе'),
     ):
         result = subprocess.run([sys.executable, str(root / 'examples/python' / offline)], capture_output=True,
                                 text=True, encoding='utf-8', env=environment, timeout=60)
@@ -224,6 +225,14 @@ def build(root: Path = ROOT) -> dict:
             records[-1]['source_files'] += ['packages/python/src/telegram_patterns/rich_message.py']
             records[-1]['check_files'] += ['packages/python/tests/test_rich_message.py']
             records[-1]['scope'] = 'Actual synthetic Dispatcher/StubSession and SDK serialization of sendRichMessage and its text fallback; Telegram rendering of rich blocks and client support unconfirmed.'
+        if key == 'demo-ephemeral':
+            records[-1]['summary'] = 'Ответ на нажатие кнопки, который видит только нажавший: callback_query_id, замена панели, изменение и удаление по ephemeral_message_id, окно 15 секунд'
+            records[-1]['tasks'] = ['messages', 'bot']
+            records[-1]['contexts'] = ['group', 'supergroup']
+            records[-1]['keywords'] += ['эфемерное', 'эфемерные', 'ephemeral', 'только мне', 'видит только', 'личный ответ', 'группа', 'супергруппа', 'кнопка', 'callback', 'скрыть', 'обновить']
+            records[-1]['source_files'] += ['packages/python/src/telegram_patterns/ephemeral.py']
+            records[-1]['check_files'] += ['packages/python/tests/test_ephemeral.py']
+            records[-1]['scope'] = 'Actual synthetic Dispatcher/StubSession and SDK serialization of ephemeral send/edit/delete; delivery to real clients, disappearance and administrator rights unconfirmed.'
         if key == 'demo-platform':
             records[-1]['summary'] = 'Семь семейств: native rights, host ACL/budget/intent, scoped events и explicit unknown reconciliation'
             records[-1]['tasks'] = ['platform']
