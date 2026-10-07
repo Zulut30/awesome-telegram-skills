@@ -295,7 +295,7 @@ print(json.dumps({'passed': True, 'case': 'core_starter', 'network': False}))
 
 Файл: `core_doctor.py`. Символы: `doctor`
 
-Границы: Пример намеренно запускается без aiogram: readiness fail содержит команды следующего явного действия. Doctor не читает .env/не отправляет token, не выполняет предлагаемые repairs и не подтверждает live identity. SDK probe установленного extra изолирован от проекта.
+Границы: Пример намеренно запускается без aiogram: readiness fail содержит команды следующего явного действия. Без webhook=True doctor не читает .env, не обращается к сети и не подтверждает live identity; webhook=True делает один read-only getWebhookInfo с BOT_TOKEN из окружения или .env проекта. Предлагаемые repairs не выполняются, token не попадает в отчет. SDK probe установленного extra изолирован от проекта.
 
 ```python
 """Doctor запускается SDK-free: диагностика readiness, не автоматический install."""

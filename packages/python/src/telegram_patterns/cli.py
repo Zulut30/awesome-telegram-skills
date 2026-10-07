@@ -18,8 +18,11 @@ from .starter import create_starter
 from .starter_components import StarterConflict, starter_components
 
 
-def doctor(target: str | Path = '.', *, require_token: bool = False) -> dict:
-    return diagnose(target, require_token=require_token)
+def doctor(target: str | Path = '.', *, require_token: bool = False, webhook: bool = False,
+           expect: str | None = None, webhook_secret_env: str = 'WEBHOOK_SECRET') -> dict:
+    """Local read-only checks; webhook=True adds one getWebhookInfo request and reads BOT_TOKEN from .env too."""
+    return diagnose(target, require_token=require_token, webhook=webhook, expect=expect,
+                    webhook_secret_env=webhook_secret_env)
 
 
 _PROBLEMS = {
@@ -97,8 +100,11 @@ def main(argv: list[str] | None = None) -> int:
     init.add_argument('--typescript'); init.add_argument('--dry-run', action='store_true')
     init.add_argument('--component', action='append', help='Repeat a selectable component ID; dependencies are included')
     init.add_argument('--list-components', action='store_true', help='List the closed starter registry; no filesystem or network')
-    diagnostics = commands.add_parser('doctor', parents=[common], help='Read-only local diagnostics; never prints token')
+    diagnostics = commands.add_parser('doctor', parents=[common], help='Read-only diagnostics; never prints token; network only with --webhook')
     diagnostics.add_argument('target', nargs='?', default='.'); diagnostics.add_argument('--require-token', action='store_true')
+    diagnostics.add_argument('--webhook', action='store_true', help='Also call read-only getWebhookInfo; BOT_TOKEN from environment or project .env')
+    diagnostics.add_argument('--expect', choices=('polling', 'webhook'), help='How this bot receives updates; turns a mismatch into a failed check')
+    diagnostics.add_argument('--webhook-secret-env', default='WEBHOOK_SECRET', help='Variable holding the secret_token passed to setWebhook')
     run_recipe = commands.add_parser('run-recipe', parents=[common], help='Show prerequisites; --offline runs only a bundled fixture')
     run_recipe.add_argument('recipe_id')
     run_recipe.add_argument('--offline', action='store_true')
@@ -140,7 +146,10 @@ def main(argv: list[str] | None = None) -> int:
                               'library_version': plan.library_version, 'files': plan.files, 'components': plan.components,
                               'requested_components': plan.requested_components, 'network': False}))
         else:
-            report = doctor(args.target, require_token=args.require_token)
+            if (args.expect or args.webhook_secret_env != 'WEBHOOK_SECRET') and not args.webhook:
+                parser.error('--expect and --webhook-secret-env require --webhook')
+            report = doctor(args.target, require_token=args.require_token, webhook=args.webhook,
+                            expect=args.expect, webhook_secret_env=args.webhook_secret_env)
             print(json.dumps(report)); return 0 if report['passed'] else 1
     except StarterConflict as error:
         _report({'passed': False, 'error': 'StarterConflict', 'problem': 'input', 'reason': error.reason,

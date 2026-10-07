@@ -311,19 +311,24 @@
       "commit_subject": "excellence(026): run the service bot in an optional container",
       "evidence": [
         "examples/service-bot/Dockerfile, compose.yaml, .env.example и корневой .dockerignore (.env не попадает в образ); база SQLite и .lock на именованном томе /data, процесс от uid 10001",
-        "docker compose build и run на Docker 29.8.2 / Compose 5.6.0: без .env Compose отказывается стартовать; с заглушкой — 'telegram-service-example: error: Replace the BOT_TOKEN placeholder…' и код 2; с фиктивным токеном — понятная ошибка getMe (Bot API недоступен из песочницы) и код 2, без traceback",
+        "docker compose build и run на Docker 29.8.2 / Compose 5.6.0: без .env Compose отказывается стартовать; с заглушкой — 'telegram-service-example: error: Replace the BOT_TOKEN placeholder…' и код 2; с фиктивным токеном — понятная ошибка getMe (в контейнере нет прокси этой среды, поэтому Bot API недоступен) и код 2, без traceback",
         "scripts/verify_docker_example.py: офлайн-фазы start и review в разных контейнерах на одном томе с docker compose down между ними — passed; проект, том и образ удалены; существующий .env не читается и не перезаписывается",
         "verify_service_bot.py с wheel 0.24.0: passed, unit_tests 9 (новый тест entrypoint), mypy примера чистый; job CI docker добавлен",
-        "README примера и две копии: раздел «Docker (необязательно)», сверено с docs.docker.com (env_file required с Compose 2.24.0, build args/secrets/network, restart) 2026-10-07; живой polling с настоящим токеном в песочнице не проверялся, webhook-режим в примере отсутствует"
+        "README примера и две копии: раздел «Docker (необязательно)», сверено с docs.docker.com (env_file required с Compose 2.24.0, build args/secrets/network, restart) 2026-10-07; живой polling с настоящим токеном не проверялся: тестового токена нет, webhook-режим в примере отсутствует"
       ],
       "remaining": null
     },
     {
       "id": 27,
       "title": "Диагностика webhook в `doctor`",
-      "status": "pending",
-      "commit_subject": null,
-      "evidence": [],
+      "status": "done",
+      "commit_subject": "excellence(027): diagnose webhook state with doctor --webhook",
+      "evidence": [
+        "diagnostics._webhook_checks разбирает WebhookInfo (Bot API 10.3): конфликт с polling (409, fail при --expect polling), webhook не установлен при --expect webhook, очередь updates (24 часа хранения), последняя ошибка доставки по 7 типам, ошибка синхронизации, локальный secret_token, которого Bot API не показывает; у каждого warn/fail есть summary и команда",
+        "tests/test_doctor_webhook.py: 12 тестов на synthetic ответах, в том числе через настоящий HTTP на loopback (401, не-JSON, закрытый порт, .env, CLI-флаги); мутационная проверка (401 → api-error, окно 60 с) дала 13 падений",
+        "Установленный wheel в SDK-free consumer: verify_doctor_consumer.py passed; telegram-patterns doctor . --webhook --expect polling через прокси этой среды получил настоящий ответ Bot API 401 → token-rejected, network true, фиктивный токен не попал ни в stdout, ни в stderr",
+        "Пакет: 487 тестов, mypy чистый; корень: 60 тестов, validate_skills, check_api_compatibility passed; API reference пересобран; docs/doctor.md и копия в скилле, telegram-debugging ссылается на режим"
+      ],
       "remaining": null
     },
     {

@@ -620,7 +620,7 @@
       "import": "from telegram_patterns.cli import doctor",
       "recipe": "ref.core_doctor",
       "example": "examples/api-reference/python/core_doctor.py",
-      "limits": "Пример намеренно запускается без aiogram: readiness fail содержит команды следующего явного действия. Doctor не читает .env/не отправляет token, не выполняет предлагаемые repairs и не подтверждает live identity. SDK probe установленного extra изолирован от проекта.",
+      "limits": "Пример намеренно запускается без aiogram: readiness fail содержит команды следующего явного действия. Без webhook=True doctor не читает .env, не обращается к сети и не подтверждает live identity; webhook=True делает один read-only getWebhookInfo с BOT_TOKEN из окружения или .env проекта. Предлагаемые repairs не выполняются, token не попадает в отчет. SDK probe установленного extra изолирован от проекта.",
       "intent": "Локальные checks с reason/remediation и exit readiness",
       "example_sha256": "993d8b692f73a6360301e227962ef657f94e5cfe44319078bc18004796cdfb8d",
       "example_source_sha256": "993d8b692f73a6360301e227962ef657f94e5cfe44319078bc18004796cdfb8d",

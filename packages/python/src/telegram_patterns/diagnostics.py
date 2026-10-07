@@ -11,9 +11,14 @@ import shutil
 import stat
 import subprocess
 import sys
+import time
 import tomllib
+from typing import Any, Mapping
+import urllib.error
+import urllib.parse
+import urllib.request
 
-from .settings import BotSettings
+from .settings import BotSettings, _read_env_file
 
 _MAX_MANIFEST_BYTES = 256 * 1024
 _VERSION = re.compile(r'\d+\.\d+\.\d+')
@@ -25,6 +30,18 @@ _SDK_PROBE = ("from telegram_patterns import aiogram as a; "
 _LIMITS = ('Only local manifests, installed package metadata, isolated Python adapter imports and fixed node --version; '
            'no Telegram token validity/webhook/polling, deployment, project-code execution, '
            'backend auth, dependency installation or real-client check. Suggested commands are not executed.')
+_WEBHOOK_LIMITS = ('Local checks plus one read-only getWebhookInfo request with BOT_TOKEN from the environment or project .env; '
+                   'no setWebhook/deleteWebhook/getUpdates, endpoint probe, deployment or project-code execution. '
+                   'Bot API does not report whether secret_token was set; only a local secret is checked. Suggested commands are not executed.')
+_API_BASE = 'https://api.telegram.org'
+_WEBHOOK_TIMEOUT = 10.0
+_MAX_API_BYTES = 64 * 1024
+_SECRET = re.compile(r'[A-Za-z0-9_-]{1,256}')
+_ENV_NAME = re.compile(r'[A-Za-z_][A-Za-z0-9_]*')
+_RECENT_SECONDS = 24 * 3600
+_BACKLOG = 100
+# Commands read BOT_TOKEN from the environment, so the token never appears in argv or shell history.
+_API_CALL = "import os,urllib.request;print(urllib.request.urlopen('{base}/bot'+os.environ['BOT_TOKEN']+'/{method}').read().decode())"
 
 
 def _command(argv: list[str], *, cwd: str = 'project', placeholders: bool = False) -> dict:
@@ -85,8 +102,192 @@ def _read_manifest(path: Path) -> tuple[str | None, str]:
         return None, 'manifest-unreadable'
 
 
-def diagnose(target: str | Path, *, require_token: bool) -> dict:
+class _WebhookUnavailable(Exception):
+    def __init__(self, reason: str) -> None:
+        super().__init__(reason)
+        self.reason = reason
+
+
+def _fetch_webhook_info(token: str) -> dict[str, Any]:
+    """One GET getWebhookInfo; the token exists only in the request URL, never in errors or the report."""
+    request = urllib.request.Request(f'{_API_BASE}/bot{token}/getWebhookInfo', headers={'Accept': 'application/json'})
+    try:
+        with urllib.request.urlopen(request, timeout=_WEBHOOK_TIMEOUT) as response:
+            body = response.read(_MAX_API_BYTES + 1)
+    except urllib.error.HTTPError as error:
+        status = error.code
+        error.close()
+        raise _WebhookUnavailable('token-rejected' if status in (401, 404) else 'api-error') from None
+    except (urllib.error.URLError, OSError, ValueError):
+        raise _WebhookUnavailable('api-unreachable') from None
+    try:
+        payload = json.loads(body) if len(body) <= _MAX_API_BYTES else None
+    except (ValueError, RecursionError):
+        payload = None
+    if not (isinstance(payload, dict) and payload.get('ok') is True and isinstance(payload.get('result'), dict)):
+        raise _WebhookUnavailable('api-error')
+    return payload['result']
+
+
+def _api_command(method: str) -> dict:
+    return _command(['python', '-c', _API_CALL.format(base=_API_BASE, method=method)])
+
+
+def _set_webhook_command(secret_env: str) -> dict:
+    code = ("import os,urllib.parse,urllib.request;q=urllib.parse.urlencode({'url':'<WEBHOOK_URL>','secret_token':os.environ['" + secret_env + "']});"
+            "print(urllib.request.urlopen('" + _API_BASE + "/bot'+os.environ['BOT_TOKEN']+'/setWebhook?'+q).read().decode())")
+    return _command(['python', '-c', code], placeholders=True)
+
+
+def _safe_url(url: str) -> str:
+    """Scheme, host and port only: a webhook path often carries a secret."""
+    try:
+        parts = urllib.parse.urlsplit(url)
+        host = parts.hostname or ''
+        port = parts.port
+    except ValueError:
+        return 'URL скрыт: не удалось разобрать'
+    if ':' in host:
+        host = f'[{host}]'
+    hidden = '/…' if parts.path not in ('', '/') or parts.query or parts.fragment else ''
+    return f'{parts.scheme}://{host}{f":{port}" if port else ""}{hidden}'
+
+
+def _age(seconds: float) -> str:
+    minutes = max(0, int(seconds // 60))
+    if minutes < 60:
+        return f'{minutes} мин назад'
+    if minutes < 48 * 60:
+        return f'{minutes // 60} ч назад'
+    return f'{minutes // 1440} дн назад'
+
+
+def _delivery_error(message: str) -> tuple[str, str]:
+    text = message.lower()
+    status = re.search(r'wrong response from the webhook: (\d{3})', text)
+    if status and status.group(1) in ('401', '403'):
+        return 'webhook-auth-rejected', ('Сервер отклоняет запросы Telegram: сверьте secret_token из setWebhook с проверкой заголовка '
+                                         'X-Telegram-Bot-Api-Secret-Token, а также правила firewall/WAF.')
+    if status and status.group(1) == '404':
+        return 'webhook-path-not-found', 'Путь webhook не обслуживается: сверьте URL из setWebhook с маршрутом сервера и reverse proxy.'
+    if status and status.group(1).startswith('5'):
+        return 'webhook-server-error', ('Обработчик падает или proxy не достает до процесса: смотрите логи сервера. '
+                                        'Отвечайте 200 только после обработки или надежного сохранения update.')
+    if status:
+        return 'webhook-bad-response', 'Webhook должен отвечать 2xx: смотрите логи сервера и ответ обработчика.'
+    if 'ssl' in text or 'certificate' in text:
+        return 'webhook-tls', ('Проверьте полную цепочку сертификата и имя хоста. Самоподписанный сертификат '
+                               'передается параметром certificate в setWebhook.')
+    if any(sign in text for sign in ('refused', 'timed out', 'timeout', 'resolve', 'no route', 'unreachable', 'name or service')):
+        return 'webhook-unreachable', ('Telegram не может подключиться: проверьте DNS, открытый порт (443, 80, 88 или 8443), '
+                                       'firewall и что сервер слушает этот адрес.')
+    return 'webhook-error', 'Смотрите логи сервера за время ошибки; повторите doctor после исправления.'
+
+
+def _webhook_checks(info: Mapping[str, Any], *, expect: str | None, secret_env: str,
+                    secret: str | None, now: float) -> list[tuple]:
+    """Pure analysis of a WebhookInfo object; each tuple feeds diagnose().check()."""
+    rerun = _command(['python', '-m', 'telegram_patterns', 'doctor', '.', '--webhook'])
+    url = info.get('url') if isinstance(info.get('url'), str) else ''
+    pending = info.get('pending_update_count')
+    pending = pending if isinstance(pending, int) and not isinstance(pending, bool) and pending >= 0 else 0
+    found: list[tuple] = []
+    shown = _safe_url(url) if url else ''
+    if url:
+        extra = [f'IP {info["ip_address"]}'] if isinstance(info.get('ip_address'), str) else []
+        if isinstance(info.get('max_connections'), int):
+            extra.append(f'max_connections {info["max_connections"]}')
+        if info.get('has_custom_certificate') is True:
+            extra.append('собственный сертификат')
+        detail = f'Webhook установлен: {shown}' + (f' ({", ".join(extra)})' if extra else '') + '.'
+        delete = 'удалите webhook через deleteWebhook без drop_pending_updates — очередь updates сохранится.'
+        if expect == 'webhook':
+            found.append(('webhook', 'pass', 'webhook-set', detail))
+        elif expect == 'polling':
+            found.append(('webhook', 'fail', 'webhook-blocks-polling', detail + ' Пока он установлен, getUpdates отвечает 409 Conflict.',
+                          'Если updates должен получать этот polling процесс и сервер по этому адресу больше их не принимает, ' + delete +
+                          ' Иначе запускайте бот в режиме webhook. Doctor ничего не меняет.', [_api_command('deleteWebhook'), rerun]))
+        else:
+            found.append(('webhook', 'warn', 'webhook-active', detail + ' Polling (run_bot, app.py стартера) получит 409 Conflict.',
+                          'Для polling ' + delete + ' Для webhook повторите doctor с --expect webhook.',
+                          [_api_command('deleteWebhook'), _command(['python', '-m', 'telegram_patterns', 'doctor', '.', '--webhook', '--expect', 'webhook'])]))
+    elif expect == 'webhook':
+        found.append(('webhook', 'fail', 'webhook-not-set', 'Webhook не установлен: Telegram хранит updates для getUpdates.',
+                      'Вызовите setWebhook с HTTPS адресом сервера (порт 443, 80, 88 или 8443) и secret_token; '
+                      'другой polling процесс этого бота перед этим остановите.', [_set_webhook_command(secret_env), rerun]))
+    else:
+        found.append(('webhook', 'pass', 'polling-available', 'Webhook не установлен: polling через getUpdates доступен одному процессу.'))
+
+    if url:
+        error_date = info.get('last_error_date')
+        recent_error = isinstance(error_date, int) and now - error_date < _RECENT_SECONDS
+        if pending >= _BACKLOG or (pending and recent_error):
+            found.append(('webhook-pending', 'warn', 'webhook-backlog', f'{pending} updates ждут доставки на webhook.',
+                          'Telegram не успевает доставить updates: устраните ошибку доставки ниже и ускорьте ответ обработчика. '
+                          'Updates хранятся не дольше 24 часов; не удаляйте очередь ради диагностики.', [rerun]))
+        else:
+            found.append(('webhook-pending', 'pass', 'webhook-queue-ok', f'{pending} updates ждут доставки.'))
+    elif pending:
+        found.append(('webhook-pending', 'warn', 'updates-waiting', f'{pending} updates ждут getUpdates; Telegram хранит их не дольше 24 часов.',
+                      'Запустите один polling процесс бота; не удаляйте очередь ради диагностики.',
+                      [_command(['python', 'app.py'])]))
+    else:
+        found.append(('webhook-pending', 'pass', 'queue-empty', 'Очередь updates пуста.'))
+
+    error_date = info.get('last_error_date')
+    if isinstance(error_date, int) and not isinstance(error_date, bool):
+        raw_message = info.get('last_error_message')
+        message = ' '.join(raw_message.split())[:200] if isinstance(raw_message, str) else ''
+        message = message or 'текст ошибки не передан'
+        if now - error_date < _RECENT_SECONDS:
+            reason, fix = _delivery_error(message)
+            found.append(('webhook-error', 'warn', reason, f'Последняя ошибка доставки {_age(now - error_date)}: {message}', fix, [rerun]))
+        else:
+            found.append(('webhook-error', 'pass', 'webhook-error-old', f'Последняя ошибка доставки {_age(now - error_date)}: {message}'))
+    elif url:
+        found.append(('webhook-error', 'pass', 'webhook-no-errors', 'Telegram не сообщает об ошибках доставки.'))
+    sync_date = info.get('last_synchronization_error_date')
+    if isinstance(sync_date, int) and not isinstance(sync_date, bool) and now - sync_date < _RECENT_SECONDS:
+        found.append(('webhook-sync', 'warn', 'sync-error', f'Telegram сообщил об ошибке синхронизации updates {_age(now - sync_date)}.',
+                      'Обычно это временная проблема на стороне Telegram: повторите doctor позже; если ошибка повторяется, '
+                      'сверьте, что updates получает только один процесс.', [rerun]))
+
+    if url or expect == 'webhook':
+        generate = _command(['python', '-c', 'import secrets; print(secrets.token_urlsafe(32))'])
+        if secret is None or secret == '':
+            found.append(('webhook-secret', 'warn', 'secret-not-found',
+                          f'{secret_env} не задан, а getWebhookInfo не сообщает, передан ли secret_token: чужой запрос к webhook не отличить от Telegram.',
+                          f'Сгенерируйте секрет, сохраните его в {secret_env}, передайте как secret_token в setWebhook и отклоняйте запросы '
+                          'без совпадающего заголовка X-Telegram-Bot-Api-Secret-Token.', [generate, _set_webhook_command(secret_env)]))
+        elif not _SECRET.fullmatch(secret):
+            found.append(('webhook-secret', 'fail', 'secret-invalid', f'{secret_env} не подходит для secret_token.',
+                          'Нужно 1–256 символов из A-Z, a-z, 0-9, _ и -: сгенерируйте новый секрет.', [generate]))
+        else:
+            found.append(('webhook-secret', 'pass', 'secret-configured',
+                          f'Секрет найден в {secret_env}. Bot API не показывает, передан ли он в setWebhook: '
+                          'сервер должен сверять заголовок X-Telegram-Bot-Api-Secret-Token.'))
+    return found
+
+
+def _token_value(env_file: Path | None) -> str | None:
+    """Raw BOT_TOKEN with BotSettings.from_env precedence; None when the project .env is unreadable."""
+    value = os.environ.get('BOT_TOKEN')
+    if value is not None or env_file is None:
+        return value or ''
+    try:
+        return _read_env_file(env_file).get('BOT_TOKEN', '') if env_file.is_file() else ''
+    except (ValueError, OSError):
+        return None
+
+
+def diagnose(target: str | Path, *, require_token: bool, webhook: bool = False, expect: str | None = None,
+             webhook_secret_env: str = 'WEBHOOK_SECRET', now: float | None = None) -> dict:
+    if expect not in (None, 'polling', 'webhook'):
+        raise ValueError("expect must be None, 'polling' or 'webhook'")
+    if not isinstance(webhook_secret_env, str) or not _ENV_NAME.fullmatch(webhook_secret_env):
+        raise ValueError('Invalid webhook secret environment variable name')
     checks: list[dict] = []
+    network = False
 
     def check(name: str, status: str, reason: str, detail: str, *,
               fix: str = '', commands: list[dict] | None = None) -> None:
@@ -95,9 +296,10 @@ def diagnose(target: str | Path, *, require_token: bool) -> dict:
 
     def finish() -> dict:
         return {'passed': not any(item['status'] == 'fail' for item in checks),
-                'network': False, 'checks': checks, 'limits': _LIMITS,
+                'network': network, 'checks': checks, 'limits': _WEBHOOK_LIMITS if webhook else _LIMITS,
                 'schema_version': 1, 'tool_probes_attempted':
-                    (['python -I -B adapter imports'] if sdk_probed else []) + (['node --version'] if node_executed else []),
+                    (['python -I -B adapter imports'] if sdk_probed else []) + (['node --version'] if node_executed else [])
+                    + (['getWebhookInfo'] if network else []),
                 'suggestions_executed': False}
 
     node_executed = False
@@ -188,15 +390,63 @@ def diagnose(target: str | Path, *, require_token: bool) -> dict:
             check('pyproject', 'fail', 'toml-invalid', 'Синтаксис pyproject.toml поврежден.',
                   fix='Исправьте TOML в редакторе, сохранив зависимости приложения; содержимое файла в отчет не включается.', commands=[_rerun()])
 
-    try:
-        BotSettings.from_env()
-        check('token-format', 'pass', 'token-format-valid', 'BOT_TOKEN присутствует в окружении; проверен только формат.')
-    except ValueError:
-        present = bool(os.environ.get('BOT_TOKEN'))
-        check('token-format', 'fail' if require_token else 'warn', 'token-format-invalid' if present else 'token-missing',
-              'BOT_TOKEN имеет неверный формат.' if present else 'BOT_TOKEN отсутствует в окружении; .env не читается.',
-              fix='Для offline запуска token не нужен. Для live задайте BOT_TOKEN через свой механизм секретов; doctor не подтверждает действительность token.',
-              commands=[_command(['python', '-m', 'telegram_patterns', 'doctor', '.', '--require-token'])])
+    env_file = root / '.env' if webhook and not _linked(root / '.env') else None
+    raw_token = _token_value(env_file)
+    token: str | None = None
+    token_fix = ('Для offline запуска token не нужен. Для live задайте BOT_TOKEN через свой механизм секретов'
+                 + (' или в .env проекта' if webhook else '') + '; doctor не подтверждает действительность token без --webhook.')
+    token_retry = [_command(['python', '-m', 'telegram_patterns', 'doctor', '.', '--webhook' if webhook else '--require-token'])]
+    strict = require_token or webhook
+    if raw_token is None:
+        check('token-format', 'fail' if strict else 'warn', 'env-file-invalid', '.env проекта не читается как строки KEY=VALUE до 64 KiB.',
+              fix='Исправьте .env по образцу .env.example; значения в отчет не включаются.', commands=token_retry)
+    elif not raw_token:
+        check('token-format', 'fail' if strict else 'warn', 'token-missing',
+              'BOT_TOKEN нет ни в окружении, ни в .env проекта.' if webhook else 'BOT_TOKEN отсутствует в окружении; .env не читается.',
+              fix=token_fix, commands=token_retry)
+    elif 'REPLACE_WITH' in raw_token:
+        check('token-format', 'fail' if strict else 'warn', 'token-placeholder', 'BOT_TOKEN содержит заглушку из .env.example.',
+              fix='Замените заглушку токеном тестового бота от @BotFather.', commands=token_retry)
+    else:
+        try:
+            token = BotSettings(token=raw_token).token
+        except ValueError:
+            check('token-format', 'fail' if strict else 'warn', 'token-format-invalid', 'BOT_TOKEN имеет неверный формат.',
+                  fix=token_fix, commands=token_retry)
+        else:
+            source = 'окружении' if os.environ.get('BOT_TOKEN') else '.env проекта'
+            check('token-format', 'pass', 'token-format-valid', f'BOT_TOKEN присутствует в {source}; проверен только формат.')
+
+    if webhook:
+        if token is None:
+            check('webhook', 'fail', 'token-required', 'Для --webhook нужен BOT_TOKEN в правильном формате.',
+                  fix='Исправьте проверку token-format и повторите doctor --webhook.', commands=token_retry)
+        else:
+            network = True
+            try:
+                info = _fetch_webhook_info(token)
+            except _WebhookUnavailable as failure:
+                if failure.reason == 'token-rejected':
+                    check('token-valid', 'fail', 'token-rejected', 'Telegram отклонил BOT_TOKEN.',
+                          fix='Проверьте токен или выпустите новый в @BotFather (/token); старый перестанет работать.', commands=token_retry)
+                elif failure.reason == 'api-unreachable':
+                    check('webhook', 'fail', 'api-unreachable', 'Bot API недоступен: сеть, прокси или DNS не пропускают запрос.',
+                          fix='Проверьте доступ к api.telegram.org, HTTPS_PROXY и сертификаты прокси; повторите doctor --webhook.', commands=token_retry)
+                else:
+                    check('webhook', 'fail', 'api-error', 'Bot API вернул неожиданный ответ на getWebhookInfo.',
+                          fix='Повторите позже; если ошибка сохраняется, проверьте адрес Bot API и прокси.', commands=token_retry)
+            else:
+                check('token-valid', 'pass', 'token-accepted', 'Telegram принял BOT_TOKEN (getWebhookInfo).')
+                secret = os.environ.get(webhook_secret_env)
+                if secret is None and env_file is not None:
+                    try:
+                        secret = _read_env_file(env_file).get(webhook_secret_env) if env_file.is_file() else None
+                    except (ValueError, OSError):
+                        secret = None
+                for name, status, reason, detail, *repair in _webhook_checks(
+                        info, expect=expect, secret_env=webhook_secret_env, secret=secret,
+                        now=time.time() if now is None else now):
+                    check(name, status, reason, detail, fix=repair[0] if repair else '', commands=repair[1] if repair else None)
 
     mini_dir = root / 'mini-app'
     # A present but damaged/inaccessible mini-app must not silently disappear.
