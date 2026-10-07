@@ -65,6 +65,33 @@ class AuthTests(unittest.TestCase):
         for changes in [{'user': '{}'}, {'user': '{"id":true}'}, {'user': '{"id":-1}'}, {'user': 'not-json'}, {'auth_date': 'nan'}]:
             with self.subTest(changes=changes), self.assertRaises(InvalidInitData): validate_init_data(signed(**changes), TOKEN, now=DATE)
 
+    def test_launch_fields_are_returned_and_deeply_read_only(self):
+        user = '{"id":42,"first_name":"Test","photo":{"a":1},"tags":[{"x":1}]}'
+        raw = signed(user=user, chat='{"id":-100,"type":"group"}', receiver='{"id":7,"first_name":"R"}',
+                     chat_type='group', chat_instance='-55', start_param='ref_1', can_send_after='15')
+        launch = validate_init_data(raw, TOKEN, now=DATE)
+        self.assertEqual((launch.query_id, launch.chat_type, launch.chat_instance, launch.start_param, launch.can_send_after),
+                         ('test', 'group', '-55', 'ref_1', 15))
+        self.assertEqual((launch.chat['id'], launch.receiver['id']), (-100, 7))
+        for mutate in (lambda: launch.user.__setitem__('id', 1), lambda: launch.user['photo'].__setitem__('a', 2),
+                       lambda: launch.user['tags'][0].__setitem__('x', 2), lambda: launch.chat.__setitem__('id', 1),
+                       lambda: launch.user['tags'].append({})):
+            with self.assertRaises((TypeError, AttributeError)): mutate()
+        copy = launch.as_dict()
+        self.assertEqual(json.loads(json.dumps(copy))['user'], json.loads(user))
+        copy['user']['photo']['a'] = 99
+        self.assertEqual(launch.user['photo']['a'], 1)
+        minimal = validate_init_data(VECTOR, TOKEN, now=DATE)
+        self.assertEqual((minimal.chat, minimal.receiver, minimal.start_param, minimal.can_send_after), (None, None, None, None))
+        self.assertEqual(set(minimal.as_dict()), {'user_id', 'auth_date', 'user', 'query_id'})
+
+    def test_non_standard_json_and_invalid_optional_objects_are_rejected(self):
+        for changes in [{'user': '{"id":42,"score":NaN}'}, {'user': '{"id":42,"score":Infinity}'},
+                        {'user': '{"id":42,"score":-Infinity}'}, {'chat': '[1]'}, {'chat': 'null'}, {'receiver': 'oops'},
+                        {'can_send_after': '-1'}, {'can_send_after': '1.5'}, {'can_send_after': ''}]:
+            with self.subTest(changes=changes), self.assertRaises(InvalidInitData):
+                validate_init_data(signed(**changes), TOKEN, now=DATE)
+
     def test_bad_encoding_size_hash_and_configuration(self):
         for raw in [VECTOR + '%ZZ', 'query_id=x&hash=abcd', VECTOR.replace('%7B', '%FF'), VECTOR + '&=x']:
             with self.subTest(raw=raw), self.assertRaises(InvalidInitData): validate_init_data(raw, TOKEN, now=DATE)

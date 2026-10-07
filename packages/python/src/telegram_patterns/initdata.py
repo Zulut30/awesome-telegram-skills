@@ -8,7 +8,7 @@ import json
 import re
 import time
 from types import MappingProxyType
-from typing import Mapping
+from typing import Any, Mapping
 from urllib.parse import parse_qsl
 
 
@@ -17,11 +17,49 @@ class InvalidInitData(ValidationFailure):
     code: ErrorCode = 'invalid-init-data'
 
 
+def _frozen(value: Any) -> Any:
+    """Read-only view of parsed JSON: objects become mappings, arrays become tuples."""
+    if isinstance(value, dict):
+        return MappingProxyType({key: _frozen(item) for key, item in value.items()})
+    if isinstance(value, list):
+        return tuple(_frozen(item) for item in value)
+    return value
+
+
+def _thawed(value: Any) -> Any:
+    if isinstance(value, Mapping):
+        return {key: _thawed(item) for key, item in value.items()}
+    if isinstance(value, tuple):
+        return [_thawed(item) for item in value]
+    return value
+
+
+def _reject_constant(name: str) -> Any:
+    raise ValueError(f"Non-standard JSON constant {name}")
+
+
 @dataclass(frozen=True)
 class VerifiedLaunch:
+    """Signed launch fields; nested JSON values are read-only (mappings and tuples)."""
     user_id: int
     auth_date: int
     user: Mapping[str, object]
+    query_id: str | None = None
+    chat_type: str | None = None
+    chat_instance: str | None = None
+    start_param: str | None = None
+    can_send_after: int | None = None
+    chat: Mapping[str, object] | None = None
+    receiver: Mapping[str, object] | None = None
+
+    def as_dict(self) -> dict[str, Any]:
+        """Fresh JSON-compatible copy; absent optional fields are omitted."""
+        result: dict[str, Any] = {'user_id': self.user_id, 'auth_date': self.auth_date, 'user': _thawed(self.user)}
+        for name in ('query_id', 'chat_type', 'chat_instance', 'start_param', 'can_send_after', 'chat', 'receiver'):
+            value = getattr(self, name)
+            if value is not None:
+                result[name] = _thawed(value)
+        return result
 
 
 def validate_init_data(
@@ -75,10 +113,28 @@ def validate_init_data(
     age = current - auth_date
     if age < -future_tolerance_seconds or age >= max_age_seconds:
         raise InvalidInitData("Launch data outside freshness policy")
-    try:
-        user = json.loads(data.get("user", ""))
-    except (ValueError, TypeError, RecursionError):
-        raise InvalidInitData("Invalid user") from None
-    if not isinstance(user, dict) or type(user.get("id")) is not int or user["id"] <= 0:
+    objects: dict[str, dict[str, Any] | None] = {}
+    for name in ("user", "chat", "receiver"):
+        if name not in data:
+            objects[name] = None
+            continue
+        try:
+            value = json.loads(data[name], parse_constant=_reject_constant)
+        except (ValueError, TypeError, RecursionError):
+            raise InvalidInitData(f"Invalid {name}") from None
+        if not isinstance(value, dict):
+            raise InvalidInitData(f"Invalid {name}")
+        objects[name] = value
+    user = objects["user"]
+    if user is None or type(user.get("id")) is not int or user["id"] <= 0:
         raise InvalidInitData("Missing signed user identity")
-    return VerifiedLaunch(user_id=user["id"], auth_date=auth_date, user=MappingProxyType(user))
+    can_send_after = data.get("can_send_after")
+    if can_send_after is not None and not re.fullmatch(r"[0-9]{1,10}", can_send_after):
+        raise InvalidInitData("Invalid can_send_after")
+    return VerifiedLaunch(
+        user_id=user["id"], auth_date=auth_date, user=_frozen(user),
+        query_id=data.get("query_id"), chat_type=data.get("chat_type"),
+        chat_instance=data.get("chat_instance"), start_param=data.get("start_param"),
+        can_send_after=None if can_send_after is None else int(can_send_after),
+        chat=None if objects["chat"] is None else _frozen(objects["chat"]),
+        receiver=None if objects["receiver"] is None else _frozen(objects["receiver"]))

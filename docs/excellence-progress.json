@@ -108,9 +108,14 @@
     {
       "id": 9,
       "title": "Полностью неизменяемый `VerifiedLaunch`",
-      "status": "pending",
-      "commit_subject": null,
-      "evidence": [],
+      "status": "done",
+      "commit_subject": "excellence(009): return deep read-only launch fields from initData",
+      "evidence": [
+        "user/chat/receiver глубоко read-only: изменение вложенного dict/list падает; as_dict() дает независимую JSON-копию",
+        "query_id/chat_type/chat_instance/start_param/can_send_after/chat/receiver возвращаются; NaN/Infinity/-Infinity, не-объекты chat/receiver, неверный can_send_after -> InvalidInitData",
+        "2 новых теста падают на прежнем initdata.py; test_components 24 OK; core_identity пример проходит",
+        "mypy --strict initdata.py и tests/public_types.py без ошибок; build_api_reference --check passed"
+      ],
       "remaining": null
     },
     {

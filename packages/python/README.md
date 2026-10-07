@@ -49,7 +49,7 @@ Doctor 0.11.0 проверяет установленный adapter в фикс�
 | Ввод | `input_prompt(placeholder=None,selective=False)`; `remove_keyboard(selective=False)` | ForceReply / ReplyKeyboardRemove без HTTP; host связывает actor/chat/prompt и проверяет ответ |
 | Все SDK методы | `method_catalog()`; `build_request(name,parameters=None)` | MethodSpec / native TelegramMethod; неизвестные top-level fields отклоняются, nested rules — SDK. HTTP только при `await existing_bot(request)` |
 | События | `event_router(handlers)`; `UpdateObserver(record,include_ids=False)`; `update_kinds(update)` | Native Router и best-effort metadata received/handled/unhandled/failed/cancelled. Middleware не создает подписок или durable audit |
-| Проверка запуска | `validate_init_data(raw, bot_token, *, max_age_seconds, now)` | Сырой initData, HMAC и freshness; возвращает подписанный user_id. Не OIDC/Ed25519 и не объектные права |
+| Проверка запуска | `validate_init_data(raw, bot_token, *, max_age_seconds, now)` | Сырой initData, HMAC и freshness; возвращает подписанные user_id, `start_param`, `chat_type`, `chat_instance`, `query_id`, `chat`, `receiver` (глубоко read-only, копия — `.as_dict()`). Не OIDC/Ed25519 и не объектные права |
 | Однократная операция | `SQLiteOnce(path).initialize(); run(scope, key, payload, apply)` | Effect и replay result в одной SQLite transaction. Payload — только JSON-значения со строковыми ключами (tuple и `{1: ...}` отклоняются). Scope/права проверяет сервис |
 | Команда старта | `start_router(text, keyboard=None)` | Небольшой /start с plain text; добавить Router в текущий Dispatcher |
 | Кнопка | `action_keyboard(text, key, style=..., ...)` | Opaque callback key, style, проверенный entitlement либо emoji fallback |
