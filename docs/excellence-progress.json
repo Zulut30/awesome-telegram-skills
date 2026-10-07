@@ -334,10 +334,16 @@
     {
       "id": 28,
       "title": "Тестовое окружение Telegram",
-      "status": "pending",
-      "commit_subject": null,
-      "evidence": [],
-      "remaining": null
+      "status": "partial",
+      "commit_subject": "excellence(028): switch to the Telegram test environment with one flag",
+      "evidence": [
+        "BotSettings.test_environment и TELEGRAM_TEST_ENVIRONMENT (from_env, .env), create_bot/run_bot создают AiohttpSession(api=aiogram.client.telegram.TEST) → https://api.telegram.org/bot<token>/test/METHOD_NAME; session основного окружения отклоняется; StubSession(api=TEST); doctor --webhook проверяет выбранное окружение",
+        "tests/test_test_environment.py: 8 тестов, маршрут /bot<token>/test/getMe и /test/getWebhookInfo через настоящий HTTP на loopback; пакет — 495 тестов OK, mypy чистый",
+        "Установленный wheel: doctor --webhook с TELEGRAM_TEST_ENVIRONMENT=1 через прокси получил настоящий ответ тестового окружения 401 → 'Тестовое окружение Telegram отклонило BOT_TOKEN' с подсказкой про тестовый @BotFather; curl .../test/getMe → 401",
+        "Сгенерированный стартер: .env.example с TELEGRAM_TEST_ENVIRONMENT, app.py печатает режим; service-bot, group-bot (create_bot) и shop (create_bot) верификаторы passed на новом wheel",
+        "docs/test-environment.md (+копия в telegram-code-patterns), вход на iOS/Desktop/macOS, сверено 2026-10-07 с core.telegram.org/bots/features#testing-your-bot, webapps, payments-stars и aiogram 3.31.0"
+      ],
+      "remaining": "Живой запуск примеров в тестовом окружении: нужен тестовый аккаунт Telegram (регистрация по номеру телефона) и бот из тестового @BotFather — это делает владелец; из этой среды aiohttp не ходит через прокси, поэтому getMe через aiogram здесь не проверен"
     },
     {
       "id": 29,

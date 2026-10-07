@@ -940,14 +940,26 @@
     },
     {
       "module": "telegram_patterns.aiogram",
+      "name": "create_bot",
+      "import": "from telegram_patterns.aiogram import create_bot",
+      "recipe": "ref.bot_runner",
+      "example": "examples/api-reference/python/bot_runner.py",
+      "limits": "SDK polling через StubSession завершается после первого запроса; ни реального token, ни удаления webhook. Live требует отдельного процесса и проверки consumer/webhook. Runner закрывает session после успешного preflight. create_bot с test_environment=True направляет запросы в отдельное тестовое окружение Telegram; переданная session должна уже использовать TEST. Stars request не создает оплату, заказ или entitlement; consent и server ledger у host.",
+      "intent": "Bot из BotSettings; test_environment → /bot<token>/test/<method>",
+      "example_sha256": "e8784d94d4d9e6ace72a8c9cb398f32710331c833c8395697663311bbfd1d4c6",
+      "example_source_sha256": "e8784d94d4d9e6ace72a8c9cb398f32710331c833c8395697663311bbfd1d4c6",
+      "kind": "value"
+    },
+    {
+      "module": "telegram_patterns.aiogram",
       "name": "run_bot",
       "import": "from telegram_patterns.aiogram import run_bot",
       "recipe": "ref.bot_runner",
       "example": "examples/api-reference/python/bot_runner.py",
-      "limits": "SDK polling через StubSession завершается после первого запроса; ни реального token, ни удаления webhook. Live требует отдельного процесса и проверки consumer/webhook. Runner закрывает session после успешного preflight. Stars request не создает оплату, заказ или entitlement; consent и server ledger у host.",
+      "limits": "SDK polling через StubSession завершается после первого запроса; ни реального token, ни удаления webhook. Live требует отдельного процесса и проверки consumer/webhook. Runner закрывает session после успешного preflight. create_bot с test_environment=True направляет запросы в отдельное тестовое окружение Telegram; переданная session должна уже использовать TEST. Stars request не создает оплату, заказ или entitlement; consent и server ledger у host.",
       "intent": "Owned polling/task/session lifecycle",
-      "example_sha256": "f6ca6a2d06e7639a03642ee0d7fa7944e232604172e29930c89e7ce25f8619cf",
-      "example_source_sha256": "f6ca6a2d06e7639a03642ee0d7fa7944e232604172e29930c89e7ce25f8619cf",
+      "example_sha256": "e8784d94d4d9e6ace72a8c9cb398f32710331c833c8395697663311bbfd1d4c6",
+      "example_source_sha256": "e8784d94d4d9e6ace72a8c9cb398f32710331c833c8395697663311bbfd1d4c6",
       "kind": "value"
     },
     {
@@ -956,10 +968,10 @@
       "import": "from telegram_patterns.aiogram import stars_invoice",
       "recipe": "ref.bot_runner",
       "example": "examples/api-reference/python/bot_runner.py",
-      "limits": "SDK polling через StubSession завершается после первого запроса; ни реального token, ни удаления webhook. Live требует отдельного процесса и проверки consumer/webhook. Runner закрывает session после успешного preflight. Stars request не создает оплату, заказ или entitlement; consent и server ledger у host.",
+      "limits": "SDK polling через StubSession завершается после первого запроса; ни реального token, ни удаления webhook. Live требует отдельного процесса и проверки consumer/webhook. Runner закрывает session после успешного preflight. create_bot с test_environment=True направляет запросы в отдельное тестовое окружение Telegram; переданная session должна уже использовать TEST. Stars request не создает оплату, заказ или entitlement; consent и server ledger у host.",
       "intent": "Native XTR CreateInvoiceLink request",
-      "example_sha256": "f6ca6a2d06e7639a03642ee0d7fa7944e232604172e29930c89e7ce25f8619cf",
-      "example_source_sha256": "f6ca6a2d06e7639a03642ee0d7fa7944e232604172e29930c89e7ce25f8619cf",
+      "example_sha256": "e8784d94d4d9e6ace72a8c9cb398f32710331c833c8395697663311bbfd1d4c6",
+      "example_source_sha256": "e8784d94d4d9e6ace72a8c9cb398f32710331c833c8395697663311bbfd1d4c6",
       "kind": "value"
     },
     {
@@ -2871,7 +2883,7 @@
       "kind": "value"
     }
   ],
-  "python_symbols": 198,
+  "python_symbols": 199,
   "typescript_symbols": 41,
   "recipes": 32,
   "additional_entries": [

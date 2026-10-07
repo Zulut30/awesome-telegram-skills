@@ -31,7 +31,7 @@ license: MIT
 
 ## Работа с реальным ботом
 
-Polling читает и подтверждает updates; не подключай второго потребителя к рабочему боту ради теста. Изолируй тестовые token, chat, storage и платежную среду. Не запускай платеж или сообщение в чужой чат как побочный эффект проверки без авторизации на такой сценарий.
+Polling читает и подтверждает updates; не подключай второго потребителя к рабочему боту ради теста. Изолируй тестовые token, chat, storage и платежную среду. Без основного аккаунта используй тестовое окружение Telegram: отдельные аккаунт и бот из его @BotFather, запросы на `https://api.telegram.org/bot<token>/test/METHOD_NAME` (в aiogram — `AiohttpSession(api=aiogram.client.telegram.TEST)`; в awesome-telegram-patterns — `TELEGRAM_TEST_ENVIRONMENT=1`). Там Mini App открывается по HTTP без TLS, а оплату в Stars можно проверять свободно; лимиты частоты не выше основных и иногда строже. Не запускай платеж или сообщение в чужой чат как побочный эффект проверки без авторизации на такой сценарий.
 
 ## Результат
 
@@ -39,4 +39,4 @@ Polling читает и подтверждает updates; не подключа�
 
 ## Источники
 
-[Bot API](https://core.telegram.org/bots/api), [тестовая среда Mini Apps](https://core.telegram.org/bots/webapps#using-bots-in-the-test-environment). Для поведения transport используй документацию библиотеки проекта.
+[Bot API](https://core.telegram.org/bots/api), [тестовая среда Mini Apps](https://core.telegram.org/bots/webapps#using-bots-in-the-test-environment), [Testing your bot](https://core.telegram.org/bots/features#testing-your-bot), [Stars в тестовом окружении](https://core.telegram.org/bots/payments-stars). Для поведения transport используй документацию библиотеки проекта.

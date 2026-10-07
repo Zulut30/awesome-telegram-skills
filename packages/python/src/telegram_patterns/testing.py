@@ -6,6 +6,7 @@ from typing import Any, AsyncGenerator, Awaitable, Callable
 
 from aiogram import Bot
 from aiogram.client.session.base import BaseSession
+from aiogram.client.telegram import PRODUCTION, TelegramAPIServer
 from aiogram.methods.base import TelegramMethod
 from pydantic import TypeAdapter
 
@@ -19,8 +20,8 @@ class StubSession(BaseSession):
 
     Fixtures are artificial API responses, not evidence of live Telegram behavior.
     """
-    def __init__(self) -> None:
-        super().__init__()
+    def __init__(self, *, api: TelegramAPIServer = PRODUCTION) -> None:
+        super().__init__(api=api)  # api=TEST mirrors a test-environment session offline
         self.calls: list[TelegramMethod[Any]] = []
         self.closed = False
         self._responders: dict[type[TelegramMethod[Any]], Responder] = {}

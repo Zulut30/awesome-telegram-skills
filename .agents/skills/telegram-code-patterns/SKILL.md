@@ -22,7 +22,7 @@ license: MIT
 
 Для выбора starter components, dry-run и preflight conflicts в 0.24.0 прочитай [создание проекта из компонентов](references/starter-selection.md).
 
-Для первого запуска нового бота и Mini App из предоставленных wheel/tarball прочитай [короткий первый запуск](references/quickstart.md). Это Windows offline/browser пример; существующий проект сохраняй, backend auth подключай по его контракту.
+Для первого запуска нового бота и Mini App из предоставленных wheel/tarball прочитай [короткий первый запуск](references/quickstart.md). Это offline/browser пример для PowerShell и bash; существующий проект сохраняй, backend auth подключай по его контракту. Живой запуск без основного аккаунта описан в [тестовом окружении Telegram](references/test-environment.md): `TELEGRAM_TEST_ENVIRONMENT=1`, `create_bot`/`run_bot` и бот из тестового @BotFather.
 
 Для сервисного бота с записью, меню, диалогом, напоминанием и восстановлением прочитай [сервисный пример](references/service-bot.md). Его приложение поставляется отдельно от библиотеки; используй предоставленный source/wheel, сохраняй текущие SDK и storage. Persistent FSM, owner ACL, replay и неизвестная отправка — прикладная композиция, не новые public exports.
 

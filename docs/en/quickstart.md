@@ -134,6 +134,8 @@ Open **http://127.0.0.1:4173** in a browser (use your port if you changed it). H
 
 For a real bot get a separate test BOT_TOKEN from BotFather, copy `.env.example` to `.env` and paste the token (or pass BOT_TOKEN in the process environment, which wins over the file). Before starting, the bot calls getMe: a wrong token or no network produces a clear message. From the `my-bot` directory run `.\.venv\Scripts\python.exe app.py` (Windows) or `.venv/bin/python app.py` (Linux, macOS). This run talks to Telegram and explicitly sets the default command menu. First make sure no other polling consumer runs and check the webhook configuration; the template never deletes a webhook automatically.
 
+You do not need your main account for this: in the [Telegram test environment](https://core.telegram.org/bots/features#testing-your-bot) create a separate account, make a bot with its @BotFather and add `TELEGRAM_TEST_ENVIRONMENT=1` to `.env` (details in Russian: [test-environment.md](../test-environment.md)).
+
 A Mini App inside Telegram needs HTTPS hosting, the official WebApp SDK and a chosen launch point. Before handling user data, connect a backend, raw initData validation, a session and object permissions. The local form grants no access and proves no identity. Business permissions and a user MTProto session are never connected automatically. Real Telegram clients and payments are verified separately.
 
 If an existing project uses React, Vue, another bot library or database, plug the public APIs you need into its current architecture. This starter is meant for a new small example; 1.0 stability is not declared for it yet.

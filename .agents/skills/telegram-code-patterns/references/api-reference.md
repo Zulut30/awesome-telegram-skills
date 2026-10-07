@@ -90,6 +90,7 @@
 | `command_router` | `from telegram_patterns.aiogram import command_router` | [ref.bot_actions](api-reference-bot.md#ref-bot_actions) | Reply handlers с SDK mention filtering |
 | `Responder` | `from telegram_patterns.testing import Responder` | [ref.bot_actions](api-reference-bot.md#ref-bot_actions) | Typed fixture value или sync/async callable |
 | `StubSession` | `from telegram_patterns.testing import StubSession` | [ref.bot_actions](api-reference-bot.md#ref-bot_actions) | Явные responses, calls, close без HTTP fallback |
+| `create_bot` | `from telegram_patterns.aiogram import create_bot` | [ref.bot_runner](api-reference-bot.md#ref-bot_runner) | Bot из BotSettings; test_environment → /bot<token>/test/<method> |
 | `run_bot` | `from telegram_patterns.aiogram import run_bot` | [ref.bot_runner](api-reference-bot.md#ref-bot_runner) | Owned polling/task/session lifecycle |
 | `stars_invoice` | `from telegram_patterns.aiogram import stars_invoice` | [ref.bot_runner](api-reference-bot.md#ref-bot_runner) | Native XTR CreateInvoiceLink request |
 | `TextField` | `from telegram_patterns.aiogram import TextField` | [ref.bot_form](api-reference-bot.md#ref-bot_form) | Конфигурация и нормализация/validation read |

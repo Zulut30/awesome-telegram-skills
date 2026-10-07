@@ -2,9 +2,10 @@
 import asyncio
 import json
 from aiogram import Dispatcher
+from aiogram.client.telegram import TEST
 from aiogram.methods import GetMe, GetUpdates, SetMyCommands
 from telegram_patterns import BotSettings
-from telegram_patterns.aiogram import run_bot, stars_invoice, start_router
+from telegram_patterns.aiogram import create_bot, run_bot, stars_invoice, start_router
 from telegram_patterns.testing import StubSession
 from bot_fixture import BOT_USER, TOKEN
 
@@ -29,6 +30,10 @@ async def main() -> None:
         await asyncio.gather(running, return_exceptions=True)
         await dispatcher.fsm.close()
     assert session.closed and any(isinstance(c, GetUpdates) for c in session.calls)
+    # TELEGRAM_TEST_ENVIRONMENT=1 в BotSettings.from_env: отдельное тестовое окружение Telegram.
+    test_bot = create_bot(BotSettings(TOKEN, test_environment=True), session=StubSession(api=TEST))
+    assert '/test/' in test_bot.session.api.api_url(TOKEN, 'getMe')
+    await test_bot.session.close()
     print(json.dumps({'passed': True, 'case': 'bot_runner', 'network': False}))
 
 if __name__ == '__main__': asyncio.run(main())

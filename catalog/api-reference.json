@@ -209,9 +209,10 @@
       "section": "bot",
       "title": "Polling lifecycle и Stars request",
       "example": "examples/api-reference/python/bot_runner.py",
-      "limits": "SDK polling через StubSession завершается после первого запроса; ни реального token, ни удаления webhook. Live требует отдельного процесса и проверки consumer/webhook. Runner закрывает session после успешного preflight. Stars request не создает оплату, заказ или entitlement; consent и server ledger у host.",
+      "limits": "SDK polling через StubSession завершается после первого запроса; ни реального token, ни удаления webhook. Live требует отдельного процесса и проверки consumer/webhook. Runner закрывает session после успешного preflight. create_bot с test_environment=True направляет запросы в отдельное тестовое окружение Telegram; переданная session должна уже использовать TEST. Stars request не создает оплату, заказ или entitlement; consent и server ledger у host.",
       "api": {
         "telegram_patterns.aiogram": {
+          "create_bot": "Bot из BotSettings; test_environment → /bot<token>/test/<method>",
           "run_bot": "Owned polling/task/session lifecycle",
           "stars_invoice": "Native XTR CreateInvoiceLink request"
         }

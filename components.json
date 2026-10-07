@@ -278,7 +278,7 @@
     {
       "id": "bot-polling",
       "language": "python",
-      "import": "telegram_patterns.aiogram.run_bot",
+      "import": "telegram_patterns.aiogram.run_bot; telegram_patterns.aiogram.create_bot",
       "extra": "aiogram",
       "intent": "Запустить текущий Dispatcher и закрыть принадлежащую запуску Bot session",
       "source": "packages/python/src/telegram_patterns/aiogram.py",
@@ -286,7 +286,8 @@
       "boundaries": [
         "one polling bot; custom multi-bot/webhook lifecycle stays with SDK",
         "commands opt in replaces default menu; no webhook deletion",
-        "SDK polling ACK is not durable acceptance"
+        "SDK polling ACK is not durable acceptance",
+        "test_environment=True (TELEGRAM_TEST_ENVIRONMENT) uses the separate Telegram test environment with its own accounts and bots"
       ],
       "maturity": "experimental",
       "maturity_scope": "All public API symbols in this component; local verification is not a stable 1.0 promise"

@@ -33,6 +33,8 @@ async def main():
     try: settings = BotSettings.from_env(env_file=Path(__file__).with_name('.env'))
     except ValueError as error:
         raise SystemExit(f'{error}\nСкопируйте .env.example в .env и вставьте токен от @BotFather.') from None
+    if settings.test_environment:
+        print('Тестовое окружение Telegram: нужен бот из тестового @BotFather (TELEGRAM_TEST_ENVIRONMENT).')
     dispatcher, commands = create_app()
     # Сначала getMe: неверный токен или нет сети — понятная ошибка до запуска.
     # Явно устанавливается default command menu тестового бота.

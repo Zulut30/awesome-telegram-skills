@@ -9,7 +9,9 @@ import re
 from typing import Any, Awaitable, Callable, Literal, Mapping, Sequence
 
 from aiogram import Bot, Dispatcher, F, Router
+from aiogram.client.session.aiohttp import AiohttpSession
 from aiogram.client.session.base import BaseSession
+from aiogram.client.telegram import TEST
 from aiogram.exceptions import TelegramNetworkError, TelegramUnauthorizedError
 from aiogram.filters import Command, CommandStart
 from aiogram.methods import CreateInvoiceLink
@@ -37,7 +39,7 @@ from .events import UpdatePhase, UpdateTrace, UpdateObserver, update_kinds, even
 __all__ = [
     "FSMSnapshot", "FSMConflict", "SnapshotStore", "AtomicFSMStorage", "SnapshotFSMStorage", "DialogLifetime",
     "Action", "ActionResult", "callback_router", "start_router",
-    "CommandReply", "command_menu", "command_router", "run_bot", "stars_invoice",
+    "CommandReply", "command_menu", "command_router", "create_bot", "run_bot", "stars_invoice",
     "ActionButton", "ButtonStyle", "MenuPage", "action_keyboard", "action_menu", "paginated_menu", "page_number",
     "FormSubmission", "InvalidField", "TextField", "text_form_router",
     "FieldValue", "NumberField", "EmailField", "PhoneField", "DateField", "FileField", "ContactField", "LocationField",
@@ -172,6 +174,22 @@ def command_router(commands: Sequence[CommandReply]) -> Router:
     return router
 
 
+def create_bot(settings: BotSettings, *, session: BaseSession | None = None) -> Bot:
+    """Bot for these settings; test_environment targets https://api.telegram.org/bot<token>/test/<method>.
+
+    The Telegram test environment is separate: it needs its own account and a bot made with its @BotFather.
+    A supplied session must already target it (api=aiogram.client.telegram.TEST); it is never rewritten.
+    """
+    if not isinstance(settings, BotSettings):
+        raise InvalidType("Use BotSettings")
+    if settings.test_environment:
+        if session is None:
+            session = AiohttpSession(api=TEST)
+        elif '/test/' not in session.api.base:
+            raise ValidationFailure("Test environment needs a session created with api=aiogram.client.telegram.TEST")
+    return Bot(token=settings.token, session=session)
+
+
 async def run_bot(dispatcher: Dispatcher, settings: BotSettings, *,
                   commands: Sequence[BotCommand] | None = None,
                   session: BaseSession | None = None,
@@ -186,6 +204,8 @@ async def run_bot(dispatcher: Dispatcher, settings: BotSettings, *,
     SDK polling ACK is not a durable acceptance/transaction guarantee.
     verify_token=True calls getMe first: a rejected token raises AuthenticationRequired
     and an unreachable API TransportFailure, before menus or polling, without the token.
+    settings.test_environment uses the separate Telegram test environment; a supplied
+    session must then already target it (api=aiogram.client.telegram.TEST).
     """
     if not isinstance(dispatcher, Dispatcher) or not isinstance(settings, BotSettings):
         raise InvalidType("Use the existing Dispatcher and BotSettings")
@@ -205,14 +225,17 @@ async def run_bot(dispatcher: Dispatcher, settings: BotSettings, *,
     menu = list(commands) if commands is not None else None
     if menu is not None and (len(menu) > 100 or any(not isinstance(item, BotCommand) for item in menu)):
         raise ValidationFailure("Use up to 100 BotCommand items")
-    bot = Bot(token=settings.token, session=session)
+    bot = create_bot(settings, session=session)
     try:
         if verify_token:
             failure: PatternError | None = None
             try:
                 await bot.me()  # cached: start_polling does not repeat getMe
             except TelegramUnauthorizedError:
-                failure = AuthenticationRequired('Telegram rejected the bot token: check BOT_TOKEN or issue a new one with @BotFather')
+                failure = AuthenticationRequired(
+                    'Telegram test environment rejected the bot token: it is separate from the main one, '
+                    'create a test bot with @BotFather from a test account' if settings.test_environment else
+                    'Telegram rejected the bot token: check BOT_TOKEN or issue a new one with @BotFather')
             except TelegramNetworkError:
                 failure = TransportFailure('Telegram Bot API is unreachable: check the network, proxy or API server')
             if failure is not None:

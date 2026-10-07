@@ -132,18 +132,19 @@ if __name__ == '__main__': asyncio.run(main())
 
 ## Polling lifecycle и Stars request — ref.bot_runner
 
-Файл: `bot_runner.py`. Символы: `run_bot`, `stars_invoice`
+Файл: `bot_runner.py`. Символы: `create_bot`, `run_bot`, `stars_invoice`
 
-Границы: SDK polling через StubSession завершается после первого запроса; ни реального token, ни удаления webhook. Live требует отдельного процесса и проверки consumer/webhook. Runner закрывает session после успешного preflight. Stars request не создает оплату, заказ или entitlement; consent и server ledger у host.
+Границы: SDK polling через StubSession завершается после первого запроса; ни реального token, ни удаления webhook. Live требует отдельного процесса и проверки consumer/webhook. Runner закрывает session после успешного preflight. create_bot с test_environment=True направляет запросы в отдельное тестовое окружение Telegram; переданная session должна уже использовать TEST. Stars request не создает оплату, заказ или entitlement; consent и server ledger у host.
 
 ```python
 """Настоящий SDK polling через StubSession; останавливаем его после первого запроса."""
 import asyncio
 import json
 from aiogram import Dispatcher
+from aiogram.client.telegram import TEST
 from aiogram.methods import GetMe, GetUpdates, SetMyCommands
 from telegram_patterns import BotSettings
-from telegram_patterns.aiogram import run_bot, stars_invoice, start_router
+from telegram_patterns.aiogram import create_bot, run_bot, stars_invoice, start_router
 from telegram_patterns.testing import StubSession
 from bot_fixture import BOT_USER, TOKEN
 
@@ -168,6 +169,10 @@ async def main() -> None:
         await asyncio.gather(running, return_exceptions=True)
         await dispatcher.fsm.close()
     assert session.closed and any(isinstance(c, GetUpdates) for c in session.calls)
+    # TELEGRAM_TEST_ENVIRONMENT=1 в BotSettings.from_env: отдельное тестовое окружение Telegram.
+    test_bot = create_bot(BotSettings(TOKEN, test_environment=True), session=StubSession(api=TEST))
+    assert '/test/' in test_bot.session.api.api_url(TOKEN, 'getMe')
+    await test_bot.session.close()
     print(json.dumps({'passed': True, 'case': 'bot_runner', 'network': False}))
 
 if __name__ == '__main__': asyncio.run(main())

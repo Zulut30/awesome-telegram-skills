@@ -17,7 +17,7 @@ from aiogram.exceptions import TelegramAPIError, TelegramBadRequest, TelegramFor
 from aiogram.filters import Command, CommandObject
 from aiogram.types import CallbackQuery, ChatJoinRequest, ChatMemberUpdated, ForumTopic, Message, TelegramObject, Update
 from telegram_patterns import BotSettings
-from telegram_patterns.aiogram import ActionButton, action_menu, build_request, event_router
+from telegram_patterns.aiogram import ActionButton, action_menu, build_request, create_bot, event_router
 
 from .storage import ProcessLock, io_call
 from .store import Context, Refused, Store
@@ -313,7 +313,7 @@ async def live(database: Path, chats: set[int]) -> None:
     settings = BotSettings.from_env()
     app = Application(database,int(settings.token.split(':',1)[0]),chats)
     try:
-        async with Bot(settings.token) as bot:
+        async with create_bot(settings) as bot:  # TELEGRAM_TEST_ENVIRONMENT=1 selects the test environment
             # Do not delete webhook or pending updates. Existing consumers need owner coordination.
             try:
                 await app.dispatcher.start_polling(bot,allowed_updates=app.dispatcher.resolve_used_update_types(),close_bot_session=False)

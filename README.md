@@ -92,7 +92,7 @@ python3 -m venv .venv
 .venv/bin/python examples/python/offline_keyboards.py
 ```
 
-Последняя команда выполняет пример через тестовый транспорт без токена и обращений к Telegram. [Пошаговый запуск бота и Mini App](docs/quickstart.md).
+Последняя команда выполняет пример через тестовый транспорт без токена и обращений к Telegram. [Пошаговый запуск бота и Mini App](docs/quickstart.md). Живого бота можно проверить без основного аккаунта — в [тестовом окружении Telegram](docs/test-environment.md).
 
 **Для Mini App.** Нужен Node.js 20 или новее. Из корня репозитория:
 
