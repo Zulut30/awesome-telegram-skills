@@ -2,6 +2,8 @@
 
 Доступно с 0.18.0, проверено на 0.24.0.
 
+Термины: квитанция (receipt) — сохраненная запись о выполненной операции; повтор возвращает ее вместо второго эффекта; **entitlement** — право на возможность (custom emoji, оплаченный доступ), которое проверяется отдельно от самого запроса; **fallback** — запасной вариант, если основная возможность недоступна.
+
 У всех 311 cookbook-рецептов есть план зависимостей, данных, окружения и прав. 212 Python-рецептов имеют локальный исполнитель: 185 SDK requests, 11 markup builders, пятнадцать Dispatcher-композиций и один SQLite lost-response сценарий. 99 native-фрагментов остаются reference: без Telegram host и аргументов запуск отклоняется до создания процесса. Это не меняет maturity и не добавляет live evidence.
 
 ## Сначала требования
@@ -37,7 +39,7 @@ DTO frozen, collection fields — tuples. `Recipe.execution` возвращае�
 
 ## Что именно выполняется
 
-Нужен установленный пакет в текущем interpreter. Runner запускает закрытый bundled worker через Python `-I -B`: игнорируются project cwd, `PYTHONPATH` и user-site. Создается принадлежащий runner временный каталог; он удаляется при завершении. В child передаются только системные PATH/PATHEXT/SYSTEMROOT/WINDIR/TEMP/TMP/COMSPEC и PYTHONUTF8. BOT_TOKEN, payment secrets, `.env` и код приложения не читаются и не передаются.
+Нужен установленный пакет в текущем interpreter. Runner запускает закрытый bundled worker через Python `-I -B`: игнорируются project cwd, `PYTHONPATH` и user-site. Создается принадлежащий runner временный каталог; он удаляется при завершении. В дочерний процесс передаются только системные переменные `PATH`, `PATHEXT`, `SYSTEMROOT`, `WINDIR`, `TEMP`, `TMP`, `COMSPEC` и `PYTHONUTF8`. BOT_TOKEN, payment secrets, `.env` и код приложения не читаются и не передаются.
 
 Worker собирает настоящий SDK request/markup из синтетических fixtures либо выполняет один из четырех фиксированных bundled сценариев. Он не выполняет `recipe.code`, произвольные пути или пользовательский код. Dispatcher использует StubSession без HTTP fallback. SQLite effect и replay происходят в временной БД. Сессия и FSM композиции закрываются явно.
 
@@ -57,4 +59,4 @@ Timeout 1..120 секунд, default 60; bool/NaN/inf отклоняются д�
 
 `scripts/verify_recipe_execution.py` проверяет установленный core без SDK, все 212 Python fixtures в SDK consumer, отказ native/missing SDK, безопасные ошибки, сохранение файлов и два guard отказа. Browser tests проверяют requirements panel на phone/tablet/desktop и темах. Это executable fixtures; human/blind agent usability и реальные Telegram-клиенты остаются отдельными проверками.
 
-`demo-calendar` — sixth Dispatcher fixture: temporary file SQLite booking/receipt, unavailable dates и DST offsets. Requires aiogram 3.31.0 и pinned tzdata 2026.5; plan сообщает calendar-extra-required или calendar-data-differs-from-checked-fixture до запуска worker.
+`demo-calendar` — шестой сценарий на `Dispatcher`: бронирование и квитанция во временном файле SQLite, недоступные даты и смещения при переходе на летнее время. Requires aiogram 3.31.0 и pinned tzdata 2026.5; plan сообщает calendar-extra-required или calendar-data-differs-from-checked-fixture до запуска worker.

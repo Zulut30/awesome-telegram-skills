@@ -6,7 +6,7 @@ Telegram держит отдельное тестовое окружение: в
 
 Войдите в тестовое окружение официальным клиентом:
 
-- **iOS:** 10 раз нажмите на иконку «Настройки» → Accounts → Login to another account → Test.
+- **iOS:** 10 раз нажмите на иконку «Настройки» → «Accounts» → «Login to another account» → «Test».
 - **Telegram Desktop:** ☰ Settings → Shift + Alt + правый клик по «Add Account» → Test Server.
 - **macOS:** 10 раз нажмите на иконку «Настройки», откроется Debug Menu; затем ⌘ + клик по «Add Account» и вход по номеру телефона.
 

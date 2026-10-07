@@ -1,5 +1,7 @@
 # Python core — 0.24.0
 
+Термины: **CAS** — сравнение с заменой: запись сохраняется, только если версия не изменилась с момента чтения; квитанция (receipt) — сохраненная запись о выполненной операции; повтор возвращает ее вместо второго эффекта; **неизвестный результат** — запрос мог выполниться, но ответа нет (таймаут, обрыв связи); повторять вслепую нельзя, сначала сверка; **сверка** — запрос фактического состояния у провайдера или в хранилище перед повтором или выдачей; **entitlement** — право на возможность (custom emoji, оплаченный доступ), которое проверяется отдельно от самого запроса.
+
 [Индекс всех символов](api-reference.md). Образцы ниже воспроизводятся через установленный wheel/tarball вне исходного дерева. Assert — проверка fixture, не бизнес-правило production приложения.
 
 Установите предоставленный локальный wheel без aiogram. Для core_starter.py передайте путь к нему как первый аргумент: `python core_starter.py "<PROVIDED_WHEEL>"`. Остальные файлы запускаются `python <FILE.py>`. Для core_calendar нужна IANA-база Europe/Warsaw: при ее отсутствии установите calendar extra того же wheel; aiogram не требуется. core_doctor намеренно проверяет SDK-free окружение.
@@ -43,7 +45,7 @@ print(json.dumps({'passed': True, 'case': 'core_identity', 'network': False}))
 
 Файл: `core_message_text.py`. Символы: `EntityKind`, `TextEntity`, `TextPayload`, `FormattedText`, `MessageBuilder`, `utf16_length`, `escape_html`, `escape_markdown_v2`, `split_formatted`
 
-Границы: SDK-free/entities payload с parse_mode=None. Консервативный UTF-16 limit; atomic oversized entity/Unicode sequence вызывает error. Общие emoji/combining sequences сохранены, полная UAX29 segmentation не обещана. Host проверяет link trust, sticker/fallback metadata и custom emoji entitlement/context; default — regular emoji. Никаких network/retry/delivery/ACL promises.
+Границы: Готовит текст с entities и parse_mode=None без зависимости от SDK. Лимит в единицах UTF-16 консервативный; неделимая entity или последовательность Unicode больше лимита вызывает ошибку. Распространенные emoji и комбинируемые последовательности не разрезаются, полная сегментация UAX29 не обещана. Проект сам проверяет доверие к ссылкам, метаданные стикера и запасного варианта, entitlement и контекст для custom emoji; по умолчанию используется обычный emoji. Сеть, повторы, доставку и права доступа компонент не обещает.
 
 ```python
 """All SDK-free message exports; no network, parser, Unicode asset or rights proof."""

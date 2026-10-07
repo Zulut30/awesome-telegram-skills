@@ -1,5 +1,7 @@
 # Responsive, viewport и safe areas
 
+Термины: **fallback** — запасной вариант, если основная возможность недоступна.
+
 Проверено по [Telegram Mini Apps](https://core.telegram.org/bots/webapps) 2 октября 2026 года. Поля и version gates сверяйте с установленным bridge/SDK.
 
 ## Геометрия

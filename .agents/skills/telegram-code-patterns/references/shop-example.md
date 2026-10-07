@@ -1,5 +1,7 @@
 # Магазин: Mini App, заказ и Telegram Stars
 
+Термины: квитанция (receipt) — сохраненная запись о выполненной операции; повтор возвращает ее вместо второго эффекта; **outbox** — события, сохраненные в той же транзакции, что и изменение данных; отдельный обработчик выполняет их позже; **сверка** — запрос фактического состояния у провайдера или в хранилище перед повтором или выдачей.
+
 Пример пункта 018 связывает TypeScript-каталог и корзину с Python/aiohttp backend, настоящей SQLite и aiogram 3.31.0. Использует публичные `ApiClient`, `TelegramBridge`, `TelegramNativeAPI`, `createAppShell`, `validate_init_data`, `SQLiteOnce`, `stars_invoice` и `StubSession` библиотеки 0.24.0 (CI проверяет пример на текущей версии). Приложение `awesome-telegram-shop-example` 0.1.0 поставляется отдельно; его классы не public exports библиотеки.
 
 Два учебных цифровых товара стоят 25 и 40 Stars. Backend принимает только IDs, operation UUID и согласие с версией условий. Цена и валюта фиксируются сервером в заказе; клиентские price/user_id/paid поля отклоняются. Данные запуска проходят HMAC/freshness проверку; сервер выдаёт ограниченную HttpOnly cookie-сессию и CSRF. В production требуются HTTPS и точный origin. `initDataUnsafe` не даёт прав. Получение заказа и материала проверяет владельца из сессии.
@@ -45,11 +47,11 @@ python scripts/build_release.py --ref HEAD --output output/release
 python scripts/verify_shop_example.py --wheel output/release/awesome_telegram_patterns-0.24.0-py3-none-any.whl --tarball output/release/awesome-telegram-patterns-0.24.0.tgz --output output/shop-check
 ```
 
-Output должен быть новым. Helper собирает application wheel, устанавливает его с принятым pattern wheel во внешний consumer, копирует frontend и строит его из установленного tarball. Source/metadata, origins, Mypy, domain/HTTP tests и Chrome проверяются отдельно. Loopback HTTP и synthetic initData/SDK updates существуют только в explicit offline fixture; настоящий токен и live entrypoint не используются. Fixture payment control идёт через stdin отдельного процесса, не через публичный HTTP API. Браузер и Python fixture блокируют внешнюю сеть; это не OS sandbox.
+Output должен быть новым. Helper собирает application wheel, устанавливает его с принятым pattern wheel во внешний consumer, копирует frontend и строит его из установленного tarball. Исходники и метаданные, разрешенные origins, Mypy, тесты домена и HTTP и Chrome проверяются отдельно. Loopback HTTP и synthetic initData/SDK updates существуют только в explicit offline fixture; настоящий токен и live entrypoint не используются. Fixture payment control идёт через stdin отдельного процесса, не через публичный HTTP API. Браузер и Python fixture блокируют внешнюю сеть; это не OS sandbox.
 
 ## Рабочая конфигурация
 
-После отдельной настройки BOT_TOKEN, проверки existing webhook/getUpdates consumer, HTTPS reverse proxy, постоянного локального пути БД, ваших реальных условий и поддержки:
+После отдельной настройки BOT_TOKEN, проверки, что нет установленного webhook и другого получателя getUpdates, настройки обратного прокси с HTTPS, постоянного локального пути БД, ваших реальных условий и поддержки:
 
 ```powershell
 & .\.venv\Scripts\telegram-shop-example.exe --database 'C:\shop-data\shop.sqlite' --frontend "$shopProject\frontend\dist" --origin 'https://shop.example.com' --terms 'C:\shop-data\terms.txt' --terms-version '2026-01' --support 'Ваш контакт и порядок обращения к оператору' --port 8080
@@ -63,7 +65,7 @@ Pending operation/cart/terms сохраняются под server-derived scope 
 
 Invoice проходит none → creating → ready. Timeout/invalid response/crash после вызова без сохранённой ссылки дают unknown; новая ссылка автоматически не создаётся. Такой заказ требует сверки. Сохраняется один accepted pre-checkout query на заказ: после неизвестной/прерванной предыдущей оплаты нельзя молча разрешать второй charge. Смена accepted query требует отдельной операторской сверки. Это сознательная граница примера, не полноценный payment orchestration/refund сервис.
 
-Схема SQLite версия 1; corruption/другая схема требуют явной миграции. Один процесс и локальный диск; general multiworker/inbox/outbox, rate limits, backups, refund/chargeback/reconciliation, production monitoring и security hardening — отдельные пункты. Памятки демонстрационные, реальные коммерческие материалы должны храниться в защищённом storage проекта. Цифровые товары внутри Telegram не переключаются на внешнюю карточную/крипто оплату.
+Схема SQLite версия 1; corruption/другая схема требуют явной миграции. Один процесс и локальный диск; несколько рабочих процессов, inbox и outbox общего назначения, ограничения частоты, резервные копии, возвраты, chargeback и сверка, мониторинг продакшена и усиление безопасности — отдельные пункты. Памятки демонстрационные, реальные коммерческие материалы должны храниться в защищённом storage проекта. Цифровые товары внутри Telegram не переключаются на внешнюю карточную/крипто оплату.
 
 Приёмка этого примера — установленное приложение, настоящие SQLite/HTTP/процессы и Chrome viewport/theme проверки. Bot transport, launch vectors и native host synthetic; live Telegram/Stars test environment, настоящий WebView/cookies, физические устройства, screen readers и независимое человеческое удобство не подтверждены. Это experimental example, не объявление production готовности или выпуска 1.0.
 

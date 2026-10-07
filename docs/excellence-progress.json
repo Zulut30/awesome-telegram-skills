@@ -585,9 +585,15 @@
     {
       "id": 47,
       "title": "Объяснять термины простыми словами",
-      "status": "pending",
-      "commit_subject": null,
-      "evidence": [],
+      "status": "done",
+      "commit_subject": "excellence(047): explain jargon in every skill file and rewrite glued English phrases",
+      "evidence": [
+        "scripts/_glossary.py: 8 терминов с пояснением в одну строку; scripts/add_terms_lines.py ставит строку «Термины:» в references и страницы docs/, build_api_reference.py — в справочник API; CI: add_terms_lines.py --check",
+        "17 SKILL.md поясняют термин при первом упоминании; проверка _glossary.explained по всем 42 скиллам: 0 непояснённых",
+        "catalog/api-reference.json: 141 назначение и границы core_message_text переведены; около 80 фраз в справочниках и docs/support-matrix.md переписаны предложениями",
+        "catalog/skill-references.json mirrors: README примеров service-bot, group-bot, shop — источник docs/ и копий в скиллах",
+        "tests/test_skill_terms.py (5 тестов), tests/test_skill_reference_sync.py (зеркала); корень 112 OK, пакет Python 507 OK, site/tests 5 OK, сайт 443 страницы без ошибок"
+      ],
       "remaining": null
     },
     {

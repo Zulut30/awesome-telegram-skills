@@ -1,5 +1,7 @@
 # Доступность профиля
 
+Термины: **сверка** — запрос фактического состояния у провайдера или в хранилище перед повтором или выдачей.
+
 | Задача | API и условия |
 | --- | --- |
 | Базовые данные, включая доступный `is_premium` | [User](https://core.telegram.org/bots/api#user) из update или другого допустимого ответа |
@@ -25,4 +27,4 @@
 
 Проверено 2 октября 2026 года. Для реализации проверяйте поля установленного SDK и актуальную схему; raw Bot API и MTProto используют разные объекты.
 
-5 октября 2026 отдельно повторно прочитаны User, getMe/getChat/ChatFullInfo, getUserProfilePhotos, own-bot set/getMyName/Description/ShortDescription и set/removeMyProfilePhoto/InputProfilePhotoStatic/Animated; сверены native модели установленного aiogram 3.31.0. [Готовая локальная композиция](profiles.md) сохраняет unknown/false, язык, omission/clear и текущий host ACL. Эта дата не обновляет Business/MTProto, profile audio/personal chat messages либо весь API.
+5 октября 2026 отдельно повторно прочитаны `User`, `getMe`, `getChat`, `ChatFullInfo`, `getUserProfilePhotos`, методы профиля своего бота (`setMyName`, `getMyName`, `setMyDescription`, `getMyDescription`, `setMyShortDescription`, `getMyShortDescription`, `setMyProfilePhoto`, `removeMyProfilePhoto`) и `InputProfilePhotoStatic`/`InputProfilePhotoAnimated`; сверены модели установленного aiogram 3.31.0. [Готовая локальная композиция](profiles.md) различает «неизвестно» и `false`, учитывает язык, пропуск и очистку значения и текущие права проекта. Эта дата не относится к Business, MTProto, аудио профиля, сообщениям личного канала и остальному API.

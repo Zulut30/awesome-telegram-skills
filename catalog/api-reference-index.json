@@ -45,7 +45,7 @@
       "recipe": "ref.core_identity",
       "example": "examples/api-reference/python/core_identity.py",
       "limits": "HMAC fixture без Telegram; token только на backend, raw initData проверяется до session/ACL. BotSettings repr скрывает token, сериализация не становится безопасной. VerifiedLaunch — результат проверки, ручной DTO не подтверждает identity.",
-      "intent": "HMAC и freshness raw initData",
+      "intent": "HMAC-подпись и свежесть сырой initData",
       "example_sha256": "79ba58973a74c842c84dc7d79b81f337a2bb332ab201803aa574f20111a56614",
       "example_source_sha256": "79ba58973a74c842c84dc7d79b81f337a2bb332ab201803aa574f20111a56614",
       "kind": "value"
@@ -56,7 +56,7 @@
       "import": "from telegram_patterns import EntityKind",
       "recipe": "ref.core_message_text",
       "example": "examples/api-reference/python/core_message_text.py",
-      "limits": "SDK-free/entities payload с parse_mode=None. Консервативный UTF-16 limit; atomic oversized entity/Unicode sequence вызывает error. Общие emoji/combining sequences сохранены, полная UAX29 segmentation не обещана. Host проверяет link trust, sticker/fallback metadata и custom emoji entitlement/context; default — regular emoji. Никаких network/retry/delivery/ACL promises.",
+      "limits": "Готовит текст с entities и parse_mode=None без зависимости от SDK. Лимит в единицах UTF-16 консервативный; неделимая entity или последовательность Unicode больше лимита вызывает ошибку. Распространенные emoji и комбинируемые последовательности не разрезаются, полная сегментация UAX29 не обещана. Проект сам проверяет доверие к ссылкам, метаданные стикера и запасного варианта, entitlement и контекст для custom emoji; по умолчанию используется обычный emoji. Сеть, повторы, доставку и права доступа компонент не обещает.",
       "intent": "Literal одиннадцати поддерживаемых outgoing entity типов",
       "example_sha256": "abcf46f5052aadd73a6fa08de0c743b7a7dbccd91fd965ab6b8cdf47b6f42ebe",
       "example_source_sha256": "abcf46f5052aadd73a6fa08de0c743b7a7dbccd91fd965ab6b8cdf47b6f42ebe",
@@ -68,7 +68,7 @@
       "import": "from telegram_patterns import TextEntity",
       "recipe": "ref.core_message_text",
       "example": "examples/api-reference/python/core_message_text.py",
-      "limits": "SDK-free/entities payload с parse_mode=None. Консервативный UTF-16 limit; atomic oversized entity/Unicode sequence вызывает error. Общие emoji/combining sequences сохранены, полная UAX29 segmentation не обещана. Host проверяет link trust, sticker/fallback metadata и custom emoji entitlement/context; default — regular emoji. Никаких network/retry/delivery/ACL promises.",
+      "limits": "Готовит текст с entities и parse_mode=None без зависимости от SDK. Лимит в единицах UTF-16 консервативный; неделимая entity или последовательность Unicode больше лимита вызывает ошибку. Распространенные emoji и комбинируемые последовательности не разрезаются, полная сегментация UAX29 не обещана. Проект сам проверяет доверие к ссылкам, метаданные стикера и запасного варианта, entitlement и контекст для custom emoji; по умолчанию используется обычный emoji. Сеть, повторы, доставку и права доступа компонент не обещает.",
       "intent": "Frozen range и проверенные metadata",
       "example_sha256": "abcf46f5052aadd73a6fa08de0c743b7a7dbccd91fd965ab6b8cdf47b6f42ebe",
       "example_source_sha256": "abcf46f5052aadd73a6fa08de0c743b7a7dbccd91fd965ab6b8cdf47b6f42ebe",
@@ -80,8 +80,8 @@
       "import": "from telegram_patterns import TextPayload",
       "recipe": "ref.core_message_text",
       "example": "examples/api-reference/python/core_message_text.py",
-      "limits": "SDK-free/entities payload с parse_mode=None. Консервативный UTF-16 limit; atomic oversized entity/Unicode sequence вызывает error. Общие emoji/combining sequences сохранены, полная UAX29 segmentation не обещана. Host проверяет link trust, sticker/fallback metadata и custom emoji entitlement/context; default — regular emoji. Никаких network/retry/delivery/ACL promises.",
-      "intent": "TypedDict JSON text/entities/parse_mode=None",
+      "limits": "Готовит текст с entities и parse_mode=None без зависимости от SDK. Лимит в единицах UTF-16 консервативный; неделимая entity или последовательность Unicode больше лимита вызывает ошибку. Распространенные emoji и комбинируемые последовательности не разрезаются, полная сегментация UAX29 не обещана. Проект сам проверяет доверие к ссылкам, метаданные стикера и запасного варианта, entitlement и контекст для custom emoji; по умолчанию используется обычный emoji. Сеть, повторы, доставку и права доступа компонент не обещает.",
+      "intent": "TypedDict с JSON-полями text, entities и parse_mode=None",
       "example_sha256": "abcf46f5052aadd73a6fa08de0c743b7a7dbccd91fd965ab6b8cdf47b6f42ebe",
       "example_source_sha256": "abcf46f5052aadd73a6fa08de0c743b7a7dbccd91fd965ab6b8cdf47b6f42ebe",
       "kind": "value"
@@ -92,8 +92,8 @@
       "import": "from telegram_patterns import FormattedText",
       "recipe": "ref.core_message_text",
       "example": "examples/api-reference/python/core_message_text.py",
-      "limits": "SDK-free/entities payload с parse_mode=None. Консервативный UTF-16 limit; atomic oversized entity/Unicode sequence вызывает error. Общие emoji/combining sequences сохранены, полная UAX29 segmentation не обещана. Host проверяет link trust, sticker/fallback metadata и custom emoji entitlement/context; default — regular emoji. Никаких network/retry/delivery/ACL promises.",
-      "intent": "Immutable snapshot и kwargs/split",
+      "limits": "Готовит текст с entities и parse_mode=None без зависимости от SDK. Лимит в единицах UTF-16 консервативный; неделимая entity или последовательность Unicode больше лимита вызывает ошибку. Распространенные emoji и комбинируемые последовательности не разрезаются, полная сегментация UAX29 не обещана. Проект сам проверяет доверие к ссылкам, метаданные стикера и запасного варианта, entitlement и контекст для custom emoji; по умолчанию используется обычный emoji. Сеть, повторы, доставку и права доступа компонент не обещает.",
+      "intent": "Неизменяемый снимок текста; kwargs и разбиение на части",
       "example_sha256": "abcf46f5052aadd73a6fa08de0c743b7a7dbccd91fd965ab6b8cdf47b6f42ebe",
       "example_source_sha256": "abcf46f5052aadd73a6fa08de0c743b7a7dbccd91fd965ab6b8cdf47b6f42ebe",
       "kind": "value"
@@ -104,8 +104,8 @@
       "import": "from telegram_patterns import MessageBuilder",
       "recipe": "ref.core_message_text",
       "example": "examples/api-reference/python/core_message_text.py",
-      "limits": "SDK-free/entities payload с parse_mode=None. Консервативный UTF-16 limit; atomic oversized entity/Unicode sequence вызывает error. Общие emoji/combining sequences сохранены, полная UAX29 segmentation не обещана. Host проверяет link trust, sticker/fallback metadata и custom emoji entitlement/context; default — regular emoji. Никаких network/retry/delivery/ACL promises.",
-      "intent": "Immutable fluent literal composition и rebased entities",
+      "limits": "Готовит текст с entities и parse_mode=None без зависимости от SDK. Лимит в единицах UTF-16 консервативный; неделимая entity или последовательность Unicode больше лимита вызывает ошибку. Распространенные emoji и комбинируемые последовательности не разрезаются, полная сегментация UAX29 не обещана. Проект сам проверяет доверие к ссылкам, метаданные стикера и запасного варианта, entitlement и контекст для custom emoji; по умолчанию используется обычный emoji. Сеть, повторы, доставку и права доступа компонент не обещает.",
+      "intent": "Пошаговая сборка буквального текста с пересчетом entities",
       "example_sha256": "abcf46f5052aadd73a6fa08de0c743b7a7dbccd91fd965ab6b8cdf47b6f42ebe",
       "example_source_sha256": "abcf46f5052aadd73a6fa08de0c743b7a7dbccd91fd965ab6b8cdf47b6f42ebe",
       "kind": "value"
@@ -116,7 +116,7 @@
       "import": "from telegram_patterns import utf16_length",
       "recipe": "ref.core_message_text",
       "example": "examples/api-reference/python/core_message_text.py",
-      "limits": "SDK-free/entities payload с parse_mode=None. Консервативный UTF-16 limit; atomic oversized entity/Unicode sequence вызывает error. Общие emoji/combining sequences сохранены, полная UAX29 segmentation не обещана. Host проверяет link trust, sticker/fallback metadata и custom emoji entitlement/context; default — regular emoji. Никаких network/retry/delivery/ACL promises.",
+      "limits": "Готовит текст с entities и parse_mode=None без зависимости от SDK. Лимит в единицах UTF-16 консервативный; неделимая entity или последовательность Unicode больше лимита вызывает ошибку. Распространенные emoji и комбинируемые последовательности не разрезаются, полная сегментация UAX29 не обещана. Проект сам проверяет доверие к ссылкам, метаданные стикера и запасного варианта, entitlement и контекст для custom emoji; по умолчанию используется обычный emoji. Сеть, повторы, доставку и права доступа компонент не обещает.",
       "intent": "Валидация scalars и подсчет UTF-16 units",
       "example_sha256": "abcf46f5052aadd73a6fa08de0c743b7a7dbccd91fd965ab6b8cdf47b6f42ebe",
       "example_source_sha256": "abcf46f5052aadd73a6fa08de0c743b7a7dbccd91fd965ab6b8cdf47b6f42ebe",
@@ -128,8 +128,8 @@
       "import": "from telegram_patterns import escape_html",
       "recipe": "ref.core_message_text",
       "example": "examples/api-reference/python/core_message_text.py",
-      "limits": "SDK-free/entities payload с parse_mode=None. Консервативный UTF-16 limit; atomic oversized entity/Unicode sequence вызывает error. Общие emoji/combining sequences сохранены, полная UAX29 segmentation не обещана. Host проверяет link trust, sticker/fallback metadata и custom emoji entitlement/context; default — regular emoji. Никаких network/retry/delivery/ACL promises.",
-      "intent": "Literal HTML text/attribute escaping",
+      "limits": "Готовит текст с entities и parse_mode=None без зависимости от SDK. Лимит в единицах UTF-16 консервативный; неделимая entity или последовательность Unicode больше лимита вызывает ошибку. Распространенные emoji и комбинируемые последовательности не разрезаются, полная сегментация UAX29 не обещана. Проект сам проверяет доверие к ссылкам, метаданные стикера и запасного варианта, entitlement и контекст для custom emoji; по умолчанию используется обычный emoji. Сеть, повторы, доставку и права доступа компонент не обещает.",
+      "intent": "Экранирование буквального текста и атрибутов для HTML",
       "example_sha256": "abcf46f5052aadd73a6fa08de0c743b7a7dbccd91fd965ab6b8cdf47b6f42ebe",
       "example_source_sha256": "abcf46f5052aadd73a6fa08de0c743b7a7dbccd91fd965ab6b8cdf47b6f42ebe",
       "kind": "value"
@@ -140,7 +140,7 @@
       "import": "from telegram_patterns import escape_markdown_v2",
       "recipe": "ref.core_message_text",
       "example": "examples/api-reference/python/core_message_text.py",
-      "limits": "SDK-free/entities payload с parse_mode=None. Консервативный UTF-16 limit; atomic oversized entity/Unicode sequence вызывает error. Общие emoji/combining sequences сохранены, полная UAX29 segmentation не обещана. Host проверяет link trust, sticker/fallback metadata и custom emoji entitlement/context; default — regular emoji. Никаких network/retry/delivery/ACL promises.",
+      "limits": "Готовит текст с entities и parse_mode=None без зависимости от SDK. Лимит в единицах UTF-16 консервативный; неделимая entity или последовательность Unicode больше лимита вызывает ошибку. Распространенные emoji и комбинируемые последовательности не разрезаются, полная сегментация UAX29 не обещана. Проект сам проверяет доверие к ссылкам, метаданные стикера и запасного варианта, entitlement и контекст для custom emoji; по умолчанию используется обычный emoji. Сеть, повторы, доставку и права доступа компонент не обещает.",
       "intent": "Literal escaping в text/code/link контексте",
       "example_sha256": "abcf46f5052aadd73a6fa08de0c743b7a7dbccd91fd965ab6b8cdf47b6f42ebe",
       "example_source_sha256": "abcf46f5052aadd73a6fa08de0c743b7a7dbccd91fd965ab6b8cdf47b6f42ebe",
@@ -152,8 +152,8 @@
       "import": "from telegram_patterns import split_formatted",
       "recipe": "ref.core_message_text",
       "example": "examples/api-reference/python/core_message_text.py",
-      "limits": "SDK-free/entities payload с parse_mode=None. Консервативный UTF-16 limit; atomic oversized entity/Unicode sequence вызывает error. Общие emoji/combining sequences сохранены, полная UAX29 segmentation не обещана. Host проверяет link trust, sticker/fallback metadata и custom emoji entitlement/context; default — regular emoji. Никаких network/retry/delivery/ACL promises.",
-      "intent": "Lossless partition, clipping styles/code и atomic links/quotes/emoji",
+      "limits": "Готовит текст с entities и parse_mode=None без зависимости от SDK. Лимит в единицах UTF-16 консервативный; неделимая entity или последовательность Unicode больше лимита вызывает ошибку. Распространенные emoji и комбинируемые последовательности не разрезаются, полная сегментация UAX29 не обещана. Проект сам проверяет доверие к ссылкам, метаданные стикера и запасного варианта, entitlement и контекст для custom emoji; по умолчанию используется обычный emoji. Сеть, повторы, доставку и права доступа компонент не обещает.",
+      "intent": "Разбиение без потерь: стили и код обрезаются по границе, ссылки, цитаты и emoji не делятся",
       "example_sha256": "abcf46f5052aadd73a6fa08de0c743b7a7dbccd91fd965ab6b8cdf47b6f42ebe",
       "example_source_sha256": "abcf46f5052aadd73a6fa08de0c743b7a7dbccd91fd965ab6b8cdf47b6f42ebe",
       "kind": "value"
@@ -213,7 +213,7 @@
       "recipe": "ref.core_errors",
       "example": "examples/api-reference/python/core_errors.py",
       "limits": "Передавайте реальный operation kind. Report не копирует developer text и не делает retry. Timeout/cancel/невалидный feedback после возможной записи оставляют unknown outcome и требуют сверки той же операции; локальный отказ должен произойти до эффекта.",
-      "intent": "Базовое исключение с безопасным report",
+      "intent": "Базовая ошибка с кодом, исходом и отчетом",
       "example_sha256": "d647370569ef2346f21d3c682f85f90af38eefb40be213da7b9764497d788706",
       "example_source_sha256": "d647370569ef2346f21d3c682f85f90af38eefb40be213da7b9764497d788706",
       "kind": "value"
@@ -237,7 +237,7 @@
       "recipe": "ref.core_errors",
       "example": "examples/api-reference/python/core_errors.py",
       "limits": "Передавайте реальный operation kind. Report не копирует developer text и не делает retry. Timeout/cancel/невалидный feedback после возможной записи оставляют unknown outcome и требуют сверки той же операции; локальный отказ должен произойти до эффекта.",
-      "intent": "Локальный type отказ, совместимый с TypeError",
+      "intent": "Совместимый с TypeError известный локальный отказ",
       "example_sha256": "d647370569ef2346f21d3c682f85f90af38eefb40be213da7b9764497d788706",
       "example_source_sha256": "d647370569ef2346f21d3c682f85f90af38eefb40be213da7b9764497d788706",
       "kind": "value"
@@ -357,7 +357,7 @@
       "recipe": "ref.core_errors",
       "example": "examples/api-reference/python/core_errors.py",
       "limits": "Передавайте реальный operation kind. Report не копирует developer text и не делает retry. Timeout/cancel/невалидный feedback после возможной записи оставляют unknown outcome и требуют сверки той же операции; локальный отказ должен произойти до эффекта.",
-      "intent": "Неизменяемые code/category/outcome/recovery/message",
+      "intent": "Код, категория, исход, способ восстановления и сообщение, только чтение",
       "example_sha256": "d647370569ef2346f21d3c682f85f90af38eefb40be213da7b9764497d788706",
       "example_source_sha256": "d647370569ef2346f21d3c682f85f90af38eefb40be213da7b9764497d788706",
       "kind": "value"
@@ -393,7 +393,7 @@
       "recipe": "ref.core_errors",
       "example": "examples/api-reference/python/core_errors.py",
       "limits": "Передавайте реальный operation kind. Report не копирует developer text и не делает retry. Timeout/cancel/невалидный feedback после возможной записи оставляют unknown outcome и требуют сверки той же операции; локальный отказ должен произойти до эффекта.",
-      "intent": "Literal rejected/read-failed/unknown",
+      "intent": "Literal-исход: rejected, read-failed или unknown",
       "example_sha256": "d647370569ef2346f21d3c682f85f90af38eefb40be213da7b9764497d788706",
       "example_source_sha256": "d647370569ef2346f21d3c682f85f90af38eefb40be213da7b9764497d788706",
       "kind": "value"
@@ -417,7 +417,7 @@
       "recipe": "ref.core_errors",
       "example": "examples/api-reference/python/core_errors.py",
       "limits": "Передавайте реальный operation kind. Report не копирует developer text и не делает retry. Timeout/cancel/невалидный feedback после возможной записи оставляют unknown outcome и требуют сверки той же операции; локальный отказ должен произойти до эффекта.",
-      "intent": "Literal read/write для реальной операции",
+      "intent": "Literal read/write",
       "example_sha256": "d647370569ef2346f21d3c682f85f90af38eefb40be213da7b9764497d788706",
       "example_source_sha256": "d647370569ef2346f21d3c682f85f90af38eefb40be213da7b9764497d788706",
       "kind": "value"
@@ -465,7 +465,7 @@
       "recipe": "ref.core_recipes",
       "example": "examples/api-reference/python/core_recipes.py",
       "limits": "Чтение не исполняет recipe code. Maturity отдельно от verification; SDK/mock не доказывают live/device. Preview — независимая копия. Этот пример ищет существующий cookbook recipe two-columns; ref.* — имена справочника API.",
-      "intent": "Literal stable/experimental/reference",
+      "intent": "Literal-зрелость: stable, experimental или reference",
       "example_sha256": "56fb799776fea231e058db0d81a23e3b0b10cfc92e6bf07114e36a1047ea4897",
       "example_source_sha256": "56fb799776fea231e058db0d81a23e3b0b10cfc92e6bf07114e36a1047ea4897",
       "kind": "value"
@@ -477,7 +477,7 @@
       "recipe": "ref.core_recipes",
       "example": "examples/api-reference/python/core_recipes.py",
       "limits": "Чтение не исполняет recipe code. Maturity отдельно от verification; SDK/mock не доказывают live/device. Preview — независимая копия. Этот пример ищет существующий cookbook recipe two-columns; ref.* — имена справочника API.",
-      "intent": "Literal sdk/mock/browser/live/not_run",
+      "intent": "Literal-уровень проверки: sdk, mock, browser, live или not_run",
       "example_sha256": "56fb799776fea231e058db0d81a23e3b0b10cfc92e6bf07114e36a1047ea4897",
       "example_source_sha256": "56fb799776fea231e058db0d81a23e3b0b10cfc92e6bf07114e36a1047ea4897",
       "kind": "value"
@@ -633,7 +633,7 @@
       "recipe": "ref.bot_keyboards",
       "example": "examples/api-reference/python/bot_keyboards.py",
       "limits": "Aiogram extra; callbacks до 64 bytes, keys bounded ASCII, prefixes навигации и action различимы. Colors только primary/success/danger, emoji entitlement отдельный. Контекст chat/business/invoice передает host. Reply не вызывает callback_query; appearance в Telegram не проверяется.",
-      "intent": "Label/key/style/custom emoji descriptor",
+      "intent": "Описание кнопки: текст, ключ, стиль и custom emoji",
       "example_sha256": "ac59b30b5b13ee6fcba17b3ee5b0d2c37f98be45582be663e491f06c9f8f6334",
       "example_source_sha256": "ac59b30b5b13ee6fcba17b3ee5b0d2c37f98be45582be663e491f06c9f8f6334",
       "kind": "value"
@@ -645,7 +645,7 @@
       "recipe": "ref.bot_keyboards",
       "example": "examples/api-reference/python/bot_keyboards.py",
       "limits": "Aiogram extra; callbacks до 64 bytes, keys bounded ASCII, prefixes навигации и action различимы. Colors только primary/success/danger, emoji entitlement отдельный. Контекст chat/business/invoice передает host. Reply не вызывает callback_query; appearance в Telegram не проверяется.",
-      "intent": "Literal Telegram button style",
+      "intent": "Literal-стиль кнопки Telegram",
       "example_sha256": "ac59b30b5b13ee6fcba17b3ee5b0d2c37f98be45582be663e491f06c9f8f6334",
       "example_source_sha256": "ac59b30b5b13ee6fcba17b3ee5b0d2c37f98be45582be663e491f06c9f8f6334",
       "kind": "value"
@@ -657,7 +657,7 @@
       "recipe": "ref.bot_keyboards",
       "example": "examples/api-reference/python/bot_keyboards.py",
       "limits": "Aiogram extra; callbacks до 64 bytes, keys bounded ASCII, prefixes навигации и action различимы. Colors только primary/success/danger, emoji entitlement отдельный. Контекст chat/business/invoice передает host. Reply не вызывает callback_query; appearance в Telegram не проверяется.",
-      "intent": "Markup и page/page_count/total_items",
+      "intent": "Разметка и номер страницы, число страниц и элементов",
       "example_sha256": "ac59b30b5b13ee6fcba17b3ee5b0d2c37f98be45582be663e491f06c9f8f6334",
       "example_source_sha256": "ac59b30b5b13ee6fcba17b3ee5b0d2c37f98be45582be663e491f06c9f8f6334",
       "kind": "value"
@@ -741,7 +741,7 @@
       "recipe": "ref.bot_keyboards",
       "example": "examples/api-reference/python/bot_keyboards.py",
       "limits": "Aiogram extra; callbacks до 64 bytes, keys bounded ASCII, prefixes навигации и action различимы. Colors только primary/success/danger, emoji entitlement отдельный. Контекст chat/business/invoice передает host. Reply не вызывает callback_query; appearance в Telegram не проверяется.",
-      "intent": "Reply rows/input placeholder",
+      "intent": "Строки reply-клавиатуры и подсказка в поле ввода",
       "example_sha256": "ac59b30b5b13ee6fcba17b3ee5b0d2c37f98be45582be663e491f06c9f8f6334",
       "example_source_sha256": "ac59b30b5b13ee6fcba17b3ee5b0d2c37f98be45582be663e491f06c9f8f6334",
       "kind": "value"
@@ -777,7 +777,7 @@
       "recipe": "ref.bot_keyboards",
       "example": "examples/api-reference/python/bot_keyboards.py",
       "limits": "Aiogram extra; callbacks до 64 bytes, keys bounded ASCII, prefixes навигации и action различимы. Colors только primary/success/danger, emoji entitlement отдельный. Контекст chat/business/invoice передает host. Reply не вызывает callback_query; appearance в Telegram не проверяется.",
-      "intent": "Immutable 2/3/mixed width pattern with last/cycle tail",
+      "intent": "Неизменяемая раскладка по 2, по 3 или смешанная, с правилом для последней строки",
       "example_sha256": "ac59b30b5b13ee6fcba17b3ee5b0d2c37f98be45582be663e491f06c9f8f6334",
       "example_source_sha256": "ac59b30b5b13ee6fcba17b3ee5b0d2c37f98be45582be663e491f06c9f8f6334",
       "kind": "value"
@@ -789,7 +789,7 @@
       "recipe": "ref.bot_keyboards",
       "example": "examples/api-reference/python/bot_keyboards.py",
       "limits": "Aiogram extra; callbacks до 64 bytes, keys bounded ASCII, prefixes навигации и action различимы. Colors только primary/success/danger, emoji entitlement отдельный. Контекст chat/business/invoice передает host. Reply не вызывает callback_query; appearance в Telegram не проверяется.",
-      "intent": "Explicit context and presentation hints; unknown uses standard text fallback",
+      "intent": "Явный контекст и подсказки оформления; при неизвестном контексте — обычный текст",
       "example_sha256": "ac59b30b5b13ee6fcba17b3ee5b0d2c37f98be45582be663e491f06c9f8f6334",
       "example_source_sha256": "ac59b30b5b13ee6fcba17b3ee5b0d2c37f98be45582be663e491f06c9f8f6334",
       "kind": "value"
@@ -801,7 +801,7 @@
       "recipe": "ref.bot_keyboards",
       "example": "examples/api-reference/python/bot_keyboards.py",
       "limits": "Aiogram extra; callbacks до 64 bytes, keys bounded ASCII, prefixes навигации и action различимы. Colors только primary/success/danger, emoji entitlement отдельный. Контекст chat/business/invoice передает host. Reply не вызывает callback_query; appearance в Telegram не проверяется.",
-      "intent": "Unique callback descriptors composed by width pattern",
+      "intent": "Уникальные callback-кнопки, разложенные по шаблону ширины",
       "example_sha256": "ac59b30b5b13ee6fcba17b3ee5b0d2c37f98be45582be663e491f06c9f8f6334",
       "example_source_sha256": "ac59b30b5b13ee6fcba17b3ee5b0d2c37f98be45582be663e491f06c9f8f6334",
       "kind": "value"
@@ -813,7 +813,7 @@
       "recipe": "ref.bot_keyboards",
       "example": "examples/api-reference/python/bot_keyboards.py",
       "limits": "Aiogram extra; callbacks до 64 bytes, keys bounded ASCII, prefixes навигации и action различимы. Colors только primary/success/danger, emoji entitlement отдельный. Контекст chat/business/invoice передает host. Reply не вызывает callback_query; appearance в Telegram не проверяется.",
-      "intent": "Flat native inline buttons with context checks and fallback",
+      "intent": "Inline-кнопки с проверкой контекста и запасным оформлением",
       "example_sha256": "ac59b30b5b13ee6fcba17b3ee5b0d2c37f98be45582be663e491f06c9f8f6334",
       "example_source_sha256": "ac59b30b5b13ee6fcba17b3ee5b0d2c37f98be45582be663e491f06c9f8f6334",
       "kind": "value"
@@ -825,7 +825,7 @@
       "recipe": "ref.bot_keyboards",
       "example": "examples/api-reference/python/bot_keyboards.py",
       "limits": "Aiogram extra; callbacks до 64 bytes, keys bounded ASCII, prefixes навигации и action различимы. Colors только primary/success/danger, emoji entitlement отдельный. Контекст chat/business/invoice передает host. Reply не вызывает callback_query; appearance в Telegram не проверяется.",
-      "intent": "Flat reply buttons with request validation and fallback",
+      "intent": "Reply-кнопки с проверкой запросов и запасным оформлением",
       "example_sha256": "ac59b30b5b13ee6fcba17b3ee5b0d2c37f98be45582be663e491f06c9f8f6334",
       "example_source_sha256": "ac59b30b5b13ee6fcba17b3ee5b0d2c37f98be45582be663e491f06c9f8f6334",
       "kind": "value"
@@ -861,7 +861,7 @@
       "recipe": "ref.bot_actions",
       "example": "examples/api-reference/python/bot_actions.py",
       "limits": "Добавляйте Router в существующий Dispatcher. Command menu устанавливается явно с выбранным scope. ACK убирает spinner, service проверяет actor/object/revision/idempotency. Notify выбирает безопасный доступный канал; пример использует только synthetic private message.",
-      "intent": "ACK перед execute и notify",
+      "intent": "ACK до вызова execute и notify",
       "example_sha256": "3a846ca31534e2f13d6cc925327165be390686f55f30da6dacbd2c06341315c1",
       "example_source_sha256": "3a846ca31534e2f13d6cc925327165be390686f55f30da6dacbd2c06341315c1",
       "kind": "value"
@@ -885,7 +885,7 @@
       "recipe": "ref.bot_actions",
       "example": "examples/api-reference/python/bot_actions.py",
       "limits": "Добавляйте Router в существующий Dispatcher. Command menu устанавливается явно с выбранным scope. ACK убирает spinner, service проверяет actor/object/revision/idempotency. Notify выбирает безопасный доступный канал; пример использует только synthetic private message.",
-      "intent": "Command/description/plain text/keyboard",
+      "intent": "Команда, описание, текст ответа и клавиатура",
       "example_sha256": "3a846ca31534e2f13d6cc925327165be390686f55f30da6dacbd2c06341315c1",
       "example_source_sha256": "3a846ca31534e2f13d6cc925327165be390686f55f30da6dacbd2c06341315c1",
       "kind": "value"
@@ -909,7 +909,7 @@
       "recipe": "ref.bot_actions",
       "example": "examples/api-reference/python/bot_actions.py",
       "limits": "Добавляйте Router в существующий Dispatcher. Command menu устанавливается явно с выбранным scope. ACK убирает spinner, service проверяет actor/object/revision/idempotency. Notify выбирает безопасный доступный канал; пример использует только synthetic private message.",
-      "intent": "Reply handlers с SDK mention filtering",
+      "intent": "Обработчики команд с фильтром упоминания бота из SDK",
       "example_sha256": "3a846ca31534e2f13d6cc925327165be390686f55f30da6dacbd2c06341315c1",
       "example_source_sha256": "3a846ca31534e2f13d6cc925327165be390686f55f30da6dacbd2c06341315c1",
       "kind": "value"
@@ -921,7 +921,7 @@
       "recipe": "ref.bot_actions",
       "example": "examples/api-reference/python/bot_actions.py",
       "limits": "Добавляйте Router в существующий Dispatcher. Command menu устанавливается явно с выбранным scope. ACK убирает spinner, service проверяет actor/object/revision/idempotency. Notify выбирает безопасный доступный канал; пример использует только synthetic private message.",
-      "intent": "Typed fixture value или sync/async callable",
+      "intent": "Ответ заглушки: значение или синхронная/асинхронная функция",
       "example_sha256": "3a846ca31534e2f13d6cc925327165be390686f55f30da6dacbd2c06341315c1",
       "example_source_sha256": "3a846ca31534e2f13d6cc925327165be390686f55f30da6dacbd2c06341315c1",
       "kind": "value"
@@ -957,7 +957,7 @@
       "recipe": "ref.bot_runner",
       "example": "examples/api-reference/python/bot_runner.py",
       "limits": "SDK polling через StubSession завершается после первого запроса; ни реального token, ни удаления webhook. Live требует отдельного процесса и проверки consumer/webhook. Runner закрывает session после успешного preflight. create_bot с test_environment=True направляет запросы в отдельное тестовое окружение Telegram; переданная session должна уже использовать TEST. Stars request не создает оплату, заказ или entitlement; consent и server ledger у host.",
-      "intent": "Owned polling/task/session lifecycle",
+      "intent": "Polling, задачи и сессия бота под управлением библиотеки",
       "example_sha256": "e8784d94d4d9e6ace72a8c9cb398f32710331c833c8395697663311bbfd1d4c6",
       "example_source_sha256": "e8784d94d4d9e6ace72a8c9cb398f32710331c833c8395697663311bbfd1d4c6",
       "kind": "value"
@@ -969,7 +969,7 @@
       "recipe": "ref.bot_runner",
       "example": "examples/api-reference/python/bot_runner.py",
       "limits": "SDK polling через StubSession завершается после первого запроса; ни реального token, ни удаления webhook. Live требует отдельного процесса и проверки consumer/webhook. Runner закрывает session после успешного preflight. create_bot с test_environment=True направляет запросы в отдельное тестовое окружение Telegram; переданная session должна уже использовать TEST. Stars request не создает оплату, заказ или entitlement; consent и server ledger у host.",
-      "intent": "Native XTR CreateInvoiceLink request",
+      "intent": "Нативный запрос CreateInvoiceLink в XTR",
       "example_sha256": "e8784d94d4d9e6ace72a8c9cb398f32710331c833c8395697663311bbfd1d4c6",
       "example_source_sha256": "e8784d94d4d9e6ace72a8c9cb398f32710331c833c8395697663311bbfd1d4c6",
       "kind": "value"
@@ -1005,7 +1005,7 @@
       "recipe": "ref.bot_form",
       "example": "examples/api-reference/python/bot_form.py",
       "limits": "Private chat, 1..10 уникальных TextField, включенный actor-scoped FSM isolation. Max_length в UTF-16; validator synchronous. MemoryStorage и list — fixture, не durable заявка. Service проверяет ACL и эффект/replay; unknown outcome сохраняет operation identity до сверки.",
-      "intent": "Server-derived identity и copied values",
+      "intent": "Личность, полученная на сервере, и копии ответов",
       "example_sha256": "87bf04d3c82eaa22218eb7525c99eed955e8dae5523af209cadf57fe4f8a4841",
       "example_source_sha256": "87bf04d3c82eaa22218eb7525c99eed955e8dae5523af209cadf57fe4f8a4841",
       "kind": "value"
@@ -1089,7 +1089,7 @@
       "recipe": "ref.bot_methods",
       "example": "examples/api-reference/python/bot_methods.py",
       "limits": "Catalog отражает установленный SDK, не server rights. Builder отклоняет неизвестные top-level fields; nested validation принадлежит SDK. InputFile не читается автоматически. HTTP/send/лимиты/доступ и provider workflow не появляются от construction.",
-      "intent": "Name/class/fields/required/official URL",
+      "intent": "Имя, класс, поля, обязательные поля и ссылка на документацию",
       "example_sha256": "9d2e95a24eebb45c8c0f075d3c3915297b4ef36f2c3763ddc3f37ea8931dc43d",
       "example_source_sha256": "9d2e95a24eebb45c8c0f075d3c3915297b4ef36f2c3763ddc3f37ea8931dc43d",
       "kind": "value"
@@ -1113,7 +1113,7 @@
       "recipe": "ref.bot_methods",
       "example": "examples/api-reference/python/bot_methods.py",
       "limits": "Catalog отражает установленный SDK, не server rights. Builder отклоняет неизвестные top-level fields; nested validation принадлежит SDK. InputFile не читается автоматически. HTTP/send/лимиты/доступ и provider workflow не появляются от construction.",
-      "intent": "Текущие SDK request methods",
+      "intent": "Текущие методы запросов SDK",
       "example_sha256": "9d2e95a24eebb45c8c0f075d3c3915297b4ef36f2c3763ddc3f37ea8931dc43d",
       "example_source_sha256": "9d2e95a24eebb45c8c0f075d3c3915297b4ef36f2c3763ddc3f37ea8931dc43d",
       "kind": "value"
@@ -1125,7 +1125,7 @@
       "recipe": "ref.bot_methods",
       "example": "examples/api-reference/python/bot_methods.py",
       "limits": "Catalog отражает установленный SDK, не server rights. Builder отклоняет неизвестные top-level fields; nested validation принадлежит SDK. InputFile не читается автоматически. HTTP/send/лимиты/доступ и provider workflow не появляются от construction.",
-      "intent": "Native request без HTTP",
+      "intent": "Нативный запрос без HTTP",
       "example_sha256": "9d2e95a24eebb45c8c0f075d3c3915297b4ef36f2c3763ddc3f37ea8931dc43d",
       "example_source_sha256": "9d2e95a24eebb45c8c0f075d3c3915297b4ef36f2c3763ddc3f37ea8931dc43d",
       "kind": "value"
@@ -1137,7 +1137,7 @@
       "recipe": "ref.bridge",
       "example": "examples/api-reference/typescript/bridge.ts",
       "limits": "ESM + DOM + явно подключенный styles.css. Native объект synthetic; snapshot не auth. Host разрешает coordinates insets и владеет состоянием/navigation/focus. Shell/field используют textContent; dispose удаляет только own UI/subscriptions. Viewport не physical Telegram QA.",
-      "intent": "Snapshot/subscribe/start/dispose lifecycle",
+      "intent": "Снимок, подписка, запуск и освобождение моста",
       "example_sha256": "db807a5cb98b03503a6c71d740697fbbe5e0ec0c6d919287a6a41a24639d4c99",
       "example_source_sha256": "db807a5cb98b03503a6c71d740697fbbe5e0ec0c6d919287a6a41a24639d4c99",
       "kind": "value"
@@ -1149,7 +1149,7 @@
       "recipe": "ref.bridge",
       "example": "examples/api-reference/typescript/bridge.ts",
       "limits": "ESM + DOM + явно подключенный styles.css. Native объект synthetic; snapshot не auth. Host разрешает coordinates insets и владеет состоянием/navigation/focus. Shell/field используют textContent; dispose удаляет только own UI/subscriptions. Viewport не physical Telegram QA.",
-      "intent": "Readonly subset SDK для bridge",
+      "intent": "Подмножество SDK для моста, только чтение",
       "example_sha256": "db807a5cb98b03503a6c71d740697fbbe5e0ec0c6d919287a6a41a24639d4c99",
       "example_source_sha256": "db807a5cb98b03503a6c71d740697fbbe5e0ec0c6d919287a6a41a24639d4c99",
       "kind": "type"
@@ -1161,7 +1161,7 @@
       "recipe": "ref.bridge",
       "example": "examples/api-reference/typescript/bridge.ts",
       "limits": "ESM + DOM + явно подключенный styles.css. Native объект synthetic; snapshot не auth. Host разрешает coordinates insets и владеет состоянием/navigation/focus. Shell/field используют textContent; dispose удаляет только own UI/subscriptions. Viewport не physical Telegram QA.",
-      "intent": "Readonly top/right/bottom/left coordinates",
+      "intent": "Отступы сверху, справа, снизу и слева, только чтение",
       "example_sha256": "db807a5cb98b03503a6c71d740697fbbe5e0ec0c6d919287a6a41a24639d4c99",
       "example_source_sha256": "db807a5cb98b03503a6c71d740697fbbe5e0ec0c6d919287a6a41a24639d4c99",
       "kind": "type"
@@ -1185,7 +1185,7 @@
       "recipe": "ref.bridge",
       "example": "examples/api-reference/typescript/bridge.ts",
       "limits": "ESM + DOM + явно подключенный styles.css. Native объект synthetic; snapshot не auth. Host разрешает coordinates insets и владеет состоянием/navigation/focus. Shell/field используют textContent; dispose удаляет только own UI/subscriptions. Viewport не physical Telegram QA.",
-      "intent": "Owned content/summary/actions composition",
+      "intent": "Каркас с содержимым, итогом и действиями",
       "example_sha256": "db807a5cb98b03503a6c71d740697fbbe5e0ec0c6d919287a6a41a24639d4c99",
       "example_source_sha256": "db807a5cb98b03503a6c71d740697fbbe5e0ec0c6d919287a6a41a24639d4c99",
       "kind": "value"
@@ -1197,7 +1197,7 @@
       "recipe": "ref.bridge",
       "example": "examples/api-reference/typescript/bridge.ts",
       "limits": "ESM + DOM + явно подключенный styles.css. Native объект synthetic; snapshot не auth. Host разрешает coordinates insets и владеет состоянием/navigation/focus. Shell/field используют textContent; dispose удаляет только own UI/subscriptions. Viewport не physical Telegram QA.",
-      "intent": "Typed shell slots/theme/insets/dispose",
+      "intent": "Типизированные слоты каркаса, тема, отступы и освобождение",
       "example_sha256": "db807a5cb98b03503a6c71d740697fbbe5e0ec0c6d919287a6a41a24639d4c99",
       "example_source_sha256": "db807a5cb98b03503a6c71d740697fbbe5e0ec0c6d919287a6a41a24639d4c99",
       "kind": "type"
@@ -1221,7 +1221,7 @@
       "recipe": "ref.bridge",
       "example": "examples/api-reference/typescript/bridge.ts",
       "limits": "ESM + DOM + явно подключенный styles.css. Native объект synthetic; snapshot не auth. Host разрешает coordinates insets и владеет состоянием/navigation/focus. Shell/field используют textContent; dispose удаляет только own UI/subscriptions. Viewport не physical Telegram QA.",
-      "intent": "Typed root/input/setError",
+      "intent": "Типизированные корень, поле и setError",
       "example_sha256": "db807a5cb98b03503a6c71d740697fbbe5e0ec0c6d919287a6a41a24639d4c99",
       "example_source_sha256": "db807a5cb98b03503a6c71d740697fbbe5e0ec0c6d919287a6a41a24639d4c99",
       "kind": "type"
@@ -1233,7 +1233,7 @@
       "recipe": "ref.client",
       "example": "examples/api-reference/typescript/client.ts",
       "limits": "Response/fetch synthetic, реального backend нет. Trusted baseUrl и same-origin paths; runtime decode обязательно. Headers/session/CSRF/ACL/idempotency у host. Один invocation транспорта не исключает wire replay браузером. Unknown POST сверяется с тем же ключом без автоматического retry.",
-      "intent": "Один request с runtime decoder",
+      "intent": "Один запрос с проверкой ответа во время выполнения",
       "example_sha256": "02b187c842cd5f1fd7aaccec8391d9fdbd3c995301421bd9f098c9bb1d983be0",
       "example_source_sha256": "02b187c842cd5f1fd7aaccec8391d9fdbd3c995301421bd9f098c9bb1d983be0",
       "kind": "value"
@@ -1245,7 +1245,7 @@
       "recipe": "ref.client",
       "example": "examples/api-reference/typescript/client.ts",
       "limits": "Response/fetch synthetic, реального backend нет. Trusted baseUrl и same-origin paths; runtime decode обязательно. Headers/session/CSRF/ACL/idempotency у host. Один invocation транспорта не исключает wire replay браузером. Unknown POST сверяется с тем же ключом без автоматического retry.",
-      "intent": "Kind/status/outcome без response body",
+      "intent": "Вид, статус и исход ошибки без тела ответа",
       "example_sha256": "02b187c842cd5f1fd7aaccec8391d9fdbd3c995301421bd9f098c9bb1d983be0",
       "example_source_sha256": "02b187c842cd5f1fd7aaccec8391d9fdbd3c995301421bd9f098c9bb1d983be0",
       "kind": "value"
@@ -1257,7 +1257,7 @@
       "recipe": "ref.client",
       "example": "examples/api-reference/typescript/client.ts",
       "limits": "Response/fetch synthetic, реального backend нет. Trusted baseUrl и same-origin paths; runtime decode обязательно. Headers/session/CSRF/ACL/idempotency у host. Один invocation транспорта не исключает wire replay браузером. Unknown POST сверяется с тем же ключом без автоматического retry.",
-      "intent": "Literal HTTP/network/timeout/abort/response failure",
+      "intent": "Literal-вид сбоя: HTTP, сеть, таймаут, отмена или ответ",
       "example_sha256": "02b187c842cd5f1fd7aaccec8391d9fdbd3c995301421bd9f098c9bb1d983be0",
       "example_source_sha256": "02b187c842cd5f1fd7aaccec8391d9fdbd3c995301421bd9f098c9bb1d983be0",
       "kind": "type"
@@ -1269,7 +1269,7 @@
       "recipe": "ref.client",
       "example": "examples/api-reference/typescript/client.ts",
       "limits": "Response/fetch synthetic, реального backend нет. Trusted baseUrl и same-origin paths; runtime decode обязательно. Headers/session/CSRF/ACL/idempotency у host. Один invocation транспорта не исключает wire replay браузером. Unknown POST сверяется с тем же ключом без автоматического retry.",
-      "intent": "Base/headers/owned fetch transport",
+      "intent": "Базовый адрес, заголовки и свой транспорт fetch",
       "example_sha256": "02b187c842cd5f1fd7aaccec8391d9fdbd3c995301421bd9f098c9bb1d983be0",
       "example_source_sha256": "02b187c842cd5f1fd7aaccec8391d9fdbd3c995301421bd9f098c9bb1d983be0",
       "kind": "type"
@@ -1281,7 +1281,7 @@
       "recipe": "ref.client",
       "example": "examples/api-reference/typescript/client.ts",
       "limits": "Response/fetch synthetic, реального backend нет. Trusted baseUrl и same-origin paths; runtime decode обязательно. Headers/session/CSRF/ACL/idempotency у host. Один invocation транспорта не исключает wire replay браузером. Unknown POST сверяется с тем же ключом без автоматического retry.",
-      "intent": "Method/body/signal/timeout options",
+      "intent": "Метод, тело, сигнал отмены и таймаут",
       "example_sha256": "02b187c842cd5f1fd7aaccec8391d9fdbd3c995301421bd9f098c9bb1d983be0",
       "example_source_sha256": "02b187c842cd5f1fd7aaccec8391d9fdbd3c995301421bd9f098c9bb1d983be0",
       "kind": "type"
@@ -1293,7 +1293,7 @@
       "recipe": "ref.client",
       "example": "examples/api-reference/typescript/client.ts",
       "limits": "Response/fetch synthetic, реального backend нет. Trusted baseUrl и same-origin paths; runtime decode обязательно. Headers/session/CSRF/ACL/idempotency у host. Один invocation транспорта не исключает wire replay браузером. Unknown POST сверяется с тем же ключом без автоматического retry.",
-      "intent": "Typed Fetch-compatible adapter host",
+      "intent": "Типизированный адаптер, совместимый с fetch",
       "example_sha256": "02b187c842cd5f1fd7aaccec8391d9fdbd3c995301421bd9f098c9bb1d983be0",
       "example_source_sha256": "02b187c842cd5f1fd7aaccec8391d9fdbd3c995301421bd9f098c9bb1d983be0",
       "kind": "type"
@@ -1305,7 +1305,7 @@
       "recipe": "ref.draft",
       "example": "examples/api-reference/typescript/draft.ts",
       "limits": "Только serviceId/slotId, без auth/contacts/price/pending operation. Account scope должен поступать от server host; fixture scope не авторизация. Store не меняет scope автоматически при account switch. Storage sync; async CloudStorage требует другого adapter, failure дает unavailable/false.",
-      "intent": "Scoped read/write/clear и key",
+      "intent": "Чтение, запись и очистка черновика в своей области и ключ",
       "example_sha256": "eb9875da832d4da5ea79b40cfecacd435625d39b10db139d4d925743040d2029",
       "example_source_sha256": "eb9875da832d4da5ea79b40cfecacd435625d39b10db139d4d925743040d2029",
       "kind": "value"
@@ -1317,7 +1317,7 @@
       "recipe": "ref.draft",
       "example": "examples/api-reference/typescript/draft.ts",
       "limits": "Только serviceId/slotId, без auth/contacts/price/pending operation. Account scope должен поступать от server host; fixture scope не авторизация. Store не меняет scope автоматически при account switch. Storage sync; async CloudStorage требует другого adapter, failure дает unavailable/false.",
-      "intent": "Readonly nullable identifiers",
+      "intent": "Идентификаторы выбора, допускающие null, только чтение",
       "example_sha256": "eb9875da832d4da5ea79b40cfecacd435625d39b10db139d4d925743040d2029",
       "example_source_sha256": "eb9875da832d4da5ea79b40cfecacd435625d39b10db139d4d925743040d2029",
       "kind": "type"
@@ -1329,7 +1329,7 @@
       "recipe": "ref.draft",
       "example": "examples/api-reference/typescript/draft.ts",
       "limits": "Только serviceId/slotId, без auth/contacts/price/pending operation. Account scope должен поступать от server host; fixture scope не авторизация. Store не меняет scope автоматически при account switch. Storage sync; async CloudStorage требует другого adapter, failure дает unavailable/false.",
-      "intent": "Discriminated status с value только restored",
+      "intent": "Статус чтения; значение есть только у restored",
       "example_sha256": "eb9875da832d4da5ea79b40cfecacd435625d39b10db139d4d925743040d2029",
       "example_source_sha256": "eb9875da832d4da5ea79b40cfecacd435625d39b10db139d4d925743040d2029",
       "kind": "type"
@@ -1341,7 +1341,7 @@
       "recipe": "ref.draft",
       "example": "examples/api-reference/typescript/draft.ts",
       "limits": "Только serviceId/slotId, без auth/contacts/price/pending operation. Account scope должен поступать от server host; fixture scope не авторизация. Store не меняет scope автоматически при account switch. Storage sync; async CloudStorage требует другого adapter, failure дает unavailable/false.",
-      "intent": "Namespace/scope/TTL/clock",
+      "intent": "Пространство имен, область, TTL и часы",
       "example_sha256": "eb9875da832d4da5ea79b40cfecacd435625d39b10db139d4d925743040d2029",
       "example_source_sha256": "eb9875da832d4da5ea79b40cfecacd435625d39b10db139d4d925743040d2029",
       "kind": "type"
@@ -1353,7 +1353,7 @@
       "recipe": "ref.draft",
       "example": "examples/api-reference/typescript/draft.ts",
       "limits": "Только serviceId/slotId, без auth/contacts/price/pending operation. Account scope должен поступать от server host; fixture scope не авторизация. Store не меняет scope автоматически при account switch. Storage sync; async CloudStorage требует другого adapter, failure дает unavailable/false.",
-      "intent": "Sync storage contract",
+      "intent": "Контракт синхронного хранилища",
       "example_sha256": "eb9875da832d4da5ea79b40cfecacd435625d39b10db139d4d925743040d2029",
       "example_source_sha256": "eb9875da832d4da5ea79b40cfecacd435625d39b10db139d4d925743040d2029",
       "kind": "type"
@@ -1365,7 +1365,7 @@
       "recipe": "ref.draft",
       "example": "examples/api-reference/typescript/draft.ts",
       "limits": "Только serviceId/slotId, без auth/contacts/price/pending operation. Account scope должен поступать от server host; fixture scope не авторизация. Store не меняет scope автоматически при account switch. Storage sync; async CloudStorage требует другого adapter, failure дает unavailable/false.",
-      "intent": "Lazy owned storage factory",
+      "intent": "Ленивая фабрика своего хранилища",
       "example_sha256": "eb9875da832d4da5ea79b40cfecacd435625d39b10db139d4d925743040d2029",
       "example_source_sha256": "eb9875da832d4da5ea79b40cfecacd435625d39b10db139d4d925743040d2029",
       "kind": "type"
@@ -1377,7 +1377,7 @@
       "recipe": "ref.native",
       "example": "examples/api-reference/typescript/native.ts",
       "limits": "Каталоги и facade не являются полной parameter schema. Presence/platform/version не consent, launch, auth или успешный платеж. Callback и receiver сохраняются; host выбирает arguments/permissions. Listener/dispose подавляют late callbacks, native cleanup failure может требовать повторного dispose.",
-      "intent": "Supports/call/listen/dispose с gates",
+      "intent": "Проверка поддержки, вызов, подписка и освобождение с проверкой версии",
       "example_sha256": "dc045786eba0343587d05fbd8a537a5bf892f519bd96e2466ee29d84db7c3e95",
       "example_source_sha256": "dc045786eba0343587d05fbd8a537a5bf892f519bd96e2466ee29d84db7c3e95",
       "kind": "value"
@@ -1401,7 +1401,7 @@
       "recipe": "ref.native",
       "example": "examples/api-reference/typescript/native.ts",
       "limits": "Каталоги и facade не являются полной parameter schema. Presence/platform/version не consent, launch, auth или успешный платеж. Callback и receiver сохраняются; host выбирает arguments/permissions. Listener/dispose подавляют late callbacks, native cleanup failure может требовать повторного dispose.",
-      "intent": "Readonly path/minVersion/source catalog",
+      "intent": "Каталог путей, минимальных версий и источников, только чтение",
       "example_sha256": "dc045786eba0343587d05fbd8a537a5bf892f519bd96e2466ee29d84db7c3e95",
       "example_source_sha256": "dc045786eba0343587d05fbd8a537a5bf892f519bd96e2466ee29d84db7c3e95",
       "kind": "value"
@@ -1413,7 +1413,7 @@
       "recipe": "ref.native",
       "example": "examples/api-reference/typescript/native.ts",
       "limits": "Каталоги и facade не являются полной parameter schema. Presence/platform/version не consent, launch, auth или успешный платеж. Callback и receiver сохраняются; host выбирает arguments/permissions. Listener/dispose подавляют late callbacks, native cleanup failure может требовать повторного dispose.",
-      "intent": "Readonly имена native events",
+      "intent": "Имена нативных событий, только чтение",
       "example_sha256": "dc045786eba0343587d05fbd8a537a5bf892f519bd96e2466ee29d84db7c3e95",
       "example_source_sha256": "dc045786eba0343587d05fbd8a537a5bf892f519bd96e2466ee29d84db7c3e95",
       "kind": "value"
@@ -1425,7 +1425,7 @@
       "recipe": "ref.native",
       "example": "examples/api-reference/typescript/native.ts",
       "limits": "Каталоги и facade не являются полной parameter schema. Presence/platform/version не consent, launch, auth или успешный платеж. Callback и receiver сохраняются; host выбирает arguments/permissions. Listener/dispose подавляют late callbacks, native cleanup failure может требовать повторного dispose.",
-      "intent": "Readonly event version/source metadata",
+      "intent": "Версии и источники событий, только чтение",
       "example_sha256": "dc045786eba0343587d05fbd8a537a5bf892f519bd96e2466ee29d84db7c3e95",
       "example_source_sha256": "dc045786eba0343587d05fbd8a537a5bf892f519bd96e2466ee29d84db7c3e95",
       "kind": "value"
@@ -1461,7 +1461,7 @@
       "recipe": "ref.errors",
       "example": "examples/api-reference/typescript/errors.ts",
       "limits": "Developer messages не сериализуются в safe report. Operation kind отражает реальное действие; unknown write требует reconcile, classification не отменяет effect. InvalidType сохраняет TypeError catch, а не наследование PatternError. Type aliases не валидируют произвольный JSON автоматически.",
-      "intent": "Base code/outcome с report",
+      "intent": "Базовая ошибка с кодом, исходом и отчетом",
       "example_sha256": "4d1b8172353a97d5c44b72e5b32753fc65bfc4e7dc2fcee8f8005a119d5c646e",
       "example_source_sha256": "4d1b8172353a97d5c44b72e5b32753fc65bfc4e7dc2fcee8f8005a119d5c646e",
       "kind": "value"
@@ -1485,7 +1485,7 @@
       "recipe": "ref.errors",
       "example": "examples/api-reference/typescript/errors.ts",
       "limits": "Developer messages не сериализуются в safe report. Operation kind отражает реальное действие; unknown write требует reconcile, classification не отменяет effect. InvalidType сохраняет TypeError catch, а не наследование PatternError. Type aliases не валидируют произвольный JSON автоматически.",
-      "intent": "TypeError-compatible known local rejection",
+      "intent": "Совместимый с TypeError известный локальный отказ",
       "example_sha256": "4d1b8172353a97d5c44b72e5b32753fc65bfc4e7dc2fcee8f8005a119d5c646e",
       "example_source_sha256": "4d1b8172353a97d5c44b72e5b32753fc65bfc4e7dc2fcee8f8005a119d5c646e",
       "kind": "value"
@@ -1545,7 +1545,7 @@
       "recipe": "ref.errors",
       "example": "examples/api-reference/typescript/errors.ts",
       "limits": "Developer messages не сериализуются в safe report. Operation kind отражает реальное действие; unknown write требует reconcile, classification не отменяет effect. InvalidType сохраняет TypeError catch, а не наследование PatternError. Type aliases не валидируют произвольный JSON автоматически.",
-      "intent": "Allowlisted error metadata без raw exception",
+      "intent": "Метаданные ошибки по списку разрешенных, без сырого исключения",
       "example_sha256": "4d1b8172353a97d5c44b72e5b32753fc65bfc4e7dc2fcee8f8005a119d5c646e",
       "example_source_sha256": "4d1b8172353a97d5c44b72e5b32753fc65bfc4e7dc2fcee8f8005a119d5c646e",
       "kind": "value"
@@ -1557,7 +1557,7 @@
       "recipe": "ref.errors",
       "example": "examples/api-reference/typescript/errors.ts",
       "limits": "Developer messages не сериализуются в safe report. Operation kind отражает реальное действие; unknown write требует reconcile, classification не отменяет effect. InvalidType сохраняет TypeError catch, а не наследование PatternError. Type aliases не валидируют произвольный JSON автоматически.",
-      "intent": "Readonly code/category/outcome/recovery/message",
+      "intent": "Код, категория, исход, способ восстановления и сообщение, только чтение",
       "example_sha256": "4d1b8172353a97d5c44b72e5b32753fc65bfc4e7dc2fcee8f8005a119d5c646e",
       "example_source_sha256": "4d1b8172353a97d5c44b72e5b32753fc65bfc4e7dc2fcee8f8005a119d5c646e",
       "kind": "type"
@@ -1593,7 +1593,7 @@
       "recipe": "ref.errors",
       "example": "examples/api-reference/typescript/errors.ts",
       "limits": "Developer messages не сериализуются в safe report. Operation kind отражает реальное действие; unknown write требует reconcile, classification не отменяет effect. InvalidType сохраняет TypeError catch, а не наследование PatternError. Type aliases не валидируют произвольный JSON автоматически.",
-      "intent": "Literal outcome",
+      "intent": "Literal-исход: rejected, read-failed или unknown",
       "example_sha256": "4d1b8172353a97d5c44b72e5b32753fc65bfc4e7dc2fcee8f8005a119d5c646e",
       "example_source_sha256": "4d1b8172353a97d5c44b72e5b32753fc65bfc4e7dc2fcee8f8005a119d5c646e",
       "kind": "type"
@@ -1629,7 +1629,7 @@
       "recipe": "ref.bot_navigation",
       "example": "examples/api-reference/python/bot_navigation.py",
       "limits": "Нужен extra aiogram. Проверяются владелец, бот, чат, тема, сообщение и ревизия; сначала ответ на callback (ACK), неизвестный результат редактирования замораживает меню, восстановление — явное, в том же сообщении. Состояние живет в одном процессе и цикле событий: после рестарта старые кнопки устаревают. Сессии, задачи и бизнес-права принадлежат приложению. После неизвестного результата первой отправки повтора нет; работа интерфейса в живом Telegram не подтверждена.",
-      "intent": "Immutable plain screen with declared links/layout",
+      "intent": "Неизменяемый экран с объявленными переходами и раскладкой",
       "example_sha256": "2bdd6ebae6d75cd1cea4d8a51b8c7ec87247ccd2d6c88dfa15a56ec5756a5add",
       "example_source_sha256": "2bdd6ebae6d75cd1cea4d8a51b8c7ec87247ccd2d6c88dfa15a56ec5756a5add",
       "kind": "value"
@@ -1641,7 +1641,7 @@
       "recipe": "ref.bot_navigation",
       "example": "examples/api-reference/python/bot_navigation.py",
       "limits": "Нужен extra aiogram. Проверяются владелец, бот, чат, тема, сообщение и ревизия; сначала ответ на callback (ACK), неизвестный результат редактирования замораживает меню, восстановление — явное, в том же сообщении. Состояние живет в одном процессе и цикле событий: после рестарта старые кнопки устаревают. Сессии, задачи и бизнес-права принадлежат приложению. После неизвестного результата первой отправки повтора нет; работа интерфейса в живом Telegram не подтверждена.",
-      "intent": "Frozen scoped history/revision/phase snapshot",
+      "intent": "Неизменяемый снимок истории, ревизии и фазы в своей области",
       "example_sha256": "2bdd6ebae6d75cd1cea4d8a51b8c7ec87247ccd2d6c88dfa15a56ec5756a5add",
       "example_source_sha256": "2bdd6ebae6d75cd1cea4d8a51b8c7ec87247ccd2d6c88dfa15a56ec5756a5add",
       "kind": "value"
@@ -1653,7 +1653,7 @@
       "recipe": "ref.bot_navigation",
       "example": "examples/api-reference/python/bot_navigation.py",
       "limits": "Нужен extra aiogram. Проверяются владелец, бот, чат, тема, сообщение и ревизия; сначала ответ на callback (ACK), неизвестный результат редактирования замораживает меню, восстановление — явное, в том же сообщении. Состояние живет в одном процессе и цикле событий: после рестарта старые кнопки устаревают. Сессии, задачи и бизнес-права принадлежат приложению. После неизвестного результата первой отправки повтора нет; работа интерфейса в живом Telegram не подтверждена.",
-      "intent": "Safe accepted/denied/stale/unavailable/unknown feedback",
+      "intent": "Безопасный ответ: принято, отказано, устарело, недоступно или неизвестно",
       "example_sha256": "2bdd6ebae6d75cd1cea4d8a51b8c7ec87247ccd2d6c88dfa15a56ec5756a5add",
       "example_source_sha256": "2bdd6ebae6d75cd1cea4d8a51b8c7ec87247ccd2d6c88dfa15a56ec5756a5add",
       "kind": "value"
@@ -1665,7 +1665,7 @@
       "recipe": "ref.bot_navigation",
       "example": "examples/api-reference/python/bot_navigation.py",
       "limits": "Нужен extra aiogram. Проверяются владелец, бот, чат, тема, сообщение и ревизия; сначала ответ на callback (ACK), неизвестный результат редактирования замораживает меню, восстановление — явное, в том же сообщении. Состояние живет в одном процессе и цикле событий: после рестарта старые кнопки устаревают. Сессии, задачи и бизнес-права принадлежат приложению. После неизвестного результата первой отправки повтора нет; работа интерфейса в живом Telegram не подтверждена.",
-      "intent": "Bounded open/get_state/handle/discard lifecycle for one owned message",
+      "intent": "Открытие, состояние, обработка и сброс для одного своего сообщения",
       "example_sha256": "2bdd6ebae6d75cd1cea4d8a51b8c7ec87247ccd2d6c88dfa15a56ec5756a5add",
       "example_source_sha256": "2bdd6ebae6d75cd1cea4d8a51b8c7ec87247ccd2d6c88dfa15a56ec5756a5add",
       "kind": "value"
@@ -1677,7 +1677,7 @@
       "recipe": "ref.bot_navigation",
       "example": "examples/api-reference/python/bot_navigation.py",
       "limits": "Нужен extra aiogram. Проверяются владелец, бот, чат, тема, сообщение и ревизия; сначала ответ на callback (ACK), неизвестный результат редактирования замораживает меню, восстановление — явное, в том же сообщении. Состояние живет в одном процессе и цикле событий: после рестарта старые кнопки устаревают. Сессии, задачи и бизнес-права принадлежат приложению. После неизвестного результата первой отправки повтора нет; работа интерфейса в живом Telegram не подтверждена.",
-      "intent": "SDK Router with ACK-first guarded navigation and optional feedback",
+      "intent": "Router SDK: сначала ACK, проверки перехода и необязательный ответ",
       "example_sha256": "2bdd6ebae6d75cd1cea4d8a51b8c7ec87247ccd2d6c88dfa15a56ec5756a5add",
       "example_source_sha256": "2bdd6ebae6d75cd1cea4d8a51b8c7ec87247ccd2d6c88dfa15a56ec5756a5add",
       "kind": "value"
@@ -1689,7 +1689,7 @@
       "recipe": "ref.core_selection",
       "example": "examples/api-reference/python/core_selection.py",
       "limits": "Черновик на сервере в одном процессе; точные проверки владельца, контекста, ревизии и токена подтверждения. Бизнес-операция, долговременное хранение и работа нескольких процессов не гарантируются. Текущие права, `resource_version` и идемпотентная транзакция принадлежат приложению; синтетический транспорт не доказывает доставку и отображение в Telegram.",
-      "intent": "Immutable keyed option and filter membership",
+      "intent": "Неизменяемый вариант с ключом и принадлежностью к фильтрам",
       "example_sha256": "fe2f0b4a9b8b771e3532c715e1478dae48e882d32e38cb58696e4dd649242478",
       "example_source_sha256": "fe2f0b4a9b8b771e3532c715e1478dae48e882d32e38cb58696e4dd649242478",
       "kind": "value"
@@ -1701,7 +1701,7 @@
       "recipe": "ref.core_selection",
       "example": "examples/api-reference/python/core_selection.py",
       "limits": "Черновик на сервере в одном процессе; точные проверки владельца, контекста, ревизии и токена подтверждения. Бизнес-операция, долговременное хранение и работа нескольких процессов не гарантируются. Текущие права, `resource_version` и идемпотентная транзакция принадлежат приложению; синтетический транспорт не доказывает доставку и отображение в Telegram.",
-      "intent": "Current server values, field bounds and resource version",
+      "intent": "Текущие значения сервера, границы полей и версия ресурса",
       "example_sha256": "fe2f0b4a9b8b771e3532c715e1478dae48e882d32e38cb58696e4dd649242478",
       "example_source_sha256": "fe2f0b4a9b8b771e3532c715e1478dae48e882d32e38cb58696e4dd649242478",
       "kind": "value"
@@ -1713,7 +1713,7 @@
       "recipe": "ref.core_selection",
       "example": "examples/api-reference/python/core_selection.py",
       "limits": "Черновик на сервере в одном процессе; точные проверки владельца, контекста, ревизии и токена подтверждения. Бизнес-операция, долговременное хранение и работа нескольких процессов не гарантируются. Текущие права, `resource_version` и идемпотентная транзакция принадлежат приложению; синтетический транспорт не доказывает доставку и отображение в Telegram.",
-      "intent": "Host-derived owner/bot/chat/thread/message identity",
+      "intent": "Владелец, бот, чат, тема и сообщение, определенные приложением",
       "example_sha256": "fe2f0b4a9b8b771e3532c715e1478dae48e882d32e38cb58696e4dd649242478",
       "example_source_sha256": "fe2f0b4a9b8b771e3532c715e1478dae48e882d32e38cb58696e4dd649242478",
       "kind": "value"
@@ -1725,7 +1725,7 @@
       "recipe": "ref.core_selection",
       "example": "examples/api-reference/python/core_selection.py",
       "limits": "Черновик на сервере в одном процессе; точные проверки владельца, контекста, ревизии и токена подтверждения. Бизнес-операция, долговременное хранение и работа нескольких процессов не гарантируются. Текущие права, `resource_version` и идемпотентная транзакция принадлежат приложению; синтетический транспорт не доказывает доставку и отображение в Telegram.",
-      "intent": "Immutable draft snapshot, summary and bounded callback code",
+      "intent": "Неизменяемый снимок черновика, итог и ограниченный код callback",
       "example_sha256": "fe2f0b4a9b8b771e3532c715e1478dae48e882d32e38cb58696e4dd649242478",
       "example_source_sha256": "fe2f0b4a9b8b771e3532c715e1478dae48e882d32e38cb58696e4dd649242478",
       "kind": "value"
@@ -1737,7 +1737,7 @@
       "recipe": "ref.core_selection",
       "example": "examples/api-reference/python/core_selection.py",
       "limits": "Черновик на сервере в одном процессе; точные проверки владельца, контекста, ревизии и токена подтверждения. Бизнес-операция, долговременное хранение и работа нескольких процессов не гарантируются. Текущие права, `resource_version` и идемпотентная транзакция принадлежат приложению; синтетический транспорт не доказывает доставку и отображение в Telegram.",
-      "intent": "Guarded selection decision with safe feedback",
+      "intent": "Решение по выбору после проверок с безопасным ответом",
       "example_sha256": "fe2f0b4a9b8b771e3532c715e1478dae48e882d32e38cb58696e4dd649242478",
       "example_source_sha256": "fe2f0b4a9b8b771e3532c715e1478dae48e882d32e38cb58696e4dd649242478",
       "kind": "value"
@@ -1749,7 +1749,7 @@
       "recipe": "ref.core_selection",
       "example": "examples/api-reference/python/core_selection.py",
       "limits": "Черновик на сервере в одном процессе; точные проверки владельца, контекста, ревизии и токена подтверждения. Бизнес-операция, долговременное хранение и работа нескольких процессов не гарантируются. Текущие права, `resource_version` и идемпотентная транзакция принадлежат приложению; синтетический транспорт не доказывает доставку и отображение в Telegram.",
-      "intent": "Atomic server draft, rule refresh and revision-bound one-time confirmation",
+      "intent": "Атомарный черновик на сервере, обновление правил и одноразовое подтверждение по ревизии",
       "example_sha256": "fe2f0b4a9b8b771e3532c715e1478dae48e882d32e38cb58696e4dd649242478",
       "example_source_sha256": "fe2f0b4a9b8b771e3532c715e1478dae48e882d32e38cb58696e4dd649242478",
       "kind": "value"
@@ -1761,7 +1761,7 @@
       "recipe": "ref.bot_selection",
       "example": "examples/api-reference/python/bot_selection.py",
       "limits": "Черновик на сервере в одном процессе; точные проверки владельца, контекста, ревизии и токена подтверждения. Бизнес-операция, долговременное хранение и работа нескольких процессов не гарантируются. Текущие права, `resource_version` и идемпотентная транзакция принадлежат приложению; синтетический транспорт не доказывает доставку и отображение в Telegram.",
-      "intent": "Render toggle/multiselect/quantity/filter and confirmation markup with capability fallback",
+      "intent": "Разметка переключателей, множественного выбора, количества, фильтров и подтверждения с запасным оформлением",
       "example_sha256": "177d88baae02778f3a21064421c2f765b5f0c8691a19fc4f162b112947e279c9",
       "example_source_sha256": "177d88baae02778f3a21064421c2f765b5f0c8691a19fc4f162b112947e279c9",
       "kind": "value"
@@ -1773,7 +1773,7 @@
       "recipe": "ref.bot_selection",
       "example": "examples/api-reference/python/bot_selection.py",
       "limits": "Черновик на сервере в одном процессе; точные проверки владельца, контекста, ревизии и токена подтверждения. Бизнес-операция, долговременное хранение и работа нескольких процессов не гарантируются. Текущие права, `resource_version` и идемпотентная транзакция принадлежат приложению; синтетический транспорт не доказывает доставку и отображение в Telegram.",
-      "intent": "ACK-first composition with fresh server spec, safe callback guards and host-owned hooks",
+      "intent": "Сначала ACK, свежая спецификация с сервера, проверки callback и хуки приложения",
       "example_sha256": "177d88baae02778f3a21064421c2f765b5f0c8691a19fc4f162b112947e279c9",
       "example_source_sha256": "177d88baae02778f3a21064421c2f765b5f0c8691a19fc4f162b112947e279c9",
       "kind": "value"
@@ -1785,7 +1785,7 @@
       "recipe": "ref.core_calendar",
       "example": "examples/api-reference/python/core_calendar.py",
       "limits": "Без SDK; для Europe/Warsaw нужна база IANA приложения или необязательный extra calendar (проверено с tzdata 2026.5). Текущие права приложения проверяются синхронно внутри транзакции файловой SQLite до эффекта или повтора. Публикация расписания — доверенное приложению сравнение с заменой (CAS); неизменяемая квитанция отличается от текущей записи; внешних побочных эффектов нет. Файл, миграции, срок хранения и асинхронное завершение работы принадлежат приложению.",
-      "intent": "Immutable Monday-first month, available/blocked dates and plain summary",
+      "intent": "Неизменяемый месяц с понедельника, доступные и закрытые даты и краткий итог",
       "example_sha256": "b2fd640b4e935e9b867b80ef48aca9a443d7a4f748ecf57bd9bbcde7e32147fc",
       "example_source_sha256": "b2fd640b4e935e9b867b80ef48aca9a443d7a4f748ecf57bd9bbcde7e32147fc",
       "kind": "value"
@@ -1797,7 +1797,7 @@
       "recipe": "ref.core_calendar",
       "example": "examples/api-reference/python/core_calendar.py",
       "limits": "Без SDK; для Europe/Warsaw нужна база IANA приложения или необязательный extra calendar (проверено с tzdata 2026.5). Текущие права приложения проверяются синхронно внутри транзакции файловой SQLite до эффекта или повтора. Публикация расписания — доверенное приложению сравнение с заменой (CAS); неизменяемая квитанция отличается от текущей записи; внешних побочных эффектов нет. Файл, миграции, срок хранения и асинхронное завершение работы принадлежат приложению.",
-      "intent": "Half-open UTC interval and local offset display",
+      "intent": "Полуоткрытый интервал UTC и отображение со смещением местного времени",
       "example_sha256": "b2fd640b4e935e9b867b80ef48aca9a443d7a4f748ecf57bd9bbcde7e32147fc",
       "example_source_sha256": "b2fd640b4e935e9b867b80ef48aca9a443d7a4f748ecf57bd9bbcde7e32147fc",
       "kind": "value"
@@ -1809,7 +1809,7 @@
       "recipe": "ref.core_calendar",
       "example": "examples/api-reference/python/core_calendar.py",
       "limits": "Без SDK; для Europe/Warsaw нужна база IANA приложения или необязательный extra calendar (проверено с tzdata 2026.5). Текущие права приложения проверяются синхронно внутри транзакции файловой SQLite до эффекта или повтора. Публикация расписания — доверенное приложению сравнение с заменой (CAS); неизменяемая квитанция отличается от текущей записи; внешних побочных эффектов нет. Файл, миграции, срок хранения и асинхронное завершение работы принадлежат приложению.",
-      "intent": "Naive wall time to UTC, DST gap rejection and explicit ambiguous fold",
+      "intent": "Перевод местного времени в UTC: отказ при пропуске из-за перехода на летнее время и явный выбор при двусмысленности",
       "example_sha256": "b2fd640b4e935e9b867b80ef48aca9a443d7a4f748ecf57bd9bbcde7e32147fc",
       "example_source_sha256": "b2fd640b4e935e9b867b80ef48aca9a443d7a4f748ecf57bd9bbcde7e32147fc",
       "kind": "value"
@@ -1821,7 +1821,7 @@
       "recipe": "ref.core_calendar",
       "example": "examples/api-reference/python/core_calendar.py",
       "limits": "Без SDK; для Europe/Warsaw нужна база IANA приложения или необязательный extra calendar (проверено с tzdata 2026.5). Текущие права приложения проверяются синхронно внутри транзакции файловой SQLite до эффекта или повтора. Публикация расписания — доверенное приложению сравнение с заменой (CAS); неизменяемая квитанция отличается от текущей записи; внешних побочных эффектов нет. Файл, миграции, срок хранения и асинхронное завершение работы принадлежат приложению.",
-      "intent": "Immutable resource/revision/sorted uniquely keyed slots",
+      "intent": "Неизменяемые ресурс, ревизия и отсортированные слоты с уникальными ключами",
       "example_sha256": "b2fd640b4e935e9b867b80ef48aca9a443d7a4f748ecf57bd9bbcde7e32147fc",
       "example_source_sha256": "b2fd640b4e935e9b867b80ef48aca9a443d7a4f748ecf57bd9bbcde7e32147fc",
       "kind": "value"
@@ -1833,7 +1833,7 @@
       "recipe": "ref.core_calendar",
       "example": "examples/api-reference/python/core_calendar.py",
       "limits": "Без SDK; для Europe/Warsaw нужна база IANA приложения или необязательный extra calendar (проверено с tzdata 2026.5). Текущие права приложения проверяются синхронно внутри транзакции файловой SQLite до эффекта или повтора. Публикация расписания — доверенное приложению сравнение с заменой (CAS); неизменяемая квитанция отличается от текущей записи; внешних побочных эффектов нет. Файл, миграции, срок хранения и асинхронное завершение работы принадлежат приложению.",
-      "intent": "Current owner-bound booking status and immutable times",
+      "intent": "Текущий статус записи владельца и неизменяемое время",
       "example_sha256": "b2fd640b4e935e9b867b80ef48aca9a443d7a4f748ecf57bd9bbcde7e32147fc",
       "example_source_sha256": "b2fd640b4e935e9b867b80ef48aca9a443d7a4f748ecf57bd9bbcde7e32147fc",
       "kind": "value"
@@ -1845,7 +1845,7 @@
       "recipe": "ref.core_calendar",
       "example": "examples/api-reference/python/core_calendar.py",
       "limits": "Без SDK; для Europe/Warsaw нужна база IANA приложения или необязательный extra calendar (проверено с tzdata 2026.5). Текущие права приложения проверяются синхронно внутри транзакции файловой SQLite до эффекта или повтора. Публикация расписания — доверенное приложению сравнение с заменой (CAS); неизменяемая квитанция отличается от текущей записи; внешних побочных эффектов нет. Файл, миграции, срок хранения и асинхронное завершение работы принадлежат приложению.",
-      "intent": "Explicit schema, schedule CAS, current ACL, atomic reserve/cancel and replay",
+      "intent": "Явная схема, CAS расписания, текущие права, атомарные бронь и отмена, повтор",
       "example_sha256": "b2fd640b4e935e9b867b80ef48aca9a443d7a4f748ecf57bd9bbcde7e32147fc",
       "example_source_sha256": "b2fd640b4e935e9b867b80ef48aca9a443d7a4f748ecf57bd9bbcde7e32147fc",
       "kind": "value"
@@ -1857,7 +1857,7 @@
       "recipe": "ref.bot_calendar",
       "example": "examples/api-reference/python/bot_calendar.py",
       "limits": "Нужен extra aiogram; только разметка. Контроллер обязан привязать callback data к владельцу, контексту и ревизии; транзакция записи заново проверяет доступность. Запасной вариант по умолчанию просто не показывает недоступные дни. `disabled_buttons=True` требует поддержки, явно проверенной приложением; работа в живых клиентах не заявлена.",
-      "intent": "Available-date fallback or native disabled month grid with explicit navigation",
+      "intent": "Только доступные даты или нативная сетка месяца с неактивными днями и явной навигацией",
       "example_sha256": "f96e073461ae88e8f76fcb67fe3ec2b2c0be4492ab30666ac75d35d7f7b64133",
       "example_source_sha256": "f96e073461ae88e8f76fcb67fe3ec2b2c0be4492ab30666ac75d35d7f7b64133",
       "kind": "value"
@@ -1869,7 +1869,7 @@
       "recipe": "ref.bot_calendar",
       "example": "examples/api-reference/python/bot_calendar.py",
       "limits": "Нужен extra aiogram; только разметка. Контроллер обязан привязать callback data к владельцу, контексту и ревизии; транзакция записи заново проверяет доступность. Запасной вариант по умолчанию просто не показывает недоступные дни. `disabled_buttons=True` требует поддержки, явно проверенной приложением; работа в живых клиентах не заявлена.",
-      "intent": "Enabled UTC intervals displayed with local offset, native layout/validation",
+      "intent": "Доступные интервалы UTC со смещением местного времени, нативная раскладка и проверка",
       "example_sha256": "f96e073461ae88e8f76fcb67fe3ec2b2c0be4492ab30666ac75d35d7f7b64133",
       "example_source_sha256": "f96e073461ae88e8f76fcb67fe3ec2b2c0be4492ab30666ac75d35d7f7b64133",
       "kind": "value"
@@ -1881,7 +1881,7 @@
       "recipe": "ref.bot_dialog_fields",
       "example": "examples/api-reference/python/bot_dialog_fields.py",
       "limits": "Нужен extra aiogram. Обычный личный чат; изоляция FSM и событий и долговечная бизнес-транзакция того же намерения — на стороне приложения. ForceReply связывается с автором и шагом; нативные значения требуют подтверждения. Метаданные и координаты не доказывают содержимое, личность или присутствие. Приемки в живых клиентах нет.",
-      "intent": "JSON-compatible string or flat metadata",
+      "intent": "Строка или плоские метаданные, совместимые с JSON",
       "example_sha256": "89edee3c0aacd0253018cfed93667b7b4a29127a88fd452fd6bb94ff8be78a48",
       "example_source_sha256": "89edee3c0aacd0253018cfed93667b7b4a29127a88fd452fd6bb94ff8be78a48",
       "kind": "value"
@@ -1893,7 +1893,7 @@
       "recipe": "ref.bot_dialog_fields",
       "example": "examples/api-reference/python/bot_dialog_fields.py",
       "limits": "Нужен extra aiogram. Обычный личный чат; изоляция FSM и событий и долговечная бизнес-транзакция того же намерения — на стороне приложения. ForceReply связывается с автором и шагом; нативные значения требуют подтверждения. Метаданные и координаты не доказывают содержимое, личность или присутствие. Приемки в живых клиентах нет.",
-      "intent": "Exact bounded decimal string",
+      "intent": "Точное десятичное число в границах, строкой",
       "example_sha256": "89edee3c0aacd0253018cfed93667b7b4a29127a88fd452fd6bb94ff8be78a48",
       "example_source_sha256": "89edee3c0aacd0253018cfed93667b7b4a29127a88fd452fd6bb94ff8be78a48",
       "kind": "value"
@@ -1905,7 +1905,7 @@
       "recipe": "ref.bot_dialog_fields",
       "example": "examples/api-reference/python/bot_dialog_fields.py",
       "limits": "Нужен extra aiogram. Обычный личный чат; изоляция FSM и событий и долговечная бизнес-транзакция того же намерения — на стороне приложения. ForceReply связывается с автором и шагом; нативные значения требуют подтверждения. Метаданные и координаты не доказывают содержимое, личность или присутствие. Приемки в живых клиентах нет.",
-      "intent": "ASCII mailbox format",
+      "intent": "Формат ASCII-адреса почты",
       "example_sha256": "89edee3c0aacd0253018cfed93667b7b4a29127a88fd452fd6bb94ff8be78a48",
       "example_source_sha256": "89edee3c0aacd0253018cfed93667b7b4a29127a88fd452fd6bb94ff8be78a48",
       "kind": "value"
@@ -1917,7 +1917,7 @@
       "recipe": "ref.bot_dialog_fields",
       "example": "examples/api-reference/python/bot_dialog_fields.py",
       "limits": "Нужен extra aiogram. Обычный личный чат; изоляция FSM и событий и долговечная бизнес-транзакция того же намерения — на стороне приложения. ForceReply связывается с автором и шагом; нативные значения требуют подтверждения. Метаданные и координаты не доказывают содержимое, личность или присутствие. Приемки в живых клиентах нет.",
-      "intent": "Explicit international number",
+      "intent": "Номер в международном формате",
       "example_sha256": "89edee3c0aacd0253018cfed93667b7b4a29127a88fd452fd6bb94ff8be78a48",
       "example_source_sha256": "89edee3c0aacd0253018cfed93667b7b4a29127a88fd452fd6bb94ff8be78a48",
       "kind": "value"
@@ -1929,7 +1929,7 @@
       "recipe": "ref.bot_dialog_fields",
       "example": "examples/api-reference/python/bot_dialog_fields.py",
       "limits": "Нужен extra aiogram. Обычный личный чат; изоляция FSM и событий и долговечная бизнес-транзакция того же намерения — на стороне приложения. ForceReply связывается с автором и шагом; нативные значения требуют подтверждения. Метаданные и координаты не доказывают содержимое, личность или присутствие. Приемки в живых клиентах нет.",
-      "intent": "Existing calendar date with bounds",
+      "intent": "Существующая календарная дата в границах",
       "example_sha256": "89edee3c0aacd0253018cfed93667b7b4a29127a88fd452fd6bb94ff8be78a48",
       "example_source_sha256": "89edee3c0aacd0253018cfed93667b7b4a29127a88fd452fd6bb94ff8be78a48",
       "kind": "value"
@@ -1941,7 +1941,7 @@
       "recipe": "ref.bot_dialog_fields",
       "example": "examples/api-reference/python/bot_dialog_fields.py",
       "limits": "Нужен extra aiogram. Обычный личный чат; изоляция FSM и событий и долговечная бизнес-транзакция того же намерения — на стороне приложения. ForceReply связывается с автором и шагом; нативные значения требуют подтверждения. Метаданные и координаты не доказывают содержимое, личность или присутствие. Приемки в живых клиентах нет.",
-      "intent": "Bounded opaque document metadata",
+      "intent": "Ограниченные непрозрачные метаданные документа",
       "example_sha256": "89edee3c0aacd0253018cfed93667b7b4a29127a88fd452fd6bb94ff8be78a48",
       "example_source_sha256": "89edee3c0aacd0253018cfed93667b7b4a29127a88fd452fd6bb94ff8be78a48",
       "kind": "value"
@@ -1953,7 +1953,7 @@
       "recipe": "ref.bot_dialog_fields",
       "example": "examples/api-reference/python/bot_dialog_fields.py",
       "limits": "Нужен extra aiogram. Обычный личный чат; изоляция FSM и событий и долговечная бизнес-транзакция того же намерения — на стороне приложения. ForceReply связывается с автором и шагом; нативные значения требуют подтверждения. Метаданные и координаты не доказывают содержимое, личность или присутствие. Приемки в живых клиентах нет.",
-      "intent": "Own or explicitly third-party contact candidate",
+      "intent": "Свой или явно чужой контакт-кандидат",
       "example_sha256": "89edee3c0aacd0253018cfed93667b7b4a29127a88fd452fd6bb94ff8be78a48",
       "example_source_sha256": "89edee3c0aacd0253018cfed93667b7b4a29127a88fd452fd6bb94ff8be78a48",
       "kind": "value"
@@ -1965,7 +1965,7 @@
       "recipe": "ref.bot_dialog_fields",
       "example": "examples/api-reference/python/bot_dialog_fields.py",
       "limits": "Нужен extra aiogram. Обычный личный чат; изоляция FSM и событий и долговечная бизнес-транзакция того же намерения — на стороне приложения. ForceReply связывается с автором и шагом; нативные значения требуют подтверждения. Метаданные и координаты не доказывают содержимое, личность или присутствие. Приемки в живых клиентах нет.",
-      "intent": "Finite static coordinate candidate",
+      "intent": "Конечные статичные координаты-кандидат",
       "example_sha256": "89edee3c0aacd0253018cfed93667b7b4a29127a88fd452fd6bb94ff8be78a48",
       "example_source_sha256": "89edee3c0aacd0253018cfed93667b7b4a29127a88fd452fd6bb94ff8be78a48",
       "kind": "value"
@@ -1977,7 +1977,7 @@
       "recipe": "ref.bot_dialog_fields",
       "example": "examples/api-reference/python/bot_dialog_fields.py",
       "limits": "Нужен extra aiogram. Обычный личный чат; изоляция FSM и событий и долговечная бизнес-транзакция того же намерения — на стороне приложения. ForceReply связывается с автором и шагом; нативные значения требуют подтверждения. Метаданные и координаты не доказывают содержимое, личность или присутствие. Приемки в живых клиентах нет.",
-      "intent": "Immutable identity and values; fresh as_dict",
+      "intent": "Неизменяемые личность и ответы; новый as_dict при каждом вызове",
       "example_sha256": "89edee3c0aacd0253018cfed93667b7b4a29127a88fd452fd6bb94ff8be78a48",
       "example_source_sha256": "89edee3c0aacd0253018cfed93667b7b4a29127a88fd452fd6bb94ff8be78a48",
       "kind": "value"
@@ -1989,7 +1989,7 @@
       "recipe": "ref.bot_dialog_fields",
       "example": "examples/api-reference/python/bot_dialog_fields.py",
       "limits": "Нужен extra aiogram. Обычный личный чат; изоляция FSM и событий и долговечная бизнес-транзакция того же намерения — на стороне приложения. ForceReply связывается с автором и шагом; нативные значения требуют подтверждения. Метаданные и координаты не доказывают содержимое, личность или присутствие. Приемки в живых клиентах нет.",
-      "intent": "Mixed router with owner/step guards, back/cancel and confirmation",
+      "intent": "Смешанная форма с проверкой владельца и шага, назад, отменой и подтверждением",
       "example_sha256": "89edee3c0aacd0253018cfed93667b7b4a29127a88fd452fd6bb94ff8be78a48",
       "example_source_sha256": "89edee3c0aacd0253018cfed93667b7b4a29127a88fd452fd6bb94ff8be78a48",
       "kind": "value"
@@ -2025,7 +2025,7 @@
       "recipe": "ref.bot_media",
       "example": "examples/api-reference/python/bot_media.py",
       "limits": "Нужен extra aiogram; запросы ничего не отправляют сами. Типизированная загрузка байтов или `file_id` того же бота; проверки кодека и прав нет. Альбом — от 2 до 10 совместимых элементов, подпись — до 1024 единиц UTF-16, загрузка в inline отклоняется. Явное ограниченное скачивание с серверов Telegram закрывает поток; локальной файловой системы, URL, преобразования `unique_id` и автоматического повтора нет. Приложение сохраняет нативную маршрутизацию и права и проверяет фактическое содержимое.",
-      "intent": "Immutable bytes/filename или same-bot file_id, bounds и fresh multipart input",
+      "intent": "Неизменяемые байты и имя файла или file_id того же бота, границы и новый multipart",
       "example_sha256": "f17d76df9fbd7edca66b716c96a8e37aa630130bdc1100dd0fea526b2fe519f2",
       "example_source_sha256": "f17d76df9fbd7edca66b716c96a8e37aa630130bdc1100dd0fea526b2fe519f2",
       "kind": "value"
@@ -2037,7 +2037,7 @@
       "recipe": "ref.bot_media",
       "example": "examples/api-reference/python/bot_media.py",
       "limits": "Нужен extra aiogram; запросы ничего не отправляют сами. Типизированная загрузка байтов или `file_id` того же бота; проверки кодека и прав нет. Альбом — от 2 до 10 совместимых элементов, подпись — до 1024 единиц UTF-16, загрузка в inline отклоняется. Явное ограниченное скачивание с серверов Telegram закрывает поток; локальной файловой системы, URL, преобразования `unique_id` и автоматического повтора нет. Приложение сохраняет нативную маршрутизацию и права и проверяет фактическое содержимое.",
-      "intent": "Immutable typed source, literal FormattedText caption и presentation flags",
+      "intent": "Неизменяемый типизированный источник, буквальная подпись FormattedText и флаги оформления",
       "example_sha256": "f17d76df9fbd7edca66b716c96a8e37aa630130bdc1100dd0fea526b2fe519f2",
       "example_source_sha256": "f17d76df9fbd7edca66b716c96a8e37aa630130bdc1100dd0fea526b2fe519f2",
       "kind": "value"
@@ -2049,7 +2049,7 @@
       "recipe": "ref.bot_media",
       "example": "examples/api-reference/python/bot_media.py",
       "limits": "Нужен extra aiogram; запросы ничего не отправляют сами. Типизированная загрузка байтов или `file_id` того же бота; проверки кодека и прав нет. Альбом — от 2 до 10 совместимых элементов, подпись — до 1024 единиц UTF-16, загрузка в inline отклоняется. Явное ограниченное скачивание с серверов Telegram закрывает поток; локальной файловой системы, URL, преобразования `unique_id` и автоматического повтора нет. Приложение сохраняет нативную маршрутизацию и права и проверяет фактическое содержимое.",
-      "intent": "Frozen bounded bytes и bot-scoped identifiers без URL/file_path",
+      "intent": "Ограниченные байты и идентификаторы этого бота без URL и file_path",
       "example_sha256": "f17d76df9fbd7edca66b716c96a8e37aa630130bdc1100dd0fea526b2fe519f2",
       "example_source_sha256": "f17d76df9fbd7edca66b716c96a8e37aa630130bdc1100dd0fea526b2fe519f2",
       "kind": "value"
@@ -2073,7 +2073,7 @@
       "recipe": "ref.bot_media",
       "example": "examples/api-reference/python/bot_media.py",
       "limits": "Нужен extra aiogram; запросы ничего не отправляют сами. Типизированная загрузка байтов или `file_id` того же бота; проверки кодека и прав нет. Альбом — от 2 до 10 совместимых элементов, подпись — до 1024 единиц UTF-16, загрузка в inline отклоняется. Явное ограниченное скачивание с серверов Telegram закрывает поток; локальной файловой системы, URL, преобразования `unique_id` и автоматического повтора нет. Приложение сохраняет нативную маршрутизацию и права и проверяет фактическое содержимое.",
-      "intent": "Один native 2..10-item homogeneous/visual album без batching",
+      "intent": "Один нативный однородный альбом из 2–10 элементов без разбиения на пачки",
       "example_sha256": "f17d76df9fbd7edca66b716c96a8e37aa630130bdc1100dd0fea526b2fe519f2",
       "example_source_sha256": "f17d76df9fbd7edca66b716c96a8e37aa630130bdc1100dd0fea526b2fe519f2",
       "kind": "value"
@@ -2085,7 +2085,7 @@
       "recipe": "ref.bot_media",
       "example": "examples/api-reference/python/bot_media.py",
       "limits": "Нужен extra aiogram; запросы ничего не отправляют сами. Типизированная загрузка байтов или `file_id` того же бота; проверки кодека и прав нет. Альбом — от 2 до 10 совместимых элементов, подпись — до 1024 единиц UTF-16, загрузка в inline отклоняется. Явное ограниченное скачивание с серверов Telegram закрывает поток; локальной файловой системы, URL, преобразования `unique_id` и автоматического повтора нет. Приложение сохраняет нативную маршрутизацию и права и проверяет фактическое содержимое.",
-      "intent": "Exclusive chat/message или inline address и album type guard",
+      "intent": "Замена по чату и сообщению либо по inline-адресу с проверкой типа альбома",
       "example_sha256": "f17d76df9fbd7edca66b716c96a8e37aa630130bdc1100dd0fea526b2fe519f2",
       "example_source_sha256": "f17d76df9fbd7edca66b716c96a8e37aa630130bdc1100dd0fea526b2fe519f2",
       "kind": "value"
@@ -2133,7 +2133,7 @@
       "recipe": "ref.bot_profiles",
       "example": "examples/api-reference/python/bot_profiles.py",
       "limits": "Нужен extra aiogram; неизменяемые выбранные факты SDK, различие `bool`/`None`, источник и время не авторизуют пользователя. Явные нативные чтения сохраняют видимость и запасную локаль. Запись в профиль собственного бота требует свежей личности и текущих прав приложения на каждый метод; `None` пропускает поле, пустая строка очищает локаль, аватар — глобальный, из новых байтов. Кодек и содержимое, сериализация, кеши и сверка — на стороне приложения; последовательные записи и чтение не атомарны, отмена или отклоненный `await` не откатывает эффекты. Business, MTProto, редактирования произвольного профиля и живой проверки нет.",
-      "intent": "Frozen numeric identity, optional text/Premium/capabilities и aware source observation",
+      "intent": "Неизменяемые ID, необязательные текст, Premium и возможности, источник и время наблюдения",
       "example_sha256": "d8a463a0df22f7e231e333904f9aed1dc614a120e973466e6e55393185901571",
       "example_source_sha256": "d8a463a0df22f7e231e333904f9aed1dc614a120e973466e6e55393185901571",
       "kind": "value"
@@ -2181,7 +2181,7 @@
       "recipe": "ref.bot_profiles",
       "example": "examples/api-reference/python/bot_profiles.py",
       "limits": "Нужен extra aiogram; неизменяемые выбранные факты SDK, различие `bool`/`None`, источник и время не авторизуют пользователя. Явные нативные чтения сохраняют видимость и запасную локаль. Запись в профиль собственного бота требует свежей личности и текущих прав приложения на каждый метод; `None` пропускает поле, пустая строка очищает локаль, аватар — глобальный, из новых байтов. Кодек и содержимое, сериализация, кеши и сверка — на стороне приложения; последовательные записи и чтение не атомарны, отмена или отклоненный `await` не откатывает эффекты. Business, MTProto, редактирования произвольного профиля и живой проверки нет.",
-      "intent": "Fresh getMe/localized texts, optional own-bot ProfilePhotos; не atomic snapshot",
+      "intent": "Свежие getMe и локализованные тексты, необязательные фото своего бота; это не атомарный снимок",
       "example_sha256": "d8a463a0df22f7e231e333904f9aed1dc614a120e973466e6e55393185901571",
       "example_source_sha256": "d8a463a0df22f7e231e333904f9aed1dc614a120e973466e6e55393185901571",
       "kind": "value"
@@ -2253,7 +2253,7 @@
       "recipe": "ref.bot_profiles",
       "example": "examples/api-reference/python/bot_profiles.py",
       "limits": "Нужен extra aiogram; неизменяемые выбранные факты SDK, различие `bool`/`None`, источник и время не авторизуют пользователя. Явные нативные чтения сохраняют видимость и запасную локаль. Запись в профиль собственного бота требует свежей личности и текущих прав приложения на каждый метод; `None` пропускает поле, пустая строка очищает локаль, аватар — глобальный, из новых байтов. Кодек и содержимое, сериализация, кеши и сверка — на стороне приложения; последовательные записи и чтение не атомарны, отмена или отклоненный `await` не откатывает эффекты. Business, MTProto, редактирования произвольного профиля и живой проверки нет.",
-      "intent": "Fresh getMe плюс три locale reads; optional own-bot photos, unrequested None",
+      "intent": "Свежий getMe и три чтения по локалям; фото своего бота по запросу, иначе None",
       "example_sha256": "d8a463a0df22f7e231e333904f9aed1dc614a120e973466e6e55393185901571",
       "example_source_sha256": "d8a463a0df22f7e231e333904f9aed1dc614a120e973466e6e55393185901571",
       "kind": "value"
@@ -2277,7 +2277,7 @@
       "recipe": "ref.bot_inline_search",
       "example": "examples/api-reference/python/bot_inline_search.py",
       "limits": "Личные элементы по умолчанию нельзя делиться; персональный кеш Telegram не делает отправленное inline-сообщение секретным. Текущие права, ревизии каталога и прав, долговечный секрет, сроки, конкурентность и хранилище принадлежат приложению. Персональные курсоры привязаны к пользователю, боту, запросу, контексту и каталогу; общий кеш полностью публичный, для всех контекстов и не зависит от пользователя. Положительный серверный кеш может повторить старые результаты, не обращаясь к боту, поэтому выдача с текущими ограничениями прав использует `cache_time=0`. Срок цепочки курсоров не продлевается; устаревший, запрещенный или просроченный запрос получает пустой персональный ответ, а не автоматический перезапуск. Статьи передаются буквально, проверенные метаданные emoji — по явному согласию; повтора нативного ответа, учета выбранных результатов и живой проверки приватности нет.",
-      "intent": "Literal inline chat context, including explicit unknown None",
+      "intent": "Literal-тип чата inline, включая явный неизвестный None",
       "example_sha256": "7d9243202fc3c273165a43cc3f2c7fe36bb658a27610cb3b25fbd62cfe3da18e",
       "example_source_sha256": "7d9243202fc3c273165a43cc3f2c7fe36bb658a27610cb3b25fbd62cfe3da18e",
       "kind": "value"
@@ -2289,7 +2289,7 @@
       "recipe": "ref.bot_inline_search",
       "example": "examples/api-reference/python/bot_inline_search.py",
       "limits": "Личные элементы по умолчанию нельзя делиться; персональный кеш Telegram не делает отправленное inline-сообщение секретным. Текущие права, ревизии каталога и прав, долговечный секрет, сроки, конкурентность и хранилище принадлежат приложению. Персональные курсоры привязаны к пользователю, боту, запросу, контексту и каталогу; общий кеш полностью публичный, для всех контекстов и не зависит от пользователя. Положительный серверный кеш может повторить старые результаты, не обращаясь к боту, поэтому выдача с текущими ограничениями прав использует `cache_time=0`. Срок цепочки курсоров не продлевается; устаревший, запрещенный или просроченный запрос получает пустой персональный ответ, а не автоматический перезапуск. Статьи передаются буквально, проверенные метаданные emoji — по явному согласию; повтора нативного ответа, учета выбранных результатов и живой проверки приватности нет.",
-      "intent": "Async current host ACL(actor,item) → strict bool",
+      "intent": "Асинхронная проверка текущих прав приложения (пользователь, элемент) → строгий bool",
       "example_sha256": "7d9243202fc3c273165a43cc3f2c7fe36bb658a27610cb3b25fbd62cfe3da18e",
       "example_source_sha256": "7d9243202fc3c273165a43cc3f2c7fe36bb658a27610cb3b25fbd62cfe3da18e",
       "kind": "value"
@@ -2301,7 +2301,7 @@
       "recipe": "ref.bot_inline_search",
       "example": "examples/api-reference/python/bot_inline_search.py",
       "limits": "Личные элементы по умолчанию нельзя делиться; персональный кеш Telegram не делает отправленное inline-сообщение секретным. Текущие права, ревизии каталога и прав, долговечный секрет, сроки, конкурентность и хранилище принадлежат приложению. Персональные курсоры привязаны к пользователю, боту, запросу, контексту и каталогу; общий кеш полностью публичный, для всех контекстов и не зависит от пользователя. Положительный серверный кеш может повторить старые результаты, не обращаясь к боту, поэтому выдача с текущими ограничениями прав использует `cache_time=0`. Срок цепочки курсоров не продлевается; устаревший, запрещенный или просроченный запрос получает пустой персональный ответ, а не автоматический перезапуск. Статьи передаются буквально, проверенные метаданные emoji — по явному согласию; повтора нативного ответа, учета выбранных результатов и живой проверки приватности нет.",
-      "intent": "Async host provider of a fresh immutable catalog",
+      "intent": "Асинхронный поставщик свежего неизменяемого каталога",
       "example_sha256": "7d9243202fc3c273165a43cc3f2c7fe36bb658a27610cb3b25fbd62cfe3da18e",
       "example_source_sha256": "7d9243202fc3c273165a43cc3f2c7fe36bb658a27610cb3b25fbd62cfe3da18e",
       "kind": "value"
@@ -2313,7 +2313,7 @@
       "recipe": "ref.bot_inline_search",
       "example": "examples/api-reference/python/bot_inline_search.py",
       "limits": "Личные элементы по умолчанию нельзя делиться; персональный кеш Telegram не делает отправленное inline-сообщение секретным. Текущие права, ревизии каталога и прав, долговечный секрет, сроки, конкурентность и хранилище принадлежат приложению. Персональные курсоры привязаны к пользователю, боту, запросу, контексту и каталогу; общий кеш полностью публичный, для всех контекстов и не зависит от пользователя. Положительный серверный кеш может повторить старые результаты, не обращаясь к боту, поэтому выдача с текущими ограничениями прав использует `cache_time=0`. Срок цепочки курсоров не продлевается; устаревший, запрещенный или просроченный запрос получает пустой персональный ответ, а не автоматический перезапуск. Статьи передаются буквально, проверенные метаданные emoji — по явному согласию; повтора нативного ответа, учета выбранных результатов и живой проверки приватности нет.",
-      "intent": "Explicit bounded cache_time/is_personal policy",
+      "intent": "Явная политика cache_time и is_personal в границах",
       "example_sha256": "7d9243202fc3c273165a43cc3f2c7fe36bb658a27610cb3b25fbd62cfe3da18e",
       "example_source_sha256": "7d9243202fc3c273165a43cc3f2c7fe36bb658a27610cb3b25fbd62cfe3da18e",
       "kind": "value"
@@ -2325,7 +2325,7 @@
       "recipe": "ref.bot_inline_search",
       "example": "examples/api-reference/python/bot_inline_search.py",
       "limits": "Личные элементы по умолчанию нельзя делиться; персональный кеш Telegram не делает отправленное inline-сообщение секретным. Текущие права, ревизии каталога и прав, долговечный секрет, сроки, конкурентность и хранилище принадлежат приложению. Персональные курсоры привязаны к пользователю, боту, запросу, контексту и каталогу; общий кеш полностью публичный, для всех контекстов и не зависит от пользователя. Положительный серверный кеш может повторить старые результаты, не обращаясь к боту, поэтому выдача с текущими ограничениями прав использует `cache_time=0`. Срок цепочки курсоров не продлевается; устаревший, запрещенный или просроченный запрос получает пустой персональный ответ, а не автоматический перезапуск. Статьи передаются буквально, проверенные метаданные emoji — по явному согласию; повтора нативного ответа, учета выбранных результатов и живой проверки приватности нет.",
-      "intent": "Frozen article identity and literal/entities text; shareable=False by default",
+      "intent": "Неизменяемая статья и буквальный текст с entities; по умолчанию shareable=False",
       "example_sha256": "7d9243202fc3c273165a43cc3f2c7fe36bb658a27610cb3b25fbd62cfe3da18e",
       "example_source_sha256": "7d9243202fc3c273165a43cc3f2c7fe36bb658a27610cb3b25fbd62cfe3da18e",
       "kind": "value"
@@ -2337,7 +2337,7 @@
       "recipe": "ref.bot_inline_search",
       "example": "examples/api-reference/python/bot_inline_search.py",
       "limits": "Личные элементы по умолчанию нельзя делиться; персональный кеш Telegram не делает отправленное inline-сообщение секретным. Текущие права, ревизии каталога и прав, долговечный секрет, сроки, конкурентность и хранилище принадлежат приложению. Персональные курсоры привязаны к пользователю, боту, запросу, контексту и каталогу; общий кеш полностью публичный, для всех контекстов и не зависит от пользователя. Положительный серверный кеш может повторить старые результаты, не обращаясь к боту, поэтому выдача с текущими ограничениями прав использует `cache_time=0`. Срок цепочки курсоров не продлевается; устаревший, запрещенный или просроченный запрос получает пустой персональный ответ, а не автоматический перезапуск. Статьи передаются буквально, проверенные метаданные emoji — по явному согласию; повтора нативного ответа, учета выбранных результатов и живой проверки приватности нет.",
-      "intent": "Frozen page bound to the original query; answer_request builds one native request",
+      "intent": "Неизменяемая страница исходного запроса; answer_request строит один нативный запрос",
       "example_sha256": "7d9243202fc3c273165a43cc3f2c7fe36bb658a27610cb3b25fbd62cfe3da18e",
       "example_source_sha256": "7d9243202fc3c273165a43cc3f2c7fe36bb658a27610cb3b25fbd62cfe3da18e",
       "kind": "value"
@@ -2349,7 +2349,7 @@
       "recipe": "ref.bot_inline_search",
       "example": "examples/api-reference/python/bot_inline_search.py",
       "limits": "Личные элементы по умолчанию нельзя делиться; персональный кеш Telegram не делает отправленное inline-сообщение секретным. Текущие права, ревизии каталога и прав, долговечный секрет, сроки, конкурентность и хранилище принадлежат приложению. Персональные курсоры привязаны к пользователю, боту, запросу, контексту и каталогу; общий кеш полностью публичный, для всех контекстов и не зависит от пользователя. Положительный серверный кеш может повторить старые результаты, не обращаясь к боту, поэтому выдача с текущими ограничениями прав использует `cache_time=0`. Срок цепочки курсоров не продлевается; устаревший, запрещенный или просроченный запрос получает пустой персональный ответ, а не автоматический перезапуск. Статьи передаются буквально, проверенные метаданные emoji — по явному согласию; повтора нативного ответа, учета выбранных результатов и живой проверки приватности нет.",
-      "intent": "Bounded immutable search snapshot with HMAC cursor and fixed chain expiry",
+      "intent": "Ограниченный неизменяемый снимок поиска с курсором под HMAC и фиксированным сроком цепочки",
       "example_sha256": "7d9243202fc3c273165a43cc3f2c7fe36bb658a27610cb3b25fbd62cfe3da18e",
       "example_source_sha256": "7d9243202fc3c273165a43cc3f2c7fe36bb658a27610cb3b25fbd62cfe3da18e",
       "kind": "value"
@@ -2361,7 +2361,7 @@
       "recipe": "ref.bot_inline_search",
       "example": "examples/api-reference/python/bot_inline_search.py",
       "limits": "Личные элементы по умолчанию нельзя делиться; персональный кеш Telegram не делает отправленное inline-сообщение секретным. Текущие права, ревизии каталога и прав, долговечный секрет, сроки, конкурентность и хранилище принадлежат приложению. Персональные курсоры привязаны к пользователю, боту, запросу, контексту и каталогу; общий кеш полностью публичный, для всех контекстов и не зависит от пользователя. Положительный серверный кеш может повторить старые результаты, не обращаясь к боту, поэтому выдача с текущими ограничениями прав использует `cache_time=0`. Срок цепочки курсоров не продлевается; устаревший, запрещенный или просроченный запрос получает пустой персональный ответ, а не автоматический перезапуск. Статьи передаются буквально, проверенные метаданные emoji — по явному согласию; повтора нативного ответа, учета выбранных результатов и живой проверки приватности нет.",
-      "intent": "Fresh native article/text models with explicit parse_mode=None",
+      "intent": "Свежие нативные модели статей с явным parse_mode=None",
       "example_sha256": "7d9243202fc3c273165a43cc3f2c7fe36bb658a27610cb3b25fbd62cfe3da18e",
       "example_source_sha256": "7d9243202fc3c273165a43cc3f2c7fe36bb658a27610cb3b25fbd62cfe3da18e",
       "kind": "value"
@@ -2373,7 +2373,7 @@
       "recipe": "ref.bot_inline_search",
       "example": "examples/api-reference/python/bot_inline_search.py",
       "limits": "Личные элементы по умолчанию нельзя делиться; персональный кеш Telegram не делает отправленное inline-сообщение секретным. Текущие права, ревизии каталога и прав, долговечный секрет, сроки, конкурентность и хранилище принадлежат приложению. Персональные курсоры привязаны к пользователю, боту, запросу, контексту и каталогу; общий кеш полностью публичный, для всех контекстов и не зависит от пользователя. Положительный серверный кеш может повторить старые результаты, не обращаясь к боту, поэтому выдача с текущими ограничениями прав использует `cache_time=0`. Срок цепочки курсоров не продлевается; устаревший, запрещенный или просроченный запрос получает пустой персональный ответ, а не автоматический перезапуск. Статьи передаются буквально, проверенные метаданные emoji — по явному согласию; повтора нативного ответа, учета выбранных результатов и живой проверки приватности нет.",
-      "intent": "Host Dispatcher router with provider/ACL deadline, stale rejection and one native answer",
+      "intent": "Router для Dispatcher приложения: срок поставщика и прав, отказ устаревшим и один нативный ответ",
       "example_sha256": "7d9243202fc3c273165a43cc3f2c7fe36bb658a27610cb3b25fbd62cfe3da18e",
       "example_source_sha256": "7d9243202fc3c273165a43cc3f2c7fe36bb658a27610cb3b25fbd62cfe3da18e",
       "kind": "value"
@@ -2397,7 +2397,7 @@
       "recipe": "ref.bot_polls",
       "example": "examples/api-reference/python/bot_polls.py",
       "limits": "От 1 до 12 начальных вариантов, quiz с несколькими правильными ответами без их сокращения, переголосование и rich media SDK; нативные лимиты проверяются отдельно от локальных. Ограничения «только участники канала» и по странам и явно заявленный контекст чата, темы или Business не доказывают серверных прав. Постоянные ID вариантов и личности голосующих (пользователь или чат); `None` и сообщенный ноль остаются сырыми и, возможно, неизвестными. Приложение регистрирует подтвержденные ответы собственного `SendPoll`, находит текущую привязку и транзакционно сохраняет квитанцию Update. Недоступный `poll_message` не позволяет выдумать связь; анонимные, чужие и непривязанные события не дают реестра голосов. Нет `getPoll`, неявного `stopPoll`, просмотра истории, подсчета голосов, повтора создания, ввода-вывода медиа и обещания живой доставки.",
-      "intent": "Frozen literal option and cloned native SDK rich media",
+      "intent": "Неизменяемый буквальный вариант и копия rich media SDK",
       "example_sha256": "6d1dec9ef76a012ea369e5287800f7dea9a5b96515d9b264fc2bedfcee6956b5",
       "example_source_sha256": "6d1dec9ef76a012ea369e5287800f7dea9a5b96515d9b264fc2bedfcee6956b5",
       "kind": "value"
@@ -2409,7 +2409,7 @@
       "recipe": "ref.bot_polls",
       "example": "examples/api-reference/python/bot_polls.py",
       "limits": "От 1 до 12 начальных вариантов, quiz с несколькими правильными ответами без их сокращения, переголосование и rich media SDK; нативные лимиты проверяются отдельно от локальных. Ограничения «только участники канала» и по странам и явно заявленный контекст чата, темы или Business не доказывают серверных прав. Постоянные ID вариантов и личности голосующих (пользователь или чат); `None` и сообщенный ноль остаются сырыми и, возможно, неизвестными. Приложение регистрирует подтвержденные ответы собственного `SendPoll`, находит текущую привязку и транзакционно сохраняет квитанцию Update. Недоступный `poll_message` не позволяет выдумать связь; анонимные, чужие и непривязанные события не дают реестра голосов. Нет `getPoll`, неявного `stopPoll`, просмотра истории, подсчета голосов, повтора создания, ввода-вывода медиа и обещания живой доставки.",
-      "intent": "Frozen validated modern creation parameters",
+      "intent": "Неизменяемые проверенные параметры создания",
       "example_sha256": "6d1dec9ef76a012ea369e5287800f7dea9a5b96515d9b264fc2bedfcee6956b5",
       "example_source_sha256": "6d1dec9ef76a012ea369e5287800f7dea9a5b96515d9b264fc2bedfcee6956b5",
       "kind": "value"
@@ -2421,7 +2421,7 @@
       "recipe": "ref.bot_polls",
       "example": "examples/api-reference/python/bot_polls.py",
       "limits": "От 1 до 12 начальных вариантов, quiz с несколькими правильными ответами без их сокращения, переголосование и rich media SDK; нативные лимиты проверяются отдельно от локальных. Ограничения «только участники канала» и по странам и явно заявленный контекст чата, темы или Business не доказывают серверных прав. Постоянные ID вариантов и личности голосующих (пользователь или чат); `None` и сообщенный ноль остаются сырыми и, возможно, неизвестными. Приложение регистрирует подтвержденные ответы собственного `SendPoll`, находит текущую привязку и транзакционно сохраняет квитанцию Update. Недоступный `poll_message` не позволяет выдумать связь; анонимные, чужие и непривязанные события не дают реестра голосов. Нет `getPoll`, неявного `stopPoll`, просмотра истории, подсчета голосов, повтора создания, ввода-вывода медиа и обещания живой доставки.",
-      "intent": "Persistent option identity and raw reported count",
+      "intent": "Постоянный ID варианта и сырой счетчик голосов",
       "example_sha256": "6d1dec9ef76a012ea369e5287800f7dea9a5b96515d9b264fc2bedfcee6956b5",
       "example_source_sha256": "6d1dec9ef76a012ea369e5287800f7dea9a5b96515d9b264fc2bedfcee6956b5",
       "kind": "value"
@@ -2433,7 +2433,7 @@
       "recipe": "ref.bot_polls",
       "example": "examples/api-reference/python/bot_polls.py",
       "limits": "От 1 до 12 начальных вариантов, quiz с несколькими правильными ответами без их сокращения, переголосование и rich media SDK; нативные лимиты проверяются отдельно от локальных. Ограничения «только участники канала» и по странам и явно заявленный контекст чата, темы или Business не доказывают серверных прав. Постоянные ID вариантов и личности голосующих (пользователь или чат); `None` и сообщенный ноль остаются сырыми и, возможно, неизвестными. Приложение регистрирует подтвержденные ответы собственного `SendPoll`, находит текущую привязку и транзакционно сохраняет квитанцию Update. Недоступный `poll_message` не позволяет выдумать связь; анонимные, чужие и непривязанные события не дают реестра голосов. Нет `getPoll`, неявного `stopPoll`, просмотра истории, подсчета голосов, повтора создания, ввода-вывода медиа и обещания живой доставки.",
-      "intent": "Immutable native Poll snapshot with nullable answers and full JSON details",
+      "intent": "Неизменяемый снимок Poll с допускающими null ответами и полным JSON",
       "example_sha256": "6d1dec9ef76a012ea369e5287800f7dea9a5b96515d9b264fc2bedfcee6956b5",
       "example_source_sha256": "6d1dec9ef76a012ea369e5287800f7dea9a5b96515d9b264fc2bedfcee6956b5",
       "kind": "value"
@@ -2445,7 +2445,7 @@
       "recipe": "ref.bot_polls",
       "example": "examples/api-reference/python/bot_polls.py",
       "limits": "От 1 до 12 начальных вариантов, quiz с несколькими правильными ответами без их сокращения, переголосование и rich media SDK; нативные лимиты проверяются отдельно от локальных. Ограничения «только участники канала» и по странам и явно заявленный контекст чата, темы или Business не доказывают серверных прав. Постоянные ID вариантов и личности голосующих (пользователь или чат); `None` и сообщенный ноль остаются сырыми и, возможно, неизвестными. Приложение регистрирует подтвержденные ответы собственного `SendPoll`, находит текущую привязку и транзакционно сохраняет квитанцию Update. Недоступный `poll_message` не позволяет выдумать связь; анонимные, чужие и непривязанные события не дают реестра голосов. Нет `getPoll`, неявного `stopPoll`, просмотра истории, подсчета голосов, повтора создания, ввода-вывода медиа и обещания живой доставки.",
-      "intent": "Selected persistent/ordinal IDs and exact user/chat identity; empty means retraction",
+      "intent": "Выбранные постоянные и порядковые ID и точная личность голосующего; пустой выбор — отзыв голоса",
       "example_sha256": "6d1dec9ef76a012ea369e5287800f7dea9a5b96515d9b264fc2bedfcee6956b5",
       "example_source_sha256": "6d1dec9ef76a012ea369e5287800f7dea9a5b96515d9b264fc2bedfcee6956b5",
       "kind": "value"
@@ -2457,7 +2457,7 @@
       "recipe": "ref.bot_polls",
       "example": "examples/api-reference/python/bot_polls.py",
       "limits": "От 1 до 12 начальных вариантов, quiz с несколькими правильными ответами без их сокращения, переголосование и rich media SDK; нативные лимиты проверяются отдельно от локальных. Ограничения «только участники канала» и по странам и явно заявленный контекст чата, темы или Business не доказывают серверных прав. Постоянные ID вариантов и личности голосующих (пользователь или чат); `None` и сообщенный ноль остаются сырыми и, возможно, неизвестными. Приложение регистрирует подтвержденные ответы собственного `SendPoll`, находит текущую привязку и транзакционно сохраняет квитанцию Update. Недоступный `poll_message` не позволяет выдумать связь; анонимные, чужие и непривязанные события не дают реестра голосов. Нет `getPoll`, неявного `stopPoll`, просмотра истории, подсчета голосов, повтора создания, ввода-вывода медиа и обещания живой доставки.",
-      "intent": "Option service observation with possibly unknown poll association and preserved details",
+      "intent": "Служебное событие о новом варианте; связь с опросом может быть неизвестна",
       "example_sha256": "6d1dec9ef76a012ea369e5287800f7dea9a5b96515d9b264fc2bedfcee6956b5",
       "example_source_sha256": "6d1dec9ef76a012ea369e5287800f7dea9a5b96515d9b264fc2bedfcee6956b5",
       "kind": "value"
@@ -2469,7 +2469,7 @@
       "recipe": "ref.bot_polls",
       "example": "examples/api-reference/python/bot_polls.py",
       "limits": "От 1 до 12 начальных вариантов, quiz с несколькими правильными ответами без их сокращения, переголосование и rich media SDK; нативные лимиты проверяются отдельно от локальных. Ограничения «только участники канала» и по странам и явно заявленный контекст чата, темы или Business не доказывают серверных прав. Постоянные ID вариантов и личности голосующих (пользователь или чат); `None` и сообщенный ноль остаются сырыми и, возможно, неизвестными. Приложение регистрирует подтвержденные ответы собственного `SendPoll`, находит текущую привязку и транзакционно сохраняет квитанцию Update. Недоступный `poll_message` не позволяет выдумать связь; анонимные, чужие и непривязанные события не дают реестра голосов. Нет `getPoll`, неявного `stopPoll`, просмотра истории, подсчета голосов, повтора создания, ввода-вывода медиа и обещания живой доставки.",
-      "intent": "Bot/poll/chat/message/thread/business binding of an own confirmed response",
+      "intent": "Привязка бота, опроса, чата, сообщения, темы и Business к подтвержденному ответу своего бота",
       "example_sha256": "6d1dec9ef76a012ea369e5287800f7dea9a5b96515d9b264fc2bedfcee6956b5",
       "example_source_sha256": "6d1dec9ef76a012ea369e5287800f7dea9a5b96515d9b264fc2bedfcee6956b5",
       "kind": "value"
@@ -2481,7 +2481,7 @@
       "recipe": "ref.bot_polls",
       "example": "examples/api-reference/python/bot_polls.py",
       "limits": "От 1 до 12 начальных вариантов, quiz с несколькими правильными ответами без их сокращения, переголосование и rich media SDK; нативные лимиты проверяются отдельно от локальных. Ограничения «только участники канала» и по странам и явно заявленный контекст чата, темы или Business не доказывают серверных прав. Постоянные ID вариантов и личности голосующих (пользователь или чат); `None` и сообщенный ноль остаются сырыми и, возможно, неизвестными. Приложение регистрирует подтвержденные ответы собственного `SendPoll`, находит текущую привязку и транзакционно сохраняет квитанцию Update. Недоступный `poll_message` не позволяет выдумать связь; анонимные, чужие и непривязанные события не дают реестра голосов. Нет `getPoll`, неявного `stopPoll`, просмотра истории, подсчета голосов, повтора создания, ввода-вывода медиа и обещания живой доставки.",
-      "intent": "Host lookup identity or exact address, always bot scoped",
+      "intent": "Ключ поиска в приложении или точный адрес, всегда в рамках бота",
       "example_sha256": "6d1dec9ef76a012ea369e5287800f7dea9a5b96515d9b264fc2bedfcee6956b5",
       "example_source_sha256": "6d1dec9ef76a012ea369e5287800f7dea9a5b96515d9b264fc2bedfcee6956b5",
       "kind": "value"
@@ -2493,7 +2493,7 @@
       "recipe": "ref.bot_polls",
       "example": "examples/api-reference/python/bot_polls.py",
       "limits": "От 1 до 12 начальных вариантов, quiz с несколькими правильными ответами без их сокращения, переголосование и rich media SDK; нативные лимиты проверяются отдельно от локальных. Ограничения «только участники канала» и по странам и явно заявленный контекст чата, темы или Business не доказывают серверных прав. Постоянные ID вариантов и личности голосующих (пользователь или чат); `None` и сообщенный ноль остаются сырыми и, возможно, неизвестными. Приложение регистрирует подтвержденные ответы собственного `SendPoll`, находит текущую привязку и транзакционно сохраняет квитанцию Update. Недоступный `poll_message` не позволяет выдумать связь; анонимные, чужие и непривязанные события не дают реестра голосов. Нет `getPoll`, неявного `stopPoll`, просмотра истории, подсчета голосов, повтора создания, ввода-вывода медиа и обещания живой доставки.",
-      "intent": "Union of available state/vote/option observations",
+      "intent": "Объединение доступных наблюдений: состояние, голос или вариант",
       "example_sha256": "6d1dec9ef76a012ea369e5287800f7dea9a5b96515d9b264fc2bedfcee6956b5",
       "example_source_sha256": "6d1dec9ef76a012ea369e5287800f7dea9a5b96515d9b264fc2bedfcee6956b5",
       "kind": "value"
@@ -2505,7 +2505,7 @@
       "recipe": "ref.bot_polls",
       "example": "examples/api-reference/python/bot_polls.py",
       "limits": "От 1 до 12 начальных вариантов, quiz с несколькими правильными ответами без их сокращения, переголосование и rich media SDK; нативные лимиты проверяются отдельно от локальных. Ограничения «только участники канала» и по странам и явно заявленный контекст чата, темы или Business не доказывают серверных прав. Постоянные ID вариантов и личности голосующих (пользователь или чат); `None` и сообщенный ноль остаются сырыми и, возможно, неизвестными. Приложение регистрирует подтвержденные ответы собственного `SendPoll`, находит текущую привязку и транзакционно сохраняет квитанцию Update. Недоступный `poll_message` не позволяет выдумать связь; анонимные, чужие и непривязанные события не дают реестра голосов. Нет `getPoll`, неявного `stopPoll`, просмотра истории, подсчета голосов, повтора создания, ввода-вывода медиа и обещания живой доставки.",
-      "intent": "Update ID, binding and one immutable observation",
+      "intent": "ID update, привязка и одно неизменяемое наблюдение",
       "example_sha256": "6d1dec9ef76a012ea369e5287800f7dea9a5b96515d9b264fc2bedfcee6956b5",
       "example_source_sha256": "6d1dec9ef76a012ea369e5287800f7dea9a5b96515d9b264fc2bedfcee6956b5",
       "kind": "value"
@@ -2517,7 +2517,7 @@
       "recipe": "ref.bot_polls",
       "example": "examples/api-reference/python/bot_polls.py",
       "limits": "От 1 до 12 начальных вариантов, quiz с несколькими правильными ответами без их сокращения, переголосование и rich media SDK; нативные лимиты проверяются отдельно от локальных. Ограничения «только участники канала» и по странам и явно заявленный контекст чата, темы или Business не доказывают серверных прав. Постоянные ID вариантов и личности голосующих (пользователь или чат); `None` и сообщенный ноль остаются сырыми и, возможно, неизвестными. Приложение регистрирует подтвержденные ответы собственного `SendPoll`, находит текущую привязку и транзакционно сохраняет квитанцию Update. Недоступный `poll_message` не позволяет выдумать связь; анонимные, чужие и непривязанные события не дают реестра голосов. Нет `getPoll`, неявного `stopPoll`, просмотра истории, подсчета голосов, повтора создания, ввода-вывода медиа и обещания живой доставки.",
-      "intent": "Async host observer; owns durable dedup/state policy",
+      "intent": "Асинхронный наблюдатель приложения; отвечает за долговечную дедупликацию и состояние",
       "example_sha256": "6d1dec9ef76a012ea369e5287800f7dea9a5b96515d9b264fc2bedfcee6956b5",
       "example_source_sha256": "6d1dec9ef76a012ea369e5287800f7dea9a5b96515d9b264fc2bedfcee6956b5",
       "kind": "value"
@@ -2529,7 +2529,7 @@
       "recipe": "ref.bot_polls",
       "example": "examples/api-reference/python/bot_polls.py",
       "limits": "От 1 до 12 начальных вариантов, quiz с несколькими правильными ответами без их сокращения, переголосование и rich media SDK; нативные лимиты проверяются отдельно от локальных. Ограничения «только участники канала» и по странам и явно заявленный контекст чата, темы или Business не доказывают серверных прав. Постоянные ID вариантов и личности голосующих (пользователь или чат); `None` и сообщенный ноль остаются сырыми и, возможно, неизвестными. Приложение регистрирует подтвержденные ответы собственного `SendPoll`, находит текущую привязку и транзакционно сохраняет квитанцию Update. Недоступный `poll_message` не позволяет выдумать связь; анонимные, чужие и непривязанные события не дают реестра голосов. Нет `getPoll`, неявного `stopPoll`, просмотра истории, подсчета голосов, повтора создания, ввода-вывода медиа и обещания живой доставки.",
-      "intent": "Async current host binding lookup, no hidden authorization",
+      "intent": "Асинхронный поиск текущей привязки без скрытой авторизации",
       "example_sha256": "6d1dec9ef76a012ea369e5287800f7dea9a5b96515d9b264fc2bedfcee6956b5",
       "example_source_sha256": "6d1dec9ef76a012ea369e5287800f7dea9a5b96515d9b264fc2bedfcee6956b5",
       "kind": "value"
@@ -2541,7 +2541,7 @@
       "recipe": "ref.bot_polls",
       "example": "examples/api-reference/python/bot_polls.py",
       "limits": "От 1 до 12 начальных вариантов, quiz с несколькими правильными ответами без их сокращения, переголосование и rich media SDK; нативные лимиты проверяются отдельно от локальных. Ограничения «только участники канала» и по странам и явно заявленный контекст чата, темы или Business не доказывают серверных прав. Постоянные ID вариантов и личности голосующих (пользователь или чат); `None` и сообщенный ноль остаются сырыми и, возможно, неизвестными. Приложение регистрирует подтвержденные ответы собственного `SendPoll`, находит текущую привязку и транзакционно сохраняет квитанцию Update. Недоступный `poll_message` не позволяет выдумать связь; анонимные, чужие и непривязанные события не дают реестра голосов. Нет `getPoll`, неявного `stopPoll`, просмотра истории, подсчета голосов, повтора создания, ввода-вывода медиа и обещания живой доставки.",
-      "intent": "One native SendPoll request; literal entities, modern fields and no IO",
+      "intent": "Один нативный запрос SendPoll: буквальные entities, современные поля, без ввода-вывода",
       "example_sha256": "6d1dec9ef76a012ea369e5287800f7dea9a5b96515d9b264fc2bedfcee6956b5",
       "example_source_sha256": "6d1dec9ef76a012ea369e5287800f7dea9a5b96515d9b264fc2bedfcee6956b5",
       "kind": "value"
@@ -2553,7 +2553,7 @@
       "recipe": "ref.bot_polls",
       "example": "examples/api-reference/python/bot_polls.py",
       "limits": "От 1 до 12 начальных вариантов, quiz с несколькими правильными ответами без их сокращения, переголосование и rich media SDK; нативные лимиты проверяются отдельно от локальных. Ограничения «только участники канала» и по странам и явно заявленный контекст чата, темы или Business не доказывают серверных прав. Постоянные ID вариантов и личности голосующих (пользователь или чат); `None` и сообщенный ноль остаются сырыми и, возможно, неизвестными. Приложение регистрирует подтвержденные ответы собственного `SendPoll`, находит текущую привязку и транзакционно сохраняет квитанцию Update. Недоступный `poll_message` не позволяет выдумать связь; анонимные, чужие и непривязанные события не дают реестра голосов. Нет `getPoll`, неявного `stopPoll`, просмотра истории, подсчета голосов, повтора создания, ввода-вывода медиа и обещания живой доставки.",
-      "intent": "Copy native Poll without count inference",
+      "intent": "Копия нативного Poll без вычисления счетчиков",
       "example_sha256": "6d1dec9ef76a012ea369e5287800f7dea9a5b96515d9b264fc2bedfcee6956b5",
       "example_source_sha256": "6d1dec9ef76a012ea369e5287800f7dea9a5b96515d9b264fc2bedfcee6956b5",
       "kind": "value"
@@ -2565,7 +2565,7 @@
       "recipe": "ref.bot_polls",
       "example": "examples/api-reference/python/bot_polls.py",
       "limits": "От 1 до 12 начальных вариантов, quiz с несколькими правильными ответами без их сокращения, переголосование и rich media SDK; нативные лимиты проверяются отдельно от локальных. Ограничения «только участники канала» и по странам и явно заявленный контекст чата, темы или Business не доказывают серверных прав. Постоянные ID вариантов и личности голосующих (пользователь или чат); `None` и сообщенный ноль остаются сырыми и, возможно, неизвестными. Приложение регистрирует подтвержденные ответы собственного `SendPoll`, находит текущую привязку и транзакционно сохраняет квитанцию Update. Недоступный `poll_message` не позволяет выдумать связь; анонимные, чужие и непривязанные события не дают реестра голосов. Нет `getPoll`, неявного `stopPoll`, просмотра истории, подсчета голосов, повтора создания, ввода-вывода медиа и обещания живой доставки.",
-      "intent": "Copy native PollAnswer without inventing user identity",
+      "intent": "Копия нативного PollAnswer без выдуманной личности",
       "example_sha256": "6d1dec9ef76a012ea369e5287800f7dea9a5b96515d9b264fc2bedfcee6956b5",
       "example_source_sha256": "6d1dec9ef76a012ea369e5287800f7dea9a5b96515d9b264fc2bedfcee6956b5",
       "kind": "value"
@@ -2577,7 +2577,7 @@
       "recipe": "ref.bot_polls",
       "example": "examples/api-reference/python/bot_polls.py",
       "limits": "От 1 до 12 начальных вариантов, quiz с несколькими правильными ответами без их сокращения, переголосование и rich media SDK; нативные лимиты проверяются отдельно от локальных. Ограничения «только участники канала» и по странам и явно заявленный контекст чата, темы или Business не доказывают серверных прав. Постоянные ID вариантов и личности голосующих (пользователь или чат); `None` и сообщенный ноль остаются сырыми и, возможно, неизвестными. Приложение регистрирует подтвержденные ответы собственного `SendPoll`, находит текущую привязку и транзакционно сохраняет квитанцию Update. Недоступный `poll_message` не позволяет выдумать связь; анонимные, чужие и непривязанные события не дают реестра голосов. Нет `getPoll`, неявного `stopPoll`, просмотра истории, подсчета голосов, повтора создания, ввода-вывода медиа и обещания живой доставки.",
-      "intent": "Copy Message.poll_option_added, including inaccessible/omitted address",
+      "intent": "Копия Message.poll_option_added, включая недоступный или пропущенный адрес",
       "example_sha256": "6d1dec9ef76a012ea369e5287800f7dea9a5b96515d9b264fc2bedfcee6956b5",
       "example_source_sha256": "6d1dec9ef76a012ea369e5287800f7dea9a5b96515d9b264fc2bedfcee6956b5",
       "kind": "value"
@@ -2589,7 +2589,7 @@
       "recipe": "ref.bot_polls",
       "example": "examples/api-reference/python/bot_polls.py",
       "limits": "От 1 до 12 начальных вариантов, quiz с несколькими правильными ответами без их сокращения, переголосование и rich media SDK; нативные лимиты проверяются отдельно от локальных. Ограничения «только участники канала» и по странам и явно заявленный контекст чата, темы или Business не доказывают серверных прав. Постоянные ID вариантов и личности голосующих (пользователь или чат); `None` и сообщенный ноль остаются сырыми и, возможно, неизвестными. Приложение регистрирует подтвержденные ответы собственного `SendPoll`, находит текущую привязку и транзакционно сохраняет квитанцию Update. Недоступный `poll_message` не позволяет выдумать связь; анонимные, чужие и непривязанные события не дают реестра голосов. Нет `getPoll`, неявного `stopPoll`, просмотра истории, подсчета голосов, повтора создания, ввода-вывода медиа и обещания живой доставки.",
-      "intent": "Scoped Poll/PollAnswer/message/business_message routing; no count/retry/getPoll",
+      "intent": "Маршрутизация Poll, PollAnswer, message и business_message; без подсчета, повторов и getPoll",
       "example_sha256": "6d1dec9ef76a012ea369e5287800f7dea9a5b96515d9b264fc2bedfcee6956b5",
       "example_source_sha256": "6d1dec9ef76a012ea369e5287800f7dea9a5b96515d9b264fc2bedfcee6956b5",
       "kind": "value"
@@ -2613,7 +2613,7 @@
       "recipe": "ref.bot_platform",
       "example": "examples/api-reference/python/bot_platform.py",
       "limits": "Закрытый список из 51 метода Bot API в семи семействах; нативные запросы SDK и текущие права конкретного метода, а не произвольный MTProto или история аккаунта. Текущие права, ресурс, ревизия, связи подключений и дочерних ботов, проверка медиа и допустимая активность принадлежат приложению. Запись требует атомарной долговечной заявки на отправку; бюджет, согласие и котировка приложения перепроверяются до нативного ввода-вывода. Локальное резервирование и свежая нативная котировка не гарантируют атомарного удаленного списания или финансовых расчетов. Неизвестный результат, квитанция или падение остаются тем же намерением: без автоматического повтора, отката, сверки и глобального inbox/outbox. Запрос на вступление использует исходное время получения и оставшийся нативный срок; личные темы поддерживают только явно разрешенные методы. Создание управляемого бота требует нативного подтверждения пользователя; repr токена скрыт, но хранение и сериализация секрета в приложении остаются явными. Загрузка историй использует проверенный вложенный multipart SDK; кодек, размеры, содержимое и время жизни файла — обязанности приложения. События сохраняют неизвестные и анонимные факты; текущая привязка, дедупликация, порядок и отзыв — на стороне приложения, без выведенного автора и истории голосов или аккаунта. Экспериментальные доказательства автора (SDK, mock, браузер) отделены от живых прав, реальных устройств, удаленного списания и независимой приемки людьми или ИИ.",
-      "intent": "Immutable server bot/actor/intent/revision и точные chat/thread/owner/child bindings",
+      "intent": "Неизменяемые бот, пользователь, намерение и ревизия на сервере и точные привязки чата, темы, владельца и дочернего бота",
       "example_sha256": "c5380e35cdc244cbb2bc10710da2ef6e47d04d06987c9095034b4332301f872e",
       "example_source_sha256": "c5380e35cdc244cbb2bc10710da2ef6e47d04d06987c9095034b4332301f872e",
       "kind": "value"
@@ -2661,7 +2661,7 @@
       "recipe": "ref.bot_platform",
       "example": "examples/api-reference/python/bot_platform.py",
       "limits": "Закрытый список из 51 метода Bot API в семи семействах; нативные запросы SDK и текущие права конкретного метода, а не произвольный MTProto или история аккаунта. Текущие права, ресурс, ревизия, связи подключений и дочерних ботов, проверка медиа и допустимая активность принадлежат приложению. Запись требует атомарной долговечной заявки на отправку; бюджет, согласие и котировка приложения перепроверяются до нативного ввода-вывода. Локальное резервирование и свежая нативная котировка не гарантируют атомарного удаленного списания или финансовых расчетов. Неизвестный результат, квитанция или падение остаются тем же намерением: без автоматического повтора, отката, сверки и глобального inbox/outbox. Запрос на вступление использует исходное время получения и оставшийся нативный срок; личные темы поддерживают только явно разрешенные методы. Создание управляемого бота требует нативного подтверждения пользователя; repr токена скрыт, но хранение и сериализация секрета в приложении остаются явными. Загрузка историй использует проверенный вложенный multipart SDK; кодек, размеры, содержимое и время жизни файла — обязанности приложения. События сохраняют неизвестные и анонимные факты; текущая привязка, дедупликация, порядок и отзыв — на стороне приложения, без выведенного автора и истории голосов или аккаунта. Экспериментальные доказательства автора (SDK, mock, браузер) отделены от живых прав, реальных устройств, удаленного списания и независимой приемки людьми или ИИ.",
-      "intent": "Receipt и native result; payload скрыт в repr",
+      "intent": "Квитанция и нативный результат; данные скрыты в repr",
       "example_sha256": "c5380e35cdc244cbb2bc10710da2ef6e47d04d06987c9095034b4332301f872e",
       "example_source_sha256": "c5380e35cdc244cbb2bc10710da2ef6e47d04d06987c9095034b4332301f872e",
       "kind": "value"
@@ -2673,7 +2673,7 @@
       "recipe": "ref.bot_platform",
       "example": "examples/api-reference/python/bot_platform.py",
       "limits": "Закрытый список из 51 метода Bot API в семи семействах; нативные запросы SDK и текущие права конкретного метода, а не произвольный MTProto или история аккаунта. Текущие права, ресурс, ревизия, связи подключений и дочерних ботов, проверка медиа и допустимая активность принадлежат приложению. Запись требует атомарной долговечной заявки на отправку; бюджет, согласие и котировка приложения перепроверяются до нативного ввода-вывода. Локальное резервирование и свежая нативная котировка не гарантируют атомарного удаленного списания или финансовых расчетов. Неизвестный результат, квитанция или падение остаются тем же намерением: без автоматического повтора, отката, сверки и глобального inbox/outbox. Запрос на вступление использует исходное время получения и оставшийся нативный срок; личные темы поддерживают только явно разрешенные методы. Создание управляемого бота требует нативного подтверждения пользователя; repr токена скрыт, но хранение и сериализация секрета в приложении остаются явными. Загрузка историй использует проверенный вложенный multipart SDK; кодек, размеры, содержимое и время жизни файла — обязанности приложения. События сохраняют неизвестные и анонимные факты; текущая привязка, дедупликация, порядок и отзыв — на стороне приложения, без выведенного автора и истории голосов или аккаунта. Экспериментальные доказательства автора (SDK, mock, браузер) отделены от живых прав, реальных устройств, удаленного списания и независимой приемки людьми или ИИ.",
-      "intent": "Async host authorize/atomic claim/durable record contract",
+      "intent": "Асинхронный контракт приложения: авторизация, атомарная заявка и долговечная запись",
       "example_sha256": "c5380e35cdc244cbb2bc10710da2ef6e47d04d06987c9095034b4332301f872e",
       "example_source_sha256": "c5380e35cdc244cbb2bc10710da2ef6e47d04d06987c9095034b4332301f872e",
       "kind": "value"
@@ -2697,7 +2697,7 @@
       "recipe": "ref.bot_platform",
       "example": "examples/api-reference/python/bot_platform.py",
       "limits": "Закрытый список из 51 метода Bot API в семи семействах; нативные запросы SDK и текущие права конкретного метода, а не произвольный MTProto или история аккаунта. Текущие права, ресурс, ревизия, связи подключений и дочерних ботов, проверка медиа и допустимая активность принадлежат приложению. Запись требует атомарной долговечной заявки на отправку; бюджет, согласие и котировка приложения перепроверяются до нативного ввода-вывода. Локальное резервирование и свежая нативная котировка не гарантируют атомарного удаленного списания или финансовых расчетов. Неизвестный результат, квитанция или падение остаются тем же намерением: без автоматического повтора, отката, сверки и глобального inbox/outbox. Запрос на вступление использует исходное время получения и оставшийся нативный срок; личные темы поддерживают только явно разрешенные методы. Создание управляемого бота требует нативного подтверждения пользователя; repr токена скрыт, но хранение и сериализация секрета в приложении остаются явными. Загрузка историй использует проверенный вложенный multipart SDK; кодек, размеры, содержимое и время жизни файла — обязанности приложения. События сохраняют неизвестные и анонимные факты; текущая привязка, дедупликация, порядок и отзыв — на стороне приложения, без выведенного автора и истории голосов или аккаунта. Экспериментальные доказательства автора (SDK, mock, браузер) отделены от живых прав, реальных устройств, удаленного списания и независимой приемки людьми или ИИ.",
-      "intent": "Immutable native Update facts и preserved raw JSON; payload скрыт в repr",
+      "intent": "Неизменяемые факты нативного Update и сохраненный сырой JSON; данные скрыты в repr",
       "example_sha256": "c5380e35cdc244cbb2bc10710da2ef6e47d04d06987c9095034b4332301f872e",
       "example_source_sha256": "c5380e35cdc244cbb2bc10710da2ef6e47d04d06987c9095034b4332301f872e",
       "kind": "value"
@@ -2709,7 +2709,7 @@
       "recipe": "ref.bot_platform",
       "example": "examples/api-reference/python/bot_platform.py",
       "limits": "Закрытый список из 51 метода Bot API в семи семействах; нативные запросы SDK и текущие права конкретного метода, а не произвольный MTProto или история аккаунта. Текущие права, ресурс, ревизия, связи подключений и дочерних ботов, проверка медиа и допустимая активность принадлежат приложению. Запись требует атомарной долговечной заявки на отправку; бюджет, согласие и котировка приложения перепроверяются до нативного ввода-вывода. Локальное резервирование и свежая нативная котировка не гарантируют атомарного удаленного списания или финансовых расчетов. Неизвестный результат, квитанция или падение остаются тем же намерением: без автоматического повтора, отката, сверки и глобального inbox/outbox. Запрос на вступление использует исходное время получения и оставшийся нативный срок; личные темы поддерживают только явно разрешенные методы. Создание управляемого бота требует нативного подтверждения пользователя; repr токена скрыт, но хранение и сериализация секрета в приложении остаются явными. Загрузка историй использует проверенный вложенный multipart SDK; кодек, размеры, содержимое и время жизни файла — обязанности приложения. События сохраняют неизвестные и анонимные факты; текущая привязка, дедупликация, порядок и отзыв — на стороне приложения, без выведенного автора и истории голосов или аккаунта. Экспериментальные доказательства автора (SDK, mock, браузер) отделены от живых прав, реальных устройств, удаленного списания и независимой приемки людьми или ИИ.",
-      "intent": "Async current host binding по событию",
+      "intent": "Асинхронно возвращает текущую привязку из хранилища проекта по событию",
       "example_sha256": "c5380e35cdc244cbb2bc10710da2ef6e47d04d06987c9095034b4332301f872e",
       "example_source_sha256": "c5380e35cdc244cbb2bc10710da2ef6e47d04d06987c9095034b4332301f872e",
       "kind": "value"
@@ -2721,7 +2721,7 @@
       "recipe": "ref.bot_platform",
       "example": "examples/api-reference/python/bot_platform.py",
       "limits": "Закрытый список из 51 метода Bot API в семи семействах; нативные запросы SDK и текущие права конкретного метода, а не произвольный MTProto или история аккаунта. Текущие права, ресурс, ревизия, связи подключений и дочерних ботов, проверка медиа и допустимая активность принадлежат приложению. Запись требует атомарной долговечной заявки на отправку; бюджет, согласие и котировка приложения перепроверяются до нативного ввода-вывода. Локальное резервирование и свежая нативная котировка не гарантируют атомарного удаленного списания или финансовых расчетов. Неизвестный результат, квитанция или падение остаются тем же намерением: без автоматического повтора, отката, сверки и глобального inbox/outbox. Запрос на вступление использует исходное время получения и оставшийся нативный срок; личные темы поддерживают только явно разрешенные методы. Создание управляемого бота требует нативного подтверждения пользователя; repr токена скрыт, но хранение и сериализация секрета в приложении остаются явными. Загрузка историй использует проверенный вложенный multipart SDK; кодек, размеры, содержимое и время жизни файла — обязанности приложения. События сохраняют неизвестные и анонимные факты; текущая привязка, дедупликация, порядок и отзыв — на стороне приложения, без выведенного автора и истории голосов или аккаунта. Экспериментальные доказательства автора (SDK, mock, браузер) отделены от живых прав, реальных устройств, удаленного списания и независимой приемки людьми или ИИ.",
-      "intent": "Async host observer; owns dedup/order/revocation policy",
+      "intent": "Асинхронный наблюдатель приложения; отвечает за дедупликацию, порядок и отзыв",
       "example_sha256": "c5380e35cdc244cbb2bc10710da2ef6e47d04d06987c9095034b4332301f872e",
       "example_source_sha256": "c5380e35cdc244cbb2bc10710da2ef6e47d04d06987c9095034b4332301f872e",
       "kind": "value"
@@ -2745,7 +2745,7 @@
       "recipe": "ref.bot_platform",
       "example": "examples/api-reference/python/bot_platform.py",
       "limits": "Закрытый список из 51 метода Bot API в семи семействах; нативные запросы SDK и текущие права конкретного метода, а не произвольный MTProto или история аккаунта. Текущие права, ресурс, ревизия, связи подключений и дочерних ботов, проверка медиа и допустимая активность принадлежат приложению. Запись требует атомарной долговечной заявки на отправку; бюджет, согласие и котировка приложения перепроверяются до нативного ввода-вывода. Локальное резервирование и свежая нативная котировка не гарантируют атомарного удаленного списания или финансовых расчетов. Неизвестный результат, квитанция или падение остаются тем же намерением: без автоматического повтора, отката, сверки и глобального inbox/outbox. Запрос на вступление использует исходное время получения и оставшийся нативный срок; личные темы поддерживают только явно разрешенные методы. Создание управляемого бота требует нативного подтверждения пользователя; repr токена скрыт, но хранение и сериализация секрета в приложении остаются явными. Загрузка историй использует проверенный вложенный multipart SDK; кодек, размеры, содержимое и время жизни файла — обязанности приложения. События сохраняют неизвестные и анонимные факты; текущая привязка, дедупликация, порядок и отзыв — на стороне приложения, без выведенного автора и истории голосов или аккаунта. Экспериментальные доказательства автора (SDK, mock, браузер) отделены от живых прав, реальных устройств, удаленного списания и независимой приемки людьми или ИИ.",
-      "intent": "Authorize/fresh rights/one claim/one SDK call/receipt без automatic retry",
+      "intent": "Авторизация, свежие права, одна заявка, один вызов SDK и квитанция без автоматического повтора",
       "example_sha256": "c5380e35cdc244cbb2bc10710da2ef6e47d04d06987c9095034b4332301f872e",
       "example_source_sha256": "c5380e35cdc244cbb2bc10710da2ef6e47d04d06987c9095034b4332301f872e",
       "kind": "value"
@@ -2793,7 +2793,7 @@
       "recipe": "ref.bot_platform",
       "example": "examples/api-reference/python/bot_platform.py",
       "limits": "Закрытый список из 51 метода Bot API в семи семействах; нативные запросы SDK и текущие права конкретного метода, а не произвольный MTProto или история аккаунта. Текущие права, ресурс, ревизия, связи подключений и дочерних ботов, проверка медиа и допустимая активность принадлежат приложению. Запись требует атомарной долговечной заявки на отправку; бюджет, согласие и котировка приложения перепроверяются до нативного ввода-вывода. Локальное резервирование и свежая нативная котировка не гарантируют атомарного удаленного списания или финансовых расчетов. Неизвестный результат, квитанция или падение остаются тем же намерением: без автоматического повтора, отката, сверки и глобального inbox/outbox. Запрос на вступление использует исходное время получения и оставшийся нативный срок; личные темы поддерживают только явно разрешенные методы. Создание управляемого бота требует нативного подтверждения пользователя; repr токена скрыт, но хранение и сериализация секрета в приложении остаются явными. Загрузка историй использует проверенный вложенный multipart SDK; кодек, размеры, содержимое и время жизни файла — обязанности приложения. События сохраняют неизвестные и анонимные факты; текущая привязка, дедупликация, порядок и отзыв — на стороне приложения, без выведенного автора и истории голосов или аккаунта. Экспериментальные доказательства автора (SDK, mock, браузер) отделены от живых прав, реальных устройств, удаленного списания и независимой приемки людьми или ИИ.",
-      "intent": "Validated new photo InputFile bridge к SDK nested multipart",
+      "intent": "Проверенный новый InputFile фото для вложенного multipart SDK",
       "example_sha256": "c5380e35cdc244cbb2bc10710da2ef6e47d04d06987c9095034b4332301f872e",
       "example_source_sha256": "c5380e35cdc244cbb2bc10710da2ef6e47d04d06987c9095034b4332301f872e",
       "kind": "value"
@@ -2805,7 +2805,7 @@
       "recipe": "ref.bot_platform",
       "example": "examples/api-reference/python/bot_platform.py",
       "limits": "Закрытый список из 51 метода Bot API в семи семействах; нативные запросы SDK и текущие права конкретного метода, а не произвольный MTProto или история аккаунта. Текущие права, ресурс, ревизия, связи подключений и дочерних ботов, проверка медиа и допустимая активность принадлежат приложению. Запись требует атомарной долговечной заявки на отправку; бюджет, согласие и котировка приложения перепроверяются до нативного ввода-вывода. Локальное резервирование и свежая нативная котировка не гарантируют атомарного удаленного списания или финансовых расчетов. Неизвестный результат, квитанция или падение остаются тем же намерением: без автоматического повтора, отката, сверки и глобального inbox/outbox. Запрос на вступление использует исходное время получения и оставшийся нативный срок; личные темы поддерживают только явно разрешенные методы. Создание управляемого бота требует нативного подтверждения пользователя; repr токена скрыт, но хранение и сериализация секрета в приложении остаются явными. Загрузка историй использует проверенный вложенный multipart SDK; кодек, размеры, содержимое и время жизни файла — обязанности приложения. События сохраняют неизвестные и анонимные факты; текущая привязка, дедупликация, порядок и отзыв — на стороне приложения, без выведенного автора и истории голосов или аккаунта. Экспериментальные доказательства автора (SDK, mock, браузер) отделены от живых прав, реальных устройств, удаленного списания и независимой приемки людьми или ИИ.",
-      "intent": "Validated new video InputFile/duration bridge к SDK nested multipart",
+      "intent": "Проверенный новый InputFile видео с длительностью для вложенного multipart SDK",
       "example_sha256": "c5380e35cdc244cbb2bc10710da2ef6e47d04d06987c9095034b4332301f872e",
       "example_source_sha256": "c5380e35cdc244cbb2bc10710da2ef6e47d04d06987c9095034b4332301f872e",
       "kind": "value"
@@ -2817,7 +2817,7 @@
       "recipe": "ref.bot_fsm_storage",
       "example": "examples/api-reference/python/bot_fsm_storage.py",
       "limits": "Структурное хранилище приложения, точный шестиполевой ключ SDK, одна CAS-запись состояния и данных (сравнение с заменой); JSON до 64 КиБ. Словарь в примере только показывает контракт и не сохраняется; отдельная файловая SQLite и доказательство с тремя процессами — в рецепте восстановления диалога. Сохраняйте изоляцию событий, миграции и надгробные записи, права и дедупликацию бизнес-эффекта; обещания exactly-once в живой или распределенной системе нет.",
-      "intent": "Immutable revision and detached JSON answers",
+      "intent": "Неизменяемая ревизия и отдельная копия ответов в JSON",
       "example_sha256": "06d0b21bfa17efef0f50720ac45e7aefef449b4bad78902c67f316dd6668e8cd",
       "example_source_sha256": "06d0b21bfa17efef0f50720ac45e7aefef449b4bad78902c67f316dd6668e8cd",
       "kind": "value"
@@ -2829,7 +2829,7 @@
       "recipe": "ref.bot_fsm_storage",
       "example": "examples/api-reference/python/bot_fsm_storage.py",
       "limits": "Структурное хранилище приложения, точный шестиполевой ключ SDK, одна CAS-запись состояния и данных (сравнение с заменой); JSON до 64 КиБ. Словарь в примере только показывает контракт и не сохраняется; отдельная файловая SQLite и доказательство с тремя процессами — в рецепте восстановления диалога. Сохраняйте изоляцию событий, миграции и надгробные записи, права и дедупликацию бизнес-эффекта; обещания exactly-once в живой или распределенной системе нет.",
-      "intent": "Stale CAS refused before effects",
+      "intent": "Устаревшая запись CAS отклонена до эффектов",
       "example_sha256": "06d0b21bfa17efef0f50720ac45e7aefef449b4bad78902c67f316dd6668e8cd",
       "example_source_sha256": "06d0b21bfa17efef0f50720ac45e7aefef449b4bad78902c67f316dd6668e8cd",
       "kind": "value"
@@ -2841,7 +2841,7 @@
       "recipe": "ref.bot_fsm_storage",
       "example": "examples/api-reference/python/bot_fsm_storage.py",
       "limits": "Структурное хранилище приложения, точный шестиполевой ключ SDK, одна CAS-запись состояния и данных (сравнение с заменой); JSON до 64 КиБ. Словарь в примере только показывает контракт и не сохраняется; отдельная файловая SQLite и доказательство с тремя процессами — в рецепте восстановления диалога. Сохраняйте изоляцию событий, миграции и надгробные записи, права и дедупликацию бизнес-эффекта; обещания exactly-once в живой или распределенной системе нет.",
-      "intent": "Host-owned durable snapshot transaction contract",
+      "intent": "Контракт долговечной транзакции снимка в хранилище приложения",
       "example_sha256": "06d0b21bfa17efef0f50720ac45e7aefef449b4bad78902c67f316dd6668e8cd",
       "example_source_sha256": "06d0b21bfa17efef0f50720ac45e7aefef449b4bad78902c67f316dd6668e8cd",
       "kind": "value"
@@ -2853,7 +2853,7 @@
       "recipe": "ref.bot_fsm_storage",
       "example": "examples/api-reference/python/bot_fsm_storage.py",
       "limits": "Структурное хранилище приложения, точный шестиполевой ключ SDK, одна CAS-запись состояния и данных (сравнение с заменой); JSON до 64 КиБ. Словарь в примере только показывает контракт и не сохраняется; отдельная файловая SQLite и доказательство с тремя процессами — в рецепте восстановления диалога. Сохраняйте изоляцию событий, миграции и надгробные записи, права и дедупликацию бизнес-эффекта; обещания exactly-once в живой или распределенной системе нет.",
-      "intent": "Optional atomic capability on current project storage",
+      "intent": "Необязательная атомарная возможность текущего хранилища проекта",
       "example_sha256": "06d0b21bfa17efef0f50720ac45e7aefef449b4bad78902c67f316dd6668e8cd",
       "example_source_sha256": "06d0b21bfa17efef0f50720ac45e7aefef449b4bad78902c67f316dd6668e8cd",
       "kind": "value"
@@ -2865,7 +2865,7 @@
       "recipe": "ref.bot_fsm_storage",
       "example": "examples/api-reference/python/bot_fsm_storage.py",
       "limits": "Структурное хранилище приложения, точный шестиполевой ключ SDK, одна CAS-запись состояния и данных (сравнение с заменой); JSON до 64 КиБ. Словарь в примере только показывает контракт и не сохраняется; отдельная файловая SQLite и доказательство с тремя процессами — в рецепте восстановления диалога. Сохраняйте изоляцию событий, миграции и надгробные записи, права и дедупликацию бизнес-эффекта; обещания exactly-once в живой или распределенной системе нет.",
-      "intent": "aiogram BaseStorage facade over supplied host store",
+      "intent": "Фасад aiogram BaseStorage над хранилищем приложения",
       "example_sha256": "06d0b21bfa17efef0f50720ac45e7aefef449b4bad78902c67f316dd6668e8cd",
       "example_source_sha256": "06d0b21bfa17efef0f50720ac45e7aefef449b4bad78902c67f316dd6668e8cd",
       "kind": "value"
@@ -2877,7 +2877,7 @@
       "recipe": "ref.bot_fsm_storage",
       "example": "examples/api-reference/python/bot_fsm_storage.py",
       "limits": "Структурное хранилище приложения, точный шестиполевой ключ SDK, одна CAS-запись состояния и данных (сравнение с заменой); JSON до 64 КиБ. Словарь в примере только показывает контракт и не сохраняется; отдельная файловая SQLite и доказательство с тремя процессами — в рецепте восстановления диалога. Сохраняйте изоляцию событий, миграции и надгробные записи, права и дедупликацию бизнес-эффекта; обещания exactly-once в живой или распределенной системе нет.",
-      "intent": "Absolute draft deadline without expiring pending effects",
+      "intent": "Абсолютный срок черновика, при котором ожидающие эффекты не истекают",
       "example_sha256": "06d0b21bfa17efef0f50720ac45e7aefef449b4bad78902c67f316dd6668e8cd",
       "example_source_sha256": "06d0b21bfa17efef0f50720ac45e7aefef449b4bad78902c67f316dd6668e8cd",
       "kind": "value"

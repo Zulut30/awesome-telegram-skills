@@ -14,7 +14,7 @@
           "BotSettings": "Конфигурация из явного environ без dotenv",
           "InvalidInitData": "Контролируемый отказ подписи/кодировки/freshness",
           "VerifiedLaunch": "Подписанные user_id/auth_date/user",
-          "validate_init_data": "HMAC и freshness raw initData"
+          "validate_init_data": "HMAC-подпись и свежесть сырой initData"
         }
       }
     },
@@ -23,18 +23,18 @@
       "section": "core",
       "title": "Безопасные сообщения и длинный текст",
       "example": "examples/api-reference/python/core_message_text.py",
-      "limits": "SDK-free/entities payload с parse_mode=None. Консервативный UTF-16 limit; atomic oversized entity/Unicode sequence вызывает error. Общие emoji/combining sequences сохранены, полная UAX29 segmentation не обещана. Host проверяет link trust, sticker/fallback metadata и custom emoji entitlement/context; default — regular emoji. Никаких network/retry/delivery/ACL promises.",
+      "limits": "Готовит текст с entities и parse_mode=None без зависимости от SDK. Лимит в единицах UTF-16 консервативный; неделимая entity или последовательность Unicode больше лимита вызывает ошибку. Распространенные emoji и комбинируемые последовательности не разрезаются, полная сегментация UAX29 не обещана. Проект сам проверяет доверие к ссылкам, метаданные стикера и запасного варианта, entitlement и контекст для custom emoji; по умолчанию используется обычный emoji. Сеть, повторы, доставку и права доступа компонент не обещает.",
       "api": {
         "telegram_patterns": {
           "EntityKind": "Literal одиннадцати поддерживаемых outgoing entity типов",
           "TextEntity": "Frozen range и проверенные metadata",
-          "TextPayload": "TypedDict JSON text/entities/parse_mode=None",
-          "FormattedText": "Immutable snapshot и kwargs/split",
-          "MessageBuilder": "Immutable fluent literal composition и rebased entities",
+          "TextPayload": "TypedDict с JSON-полями text, entities и parse_mode=None",
+          "FormattedText": "Неизменяемый снимок текста; kwargs и разбиение на части",
+          "MessageBuilder": "Пошаговая сборка буквального текста с пересчетом entities",
           "utf16_length": "Валидация scalars и подсчет UTF-16 units",
-          "escape_html": "Literal HTML text/attribute escaping",
+          "escape_html": "Экранирование буквального текста и атрибутов для HTML",
           "escape_markdown_v2": "Literal escaping в text/code/link контексте",
-          "split_formatted": "Lossless partition, clipping styles/code и atomic links/quotes/emoji"
+          "split_formatted": "Разбиение без потерь: стили и код обрезаются по границе, ссылки, цитаты и emoji не делятся"
         }
       }
     },
@@ -61,9 +61,9 @@
       "limits": "Передавайте реальный operation kind. Report не копирует developer text и не делает retry. Timeout/cancel/невалидный feedback после возможной записи оставляют unknown outcome и требуют сверки той же операции; локальный отказ должен произойти до эффекта.",
       "api": {
         "telegram_patterns": {
-          "PatternError": "Базовое исключение с безопасным report",
+          "PatternError": "Базовая ошибка с кодом, исходом и отчетом",
           "ValidationFailure": "Известный локальный отказ validation",
-          "InvalidType": "Локальный type отказ, совместимый с TypeError",
+          "InvalidType": "Совместимый с TypeError известный локальный отказ",
           "AuthenticationRequired": "Известный отказ до эффекта из-за отсутствия auth",
           "PermissionDenied": "Известный отказ до эффекта по правам",
           "UnsupportedCapability": "Отсутствующая capability и fallback",
@@ -73,12 +73,12 @@
           "UnknownOutcome": "Эффект пока не подтвержден",
           "InvalidCompletion": "Невалидный feedback после возможного эффекта",
           "safe_error_report": "Классификация без raw exception payload",
-          "ErrorReport": "Неизменяемые code/category/outcome/recovery/message",
+          "ErrorReport": "Код, категория, исход, способ восстановления и сообщение, только чтение",
           "ErrorCategory": "Literal категории ошибки",
           "ErrorCode": "Literal известных кодов",
-          "ErrorOutcome": "Literal rejected/read-failed/unknown",
+          "ErrorOutcome": "Literal-исход: rejected, read-failed или unknown",
           "RecoveryAction": "Literal следующего действия",
-          "OperationKind": "Literal read/write для реальной операции"
+          "OperationKind": "Literal read/write"
         }
       }
     },
@@ -104,8 +104,8 @@
       "limits": "Чтение не исполняет recipe code. Maturity отдельно от verification; SDK/mock не доказывают live/device. Preview — независимая копия. Этот пример ищет существующий cookbook recipe two-columns; ref.* — имена справочника API.",
       "api": {
         "telegram_patterns": {
-          "Maturity": "Literal stable/experimental/reference",
-          "VerificationLevel": "Literal sdk/mock/browser/live/not_run",
+          "Maturity": "Literal-зрелость: stable, experimental или reference",
+          "VerificationLevel": "Literal-уровень проверки: sdk, mock, browser, live или not_run",
           "Recipe": "Неизменяемая запись и копия preview",
           "RecipeCatalog": "Версия, recipes, get/search с фильтрами"
         }
@@ -162,23 +162,23 @@
       "limits": "Aiogram extra; callbacks до 64 bytes, keys bounded ASCII, prefixes навигации и action различимы. Colors только primary/success/danger, emoji entitlement отдельный. Контекст chat/business/invoice передает host. Reply не вызывает callback_query; appearance в Telegram не проверяется.",
       "api": {
         "telegram_patterns.aiogram": {
-          "ActionButton": "Label/key/style/custom emoji descriptor",
-          "ButtonStyle": "Literal Telegram button style",
-          "MenuPage": "Markup и page/page_count/total_items",
+          "ActionButton": "Описание кнопки: текст, ключ, стиль и custom emoji",
+          "ButtonStyle": "Literal-стиль кнопки Telegram",
+          "MenuPage": "Разметка и номер страницы, число страниц и элементов",
           "action_keyboard": "Одна callback-кнопка",
           "action_menu": "Равномерные строки по 2/3 и другое число",
           "paginated_menu": "Локальная страница с отдельной навигацией",
           "page_number": "Безопасный разбор callback страницы",
           "ChatType": "Literal настоящего контекста чата",
           "inline_keyboard": "Явные строки native inline-кнопок",
-          "reply_keyboard": "Reply rows/input placeholder",
+          "reply_keyboard": "Строки reply-клавиатуры и подсказка в поле ввода",
           "input_prompt": "ForceReply для ввода",
           "remove_keyboard": "Снять reply keyboard",
-          "KeyboardLayout": "Immutable 2/3/mixed width pattern with last/cycle tail",
-          "KeyboardCapabilities": "Explicit context and presentation hints; unknown uses standard text fallback",
-          "action_layout": "Unique callback descriptors composed by width pattern",
-          "inline_layout": "Flat native inline buttons with context checks and fallback",
-          "reply_layout": "Flat reply buttons with request validation and fallback"
+          "KeyboardLayout": "Неизменяемая раскладка по 2, по 3 или смешанная, с правилом для последней строки",
+          "KeyboardCapabilities": "Явный контекст и подсказки оформления; при неизвестном контексте — обычный текст",
+          "action_layout": "Уникальные callback-кнопки, разложенные по шаблону ширины",
+          "inline_layout": "Inline-кнопки с проверкой контекста и запасным оформлением",
+          "reply_layout": "Reply-кнопки с проверкой запросов и запасным оформлением"
         }
       }
     },
@@ -192,14 +192,14 @@
         "telegram_patterns.aiogram": {
           "Action": "Actor/key для авторизованного сервиса",
           "ActionResult": "Статус и публичный plain ответ сервиса",
-          "callback_router": "ACK перед execute и notify",
+          "callback_router": "ACK до вызова execute и notify",
           "start_router": "Небольшой /start без состояния",
-          "CommandReply": "Command/description/plain text/keyboard",
+          "CommandReply": "Команда, описание, текст ответа и клавиатура",
           "command_menu": "Native BotCommand list без регистрации",
-          "command_router": "Reply handlers с SDK mention filtering"
+          "command_router": "Обработчики команд с фильтром упоминания бота из SDK"
         },
         "telegram_patterns.testing": {
-          "Responder": "Typed fixture value или sync/async callable",
+          "Responder": "Ответ заглушки: значение или синхронная/асинхронная функция",
           "StubSession": "Явные responses, calls, close без HTTP fallback"
         }
       }
@@ -213,8 +213,8 @@
       "api": {
         "telegram_patterns.aiogram": {
           "create_bot": "Bot из BotSettings; test_environment → /bot<token>/test/<method>",
-          "run_bot": "Owned polling/task/session lifecycle",
-          "stars_invoice": "Native XTR CreateInvoiceLink request"
+          "run_bot": "Polling, задачи и сессия бота под управлением библиотеки",
+          "stars_invoice": "Нативный запрос CreateInvoiceLink в XTR"
         }
       }
     },
@@ -228,7 +228,7 @@
         "telegram_patterns.aiogram": {
           "TextField": "Конфигурация и нормализация/validation read",
           "InvalidField": "Bounded plain ошибка пользователя без секретов",
-          "FormSubmission": "Server-derived identity и copied values",
+          "FormSubmission": "Личность, полученная на сервере, и копии ответов",
           "text_form_router": "Многошаговый FSM с back/cancel/review"
         }
       }
@@ -257,10 +257,10 @@
       "limits": "Catalog отражает установленный SDK, не server rights. Builder отклоняет неизвестные top-level fields; nested validation принадлежит SDK. InputFile не читается автоматически. HTTP/send/лимиты/доступ и provider workflow не появляются от construction.",
       "api": {
         "telegram_patterns.aiogram": {
-          "MethodSpec": "Name/class/fields/required/official URL",
+          "MethodSpec": "Имя, класс, поля, обязательные поля и ссылка на документацию",
           "InvalidAPIRequest": "Контролируемый отказ без SDK payload dump",
-          "method_catalog": "Текущие SDK request methods",
-          "build_request": "Native request без HTTP"
+          "method_catalog": "Текущие методы запросов SDK",
+          "build_request": "Нативный запрос без HTTP"
         }
       }
     },
@@ -272,14 +272,14 @@
       "limits": "ESM + DOM + явно подключенный styles.css. Native объект synthetic; snapshot не auth. Host разрешает coordinates insets и владеет состоянием/navigation/focus. Shell/field используют textContent; dispose удаляет только own UI/subscriptions. Viewport не physical Telegram QA.",
       "api": {
         "@awesome-telegram/patterns": {
-          "TelegramBridge": "Snapshot/subscribe/start/dispose lifecycle",
-          "TelegramWebApp": "Readonly subset SDK для bridge",
-          "Insets": "Readonly top/right/bottom/left coordinates",
+          "TelegramBridge": "Снимок, подписка, запуск и освобождение моста",
+          "TelegramWebApp": "Подмножество SDK для моста, только чтение",
+          "Insets": "Отступы сверху, справа, снизу и слева, только чтение",
           "BridgeSnapshot": "Неизменяемая theme/geometry metadata",
-          "createAppShell": "Owned content/summary/actions composition",
-          "AppShell": "Typed shell slots/theme/insets/dispose",
+          "createAppShell": "Каркас с содержимым, итогом и действиями",
+          "AppShell": "Типизированные слоты каркаса, тема, отступы и освобождение",
           "createTextField": "Связанные label/hint/error без HTML injection",
-          "TextFieldControl": "Typed root/input/setError"
+          "TextFieldControl": "Типизированные корень, поле и setError"
         }
       }
     },
@@ -291,12 +291,12 @@
       "limits": "Response/fetch synthetic, реального backend нет. Trusted baseUrl и same-origin paths; runtime decode обязательно. Headers/session/CSRF/ACL/idempotency у host. Один invocation транспорта не исключает wire replay браузером. Unknown POST сверяется с тем же ключом без автоматического retry.",
       "api": {
         "@awesome-telegram/patterns": {
-          "ApiClient": "Один request с runtime decoder",
-          "ApiError": "Kind/status/outcome без response body",
-          "FailureKind": "Literal HTTP/network/timeout/abort/response failure",
-          "ClientOptions": "Base/headers/owned fetch transport",
-          "RequestOptions": "Method/body/signal/timeout options",
-          "FetchTransport": "Typed Fetch-compatible adapter host"
+          "ApiClient": "Один запрос с проверкой ответа во время выполнения",
+          "ApiError": "Вид, статус и исход ошибки без тела ответа",
+          "FailureKind": "Literal-вид сбоя: HTTP, сеть, таймаут, отмена или ответ",
+          "ClientOptions": "Базовый адрес, заголовки и свой транспорт fetch",
+          "RequestOptions": "Метод, тело, сигнал отмены и таймаут",
+          "FetchTransport": "Типизированный адаптер, совместимый с fetch"
         }
       }
     },
@@ -308,12 +308,12 @@
       "limits": "Только serviceId/slotId, без auth/contacts/price/pending operation. Account scope должен поступать от server host; fixture scope не авторизация. Store не меняет scope автоматически при account switch. Storage sync; async CloudStorage требует другого adapter, failure дает unavailable/false.",
       "api": {
         "@awesome-telegram/patterns": {
-          "SelectionDraftStore": "Scoped read/write/clear и key",
-          "SelectionDraft": "Readonly nullable identifiers",
-          "DraftRead": "Discriminated status с value только restored",
-          "DraftOptions": "Namespace/scope/TTL/clock",
-          "KeyValueStorage": "Sync storage contract",
-          "StorageFactory": "Lazy owned storage factory"
+          "SelectionDraftStore": "Чтение, запись и очистка черновика в своей области и ключ",
+          "SelectionDraft": "Идентификаторы выбора, допускающие null, только чтение",
+          "DraftRead": "Статус чтения; значение есть только у restored",
+          "DraftOptions": "Пространство имен, область, TTL и часы",
+          "KeyValueStorage": "Контракт синхронного хранилища",
+          "StorageFactory": "Ленивая фабрика своего хранилища"
         }
       }
     },
@@ -325,11 +325,11 @@
       "limits": "Каталоги и facade не являются полной parameter schema. Presence/platform/version не consent, launch, auth или успешный платеж. Callback и receiver сохраняются; host выбирает arguments/permissions. Listener/dispose подавляют late callbacks, native cleanup failure может требовать повторного dispose.",
       "api": {
         "@awesome-telegram/patterns": {
-          "TelegramNativeAPI": "Supports/call/listen/dispose с gates",
+          "TelegramNativeAPI": "Проверка поддержки, вызов, подписка и освобождение с проверкой версии",
           "UnsupportedTelegramCapability": "Контролируемое отсутствие/disposed native capability",
-          "TELEGRAM_NATIVE_METHODS": "Readonly path/minVersion/source catalog",
-          "TELEGRAM_NATIVE_EVENTS": "Readonly имена native events",
-          "TELEGRAM_NATIVE_EVENT_DETAILS": "Readonly event version/source metadata",
+          "TELEGRAM_NATIVE_METHODS": "Каталог путей, минимальных версий и источников, только чтение",
+          "TELEGRAM_NATIVE_EVENTS": "Имена нативных событий, только чтение",
+          "TELEGRAM_NATIVE_EVENT_DETAILS": "Версии и источники событий, только чтение",
           "TelegramNativeMethod": "Literal известных native paths",
           "TelegramNativeEvent": "Literal известных event names"
         }
@@ -343,18 +343,18 @@
       "limits": "Developer messages не сериализуются в safe report. Operation kind отражает реальное действие; unknown write требует reconcile, classification не отменяет effect. InvalidType сохраняет TypeError catch, а не наследование PatternError. Type aliases не валидируют произвольный JSON автоматически.",
       "api": {
         "@awesome-telegram/patterns": {
-          "PatternError": "Base code/outcome с report",
+          "PatternError": "Базовая ошибка с кодом, исходом и отчетом",
           "ValidationFailure": "Известная local validation rejection",
-          "InvalidType": "TypeError-compatible known local rejection",
+          "InvalidType": "Совместимый с TypeError известный локальный отказ",
           "AuthenticationRequired": "Известный auth refusal",
           "PermissionDenied": "Известный permission refusal",
           "UnsupportedCapability": "Известная unavailable capability",
           "UnknownOutcome": "Неподтвержденный effect",
-          "safeErrorReport": "Allowlisted error metadata без raw exception",
-          "ErrorReport": "Readonly code/category/outcome/recovery/message",
+          "safeErrorReport": "Метаданные ошибки по списку разрешенных, без сырого исключения",
+          "ErrorReport": "Код, категория, исход, способ восстановления и сообщение, только чтение",
           "ErrorCategory": "Literal категории ошибки",
           "ErrorCode": "Literal известных кодов",
-          "ErrorOutcome": "Literal outcome",
+          "ErrorOutcome": "Literal-исход: rejected, read-failed или unknown",
           "OperationKind": "Literal read/write",
           "RecoveryAction": "Literal следующего действия"
         }
@@ -368,11 +368,11 @@
       "limits": "Нужен extra aiogram. Проверяются владелец, бот, чат, тема, сообщение и ревизия; сначала ответ на callback (ACK), неизвестный результат редактирования замораживает меню, восстановление — явное, в том же сообщении. Состояние живет в одном процессе и цикле событий: после рестарта старые кнопки устаревают. Сессии, задачи и бизнес-права принадлежат приложению. После неизвестного результата первой отправки повтора нет; работа интерфейса в живом Telegram не подтверждена.",
       "api": {
         "telegram_patterns.aiogram": {
-          "NavigationScreen": "Immutable plain screen with declared links/layout",
-          "NavigationState": "Frozen scoped history/revision/phase snapshot",
-          "NavigationResult": "Safe accepted/denied/stale/unavailable/unknown feedback",
-          "MessageNavigation": "Bounded open/get_state/handle/discard lifecycle for one owned message",
-          "navigation_router": "SDK Router with ACK-first guarded navigation and optional feedback"
+          "NavigationScreen": "Неизменяемый экран с объявленными переходами и раскладкой",
+          "NavigationState": "Неизменяемый снимок истории, ревизии и фазы в своей области",
+          "NavigationResult": "Безопасный ответ: принято, отказано, устарело, недоступно или неизвестно",
+          "MessageNavigation": "Открытие, состояние, обработка и сброс для одного своего сообщения",
+          "navigation_router": "Router SDK: сначала ACK, проверки перехода и необязательный ответ"
         }
       }
     },
@@ -384,12 +384,12 @@
       "limits": "Черновик на сервере в одном процессе; точные проверки владельца, контекста, ревизии и токена подтверждения. Бизнес-операция, долговременное хранение и работа нескольких процессов не гарантируются. Текущие права, `resource_version` и идемпотентная транзакция принадлежат приложению; синтетический транспорт не доказывает доставку и отображение в Telegram.",
       "api": {
         "telegram_patterns": {
-          "SelectionOption": "Immutable keyed option and filter membership",
-          "SelectionSpec": "Current server values, field bounds and resource version",
-          "SelectionContext": "Host-derived owner/bot/chat/thread/message identity",
-          "SelectionState": "Immutable draft snapshot, summary and bounded callback code",
-          "SelectionResult": "Guarded selection decision with safe feedback",
-          "SelectionMenu": "Atomic server draft, rule refresh and revision-bound one-time confirmation"
+          "SelectionOption": "Неизменяемый вариант с ключом и принадлежностью к фильтрам",
+          "SelectionSpec": "Текущие значения сервера, границы полей и версия ресурса",
+          "SelectionContext": "Владелец, бот, чат, тема и сообщение, определенные приложением",
+          "SelectionState": "Неизменяемый снимок черновика, итог и ограниченный код callback",
+          "SelectionResult": "Решение по выбору после проверок с безопасным ответом",
+          "SelectionMenu": "Атомарный черновик на сервере, обновление правил и одноразовое подтверждение по ревизии"
         }
       }
     },
@@ -401,8 +401,8 @@
       "limits": "Черновик на сервере в одном процессе; точные проверки владельца, контекста, ревизии и токена подтверждения. Бизнес-операция, долговременное хранение и работа нескольких процессов не гарантируются. Текущие права, `resource_version` и идемпотентная транзакция принадлежат приложению; синтетический транспорт не доказывает доставку и отображение в Telegram.",
       "api": {
         "telegram_patterns.aiogram": {
-          "selection_keyboard": "Render toggle/multiselect/quantity/filter and confirmation markup with capability fallback",
-          "selection_router": "ACK-first composition with fresh server spec, safe callback guards and host-owned hooks"
+          "selection_keyboard": "Разметка переключателей, множественного выбора, количества, фильтров и подтверждения с запасным оформлением",
+          "selection_router": "Сначала ACK, свежая спецификация с сервера, проверки callback и хуки приложения"
         }
       }
     },
@@ -414,12 +414,12 @@
       "limits": "Без SDK; для Europe/Warsaw нужна база IANA приложения или необязательный extra calendar (проверено с tzdata 2026.5). Текущие права приложения проверяются синхронно внутри транзакции файловой SQLite до эффекта или повтора. Публикация расписания — доверенное приложению сравнение с заменой (CAS); неизменяемая квитанция отличается от текущей записи; внешних побочных эффектов нет. Файл, миграции, срок хранения и асинхронное завершение работы принадлежат приложению.",
       "api": {
         "telegram_patterns": {
-          "CalendarMonth": "Immutable Monday-first month, available/blocked dates and plain summary",
-          "TimeSlot": "Half-open UTC interval and local offset display",
-          "resolve_local_time": "Naive wall time to UTC, DST gap rejection and explicit ambiguous fold",
-          "SlotSchedule": "Immutable resource/revision/sorted uniquely keyed slots",
-          "SlotBooking": "Current owner-bound booking status and immutable times",
-          "SQLiteSlotStore": "Explicit schema, schedule CAS, current ACL, atomic reserve/cancel and replay"
+          "CalendarMonth": "Неизменяемый месяц с понедельника, доступные и закрытые даты и краткий итог",
+          "TimeSlot": "Полуоткрытый интервал UTC и отображение со смещением местного времени",
+          "resolve_local_time": "Перевод местного времени в UTC: отказ при пропуске из-за перехода на летнее время и явный выбор при двусмысленности",
+          "SlotSchedule": "Неизменяемые ресурс, ревизия и отсортированные слоты с уникальными ключами",
+          "SlotBooking": "Текущий статус записи владельца и неизменяемое время",
+          "SQLiteSlotStore": "Явная схема, CAS расписания, текущие права, атомарные бронь и отмена, повтор"
         }
       }
     },
@@ -431,8 +431,8 @@
       "limits": "Нужен extra aiogram; только разметка. Контроллер обязан привязать callback data к владельцу, контексту и ревизии; транзакция записи заново проверяет доступность. Запасной вариант по умолчанию просто не показывает недоступные дни. `disabled_buttons=True` требует поддержки, явно проверенной приложением; работа в живых клиентах не заявлена.",
       "api": {
         "telegram_patterns.aiogram": {
-          "calendar_keyboard": "Available-date fallback or native disabled month grid with explicit navigation",
-          "time_slot_keyboard": "Enabled UTC intervals displayed with local offset, native layout/validation"
+          "calendar_keyboard": "Только доступные даты или нативная сетка месяца с неактивными днями и явной навигацией",
+          "time_slot_keyboard": "Доступные интервалы UTC со смещением местного времени, нативная раскладка и проверка"
         }
       }
     },
@@ -444,16 +444,16 @@
       "limits": "Нужен extra aiogram. Обычный личный чат; изоляция FSM и событий и долговечная бизнес-транзакция того же намерения — на стороне приложения. ForceReply связывается с автором и шагом; нативные значения требуют подтверждения. Метаданные и координаты не доказывают содержимое, личность или присутствие. Приемки в живых клиентах нет.",
       "api": {
         "telegram_patterns.aiogram": {
-          "FieldValue": "JSON-compatible string or flat metadata",
-          "NumberField": "Exact bounded decimal string",
-          "EmailField": "ASCII mailbox format",
-          "PhoneField": "Explicit international number",
-          "DateField": "Existing calendar date with bounds",
-          "FileField": "Bounded opaque document metadata",
-          "ContactField": "Own or explicitly third-party contact candidate",
-          "LocationField": "Finite static coordinate candidate",
-          "DialogSubmission": "Immutable identity and values; fresh as_dict",
-          "dialog_form_router": "Mixed router with owner/step guards, back/cancel and confirmation"
+          "FieldValue": "Строка или плоские метаданные, совместимые с JSON",
+          "NumberField": "Точное десятичное число в границах, строкой",
+          "EmailField": "Формат ASCII-адреса почты",
+          "PhoneField": "Номер в международном формате",
+          "DateField": "Существующая календарная дата в границах",
+          "FileField": "Ограниченные непрозрачные метаданные документа",
+          "ContactField": "Свой или явно чужой контакт-кандидат",
+          "LocationField": "Конечные статичные координаты-кандидат",
+          "DialogSubmission": "Неизменяемые личность и ответы; новый as_dict при каждом вызове",
+          "dialog_form_router": "Смешанная форма с проверкой владельца и шага, назад, отменой и подтверждением"
         }
       }
     },
@@ -467,12 +467,12 @@
         "telegram_patterns.aiogram": {
           "MediaKind": "Literal photo/video/audio/document; исходный тип file_id проверяет host",
           "MediaSendRequest": "Union четырех native send request типов",
-          "MediaFile": "Immutable bytes/filename или same-bot file_id, bounds и fresh multipart input",
-          "MediaItem": "Immutable typed source, literal FormattedText caption и presentation flags",
-          "DownloadedMedia": "Frozen bounded bytes и bot-scoped identifiers без URL/file_path",
+          "MediaFile": "Неизменяемые байты и имя файла или file_id того же бота, границы и новый multipart",
+          "MediaItem": "Неизменяемый типизированный источник, буквальная подпись FormattedText и флаги оформления",
+          "DownloadedMedia": "Ограниченные байты и идентификаторы этого бота без URL и file_path",
           "media_request": "Один native send request без отправки",
-          "media_album": "Один native 2..10-item homogeneous/visual album без batching",
-          "media_edit": "Exclusive chat/message или inline address и album type guard",
+          "media_album": "Один нативный однородный альбом из 2–10 элементов без разбиения на пачки",
+          "media_edit": "Замена по чату и сообщению либо по inline-адресу с проверкой типа альбома",
           "download_media": "Явное hosted чтение с actual byte bound, total deadline и stream close"
         }
       }
@@ -487,17 +487,17 @@
         "telegram_patterns.aiogram": {
           "ProfileSource": "Literal update/getMe — объявленный источник наблюдения, не authorization proof",
           "ProfileAuthorizer": "Async host ACL(actor_id, bot_id, method) → bool; read и точные setMy*/removeMy* имена",
-          "UserProfile": "Frozen numeric identity, optional text/Premium/capabilities и aware source observation",
+          "UserProfile": "Неизменяемые ID, необязательные текст, Premium и возможности, источник и время наблюдения",
           "ChatProfile": "Frozen выбранные getChat данные, фото/permissions/birthdate и nullable facts",
           "ProfilePhotoSize": "Frozen bot/user-scoped photo identifiers; as_media только для message reuse",
           "ProfilePhotos": "Immutable видимая страница, total_count/offset/limit и observation time",
-          "BotProfile": "Fresh getMe/localized texts, optional own-bot ProfilePhotos; не atomic snapshot",
+          "BotProfile": "Свежие getMe и локализованные тексты, необязательные фото своего бота; это не атомарный снимок",
           "BotProfilePatch": "None omission/empty clear, bounds и новый static JPG/animated MPEG4 upload либо removal",
           "ProfileEditIncomplete": "UnknownOutcome с safe confirmed prefix и pending phase; требуется сверка",
           "user_profile": "Копирование User без I/O, nullable flags и ownership snapshot",
           "chat_profile": "Копирование selected ChatFullInfo без I/O; default permissions не actor role",
           "read_profile_photos": "Один explicit getUserProfilePhotos, immutable sizes, без отрицательных privacy выводов",
-          "read_bot_profile": "Fresh getMe плюс три locale reads; optional own-bot photos, unrequested None",
+          "read_bot_profile": "Свежий getMe и три чтения по локалям; фото своего бота по запросу, иначе None",
           "update_bot_profile": "Текущий host ACL перед каждым выбранным own-bot методом и fresh readback; без retry/rollback"
         }
       }
@@ -510,15 +510,15 @@
       "limits": "Личные элементы по умолчанию нельзя делиться; персональный кеш Telegram не делает отправленное inline-сообщение секретным. Текущие права, ревизии каталога и прав, долговечный секрет, сроки, конкурентность и хранилище принадлежат приложению. Персональные курсоры привязаны к пользователю, боту, запросу, контексту и каталогу; общий кеш полностью публичный, для всех контекстов и не зависит от пользователя. Положительный серверный кеш может повторить старые результаты, не обращаясь к боту, поэтому выдача с текущими ограничениями прав использует `cache_time=0`. Срок цепочки курсоров не продлевается; устаревший, запрещенный или просроченный запрос получает пустой персональный ответ, а не автоматический перезапуск. Статьи передаются буквально, проверенные метаданные emoji — по явному согласию; повтора нативного ответа, учета выбранных результатов и живой проверки приватности нет.",
       "api": {
         "telegram_patterns.aiogram": {
-          "InlineChatType": "Literal inline chat context, including explicit unknown None",
-          "InlineAuthorizer": "Async current host ACL(actor,item) → strict bool",
-          "InlineSearchProvider": "Async host provider of a fresh immutable catalog",
-          "InlineCachePolicy": "Explicit bounded cache_time/is_personal policy",
-          "InlineItem": "Frozen article identity and literal/entities text; shareable=False by default",
-          "InlinePage": "Frozen page bound to the original query; answer_request builds one native request",
-          "InlineSearch": "Bounded immutable search snapshot with HMAC cursor and fixed chain expiry",
-          "inline_articles": "Fresh native article/text models with explicit parse_mode=None",
-          "inline_query_router": "Host Dispatcher router with provider/ACL deadline, stale rejection and one native answer"
+          "InlineChatType": "Literal-тип чата inline, включая явный неизвестный None",
+          "InlineAuthorizer": "Асинхронная проверка текущих прав приложения (пользователь, элемент) → строгий bool",
+          "InlineSearchProvider": "Асинхронный поставщик свежего неизменяемого каталога",
+          "InlineCachePolicy": "Явная политика cache_time и is_personal в границах",
+          "InlineItem": "Неизменяемая статья и буквальный текст с entities; по умолчанию shareable=False",
+          "InlinePage": "Неизменяемая страница исходного запроса; answer_request строит один нативный запрос",
+          "InlineSearch": "Ограниченный неизменяемый снимок поиска с курсором под HMAC и фиксированным сроком цепочки",
+          "inline_articles": "Свежие нативные модели статей с явным parse_mode=None",
+          "inline_query_router": "Router для Dispatcher приложения: срок поставщика и прав, отказ устаревшим и один нативный ответ"
         }
       }
     },
@@ -531,23 +531,23 @@
       "api": {
         "telegram_patterns.aiogram": {
           "PollKind": "Literal regular/quiz",
-          "PollChoice": "Frozen literal option and cloned native SDK rich media",
-          "PollSpec": "Frozen validated modern creation parameters",
-          "PollOptionState": "Persistent option identity and raw reported count",
-          "PollState": "Immutable native Poll snapshot with nullable answers and full JSON details",
-          "PollVote": "Selected persistent/ordinal IDs and exact user/chat identity; empty means retraction",
-          "PollOptionAddition": "Option service observation with possibly unknown poll association and preserved details",
-          "PollBinding": "Bot/poll/chat/message/thread/business binding of an own confirmed response",
-          "PollLocator": "Host lookup identity or exact address, always bot scoped",
-          "PollObservation": "Union of available state/vote/option observations",
-          "PollEvent": "Update ID, binding and one immutable observation",
-          "PollObserver": "Async host observer; owns durable dedup/state policy",
-          "PollLookup": "Async current host binding lookup, no hidden authorization",
-          "poll_request": "One native SendPoll request; literal entities, modern fields and no IO",
-          "poll_state": "Copy native Poll without count inference",
-          "poll_vote": "Copy native PollAnswer without inventing user identity",
-          "poll_option_added": "Copy Message.poll_option_added, including inaccessible/omitted address",
-          "poll_events_router": "Scoped Poll/PollAnswer/message/business_message routing; no count/retry/getPoll"
+          "PollChoice": "Неизменяемый буквальный вариант и копия rich media SDK",
+          "PollSpec": "Неизменяемые проверенные параметры создания",
+          "PollOptionState": "Постоянный ID варианта и сырой счетчик голосов",
+          "PollState": "Неизменяемый снимок Poll с допускающими null ответами и полным JSON",
+          "PollVote": "Выбранные постоянные и порядковые ID и точная личность голосующего; пустой выбор — отзыв голоса",
+          "PollOptionAddition": "Служебное событие о новом варианте; связь с опросом может быть неизвестна",
+          "PollBinding": "Привязка бота, опроса, чата, сообщения, темы и Business к подтвержденному ответу своего бота",
+          "PollLocator": "Ключ поиска в приложении или точный адрес, всегда в рамках бота",
+          "PollObservation": "Объединение доступных наблюдений: состояние, голос или вариант",
+          "PollEvent": "ID update, привязка и одно неизменяемое наблюдение",
+          "PollObserver": "Асинхронный наблюдатель приложения; отвечает за долговечную дедупликацию и состояние",
+          "PollLookup": "Асинхронный поиск текущей привязки без скрытой авторизации",
+          "poll_request": "Один нативный запрос SendPoll: буквальные entities, современные поля, без ввода-вывода",
+          "poll_state": "Копия нативного Poll без вычисления счетчиков",
+          "poll_vote": "Копия нативного PollAnswer без выдуманной личности",
+          "poll_option_added": "Копия Message.poll_option_added, включая недоступный или пропущенный адрес",
+          "poll_events_router": "Маршрутизация Poll, PollAnswer, message и business_message; без подсчета, повторов и getPoll"
         }
       }
     },
@@ -560,23 +560,23 @@
       "api": {
         "telegram_patterns.aiogram": {
           "PlatformContract": "Frozen native метод/семейство/right/version/source/evidence",
-          "PlatformScope": "Immutable server bot/actor/intent/revision и точные chat/thread/owner/child bindings",
+          "PlatformScope": "Неизменяемые бот, пользователь, намерение и ревизия на сервере и точные привязки чата, темы, владельца и дочернего бота",
           "PlatformPermit": "Текущие host policy facts, consent/quote и дополнительные права",
           "PlatformAction": "Копия exact native request, проверка scope/params и immutable fingerprint",
           "PlatformReceipt": "Безопасный method/outcome/result ID для прежнего intent",
-          "PlatformResult": "Receipt и native result; payload скрыт в repr",
-          "PlatformHooks": "Async host authorize/atomic claim/durable record contract",
+          "PlatformResult": "Квитанция и нативный результат; данные скрыты в repr",
+          "PlatformHooks": "Асинхронный контракт приложения: авторизация, атомарная заявка и долговечная запись",
           "SecretToken": "Repr-hidden managed token с явным reveal для secret store",
-          "PlatformEvent": "Immutable native Update facts и preserved raw JSON; payload скрыт в repr",
-          "PlatformLookup": "Async current host binding по событию",
-          "PlatformObserver": "Async host observer; owns dedup/order/revocation policy",
+          "PlatformEvent": "Неизменяемые факты нативного Update и сохраненный сырой JSON; данные скрыты в repr",
+          "PlatformLookup": "Асинхронно возвращает текущую привязку из хранилища проекта по событию",
+          "PlatformObserver": "Асинхронный наблюдатель приложения; отвечает за дедупликацию, порядок и отзыв",
           "platform_contracts": "51 разрешенный native метод с current method-specific rights и SDK sources",
-          "execute_platform_action": "Authorize/fresh rights/one claim/one SDK call/receipt без automatic retry",
+          "execute_platform_action": "Авторизация, свежие права, одна заявка, один вызов SDK и квитанция без автоматического повтора",
           "managed_bot_link": "Native user-confirmed создание; без I/O или получения token",
           "platform_event": "Копирование native facts без guessed identity/history",
           "platform_events_router": "Observers для разрешенных native events в текущем Dispatcher",
-          "StoryPhotoUpload": "Validated new photo InputFile bridge к SDK nested multipart",
-          "StoryVideoUpload": "Validated new video InputFile/duration bridge к SDK nested multipart"
+          "StoryPhotoUpload": "Проверенный новый InputFile фото для вложенного multipart SDK",
+          "StoryVideoUpload": "Проверенный новый InputFile видео с длительностью для вложенного multipart SDK"
         }
       }
     },
@@ -588,12 +588,12 @@
       "limits": "Структурное хранилище приложения, точный шестиполевой ключ SDK, одна CAS-запись состояния и данных (сравнение с заменой); JSON до 64 КиБ. Словарь в примере только показывает контракт и не сохраняется; отдельная файловая SQLite и доказательство с тремя процессами — в рецепте восстановления диалога. Сохраняйте изоляцию событий, миграции и надгробные записи, права и дедупликацию бизнес-эффекта; обещания exactly-once в живой или распределенной системе нет.",
       "api": {
         "telegram_patterns.aiogram": {
-          "FSMSnapshot": "Immutable revision and detached JSON answers",
-          "FSMConflict": "Stale CAS refused before effects",
-          "SnapshotStore": "Host-owned durable snapshot transaction contract",
-          "AtomicFSMStorage": "Optional atomic capability on current project storage",
-          "SnapshotFSMStorage": "aiogram BaseStorage facade over supplied host store",
-          "DialogLifetime": "Absolute draft deadline without expiring pending effects"
+          "FSMSnapshot": "Неизменяемая ревизия и отдельная копия ответов в JSON",
+          "FSMConflict": "Устаревшая запись CAS отклонена до эффектов",
+          "SnapshotStore": "Контракт долговечной транзакции снимка в хранилище приложения",
+          "AtomicFSMStorage": "Необязательная атомарная возможность текущего хранилища проекта",
+          "SnapshotFSMStorage": "Фасад aiogram BaseStorage над хранилищем приложения",
+          "DialogLifetime": "Абсолютный срок черновика, при котором ожидающие эффекты не истекают"
         }
       }
     }

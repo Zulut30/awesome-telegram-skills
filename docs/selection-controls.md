@@ -2,6 +2,8 @@
 
 Доступно с 0.16.0, проверено на 0.24.0.
 
+Термины: квитанция (receipt) — сохраненная запись о выполненной операции; повтор возвращает ее вместо второго эффекта; **неизвестный результат** — запрос мог выполниться, но ответа нет (таймаут, обрыв связи); повторять вслепую нельзя, сначала сверка; **сверка** — запрос фактического состояния у провайдера или в хранилище перед повтором или выдачей; **fallback** — запасной вариант, если основная возможность недоступна.
+
 `SelectionMenu` хранит server-owned черновик: toggle, multiselect, количество и фильтр. `SelectionSpec` задает разрешенные значения, границы и версию ресурса. Core импортируется без SDK. `selection_keyboard` и `selection_router` требуют optional aiogram extra; подключайте Router к существующему Dispatcher. Пакеты предоставляются локальными wheel/tarball.
 
 ```python
@@ -27,7 +29,7 @@ router = selection_router(menu)
 
 ## Значения и версии
 
-Сервер проверяет owner, bot, chat, thread, message, opaque session token, canonical revision и TTL. `SelectionContext` создает host из проверенного события; callback data не является источником identity. `check()` — preflight, `apply()` повторяет guards под lock. Другой actor/context не получает чужой snapshot. DTO `SelectionState` можно использовать для отображения, но он не становится серверным состоянием при передаче от клиента.
+Сервер проверяет владельца, бота, чат, тему, сообщение, непрозрачный токен сессии, каноническую ревизию и срок жизни. `SelectionContext` создает host из проверенного события; callback data не является источником identity. `check()` — preflight, `apply()` повторяет guards под lock. Другой actor/context не получает чужой snapshot. DTO `SelectionState` можно использовать для отображения, но он не становится серверным состоянием при передаче от клиента.
 
 `state.callback(action)` создает код кнопки; его создание не дает разрешение. `s:key` меняет multiselect, `t:key` — bool toggle, `q:inc/dec` — количество, `f:key` — фильтр. Нет передачи произвольного числа, цены, ID заказа или разрешений. Неизвестный, disabled или скрытый текущим фильтром вариант отклоняется. Фильтр сохраняет уже выбранные скрытые элементы: полный выбор виден в summary. `max_selected` ограничивает выбор, `min_selected` проверяется перед подтверждением. Цвет сохраняет понятный текст и использует существующий capability fallback; отсутствующий disabled вариант не показывается кнопкой.
 
@@ -55,6 +57,6 @@ router = selection_router(menu)
 
 Лимиты компонента: 1..60 уникальных options, до 8 toggles и 8 filters (обязательный `all`), labels до 40 UTF-16 units, confirm label до 48, quantity 0..1000000, prefix 1..8 ASCII плюс `:`, keys 1..24 ASCII. Callback до 64 UTF-8 bytes. Snapshot копирует input collections и не сохраняет mutable ссылки.
 
-`selection_bot.py` показывает private `/choose` без тем, registry до 100 меню и повторное открытие того же message ID. `offline_selection.py` исполняет тот же Router через real SDK/Dispatcher и StubSession: все четыре поля, owner/stale guards, fresh spec, back и одно confirmation intent. Бизнес-эффектов в примере нет. Unit tests дополнительно проверяют expiry, malformed/forged commands, конкуренцию, неизвестный edit и cancellation. Это авторская offline-проверка, не live Telegram или независимый human/AI usability study.
+`selection_bot.py` показывает private `/choose` без тем, registry до 100 меню и повторное открытие того же message ID. `offline_selection.py` исполняет тот же Router через real SDK/Dispatcher и StubSession: все четыре поля, защиту от чужого и устаревшего нажатия, свежую спецификацию меню, возврат и одно намерение подтверждения. Бизнес-эффектов в примере нет. Unit tests дополнительно проверяют expiry, malformed/forged commands, конкуренцию, неизвестный edit и cancellation. Это авторская offline-проверка, не live Telegram или независимый human/AI usability study.
 
 Частично сверены 5 октября 2026: [CallbackQuery](https://core.telegram.org/bots/api#callbackquery), [InlineKeyboardButton](https://core.telegram.org/bots/api#inlinekeyboardbutton), [Router aiogram 3.31.0](https://docs.aiogram.dev/en/latest/dispatcher/router.html). Используйте проверенный установленный SDK и текущие условия контекста; дата всего source catalog этим не обновляется.

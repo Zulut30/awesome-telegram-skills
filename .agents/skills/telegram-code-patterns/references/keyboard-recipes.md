@@ -2,6 +2,8 @@
 
 Доступно с 0.14.0, проверено на 0.24.0.
 
+Термины: **fallback** — запасной вариант, если основная возможность недоступна.
+
 Навык переносится отдельно; примеры требуют установленный локальный `awesome-telegram-patterns[aiogram]` и aiogram >=3.31. Установка из PyPI не подразумевается. Сохраняйте текущий Dispatcher/SDK; для проекта с другой библиотекой используйте ее native API, не меняйте стек ради helper.
 
 Две кнопки в строке, затем еще две; замена на три и цвет:
@@ -23,7 +25,7 @@ hidden = remove_keyboard()
 
 В existing async handler: `await message.answer("Меню", reply_markup=two)`. Helpers строят native SDK markup без HTTP и копируют кнопки. 1–8 в строке / <=100 суммарно — component limits. Inline exact-one-action, callback_data 1–64 UTF-8 bytes; native style только primary/success/danger/default, не RGB. `icon_custom_emoji_id` удаляется при default `emoji_entitlement_verified=False`; True задается только после проверки права бота и реального ID, а не по Premium нажавшего пользователя.
 
-Передавайте фактический `chat_type`/`business`; ограничения прав/специальных contexts не покрываются только local validation. Reply запрещен channel/Business; request_contact/location/poll/users/chat/managed_bot/web_app доступны private. KeyboardButton native models позволяют запросы; request_id уникален в меню и signed32. Response — message/contact/location/users_shared/chat_shared, не callback; shared ID не дает истории/прав. Typed/forged reply text не доказывает click.
+Передавайте фактические `chat_type` и `business`: локальная проверка не покрывает ограничения прав и особых контекстов. Reply-клавиатура запрещена в каналах и Business; кнопки `request_contact`, `request_location`, `request_poll`, `request_users`, `request_chat`, `request_managed_bot` и `web_app` доступны только в личном чате. Модели `KeyboardButton` поддерживают такие запросы; `request_id` уникален в пределах меню и помещается в знаковое 32-битное число. Ответ приходит сообщением (`contact`, `location`, `users_shared`, `chat_shared`), а не callback; полученный ID не дает доступа к истории и прав. Набранный вручную или подделанный текст ответа не доказывает нажатие кнопки.
 
 В callback handler ответь `await query.answer()` до работы; проверьте owner/актуальный object/version, затем `await query.message.edit_reply_markup(reply_markup=three)` лишь если доступен Message. Не пытайтесь повторно изменять уже ту же клавиатуру; inline force_reply flag неизменяем при edit. Объектные права/идемпотентность проверяет сервис. Inaccessible/inline callbacks требуют своего пути.
 
@@ -47,11 +49,11 @@ request = build_request("sendMessage", {"chat_id": 42, "text": "Пример"})
 
 method_catalog покрывает установленный SDK, build_request отклоняет неизвестные top-level parameters, строит native request и не отправляет его. SDK schema не проверяет все права/лимиты/semantic requirements Telegram. При предоставленном репозитории используйте его catalog/recipes; перенос этого навыка не требует этих внешних файлов.
 
-Observer best-effort, include_ids=False; failed recorder не ломает handler. Только доставленные Update, не durable audit и не новая subscription. event_router объявляет SDK update kinds для resolve_used_update_types, не отвечает автоматически на callback. Реакции require admin + explicit allowed_updates; middleware само не включает их. Обычный Bot API не наблюдает user typing/read receipts/click URL/copy. sendChatAction — действие бота.
+Наблюдатель работает по возможности, `include_ids=False`; сбой записи не ломает обработчик. Он видит только доставленные `Update`: это не надежный журнал аудита и не новая подписка. `event_router` объявляет типы updates для `resolve_used_update_types` и не отвечает на callback автоматически. Реакции требуют прав администратора и явного `allowed_updates`; middleware сама их не включает. Обычный Bot API не показывает, что пользователь печатает, прочитал сообщение, открыл ссылку или скопировал текст. `sendChatAction` — действие самого бота.
 
-Для Mini App установленный TS package экспортирует `TelegramNativeAPI`, `TELEGRAM_NATIVE_METHODS`, `TELEGRAM_NATIVE_EVENTS`. `supports(path)` сверяет версию и actual function, `call(path,...args)` сохраняет callbacks/native result (unknown), `listen(event,fn)` возвращает cleanup; dispose очищает только свои listeners. Это не полный typed SDK wrapper, permissions/auth/init flow остаются у проекта. Unsupported/denied/cancelled/late callback не считать успехом; direct onClick/onEvent через call требуют собственных off. Новый mounted экран создает новый adapter.
+Для Mini App установленный TS package экспортирует `TelegramNativeAPI`, `TELEGRAM_NATIVE_METHODS`, `TELEGRAM_NATIVE_EVENTS`. `supports(path)` сверяет версию и actual function, `call(path,...args)` сохраняет callbacks/native result (unknown), `listen(event,fn)` возвращает cleanup; dispose очищает только свои listeners. Это не полная типизированная обертка SDK: разрешения, авторизация и порядок инициализации остаются у проекта. Неподдерживаемый вызов, отказ, отмена и поздний callback — не успех; прямые `onClick` и `onEvent` через `call` требуют собственной отписки. Новый mounted экран создает новый adapter.
 
-Проверьте реальный Dispatcher и installed package с negative cases: чужой actor, duplicate callback, непредусмотренный reply_to, неверный context, unknown/misspelled parameter, missing native method. Fake transport/mock не доказывают доставку/физический Telegram-клиент. Нельзя отправлять synthetic request fixtures без замены.
+Проверьте реальный `Dispatcher` и установленный пакет на отрицательных сценариях: чужой пользователь, повторный callback, непредусмотренный `reply_to`, неверный контекст, неизвестный параметр или опечатка в имени, отсутствующий метод клиента. Подставной транспорт и mock не доказывают доставку и работу в настоящем клиенте Telegram. Не отправляйте синтетические заготовки запросов без замены реальными данными.
 
 Проверено 4 октября 2026: [InlineKeyboardButton](https://core.telegram.org/bots/api#inlinekeyboardbutton), [KeyboardButton](https://core.telegram.org/bots/api#keyboardbutton), [ReplyKeyboardMarkup](https://core.telegram.org/bots/api#replykeyboardmarkup), [ForceReply](https://core.telegram.org/bots/api#forcereply), [Update](https://core.telegram.org/bots/api#update), [Mini App client API](https://core.telegram.org/bots/webapps#initializing-mini-apps), [события](https://core.telegram.org/bots/webapps#events-available-for-mini-apps). Версия установленного SDK для проверки: aiogram 3.31.0.
 

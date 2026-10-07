@@ -2,8 +2,9 @@
 
 catalog/skill-references.json lists each docs/ source and its skill copies. A copy is
 written byte for byte, so a skill folder stays standalone after it is copied elsewhere.
-A skill reference named like a docs/ page but missing from the list is an error too:
-hand-made copies drift unnoticed.
+"mirrors" names example READMEs that are the source of a docs/ page: the page and its
+skill copies follow the README. A skill reference named like a docs/ page but missing
+from the list is an error too: hand-made copies drift unnoticed.
 """
 from __future__ import annotations
 
@@ -17,16 +18,22 @@ MANIFEST = 'catalog/skill-references.json'
 
 
 def plan(root: Path) -> tuple[dict[Path, Path], list[str]]:
-    copies = json.loads((root / MANIFEST).read_text(encoding='utf-8'))['copies']
+    manifest = json.loads((root / MANIFEST).read_text(encoding='utf-8'))
+    origin = {page: readme for readme, page in manifest.get('mirrors', {}).items()}
     targets, problems = {}, []
-    for source, destinations in copies.items():
+    for readme, page in manifest.get('mirrors', {}).items():
+        if not (root / readme).is_file() or not page.startswith('docs/') or page not in manifest['copies']:
+            problems.append(f'{readme}: a mirror needs the README and a docs/ page listed in copies')
+            continue
+        targets[root / page] = root / readme
+    for source, destinations in manifest['copies'].items():
         if not (root / source).is_file():
             problems.append(f'missing source {source}')
             continue
         for destination in destinations:
             if Path(destination).name != Path(source).name or not destination.startswith('.agents/skills/'):
                 problems.append(f'{destination}: a copy keeps the source name inside a skill')
-            targets[root / destination] = root / source
+            targets[root / destination] = root / origin.get(source, source)
     for reference in sorted((root / '.agents/skills').glob('*/references/*.md')):
         if (root / 'docs' / reference.name).is_file() and reference not in targets:
             problems.append(f'{reference.relative_to(root).as_posix()}: copy of docs/{reference.name} is not in {MANIFEST}')

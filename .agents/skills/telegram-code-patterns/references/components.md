@@ -1,5 +1,7 @@
 # API библиотеки 0.24.0
 
+Термины: **ACK** — ответ на нажатие кнопки через `answerCallbackQuery`: клиент убирает индикатор ожидания; это не сообщение об успехе операции; **CAS** — сравнение с заменой: запись сохраняется, только если версия не изменилась с момента чтения; квитанция (receipt) — сохраненная запись о выполненной операции; повтор возвращает ее вместо второго эффекта; **outbox** — события, сохраненные в той же транзакции, что и изменение данных; отдельный обработчик выполняет их позже; **неизвестный результат** — запрос мог выполниться, но ответа нет (таймаут, обрыв связи); повторять вслепую нельзя, сначала сверка; **сверка** — запрос фактического состояния у провайдера или в хранилище перед повтором или выдачей; **entitlement** — право на возможность (custom emoji, оплаченный доступ), которое проверяется отдельно от самого запроса; **fallback** — запасной вариант, если основная возможность недоступна.
+
 Текущий каталог содержит 43 группы компонентов. Полный перечень публичных импортов и исполняемых примеров — в локальном [справочнике API](api-reference.md); исторические версии ниже показывают время добавления контрактов.
 
 Именованные типы (с 0.7.0): core `Maturity`, `VerificationLevel`; aiogram `ButtonStyle`, `ChatType`, `UpdatePhase`; testing `Responder`; TypeScript `TextFieldControl`. SDK `Bot`/`Dispatcher` импортируйте из aiogram: wildcard library exports теперь явные, существующие документированные function/DTO imports сохранены.
@@ -13,8 +15,8 @@
 | Намерение | Публичный API | Граница |
 | --- | --- | --- |
 | Поиск примера | `from telegram_patterns import Recipe, RecipeCatalog`; `.search(query,category=None,language=None,verification=None,limit=20)`, `.get(id)` | Core без SDK; bundled snapshot, metadata scope; не исполняет код. [Поиск и CLI](developer-tools.md) |
-| Новый проект | `from telegram_patterns import StarterPlan, create_starter`; `create_starter(target,library=...,template='bot',typescript=None,dry_run=False)` | Новый каталог из local source/wheel и optional matching TS tarball; no install/overwrite/network; partial new files possible on I/O failure |
-| Doctor | `from telegram_patterns.cli import doctor`; `doctor(path,require_token=False)` | Local read-only environment/imports/manifest/token format; .env не читает; отсутствующий SDK — fail, token по умолчанию warn; не live readiness |
+| Новый проект | `from telegram_patterns import StarterPlan, create_starter`; `create_starter(target,library=...,template='bot',typescript=None,dry_run=False)` | Новый каталог из локального исходника или wheel; по желанию — tarball TypeScript той же версии. Ничего не устанавливает, не перезаписывает и не ходит в сеть; при ошибке ввода-вывода могут остаться частично созданные новые файлы |
+| Doctor | `from telegram_patterns.cli import doctor`; `doctor(path,require_token=False)` | Только чтение локального окружения: импорты, манифест, формат токена; .env не читает; отсутствующий SDK — fail, токен по умолчанию — warn; готовность живого бота не проверяет |
 | Mini App auth | `from telegram_patterns import validate_init_data`; `validate_init_data(raw, token, *, max_age_seconds=3600, future_tolerance_seconds=30, now=None)` | Сырой URL-encoded initData; HMAC исключает только hash; дубли/просрочка/невалидный user отклоняются. Возвращает VerifiedLaunch(user_id,auth_date,user); не OIDC/Ed25519/ACL |
 | SQLite effect/replay | `from telegram_patterns import SQLiteOnce, OperationConflict`; `SQLiteOnce(path).initialize()`, `run(scope,key,payload,apply)` | Только синхронный effect на переданном connection; без network/COMMIT/ROLLBACK. Возвращает OnceResult(value,replayed), измененный payload — OperationConflict |
 | /start | `from telegram_patterns.aiogram import start_router`; `start_router(text, keyboard=None)` | Добавить Router в существующий Dispatcher; stateless plain text |
@@ -27,11 +29,11 @@
 | Команды | `CommandReply(command,description,text,keyboard=None)`; `command_router(specs)`, `command_menu(specs)` из `telegram_patterns.aiogram` | Статический plain text, разные ответы/SDK mention filter; BotCommand DTO без API вызова. Динамические handlers и права остаются у проекта |
 | Запуск | `await run_bot(dispatcher,settings,commands=None,session=None,workflow_data=None,...)` из `telegram_patterns.aiogram` | Текущий Dispatcher; владеет Bot session после preflight. Commands opt-in заменяет default scope; no webhook deletion/update dropping |
 | Локальный transport | `from telegram_patterns.testing import StubSession`; `StubSession().respond(Method,response)` | Явные SDK response fixtures, calls/closed; unexpected method и streaming падают. Без HTTP fallback, не live Telegram |
-| Текстовые формы | `TextField(name,label,prompt,max_length=128,validate=None)`, `InvalidField`, `FormSubmission`, `text_form_router(fields,on_submit,name='application',command='apply')` из `telegram_patterns.aiogram` | Ordinary private chat, host FSM/isolation; /back, /cancel, review + submit button. Сервис владеет durable effect/replay/ACL, ID сохраняется при неизвестном результате |
+| Текстовые формы | `TextField(name,label,prompt,max_length=128,validate=None)`, `InvalidField`, `FormSubmission`, `text_form_router(fields,on_submit,name='application',command='apply')` из `telegram_patterns.aiogram` | Обычный личный чат; FSM и изоляцию дает проект; /back, /cancel, проверка ответов и кнопка отправки. Надежный эффект, повтор и права доступа — на стороне сервиса; ID сохраняется при неизвестном результате |
 | Bridge | `import {TelegramBridge} from '@awesome-telegram/patterns'`; `new TelegramBridge(app,lifecycle?)` | subscribe/start/dispose; ready один раз, pagehide/pageshow. Snapshot не аутентификация; host задает SDK |
 | HTTP | `ApiClient, ApiError` из npm-пакета; `new ApiClient({baseUrl,headers?})`, `request(path,decode,{method?,body?,signal?,timeoutMs?})` | Decoder принимает unknown. Чужой origin/redirects отклоняются. Один вызов fetch библиотекой; ошибки записи outcome unknown; GET/HEAD read-failed |
 | Черновик | `SelectionDraftStore` из npm-пакета; `new SelectionDraftStore(()=>storage,{namespace,scope,ttlMs})` | Только serviceId/slotId; schema/TTL/серверный scope. read: restored/missing/expired/corrupt/unavailable; write может вернуть false |
-| UI | `createAppShell(host,title), createTextField(document,label,hint)` из npm-пакета; CSS subpath `@awesome-telegram/patterns/styles.css` | Shell content/summary/actions, applyTheme/setInsets/dispose; поля label/hint/error. State/navigation — host |
+| UI | `createAppShell(host,title), createTextField(document,label,hint)` из npm-пакета; CSS subpath `@awesome-telegram/patterns/styles.css` | Оболочка с областями `content`, `summary`, `actions` и методами `applyTheme`, `setInsets`, `dispose`; у поля — `label`, `hint`, `error`. Состоянием и навигацией управляет проект |
 
 Для SQLite scope включает проверенный tenant/actor/action. ACL проверяется и для replay. В async-сервисе синхронный storage требует thread boundary. Не заменяйте PostgreSQL SQLite ради helper. Ledger не имеет автоматического TTL: retention задается продуктом.
 
@@ -59,7 +61,7 @@ Core starter (с 0.10.0): StarterComponent, StarterConflict, starter_components;
 
 Планы и локальный runner добавлены в 0.13.0: `RecipeRunPlan`, `RecipeRunResult`, `plan_recipe`, `run_recipe_offline` из Python root; [requirements/fixtures/границы](recipe-execution.md). В текущей 0.24.0 есть 212 Python fixtures и 99 native references без executor; offline_ready не означает live разрешение.
 
-С 0.14.0 KeyboardLayout/KeyboardCapabilities и action_layout/inline_layout/reply_layout описаны в [композициях клавиатур](keyboard-layouts.md): flat inputs, width pattern, snapshot/context validation и host capability fallback.
+С 0.14.0 KeyboardLayout/KeyboardCapabilities и action_layout/inline_layout/reply_layout описаны в [композициях клавиатур](keyboard-layouts.md): плоский список кнопок, шаблон ширины рядов, проверка снимка и контекста, запасной вариант, если клиент не поддерживает возможность.
 
 Навигация сообщений: `NavigationScreen`, `NavigationState`, `NavigationResult`, `MessageNavigation`, `navigation_router`; полный [контракт](message-navigation.md). Все пять public exports experimental; state локальный, business ACL и persistent state остаются у проекта.
 
@@ -71,7 +73,7 @@ Core starter (с 0.10.0): StarterComponent, StarterConflict, starter_components;
 
 `MessageBuilder/FormattedText/TextEntity`, `EntityKind/TextPayload`, UTF-16/HTML/MarkdownV2 helpers и split_formatted — SDK-free API. [Полная композиция](message-text.md) сохраняет текущий Dispatcher и связывает literal user text, explicit parse_mode=None и lossless partition. Capability flag не проверяет custom emoji metadata/entitlement; host делает это отдельно.
 
-Для optional aiogram медиа (с 0.20.0) — [полный контракт](media.md): byte upload/same-bot file_id, literal подпись, album/edit и bounded hosted read. No sending/retry/codec/ACL guarantee; используется Bot проекта.
+Для optional aiogram медиа (с 0.20.0) — [полный контракт](media.md): загрузка байтов или `file_id` того же бота, подпись как обычный текст, альбом и редактирование, чтение файла с ограничением размера. Отправку, повторы, кодеки и права доступа библиотека не гарантирует; используется `Bot` проекта.
 
 [Профили (с 0.21.0)](profiles.md): read observations и own-bot patch с host ACL; без hidden data/MTProto/Business и автоматического retry.
 
@@ -96,4 +98,4 @@ Core starter (с 0.10.0): StarterComponent, StarterConflict, starter_components;
 - События сохраняют неизвестные и анонимные факты; привязка, дедупликация, порядок и отзыв — на стороне приложения, без выведенного автора и истории.
 - Доказательства автора (SDK, mock, браузер) отделены от живых прав, реальных устройств, удаленного списания и независимой приемки.
 
-| Рестарт диалога | `FSMSnapshot`, `FSMConflict`, `SnapshotStore`, `AtomicFSMStorage`, `SnapshotFSMStorage`, `DialogLifetime` из optional aiogram | Project-owned atomic state/data CAS, version/deadline; expired draft ≠ pending effect. [Самостоятельный пример](dialog-restart.md); MemoryStorage неpersistent, distributed/live acceptance отдельно. |
+| Рестарт диалога | `FSMSnapshot`, `FSMConflict`, `SnapshotStore`, `AtomicFSMStorage`, `SnapshotFSMStorage`, `DialogLifetime` из optional aiogram | Хранилище проекта атомарно обновляет состояние и данные через CAS, с версией и сроком жизни; просроченный черновик — не то же самое, что незавершенный эффект. [Самостоятельный пример](dialog-restart.md); `MemoryStorage` не переживает рестарт, распределенную и живую проверку проводите отдельно. |

@@ -2,6 +2,8 @@
 
 Доступно с 0.9.0, проверено на 0.24.0.
 
+Термины: **неизвестный результат** — запрос мог выполниться, но ответа нет (таймаут, обрыв связи); повторять вслепую нельзя, сначала сверка; **сверка** — запрос фактического состояния у провайдера или в хранилище перед повтором или выдачей; **entitlement** — право на возможность (custom emoji, оплаченный доступ), которое проверяется отдельно от самого запроса.
+
 Сохраняйте SDK, базу, framework и lifecycle проекта. Core использует стандартную библиотеку; интеграция по структурному интерфейсу не требует переписывать существующие классы.
 
 Python root: `OnceStore[Transaction]` с initialize/run и существующим OnceResult; `AsyncTransport[Request,Response]` с async send; `ProviderAdapter[CreateRequest,Snapshot,Event]` с async create(request,operation_id=...), async get(provider_id) и локальным verify_event(raw_body,headers)->Event|None; отдельный `RefundProvider` с async refund. Наследование не обязательно; Protocol не проверяет runtime atomicity. SQLiteOnce уже соответствует OnceStore[sqlite3.Connection]. Async storage не выдается за sync run.

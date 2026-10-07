@@ -1,6 +1,11 @@
 {
   "schema_version": 1,
-  "note": "Pages kept in docs/ and copied byte-for-byte into skills; edit the docs/ source, then run python scripts/sync_skill_references.py.",
+  "note": "Pages kept in docs/ and copied byte-for-byte into skills; an example README is the source of its docs/ mirror. Edit the source, then run python scripts/sync_skill_references.py.",
+  "mirrors": {
+    "examples/group-bot/README.md": "docs/group-bot.md",
+    "examples/service-bot/README.md": "docs/service-bot.md",
+    "examples/shop/README.md": "docs/shop-example.md"
+  },
   "copies": {
     "docs/api-reference-bot.md": [
       ".agents/skills/telegram-code-patterns/references/api-reference-bot.md"

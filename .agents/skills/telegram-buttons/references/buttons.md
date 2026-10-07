@@ -1,5 +1,7 @@
 # Styles и custom emoji
 
+Термины: **entitlement** — право на возможность (custom emoji, оплаченный доступ), которое проверяется отдельно от самого запроса.
+
 Проверено по официальному API 4 октября 2026 года: [InlineKeyboardButton](https://core.telegram.org/bots/api#inlinekeyboardbutton), [KeyboardButton](https://core.telegram.org/bots/api#keyboardbutton).
 
 `style` принимает `primary` (синий), `success` (зеленый), `danger` (красный); без него оформление выбирает клиент. Это не произвольный RGB/CSS цвет.

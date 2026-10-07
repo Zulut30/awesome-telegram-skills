@@ -10,7 +10,7 @@
 | Официальная клиентская библиотека Telegram | [TDLib](https://core.telegram.org/tdlib); Python binding проверяется отдельно |
 | Старый MTProto-проект | [Pyrogram](https://docs.pyrogram.org/): оригинальный проект сообщает, что больше не поддерживается |
 | Mini App TypeScript | [native WebApp bridge](https://core.telegram.org/bots/webapps) либо wrapper выбранного проекта; проверять поддержку пакета |
-| Crypto Pay async wrapper сообщества | [aiocryptopay](https://github.com/layerqa/aiocryptopay); API источника истины — Crypto Pay |
+| Асинхронная обертка Crypto Pay от сообщества | [aiocryptopay](https://github.com/layerqa/aiocryptopay); API источника истины — Crypto Pay |
 | ЮKassa Python SDK от поставщика | [yookassa-sdk-python](https://github.com/yoomoney/yookassa-sdk-python) |
 | Platega SDK | [официальная страница SDK](https://docs.platega.io/sdk-1991993m0); проверять скачиваемый пакет и альтернативу HTTPS API |
 

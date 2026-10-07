@@ -46,6 +46,27 @@ class SkillReferenceSyncTests(unittest.TestCase):
             self.assertEqual(code, 1)
             self.assertIn('not in catalog/skill-references.json', report['problems'][0])
 
+    def test_example_readme_drives_its_docs_mirror_and_skill_copies(self):
+        with tempfile.TemporaryDirectory() as folder:
+            root = Path(folder)
+            for part in ('docs', 'catalog', 'examples/bot', '.agents/skills/telegram-a/references'):
+                (root / part).mkdir(parents=True)
+            (root / 'examples/bot/README.md').write_text('# Bot\n\nEdited at the README.\n', encoding='utf-8')
+            (root / 'docs/bot.md').write_text('# Bot\n\nOld.\n', encoding='utf-8')
+            (root / 'catalog/skill-references.json').write_text(json.dumps(
+                {'mirrors': {'examples/bot/README.md': 'docs/bot.md'},
+                 'copies': {'docs/bot.md': ['.agents/skills/telegram-a/references/bot.md']}}), encoding='utf-8')
+            code, report = run(root, '--check')
+            self.assertEqual((code, sorted(report['drift'])), (1, ['.agents/skills/telegram-a/references/bot.md', 'docs/bot.md']))
+            self.assertEqual(run(root)[0], 0)
+            for page in ('docs/bot.md', '.agents/skills/telegram-a/references/bot.md'):
+                self.assertEqual((root / page).read_text(encoding='utf-8'), '# Bot\n\nEdited at the README.\n', page)
+            (root / 'catalog/skill-references.json').write_text(json.dumps(
+                {'mirrors': {'examples/bot/README.md': 'docs/missing.md'}, 'copies': {}}), encoding='utf-8')
+            code, report = run(root, '--check')
+            self.assertEqual(code, 1)
+            self.assertIn('a mirror needs', report['problems'][0])
+
 
 if __name__ == '__main__':
     unittest.main()

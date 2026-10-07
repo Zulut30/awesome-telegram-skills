@@ -1,5 +1,7 @@
 # Контекст Telegram до подключения helper
 
+Термины: **fallback** — запасной вариант, если основная возможность недоступна.
+
 Bot token, Mini App launch и business connection — разные identity/context. Generic request constructor и native supports не проверяют все права/launch условия. Host проверяет actor, chat, owner, ACL и актуальный connection до effect/replay. User-client history требует отдельной явно поставленной задачи и session; не запускайте MTProto login как fallback библиотеки.
 
 `sendData` не универсальный канал: keyboard launch отличается от inline/menu/query_id и main/direct backend. Native presence/version не подтверждает launch или consent. Raw initData проверяется сервером; native callback/invoiceClosed не выдает доступ.
