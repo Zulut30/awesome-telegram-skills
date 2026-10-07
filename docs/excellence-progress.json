@@ -169,10 +169,14 @@
     {
       "id": 14,
       "title": "Устанавливать пакеты из registry",
-      "status": "pending",
-      "commit_subject": null,
-      "evidence": [],
-      "remaining": null
+      "status": "partial",
+      "commit_subject": "excellence(014): publish to registries with trusted publishing",
+      "evidence": [
+        "workflow Publish: только при vars.PUBLISH_TO_REGISTRIES == 'true', сверка SHA256SUMS, id-token: write в обоих job, без secrets, действия закреплены по SHA (проверено тестом)",
+        "форма команд README проверена на локально собранных артефактах: pip 'awesome-telegram-patterns[aiogram] @ file://...whl' ставит 0.24.0 с aiogram 3.31.0; npm install tarball импортирует ApiClient",
+        "требования trusted publishing сверены с docs.npmjs.com/trusted-publishers и docs.pypi.org (pending publisher)"
+      ],
+      "remaining": "Нужны действия владельца: занять имена (пункт 15), создать environments pypi/npm, настроить pending publisher PyPI и trusted publisher npm, задать PUBLISH_TO_REGISTRIES=true; ссылки README заработают после публикации релизов (пункт 13)."
     },
     {
       "id": 15,

@@ -75,6 +75,15 @@ npm.cmd run demo
 
 Откройте **http://127.0.0.1:4173**. Это локальный пример UI и восстановления запросов; для настоящего Mini App подключите Telegram host и свой backend. [Что демонстрирует пример](docs/component-library.md).
 
+**Подключить пакеты к своему проекту без клонирования.** Wheel, npm tarball и `SHA256SUMS` каждой версии выкладываются в [GitHub Releases](https://github.com/Zulut30/awesome-telegram-skills/releases). Команды одинаковы для Linux, macOS и Windows:
+
+```bash
+pip install "awesome-telegram-patterns[aiogram] @ https://github.com/Zulut30/awesome-telegram-skills/releases/download/v0.24.0/awesome_telegram_patterns-0.24.0-py3-none-any.whl"
+npm install https://github.com/Zulut30/awesome-telegram-skills/releases/download/v0.24.0/awesome-telegram-patterns-0.24.0.tgz
+```
+
+В PyPI и npm пакеты пока не опубликованы; не устанавливайте пакеты с такими именами из публичного реестра. [Как выпускаются версии](docs/releasing.md).
+
 <a id="buttons"></a>
 
 ## Две кнопки в ряд — несколькими строками

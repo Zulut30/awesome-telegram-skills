@@ -30,6 +30,18 @@ python scripts/build_release.py --ref v0.24.0 --notes
 
 Версии 0.5.0–0.24.0 и коммиты, которые их ввели, перечислены в [`.github/release-tags.json`](../.github/release-tags.json). После слияния workflow в `main` запустите **Actions → Release → Run workflow** с пустым полем `tags`: ручной запуск создаст недостающие аннотированные теги из этого списка (проверив версию в `pyproject.toml` коммита) и опубликует все теги без релиза. Чтобы пересобрать конкретные версии, перечислите их через пробел. Теги, созданные через `GITHUB_TOKEN`, не запускают другие workflow — публикация идет в том же запуске.
 
+## Публикация в PyPI и npm
+
+[Workflow Publish](../.github/workflows/publish.yml) загружает файлы опубликованного GitHub Release в PyPI и npm через trusted publishing (OIDC): долгоживущие токены в репозитории не хранятся, npm автоматически добавляет provenance. Перед загрузкой он сверяет `SHA256SUMS`. Пока репозиторная переменная `PUBLISH_TO_REGISTRIES` не равна `true`, workflow ничего не публикует.
+
+Включить публикацию может только владелец:
+
+1. Занять имена (пункт 15): проект `awesome-telegram-patterns` на PyPI и scope `@awesome-telegram` на npm.
+2. В GitHub создать environments `pypi` и `npm` (Settings → Environments), при желании с обязательным подтверждением.
+3. PyPI: в аккаунте **Publishing → Add a new pending publisher** указать проект `awesome-telegram-patterns`, владельца `Zulut30`, репозиторий `awesome-telegram-skills`, workflow `publish.yml`, environment `pypi`. Pending publisher создает проект при первой загрузке.
+4. npm: в настройках пакета `@awesome-telegram/patterns` → **Trusted publishing** указать GitHub Actions, `Zulut30/awesome-telegram-skills`, workflow `publish.yml`, environment `npm`. Если npm не позволяет настроить trusted publisher для еще не существующего пакета, первую версию опубликуйте вручную с 2FA. Trusted publishing требует npm ≥ 11.5.1 — workflow ставит npm 11.
+5. Задать переменную `PUBLISH_TO_REGISTRIES=true` (Settings → Secrets and variables → Actions → Variables) и запустить **Publish** для нужного тега или опубликовать следующий релиз.
+
 ## Проверить скачанный релиз
 
 ```bash

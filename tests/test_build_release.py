@@ -29,6 +29,17 @@ class BuildReleaseTests(unittest.TestCase):
             self.assertRegex(line, r'@[0-9a-f]{40}$', 'actions are pinned by commit SHA')
 
 
+class PublishWorkflowTests(unittest.TestCase):
+    def test_registry_publishing_is_opt_in_oidc_and_verifies_checksums(self):
+        workflow = (ROOT / '.github/workflows/publish.yml').read_text(encoding='utf-8')
+        self.assertIn("if: vars.PUBLISH_TO_REGISTRIES == 'true'", workflow)
+        self.assertIn('sha256sum -c SHA256SUMS', workflow)
+        self.assertEqual(workflow.count('id-token: write'), 2)
+        self.assertNotIn('secrets.', workflow, 'no long-lived registry tokens')
+        for line in re.findall(r'uses: (\S+)', workflow):
+            self.assertRegex(line, r'@[0-9a-f]{40}$')
+
+
 class ReleaseTagManifestTests(unittest.TestCase):
     def test_manifest_matches_history_where_available(self):
         import json, subprocess
