@@ -18,7 +18,7 @@ Backend Mini App должен установить личность пользо
 
 ## Алгоритм
 
-Проверьте точку запуска и формат данных, которые frontend действительно получает. Схему подписи сверяйте с [references/validation.md](references/validation.md). Это аутентификация Mini App; не подменяйте ее алгоритмом Telegram Login Widget или OIDC.
+Проверьте точку запуска и формат данных, которые frontend действительно получает. Схему подписи сверяйте с [references/validation.md](references/validation.md). Это аутентификация Mini App; не подменяйте ее алгоритмом Telegram Login Widget или OIDC. Сервису, которому нельзя передавать токен бота, подходит проверка поля `signature` по Ed25519 с публичным ключом Telegram и `bot_id` — схема там же.
 
 ### Вход на backend
 
@@ -38,7 +38,7 @@ Backend Mini App должен установить личность пользо
 
 ## Проверка
 
-Проверьте корректные данные, измененное подписанное поле, другой bot token, отсутствие hash/auth_date, дубли ключей, просроченную и будущую дату. Используйте реальный обезличенный либо официальный тестовый вектор, а не только подпись, сгенерированную проверяемым кодом. Проверьте, что клиентский user_id не меняет доступ к объекту.
+Проверьте корректные данные, измененное подписанное поле, другой bot token, отсутствие hash/auth_date, дубли ключей, просроченную и будущую дату. Используйте реальный обезличенный либо официальный тестовый вектор, а не только подпись, сгенерированную проверяемым кодом. Проверьте, что клиентский user_id не меняет доступ к объекту. Для Ed25519 добавьте другой `bot_id`, ключ другого окружения и вектор, подписанный не вашим кодом.
 
 ## Типичные ошибки
 
@@ -50,6 +50,6 @@ Backend Mini App должен установить личность пользо
 
 ## Источники
 
-[Проверка данных Mini App](https://core.telegram.org/bots/webapps#validating-data-received-via-the-mini-app), [WebAppInitData](https://core.telegram.org/bots/webapps#webappinitdata).
+[Проверка данных Mini App](https://core.telegram.org/bots/webapps#validating-data-received-via-the-mini-app), [Проверка третьей стороной](https://core.telegram.org/bots/webapps#validating-data-for-third-party-use), [WebAppInitData](https://core.telegram.org/bots/webapps#webappinitdata).
 
 Проверено: 2026-10-07, Telegram Mini Apps (Bot API 10.3).

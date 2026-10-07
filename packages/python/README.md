@@ -36,6 +36,8 @@ python -m pip install ./packages/python
 python -m pip install "./packages/python[aiogram]"
 ```
 
+Для проверки подписи Ed25519 без токена бота (`validate_init_data_signature`) добавьте extra `signature`: `python -m pip install "./packages/python[signature]"` — он ставит `cryptography`.
+
 Первый вариант достаточен для `BotSettings`, `validate_init_data`, `SQLiteOnce`, `RecipeCatalog` и `create_starter`. Второй нужен для импорта `telegram_patterns.aiogram` и `telegram_patterns.testing`, запуска бота и успешной SDK-проверки doctor. Сохраняйте существующий SDK, если бот уже построен на другой библиотеке.
 
 Doctor 0.11.0 проверяет установленный adapter в фиксированном Python `-I -B` probe вне каталога проекта. Он отклоняет подмену aiogram import, сохраняет конфигурацию и показывает reason/remediation с отдельными argv рекомендациями. HTTP-проверки и автоматического исполнения исправлений нет.
@@ -49,7 +51,8 @@ Doctor 0.11.0 проверяет установленный adapter в фикс�
 | Ввод | `input_prompt(placeholder=None,selective=False)`; `remove_keyboard(selective=False)` | ForceReply / ReplyKeyboardRemove без HTTP; host связывает actor/chat/prompt и проверяет ответ |
 | Все SDK методы | `method_catalog()`; `build_request(name,parameters=None)` | MethodSpec / native TelegramMethod; неизвестные top-level fields отклоняются, nested rules — SDK. HTTP только при `await existing_bot(request)` |
 | События | `event_router(handlers)`; `UpdateObserver(record,include_ids=False)`; `update_kinds(update)` | Native Router и best-effort metadata received/handled/unhandled/failed/cancelled. Middleware не создает подписок или durable audit |
-| Проверка запуска | `validate_init_data(raw, bot_token, *, max_age_seconds, now)` | Сырой initData, HMAC и freshness; возвращает подписанные user_id, `start_param`, `chat_type`, `chat_instance`, `query_id`, `chat`, `receiver` (глубоко read-only, копия — `.as_dict()`). Не OIDC/Ed25519 и не объектные права |
+| Проверка запуска | `validate_init_data(raw, bot_token, *, max_age_seconds, now)` | Сырой initData, HMAC и freshness; возвращает подписанные user_id, `start_param`, `chat_type`, `chat_instance`, `query_id`, `chat`, `receiver` (глубоко read-only, копия — `.as_dict()`). Не OIDC и не объектные права |
+| Проверка без токена бота | `validate_init_data_signature(raw, bot_id, *, environment='production', public_key=None, now)`; `TELEGRAM_PUBLIC_KEYS` | Подпись Ed25519 поля `signature` ключом Telegram для третьей стороны, которой известен только bot_id; тот же результат и та же проверка свежести. Нужен extra `signature`, иначе `UnsupportedCapability` |
 | Однократная операция | `SQLiteOnce(path).initialize(); run(scope, key, payload, apply)` | Effect и replay result в одной SQLite transaction. Payload — только JSON-значения со строковыми ключами (tuple и `{1: ...}` отклоняются). Scope/права проверяет сервис |
 | Команда старта | `start_router(text, keyboard=None)` | Небольшой /start с plain text; добавить Router в текущий Dispatcher |
 | Кнопка | `action_keyboard(text, key, style=..., ...)` | Opaque callback key, style, проверенный entitlement либо emoji fallback |
@@ -163,6 +166,13 @@ from telegram_patterns import validate_init_data
 
 launch = validate_init_data(raw_init_data, server_bot_token, max_age_seconds=300)
 actor_id = launch.user_id  # Затем создать/проверить сессию и права конкретного объекта.
+```
+
+```python
+from telegram_patterns import validate_init_data_signature
+
+# Третья сторона без токена бота: нужен extra signature и bot_id владельца Mini App.
+launch = validate_init_data_signature(raw_init_data, bot_id, environment="production", max_age_seconds=300)
 ```
 
 ```python

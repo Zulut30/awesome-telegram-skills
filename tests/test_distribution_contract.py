@@ -45,7 +45,7 @@ class DistributionContractTests(unittest.TestCase):
 
     def zip(self, mutate=None):
         values={**self.py_source,
-          self.prefix+'METADATA':b'Name: awesome-telegram-patterns\nVersion: 0.9.0\nRequires-Python: >=3.11\nLicense-Expression: MIT\nLicense-File: LICENSE\nRequires-Dist: aiogram<4,>=3.31; extra == "aiogram"\nRequires-Dist: tzdata<2027,>=2026.5; extra == "calendar"\n\n',
+          self.prefix+'METADATA':b'Name: awesome-telegram-patterns\nVersion: 0.9.0\nRequires-Python: >=3.11\nLicense-Expression: MIT\nLicense-File: LICENSE\nRequires-Dist: aiogram<4,>=3.31; extra == "aiogram"\nRequires-Dist: tzdata<2027,>=2026.5; extra == "calendar"\nRequires-Dist: cryptography<52,>=46; extra == "signature"\n\n',
           self.prefix+'WHEEL':b'Wheel-Version: 1.0\nRoot-Is-Purelib: true\nTag: py3-none-any\n',
           self.prefix+'entry_points.txt':b'[console_scripts]\ntelegram-patterns = telegram_patterns.cli:main\n',
           self.prefix+'top_level.txt':b'telegram_patterns\n',self.prefix+'licenses/LICENSE':self.license}

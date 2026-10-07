@@ -140,7 +140,7 @@ print(json.dumps({'core_without_sdk':True,'python':sys.version.split()[0]}))
 
         sdk = consumers / 'sdk'
         run('sdk-environment', [uv, 'venv', '--python', sys.executable, str(sdk)])
-        run('sdk-install', [uv, 'pip', 'install', '--python', str(python_in(sdk)), str(wheel), 'aiogram==3.31.0', 'tzdata==2026.5'])
+        run('sdk-install', [uv, 'pip', 'install', '--python', str(python_in(sdk)), str(wheel), 'aiogram==3.31.0', 'tzdata==2026.5', 'cryptography==50.0.2'])
         run('typing-install', [uv, 'pip', 'install', '--python', str(python_in(sdk)), 'mypy==2.4.0'])
         run('python-typecheck', [str(python_in(sdk)), '-m', 'mypy', '--follow-imports=silent', '--no-incremental', str(ROOT / 'packages/python/src/telegram_patterns')], consumers)
         public_python_types = consumers / 'public_types.py'
@@ -275,12 +275,14 @@ print(json.dumps({'core_without_sdk':True,'python':sys.version.split()[0]}))
         run('typescript-install', [npm, 'install', str(tarball), f"typescript@{ts_meta['devDependencies']['typescript']}", '--ignore-scripts', '--no-audit', '--no-fund'], client)
         # Same behavior suite, exercising the PUBLIC installed package rather than
         # ../dist from a source checkout. No component implementation is copied.
-        suite = (ROOT / 'packages/typescript/tests/core.test.mjs').read_text(encoding='utf-8')
         needle = "from '../dist/index.js'"
-        if suite.count(needle) != 1:
-            raise RuntimeError('Update the public-package test entrypoint')
-        (client / 'core.test.mjs').write_text(suite.replace(needle, "from '@awesome-telegram/patterns'"), encoding='utf-8')
-        ts_log = run('typescript-tests', [node, '--test', '--test-reporter=tap', 'core.test.mjs'], client)
+        suites = sorted((ROOT / 'packages/typescript/tests').glob('*.test.mjs'))
+        for source in suites:
+            suite = source.read_text(encoding='utf-8')
+            if suite.count(needle) != 1:
+                raise RuntimeError('Update the public-package test entrypoint: ' + source.name)
+            (client / source.name).write_text(suite.replace(needle, "from '@awesome-telegram/patterns'"), encoding='utf-8')
+        ts_log = run('typescript-tests', [node, '--test', '--test-reporter=tap', *(source.name for source in suites)], client)
         # Compile the real composition example against the INSTALLED declarations.
         (client / 'index.ts').write_text((ROOT / 'examples/mini-app/src/index.ts').read_text(encoding='utf-8'), encoding='utf-8')
         (client / 'native-recipes.ts').write_text((ROOT / 'examples/mini-app/src/native-recipes.ts').read_text(encoding='utf-8'), encoding='utf-8')

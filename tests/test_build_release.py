@@ -29,7 +29,7 @@ class BuildReleaseTests(unittest.TestCase):
         self.assertEqual((python['purl'], python['hashes'][0]['content'], python['licenses']),
                          ('pkg:pypi/awesome-telegram-patterns@' + build_release._version('HEAD'), 'a' * 64, [{'license': {'id': 'MIT'}}]))
         self.assertTrue(npm['purl'].startswith('pkg:npm/%40awesome-telegram/patterns@'))
-        self.assertEqual({c['name'] for c in optional}, {'aiogram', 'tzdata'})
+        self.assertEqual({c['name'] for c in optional}, {'aiogram', 'cryptography', 'tzdata'})
         self.assertTrue(all(c['scope'] == 'optional' for c in optional))
         self.assertEqual(bom, build_release.sbom(ROOT, '0' * 40, 0, sums), 'deterministic')
 

@@ -131,11 +131,12 @@ def verify_distributions(root: Path, wheel: Path, tarball: Path) -> dict:
              and py_files.get(prefix + 'licenses/LICENSE') == (root / 'packages/python/LICENSE').read_bytes(),
              'Wheel license metadata or file mismatch')
     # Our current core has no runtime dependencies; every requirement belongs
-    # to the explicitly enabled SDK or IANA-data extras. No mandatory core deps.
+    # to the explicitly enabled SDK, IANA-data or Ed25519 extras. No mandatory core deps.
     _require(not python.get('dependencies'), 'Update the contract for a new core dependency')
     requirements = metadata.get_all('Requires-Dist', [])
-    expected_requirements = {r'aiogram<4,>=3\.31;\s*extra == "aiogram"', r'tzdata<2027,>=2026\.5;\s*extra == "calendar"'}
-    _require(len(requirements) == 2 and all(sum(re.fullmatch(pattern, value) is not None for value in requirements) == 1 for pattern in expected_requirements),
+    expected_requirements = {r'aiogram<4,>=3\.31;\s*extra == "aiogram"', r'tzdata<2027,>=2026\.5;\s*extra == "calendar"',
+                             r'cryptography<52,>=46;\s*extra == "signature"'}
+    _require(len(requirements) == 3 and all(sum(re.fullmatch(pattern, value) is not None for value in requirements) == 1 for pattern in expected_requirements),
              'Wheel extra dependency boundary changed')
     wheel_metadata = BytesParser().parsebytes(py_files[prefix + 'WHEEL'])
     _require(wheel_metadata.get('Root-Is-Purelib') == 'true' and wheel_metadata.get_all('Tag') == ['py3-none-any'],

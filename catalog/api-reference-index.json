@@ -8,10 +8,10 @@
       "import": "from telegram_patterns import BotSettings",
       "recipe": "ref.core_identity",
       "example": "examples/api-reference/python/core_identity.py",
-      "limits": "HMAC fixture без Telegram; token только на backend, raw initData проверяется до session/ACL. BotSettings repr скрывает token, сериализация не становится безопасной. VerifiedLaunch — результат проверки, ручной DTO не подтверждает identity.",
+      "limits": "HMAC fixture без Telegram; token только на backend, raw initData проверяется до session/ACL. BotSettings repr скрывает token, сериализация не становится безопасной. VerifiedLaunch — результат проверки, ручной DTO не подтверждает identity. Сторонняя проверка Ed25519 знает только bot_id и опубликованный ключ Telegram; она требует extra signature (cryptography), без него сообщает UnsupportedCapability. Пример подписан ключом из тестов aiogram, а не ключом Telegram.",
       "intent": "Конфигурация из явного environ без dotenv",
-      "example_sha256": "79ba58973a74c842c84dc7d79b81f337a2bb332ab201803aa574f20111a56614",
-      "example_source_sha256": "79ba58973a74c842c84dc7d79b81f337a2bb332ab201803aa574f20111a56614",
+      "example_sha256": "12348fb956700b9044121779e985cef9788127e8170569bb4649ce5721de78b4",
+      "example_source_sha256": "12348fb956700b9044121779e985cef9788127e8170569bb4649ce5721de78b4",
       "kind": "value"
     },
     {
@@ -20,10 +20,10 @@
       "import": "from telegram_patterns import InvalidInitData",
       "recipe": "ref.core_identity",
       "example": "examples/api-reference/python/core_identity.py",
-      "limits": "HMAC fixture без Telegram; token только на backend, raw initData проверяется до session/ACL. BotSettings repr скрывает token, сериализация не становится безопасной. VerifiedLaunch — результат проверки, ручной DTO не подтверждает identity.",
+      "limits": "HMAC fixture без Telegram; token только на backend, raw initData проверяется до session/ACL. BotSettings repr скрывает token, сериализация не становится безопасной. VerifiedLaunch — результат проверки, ручной DTO не подтверждает identity. Сторонняя проверка Ed25519 знает только bot_id и опубликованный ключ Telegram; она требует extra signature (cryptography), без него сообщает UnsupportedCapability. Пример подписан ключом из тестов aiogram, а не ключом Telegram.",
       "intent": "Контролируемый отказ подписи/кодировки/freshness",
-      "example_sha256": "79ba58973a74c842c84dc7d79b81f337a2bb332ab201803aa574f20111a56614",
-      "example_source_sha256": "79ba58973a74c842c84dc7d79b81f337a2bb332ab201803aa574f20111a56614",
+      "example_sha256": "12348fb956700b9044121779e985cef9788127e8170569bb4649ce5721de78b4",
+      "example_source_sha256": "12348fb956700b9044121779e985cef9788127e8170569bb4649ce5721de78b4",
       "kind": "value"
     },
     {
@@ -32,10 +32,10 @@
       "import": "from telegram_patterns import VerifiedLaunch",
       "recipe": "ref.core_identity",
       "example": "examples/api-reference/python/core_identity.py",
-      "limits": "HMAC fixture без Telegram; token только на backend, raw initData проверяется до session/ACL. BotSettings repr скрывает token, сериализация не становится безопасной. VerifiedLaunch — результат проверки, ручной DTO не подтверждает identity.",
+      "limits": "HMAC fixture без Telegram; token только на backend, raw initData проверяется до session/ACL. BotSettings repr скрывает token, сериализация не становится безопасной. VerifiedLaunch — результат проверки, ручной DTO не подтверждает identity. Сторонняя проверка Ed25519 знает только bot_id и опубликованный ключ Telegram; она требует extra signature (cryptography), без него сообщает UnsupportedCapability. Пример подписан ключом из тестов aiogram, а не ключом Telegram.",
       "intent": "Подписанные user_id/auth_date/user",
-      "example_sha256": "79ba58973a74c842c84dc7d79b81f337a2bb332ab201803aa574f20111a56614",
-      "example_source_sha256": "79ba58973a74c842c84dc7d79b81f337a2bb332ab201803aa574f20111a56614",
+      "example_sha256": "12348fb956700b9044121779e985cef9788127e8170569bb4649ce5721de78b4",
+      "example_source_sha256": "12348fb956700b9044121779e985cef9788127e8170569bb4649ce5721de78b4",
       "kind": "value"
     },
     {
@@ -44,10 +44,34 @@
       "import": "from telegram_patterns import validate_init_data",
       "recipe": "ref.core_identity",
       "example": "examples/api-reference/python/core_identity.py",
-      "limits": "HMAC fixture без Telegram; token только на backend, raw initData проверяется до session/ACL. BotSettings repr скрывает token, сериализация не становится безопасной. VerifiedLaunch — результат проверки, ручной DTO не подтверждает identity.",
+      "limits": "HMAC fixture без Telegram; token только на backend, raw initData проверяется до session/ACL. BotSettings repr скрывает token, сериализация не становится безопасной. VerifiedLaunch — результат проверки, ручной DTO не подтверждает identity. Сторонняя проверка Ed25519 знает только bot_id и опубликованный ключ Telegram; она требует extra signature (cryptography), без него сообщает UnsupportedCapability. Пример подписан ключом из тестов aiogram, а не ключом Telegram.",
       "intent": "HMAC-подпись и свежесть сырой initData",
-      "example_sha256": "79ba58973a74c842c84dc7d79b81f337a2bb332ab201803aa574f20111a56614",
-      "example_source_sha256": "79ba58973a74c842c84dc7d79b81f337a2bb332ab201803aa574f20111a56614",
+      "example_sha256": "12348fb956700b9044121779e985cef9788127e8170569bb4649ce5721de78b4",
+      "example_source_sha256": "12348fb956700b9044121779e985cef9788127e8170569bb4649ce5721de78b4",
+      "kind": "value"
+    },
+    {
+      "module": "telegram_patterns",
+      "name": "validate_init_data_signature",
+      "import": "from telegram_patterns import validate_init_data_signature",
+      "recipe": "ref.core_identity",
+      "example": "examples/api-reference/python/core_identity.py",
+      "limits": "HMAC fixture без Telegram; token только на backend, raw initData проверяется до session/ACL. BotSettings repr скрывает token, сериализация не становится безопасной. VerifiedLaunch — результат проверки, ручной DTO не подтверждает identity. Сторонняя проверка Ed25519 знает только bot_id и опубликованный ключ Telegram; она требует extra signature (cryptography), без него сообщает UnsupportedCapability. Пример подписан ключом из тестов aiogram, а не ключом Telegram.",
+      "intent": "Ed25519-подпись initData без токена бота: проверка для третьей стороны",
+      "example_sha256": "12348fb956700b9044121779e985cef9788127e8170569bb4649ce5721de78b4",
+      "example_source_sha256": "12348fb956700b9044121779e985cef9788127e8170569bb4649ce5721de78b4",
+      "kind": "value"
+    },
+    {
+      "module": "telegram_patterns",
+      "name": "TELEGRAM_PUBLIC_KEYS",
+      "import": "from telegram_patterns import TELEGRAM_PUBLIC_KEYS",
+      "recipe": "ref.core_identity",
+      "example": "examples/api-reference/python/core_identity.py",
+      "limits": "HMAC fixture без Telegram; token только на backend, raw initData проверяется до session/ACL. BotSettings repr скрывает token, сериализация не становится безопасной. VerifiedLaunch — результат проверки, ручной DTO не подтверждает identity. Сторонняя проверка Ed25519 знает только bot_id и опубликованный ключ Telegram; она требует extra signature (cryptography), без него сообщает UnsupportedCapability. Пример подписан ключом из тестов aiogram, а не ключом Telegram.",
+      "intent": "Опубликованные Telegram ключи Ed25519 для production и test, только чтение",
+      "example_sha256": "12348fb956700b9044121779e985cef9788127e8170569bb4649ce5721de78b4",
+      "example_source_sha256": "12348fb956700b9044121779e985cef9788127e8170569bb4649ce5721de78b4",
       "kind": "value"
     },
     {
@@ -1623,6 +1647,78 @@
       "kind": "type"
     },
     {
+      "module": "@awesome-telegram/patterns",
+      "name": "verifyInitDataSignature",
+      "import": "import {verifyInitDataSignature} from \"@awesome-telegram/patterns\"",
+      "recipe": "ref.init_data",
+      "example": "examples/api-reference/typescript/init-data.ts",
+      "limits": "Для сервера или третьей стороны, которой известен только bot_id: подпись Ed25519 проверяется через WebCrypto (браузеры, Node 20+), без зависимостей. Нет WebCrypto или Ed25519 — UnsupportedCapability, а не успех. Результат подтверждает данные запуска, но не сессию, права на объект и однократность операции. Проверка HMAC с токеном бота остается в Python.",
+      "intent": "Асинхронная проверка подписи Ed25519, свежести и подписанного пользователя",
+      "example_sha256": "ec29de6f63f6aec36f874e1634d4bef0c5326ee3d78b0362ce51912ad775030b",
+      "example_source_sha256": "ec29de6f63f6aec36f874e1634d4bef0c5326ee3d78b0362ce51912ad775030b",
+      "kind": "value"
+    },
+    {
+      "module": "@awesome-telegram/patterns",
+      "name": "InvalidInitData",
+      "import": "import {InvalidInitData} from \"@awesome-telegram/patterns\"",
+      "recipe": "ref.init_data",
+      "example": "examples/api-reference/typescript/init-data.ts",
+      "limits": "Для сервера или третьей стороны, которой известен только bot_id: подпись Ed25519 проверяется через WebCrypto (браузеры, Node 20+), без зависимостей. Нет WebCrypto или Ed25519 — UnsupportedCapability, а не успех. Результат подтверждает данные запуска, но не сессию, права на объект и однократность операции. Проверка HMAC с токеном бота остается в Python.",
+      "intent": "Контролируемый отказ данных запуска без сырого ввода в сообщении",
+      "example_sha256": "ec29de6f63f6aec36f874e1634d4bef0c5326ee3d78b0362ce51912ad775030b",
+      "example_source_sha256": "ec29de6f63f6aec36f874e1634d4bef0c5326ee3d78b0362ce51912ad775030b",
+      "kind": "value"
+    },
+    {
+      "module": "@awesome-telegram/patterns",
+      "name": "TELEGRAM_PUBLIC_KEYS",
+      "import": "import {TELEGRAM_PUBLIC_KEYS} from \"@awesome-telegram/patterns\"",
+      "recipe": "ref.init_data",
+      "example": "examples/api-reference/typescript/init-data.ts",
+      "limits": "Для сервера или третьей стороны, которой известен только bot_id: подпись Ed25519 проверяется через WebCrypto (браузеры, Node 20+), без зависимостей. Нет WebCrypto или Ed25519 — UnsupportedCapability, а не успех. Результат подтверждает данные запуска, но не сессию, права на объект и однократность операции. Проверка HMAC с токеном бота остается в Python.",
+      "intent": "Опубликованные ключи Ed25519 в hex: production и test",
+      "example_sha256": "ec29de6f63f6aec36f874e1634d4bef0c5326ee3d78b0362ce51912ad775030b",
+      "example_source_sha256": "ec29de6f63f6aec36f874e1634d4bef0c5326ee3d78b0362ce51912ad775030b",
+      "kind": "value"
+    },
+    {
+      "module": "@awesome-telegram/patterns",
+      "name": "SignedLaunch",
+      "import": "import type {SignedLaunch} from \"@awesome-telegram/patterns\"",
+      "recipe": "ref.init_data",
+      "example": "examples/api-reference/typescript/init-data.ts",
+      "limits": "Для сервера или третьей стороны, которой известен только bot_id: подпись Ed25519 проверяется через WebCrypto (браузеры, Node 20+), без зависимостей. Нет WebCrypto или Ed25519 — UnsupportedCapability, а не успех. Результат подтверждает данные запуска, но не сессию, права на объект и однократность операции. Проверка HMAC с токеном бота остается в Python.",
+      "intent": "Подписанные userId, authDate, user и необязательные поля запуска, только чтение",
+      "example_sha256": "ec29de6f63f6aec36f874e1634d4bef0c5326ee3d78b0362ce51912ad775030b",
+      "example_source_sha256": "ec29de6f63f6aec36f874e1634d4bef0c5326ee3d78b0362ce51912ad775030b",
+      "kind": "type"
+    },
+    {
+      "module": "@awesome-telegram/patterns",
+      "name": "SignedObject",
+      "import": "import type {SignedObject} from \"@awesome-telegram/patterns\"",
+      "recipe": "ref.init_data",
+      "example": "examples/api-reference/typescript/init-data.ts",
+      "limits": "Для сервера или третьей стороны, которой известен только bot_id: подпись Ed25519 проверяется через WebCrypto (браузеры, Node 20+), без зависимостей. Нет WebCrypto или Ed25519 — UnsupportedCapability, а не успех. Результат подтверждает данные запуска, но не сессию, права на объект и однократность операции. Проверка HMAC с токеном бота остается в Python.",
+      "intent": "Замороженный JSON-объект из подписанных данных",
+      "example_sha256": "ec29de6f63f6aec36f874e1634d4bef0c5326ee3d78b0362ce51912ad775030b",
+      "example_source_sha256": "ec29de6f63f6aec36f874e1634d4bef0c5326ee3d78b0362ce51912ad775030b",
+      "kind": "type"
+    },
+    {
+      "module": "@awesome-telegram/patterns",
+      "name": "InitDataSignatureOptions",
+      "import": "import type {InitDataSignatureOptions} from \"@awesome-telegram/patterns\"",
+      "recipe": "ref.init_data",
+      "example": "examples/api-reference/typescript/init-data.ts",
+      "limits": "Для сервера или третьей стороны, которой известен только bot_id: подпись Ed25519 проверяется через WebCrypto (браузеры, Node 20+), без зависимостей. Нет WebCrypto или Ed25519 — UnsupportedCapability, а не успех. Результат подтверждает данные запуска, но не сессию, права на объект и однократность операции. Проверка HMAC с токеном бота остается в Python.",
+      "intent": "Окружение или свой ключ, текущее время, лимиты свежести и размера, WebCrypto",
+      "example_sha256": "ec29de6f63f6aec36f874e1634d4bef0c5326ee3d78b0362ce51912ad775030b",
+      "example_source_sha256": "ec29de6f63f6aec36f874e1634d4bef0c5326ee3d78b0362ce51912ad775030b",
+      "kind": "type"
+    },
+    {
       "module": "telegram_patterns.aiogram",
       "name": "NavigationScreen",
       "import": "from telegram_patterns.aiogram import NavigationScreen",
@@ -2883,9 +2979,9 @@
       "kind": "value"
     }
   ],
-  "python_symbols": 199,
-  "typescript_symbols": 41,
-  "recipes": 32,
+  "python_symbols": 201,
+  "typescript_symbols": 47,
+  "recipes": 33,
   "additional_entries": [
     "CLI recipes",
     "CLI init",

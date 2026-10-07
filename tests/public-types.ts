@@ -54,3 +54,20 @@ export function projectAdapters(): SelectionDraftStore {
 }
 // @ts-expect-error async CloudStorage is not the synchronous selection storage interface
 export const asyncStorage: KeyValueStorage = {getItem:async()=>null,setItem:()=>{},removeItem:()=>{}};
+
+import {verifyInitDataSignature, InvalidInitData, TELEGRAM_PUBLIC_KEYS,
+  type SignedLaunch, type InitDataSignatureOptions} from '@awesome-telegram/patterns';
+
+export async function thirdPartyLaunch(raw: string, botId: number): Promise<number> {
+  const options: InitDataSignatureOptions = {environment: 'test', maxAgeSeconds: 300};
+  try {
+    const launch: SignedLaunch = await verifyInitDataSignature(raw, botId, options);
+    return launch.userId + TELEGRAM_PUBLIC_KEYS.production.length;
+  } catch (error) {
+    if (error instanceof InvalidInitData) return 0;
+    throw error;
+  }
+}
+
+// @ts-expect-error environment is a closed set of published keys
+export const unknownEnvironment: InitDataSignatureOptions = {environment: 'staging'};

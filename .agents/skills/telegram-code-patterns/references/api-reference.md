@@ -18,6 +18,8 @@
 | `InvalidInitData` | `from telegram_patterns import InvalidInitData` | [ref.core_identity](api-reference-core.md#ref-core_identity) | Контролируемый отказ подписи/кодировки/freshness |
 | `VerifiedLaunch` | `from telegram_patterns import VerifiedLaunch` | [ref.core_identity](api-reference-core.md#ref-core_identity) | Подписанные user_id/auth_date/user |
 | `validate_init_data` | `from telegram_patterns import validate_init_data` | [ref.core_identity](api-reference-core.md#ref-core_identity) | HMAC-подпись и свежесть сырой initData |
+| `validate_init_data_signature` | `from telegram_patterns import validate_init_data_signature` | [ref.core_identity](api-reference-core.md#ref-core_identity) | Ed25519-подпись initData без токена бота: проверка для третьей стороны |
+| `TELEGRAM_PUBLIC_KEYS` | `from telegram_patterns import TELEGRAM_PUBLIC_KEYS` | [ref.core_identity](api-reference-core.md#ref-core_identity) | Опубликованные Telegram ключи Ed25519 для production и test, только чтение |
 | `EntityKind` | `from telegram_patterns import EntityKind` | [ref.core_message_text](api-reference-core.md#ref-core_message_text) | Literal одиннадцати поддерживаемых outgoing entity типов |
 | `TextEntity` | `from telegram_patterns import TextEntity` | [ref.core_message_text](api-reference-core.md#ref-core_message_text) | Frozen range и проверенные metadata |
 | `TextPayload` | `from telegram_patterns import TextPayload` | [ref.core_message_text](api-reference-core.md#ref-core_message_text) | TypedDict с JSON-полями text, entities и parse_mode=None |
@@ -149,6 +151,12 @@
 | `ErrorOutcome` | `import type {ErrorOutcome} from "@awesome-telegram/patterns"` | [ref.errors](api-reference-typescript.md#ref-errors) | Literal-исход: rejected, read-failed или unknown |
 | `OperationKind` | `import type {OperationKind} from "@awesome-telegram/patterns"` | [ref.errors](api-reference-typescript.md#ref-errors) | Literal read/write |
 | `RecoveryAction` | `import type {RecoveryAction} from "@awesome-telegram/patterns"` | [ref.errors](api-reference-typescript.md#ref-errors) | Literal следующего действия |
+| `verifyInitDataSignature` | `import {verifyInitDataSignature} from "@awesome-telegram/patterns"` | [ref.init_data](api-reference-typescript.md#ref-init_data) | Асинхронная проверка подписи Ed25519, свежести и подписанного пользователя |
+| `InvalidInitData` | `import {InvalidInitData} from "@awesome-telegram/patterns"` | [ref.init_data](api-reference-typescript.md#ref-init_data) | Контролируемый отказ данных запуска без сырого ввода в сообщении |
+| `TELEGRAM_PUBLIC_KEYS` | `import {TELEGRAM_PUBLIC_KEYS} from "@awesome-telegram/patterns"` | [ref.init_data](api-reference-typescript.md#ref-init_data) | Опубликованные ключи Ed25519 в hex: production и test |
+| `SignedLaunch` | `import type {SignedLaunch} from "@awesome-telegram/patterns"` | [ref.init_data](api-reference-typescript.md#ref-init_data) | Подписанные userId, authDate, user и необязательные поля запуска, только чтение |
+| `SignedObject` | `import type {SignedObject} from "@awesome-telegram/patterns"` | [ref.init_data](api-reference-typescript.md#ref-init_data) | Замороженный JSON-объект из подписанных данных |
+| `InitDataSignatureOptions` | `import type {InitDataSignatureOptions} from "@awesome-telegram/patterns"` | [ref.init_data](api-reference-typescript.md#ref-init_data) | Окружение или свой ключ, текущее время, лимиты свежести и размера, WebCrypto |
 | `NavigationScreen` | `from telegram_patterns.aiogram import NavigationScreen` | [ref.bot_navigation](api-reference-bot.md#ref-bot_navigation) | Неизменяемый экран с объявленными переходами и раскладкой |
 | `NavigationState` | `from telegram_patterns.aiogram import NavigationState` | [ref.bot_navigation](api-reference-bot.md#ref-bot_navigation) | Неизменяемый снимок истории, ревизии и фазы в своей области |
 | `NavigationResult` | `from telegram_patterns.aiogram import NavigationResult` | [ref.bot_navigation](api-reference-bot.md#ref-bot_navigation) | Безопасный ответ: принято, отказано, устарело, недоступно или неизвестно |

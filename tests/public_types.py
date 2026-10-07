@@ -168,3 +168,10 @@ platform_router = platform_events_router(platform_lookup_host,platform_observer_
 bad_platform_scope = PlatformScope('bot',42,'typed')  # type: ignore[arg-type]
 bad_platform_permit = PlatformPermit(allowed='yes')  # type: ignore[arg-type]
 bad_platform_lookup: PlatformLookup = lambda event: platform_scope  # type: ignore[assignment,return-value]
+
+# Third-party initData check: environment is a Literal, the result is the same VerifiedLaunch.
+from telegram_patterns import TELEGRAM_PUBLIC_KEYS, VerifiedLaunch, validate_init_data_signature
+def third_party_launch(raw: str) -> VerifiedLaunch:
+    return validate_init_data_signature(raw, 7, environment='test', public_key=TELEGRAM_PUBLIC_KEYS['test'])
+def bad_third_party_launch(raw: str) -> VerifiedLaunch:
+    return validate_init_data_signature(raw, 7, environment='staging')  # type: ignore[arg-type]

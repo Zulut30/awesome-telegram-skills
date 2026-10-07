@@ -8,13 +8,15 @@
       "section": "core",
       "title": "Конфигурация и проверенный запуск",
       "example": "examples/api-reference/python/core_identity.py",
-      "limits": "HMAC fixture без Telegram; token только на backend, raw initData проверяется до session/ACL. BotSettings repr скрывает token, сериализация не становится безопасной. VerifiedLaunch — результат проверки, ручной DTO не подтверждает identity.",
+      "limits": "HMAC fixture без Telegram; token только на backend, raw initData проверяется до session/ACL. BotSettings repr скрывает token, сериализация не становится безопасной. VerifiedLaunch — результат проверки, ручной DTO не подтверждает identity. Сторонняя проверка Ed25519 знает только bot_id и опубликованный ключ Telegram; она требует extra signature (cryptography), без него сообщает UnsupportedCapability. Пример подписан ключом из тестов aiogram, а не ключом Telegram.",
       "api": {
         "telegram_patterns": {
           "BotSettings": "Конфигурация из явного environ без dotenv",
           "InvalidInitData": "Контролируемый отказ подписи/кодировки/freshness",
           "VerifiedLaunch": "Подписанные user_id/auth_date/user",
-          "validate_init_data": "HMAC-подпись и свежесть сырой initData"
+          "validate_init_data": "HMAC-подпись и свежесть сырой initData",
+          "validate_init_data_signature": "Ed25519-подпись initData без токена бота: проверка для третьей стороны",
+          "TELEGRAM_PUBLIC_KEYS": "Опубликованные Telegram ключи Ed25519 для production и test, только чтение"
         }
       }
     },
@@ -357,6 +359,23 @@
           "ErrorOutcome": "Literal-исход: rejected, read-failed или unknown",
           "OperationKind": "Literal read/write",
           "RecoveryAction": "Literal следующего действия"
+        }
+      }
+    },
+    {
+      "id": "init_data",
+      "section": "typescript",
+      "title": "Проверка initData без токена бота",
+      "example": "examples/api-reference/typescript/init-data.ts",
+      "limits": "Для сервера или третьей стороны, которой известен только bot_id: подпись Ed25519 проверяется через WebCrypto (браузеры, Node 20+), без зависимостей. Нет WebCrypto или Ed25519 — UnsupportedCapability, а не успех. Результат подтверждает данные запуска, но не сессию, права на объект и однократность операции. Проверка HMAC с токеном бота остается в Python.",
+      "api": {
+        "@awesome-telegram/patterns": {
+          "verifyInitDataSignature": "Асинхронная проверка подписи Ed25519, свежести и подписанного пользователя",
+          "InvalidInitData": "Контролируемый отказ данных запуска без сырого ввода в сообщении",
+          "TELEGRAM_PUBLIC_KEYS": "Опубликованные ключи Ed25519 в hex: production и test",
+          "SignedLaunch": "Подписанные userId, authDate, user и необязательные поля запуска, только чтение",
+          "SignedObject": "Замороженный JSON-объект из подписанных данных",
+          "InitDataSignatureOptions": "Окружение или свой ключ, текущее время, лимиты свежести и размера, WebCrypto"
         }
       }
     },

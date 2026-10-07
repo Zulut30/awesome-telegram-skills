@@ -665,9 +665,15 @@
     {
       "id": 53,
       "title": "Проверка `initData` без токена бота (Ed25519)",
-      "status": "pending",
-      "commit_subject": null,
-      "evidence": [],
+      "status": "done",
+      "commit_subject": "excellence(053): verify initData without the bot token with Ed25519",
+      "evidence": [
+        "Python: validate_init_data_signature и TELEGRAM_PUBLIC_KEYS, extra signature (cryptography>=46,<52); без него UnsupportedCapability; общий разбор и свежесть с validate_init_data",
+        "TypeScript: verifyInitDataSignature (WebCrypto Ed25519), InvalidInitData, TELEGRAM_PUBLIC_KEYS, SignedLaunch, SignedObject, InitDataSignatureOptions",
+        "Векторы: независимый вектор из тестов aiogram в Python и TypeScript; совпадение с aiogram.utils.web_app_signature на 200 случайных векторах; 6 тестов Python, 5 тестов TypeScript",
+        "verify_pattern_packages.py: PASS 0.24.0, 513 Python и 35 TypeScript тестов на установленных wheel/tarball, браузер; справочник API 248 символов, контракт wheel и SBOM с extra signature",
+        "Документация: references/validation.md и SKILL.md скилла telegram-mini-app-auth, README пакетов, docs/sources.md"
+      ],
       "remaining": null
     },
     {

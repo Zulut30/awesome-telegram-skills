@@ -12,3 +12,5 @@ export {TelegramNativeAPI, UnsupportedTelegramCapability} from './native-api.js'
 export {PatternError, ValidationFailure, InvalidType, AuthenticationRequired, PermissionDenied, UnsupportedCapability, UnknownOutcome, safeErrorReport} from './errors.js';
 export type {ErrorCategory, ErrorOutcome, RecoveryAction, OperationKind, ErrorCode, ErrorReport} from './errors.js';
 export type {KeyValueStorage, StorageFactory, FetchTransport} from './adapters.js';
+export {InvalidInitData, TELEGRAM_PUBLIC_KEYS, verifyInitDataSignature} from './init-data.js';
+export type {SignedLaunch, SignedObject, InitDataSignatureOptions} from './init-data.js';

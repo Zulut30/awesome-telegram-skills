@@ -137,12 +137,26 @@
     {
       "id": "mini-app-initdata",
       "language": "python",
-      "import": "telegram_patterns.validate_init_data",
-      "intent": "Серверная HMAC-проверка сырого Mini App initData",
+      "import": "telegram_patterns.validate_init_data, telegram_patterns.validate_init_data_signature",
+      "intent": "Серверная проверка сырого Mini App initData: HMAC с токеном бота или Ed25519 без токена",
       "source": "packages/python/src/telegram_patterns/initdata.py",
       "boundaries": [
-        "bot-owner HMAC only; not OIDC/Ed25519",
-        "application session and ACL required"
+        "HMAC needs the bot token; Ed25519 needs bot_id, the published key and the signature extra (cryptography)",
+        "not OIDC; application session and ACL required"
+      ],
+      "maturity": "experimental",
+      "maturity_scope": "All public API symbols in this component; local verification is not a stable 1.0 promise"
+    },
+    {
+      "id": "mini-app-initdata-signature",
+      "language": "typescript",
+      "import": "verifyInitDataSignature, InvalidInitData, TELEGRAM_PUBLIC_KEYS",
+      "intent": "Проверка подписи Ed25519 initData без токена бота через WebCrypto",
+      "source": "packages/typescript/src/init-data.ts",
+      "example": "examples/api-reference/typescript/init-data.ts",
+      "boundaries": [
+        "WebCrypto with Ed25519 (browsers, Node 20+); otherwise UnsupportedCapability",
+        "launch data only: session, object ACL and replay protection stay with the service"
       ],
       "maturity": "experimental",
       "maturity_scope": "All public API symbols in this component; local verification is not a stable 1.0 promise"

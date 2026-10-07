@@ -24,7 +24,7 @@
 | `telegram-localization` | 2026-10-07 | Bot API 10.3 | [Telegram User](https://core.telegram.org/bots/api#user), [Intl](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Intl), [Bot formatting](https://core.telegram.org/bots/api#formatting-options) |
 | `telegram-media-processing` | 2026-10-07 | Bot API 10.3, aiogram 3.31.0 | [Telegram Bot API](https://core.telegram.org/bots/api), [FFmpeg documentation](https://ffmpeg.org/documentation.html), [OWASP File Upload](https://cheatsheetseries.owasp.org/cheatsheets/File_Upload_Cheat_Sheet.html) |
 | `telegram-mini-app-architecture` | 2026-10-07 | Telegram Mini Apps (Bot API 10.3) | [Telegram Mini Apps](https://core.telegram.org/bots/webapps), [Design Guidelines](https://core.telegram.org/bots/webapps#design-guidelines) |
-| `telegram-mini-app-auth` | 2026-10-07 | Telegram Mini Apps (Bot API 10.3) | [Проверка данных Mini App](https://core.telegram.org/bots/webapps#validating-data-received-via-the-mini-app), [WebAppInitData](https://core.telegram.org/bots/webapps#webappinitdata) |
+| `telegram-mini-app-auth` | 2026-10-07 | Telegram Mini Apps (Bot API 10.3) | [Проверка данных Mini App](https://core.telegram.org/bots/webapps#validating-data-received-via-the-mini-app), [Проверка третьей стороной](https://core.telegram.org/bots/webapps#validating-data-for-third-party-use), [WebAppInitData](https://core.telegram.org/bots/webapps#webappinitdata) |
 | `telegram-mini-app-design-system` | 2026-10-07 | Telegram Mini Apps (Bot API 10.3) | [Telegram Design Guidelines](https://core.telegram.org/bots/webapps#design-guidelines), [WAI-ARIA patterns](https://www.w3.org/WAI/ARIA/apg/patterns/), [WCAG contrast](https://www.w3.org/WAI/WCAG22/Understanding/contrast-minimum.html) |
 | `telegram-mini-app-device-qa` | 2026-10-07 | Telegram Mini Apps (Bot API 10.3) | [Telegram Mini Apps](https://core.telegram.org/bots/webapps), [тестовая среда](https://core.telegram.org/bots/webapps#using-bots-in-the-test-environment) |
 | `telegram-mini-app-integration` | 2026-10-07 | Telegram Mini Apps (Bot API 10.3) | [Mini Apps: способы запуска](https://core.telegram.org/bots/webapps#implementing-mini-apps), [deep linking](https://core.telegram.org/bots/features#deep-linking), [Bot API](https://core.telegram.org/bots/api) |
@@ -84,6 +84,10 @@
 Изменения Bot API и Mini Apps отслеживает еженедельный workflow `.github/workflows/telegram-docs-watch.yml`. Задача Bot API пересобирает индекс со страницы core.telegram.org и сравнивает `scripts/diff_api_index.py` версию, имена методов и типов и их поля с индексом в репозитории. Задача Mini Apps строит `scripts/mini_app_index.py` индекс методов и событий с их `min_version` и свойств и сравнивает его `scripts/diff_mini_app_index.py` с `catalog/mini-app-index.json`; метод нового модуля без указанной в документации версии попадает в отчет с пометкой «версия не указана». SHA-256 страниц меняется при каждой пересборке и не сравнивается. При изменении открывается issue со списком новых, удаленных и измененных элементов; одно и то же изменение не дублируется.
 
 ## Журнал проверок
+
+### 2026-10-07 — пункт 53
+
+Прочитан раздел [Validating data for Third-Party Use](https://core.telegram.org/bots/webapps#validating-data-for-third-party-use): подпись Ed25519 поля `signature` в base64url, строка `<bot_id>:WebAppData` и поля без `hash` и `signature`, ключи тестового (`40055058…72ec`) и боевого (`e7bf03a2…242d`) окружений, обязательная проверка `auth_date`. Сверены `aiogram.utils.web_app_signature` в установленном aiogram 3.31.0 и [тесты aiogram](https://github.com/aiogram/aiogram/blob/dev-3.x/tests/test_utils/test_web_app_signature.py) (независимый вектор с их ключом), extra `signature` aiogram (`cryptography>=46`) и [cryptography](https://pypi.org/project/cryptography/) 50.0.2 на PyPI. WebCrypto Ed25519 проверен в Node 22.
 
 ### 2026-10-07 — пункт 52
 

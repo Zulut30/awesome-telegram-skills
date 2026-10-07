@@ -1,5 +1,5 @@
 """Core components; importing these does not require a Telegram SDK."""
-from .initdata import InvalidInitData, VerifiedLaunch, validate_init_data
+from .initdata import TELEGRAM_PUBLIC_KEYS, InvalidInitData, VerifiedLaunch, validate_init_data, validate_init_data_signature
 from .sqlite_once import OnceResult, OperationConflict, SQLiteOnce
 from .calendar import CalendarMonth, TimeSlot, resolve_local_time
 from .slots import SlotBooking, SlotSchedule, SQLiteSlotStore
@@ -18,7 +18,7 @@ from .errors import (
 )
 
 __all__ = [
-    "BotSettings", "InvalidInitData", "VerifiedLaunch", "validate_init_data",
+    "BotSettings", "InvalidInitData", "VerifiedLaunch", "validate_init_data", "validate_init_data_signature", "TELEGRAM_PUBLIC_KEYS",
     "EntityKind", "TextEntity", "TextPayload", "FormattedText", "MessageBuilder", "utf16_length", "escape_html", "escape_markdown_v2", "split_formatted",
     "SelectionOption", "SelectionSpec", "SelectionContext", "SelectionState", "SelectionResult", "SelectionMenu",
     "OnceResult", "OperationConflict", "SQLiteOnce",
