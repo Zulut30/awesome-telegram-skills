@@ -106,12 +106,12 @@ class StarterComponentTests(unittest.TestCase):
         with tempfile.TemporaryDirectory() as folder:
             root=Path(folder);source,_=self.supplied(root);target=root/'new'
             with redirect_stderr(io.StringIO()) as error:
-                self.assertEqual(main(['init',str(target),'--library',str(source),'--component','CANARY_SECRET']),2)
+                self.assertEqual(main(['init',str(target),'--library',str(source),'--component','CANARY_SECRET','--json']),2)
             payload=json.loads(error.getvalue())
             self.assertEqual(payload['reason'],'unknown-component');self.assertNotIn('CANARY',error.getvalue())
             self.assertFalse(target.exists())
         with redirect_stderr(io.StringIO()) as error:
-            self.assertEqual(main(['init','--list-components','--dry-run']),2)
+            self.assertEqual(main(['init','--list-components','--dry-run','--json']),2)
         self.assertEqual(json.loads(error.getvalue())['reason'],'listing-input')
 
     def test_each_python_feature_and_full_composition_execute_real_dispatcher(self):

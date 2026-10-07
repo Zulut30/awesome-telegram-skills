@@ -121,9 +121,14 @@
     {
       "id": 10,
       "title": "Читаемые ошибки CLI",
-      "status": "pending",
-      "commit_subject": null,
-      "evidence": [],
+      "status": "done",
+      "commit_subject": "excellence(010): print readable CLI errors with a --json mode",
+      "evidence": [
+        "test_errors_are_readable_by_default_and_json_on_request: поврежденный wheel, существующий каталог, неполные аргументы, отсутствующий ресурс -> понятный текст; --json -> ASCII JSON с problem",
+        "отсутствующий ресурс: problem=installation, outcome=read-failed; вывод в ASCII-консоль не падает (backslashreplace)",
+        "test_catalog_cli + test_starter_components + test_execution + test_doctor: 41 OK",
+        "verify_selected_starter/verify_starter_consumer/verify_recipe_execution переведены на --json; docs/public-api.md и recipe-execution.md обновлены"
+      ],
       "remaining": null
     },
     {

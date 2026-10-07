@@ -25,7 +25,7 @@ def main() -> int:
     if not console.is_file(): raise RuntimeError('Installed console entrypoint missing')
 
     def cli(*arguments: str, expected: int = 0) -> dict:
-        completed = subprocess.run([str(console), *map(str, arguments)], env=environment,
+        completed = subprocess.run([str(console), *map(str, arguments), '--json'], env=environment,
                                    capture_output=True, text=True, encoding='utf-8', timeout=60)
         stage = {'action': arguments[0], 'exit_code': completed.returncode, 'expected_exit': expected}
         cli_stages.append(stage)

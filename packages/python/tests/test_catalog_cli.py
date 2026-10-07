@@ -204,6 +204,41 @@ class CLITests(unittest.TestCase):
             with redirect_stderr(io.StringIO()) as output:self.assertEqual(main(['init',str(root/'target'),'--library',str(artifact)]),2)
             self.assertNotIn('INVALID_FIXTURE',output.getvalue());self.assertFalse((root/'target').exists())
 
+    def test_errors_are_readable_by_default_and_json_on_request(self):
+        import shutil
+        from importlib.resources import files
+        library=Path(str(files('telegram_patterns'))).parents[1]
+        with tempfile.TemporaryDirectory(prefix='telegram-cli-errors-') as folder:
+            root=Path(folder);artifact=root/'bad.whl';artifact.write_bytes(b'INVALID_FIXTURE')
+            def run(*arguments):
+                with redirect_stderr(io.StringIO()) as output:status=main(list(arguments))
+                return status,output.getvalue()
+            status,text=run('init',str(root/'a'),'--library',str(artifact))
+            self.assertEqual(status,2);self.assertNotIn('INVALID_FIXTURE',text)
+            self.assertIn('Ошибка: Переданный wheel или tarball поврежден',text);self.assertIn('добавьте --json',text)
+            with self.assertRaises(json.JSONDecodeError): json.loads(text)
+            status,text=run('init',str(root/'a'),'--library',str(artifact),'--json')
+            payload=json.loads(text);self.assertEqual((status,payload['problem'],payload['error']),(2,'artifact','BadZipFile'))
+            self.assertTrue(text.isascii())
+            (root/'exists').mkdir()
+            status,text=run('init',str(root/'exists'),'--library',str(library))
+            self.assertIn('Ошибка: Каталог проекта уже существует.',text)
+            status,text=run('init','--component','x')
+            self.assertIn('Ошибка: Нужны новый target и --library',text);self.assertIn('Что сделать: Исправьте аргументы',text)
+            # A wheel missing a bundled template is an installation problem, not an unknown outcome.
+            package=root/'package';shutil.copytree(Path(str(files('telegram_patterns'))),package)
+            (package/'resources/starter/README.md.txt').unlink()
+            with patch('telegram_patterns.cli.files',return_value=package),patch('telegram_patterns.starter.files',return_value=package):
+                status,text=run('init',str(root/'b'),'--library',str(library),'--json')
+                payload=json.loads(text)
+                self.assertEqual((payload['problem'],payload['failure']['outcome']),('installation','read-failed'))
+                status,text=run('init',str(root/'b'),'--library',str(library))
+            self.assertIn('Пакет установлен не полностью',text);self.assertNotIn('частично',text)
+            self.assertFalse((root/'b').exists())
+        legacy=io.TextIOWrapper(io.BytesIO(),encoding='ascii')
+        with redirect_stderr(legacy):self.assertEqual(main(['init','--component','x']),2)
+        legacy.flush();self.assertIn(b'\\u041e',legacy.buffer.getvalue())
+
     def test_doctor_local_read_only_and_token_never_printed(self):
         with tempfile.TemporaryDirectory(prefix='telegram-doctor-') as folder:
             root=Path(folder);(root/'pyproject.toml').write_text('[project]\nname="fixture"\n')

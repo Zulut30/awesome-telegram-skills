@@ -14,7 +14,7 @@ telegram-patterns run-recipe demo-recovery --offline
 telegram-patterns run-recipe native.requestContact
 ```
 
-Первая команда только печатает план. `--offline` сначала печатает и flush-ит JSONL запись `stage=plan`, затем запускает известный fixture и печатает `stage=result`. Controlled ошибка выводится безопасным JSON в stderr, exit code 2. Для native reference план доступен, `--offline` дает отказ. Live режима нет.
+Первая команда только печатает план. `--offline` сначала печатает и flush-ит JSONL запись `stage=plan`, затем запускает известный fixture и печатает `stage=result`. Controlled ошибка выводится в stderr понятным текстом (с `--json` — безопасным ASCII JSON), exit code 2. Для native reference план доступен, `--offline` дает отказ. Live режима нет.
 
 JSON использует ASCII escapes для Unicode: значения полностью восстанавливаются JSON parser, включая кириллицу. Так вывод читается при Windows redirection даже с `-I`, который игнорирует PYTHONUTF8.
 

@@ -39,7 +39,7 @@ def main() -> int:
     records=[json.loads(x) for x in core.stdout.splitlines()]
     assert [r['stage'] for r in records]==['plan','result'] and records[-1]['checks']==['sqlite-one-effect','same-key-replay']
     for label,recipe in [('missing-sdk','two-columns'),('native-reference','native.requestContact')]:
-        result=run(label,args.core_python,['-m','telegram_patterns','run-recipe',recipe,'--offline'],expected=2)
+        result=run(label,args.core_python,['-m','telegram_patterns','run-recipe',recipe,'--offline','--json'],expected=2)
         assert not json.loads(result.stdout)['offline_ready'] and json.loads(result.stderr)['error']=='UnsupportedCapability'
     run('unknown-id',args.core_python,['-m','telegram_patterns','run-recipe','../../PRIVATE_CANARY.py','--offline'],expected=2)
     worker=args.output/'all fixtures';worker.mkdir();(worker/'owned.txt').write_bytes(b'preserve caller notes')
