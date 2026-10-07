@@ -295,10 +295,14 @@
     {
       "id": 25,
       "title": "Бот за одну минуту",
-      "status": "pending",
-      "commit_subject": null,
-      "evidence": [],
-      "remaining": null
+      "status": "partial",
+      "commit_subject": "excellence(025): start a bot within a minute from .env",
+      "evidence": [
+        "сгенерированный проект: .env с placeholder -> 'Replace the BOT_TOKEN placeholder…' + подсказка; вымышленный токен в песочнице без доступа к api.telegram.org -> 'Telegram Bot API is unreachable…' за ~6 с",
+        "test_bot_tools: .env (кавычки, export, комментарии, окружение важнее, неверная строка без значения), getMe 401 -> AuthenticationRequired, сетевой сбой с URL токена -> TransportFailure без токена в traceback, verify_token=False",
+        "test_catalog_cli + test_starter_components + test_start_guides + test_bot_tools: 47 OK; check_api_compatibility passed"
+      ],
+      "remaining": "Критерий «от init до ответа бота в Telegram не больше 60 секунд» требует настоящего токена, доступа к Telegram и замера с людьми (пункт 96)."
     },
     {
       "id": 26,

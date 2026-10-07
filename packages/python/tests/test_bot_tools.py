@@ -1,15 +1,20 @@
 import asyncio
 from datetime import datetime, timezone
+from pathlib import Path
+import tempfile
+import traceback
 import unittest
 from unittest.mock import AsyncMock, patch
 
 from aiogram import Bot, Dispatcher, F, Router
 from aiogram.client.default import DefaultBotProperties
+from aiogram.exceptions import TelegramNetworkError, TelegramUnauthorizedError
 from aiogram.methods import AnswerCallbackQuery, GetMe, GetUpdates, SendMessage, SetMyCommands
 from aiogram.types import CallbackQuery, Chat, Message, Update, User
 from pydantic import ValidationError
 
 from telegram_patterns import BotSettings
+from telegram_patterns.errors import AuthenticationRequired, TransportFailure
 from telegram_patterns.aiogram import (ActionButton, CommandReply, action_menu, command_menu,
                                       command_router, page_number, paginated_menu, run_bot)
 from telegram_patterns.testing import StubSession
@@ -46,6 +51,25 @@ class SettingsTests(unittest.TestCase):
                 self.assertNotIn(token, str(raised.exception))
         with self.assertRaises(ValueError):
             BotSettings.from_env('bad:name', environ={})
+
+    def test_env_file_fills_missing_values_and_environment_wins(self):
+        with tempfile.TemporaryDirectory() as folder:
+            env = Path(folder) / '.env'
+            env.write_text('# comment\nexport OTHER=x\nBOT_TOKEN="100:FROM_FILE"  \n', encoding='utf-8')
+            self.assertEqual(BotSettings.from_env(environ={}, env_file=env).token, '100:FROM_FILE')
+            self.assertEqual(BotSettings.from_env(environ={'BOT_TOKEN': TOKEN}, env_file=env).token, TOKEN)
+            env.write_text("BOT_TOKEN=100:PLAIN # inline comment\n", encoding='utf-8')
+            self.assertEqual(BotSettings.from_env(environ={}, env_file=env).token, '100:PLAIN')
+            self.assertEqual(BotSettings.from_env(environ={'BOT_TOKEN': TOKEN}, env_file=Path(folder) / 'missing').token, TOKEN)
+            with self.assertRaisesRegex(ValueError, 'or in .env'):
+                BotSettings.from_env(environ={}, env_file=Path(folder) / '.env.absent')
+            env.write_text('BOT_TOKEN=123456789:REPLACE_WITH_YOUR_TEST_BOT_TOKEN\n', encoding='utf-8')
+            with self.assertRaisesRegex(ValueError, 'placeholder'):
+                BotSettings.from_env(environ={}, env_file=env)
+            env.write_text('BOT_TOKEN 100:SECRET_LINE\n', encoding='utf-8')
+            with self.assertRaisesRegex(ValueError, 'line 1') as raised:
+                BotSettings.from_env(environ={}, env_file=env)
+            self.assertNotIn('SECRET_LINE', str(raised.exception))
 
 
 class MenuTests(unittest.TestCase):
@@ -197,7 +221,7 @@ class RunnerTests(unittest.IsolatedAsyncioTestCase):
                 await asyncio.sleep(3600)
             finally:
                 cancelled.set()
-        session = StubSession()
+        session = StubSession().respond(GetMe, BOT_USER)
         dp = Dispatcher()
         dp.startup.register(startup)
         task = asyncio.create_task(run_bot(dp, BotSettings(TOKEN), session=session,
@@ -241,13 +265,14 @@ class RunnerTests(unittest.IsolatedAsyncioTestCase):
                 task.cancel()
                 await asyncio.gather(task, return_exceptions=True)
         self.assertTrue(session.closed)
-        self.assertIsInstance(session.calls[0], SetMyCommands)
+        self.assertEqual([type(call) for call in session.calls[:2]], [GetMe, SetMyCommands], 'one cached getMe')
+        self.assertEqual(sum(isinstance(call, GetMe) for call in session.calls), 1)
         self.assertEqual([call.text for call in session.calls if isinstance(call, SendMessage)], ['Обработано'])
         self.assertFalse(any(type(call).__name__ == 'DeleteWebhook' for call in session.calls))
 
     async def test_no_menu_change_without_opt_in_and_close_on_failure_or_cancel(self):
         for error in (RuntimeError('polling failure'), asyncio.CancelledError()):
-            session = StubSession()
+            session = StubSession().respond(GetMe, BOT_USER)
             dp = Dispatcher()
             with patch.object(dp, 'start_polling', new=AsyncMock(side_effect=error)) as polling:
                 with self.assertRaises(type(error)):
@@ -255,17 +280,42 @@ class RunnerTests(unittest.IsolatedAsyncioTestCase):
                 self.assertFalse(polling.call_args.kwargs['close_bot_session'])
                 self.assertFalse(polling.call_args.kwargs['handle_as_tasks'])
             self.assertTrue(session.closed)
-            self.assertEqual(session.calls, [])
+            self.assertEqual([type(call) for call in session.calls], [GetMe])
 
     async def test_menu_failure_closes_session_before_polling(self):
-        session = StubSession()  # Intentionally no SetMyCommands response.
+        session = StubSession().respond(GetMe, BOT_USER)  # Intentionally no SetMyCommands response.
         dp = Dispatcher()
         with patch.object(dp, 'start_polling', new=AsyncMock()) as polling:
             with self.assertRaises(AssertionError):
                 await run_bot(dp, BotSettings(TOKEN), session=session, commands=[])
             polling.assert_not_called()
         self.assertTrue(session.closed)
-        self.assertEqual([type(call) for call in session.calls], [SetMyCommands])
+        self.assertEqual([type(call) for call in session.calls], [GetMe, SetMyCommands])
+
+    async def test_rejected_token_or_unreachable_api_stops_before_menu_and_polling(self):
+        secret = '100:SECRET_TOKEN_VALUE'
+        for raised, expected in ((TelegramUnauthorizedError(GetMe(), 'Unauthorized'), AuthenticationRequired),
+                                 (TelegramNetworkError(GetMe(), f'ConnectionTimeoutError: https://api.telegram.org/bot{secret}/getMe'), TransportFailure)):
+            def fail(method, error=raised): raise error
+            session = StubSession().respond(GetMe, fail)
+            dp = Dispatcher()
+            with patch.object(dp, 'start_polling', new=AsyncMock()) as polling:
+                with self.assertRaises(expected) as caught:
+                    await run_bot(dp, BotSettings(secret), session=session, commands=[])
+                polling.assert_not_called()
+            self.assertTrue(session.closed)
+            self.assertEqual([type(call) for call in session.calls], [GetMe])
+            self.assertIsNone(caught.exception.__context__)
+            self.assertNotIn('SECRET_TOKEN_VALUE', ''.join(traceback.format_exception(caught.exception)))
+
+    async def test_token_check_can_be_skipped_explicitly(self):
+        session = StubSession()
+        dp = Dispatcher()
+        with patch.object(dp, 'start_polling', new=AsyncMock()):
+            await run_bot(dp, BotSettings(TOKEN), session=session, verify_token=False)
+        self.assertEqual(session.calls, [])
+        with self.assertRaises(ValueError):
+            await run_bot(Dispatcher(), BotSettings(TOKEN), session=StubSession(), verify_token=1)
 
     async def test_bad_workflow_or_concurrency_rejected_before_ownership(self):
         session = StubSession()

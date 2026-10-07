@@ -1,8 +1,9 @@
 """Тестовый бот: текущий Dispatcher и публичные компоненты библиотеки."""
 import asyncio
+from pathlib import Path
 from aiogram import Dispatcher
 from aiogram.types import Message
-from telegram_patterns import BotSettings
+from telegram_patterns import BotSettings, PatternError
 from telegram_patterns.aiogram import (ActionButton, ActionResult, CommandReply, action_menu,
     callback_router, command_menu, command_router, run_bot)
 __COMPONENT_IMPORTS__
@@ -28,11 +29,15 @@ __COMPONENT_SETUP__
 
 
 async def main():
-    try: settings = BotSettings.from_env()
-    except ValueError as error: raise SystemExit(str(error)) from None
+    # BOT_TOKEN из окружения или из файла .env рядом с app.py (окружение важнее).
+    try: settings = BotSettings.from_env(env_file=Path(__file__).with_name('.env'))
+    except ValueError as error:
+        raise SystemExit(f'{error}\nСкопируйте .env.example в .env и вставьте токен от @BotFather.') from None
     dispatcher, commands = create_app()
+    # Сначала getMe: неверный токен или нет сети — понятная ошибка до запуска.
     # Явно устанавливается default command menu тестового бота.
-    await run_bot(dispatcher, settings, commands=commands)
+    try: await run_bot(dispatcher, settings, commands=commands)
+    except PatternError as error: raise SystemExit(str(error)) from None
 
 
 if __name__ == '__main__': asyncio.run(main())

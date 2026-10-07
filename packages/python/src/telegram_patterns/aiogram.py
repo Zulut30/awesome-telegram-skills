@@ -1,6 +1,6 @@
 """Optional aiogram 3 adapters; no SDK import in the core package."""
 from __future__ import annotations
-from .errors import ValidationFailure, InvalidType
+from .errors import AuthenticationRequired, InvalidType, PatternError, TransportFailure, ValidationFailure
 
 import asyncio
 from dataclasses import dataclass
@@ -10,6 +10,7 @@ from typing import Any, Awaitable, Callable, Literal, Mapping, Sequence
 
 from aiogram import Bot, Dispatcher, F, Router
 from aiogram.client.session.base import BaseSession
+from aiogram.exceptions import TelegramNetworkError, TelegramUnauthorizedError
 from aiogram.filters import Command, CommandStart
 from aiogram.methods import CreateInvoiceLink
 from aiogram.types import BotCommand, CallbackQuery, InlineKeyboardMarkup, LabeledPrice, Message
@@ -177,18 +178,20 @@ async def run_bot(dispatcher: Dispatcher, settings: BotSettings, *,
                   workflow_data: Mapping[str, Any] | None = None,
                   polling_timeout: int = 10, handle_signals: bool = True,
                   handle_as_tasks: bool = True, tasks_concurrency_limit: int | None = None,
-                  shutdown_timeout: float = 10.0) -> None:
+                  shutdown_timeout: float = 10.0, verify_token: bool = True) -> None:
     """One polling bot; owns/always closes its session after successful preflight.
 
     No webhook deletion or update dropping. Commands=None preserves existing menu;
     an explicit list replaces DEFAULT scope menu. Use SDK directly for other scopes.
     SDK polling ACK is not a durable acceptance/transaction guarantee.
+    verify_token=True calls getMe first: a rejected token raises AuthenticationRequired
+    and an unreachable API TransportFailure, before menus or polling, without the token.
     """
     if not isinstance(dispatcher, Dispatcher) or not isinstance(settings, BotSettings):
         raise InvalidType("Use the existing Dispatcher and BotSettings")
     if type(polling_timeout) is not int or polling_timeout <= 0:
         raise ValidationFailure("Polling timeout must be a positive integer")
-    if type(handle_signals) is not bool or type(handle_as_tasks) is not bool:
+    if type(handle_signals) is not bool or type(handle_as_tasks) is not bool or type(verify_token) is not bool:
         raise ValidationFailure("Polling flags must be bool")
     if tasks_concurrency_limit is not None and (type(tasks_concurrency_limit) is not int or tasks_concurrency_limit <= 0):
         raise ValidationFailure("Concurrency limit must be a positive integer")
@@ -204,6 +207,16 @@ async def run_bot(dispatcher: Dispatcher, settings: BotSettings, *,
         raise ValidationFailure("Use up to 100 BotCommand items")
     bot = Bot(token=settings.token, session=session)
     try:
+        if verify_token:
+            failure: PatternError | None = None
+            try:
+                await bot.me()  # cached: start_polling does not repeat getMe
+            except TelegramUnauthorizedError:
+                failure = AuthenticationRequired('Telegram rejected the bot token: check BOT_TOKEN or issue a new one with @BotFather')
+            except TelegramNetworkError:
+                failure = TransportFailure('Telegram Bot API is unreachable: check the network, proxy or API server')
+            if failure is not None:
+                raise failure  # outside the handler: the SDK error may carry the token URL
         if menu is not None:
             await bot.set_my_commands(menu)
         polling = asyncio.create_task(dispatcher.start_polling(

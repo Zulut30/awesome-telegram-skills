@@ -9,7 +9,7 @@ python -m venv .venv
 ./.venv/Scripts/python.exe -m telegram_patterns doctor .
 ```
 
-В Linux используйте `.venv/bin/python`. Перед real запуском передайте BOT_TOKEN своего тестового бота в окружение и выполните `python app.py` в выбранном окружении. Token не хранится в коде и не выводится; .env.example не загружается автоматически. Проверьте отсутствие другого polling consumer и webhook. Запуск явно устанавливает default command menu; webhook не удаляется. Offline пример проверяет ту же композицию без HTTP.
+В Linux и macOS используйте `.venv/bin/python`. Для запуска в Telegram скопируйте `.env.example` в `.env`, вставьте токен тестового бота от @BotFather и выполните `python app.py` в выбранном окружении (переменная окружения BOT_TOKEN важнее файла). Перед запуском бот вызывает getMe: неверный токен или отсутствие сети дают понятную ошибку. Token не хранится в коде и не выводится; `.env` не коммитится. Проверьте отсутствие другого polling consumer и webhook. Запуск явно устанавливает default command menu; webhook не удаляется. Offline пример проверяет ту же композицию без HTTP.
 
 В bot-mini-app дополнительно есть frontend starter:
 

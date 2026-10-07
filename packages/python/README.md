@@ -55,11 +55,11 @@ Doctor 0.11.0 проверяет установленный adapter в фикс�
 | Кнопка | `action_keyboard(text, key, style=..., ...)` | Opaque callback key, style, проверенный entitlement либо emoji fallback |
 | Callback | `callback_router(execute, notify)` | ACK до прикладной работы. `execute` проверяет owner/version/replay; `notify` выбирает безопасный канал |
 | Stars invoice | `stars_invoice(title, description, payload, stars, monthly_subscription=False)` | Готовый `CreateInvoiceLink`, без сетевого запроса и выдачи доступа |
-| Настройки | `BotSettings.from_env(token_var='BOT_TOKEN')` из core | Формат token/непустое окружение проверяются; token исключен из repr, остается доступным явно |
+| Настройки | `BotSettings.from_env(token_var='BOT_TOKEN', env_file='.env')` из core | Формат token/непустое окружение проверяются; token исключен из repr, остается доступным явно |
 | Меню кнопок | `ActionButton(text,key,style=None,custom_emoji_id=None)` + `action_menu(buttons,columns=2,prefix='act:')` | Уникальные keys, rows и emoji fallback; до 100 кнопок, 1..8 колонок — ограничения компонента |
 | Пагинация | `paginated_menu(buttons,page=0,page_size=6,...)`; `page_number(data,prefix='page:')` | MenuPage с markup/page/page_count/total_items; разные префиксы действий и навигации |
 | Статические команды | `CommandReply(command,description,text,keyboard=None)` + `command_router(specs)` / `command_menu(specs)` | Один список для Router и BotCommand DTO; plain text, SDK фильтрует чужой mention |
-| Polling | `await run_bot(dispatcher,settings,...)` | Текущий Dispatcher, workflow data, закрытие Bot session; команды устанавливаются только явно |
+| Polling | `await run_bot(dispatcher,settings,...)` | Сначала getMe с понятной ошибкой для неверного токена или недоступного API; текущий Dispatcher, workflow data, закрытие Bot session; команды устанавливаются только явно |
 | Локальные тесты | `StubSession().respond(Method,response)` из `telegram_patterns.testing` | Реальный SDK/Dispatcher, список calls, проверка возвращаемого типа; нет HTTP fallback |
 | Текстовая форма | `TextField`, `InvalidField`, `FormSubmission`, `text_form_router(fields,on_submit,name='application',command='apply')` | Личный чат, проверка/возврат/отмена/подтверждение; host FSM isolation, стабильный ID для сервиса |
 

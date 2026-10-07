@@ -28,15 +28,17 @@ Set-Location my-bot; python -m venv .venv; .\.venv\Scripts\python.exe -m pip ins
 
 ```bash
 .venv/bin/python offline.py
-BOT_TOKEN='токен-от-BotFather' .venv/bin/python app.py
+cp .env.example .env   # вставьте токен вместо REPLACE_WITH_YOUR_TEST_BOT_TOKEN
+.venv/bin/python app.py
 ```
 
 ```powershell
 .\.venv\Scripts\python.exe offline.py
-$env:BOT_TOKEN = 'токен-от-BotFather'; .\.venv\Scripts\python.exe app.py
+Copy-Item .env.example .env   # вставьте токен вместо REPLACE_WITH_YOUR_TEST_BOT_TOKEN
+.\.venv\Scripts\python.exe app.py
 ```
 
-`offline.py` печатает `passed: true` без токена и сети. После запуска `app.py` отправьте боту `/start` в Telegram: появится меню с кнопкой «Помощь». Остановите бота `Ctrl+C`.
+`offline.py` печатает `passed: true` без токена и сети. `app.py` берет токен из `.env` и сначала проверяет его через getMe: при ошибке вы увидите, что именно исправить. После запуска `app.py` отправьте боту `/start` в Telegram: появится меню с кнопкой «Помощь». Остановите бота `Ctrl+C`.
 
 ## Что дальше
 
