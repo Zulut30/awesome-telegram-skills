@@ -1,0 +1,90 @@
+name: Release
+
+# A pushed tag vX.Y.Z publishes a GitHub Release with the wheel, npm tarball and
+# SHA256SUMS built from that tag. A manual run publishes existing tags that have
+# no release yet (for example tags created before this workflow existed).
+on:
+  push:
+    tags: ['v*.*.*']
+  workflow_dispatch:
+    inputs:
+      tags:
+        description: 'Existing tags separated by spaces, e.g. "v0.13.0 v0.14.0"; empty means every tag without a release'
+        required: false
+        default: ''
+
+permissions:
+  contents: read
+
+concurrency:
+  group: release
+  cancel-in-progress: false
+
+jobs:
+  release:
+    name: Build and publish release artifacts
+    runs-on: ubuntu-latest
+    timeout-minutes: 90
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97 # v7.0.0
+        with:
+          python-version: '3.13'
+      - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
+        with:
+          node-version: '24'
+      - run: python -m pip install 'build==1.3.0'
+      - name: Create missing tags from .github/release-tags.json
+        if: github.event_name == 'workflow_dispatch'
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          python - <<'PY'
+          import json, re, subprocess
+          for entry in json.load(open('.github/release-tags.json', encoding='utf-8'))['tags']:
+              tag, version, commit = entry['tag'], entry['version'], entry['commit']
+              assert re.fullmatch(r'v\d+\.\d+\.\d+', tag) and tag == 'v' + version and re.fullmatch(r'[0-9a-f]{40}', commit)
+              if subprocess.run(['git', 'rev-parse', '--verify', '--quiet', f'refs/tags/{tag}'], capture_output=True).returncode == 0:
+                  continue
+              pyproject = subprocess.run(['git', 'show', f'{commit}:packages/python/pyproject.toml'], check=True,
+                                         capture_output=True, text=True).stdout
+              assert f'version = "{version}"' in pyproject, f'{commit} is not version {version}'
+              subprocess.run(['git', 'tag', '-a', tag, commit, '-m', f'awesome-telegram-patterns {version}'], check=True)
+              subprocess.run(['git', 'push', 'origin', f'refs/tags/{tag}'], check=True)
+              print('created', tag)
+          PY
+      - name: Select tags
+        id: select
+        env:
+          GH_TOKEN: ${{ github.token }}
+          REQUESTED: ${{ github.event_name == 'push' && github.ref_name || inputs.tags }}
+        run: |
+          if [ -n "$REQUESTED" ]; then
+            tags="$REQUESTED"
+          else
+            published=$(gh release list --limit 1000 --json tagName --jq '.[].tagName')
+            tags=$(git tag --list 'v*.*.*' --sort=v:refname | grep -vxF -f <(printf '%s\n' "$published") || true)
+          fi
+          echo "tags=$(echo $tags)" >> "$GITHUB_OUTPUT"
+      - name: Build from each tag and publish
+        env:
+          GH_TOKEN: ${{ github.token }}
+          TAGS: ${{ steps.select.outputs.tags }}
+        run: |
+          for tag in $TAGS; do
+            if ! [[ "$tag" =~ ^v[0-9]+\.[0-9]+\.[0-9]+$ ]] || ! git rev-parse --verify --quiet "refs/tags/$tag" >/dev/null; then
+              echo "::error::Not an existing release tag: $tag"; exit 1
+            fi
+            python scripts/build_release.py --ref "$tag" --output "dist/$tag"
+            python scripts/build_release.py --ref "$tag" --notes > "dist/$tag.md"
+            if gh release view "$tag" >/dev/null 2>&1; then
+              gh release upload "$tag" dist/"$tag"/* --clobber
+            else
+              # 0.x is experimental: every release stays a prerelease until 1.0.
+              gh release create "$tag" dist/"$tag"/* --verify-tag --prerelease --title "$tag" --notes-file "dist/$tag.md"
+            fi
+          done

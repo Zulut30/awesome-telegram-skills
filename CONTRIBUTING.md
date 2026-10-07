@@ -36,6 +36,10 @@ python scripts/verify_pattern_packages.py
 
 При изменении публичного API синхронизируйте exports, [components.json](components.json), документацию и [CHANGELOG.md](CHANGELOG.md). Различайте SDK/mock/browser/live evidence и статусы experimental/reference/stable. Проверка в браузере не заменяет испытания в Telegram и на реальных устройствах.
 
+## Выпуск версии
+
+Теги, сборка артефактов и публикация GitHub Release описаны в [docs/releasing.md](docs/releasing.md).
+
 ## Область GitHub Actions
 
 Workflow `Repository checks` проверяет упаковку навыков, корневые тесты, TypeScript-тесты и сборку Mini App. Он не выполняет полную приемку поставки, не обращается к Telegram и не публикует пакеты.

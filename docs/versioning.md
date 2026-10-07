@@ -2,6 +2,10 @@
 
 Политика пункта 004. Канонические контракты — [публичный API](public-api.md), [maturity](v1-maturity.md) и support matrix выпуска. Сейчас 0.6.0 в разработке, API experimental; эта политика не объявляет текущую библиотеку stable.
 
+## Теги и релизы
+
+Каждая выпущенная версия отмечена аннотированным тегом `vX.Y.Z` на коммите, который ее ввел, начиная с 0.5.0. Артефакты релиза воспроизводимо собираются из тега; порядок описан в [releasing.md](releasing.md).
+
 ## Что входит в обещание совместимости
 
 Документированные import paths/exports, constructors/functions и обязательные/optional параметры, return types и shapes, exception classes/kinds/outcome, side effects, ресурсное владение, CLI commands/exit codes/JSON fields, CSS subpath и публичные style tokens. Для сохраняемого состояния также важны schema version, scope и восстановление operation identity. Текст diagnostics, сгенерированные DOM IDs, приватные helpers и случайные SDK reexports не являются стабильным контрактом. Нельзя полагаться на приватное имя вместо публичного API.

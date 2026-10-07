@@ -157,10 +157,14 @@
     {
       "id": 13,
       "title": "Ставить git-теги и выпускать GitHub Releases",
-      "status": "pending",
-      "commit_subject": null,
-      "evidence": [],
-      "remaining": null
+      "status": "partial",
+      "commit_subject": "excellence(013): build releases reproducibly from version tags",
+      "evidence": [
+        "scripts/build_release.py: две независимые сборки каждой из 23 версий (0.5.0-0.24.0) дали одинаковые SHA256 wheel и tarball (git archive + SOURCE_DATE_EPOCH)",
+        ".github/release-tags.json сверен с историей тестом; скрипт создания тегов из workflow проверен на свежем клоне без тегов: 23 аннотированных тега, повторный запуск идемпотентен",
+        "workflow Release: пуш тега или ручной запуск -> wheel/tarball/SHA256SUMS в GitHub Release (prerelease для 0.x); теги проверяются по шаблону и существованию"
+      ],
+      "remaining": "Пуш тегов из этой сессии отклоняется git-прокси (разрешена только ветка сессии). После слияния в main владелец запускает Actions → Release → Run workflow: он создаст 23 тега из .github/release-tags.json и опубликует релизы."
     },
     {
       "id": 14,
