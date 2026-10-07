@@ -55,17 +55,17 @@ _API_CALL = (
 )
 
 
-def _command(argv: list[str], *, cwd: str = 'project', placeholders: bool = False) -> dict:
+def _command(argv: list[str], *, cwd: str = 'project', placeholders: bool = False) -> dict[str, Any]:
     if argv[0] == 'npm' and os.name == 'nt':
         argv = ['npm.cmd', *argv[1:]]
     return {'argv': argv, 'cwd': cwd, 'requires_substitution': placeholders}
 
 
-def _rerun() -> dict:
+def _rerun() -> dict[str, Any]:
     return _command(['python', '-m', 'telegram_patterns', 'doctor', '.'])
 
 
-def _repair_install() -> list[dict]:
+def _repair_install() -> list[dict[str, Any]]:
     bootstrap = [_command(['python', '-m', 'ensurepip'])] if importlib.util.find_spec('pip') is None else []
     return [
         *bootstrap,
@@ -161,14 +161,15 @@ def _fetch_webhook_info(token: str, *, test: bool = False) -> dict[str, Any]:
         payload = None
     if not (isinstance(payload, dict) and payload.get('ok') is True and isinstance(payload.get('result'), dict)):
         raise _WebhookUnavailable('api-error')
-    return payload['result']
+    result: dict[str, Any] = payload['result']
+    return result
 
 
-def _api_command(method: str, *, test: bool = False) -> dict:
+def _api_command(method: str, *, test: bool = False) -> dict[str, Any]:
     return _command(['python', '-c', _API_CALL.format(base=_API_BASE, prefix='test/' if test else '', method=method)])
 
 
-def _set_webhook_command(secret_env: str, *, test: bool = False) -> dict:
+def _set_webhook_command(secret_env: str, *, test: bool = False) -> dict[str, Any]:
     code = (
         "import "
         "os,urllib.parse,urllib.request;q=urllib.parse.urlencode({'url':'<WEBHOOK_URL>','secret_token':os.environ['"
@@ -244,13 +245,13 @@ def _delivery_error(message: str) -> tuple[str, str]:
 
 def _webhook_checks(
     info: Mapping[str, Any], *, expect: str | None, secret_env: str, secret: str | None, now: float, test: bool = False
-) -> list[tuple]:
+) -> list[tuple[Any, ...]]:
     """Pure analysis of a WebhookInfo object; each tuple feeds diagnose().check()."""
     rerun = _command(['python', '-m', 'telegram_patterns', 'doctor', '.', '--webhook'])
     url = info.get('url') if isinstance(info.get('url'), str) else ''
     pending = info.get('pending_update_count')
     pending = pending if isinstance(pending, int) and not isinstance(pending, bool) and pending >= 0 else 0
-    found: list[tuple] = []
+    found: list[tuple[Any, ...]] = []
     shown = _safe_url(url) if url else ''
     if url:
         extra = [f'IP {info["ip_address"]}'] if isinstance(info.get('ip_address'), str) else []
@@ -445,16 +446,16 @@ def diagnose(
     expect: str | None = None,
     webhook_secret_env: str = 'WEBHOOK_SECRET',
     now: float | None = None,
-) -> dict:
+) -> dict[str, Any]:
     if expect not in (None, 'polling', 'webhook'):
         raise ValueError("expect must be None, 'polling' or 'webhook'")
     if not isinstance(webhook_secret_env, str) or not _ENV_NAME.fullmatch(webhook_secret_env):
         raise ValueError('Invalid webhook secret environment variable name')
-    checks: list[dict] = []
+    checks: list[dict[str, Any]] = []
     network = False
 
     def check(
-        name: str, status: str, reason: str, detail: str, *, fix: str = '', commands: list[dict] | None = None
+        name: str, status: str, reason: str, detail: str, *, fix: str = '', commands: list[dict[str, Any]] | None = None
     ) -> None:
         checks.append(
             {
@@ -466,7 +467,7 @@ def diagnose(
             }
         )
 
-    def finish() -> dict:
+    def finish() -> dict[str, Any]:
         return {
             'passed': not any(item['status'] == 'fail' for item in checks),
             'network': network,

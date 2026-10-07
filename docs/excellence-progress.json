@@ -783,9 +783,13 @@
     {
       "id": 62,
       "title": "`mypy --strict` без ошибок",
-      "status": "pending",
-      "commit_subject": null,
-      "evidence": [],
+      "status": "done",
+      "commit_subject": "excellence(062): type the Python library under mypy --strict",
+      "evidence": [
+        "35 strict findings fixed in diagnostics, dialog_fields, _offline_recipe, selection, fsm_storage, _dialog_storage, cli and recipes: bare dict/tuple, unannotated functions, Any returns",
+        "packages/python/pyproject.toml [tool.mypy] strict; verify_pattern_packages python-typecheck stage runs --strict; CI job «Python library types (mypy --strict)»",
+        "mypy --strict: Success, no issues in 43 source files; verify_pattern_packages PASS: 537 Python and 35 TypeScript tests, browser passed"
+      ],
       "remaining": null
     },
     {

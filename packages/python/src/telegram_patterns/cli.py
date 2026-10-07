@@ -26,7 +26,7 @@ def doctor(
     webhook: bool = False,
     expect: str | None = None,
     webhook_secret_env: str = 'WEBHOOK_SECRET',
-) -> dict:
+) -> dict[str, Any]:
     """Local read-only checks; webhook=True adds one getWebhookInfo request and reads BOT_TOKEN from .env too."""
     return diagnose(
         target, require_token=require_token, webhook=webhook, expect=expect, webhook_secret_env=webhook_secret_env

@@ -27,6 +27,11 @@ where = ["src"]
 [tool.setuptools.package-data]
 telegram_patterns = ["py.typed", "resources/*.json", "resources/offline/*.txt", "resources/starter/*.txt", "resources/starter/mini-app/*.txt", "resources/starter/mini-app/src/*.txt", "resources/starter/.*.txt", "resources/starter/components/*.txt", "resources/starter/components/mini-app/src/*.txt"]
 
+[tool.mypy]
+# The library is checked with --strict; CI and verify_pattern_packages.py pass the same flag.
+strict = true
+follow_imports = "silent"
+
 [tool.ruff]
 line-length = 120
 target-version = "py311"

@@ -8,7 +8,7 @@ import re
 from dataclasses import asdict, dataclass
 from datetime import date
 from decimal import Decimal, InvalidOperation
-from typing import ClassVar, Mapping, TypeAlias
+from typing import Any, ClassVar, Mapping, TypeAlias
 
 from aiogram.types import Message
 
@@ -24,7 +24,7 @@ def _text(value: object, maximum: int = 256) -> str:
     return value.strip()
 
 
-def _record(value: object, keys: set[str]) -> dict:
+def _record(value: object, keys: set[str]) -> dict[str, Any]:
     if not isinstance(value, Mapping) or set(value) != keys:
         raise InvalidField('Данные поля повреждены. Повторите ввод.')
     return dict(value)
@@ -208,7 +208,7 @@ class FileField(_Field):
             raise ValidationFailure('Use bounded explicit MIME strings')
         object.__setattr__(self, 'mime_types', tuple(self.mime_types))
 
-    def restore(self, value: object) -> dict:
+    def restore(self, value: object) -> dict[str, Any]:
         result = _record(value, {'file_id', 'file_unique_id', 'file_name', 'mime_type', 'file_size'})
         for key in ('file_id', 'file_unique_id'):
             result[key] = _text(result[key], 1024)
@@ -221,7 +221,7 @@ class FileField(_Field):
             raise InvalidField('Этот тип файла не разрешен.')
         return result
 
-    def read(self, message: Message) -> dict:
+    def read(self, message: Message) -> dict[str, Any]:
         document = message.document
         if document is None or message.media_group_id is not None:
             raise InvalidField('Отправьте один документ ответом на текущий вопрос.')
@@ -250,7 +250,7 @@ class ContactField(_Field):
         if type(self.own) is not bool:
             raise InvalidType('Own must be bool')
 
-    def restore(self, value: object) -> dict:
+    def restore(self, value: object) -> dict[str, Any]:
         result = _record(value, {'phone_number', 'first_name', 'last_name', 'user_id'})
         for key, maximum in (('phone_number', 64), ('first_name', 64)):
             result[key] = _text(result[key], maximum)
@@ -264,7 +264,7 @@ class ContactField(_Field):
             raise InvalidField('Поделитесь своим контактом через кнопку.')
         return result
 
-    def read(self, message: Message) -> dict:
+    def read(self, message: Message) -> dict[str, Any]:
         contact, author = message.contact, message.from_user
         if (
             contact is None
@@ -290,7 +290,7 @@ class LocationField(_Field):
     kind: ClassVar[str] = 'location'
     native: ClassVar[bool] = True
 
-    def restore(self, value: object) -> dict:
+    def restore(self, value: object) -> dict[str, Any]:
         result = _record(value, {'latitude', 'longitude', 'horizontal_accuracy'})
         for key, maximum in (('latitude', 90), ('longitude', 180)):
             number = result[key]
@@ -305,7 +305,7 @@ class LocationField(_Field):
         result['horizontal_accuracy'] = float(accuracy) if accuracy is not None else None
         return result
 
-    def read(self, message: Message) -> dict:
+    def read(self, message: Message) -> dict[str, Any]:
         location = message.location
         if location is None or location.live_period is not None or message.forward_origin is not None:
             raise InvalidField('Отправьте обычную статичную геопозицию без пересылки.')

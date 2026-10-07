@@ -64,7 +64,8 @@ class FSMSnapshot:
 
     @property
     def data(self) -> dict[str, Any]:
-        return json.loads(self._json)
+        data: dict[str, Any] = json.loads(self._json)
+        return data
 
 
 class FSMConflict(RuntimeError):
@@ -205,4 +206,4 @@ class DialogLifetime:
             or not 0 < metadata['expires_at'] - metadata['created_at'] <= 2592000
         ):
             raise RuntimeError('Stored dialog lifetime requires migration or reconciliation')
-        return self.now() >= metadata['expires_at']
+        return bool(self.now() >= metadata['expires_at'])

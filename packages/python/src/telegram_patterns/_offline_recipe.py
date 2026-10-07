@@ -11,6 +11,7 @@ from contextlib import redirect_stdout
 from importlib.resources import files
 from pathlib import Path
 from tempfile import TemporaryDirectory
+from typing import Any
 
 from .execution import plan_recipe
 from .recipes import RecipeCatalog
@@ -61,7 +62,7 @@ def _install_guards(*, sdk: bool, ptb: bool = False) -> list[int]:
     # and every real aiogram HTTP transport are denied before any fixture runs.
     attempts = _ATTEMPTS
 
-    def audit(event: str, args: tuple) -> None:
+    def audit(event: str, args: tuple[Any, ...]) -> None:
         if event not in {'socket.connect', 'socket.getaddrinfo'}:
             return
         address = (
@@ -87,7 +88,7 @@ def _install_guards(*, sdk: bool, ptb: bool = False) -> list[int]:
     if sdk:
         from aiogram.client.session.aiohttp import AiohttpSession
 
-        async def no_http(*args, **kwargs):
+        async def no_http(*args: Any, **kwargs: Any) -> Any:
             attempts[0] += 1
             raise RuntimeError('Real Telegram HTTP transport is unavailable')
 
@@ -95,7 +96,7 @@ def _install_guards(*, sdk: bool, ptb: bool = False) -> list[int]:
     if ptb:
         from telegram.request import HTTPXRequest
 
-        async def no_ptb_http(*args, **kwargs):
+        async def no_ptb_http(*args: Any, **kwargs: Any) -> Any:
             attempts[0] += 1
             raise RuntimeError('Real Telegram HTTP transport is unavailable')
 
@@ -103,7 +104,7 @@ def _install_guards(*, sdk: bool, ptb: bool = False) -> list[int]:
     return attempts
 
 
-def _execute(recipe_id: str) -> dict:
+def _execute(recipe_id: str) -> dict[str, Any]:
     plan = plan_recipe(recipe_id)
     if not plan.offline_ready:
         raise RuntimeError('Offline prerequisites failed')
@@ -111,13 +112,13 @@ def _execute(recipe_id: str) -> dict:
     recipe = catalog.get(recipe_id)
     ptb = recipe.sdk == 'python-telegram-bot'
     attempts = _install_guards(sdk=plan.kind not in {'sqlite', 'ptb-markup', 'application'}, ptb=ptb)
-    checks = []
+    checks: list[str] = []
     if plan.kind == 'sdk-request':
         from aiogram.types import BufferedInputFile
 
         from .api import build_request
 
-        def materialize(value):
+        def materialize(value: Any) -> Any:
             if isinstance(value, dict):
                 if set(value) == {'__fixture_file__'}:
                     return BufferedInputFile(b'OFFLINE_FIXTURE_NOT_REAL_MEDIA', filename='fixture.bin')

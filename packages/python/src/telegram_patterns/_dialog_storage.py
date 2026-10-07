@@ -10,10 +10,10 @@ from aiogram.fsm.context import FSMContext
 from .fsm_storage import AtomicFSMStorage, DialogLifetime, FSMConflict, FSMSnapshot
 
 
-class _DialogData(dict):
+class _DialogData(dict[str, Any]):
     snapshot: FSMSnapshot | None
 
-    def __init__(self, values: dict, snapshot: FSMSnapshot | None = None) -> None:
+    def __init__(self, values: dict[str, Any], snapshot: FSMSnapshot | None = None) -> None:
         super().__init__(deepcopy(values))
         self.snapshot = snapshot
 

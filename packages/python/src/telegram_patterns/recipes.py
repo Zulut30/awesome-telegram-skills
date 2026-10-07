@@ -64,7 +64,7 @@ class RecipeCatalog:
             raise ValidationFailure('Unsupported recipe catalog')
         if not isinstance(data.get('library_version'), str):
             raise ValidationFailure('Missing catalog version')
-        self._version = data['library_version']
+        self._version: str = data['library_version']
         records, seen = [], set()
         for item in data['recipes']:
             if not isinstance(item, dict):

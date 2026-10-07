@@ -298,7 +298,7 @@ class SelectionMenu:
         with self._lock:
             return self._guard(data, context)
 
-    def _commit(self, **changes) -> SelectionState:
+    def _commit(self, **changes: Any) -> SelectionState:
         if self._state.revision >= _MAX_REVISION:
             raise ConflictFailure('Selection revision limit reached; create a new authenticated menu')
         self._state = replace(
@@ -352,7 +352,7 @@ class SelectionMenu:
                 and not action.startswith('y:')
             ):
                 return SelectionResult('stale', 'Сначала вернитесь к редактированию выбора.', state)
-            changes: dict = {'confirmation_id': None, 'confirmation_expires_at': None, 'phase': 'editing'}
+            changes: dict[str, Any] = {'confirmation_id': None, 'confirmation_expires_at': None, 'phase': 'editing'}
             status: Literal['accepted', 'confirming', 'confirmed', 'cancelled'] = 'accepted'
             if action.startswith('s:'):
                 key = action[2:]
