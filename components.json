@@ -90,7 +90,7 @@
     {
       "id": "bot-api-requests",
       "language": "python",
-      "import": "telegram_patterns.aiogram.method_catalog, build_request",
+      "import": "telegram_patterns.aiogram.method_catalog, build_request, MethodSpec, InvalidAPIRequest",
       "extra": "aiogram",
       "intent": "Поиск и native request любого метода установленного SDK",
       "source": "packages/python/src/telegram_patterns/_aiogram/api.py",
@@ -122,7 +122,7 @@
     {
       "id": "mini-app-native-api",
       "language": "typescript",
-      "import": "TelegramNativeAPI, TELEGRAM_NATIVE_METHODS, TELEGRAM_NATIVE_EVENTS",
+      "import": "TelegramNativeAPI, TELEGRAM_NATIVE_METHODS, TELEGRAM_NATIVE_EVENTS, TELEGRAM_NATIVE_EVENT_DETAILS, TelegramNativeMethod, TelegramNativeEvent, TelegramNativeSignatures, TelegramNativeArguments, TelegramNativeResult, UnsupportedTelegramCapability",
       "intent": "Каталог, availability gates, native calls и принадлежащие adapter события",
       "source": "packages/typescript/src/native-api.ts",
       "example": "examples/mini-app/src/native-recipes.ts",
@@ -137,7 +137,7 @@
     {
       "id": "mini-app-initdata",
       "language": "python",
-      "import": "telegram_patterns.validate_init_data, telegram_patterns.validate_init_data_signature",
+      "import": "telegram_patterns.validate_init_data, telegram_patterns.validate_init_data_signature, telegram_patterns.InvalidInitData, telegram_patterns.VerifiedLaunch, telegram_patterns.TELEGRAM_PUBLIC_KEYS",
       "intent": "Серверная проверка сырого Mini App initData: HMAC с токеном бота или Ed25519 без токена",
       "source": "packages/python/src/telegram_patterns/initdata.py",
       "boundaries": [
@@ -150,7 +150,7 @@
     {
       "id": "mini-app-initdata-signature",
       "language": "typescript",
-      "import": "verifyInitDataSignature, InvalidInitData, TELEGRAM_PUBLIC_KEYS",
+      "import": "verifyInitDataSignature, InvalidInitData, TELEGRAM_PUBLIC_KEYS, SignedLaunch, SignedObject, InitDataSignatureOptions",
       "intent": "Проверка подписи Ed25519 initData без токена бота через WebCrypto",
       "source": "packages/typescript/src/init-data.ts",
       "example": "examples/api-reference/typescript/init-data.ts",
@@ -164,7 +164,7 @@
     {
       "id": "sqlite-once",
       "language": "python",
-      "import": "telegram_patterns.SQLiteOnce",
+      "import": "telegram_patterns.SQLiteOnce, OnceResult, OperationConflict",
       "intent": "Один SQLite effect и сохраненный replay result",
       "source": "packages/python/src/telegram_patterns/sqlite_once.py",
       "example": "examples/python/booking.py",
@@ -207,7 +207,7 @@
     {
       "id": "callback-router",
       "language": "python",
-      "import": "telegram_patterns.aiogram.callback_router",
+      "import": "telegram_patterns.aiogram.callback_router, Action, ActionResult",
       "extra": "aiogram",
       "intent": "ACK перед прикладной работой и безопасный feedback",
       "source": "packages/python/src/telegram_patterns/aiogram.py",
@@ -324,7 +324,7 @@
     {
       "id": "mini-app-bridge",
       "language": "typescript",
-      "import": "TelegramBridge",
+      "import": "TelegramBridge, BridgeSnapshot, Insets, TelegramWebApp",
       "intent": "Theme/viewport/insets и lifecycle подписок",
       "source": "packages/typescript/src/bridge.ts",
       "boundaries": [
@@ -337,7 +337,7 @@
     {
       "id": "framework-adapters",
       "language": "typescript",
-      "import": "@awesome-telegram/patterns/react: useTelegramBridge; @awesome-telegram/patterns/vue: useTelegramBridge; @awesome-telegram/patterns/svelte: telegramBridgeStore",
+      "import": "@awesome-telegram/patterns/react: useTelegramBridge; @awesome-telegram/patterns/vue: useTelegramBridge; @awesome-telegram/patterns/svelte: telegramBridgeStore, BridgeReadable",
       "intent": "Показать тему, отступы и высоту Telegram в компонентах React, Vue или Svelte без своей подписки на bridge",
       "source": "packages/typescript/src/frameworks/source.ts",
       "example": "examples/frameworks/react/App.tsx",
@@ -352,7 +352,7 @@
     {
       "id": "api-client",
       "language": "typescript",
-      "import": "ApiClient",
+      "import": "ApiClient, ApiError, ClientOptions, RequestOptions, FailureKind",
       "intent": "HTTP с runtime decoder и timeout/cancel",
       "source": "packages/typescript/src/api-client.ts",
       "boundaries": [
@@ -366,7 +366,7 @@
     {
       "id": "selection-draft",
       "language": "typescript",
-      "import": "SelectionDraftStore",
+      "import": "SelectionDraftStore, SelectionDraft, DraftRead, DraftOptions",
       "intent": "Scoped serviceId/slotId с TTL и storage errors",
       "source": "packages/typescript/src/selection-draft.ts",
       "boundaries": [
@@ -411,7 +411,7 @@
     {
       "id": "python-error-model",
       "language": "python",
-      "import": "telegram_patterns.PatternError, ValidationFailure, InvalidType, PermissionDenied, AuthenticationRequired, UnsupportedCapability, TimeoutFailure, TransportFailure, ConflictFailure, UnknownOutcome, InvalidCompletion, ErrorReport, safe_error_report",
+      "import": "telegram_patterns.PatternError, ValidationFailure, InvalidType, PermissionDenied, AuthenticationRequired, UnsupportedCapability, TimeoutFailure, TransportFailure, ConflictFailure, UnknownOutcome, InvalidCompletion, ErrorReport, safe_error_report, ErrorCategory, ErrorCode, ErrorOutcome, OperationKind, RecoveryAction",
       "intent": "Различить validation/permission/unsupported/timeout/unknown outcome и выбрать восстановление без потери operation_id",
       "source": "packages/python/src/telegram_patterns/errors.py",
       "example": "examples/python/error_recovery.py",
@@ -426,7 +426,7 @@
     {
       "id": "typescript-error-model",
       "language": "typescript",
-      "import": "@awesome-telegram/patterns: PatternError, ValidationFailure, InvalidType, PermissionDenied, AuthenticationRequired, UnsupportedCapability, UnknownOutcome, ErrorReport, safeErrorReport",
+      "import": "@awesome-telegram/patterns: PatternError, ValidationFailure, InvalidType, PermissionDenied, AuthenticationRequired, UnsupportedCapability, UnknownOutcome, ErrorReport, safeErrorReport, ErrorCategory, ErrorCode, ErrorOutcome, OperationKind, RecoveryAction",
       "intent": "Различить validation/permission/unsupported/timeout/unknown outcome и выбрать восстановление без потери operation_id",
       "source": "packages/typescript/src/errors.ts",
       "example": "docs/error-model.md",
