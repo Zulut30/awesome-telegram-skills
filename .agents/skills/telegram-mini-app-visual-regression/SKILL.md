@@ -32,4 +32,8 @@ metadata:
 
 Укажи число фактически проверенных сочетаний, среду и исключения. Pixel diff ловит изменения, но не оценивает красоту, доступность, успешность операции или native bridge.
 
-Источник: [Playwright Visual comparisons](https://playwright.dev/docs/test-snapshots).
+## Источники
+
+[Playwright Visual comparisons](https://playwright.dev/docs/test-snapshots).
+
+Проверено: 2026-10-07, Playwright 1.63.0; не зависит от версии Bot API.

@@ -38,3 +38,5 @@ Polling и webhook взаимоисключающие. Тестовое окру
 ## Источники
 
 [Telegram Bot API](https://core.telegram.org/bots/api), [FAQ](https://core.telegram.org/bots/faq). Для новой функции сопоставь changelog API с поддержкой установленного SDK.
+
+Проверено: 2026-10-07, Bot API 10.3, aiogram 3.31.0.

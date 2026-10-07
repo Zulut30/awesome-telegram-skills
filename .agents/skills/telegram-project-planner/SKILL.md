@@ -34,3 +34,5 @@ metadata:
 ## Источники
 
 [Возможности ботов](https://core.telegram.org/bots/features), [создание первого бота](https://core.telegram.org/bots/tutorial), [Mini Apps](https://core.telegram.org/bots/webapps). Перед обещанием конкретной возможности проверь ее наличие и ограничения в текущей документации.
+
+Проверено: 2026-10-07, не зависит от версии Bot API.

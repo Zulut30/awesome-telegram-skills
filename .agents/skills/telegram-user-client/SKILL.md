@@ -21,3 +21,9 @@ metadata:
 Session-файлы и StringSession содержат полномочия аккаунта. Храни их отдельно от исходников с ограниченным доступом, не отправляй в логи или пользователю. Обеспечь disconnect и понятное поведение после отзыва сессии.
 
 Проверь filtered history, повтор события, checkpoint/reconnect и недоступный chat на fake client. При наличии авторизованной тестовой сессии проверь один выбранный чат без публикации его содержимого. Отметь отдельно offline- и live-результат.
+
+## Источники
+
+[Telethon](https://docs.telethon.dev/en/stable/), [MTProto API](https://core.telegram.org/api), [Business-боты](https://core.telegram.org/bots/features#business-bots).
+
+Проверено: 2026-10-07, Telethon 1.45.0, MTProto.

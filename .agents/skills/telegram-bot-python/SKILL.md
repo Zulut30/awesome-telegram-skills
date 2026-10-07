@@ -27,3 +27,9 @@ metadata:
 Запусти существующие проверки проекта и релевантный сценарий с синтетическим update. Проверь отсутствие текста в message, повторное нажатие кнопки и ошибку внешнего сервиса, когда это влияет на реализацию. Если тестовый токен доступен, проверь запуск и ответ через Telegram; иначе явно назови оставшуюся runtime-проверку.
 
 Передай точную команду запуска из фактического окружения проекта и необходимые настройки. Сохрани совместимость версии Python, выбранного менеджера зависимостей и lockfile.
+
+## Источники
+
+[aiogram](https://docs.aiogram.dev/en/latest/), [python-telegram-bot](https://docs.python-telegram-bot.org/en/stable/), [pyTelegramBotAPI](https://pytba.readthedocs.io/en/latest/), [Bot API](https://core.telegram.org/bots/api).
+
+Проверено: 2026-10-07, Bot API 10.3, aiogram 3.31.0.

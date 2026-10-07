@@ -507,9 +507,14 @@
     {
       "id": 41,
       "title": "Метка проверки в каждом скилле",
-      "status": "pending",
-      "commit_subject": null,
-      "evidence": [],
+      "status": "done",
+      "commit_subject": "excellence(041): stamp every skill with its sources and an ISO check date",
+      "evidence": [
+        "All 42 SKILL.md end with '## Источники' + 'Проверено: YYYY-MM-DD, <scope>'; validator requires the section last, a link and one valid non-future ISO date (tests/test_validate_skills.py)",
+        "Checked 2026-10-07: Bot API index rebuilt from today's page equals the stored 10.3 (185 methods, 400 types); Mini App index equal except new WebApp.Serverless; 69 Telegram names and 75 links/anchors OK (scripts/check_skill_sources.py --online)",
+        "Provider facts rechecked on Platega, YooKassa, Telegram Login, Stars/Payments, FAQ, Telethon; Crypto Pay answers 403, so telegram-cryptopay keeps 2026-10-02",
+        "tests/test_skill_sources.py ties stamped Bot API/aiogram/library versions to the indexes; code-patterns routing after the edit: haiku 40/40 and 12/12"
+      ],
       "remaining": null
     },
     {

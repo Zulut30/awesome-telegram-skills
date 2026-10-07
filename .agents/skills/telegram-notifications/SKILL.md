@@ -28,4 +28,8 @@ metadata:
 
 Представь контракты подписки/задания, политику повторов и неопределенности, результаты и команду запуска. Реальную доставку подтверждает ответ выбранного Telegram transport и тестовый сценарий; прочтение сообщения пользователем не предполагается.
 
-Источники: [Bot FAQ: broadcasting](https://core.telegram.org/bots/faq#broadcasting-to-users), [ResponseParameters](https://core.telegram.org/bots/api#responseparameters), [Mini App requestWriteAccess](https://core.telegram.org/bots/webapps#initializing-mini-apps).
+## Источники
+
+[Bot FAQ: broadcasting](https://core.telegram.org/bots/faq#broadcasting-to-users), [ResponseParameters](https://core.telegram.org/bots/api#responseparameters), [Mini App requestWriteAccess](https://core.telegram.org/bots/webapps#initializing-mini-apps).
+
+Проверено: 2026-10-07, Bot API 10.3, aiogram 3.31.0.

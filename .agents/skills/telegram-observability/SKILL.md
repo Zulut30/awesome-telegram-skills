@@ -28,4 +28,8 @@ metadata:
 
 Дай схему событий, измерения, место просмотра и условие полезного alert. Не устанавливай monitoring сервис и не отправляй реальные данные во внешний аккаунт без задачи на эту интеграцию. Укажи проверенный sink и ограничения покрытия.
 
-Источники: [OpenTelemetry sensitive data](https://opentelemetry.io/docs/security/handling-sensitive-data/), [Python contextvars](https://docs.python.org/3/library/contextvars.html), [Bot API](https://core.telegram.org/bots/api).
+## Источники
+
+[OpenTelemetry sensitive data](https://opentelemetry.io/docs/security/handling-sensitive-data/), [Python contextvars](https://docs.python.org/3/library/contextvars.html), [Bot API](https://core.telegram.org/bots/api).
+
+Проверено: 2026-10-07, не зависит от версии Bot API.

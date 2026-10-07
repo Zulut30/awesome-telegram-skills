@@ -34,4 +34,8 @@ metadata:
 
 Для реализации выполни typecheck/build и наблюдаемый frontend/API сценарий. Fake network и browser storage проверяют свой scope; они не подтверждают Telegram WebView storage или реальный backend, если тот не участвовал.
 
-Источники: [navigator.onLine](https://developer.mozilla.org/en-US/docs/Web/API/Navigator/onLine), [IndexedDB](https://developer.mozilla.org/en-US/docs/Web/API/IndexedDB_API), [Telegram Mini Apps](https://core.telegram.org/bots/webapps).
+## Источники
+
+[navigator.onLine](https://developer.mozilla.org/en-US/docs/Web/API/Navigator/onLine), [IndexedDB](https://developer.mozilla.org/en-US/docs/Web/API/IndexedDB_API), [Telegram Mini Apps](https://core.telegram.org/bots/webapps).
+
+Проверено: 2026-10-07, Telegram Mini Apps (Bot API 10.3).

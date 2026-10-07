@@ -30,4 +30,8 @@ Motion tokens имеют режим reduced motion; действие и cleanup 
 
 Подключи компоненты хотя бы к одному реальному экрану и проверь прежний путь. Сохрани typecheck/build, screenshots и документированный контракт. Размер и зависимости библиотеки должны соответствовать ее использованию.
 
-Источники: [Telegram Design Guidelines](https://core.telegram.org/bots/webapps#design-guidelines), [WAI-ARIA patterns](https://www.w3.org/WAI/ARIA/apg/patterns/), [WCAG contrast](https://www.w3.org/WAI/WCAG22/Understanding/contrast-minimum.html).
+## Источники
+
+[Telegram Design Guidelines](https://core.telegram.org/bots/webapps#design-guidelines), [WAI-ARIA patterns](https://www.w3.org/WAI/ARIA/apg/patterns/), [WCAG contrast](https://www.w3.org/WAI/WCAG22/Understanding/contrast-minimum.html).
+
+Проверено: 2026-10-07, Telegram Mini Apps (Bot API 10.3).

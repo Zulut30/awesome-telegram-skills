@@ -21,3 +21,9 @@ metadata:
 Для возврата, сохраненного способа оплаты, рекуррентного списания и чека прочитай документацию соответствующей функции. Данные магазина, способ расчетов и настройки чеков нужно подтвердить; не придумывай налоговые параметры по общему шаблону.
 
 Проверь тестовый магазин, повтор POST с тем же ключом, forged callback, capture, отмену, возврат и повтор подтвержденного события по релевантности. Раздели synthetic и provider sandbox evidence.
+
+## Источники
+
+[API ЮKassa](https://yookassa.ru/developers/using-api/interaction-format), [уведомления](https://yookassa.ru/developers/using-api/webhooks), [Bot Payments](https://core.telegram.org/bots/payments).
+
+Проверено: 2026-10-07, API ЮKassa v3.

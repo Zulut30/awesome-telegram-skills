@@ -32,4 +32,8 @@ Loading, пустой результат, отказ доступа, истек�
 
 При исследовании с участниками записывай фактические наблюдения. Самостоятельный walkthrough агента не является пользовательским исследованием; screenshots не доказывают понятность. Укажи проверенную среду и оставшиеся вопросы.
 
-Источники: [Telegram Design Guidelines](https://core.telegram.org/bots/webapps#design-guidelines), [WAI Forms](https://www.w3.org/WAI/tutorials/forms/).
+## Источники
+
+[Telegram Design Guidelines](https://core.telegram.org/bots/webapps#design-guidelines), [WAI Forms](https://www.w3.org/WAI/tutorials/forms/).
+
+Проверено: 2026-10-07, Telegram Mini Apps (Bot API 10.3).

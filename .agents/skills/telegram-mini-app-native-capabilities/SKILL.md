@@ -28,4 +28,8 @@ metadata:
 
 Через fake adapter проверь unsupported, отказ, отмену, ошибку, success, повторный вызов и поздний callback после ухода. Затем проверь фактическое поведение нужного API в целевом Telegram-клиенте с разрешенной тестовой операцией. Запиши отдельно mock и native evidence, версии и непроверенные клиенты.
 
-Источники: [Telegram client API](https://core.telegram.org/bots/webapps#initializing-mini-apps), [events](https://core.telegram.org/bots/webapps#events-available-for-mini-apps).
+## Источники
+
+[Telegram client API](https://core.telegram.org/bots/webapps#initializing-mini-apps), [events](https://core.telegram.org/bots/webapps#events-available-for-mini-apps).
+
+Проверено: 2026-10-07, Telegram Mini Apps (Bot API 10.3).

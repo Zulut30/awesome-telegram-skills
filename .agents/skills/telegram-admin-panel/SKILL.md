@@ -32,4 +32,8 @@ Bulk action показывает область выбора: текущая с�
 
 При реализации выполни frontend typecheck/build и backend сценарий с реальным выбранным storage, если он изменялся. Fake provider подтверждает маршрутизацию операции, но не настоящий возврат. Укажи среду и результат, отдельно от плана.
 
-Источники: [OWASP Authorization](https://cheatsheetseries.owasp.org/cheatsheets/Authorization_Cheat_Sheet.html), [Telegram Mini App validation](https://core.telegram.org/bots/webapps#validating-data-received-via-the-mini-app).
+## Источники
+
+[OWASP Authorization](https://cheatsheetseries.owasp.org/cheatsheets/Authorization_Cheat_Sheet.html), [Telegram Mini App validation](https://core.telegram.org/bots/webapps#validating-data-received-via-the-mini-app).
+
+Проверено: 2026-10-07, не зависит от версии Bot API.

@@ -28,4 +28,8 @@ metadata:
 
 Проверь прежний основной путь и результаты форматирования в затронутых компонентах. Для Mini App выполни typecheck/build и сохрани screenshots измененного UI; для Python-бота используй проверки проекта и примеры ответов. Укажи переводы, которые требуют редакторской проверки. Не считай переключение locale успешным переводом всех сообщений, профиля и backend ошибок.
 
-Источники: [Telegram User](https://core.telegram.org/bots/api#user), [Intl](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Intl), [Bot formatting](https://core.telegram.org/bots/api#formatting-options).
+## Источники
+
+[Telegram User](https://core.telegram.org/bots/api#user), [Intl](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Intl), [Bot formatting](https://core.telegram.org/bots/api#formatting-options).
+
+Проверено: 2026-10-07, Bot API 10.3.

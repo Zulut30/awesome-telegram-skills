@@ -28,4 +28,8 @@ metadata:
 
 Проверь прикладной результат через API: собственный/чужой объект, недопустимое состояние, конкурентное создание, повтор, rollback и перезапуск. Используй реальную целевую БД там, где mock или другая СУБД скрывает риск; явно укажи ограничения локального probe. Сохрани команды запуска, schema/API изменения и фактические результаты.
 
-Источники: [FastAPI async](https://fastapi.tiangolo.com/async/), [SQLAlchemy asyncio](https://docs.sqlalchemy.org/en/20/orm/extensions/asyncio.html), [PostgreSQL INSERT](https://www.postgresql.org/docs/current/sql-insert.html), [Alembic autogenerate](https://alembic.sqlalchemy.org/en/latest/autogenerate.html). Используй документацию версии проекта.
+## Источники
+
+[FastAPI async](https://fastapi.tiangolo.com/async/), [SQLAlchemy asyncio](https://docs.sqlalchemy.org/en/20/orm/extensions/asyncio.html), [PostgreSQL INSERT](https://www.postgresql.org/docs/current/sql-insert.html), [Alembic autogenerate](https://alembic.sqlalchemy.org/en/latest/autogenerate.html). Используй документацию версии проекта.
+
+Проверено: 2026-10-07, не зависит от версии Bot API.

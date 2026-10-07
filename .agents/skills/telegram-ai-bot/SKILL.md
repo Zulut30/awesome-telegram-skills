@@ -38,4 +38,8 @@ metadata:
 
 Живой черновик и кнопку остановки проверь в тестовом окружении Telegram. Если в проекте уже есть awesome-telegram-patterns, запусти `telegram-patterns run-recipe demo-ai-stream --offline`.
 
-Источники: [sendMessageDraft](https://core.telegram.org/bots/api#sendmessagedraft), [MessageGenerationStopped](https://core.telegram.org/bots/api#messagegenerationstopped), [Bot API changelog](https://core.telegram.org/bots/api-changelog).
+## Источники
+
+[sendMessageDraft](https://core.telegram.org/bots/api#sendmessagedraft), [MessageGenerationStopped](https://core.telegram.org/bots/api#messagegenerationstopped), [Bot API changelog](https://core.telegram.org/bots/api-changelog).
+
+Проверено: 2026-10-07, Bot API 10.3, aiogram 3.31.0.

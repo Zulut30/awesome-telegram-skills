@@ -32,4 +32,8 @@ Client Secret и code exchange остаются в Python backend. Allowed URLs 
 
 Для реализации проверь backend и frontend сборку, отказ popup и ошибку callback. Реальный вход требует разрешенной test конфигурации BotFather; без нее опиши локальные проверки и оставшийся end-to-end шаг.
 
-Источники: [Telegram Login](https://core.telegram.org/bots/telegram-login), [OIDC Core](https://openid.net/specs/openid-connect-core-1_0.html).
+## Источники
+
+[Telegram Login](https://core.telegram.org/bots/telegram-login), [OIDC Core](https://openid.net/specs/openid-connect-core-1_0.html).
+
+Проверено: 2026-10-07, Telegram Login (OIDC).

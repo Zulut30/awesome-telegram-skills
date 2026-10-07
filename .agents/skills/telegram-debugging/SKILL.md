@@ -39,3 +39,5 @@ metadata:
 ## Источники
 
 [Bot FAQ](https://core.telegram.org/bots/faq), [webhook guide](https://core.telegram.org/bots/webhooks), [Mini Apps](https://core.telegram.org/bots/webapps), [Bot API](https://core.telegram.org/bots/api).
+
+Проверено: 2026-10-07, Bot API 10.3, aiogram 3.31.0.

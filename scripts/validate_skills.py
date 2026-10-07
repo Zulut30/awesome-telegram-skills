@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import argparse
 import ast
+from datetime import date, timedelta
 import json
 from pathlib import Path
 import re
@@ -25,6 +26,30 @@ BOUNDARY = re.compile(r"(?:^|[.;] )Не для ")
 LINK_PATTERN = re.compile(r"!?\[[^\]\n]+\]\(([^)\n]+)\)")
 # Agent Skills specification (agentskills.io/specification), checked 2026-10-07.
 ALLOWED_FIELDS = {"name", "description", "license", "compatibility", "metadata", "allowed-tools"}
+SOURCES_HEADING = "## Источники"
+CHECKED = re.compile(r"^Проверено: (\d{4}-\d{2}-\d{2}), \S.*$", re.MULTILINE)
+
+
+def check_sources(body: str, today: date | None = None) -> str | None:
+    """The last section names its sources and the ISO date they were checked against the skill."""
+    headings = [line.strip() for line in re.findall(r"^## .*$", body, re.MULTILINE)]
+    if SOURCES_HEADING not in headings:
+        return f"missing '{SOURCES_HEADING}' section"
+    if headings[-1] != SOURCES_HEADING:
+        return f"'{SOURCES_HEADING}' must be the last section"
+    section = body[body.rindex(SOURCES_HEADING):]
+    if not re.search(r"\]\(https?://", section):
+        return f"'{SOURCES_HEADING}' needs at least one source link"
+    checked = CHECKED.findall(section)
+    if len(checked) != 1:
+        return f"'{SOURCES_HEADING}' needs exactly one line 'Проверено: YYYY-MM-DD, <что проверено>'"
+    try:
+        value = date.fromisoformat(checked[0])
+    except ValueError:
+        return f"invalid check date: {checked[0]}"
+    if value > (today or date.today()) + timedelta(days=1):  # one day of slack for time zones
+        return f"check date is in the future: {checked[0]}"
+    return None
 
 
 def load_mapping(text: str, label: Path, errors: list[str]) -> dict:
@@ -108,6 +133,9 @@ def validate(root: Path) -> tuple[int, list[str]]:
             errors.append(f"{entry}: empty skill instructions")
         if "[TODO:" in text:
             errors.append(f"{entry}: unfinished scaffold")
+        sources_error = check_sources(text[match.end():])
+        if sources_error:
+            errors.append(f"{entry}: {sources_error}")
 
         metadata_path = folder / "agents" / "openai.yaml"
         if not metadata_path.is_file():

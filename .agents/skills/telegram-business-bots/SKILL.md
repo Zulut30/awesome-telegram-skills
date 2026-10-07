@@ -21,3 +21,9 @@ metadata:
 Проверь два connection, отсутствие нужного right, отзыв доступа и duplicate update. Живой ответ от имени владельца выполняй только по авторизованному тестовому сценарию; сам навык не предоставляет доступ к аккаунту.
 
 С библиотекой awesome-telegram-patterns, если она уже есть в проекте: [специальные операции](references/platform-operations.md) — Business, stories, gifts, managed bots.
+
+## Источники
+
+[Business-боты](https://core.telegram.org/bots/features#business-bots), [BusinessConnection](https://core.telegram.org/bots/api#businessconnection), [BusinessBotRights](https://core.telegram.org/bots/api#businessbotrights).
+
+Проверено: 2026-10-07, Bot API 10.3, aiogram 3.31.0.

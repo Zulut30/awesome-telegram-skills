@@ -28,8 +28,10 @@ metadata:
 
 В отдельной тестовой группе проверь действие с нужными правами и без них, два разных чата и, при наличии, две темы. Для membership проверь вход, выход и отзыв прав. Состояние или настройка одного чата не должны применяться к другому.
 
+С библиотекой awesome-telegram-patterns, если она уже есть в проекте: [специальные операции](references/platform-operations.md) — темы, реакции, заявки, Business, stories, gifts, managed bots.
+
 ## Источники
 
 [Bot FAQ: группы и privacy mode](https://core.telegram.org/bots/faq), [возможности ботов](https://core.telegram.org/bots/features), [Bot API](https://core.telegram.org/bots/api). Условия получения конкретного update проверяй в его актуальном описании.
 
-С библиотекой awesome-telegram-patterns, если она уже есть в проекте: [специальные операции](references/platform-operations.md) — темы, реакции, заявки, Business, stories, gifts, managed bots.
+Проверено: 2026-10-07, Bot API 10.3, aiogram 3.31.0.

@@ -28,4 +28,8 @@ metadata:
 
 Отдели laboratory results от реального устройства/полевых данных. Если исходное приложение или запуск недоступны, дай план измерения; не приписывай ему результат. Не объявляй приложение быстрым только по gzip размеру или оценке Lighthouse.
 
-Источники: [Web Vitals](https://web.dev/articles/vitals), [Telegram Design Guidelines](https://core.telegram.org/bots/webapps#design-guidelines).
+## Источники
+
+[Web Vitals](https://web.dev/articles/vitals), [Telegram Design Guidelines](https://core.telegram.org/bots/webapps#design-guidelines).
+
+Проверено: 2026-10-07, Telegram Mini Apps (Bot API 10.3).

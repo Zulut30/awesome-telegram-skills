@@ -17,3 +17,9 @@ metadata:
 У inline-кнопки выбери ровно одно поддерживаемое действие; у reply-кнопки проверь ограничения request-полей. Callback должен проверять пользователя, состояние процесса и доступ к объекту, отвечать на нажатие и управлять повторной отправкой. Если требуется disabled-состояние, сначала проверь актуальный API и client support, а не имитируй его только цветом.
 
 Проверь payload, реальное отображение в целевых клиентах, действие кнопки и неподходящий chat context. Отдельно зафиксируй entitlement на custom emoji и фактически проверенные версии клиента.
+
+## Источники
+
+[InlineKeyboardButton](https://core.telegram.org/bots/api#inlinekeyboardbutton), [KeyboardButton](https://core.telegram.org/bots/api#keyboardbutton), [getCustomEmojiStickers](https://core.telegram.org/bots/api#getcustomemojistickers).
+
+Проверено: 2026-10-07, Bot API 10.3, aiogram 3.31.0.

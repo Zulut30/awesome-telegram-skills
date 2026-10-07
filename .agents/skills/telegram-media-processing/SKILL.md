@@ -32,4 +32,8 @@ metadata:
 
 Запусти новый helper/process на временном файле, если он добавлен; unit-тест строки команды не подтверждает преобразование. Если codec/tool недоступен, сохрани конкретное ограничение и воспроизводимый шаг без заявления об успешной обработке.
 
-Источники: [Telegram Bot API](https://core.telegram.org/bots/api), [FFmpeg documentation](https://ffmpeg.org/documentation.html), [OWASP File Upload](https://cheatsheetseries.owasp.org/cheatsheets/File_Upload_Cheat_Sheet.html).
+## Источники
+
+[Telegram Bot API](https://core.telegram.org/bots/api), [FFmpeg documentation](https://ffmpeg.org/documentation.html), [OWASP File Upload](https://cheatsheetseries.owasp.org/cheatsheets/File_Upload_Cheat_Sheet.html).
+
+Проверено: 2026-10-07, Bot API 10.3, aiogram 3.31.0.

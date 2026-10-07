@@ -32,8 +32,10 @@ metadata:
 
 Проверь успешный путь, отмену на промежуточном шаге, неверный ввод, два быстрых нажатия, старую кнопку и восстановление после рестарта, если оно обещано. Отдельно проверь, что два пользователя не разделяют ответы формы.
 
+С библиотекой awesome-telegram-patterns, если она уже есть в проекте: [поля диалогов](references/dialog-fields.md) и [восстановление формы после рестарта](references/dialog-restart.md). Без нее те же проверки делай средствами текущего SDK.
+
 ## Источники
 
 [aiogram FSM](https://docs.aiogram.dev/en/latest/dispatcher/finite_state_machine/index.html), [python-telegram-bot](https://docs.python-telegram-bot.org/en/stable/), [CallbackQuery](https://core.telegram.org/bots/api#callbackquery). Используй только ветку библиотеки проекта.
 
-С библиотекой awesome-telegram-patterns, если она уже есть в проекте: [поля диалогов](references/dialog-fields.md) и [восстановление формы после рестарта](references/dialog-restart.md). Без нее те же проверки делай средствами текущего SDK.
+Проверено: 2026-10-07, Bot API 10.3, aiogram 3.31.0.

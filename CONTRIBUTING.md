@@ -31,6 +31,8 @@ python -m unittest discover -s tests -v
 
 Frontmatter каждого `SKILL.md` следует [спецификации Agent Skills](https://agentskills.io/specification): `name` совпадает с каталогом, `description` до 1024 символов, `license: MIT`, `metadata.version` — строка, равная `library_version` из `components.json`. `compatibility` (до 500 символов) указывайте только при особых требованиях к среде, например для скрипта, которому нужна сеть. `agents/openai.yaml` остается для интерфейса Codex. Тот же формат проверяет официальный валидатор: `uvx --from skills-ref==0.1.1 agentskills validate .agents/skills/<имя>`; CI прогоняет его для всех скиллов.
 
+Последний раздел `SKILL.md` — `## Источники`: ссылки на первичную документацию и одна строка `Проверено: ГГГГ-ММ-ДД, <что сверено>`, например `Проверено: 2026-10-07, Bot API 10.3, aiogram 3.31.0.` или `не зависит от версии Bot API`. Меняйте дату, только когда действительно сверили содержимое скилла с источниками. `python scripts/check_skill_sources.py --online` проверяет, что имена методов и полей Telegram есть в текущих индексах, а ссылки и якоря открываются; `tests/test_skill_sources.py` падает, когда индекс Bot API, aiogram или версия библиотеки ушли вперед от строки «Проверено».
+
 ## Проверить библиотеку
 
 ```powershell

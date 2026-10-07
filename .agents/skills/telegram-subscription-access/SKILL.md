@@ -32,4 +32,8 @@ Backend проверяет текущий доступ при каждом за�
 
 Сохрани модель, переходы и фактические результаты. Fake provider/clock доказывают прикладные инварианты; платежный sandbox и реальные Telegram события требуют отдельной проверки. Не объявляй синтетическую запись подтвержденным списанием.
 
-Источники: [SuccessfulPayment](https://core.telegram.org/bots/api#successfulpayment), [Stars payments](https://core.telegram.org/bots/payments-stars).
+## Источники
+
+[SuccessfulPayment](https://core.telegram.org/bots/api#successfulpayment), [Stars payments](https://core.telegram.org/bots/payments-stars).
+
+Проверено: 2026-10-07, Bot API 10.3, Telegram Stars.

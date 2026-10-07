@@ -23,3 +23,9 @@ metadata:
 Телефон и скрытые данные не извлекаются из одного username. При обработке явно переданного contact проверь его привязку к инициатору, если это нужно сценарию. Не публикуй полное содержимое профиля или контактов в диагностических логах.
 
 Проверь профиль без username/фото, отсутствующие optional-поля, недоступный peer, отсутствие нужного права изменения и обновление кеша после смены имени. Для живой проверки работай только с указанными пользователем целями; создание навыка не означает вход в конкретный аккаунт.
+
+## Источники
+
+[User](https://core.telegram.org/bots/api#user), [getUserProfilePhotos](https://core.telegram.org/bots/api#getuserprofilephotos), [setMyDescription](https://core.telegram.org/bots/api#setmydescription), [Business-боты](https://core.telegram.org/bots/features#business-bots).
+
+Проверено: 2026-10-07, Bot API 10.3, aiogram 3.31.0.

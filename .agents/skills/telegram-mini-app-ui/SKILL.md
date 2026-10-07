@@ -39,3 +39,5 @@ metadata:
 ## Источники
 
 [Telegram Mini Apps](https://core.telegram.org/bots/webapps). Методы, параметры, CSS-переменные и client-version gates бери из текущей документации, а не из старого starter.
+
+Проверено: 2026-10-07, Telegram Mini Apps (Bot API 10.3).

@@ -35,3 +35,5 @@ metadata:
 ## Источники
 
 [Telegram Mini Apps](https://core.telegram.org/bots/webapps), [TypeScript strict](https://www.typescriptlang.org/tsconfig/strict.html), [Vite env](https://vite.dev/guide/env-and-mode). Для SDK используй официальную документацию его установленной версии.
+
+Проверено: 2026-10-07, Telegram Mini Apps (Bot API 10.3).

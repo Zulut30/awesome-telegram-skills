@@ -28,8 +28,10 @@ metadata:
 
 Проверь пустой запрос, обычный поиск, следующую страницу, неверный cursor и отправку результата в реальный чат на тестовом боте. Для персональных данных проведи сценарий с двумя пользователями. Укажи, какие настройки BotFather нужны и какие проверены.
 
+С библиотекой awesome-telegram-patterns, если она уже есть в проекте: [inline-поиск с пагинацией](references/inline-search.md).
+
 ## Источники
 
 [Inline bots](https://core.telegram.org/bots/inline), [answerInlineQuery](https://core.telegram.org/bots/api#answerinlinequery). Перед реализацией проверь параметры выбранного типа результата.
 
-С библиотекой awesome-telegram-patterns, если она уже есть в проекте: [inline-поиск с пагинацией](references/inline-search.md).
+Проверено: 2026-10-07, Bot API 10.3, aiogram 3.31.0.

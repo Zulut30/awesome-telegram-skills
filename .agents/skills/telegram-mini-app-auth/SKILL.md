@@ -29,3 +29,9 @@ metadata:
 ## Проверка
 
 Проверь корректные данные, измененное подписанное поле, другой bot token, отсутствие hash/auth_date, дубли ключей, просроченную и будущую дату. Используй реальный обезличенный либо официальный тестовый вектор, а не только подпись, сгенерированную проверяемым кодом. Проверь, что клиентский user_id не меняет доступ к объекту.
+
+## Источники
+
+[Проверка данных Mini App](https://core.telegram.org/bots/webapps#validating-data-received-via-the-mini-app), [WebAppInitData](https://core.telegram.org/bots/webapps#webappinitdata).
+
+Проверено: 2026-10-07, Telegram Mini Apps (Bot API 10.3).

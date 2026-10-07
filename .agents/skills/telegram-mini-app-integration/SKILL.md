@@ -39,3 +39,5 @@ metadata:
 ## Источники
 
 [Mini Apps: способы запуска](https://core.telegram.org/bots/webapps#implementing-mini-apps), [deep linking](https://core.telegram.org/bots/features#deep-linking), [Bot API](https://core.telegram.org/bots/api).
+
+Проверено: 2026-10-07, Telegram Mini Apps (Bot API 10.3).

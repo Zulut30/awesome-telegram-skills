@@ -23,13 +23,16 @@ class ValidateSkillsTests(unittest.TestCase):
         (self.root / 'components.json').write_text(json.dumps({'library_version': '9.9.9'}), encoding='utf-8')
         self.skill('name: telegram-other\ndescription: "Other task. Не для примера → telegram-sample."\nlicense: MIT\nmetadata:\n  version: "9.9.9"', name='telegram-other')
 
-    def skill(self, frontmatter, name='telegram-sample'):
+    SOURCES = '## Источники\n\n[Bot API](https://core.telegram.org/bots/api).\n\nПроверено: 2026-10-07, Bot API 10.3.\n'
+
+    def skill(self, frontmatter, name='telegram-sample', body=None):
         folder = self.root / '.agents/skills' / name
         (folder / 'agents').mkdir(parents=True, exist_ok=True)
         (folder / 'agents/openai.yaml').write_text(
             'interface:\n  display_name: Sample\n  short_description: A sample skill used by validator tests\n'
             f'  default_prompt: Use ${name} for a sample task.\n', encoding='utf-8')
-        (folder / 'SKILL.md').write_text(f'---\n{frontmatter}\n---\n\n# Sample\n\nDo the thing.\n', encoding='utf-8')
+        body = f'# Sample\n\nDo the thing.\n\n{self.SOURCES}' if body is None else body
+        (folder / 'SKILL.md').write_text(f'---\n{frontmatter}\n---\n\n{body}', encoding='utf-8')
 
     def errors(self):
         return self.validator.validate(self.root)[1]
@@ -64,6 +67,28 @@ class ValidateSkillsTests(unittest.TestCase):
             with self.subTest(label):
                 self.skill(frontmatter)
                 self.assertTrue(self.errors(), label)
+
+    def test_sources_section_and_check_date_are_required(self):
+        intro = '# Sample\n\nDo the thing.\n\n'
+        cases = {
+            'section missing': intro,
+            'section not last': intro + self.SOURCES + '\n## Проверка\n\nRun it.\n',
+            'no source link': intro + '## Источники\n\nДокументация.\n\nПроверено: 2026-10-07, Bot API 10.3.\n',
+            'check line missing': intro + '## Источники\n\n[Bot API](https://core.telegram.org/bots/api).\n',
+            'date not ISO': intro + self.SOURCES.replace('2026-10-07', '7 октября 2026'),
+            'impossible date': intro + self.SOURCES.replace('2026-10-07', '2026-02-30'),
+            'future date': intro + self.SOURCES.replace('2026-10-07', '2999-01-01'),
+            'scope missing': intro + self.SOURCES.replace(', Bot API 10.3.', ''),
+            'two check lines': intro + self.SOURCES + '\nПроверено: 2026-10-06, aiogram 3.31.0.\n',
+        }
+        self.skill(self.BASE)
+        self.assertEqual(self.errors(), [])
+        for label, body in cases.items():
+            with self.subTest(label):
+                self.skill(self.BASE, body=body)
+                self.assertTrue(any('Источники' in error or 'check date' in error for error in self.errors()), label)
+        self.assertIsNone(self.validator.check_sources(self.SOURCES, today=self.validator.date(2026, 10, 6)),
+                          'one day of slack for time zones')
 
     def test_repository_skills_pass(self):
         count, errors = self.validator.validate(ROOT)

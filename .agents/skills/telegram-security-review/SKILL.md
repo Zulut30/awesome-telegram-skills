@@ -35,3 +35,5 @@ metadata:
 ## Источники
 
 [Mini App validation](https://core.telegram.org/bots/webapps#validating-data-received-via-the-mini-app), [Bot API webhook](https://core.telegram.org/bots/api#setwebhook), [Stars payments](https://core.telegram.org/bots/payments-stars). Для framework-specific защиты используй официальную документацию выбранного backend.
+
+Проверено: 2026-10-07, Bot API 10.3, Telegram Mini Apps.

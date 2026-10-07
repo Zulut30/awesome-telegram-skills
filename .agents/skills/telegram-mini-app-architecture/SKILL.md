@@ -36,4 +36,8 @@ Shell владеет safe areas, темой, viewport и навигацией; �
 
 Сохрани краткое решение: границы, источники истины, переходы, ограничения и способ проверки. Для проектирования представь контракты и план приемки; для запрошенной реализации выполни вертикальный сценарий, typecheck, production build и релевантные UI/контрактные проверки. Сверь реализованный результат с матрицей из reference, сохрани команду запуска, измерения и скриншоты. Отдели план проверок от выполненных действий, а браузерные результаты — от проверки bridge и реальной клавиатуры в Telegram.
 
-Источники: [Telegram Mini Apps](https://core.telegram.org/bots/webapps), [Design Guidelines](https://core.telegram.org/bots/webapps#design-guidelines).
+## Источники
+
+[Telegram Mini Apps](https://core.telegram.org/bots/webapps), [Design Guidelines](https://core.telegram.org/bots/webapps#design-guidelines).
+
+Проверено: 2026-10-07, Telegram Mini Apps (Bot API 10.3).

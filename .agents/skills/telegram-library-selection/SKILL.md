@@ -19,3 +19,9 @@ metadata:
 Проверь происхождение пакета через документацию и upstream; похожее имя пакета не доказывает принадлежность поставщику. Не устанавливай непроверенный SDK из поисковой выдачи. Миграция должна учитывать сохраненные sessions, handlers и breaking changes, а не только изменение imports.
 
 Результат: выбор и причина, конкретная совместимая версия, минимальные зависимости, неподдерживаемые функции и проверенная альтернатива. При реализации подтверди imports, типы и фактическую сериализацию нового поля.
+
+## Источники
+
+[aiogram](https://pypi.org/project/aiogram/), [python-telegram-bot](https://pypi.org/project/python-telegram-bot/), [pyTelegramBotAPI](https://pypi.org/project/pyTelegramBotAPI/), [Telethon](https://pypi.org/project/Telethon/), [Bot API changelog](https://core.telegram.org/bots/api-changelog).
+
+Проверено: 2026-10-07, aiogram 3.31.0, python-telegram-bot 22.8, pyTelegramBotAPI 4.37.0, Telethon 1.45.0 (PyPI).

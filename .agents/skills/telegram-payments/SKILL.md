@@ -29,3 +29,9 @@ metadata:
 ## Проверка
 
 В предусмотренной Telegram тестовой среде проверь успешную оплату, отказ pre-checkout, повтор платежного события, несовпадение суммы и восстановление после сбоя между оплатой и выдачей. В UI Mini App закрытие invoice не подтверждает серверную оплату. Сообщи, если проверены только synthetic updates и не было реальной платежной интеграции.
+
+## Источники
+
+[Telegram Stars](https://core.telegram.org/bots/payments-stars), [Bot Payments](https://core.telegram.org/bots/payments), [Bot API: Payments](https://core.telegram.org/bots/api#payments).
+
+Проверено: 2026-10-07, Bot API 10.3, Telegram Stars.

@@ -42,3 +42,5 @@ Polling читает и подтверждает updates; не подключа�
 ## Источники
 
 [Bot API](https://core.telegram.org/bots/api), [тестовая среда Mini Apps](https://core.telegram.org/bots/webapps#using-bots-in-the-test-environment), [Testing your bot](https://core.telegram.org/bots/features#testing-your-bot), [Stars в тестовом окружении](https://core.telegram.org/bots/payments-stars). Для поведения transport используй документацию библиотеки проекта.
+
+Проверено: 2026-10-07, Bot API 10.3, aiogram 3.31.0.

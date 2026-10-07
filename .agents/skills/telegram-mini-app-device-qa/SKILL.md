@@ -28,4 +28,8 @@ metadata:
 
 Дай отчет с состояниями passed, failed, blocked и not-run, доказательствами и оставшимися ограничениями. Укажи отдельно реальный Telegram, обычный браузер, эмулятор и fake bridge. Скриншот подтверждает компоновку конкретного состояния; работу кнопок подтверждает выполненное действие. Скрывай credentials и личные данные в записи экрана.
 
-Источник: [Telegram Mini Apps](https://core.telegram.org/bots/webapps), [тестовая среда](https://core.telegram.org/bots/webapps#using-bots-in-the-test-environment).
+## Источники
+
+[Telegram Mini Apps](https://core.telegram.org/bots/webapps), [тестовая среда](https://core.telegram.org/bots/webapps#using-bots-in-the-test-environment).
+
+Проверено: 2026-10-07, Telegram Mini Apps (Bot API 10.3).
