@@ -14,7 +14,7 @@
 
 Скиллы помогают агенту выбрать решение и проверить результат. Библиотека дает переиспользуемый код, а рецепты показывают, как подключить его к вашему проекту. Основной стек — **Python + aiogram для ботов и backend, TypeScript для Mini Apps**.
 
-[Быстрый старт](#quickstart) · [Пример кнопок](#buttons) · [Галерея](#gallery) · [Все скиллы](#skills) · [План 1.0](docs/library-roadmap-100.md)
+[English](README.en.md) · [Быстрый старт](#quickstart) · [Пример кнопок](#buttons) · [Галерея](#gallery) · [Все скиллы](#skills) · [План 1.0](docs/library-roadmap-100.md)
 
 **[Документация на GitHub Pages](https://zulut30.github.io/awesome-telegram-skills/)** · [Каждый скилл](https://zulut30.github.io/awesome-telegram-skills/skills/) · [Справочник API](https://zulut30.github.io/awesome-telegram-skills/api/) · [Инструкция для ИИ-агента](docs/for-agents.md).
 

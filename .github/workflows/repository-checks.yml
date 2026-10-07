@@ -61,11 +61,12 @@ jobs:
       - run: python scripts/check_api_compatibility.py --base auto
 
   quickstart:
-    name: Documented quickstart (${{ matrix.os }})
+    name: Documented quickstart (${{ matrix.os }}, ${{ matrix.guide }})
     strategy:
       fail-fast: false
       matrix:
         os: [ubuntu-latest, macos-latest, windows-latest]
+        guide: [docs/quickstart.md, docs/en/quickstart.md]
     runs-on: ${{ matrix.os }}
     timeout-minutes: 30
     defaults:
@@ -84,4 +85,4 @@ jobs:
       - run: npm ci
       - run: python scripts/build_release.py --ref HEAD --output dist
       # PowerShell blocks on Windows, bash blocks on Linux and macOS; Chrome is preinstalled on hosted runners.
-      - run: python scripts/verify_quickstart.py --wheel dist/*.whl --tarball dist/*.tgz --output output/quickstart
+      - run: python scripts/verify_quickstart.py --guide '${{ matrix.guide }}' --wheel dist/*.whl --tarball dist/*.tgz --output output/quickstart

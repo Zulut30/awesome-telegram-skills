@@ -24,6 +24,7 @@
 - Пункт 20: в начале README таблица «Можно ли брать в production» простыми словами: что можно использовать, что экспериментально и что не проверено вживую, с числами из каталога.
 - Пункт 21: README и `docs/quickstart.md` дают каждую команду для PowerShell (Windows) и bash (Linux, macOS); bash-блок — одна цепочка, которая при ошибке останавливается с подсказкой. На сайте соседние блоки PowerShell и bash показываются вкладками с запоминанием выбора. `verify_quickstart.py` выполняет PowerShell-блоки на Windows и bash-блоки на Linux и macOS, а job CI `quickstart` запускает его на ubuntu, macos и windows.
 - Пункт 22: скрипты проверки больше не рассчитаны только на Windows. Общий `scripts/_environment.py` передает дочерним процессам системные переменные Windows и POSIX (`HOME`, `TMPDIR`, локаль), прокси и CA-сертификаты, но не секреты; `check_api_reference_browser.mjs` по умолчанию ищет установленный Chrome на любой ОС. CONTRIBUTING и AGENTS.md дают команды полной проверки для bash.
+- Пункт 23: английский вход — `README.en.md` (статус, быстрый старт, установка из релиза, описания всех 41 скилла), `docs/en/quickstart.md` с английскими сообщениями в командах и `docs/en/for-agents.md`. Инструкции скиллов остаются на русском. `verify_quickstart.py --guide` проверяет любое руководство, а CI запускает оба на ubuntu, macos и windows; страницы `docs/en` на сайте получают `lang="en"`.
 
 ## 0.24.0
 

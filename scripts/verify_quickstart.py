@@ -39,16 +39,20 @@ def main() -> int:
     parser.add_argument('--wheel', type=Path, required=True)
     parser.add_argument('--tarball', type=Path, required=True)
     parser.add_argument('--output', type=Path, required=True, help='New proof directory')
+    parser.add_argument('--guide', type=Path, default=ROOT / 'docs/quickstart.md', help='Guide to execute, e.g. docs/en/quickstart.md')
     args = parser.parse_args()
     shell = (shutil.which('pwsh') or shutil.which('powershell')) if WINDOWS else shutil.which('bash')
     node = shutil.which('node')
     if not shell or not node:
         parser.error('PowerShell (Windows) or bash, and Node are required')
-    document = (ROOT / 'docs/quickstart.md').read_text(encoding='utf-8')
-    portable = (ROOT / '.agents/skills/telegram-code-patterns/references/quickstart.md').read_text(encoding='utf-8')
-    if document != portable:
-        raise RuntimeError('Portable first-run guide differs from canonical guide')
-    matched = re.search(r'локальной поставкой \*\*(\d+\.\d+\.\d+)\*\*', document)
+    guide = args.guide.resolve()
+    document = guide.read_text(encoding='utf-8')
+    if guide == (ROOT / 'docs/quickstart.md').resolve():
+        portable = (ROOT / '.agents/skills/telegram-code-patterns/references/quickstart.md').read_text(encoding='utf-8')
+        if document != portable:
+            raise RuntimeError('Portable first-run guide differs from canonical guide')
+    # The first bold version in the guide names the release it was written for.
+    matched = re.search(r'\*\*(\d+\.\d+\.\d+)\*\*', document)
     if not matched:
         raise RuntimeError('Guide must identify its supplied local version')
     version = matched.group(1)
@@ -165,7 +169,7 @@ def main() -> int:
     browser = json.loads((output / 'browser/report.json').read_text(encoding='utf-8'))
     if not browser['passed']:
         raise RuntimeError('First-run screen did not pass')
-    report = {'passed': True, 'version': version, 'consumer': str(consumer), 'guide_blocks': list(BLOCKS),
+    report = {'passed': True, 'version': version, 'consumer': str(consumer), 'guide': str(guide.relative_to(ROOT)) if guide.is_relative_to(ROOT) else str(guide), 'guide_blocks': list(BLOCKS),
               'guide_sha256': hashlib.sha256(document.encode()).hexdigest(), 'artifact_hashes': artifact_proof,
               'origins': origins, 'offline': offline, 'doctor_passed': doctor['passed'],
               'existing_workspace_unchanged': True, 'browser': browser, 'telegram_requests': False,
