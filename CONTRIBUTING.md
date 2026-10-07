@@ -59,6 +59,16 @@ python3 scripts/verify_pattern_packages.py
 
 Тесты Python-библиотеки делятся на unit и integration. Unit-тесты работают в одном процессе; `python scripts/run_python_tests.py --unit` запускает их параллельными шардами меньше чем за 30 секунд (библиотека берется из окружения: установленный пакет или `PYTHONPATH=packages/python/src`, нужны aiogram, python-telegram-bot, cryptography и tzdata). Тест, который запускает дочерний процесс (Python, multiprocessing, генератор каталога или сборку) или идет секунды, помечается декоратором `integration` из `packages/python/tests/_support.py`: в режиме `--unit` он пропускается, а дочерний процесс непомеченного теста валит прогон с указанием строки. Без `--unit` раннер выполняет весь набор (около двух минут на четырех ядрах); `--jobs` задает число шардов, `--budget` — предел времени. CI запускает unit-набор с бюджетом 30 секунд, полный набор — в проверке поставки на установленном wheel.
 
+Покрытие unit-набора измеряет coverage с настройками из `packages/python/pyproject.toml` (ветвления включены). Порог задан в `scripts/check_coverage.py`: не меньше 90% строк всего пакета и все строки и ветвления в `initdata`, `sqlite_once`, `slots`, `message_text` и `_aiogram/media` (подписанные данные запуска, однократные операции, бронирование, разбиение сообщений, медиа). Локально:
+
+```bash
+PYTHONPATH=packages/python/src TELEGRAM_PATTERNS_TESTS=unit python -m coverage run --rcfile=packages/python/pyproject.toml -m unittest discover -s packages/python/tests
+python -m coverage json --rcfile=packages/python/pyproject.toml -o coverage.json
+python scripts/check_coverage.py coverage.json
+```
+
+CI задача `python-coverage` выполняет те же команды, сохраняет `coverage.json` и HTML-отчет как артефакт и падает ниже порога. Новая ветка в защищенном модуле приходит вместе с тестом, который ее проходит.
+
 Стиль кода Python-библиотеки проверяет ruff (настройки — в `packages/python/pyproject.toml`: строки до 120 символов, кавычки сохраняются, правила E, F, W и I): `ruff check packages/python` и `ruff format --check packages/python`; исправляет `ruff format packages/python`. CI запускает обе команды, а также `mypy --strict --follow-imports=silent packages/python/src/telegram_patterns` с установленными aiogram, python-telegram-bot, cryptography и tzdata: ошибок типов быть не должно.
 
 При изменении публичного API синхронизируйте exports, [components.json](components.json), документацию и [CHANGELOG.md](CHANGELOG.md). `python scripts/check_api_compatibility.py --base auto` сравнивает публичные символы Python и TypeScript с предыдущим тегом (в pull request — с базовой веткой): каждый удаленный или измененный символ нужно назвать в обратных кавычках в верхнем разделе CHANGELOG, иначе CI падает. Различайте SDK/mock/browser/live evidence и статусы experimental/reference/stable. Проверка в браузере не заменяет испытания в Telegram и на реальных устройствах.

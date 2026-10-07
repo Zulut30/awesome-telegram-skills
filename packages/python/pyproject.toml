@@ -42,3 +42,14 @@ quote-style = "preserve"
 
 [tool.ruff.lint]
 select = ["E", "F", "W", "I"]
+
+[tool.coverage.run]
+# CI measures the unit scope (TELEGRAM_PATTERNS_TESTS=unit); scripts/check_coverage.py enforces the thresholds.
+branch = true
+source = ["telegram_patterns"]
+
+[tool.coverage.report]
+exclude_also = [
+    "if TYPE_CHECKING:",
+    "if __name__ == .__main__.:",
+]

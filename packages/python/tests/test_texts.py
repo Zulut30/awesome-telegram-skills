@@ -118,6 +118,15 @@ class CatalogTests(unittest.TestCase):
         with self.assertRaisesRegex(ValidationFailure, 'needs the value'):
             Texts()('form.step', number=1)
         self.assertEqual(Texts().month(10), 'Октябрь')
+        for make, error in (
+            (lambda: Texts('en', [('form.submit', 'Send')]), TypeError),
+            (lambda: Texts().with_overrides([('form.submit', 'Send')]), TypeError),
+            (lambda: Texts()('form.missing'), ValidationFailure),
+            (lambda: Texts().month(13), ValidationFailure),
+            (lambda: Texts().month(True), ValidationFailure),
+        ):
+            with self.assertRaises(error):
+                make()
         self.assertEqual(Texts('en').weekdays()[0], 'Mo')
 
 

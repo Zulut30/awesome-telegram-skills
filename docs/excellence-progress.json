@@ -863,9 +863,15 @@
     {
       "id": 68,
       "title": "Покрытие кода",
-      "status": "pending",
-      "commit_subject": null,
-      "evidence": [],
+      "status": "done",
+      "commit_subject": "excellence(068): gate Python coverage at 90 percent with full branches in guarded modules",
+      "evidence": [
+        "unit scope: 90.88% statements (was 89.8%); initdata, sqlite_once, slots, message_text, _aiogram/media: 0 missing lines, 0 missing/partial branches",
+        "packages/python/tests/test_branch_guards.py, test_markup.test_each_guard_names_its_rule, texts guard cases; split_formatted inputs found by a traced search",
+        "scripts/check_coverage.py thresholds + tests/test_check_coverage.py; [tool.coverage] in packages/python/pyproject.toml",
+        "CI job python-coverage: coverage run/report/json/html, artifact upload, gate; local run of the same commands 31 s",
+        "verify_pattern_packages PASS 0.24.0: 559 Python and 35 TypeScript tests, browser=passed"
+      ],
       "remaining": null
     },
     {

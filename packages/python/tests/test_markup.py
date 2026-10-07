@@ -147,6 +147,47 @@ class MarkupTests(unittest.TestCase):
             with self.assertRaises(InvalidType):
                 make()
 
+    def test_each_guard_names_its_rule(self):
+        app = reply_button('App', web_app='https://example.com/app')
+        self.assertEqual(app, {'text': 'App', 'web_app': {'url': 'https://example.com/app'}})
+        button = inline_button('Open', callback_data='a')
+        cases = [
+            (lambda: inline_button('\ud800', callback_data='a'), ValidationFailure, 'valid Unicode'),
+            (lambda: inline_button('x', callback_data='a', icon_custom_emoji_id='abc'), ValidationFailure, 'decimal'),
+            (lambda: inline_button('x', callback_data='\ud800'), ValidationFailure, '1..64 UTF-8 bytes'),
+            (lambda: inline_button('x', switch_inline_query=5), InvalidType, 'Inline query text'),
+            (lambda: layout_rows('abc'), InvalidType, 'sequences of buttons'),
+            (lambda: layout_rows([]), ValidationFailure, '1..100 buttons'),
+            (lambda: inline_markup(['row']), InvalidType, 'Wrap each row'),
+            (lambda: inline_markup([[button] * 8] * 13), ValidationFailure, '1..100 buttons'),
+            (lambda: inline_markup([[button]], chat_type='forum'), ValidationFailure, 'supported chat_type'),
+            (lambda: inline_markup([[{'callback_data': 'a'}]]), InvalidType, 'inline_button results'),
+            (
+                lambda: inline_markup([[{'text': 'x', 'url': 'https://a.b', 'callback_data': 'a'}]]),
+                ValidationFailure,
+                'exactly one action',
+            ),
+            (
+                lambda: inline_markup([[inline_button('q', switch_inline_query='')]], business=True),
+                ValidationFailure,
+                'Inline switch action',
+            ),
+            (lambda: reply_markup([[7]]), InvalidType, 'strings or reply_button'),
+            (lambda: paginated_markup([('a', 'a')], action_prefix='x:', page_prefix='x:'), ValidationFailure, 'differ'),
+            (lambda: paginated_markup([('a', 'a')], page=-1), ValidationFailure, 'nonnegative'),
+            (lambda: paginated_markup([('a', 'a')], page_size=99), ValidationFailure, 'page_size'),
+            (lambda: paginated_markup([('a', 'a')], columns=9), ValidationFailure, '1..8 columns'),
+            (lambda: paginated_markup('ab'), InvalidType, 'sequence of'),
+            (lambda: paginated_markup([['a', 'a']]), InvalidType, '(text, key)'),
+            (lambda: paginated_markup([('a', 'a')], texts='en'), InvalidType, 'Texts or None'),
+            (lambda: paginated_markup([('a', 'a')], page_prefix='page'), ValidationFailure, 'prefix'),
+            (lambda: paginated_markup([('a', 'bad key')]), ValidationFailure, 'action key'),
+            (lambda: paginated_markup([('a', 'k' * 48)], action_prefix='p' * 20 + ':'), ValidationFailure, '64 bytes'),
+        ]
+        for make, error, message in cases:
+            with self.subTest(message=message), self.assertRaisesRegex(error, message):
+                make()
+
     def test_pagination_matches_the_aiogram_menu(self):
         items = [(f'Компонент {n}', f'item-{n}') for n in range(1, 8)]
         native = [ActionButton(text, key, style='primary') for text, key in items]

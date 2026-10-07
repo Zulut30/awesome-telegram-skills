@@ -19,3 +19,9 @@ build/
 *.session-wal
 output/
 .playwright-cli/
+
+# Coverage reports (python-coverage CI job)
+.coverage
+.coverage.*
+coverage.json
+coverage-html/

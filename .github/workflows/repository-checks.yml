@@ -83,6 +83,34 @@ jobs:
         env:
           PYTHONPATH: ${{ github.workspace }}/packages/python/src
 
+  python-coverage:
+    name: Python library coverage (90% statements, full branches of guarded modules)
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    env:
+      PYTHONPATH: ${{ github.workspace }}/packages/python/src
+      TELEGRAM_PATTERNS_TESTS: unit
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97 # v7.0.0
+        with:
+          python-version: '3.13'
+      - run: python -m pip install 'coverage==7.16.2' 'aiogram==3.31.0' 'python-telegram-bot==22.8' 'cryptography==50.0.2' 'tzdata==2026.5'
+      - run: python -m coverage run --rcfile=packages/python/pyproject.toml -m unittest discover -s packages/python/tests
+      - run: python -m coverage report --rcfile=packages/python/pyproject.toml --skip-covered --sort=cover
+      - run: python -m coverage json --rcfile=packages/python/pyproject.toml -o coverage.json
+      - run: python -m coverage html --rcfile=packages/python/pyproject.toml -d coverage-html
+      # Thresholds live in scripts/check_coverage.py; falling below them fails the build.
+      - run: python scripts/check_coverage.py coverage.json
+      - if: always()
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        with:
+          name: python-coverage
+          path: |
+            coverage.json
+            coverage-html
+          if-no-files-found: warn
+
   typescript:
     name: TypeScript tests and Mini App build
     runs-on: ubuntu-latest
