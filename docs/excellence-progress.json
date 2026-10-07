@@ -1049,10 +1049,15 @@
     {
       "id": 82,
       "title": "Матрица версий и ОС",
-      "status": "pending",
-      "commit_subject": null,
-      "evidence": [],
-      "remaining": null
+      "status": "partial",
+      "commit_subject": "excellence(082): test Python 3.11-3.14 and Node.js 20-24 on Linux, Windows and macOS",
+      "evidence": [
+        "python-package job: installed package and all tests on Python 3.11, 3.12, 3.13, 3.14 (Ubuntu) and 3.11, 3.14 (Windows, macOS)",
+        "typescript job: tests, demo build and framework examples on Node.js 20, 22, 24 (Ubuntu) and 24 (Windows, macOS)",
+        "Local Linux: 579 installed-package tests pass on Python 3.11.17, 3.12.3, 3.13.16, 3.14.6; TypeScript (38) and framework tests pass on Node.js 20.20.0, 22.22.0, 24.21.0",
+        "Matrix documented in docs/versioning.md and docs/support-matrix.md"
+      ],
+      "remaining": "Confirm the matrix green on GitHub Actions (Windows and macOS cannot run locally)"
     },
     {
       "id": 83,

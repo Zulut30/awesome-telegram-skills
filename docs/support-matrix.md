@@ -4,10 +4,10 @@
 
 | Область | Заявлено / формат | Проверено 5 октября 2026 | Непроверенные границы |
 | --- | --- | --- | --- |
-| Python core | Python >=3.11, stdlib, без SDK | 3.13.12, Windows 11 AMD64, установленный wheel без aiogram; CLI/core/SQLite consumers | Остальные Python versions и Linux/macOS требуют отдельной матрицы |
+| Python core | Python >=3.11, stdlib, без SDK | 3.13.12, Windows 11 AMD64, установленный wheel без aiogram; CLI/core/SQLite consumers. CI: установленный пакет и все тесты на Python 3.11–3.14 (Ubuntu), 3.11 и 3.14 (Windows, macOS) — [матрица в политике версий](versioning.md) | Python 3.15 и другие ОС не объявлены проверенными |
 | Calendar / IANA | Optional calendar extra: tzdata>=2026.5; UTC без него | tzdata 2026.5, DST gap/fold и отдельные процессы через установленный wheel | Другие tzdata versions и системные базы требуют проверки конкретного проекта |
 | Python bot adapters | Optional aiogram >=3.29,<4 | aiogram 3.29.1, 3.30.0 и 3.31.0 (unit-набор в CI-матрице), полная поставка — на 3.31.0; native SDK construction и synthetic Dispatcher | Возможности Bot API 10.3 на aiogram <3.31 отказывают UnsupportedCapability; другие SDK versions, PTB/TeleBot adapters и live Telegram не подтверждены |
-| TypeScript tooling | Node >=20, ESM; no runtime dependencies | Node 24.19.0, npm 12.0.2, TypeScript 7.0.2, tarball imports/types/build и 26 тест | Другие версии Node/TS и bundlers не объявлены проверенными; CommonJS export отсутствует |
+| TypeScript tooling | Node >=20, ESM; no runtime dependencies | Node 24.19.0, npm 12.0.2, TypeScript 7.0.2, tarball imports/types/build и 26 тест. CI: тесты и сборка на Node 20, 22, 24 (Ubuntu) и 24 (Windows, macOS) | Другие версии TS и bundlers не объявлены проверенными; CommonJS export отсутствует |
 | Browser UI | DOM/fetch/ESM; Chrome или CHROME_PATH для verification | Chrome 154.0.8037.98, Playwright 1.63.0; 141 example + 1030 gallery + 1030 export + 66 starter + 76 selected starter + 36 API-reference checks | Другие engines, screen readers и физические устройства отдельно |
 | Viewports/themes | Responsive composition | Browser cases: 320–1920 px по ширине, portrait/landscape/tablet/desktop; light/dark | Viewport emulation не настоящие iOS/Android/tablet Telegram clients |
 | Telegram Bot API | Runtime возможности установленного SDK | Snapshot Bot API 10.3: 185 request methods / 400 indexed types, construction | Server permissions, real delivery, payment workflows и все SDK versions не доказаны |
