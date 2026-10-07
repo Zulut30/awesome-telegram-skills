@@ -1,4 +1,6 @@
-# Составной выбор в боте — 0.16.0
+# Составной выбор в боте
+
+Доступно с 0.16.0, проверено на 0.24.0.
 
 `SelectionMenu` хранит server-owned черновик: toggle, multiselect, количество и фильтр. `SelectionSpec` задает разрешенные значения, границы и версию ресурса. Core импортируется без SDK. `selection_keyboard` и `selection_router` требуют optional aiogram extra; подключайте Router к существующему Dispatcher. Пакеты предоставляются локальными wheel/tarball.
 

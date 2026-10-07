@@ -1,6 +1,6 @@
 # Календарь и запись на время
 
-Локальная поставка **0.17.0**: SDK-free `CalendarMonth`, `TimeSlot`, `resolve_local_time`, `SlotSchedule`, `SlotBooking`, `SQLiteSlotStore` и optional aiogram `calendar_keyboard`, `time_slot_keyboard`. Full bot «дата → время → подтверждение» — рецепт `demo-calendar`: сначала `telegram-patterns run-recipe demo-calendar`, затем явный `--offline`. Пакеты предоставляются wheel/tarball; публикация в реестрах не предполагается.
+Доступно с 0.17.0, проверено на 0.24.0. SDK-free `CalendarMonth`, `TimeSlot`, `resolve_local_time`, `SlotSchedule`, `SlotBooking`, `SQLiteSlotStore` и optional aiogram `calendar_keyboard`, `time_slot_keyboard`. Full bot «дата → время → подтверждение» — рецепт `demo-calendar`: сначала `telegram-patterns run-recipe demo-calendar`, затем явный `--offline`. Пакеты предоставляются wheel/tarball; публикация в реестрах не предполагается.
 
 ## Время и доступность
 

@@ -1,4 +1,6 @@
-# Выбрать компоненты нового проекта — 0.17.0
+# Выбрать компоненты нового проекта
+
+Доступно с 0.11.0, проверено на 0.24.0.
 
 CLI устанавливается из предоставленного локального wheel. Он создает новый проект и подключает выбранные публичные API, сохраняя Python/aiogram и TypeScript starter. Он не устанавливает зависимости, не запускает polling и не настраивает серверную авторизацию. Для существующего проекта используйте точечные импорты: `init` принимает только новый target с существующим обычным родителем, без symlink/junction ancestors.
 
@@ -28,10 +30,10 @@ python -m telegram_patterns init --list-components
 
 ## Создать бот с формой и событиями
 
-Установите wheel 0.17.0 в отдельное tools окружение или используйте уже установленный CLI этой версии. Пути ниже заменяются на предоставленные артефакты; пакетов с нашим именем в registry не предполагается.
+Установите предоставленный wheel в отдельное tools окружение или используйте уже установленный CLI той же версии. Пути ниже заменяются на предоставленные артефакты; пакетов с нашим именем в registry не предполагается.
 
 ```powershell
-$tgWheel = 'C:\path\awesome_telegram_patterns-0.17.0-py3-none-any.whl'
+$tgWheel = '<WHEEL>'
 python -m telegram_patterns init .\new-bot --library $tgWheel --component text-form --component update-events --dry-run
 python -m telegram_patterns init .\new-bot --library $tgWheel --component text-form --component update-events
 ```
@@ -41,7 +43,7 @@ Dry-run возвращает `created: false`, все относительные
 ## Добавить Mini App
 
 ```powershell
-$tgTS = 'C:\path\awesome-telegram-patterns-0.17.0.tgz'
+$tgTS = '<TARBALL>'
 python -m telegram_patterns init .\new-mini --library $tgWheel --template bot-mini-app --typescript $tgTS --component native-keyboards --component paginated-menu --component api-client --component selection-draft --component mini-app-native-api --dry-run
 ```
 

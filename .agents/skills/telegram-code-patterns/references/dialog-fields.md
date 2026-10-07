@@ -1,6 +1,6 @@
 # Семь типов полей и подтверждение формы
 
-Локальная библиотека 0.18.0, optional aiogram (проверяемый SDK 3.31.0). Подключай `dialog_form_router` в существующий Dispatcher с его FSM/storage и включенной actor-scoped event isolation. `TextField` совместим с новым router; старые `text_form_router` и строковый `FormSubmission` сохраняют контракт. Новые `DialogSubmission.values` содержат строки и плоские immutable metadata; `as_dict()` возвращает свежую JSON-копию. Значения исключены из repr, но приложение само исключает личные данные из логов.
+Доступно с 0.18.0, проверено на 0.24.0. Optional aiogram (проверяемый SDK 3.31.0). Подключай `dialog_form_router` в существующий Dispatcher с его FSM/storage и включенной actor-scoped event isolation. `TextField` совместим с новым router; старые `text_form_router` и строковый `FormSubmission` сохраняют контракт. Новые `DialogSubmission.values` содержат строки и плоские immutable metadata; `as_dict()` возвращает свежую JSON-копию. Значения исключены из repr, но приложение само исключает личные данные из логов.
 
 | Поле | Результат и политика |
 | --- | --- |

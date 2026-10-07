@@ -1,4 +1,6 @@
-# Поиск рецепта и подготовка проекта — API 0.5.0
+# Поиск рецепта и подготовка проекта
+
+Доступно с 0.5.0, проверено на 0.24.0.
 
 Этот обзор сохраняет исторические 0.5.0 defaults. Для 0.12.0 добавлены [task/context/SDK/version filters и source/check links](gallery-navigation.md): 299 recipes, без исполнения при поиске; неопределенный контекст не означает любой чат. Прежний API ниже сохраняется.
 
@@ -39,6 +41,6 @@ Doctor не запускает проект; fixed `node --version` и изол�
 
 Частично проверенные 4 октября 2026 источники: [PyPA CLI](https://packaging.python.org/en/latest/guides/creating-command-line-tools/) и [direct dependency references](https://packaging.python.org/en/latest/specifications/dependency-specifiers/). API Telegram/SDK не менялся в этом reference; [границы кнопок и событий](keyboard-recipes.md) остаются применимыми.
 
-Для первого запуска предоставленных 0.12.0 wheel/tarball используй [проверенные команды](quickstart.md). Исправление npm path подтверждено настоящим consumer install с пробелами; npm local path/tarball документация сверена 2026-10-04, источники в этом reference.
+Для первого запуска предоставленных wheel/tarball используй [проверенные команды](quickstart.md). Исправление npm path подтверждено настоящим consumer install с пробелами; npm local path/tarball документация сверена 2026-10-04, источники в этом reference.
 
 В 0.10.0 выбор starter групп через --component и init --list-components описан в [самостоятельном reference](starter-selection.md). Прежние default композиции сохранены; partial I/O failure не разрешает удалять чужие файлы.

@@ -1,4 +1,6 @@
-# Найти пример по задаче, контексту и версии — 0.12.0
+# Найти пример по задаче, контексту и версии
+
+Доступно с 0.12.0, проверено на 0.24.0.
 
 Галерея содержит 302 запись: 11 keyboard/input builders, 185 Bot API requests, 99 native fragments, 5 bot fixtures и SQLite recovery fixture. Поиск и выбор не исполняют найденный код. Из них 18 experimental и 284 reference; 196 sdk, 7 mock, 99 not_run. Stable/live не заявлены.
 

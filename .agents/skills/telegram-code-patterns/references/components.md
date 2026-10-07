@@ -2,7 +2,7 @@
 
 Текущий каталог содержит 43 группы компонентов. Полный перечень публичных импортов и исполняемых примеров — в локальном [справочнике API](api-reference.md); исторические версии ниже показывают время добавления контрактов.
 
-Именованные типы 0.19.0: core `Maturity`, `VerificationLevel`; aiogram `ButtonStyle`, `ChatType`, `UpdatePhase`; testing `Responder`; TypeScript `TextFieldControl`. SDK `Bot`/`Dispatcher` импортируй из aiogram: wildcard library exports теперь явные, существующие документированные function/DTO imports сохранены.
+Именованные типы (с 0.7.0): core `Maturity`, `VerificationLevel`; aiogram `ButtonStyle`, `ChatType`, `UpdatePhase`; testing `Responder`; TypeScript `TextFieldControl`. SDK `Bot`/`Dispatcher` импортируй из aiogram: wildcard library exports теперь явные, существующие документированные function/DTO imports сохранены.
 
 Все группы пока experimental. [Maturity](maturity.md) наследуется их публичными символами; SDK/mock/browser/live — отдельный уровень доказательств. `RecipeCatalog.search` дополнительно принимает `maturity`, а `Recipe` содержит этот immutable field.
 
@@ -53,31 +53,31 @@ System/content insets имеют разный смысл. Shell получает
 
 Частично проверенные источники 3 октября 2026 года: [Bot API](https://core.telegram.org/bots/api), [Mini Apps/ThemeParams](https://core.telegram.org/bots/webapps#themeparams), [официальный WebApp SDK](https://telegram.org/js/telegram-web-app.js), [aiogram Router](https://docs.aiogram.dev/en/latest/dispatcher/router.html), [SQLite authorizer](https://docs.python.org/3.13/library/sqlite3.html#sqlite3.Connection.set_authorizer), [executescript](https://docs.python.org/3.13/library/sqlite3.html#sqlite3.Connection.executescript), [Response.json](https://developer.mozilla.org/en-US/docs/Web/API/Response/json), [204](https://developer.mozilla.org/en-US/docs/Web/HTTP/Reference/Status/204), [205](https://developer.mozilla.org/en-US/docs/Web/HTTP/Reference/Status/205), [color-scheme](https://developer.mozilla.org/en-US/docs/Web/CSS/Reference/Properties/color-scheme), [randomUUID](https://developer.mozilla.org/en-US/docs/Web/API/Crypto/randomUUID), [fetch](https://developer.mozilla.org/en-US/docs/Web/API/Fetch_API/Using_Fetch), [redirect](https://developer.mozilla.org/en-US/docs/Web/API/Request/redirect). Это сверка перечисленных контрактов, не live аккаунт/платеж.
 
-Storage/transport/provider interfaces 0.19.0: OnceStore/AsyncTransport/ProviderAdapter/RefundProvider и KeyValueStorage/StorageFactory/FetchTransport. Параметры и проверки адаптера — в локальной [модели расширения](extensions.md).
+Storage/transport/provider interfaces (с 0.9.0): OnceStore/AsyncTransport/ProviderAdapter/RefundProvider и KeyValueStorage/StorageFactory/FetchTransport. Параметры и проверки адаптера — в локальной [модели расширения](extensions.md).
 
-Core starter 0.19.0: StarterComponent, StarterConflict, starter_components; create_starter components keyword и StarterPlan.components/requested_components. Закрытый набор и сценарии — [выбор компонентов](starter-selection.md).
+Core starter (с 0.10.0): StarterComponent, StarterConflict, starter_components; create_starter components keyword и StarterPlan.components/requested_components. Закрытый набор и сценарии — [выбор компонентов](starter-selection.md).
 
-Планы и локальный runner добавлены в 0.19.0: `RecipeRunPlan`, `RecipeRunResult`, `plan_recipe`, `run_recipe_offline` из Python root; [requirements/fixtures/границы](recipe-execution.md). В текущей 0.24.0 есть 210 Python fixtures и 99 native references без executor; offline_ready не означает live разрешение.
+Планы и локальный runner добавлены в 0.13.0: `RecipeRunPlan`, `RecipeRunResult`, `plan_recipe`, `run_recipe_offline` из Python root; [requirements/fixtures/границы](recipe-execution.md). В текущей 0.24.0 есть 210 Python fixtures и 99 native references без executor; offline_ready не означает live разрешение.
 
-В 0.19.0 новые KeyboardLayout/KeyboardCapabilities и action_layout/inline_layout/reply_layout описаны в [композициях клавиатур](keyboard-layouts.md): flat inputs, width pattern, snapshot/context validation и host capability fallback.
+С 0.14.0 KeyboardLayout/KeyboardCapabilities и action_layout/inline_layout/reply_layout описаны в [композициях клавиатур](keyboard-layouts.md): flat inputs, width pattern, snapshot/context validation и host capability fallback.
 
 Навигация сообщений: `NavigationScreen`, `NavigationState`, `NavigationResult`, `MessageNavigation`, `navigation_router`; полный [контракт](message-navigation.md). Все пять public exports experimental; state локальный, business ACL и persistent state остаются у проекта.
 
 Составные элементы выбора: `SelectionOption/Spec/Context/State/Result/SelectionMenu` из SDK-free root и `selection_keyboard/selection_router` из optional aiogram. [Server rules и confirmation](selection-controls.md) описывают границы локального намерения и бизнес-транзакции host.
 
-Расширенные поля 0.19.0: `FieldValue`, `NumberField`, `EmailField`, `PhoneField`, `DateField`, `FileField`, `ContactField`, `LocationField`, `DialogSubmission`, `dialog_form_router` из optional aiogram. Полная [композиция и ограничения](dialog-fields.md); строковые старые формы сохраняют контракт.
+Расширенные поля (с 0.18.0): `FieldValue`, `NumberField`, `EmailField`, `PhoneField`, `DateField`, `FileField`, `ContactField`, `LocationField`, `DialogSubmission`, `dialog_form_router` из optional aiogram. Полная [композиция и ограничения](dialog-fields.md); строковые старые формы сохраняют контракт.
 
 ## Сообщения
 
 `MessageBuilder/FormattedText/TextEntity`, `EntityKind/TextPayload`, UTF-16/HTML/MarkdownV2 helpers и split_formatted — SDK-free API. [Полная композиция](message-text.md) сохраняет текущий Dispatcher и связывает literal user text, explicit parse_mode=None и lossless partition. Capability flag не проверяет custom emoji metadata/entitlement; host делает это отдельно.
 
-Для optional aiogram медиа 0.20.0 — [полный контракт](media.md): byte upload/same-bot file_id, literal подпись, album/edit и bounded hosted read. No sending/retry/codec/ACL guarantee; используется Bot проекта.
+Для optional aiogram медиа (с 0.20.0) — [полный контракт](media.md): byte upload/same-bot file_id, literal подпись, album/edit и bounded hosted read. No sending/retry/codec/ACL guarantee; используется Bot проекта.
 
-[Профили 0.21.0](profiles.md): read observations и own-bot patch с host ACL; без hidden data/MTProto/Business и автоматического retry.
+[Профили (с 0.21.0)](profiles.md): read observations и own-bot patch с host ACL; без hidden data/MTProto/Business и автоматического retry.
 
-[Inline-поиск 0.24.0](inline-search.md): `InlineSearch`, `InlineItem`, `InlinePage`, `InlineCachePolicy`, `inline_articles`, `inline_query_router` и типы host adapters импортируются из `telegram_patterns.aiogram`. Только явно shareable результаты, текущая host ACL, подписанный cursor и явная политика кеша. Персональный кеш не делает отправленное сообщение приватным; positive cache может пережить изменение прав без нового Update. Потерянный ответ не повторяется автоматически.
+[Inline-поиск (с 0.22.0)](inline-search.md): `InlineSearch`, `InlineItem`, `InlinePage`, `InlineCachePolicy`, `inline_articles`, `inline_query_router` и типы host adapters импортируются из `telegram_patterns.aiogram`. Только явно shareable результаты, текущая host ACL, подписанный cursor и явная политика кеша. Персональный кеш не делает отправленное сообщение приватным; positive cache может пережить изменение прав без нового Update. Потерянный ответ не повторяется автоматически.
 
-[Опросы 0.24.0](polls.md): `PollSpec`, `PollChoice`, `poll_request`, `poll_state`, `poll_vote`, `poll_option_added`, `PollBinding`, `PollLocator`, `PollEvent`, `poll_events_router` и типы наблюдений/host adapters из `telegram_patterns.aiogram`. Современные multi-correct quiz и persistent option IDs; доступны только собственные зарегистрированные события. Host владеет правами, durable intent и receipts. Нет `getPoll`, полного списка скрытых голосующих или автоматического повторного создания опроса после unknown outcome.
+[Опросы (с 0.22.0)](polls.md): `PollSpec`, `PollChoice`, `poll_request`, `poll_state`, `poll_vote`, `poll_option_added`, `PollBinding`, `PollLocator`, `PollEvent`, `poll_events_router` и типы наблюдений/host adapters из `telegram_patterns.aiogram`. Современные multi-correct quiz и persistent option IDs; доступны только собственные зарегистрированные события. Host владеет правами, durable intent и receipts. Нет `getPoll`, полного списка скрытых голосующих или автоматического повторного создания опроса после unknown outcome.
 
 ## platform-operations
 

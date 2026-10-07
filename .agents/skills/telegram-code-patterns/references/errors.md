@@ -1,4 +1,6 @@
-# Ошибки библиотеки 0.8.0
+# Ошибки библиотеки
+
+Доступно с 0.8.0, проверено на 0.24.0.
 
 Подключай `safe_error_report` из Python core или `safeErrorReport` из TypeScript root. Они возвращают пять безопасных полей: code, category, outcome, recovery, message. Вход — исключение; внешнее JSON тело не является доверенным доказательством результата. Developer message/stack не выводи в чат или обычный лог.
 

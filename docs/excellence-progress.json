@@ -520,9 +520,14 @@
     {
       "id": 42,
       "title": "Согласовать версии пакета в скиллах",
-      "status": "pending",
-      "commit_subject": null,
-      "evidence": [],
+      "status": "done",
+      "commit_subject": "excellence(042): label library versions as available since X, checked on 0.24.0",
+      "evidence": [
+        "References in skills and their docs sources start with 'Доступно с X, проверено на 0.24.0'; pinned old versions (поставка/wheel/библиотека 0.x) removed; starter-selection artifact paths -> <WHEEL>/<TARBALL>",
+        "components.md introduction versions corrected from CHANGELOG and git history (named types 0.7.0, interfaces 0.9.0, starter 0.10.0, recipe plans 0.13.0, KeyboardLayout 0.14.0, fields 0.18.0, inline/polls 0.22.0); maturity snapshot updated to 43 groups / 27 experimental recipes",
+        "tests/test_skill_versions.py: labels equal pyproject version, since-versions are released, no old exact versions or artifacts, TS example imports are current exports, docs copies identical (found and fixed a stale telegram-dialogs dialog-restart copy)",
+        "packages/python/tests/test_reference_imports.py: 199 Python example imports resolve, also on the installed 0.24.0 wheel"
+      ],
       "remaining": null
     },
     {

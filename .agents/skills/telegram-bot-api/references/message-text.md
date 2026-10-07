@@ -1,6 +1,8 @@
-# Безопасный конструктор сообщений — 0.19.0
+# Безопасный конструктор сообщений
 
-Core `telegram_patterns` работает без aiogram. Для имеющегося aiogram-проекта используйте установленный локальный wheel 0.19.0 с aiogram extra; сохраняйте текущий Dispatcher, middleware, storage и язык проекта. Публикация в PyPI/npm не заявлена. Другой SDK принимает те же JSON text/entities через свой официальный adapter.
+Доступно с 0.19.0, проверено на 0.24.0.
+
+Core `telegram_patterns` работает без aiogram. Для имеющегося aiogram-проекта используйте установленный локальный wheel с aiogram extra; сохраняйте текущий Dispatcher, middleware, storage и язык проекта. Публикация в PyPI/npm не заявлена. Другой SDK принимает те же JSON text/entities через свой официальный adapter.
 
 ## Контракт
 

@@ -1,6 +1,8 @@
-# Композиции клавиатур 0.14.0
+# Композиции клавиатур
 
-Optional aiogram extra, Python >=3.11 и предоставленный wheel `awesome-telegram-patterns` 0.14.0; native модели берите из установленного aiogram. Пакет не предполагается доступным в PyPI. Существующие `action_menu`, `inline_keyboard` и `reply_keyboard` сохраняют свои defaults и контракты. Новый API нужен, когда удобнее передать flat список и шаблон ширин, а не нарезать его вручную.
+Доступно с 0.14.0, проверено на 0.24.0.
+
+Optional aiogram extra, Python >=3.11 и предоставленный wheel `awesome-telegram-patterns`; native модели берите из установленного aiogram. Пакет не предполагается доступным в PyPI. Существующие `action_menu`, `inline_keyboard` и `reply_keyboard` сохраняют свои defaults и контракты. Новый API нужен, когда удобнее передать flat список и шаблон ширин, а не нарезать его вручную.
 
 ## Две, три и смешанные строки
 
