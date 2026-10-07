@@ -177,3 +177,5 @@ keyboard = action_menu([
 Каталог API содержит request-примеры; он не означает, что все возможности Telegram реализованы и испытаны в боевом приложении. Mini App UI — основа для вашего продукта; полная приемка на реальных телефонах, планшетах и ПК еще впереди. Платежные скиллы описывают интеграции Stars, Crypto Pay, Platega и ЮКассы; merchant-настройки и live-проверки относятся к конкретному проекту. Bot API, Mini Apps и пользовательские MTProto-сессии имеют отдельные границы доступа.
 
 Для изменений набора: [CONTRIBUTING.md](CONTRIBUTING.md). Источники: [docs/sources.md](docs/sources.md). Развитие: [план из 100 пунктов](docs/library-roadmap-100.md) и [регистр выполнения](docs/v1-progress.json).
+
+- [Tiny Telegram Tools](https://tg.zovo.one) — 22 single-purpose Telegram bots: anonymous inbox, party games, expense splitter, habit tracker, reminders, focus timer, and more.
