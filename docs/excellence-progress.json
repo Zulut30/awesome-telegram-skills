@@ -227,9 +227,13 @@
     {
       "id": 19,
       "title": "Опубликовать политику поддержки",
-      "status": "pending",
-      "commit_subject": null,
-      "evidence": [],
+      "status": "done",
+      "commit_subject": "excellence(019): publish a support policy",
+      "evidence": [
+        "docs/versioning.md#политика-поддержки: библиотека 0.x/1.x, Python 3.11-3.15, Node.js 20-26, aiogram, Bot API со сроками",
+        "сроки сверены 2026-10-07: devguide.python.org/versions (3.11 EOL 10.2027 ... 3.14 EOL 10.2030), github.com/nodejs/Release (20 EOL 2026-04-30, 22 до 2027-04-30, 24 до 2028-04-30)",
+        "ссылка из README; сайт документации собирается, якорь политика-поддержки существует"
+      ],
       "remaining": null
     },
     {

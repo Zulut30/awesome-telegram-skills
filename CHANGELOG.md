@@ -20,6 +20,7 @@
 - Пункт 16: `CODE_OF_CONDUCT.md` на основе Contributor Covenant 2.1 с правилами модерации issues и обсуждений (секреты в сообщениях, публичные уязвимости, спам, личные споры) и шкалой последствий.
 - Пункт 17: `scripts/check_api_compatibility.py` и job CI сравнивают публичные символы Python и TypeScript с предыдущим тегом или базовой веткой: удаленный или измененный символ без упоминания в верхнем разделе CHANGELOG валит проверку. Первый прогон относительно `main` нашел 11 измененных символов, из них 9 не были названы в CHANGELOG; запись пункта 5 дополнена.
 - Пункт 18: каждый релиз содержит детерминированный CycloneDX 1.6 SBOM (`awesome-telegram-patterns-X.Y.Z.cdx.json`: оба артефакта с SHA-256, лицензия тега, необязательные зависимости extras), он входит в `SHA256SUMS`; workflow Release создает attestation происхождения для wheel, tarball и SBOM через `actions/attest`. Проверка: `gh attestation verify`.
+- Пункт 19: `docs/versioning.md` содержит политику поддержки: версии библиотеки, Python 3.11–3.15, Node.js 20–26, aiogram и Bot API со сроками, сверенными с Python Developer's Guide и расписанием Node.js. Node.js 20 остается минимальным в `engines`, но upstream не поддерживает его с 30.04.2026.
 
 ## 0.24.0
 
