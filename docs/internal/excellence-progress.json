@@ -1277,9 +1277,13 @@
     {
       "id": 100,
       "title": "Публичное табло качества",
-      "status": "pending",
-      "commit_subject": null,
-      "evidence": [],
+      "status": "done",
+      "commit_subject": "excellence(100): Publish a quality board on the site that CI refreshes",
+      "evidence": [
+        "scripts/build_quality_board.py: skill selection accuracy, skill value, Bot API 10.3 methods with recipes (185/185) and components (104/185), source check dates, live-checked cases (0 so far), latest acceptance; --ci adds green share of Repository checks on main and the latest Full acceptance from the GitHub API",
+        "docs-site.yml builds the board before every site build and passes it to build_docs_site.py --quality; docs/quality-board.md page (sidebar, README) shows the table and the CI timestamp; Documentation Pages also runs daily",
+        "Missing CI data shows as no data instead of failing; tests/test_quality_board.py, site page test, verify_docs_site and docs-browser (232 checks) pass"
+      ],
       "remaining": null
     }
   ]

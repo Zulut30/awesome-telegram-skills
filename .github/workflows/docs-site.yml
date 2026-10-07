@@ -2,7 +2,7 @@ name: Documentation site
 
 # Shared build and checks of the documentation site. Repository checks call it for every pull request and push
 # (docs-site job); Documentation Pages calls it on main and then deploys the uploaded Pages artifact.
-# The GITHUB_TOKEN permissions come from the calling job: Pages needs pages: read, the checks only contents: read.
+# The GITHUB_TOKEN permissions come from the calling job: actions: read for the quality board, pages: read for Pages.
 on:
   workflow_call:
     inputs:
@@ -27,7 +27,11 @@ jobs:
           cache: npm
       - run: python -m pip install -r requirements-docs.txt
       - run: python -m unittest discover -s site/tests -v
-      - run: python scripts/build_docs_site.py --source . --output output/docs-site --revision '${{ github.sha }}'
+      # Quality board: repository numbers plus the CI ones from the GitHub API (needs actions: read from the caller).
+      - env:
+          GITHUB_TOKEN: ${{ github.token }}
+        run: python scripts/build_quality_board.py --ci --repo "$GITHUB_REPOSITORY" --output output/quality-board.json
+      - run: python scripts/build_docs_site.py --source . --output output/docs-site --revision '${{ github.sha }}' --quality output/quality-board.json
       - run: python scripts/verify_docs_site.py --site output/docs-site --report output/docs-site-check.json
       - run: npm ci
       - run: npx playwright install --with-deps chromium
@@ -40,6 +44,7 @@ jobs:
           name: docs-site-checks
           path: |
             output/docs-site-check.json
+            output/quality-board.json
             output/playwright/docs-site
           if-no-files-found: warn
       - if: inputs.pages-artifact

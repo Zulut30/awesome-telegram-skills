@@ -52,6 +52,13 @@ class DocumentationOperations(unittest.TestCase):
         quickstart = (self.site / 'docs/quickstart/index.html').read_text(encoding='utf-8')
         self.assertRegex(quickstart, r'class="breadcrumbs">.*?/ Обучение</p>')
 
+    def test_quality_board_shows_repository_numbers_and_says_when_ci_is_missing(self):
+        page = (self.site / 'docs/quality-board/index.html').read_text(encoding='utf-8')
+        self.assertIn('<h2 id="numbers">Числа</h2>', page)
+        self.assertIn('нет данных: сайт собран без CI', page)
+        self.assertIn('Выбор скиллов', page)
+        self.assertRegex(page, r'Методы Bot API [0-9.]+ с рецептом</td><td>\d+ из \d+')
+
     def test_check_rebuild_keeps_existing_output(self):
         before = (self.site / 'index.html').read_bytes()
         result = subprocess.run([sys.executable, str(ROOT / 'scripts/build_docs_site.py'), '--source', str(self.source), '--output', str(self.site), '--check'], capture_output=True, text=True, timeout=90)

@@ -285,6 +285,9 @@ jobs:
     name: Documentation site
     # The same build, link and browser checks that Documentation Pages runs before publishing from main.
     uses: ./.github/workflows/docs-site.yml
+    permissions:
+      actions: read
+      contents: read
 
   api-compatibility:
     name: Public API compatibility and CHANGELOG

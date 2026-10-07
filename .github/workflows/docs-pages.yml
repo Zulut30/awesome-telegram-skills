@@ -5,6 +5,9 @@ name: Documentation Pages
 on:
   push:
     branches: [main]
+  # Daily, so the quality board follows CI even without new commits.
+  schedule:
+    - cron: '29 5 * * *'
   workflow_dispatch:
 
 permissions:
@@ -21,6 +24,7 @@ jobs:
     name: Build and verify documentation
     uses: ./.github/workflows/docs-site.yml
     permissions:
+      actions: read
       contents: read
       pages: read
     with:

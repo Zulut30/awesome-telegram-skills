@@ -20,6 +20,8 @@ import markdown
 from markdown.extensions.toc import slugify_unicode
 import yaml
 
+from build_quality_board import collect as quality_numbers
+
 REPOSITORY = 'https://github.com/Zulut30/awesome-telegram-skills'
 SITE_URL = 'https://zulut30.github.io/awesome-telegram-skills/'
 ROOT = Path(__file__).resolve().parents[1]
@@ -161,8 +163,9 @@ class DocumentHTML(HTMLParser):
 
 
 class Builder:
-    def __init__(self, source: Path, output: Path, site_url: str, revision: str):
+    def __init__(self, source: Path, output: Path, site_url: str, revision: str, quality: Path | None = None):
         self.source, self.output = source, output
+        self.quality = quality  # CI numbers of the quality board; without them the board uses repository data only
         self.site_url, self.revision = site_url.rstrip('/') + '/', revision
         self.files = source_files(source)
         self.mapping = {file.relative_to(source).as_posix(): route_for(file.relative_to(source).as_posix())
@@ -261,9 +264,37 @@ class Builder:
                 resource_title, _ = title_and_body(file.read_text(encoding='utf-8'), file.stem)
                 content += f'<li><a href="{text(self.link(source_name, self.mapping[name]))}">{text(resource_title)}</a></li>'
             content += '</ul>'
+        if name == 'docs/quality-board.md':
+            content += self.quality_board()
         internal = name.startswith('docs/internal/')
         section = skill.name if skill else 'Внутренние материалы' if internal else self.section_of.get(name, 'Руководства')
         self.render(self.mapping[name], skill.title if skill else title, content, section=section, toc=md.toc, origin=name, summary=skill.description if skill else '', search_text=raw, searchable=not internal)
+
+    def quality_board(self) -> str:
+        """Numbers of the quality board: the CI file when the workflow passed one, else repository data alone."""
+        board = json.loads(self.quality.read_text(encoding='utf-8')) if self.quality else quality_numbers(self.source)
+
+        def share(part: int, whole: int) -> str:
+            return f'{part} из {whole} ({part / whole:.0%})' if whole else 'нет данных'
+
+        ci = board.get('ci') or {}
+        checks, acceptance = ci.get('repository_checks_main'), ci.get('full_acceptance')
+        selection, value, api, sources, live, accepted = (board[key] for key in ('skill_selection', 'skill_value', 'bot_api', 'sources', 'live', 'acceptance'))
+        rows = [
+            ('Зеленые запуски Repository checks на main', share(checks['green'], checks['runs']) + (f", последний {checks['last']['date']}: {checks['last']['conclusion']}" if checks and checks['last'] else '') if checks else 'нет данных: сайт собран без CI'),
+            ('Последний Full acceptance', f"{acceptance['last']['conclusion']}, {acceptance['last']['date']}" if acceptance and acceptance['last'] else 'нет данных'),
+            ('Выбор скиллов', '; '.join(f"{run['model']}: {run['accuracy']:.1%} ({run['correct']} из {run['cases']})" for run in selection['runs']) + f" — порог {selection['threshold']:.0%}, замер {selection['date']}"),
+            ('Задачи решены полностью', f"со скиллом {share(value['passed_with'], value['tasks'])}, без скилла {share(value['passed_without'], value['tasks'])}"),
+            ('Критерии выполнены', f"со скиллом {share(value['criteria_with'], value['criteria'])}, без скилла {share(value['criteria_without'], value['criteria'])}"),
+            (f"Методы Bot API {api['version']} с рецептом", share(api['with_recipe'], api['methods']) + f"; запрос собирает SDK — {api['recipe_executed']}"),
+            (f"Методы Bot API {api['version']} с компонентом", share(api['with_component'], api['methods'])),
+            ('Сверка с документацией', f"скиллы {sources['oldest_check']} — {sources['newest_check']}, последняя запись журнала {sources['last_journal_entry']}"),
+            ('Проверено вживую в Telegram', f"{live['passed']} из {live['cases']} случаев, отчетов с устройств: {live['device_reports']}" if live['cases'] else f"живой приемки еще не было; отчетов с устройств: {live['device_reports']}"),
+            ('Последняя приемка', f"{accepted['version']}, {accepted['date']}: {accepted['stages']} этапов, {accepted['python_tests']} Python- и {accepted['typescript_tests']} TypeScript-тестов"),
+        ]
+        stamp = f"Данные CI на {ci['checked_at']}." if ci.get('checked_at') else 'Данные CI не получены.'
+        body = ''.join(f'<tr><td>{text(label)}</td><td>{text(value)}</td></tr>' for label, value in rows)
+        return f'<h2 id="numbers">Числа</h2><p>{text(stamp)}</p><table><thead><tr><th>Показатель</th><th>Значение</th></tr></thead><tbody>{body}</tbody></table>'
 
     def card(self, route: str, title: str, description: str, target: str, label: str = 'Открыть →', tag: str = '', extra: str = '') -> str:
         return f'<section class="card">{extra}<span class="card-tag">{text(tag)}</span><h3><a href="{text(relative(target, route))}">{text(title)}</a></h3><p>{text(description)}</p><a href="{text(relative(target, route))}">{text(label)}</a></section>'
@@ -371,6 +402,7 @@ def main() -> int:
     parser.add_argument('--site-url', default=SITE_URL)
     parser.add_argument('--revision', default='preview')
     parser.add_argument('--check', action='store_true', help='Compare a fresh deterministic build without changing existing output')
+    parser.add_argument('--quality', type=Path, help='quality board numbers with CI data from build_quality_board.py --ci')
     args = parser.parse_args()
     source, output = args.source.resolve(), args.output.resolve()
     if output == source or source.is_relative_to(output):
@@ -381,14 +413,14 @@ def main() -> int:
         before = {file.relative_to(output).as_posix(): hashlib.sha256(file.read_bytes()).hexdigest() for file in output.rglob('*') if file.is_file()}
         with TemporaryDirectory(prefix='telegram-docs-check-') as temporary:
             fresh = Path(temporary) / 'site'
-            manifest = Builder(source, fresh, args.site_url, args.revision).build()
+            manifest = Builder(source, fresh, args.site_url, args.revision, args.quality).build()
             expected = {file.relative_to(fresh).as_posix(): hashlib.sha256(file.read_bytes()).hexdigest() for file in fresh.rglob('*') if file.is_file()}
         if before != expected:
             raise ValueError('Site differs from its source; existing output preserved')
     else:
         if output.exists():
             raise ValueError('Output already exists; choose a new directory or --check. Existing files preserved.')
-        manifest = Builder(source, output, args.site_url, args.revision).build()
+        manifest = Builder(source, output, args.site_url, args.revision, args.quality).build()
     print(json.dumps({'passed': True, 'version': manifest['version'], 'skills': manifest['skills'], 'component_groups': manifest['component_groups'], 'api_symbols': manifest['api_symbols'], 'recipes': manifest['recipes'], 'pages': len(manifest['pages']), 'check': args.check, 'output': str(output)}, ensure_ascii=False))
     return 0
 
