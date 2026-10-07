@@ -1,0 +1,600 @@
+{
+  "schema_version": 1,
+  "source": "https://core.telegram.org/bots/webapps",
+  "checked_date": "2026-10-07",
+  "scope": "Parameter, callback and result types of the documented native methods. Parameter names and optionality come from catalog/mini-app-index.json; scripts/build_native_signatures.py checks that they match.",
+  "declarations": {
+    "TelegramNativeObject": "Readonly<Record<string, unknown>>",
+    "TelegramColor": "`#${string}` | 'bg_color' | 'secondary_bg_color'",
+    "TelegramBottomBarColor": "TelegramColor | 'bottom_bar_bg_color'",
+    "TelegramEventHandler": "(...args: never[]) => void",
+    "PopupButton": "{ id?: string; type?: 'default' | 'ok' | 'close' | 'cancel' | 'destructive'; text?: string }",
+    "PopupParams": "{ title?: string; message: string; buttons?: PopupButton[] }",
+    "ScanQrPopupParams": "{ text?: string }",
+    "StoryWidgetLink": "{ url: string; name?: string }",
+    "StoryShareParams": "{ text?: string; widget_link?: StoryWidgetLink }",
+    "EmojiStatusParams": "{ duration?: number }",
+    "DownloadFileParams": "{ url: string; file_name: string }",
+    "OpenLinkOptions": "{ try_instant_view?: boolean }",
+    "BottomButtonParams": "{ text?: string; color?: string; text_color?: string; has_shine_effect?: boolean; position?: 'left' | 'right' | 'top' | 'bottom'; is_active?: boolean; is_visible?: boolean; icon_custom_emoji_id?: string }",
+    "BiometricRequestAccessParams": "{ reason?: string }",
+    "BiometricAuthenticateParams": "{ reason?: string }",
+    "MotionStartParams": "{ refresh_rate?: number }",
+    "DeviceOrientationStartParams": "{ refresh_rate?: number; need_absolute?: boolean }",
+    "LocationData": "{ latitude: number; longitude: number; altitude: number | null; course: number | null; speed: number | null; horizontal_accuracy: number | null; vertical_accuracy: number | null; course_accuracy: number | null; speed_accuracy: number | null }",
+    "StorageCallback<T>": "(error: string | null, result?: T) => void",
+    "InlineQueryChatType": "'users' | 'bots' | 'groups' | 'channels'",
+    "InvoiceStatus": "'paid' | 'cancelled' | 'failed' | 'pending'",
+    "HomeScreenStatus": "'unsupported' | 'unknown' | 'added' | 'missed'"
+  },
+  "methods": {
+    "Accelerometer.start": {
+      "parameters": {
+        "params": "MotionStartParams",
+        "callback": "(started: boolean) => void"
+      },
+      "returns": "TelegramNativeObject"
+    },
+    "Accelerometer.stop": {
+      "parameters": {
+        "callback": "(stopped: boolean) => void"
+      },
+      "returns": "TelegramNativeObject"
+    },
+    "BackButton.hide": {
+      "parameters": {},
+      "returns": "TelegramNativeObject"
+    },
+    "BackButton.offClick": {
+      "parameters": {
+        "callback": "() => void"
+      },
+      "returns": "TelegramNativeObject"
+    },
+    "BackButton.onClick": {
+      "parameters": {
+        "callback": "() => void"
+      },
+      "returns": "TelegramNativeObject"
+    },
+    "BackButton.show": {
+      "parameters": {},
+      "returns": "TelegramNativeObject"
+    },
+    "BiometricManager.authenticate": {
+      "parameters": {
+        "params": "BiometricAuthenticateParams",
+        "callback": "(authenticated: boolean, biometricToken?: string) => void"
+      },
+      "returns": "TelegramNativeObject"
+    },
+    "BiometricManager.init": {
+      "parameters": {
+        "callback": "() => void"
+      },
+      "returns": "TelegramNativeObject"
+    },
+    "BiometricManager.openSettings": {
+      "parameters": {},
+      "returns": "TelegramNativeObject"
+    },
+    "BiometricManager.requestAccess": {
+      "parameters": {
+        "params": "BiometricRequestAccessParams",
+        "callback": "(granted: boolean) => void"
+      },
+      "returns": "TelegramNativeObject"
+    },
+    "BiometricManager.updateBiometricToken": {
+      "parameters": {
+        "token": "string",
+        "callback": "(updated: boolean) => void"
+      },
+      "returns": "TelegramNativeObject"
+    },
+    "CloudStorage.getItem": {
+      "parameters": {
+        "key": "string",
+        "callback": "StorageCallback<string>"
+      },
+      "returns": "TelegramNativeObject"
+    },
+    "CloudStorage.getItems": {
+      "parameters": {
+        "keys": "string[]",
+        "callback": "StorageCallback<Record<string, string>>"
+      },
+      "returns": "TelegramNativeObject"
+    },
+    "CloudStorage.getKeys": {
+      "parameters": {
+        "callback": "StorageCallback<string[]>"
+      },
+      "returns": "TelegramNativeObject"
+    },
+    "CloudStorage.removeItem": {
+      "parameters": {
+        "key": "string",
+        "callback": "StorageCallback<boolean>"
+      },
+      "returns": "TelegramNativeObject"
+    },
+    "CloudStorage.removeItems": {
+      "parameters": {
+        "keys": "string[]",
+        "callback": "StorageCallback<boolean>"
+      },
+      "returns": "TelegramNativeObject"
+    },
+    "CloudStorage.setItem": {
+      "parameters": {
+        "key": "string",
+        "value": "string",
+        "callback": "StorageCallback<boolean>"
+      },
+      "returns": "TelegramNativeObject"
+    },
+    "DeviceOrientation.start": {
+      "parameters": {
+        "params": "DeviceOrientationStartParams",
+        "callback": "(started: boolean) => void"
+      },
+      "returns": "TelegramNativeObject"
+    },
+    "DeviceOrientation.stop": {
+      "parameters": {
+        "callback": "(stopped: boolean) => void"
+      },
+      "returns": "TelegramNativeObject"
+    },
+    "DeviceStorage.clear": {
+      "parameters": {
+        "callback": "StorageCallback<boolean>"
+      },
+      "returns": "TelegramNativeObject"
+    },
+    "DeviceStorage.getItem": {
+      "parameters": {
+        "key": "string",
+        "callback": "StorageCallback<string | null>"
+      },
+      "returns": "TelegramNativeObject"
+    },
+    "DeviceStorage.removeItem": {
+      "parameters": {
+        "key": "string",
+        "callback": "StorageCallback<boolean>"
+      },
+      "returns": "TelegramNativeObject"
+    },
+    "DeviceStorage.setItem": {
+      "parameters": {
+        "key": "string",
+        "value": "string",
+        "callback": "StorageCallback<boolean>"
+      },
+      "returns": "TelegramNativeObject"
+    },
+    "Gyroscope.start": {
+      "parameters": {
+        "params": "MotionStartParams",
+        "callback": "(started: boolean) => void"
+      },
+      "returns": "TelegramNativeObject"
+    },
+    "Gyroscope.stop": {
+      "parameters": {
+        "callback": "(stopped: boolean) => void"
+      },
+      "returns": "TelegramNativeObject"
+    },
+    "HapticFeedback.impactOccurred": {
+      "parameters": {
+        "style": "'light' | 'medium' | 'heavy' | 'rigid' | 'soft'"
+      },
+      "returns": "TelegramNativeObject"
+    },
+    "HapticFeedback.notificationOccurred": {
+      "parameters": {
+        "type": "'error' | 'success' | 'warning'"
+      },
+      "returns": "TelegramNativeObject"
+    },
+    "HapticFeedback.selectionChanged": {
+      "parameters": {},
+      "returns": "TelegramNativeObject"
+    },
+    "LocationManager.getLocation": {
+      "parameters": {
+        "callback": "(location: LocationData | null) => void"
+      },
+      "returns": "TelegramNativeObject"
+    },
+    "LocationManager.init": {
+      "parameters": {
+        "callback": "() => void"
+      },
+      "returns": "TelegramNativeObject"
+    },
+    "LocationManager.openSettings": {
+      "parameters": {},
+      "returns": "TelegramNativeObject"
+    },
+    "MainButton.disable": {
+      "parameters": {},
+      "returns": "TelegramNativeObject"
+    },
+    "MainButton.enable": {
+      "parameters": {},
+      "returns": "TelegramNativeObject"
+    },
+    "MainButton.hide": {
+      "parameters": {},
+      "returns": "TelegramNativeObject"
+    },
+    "MainButton.hideProgress": {
+      "parameters": {},
+      "returns": "TelegramNativeObject"
+    },
+    "MainButton.offClick": {
+      "parameters": {
+        "callback": "() => void"
+      },
+      "returns": "TelegramNativeObject"
+    },
+    "MainButton.onClick": {
+      "parameters": {
+        "callback": "() => void"
+      },
+      "returns": "TelegramNativeObject"
+    },
+    "MainButton.setParams": {
+      "parameters": {
+        "params": "BottomButtonParams"
+      },
+      "returns": "TelegramNativeObject"
+    },
+    "MainButton.setText": {
+      "parameters": {
+        "text": "string"
+      },
+      "returns": "TelegramNativeObject"
+    },
+    "MainButton.show": {
+      "parameters": {},
+      "returns": "TelegramNativeObject"
+    },
+    "MainButton.showProgress": {
+      "parameters": {
+        "leaveActive": "boolean"
+      },
+      "returns": "TelegramNativeObject"
+    },
+    "SecondaryButton.disable": {
+      "parameters": {},
+      "returns": "TelegramNativeObject"
+    },
+    "SecondaryButton.enable": {
+      "parameters": {},
+      "returns": "TelegramNativeObject"
+    },
+    "SecondaryButton.hide": {
+      "parameters": {},
+      "returns": "TelegramNativeObject"
+    },
+    "SecondaryButton.hideProgress": {
+      "parameters": {},
+      "returns": "TelegramNativeObject"
+    },
+    "SecondaryButton.offClick": {
+      "parameters": {
+        "callback": "() => void"
+      },
+      "returns": "TelegramNativeObject"
+    },
+    "SecondaryButton.onClick": {
+      "parameters": {
+        "callback": "() => void"
+      },
+      "returns": "TelegramNativeObject"
+    },
+    "SecondaryButton.setParams": {
+      "parameters": {
+        "params": "BottomButtonParams"
+      },
+      "returns": "TelegramNativeObject"
+    },
+    "SecondaryButton.setText": {
+      "parameters": {
+        "text": "string"
+      },
+      "returns": "TelegramNativeObject"
+    },
+    "SecondaryButton.show": {
+      "parameters": {},
+      "returns": "TelegramNativeObject"
+    },
+    "SecondaryButton.showProgress": {
+      "parameters": {
+        "leaveActive": "boolean"
+      },
+      "returns": "TelegramNativeObject"
+    },
+    "SecureStorage.clear": {
+      "parameters": {
+        "callback": "StorageCallback<boolean>"
+      },
+      "returns": "TelegramNativeObject"
+    },
+    "SecureStorage.getItem": {
+      "parameters": {
+        "key": "string",
+        "callback": "(error: string | null, value?: string | null, canRestore?: boolean) => void"
+      },
+      "returns": "TelegramNativeObject"
+    },
+    "SecureStorage.removeItem": {
+      "parameters": {
+        "key": "string",
+        "callback": "StorageCallback<boolean>"
+      },
+      "returns": "TelegramNativeObject"
+    },
+    "SecureStorage.restoreItem": {
+      "parameters": {
+        "key": "string",
+        "callback": "StorageCallback<string | null>"
+      },
+      "returns": "TelegramNativeObject"
+    },
+    "SecureStorage.setItem": {
+      "parameters": {
+        "key": "string",
+        "value": "string",
+        "callback": "StorageCallback<boolean>"
+      },
+      "returns": "TelegramNativeObject"
+    },
+    "SettingsButton.hide": {
+      "parameters": {},
+      "returns": "TelegramNativeObject"
+    },
+    "SettingsButton.offClick": {
+      "parameters": {
+        "callback": "() => void"
+      },
+      "returns": "TelegramNativeObject"
+    },
+    "SettingsButton.onClick": {
+      "parameters": {
+        "callback": "() => void"
+      },
+      "returns": "TelegramNativeObject"
+    },
+    "SettingsButton.show": {
+      "parameters": {},
+      "returns": "TelegramNativeObject"
+    },
+    "addToHomeScreen": {
+      "parameters": {},
+      "returns": "void"
+    },
+    "checkHomeScreenStatus": {
+      "parameters": {
+        "callback": "(status: HomeScreenStatus) => void"
+      },
+      "returns": "void"
+    },
+    "close": {
+      "parameters": {},
+      "returns": "void"
+    },
+    "closeScanQrPopup": {
+      "parameters": {},
+      "returns": "void"
+    },
+    "disableClosingConfirmation": {
+      "parameters": {},
+      "returns": "void"
+    },
+    "disableVerticalSwipes": {
+      "parameters": {},
+      "returns": "void"
+    },
+    "downloadFile": {
+      "parameters": {
+        "params": "DownloadFileParams",
+        "callback": "(accepted: boolean) => void"
+      },
+      "returns": "void"
+    },
+    "enableClosingConfirmation": {
+      "parameters": {},
+      "returns": "void"
+    },
+    "enableVerticalSwipes": {
+      "parameters": {},
+      "returns": "void"
+    },
+    "exitFullscreen": {
+      "parameters": {},
+      "returns": "void"
+    },
+    "expand": {
+      "parameters": {},
+      "returns": "void"
+    },
+    "hideKeyboard": {
+      "parameters": {},
+      "returns": "void"
+    },
+    "isVersionAtLeast": {
+      "parameters": {
+        "version": "string"
+      },
+      "returns": "boolean"
+    },
+    "lockOrientation": {
+      "parameters": {},
+      "returns": "void"
+    },
+    "offEvent": {
+      "parameters": {
+        "eventType": "TelegramNativeEvent",
+        "eventHandler": "TelegramEventHandler"
+      },
+      "returns": "void"
+    },
+    "onEvent": {
+      "parameters": {
+        "eventType": "TelegramNativeEvent",
+        "eventHandler": "TelegramEventHandler"
+      },
+      "returns": "void"
+    },
+    "openInvoice": {
+      "parameters": {
+        "url": "string",
+        "callback": "(status: InvoiceStatus) => void"
+      },
+      "returns": "void"
+    },
+    "openLink": {
+      "parameters": {
+        "url": "string",
+        "options": "OpenLinkOptions"
+      },
+      "returns": "void"
+    },
+    "openTelegramLink": {
+      "parameters": {
+        "url": "string"
+      },
+      "returns": "void"
+    },
+    "readTextFromClipboard": {
+      "parameters": {
+        "callback": "(text: string | null) => void"
+      },
+      "returns": "void"
+    },
+    "ready": {
+      "parameters": {},
+      "returns": "void"
+    },
+    "requestChat": {
+      "parameters": {
+        "req_id": "string",
+        "callback": "(sent: boolean) => void"
+      },
+      "returns": "void"
+    },
+    "requestContact": {
+      "parameters": {
+        "callback": "(shared: boolean, response?: unknown) => void"
+      },
+      "returns": "void"
+    },
+    "requestEmojiStatusAccess": {
+      "parameters": {
+        "callback": "(granted: boolean) => void"
+      },
+      "returns": "void"
+    },
+    "requestFullscreen": {
+      "parameters": {},
+      "returns": "void"
+    },
+    "requestWriteAccess": {
+      "parameters": {
+        "callback": "(granted: boolean) => void"
+      },
+      "returns": "void"
+    },
+    "sendData": {
+      "parameters": {
+        "data": "string"
+      },
+      "returns": "void"
+    },
+    "setBackgroundColor": {
+      "parameters": {
+        "color": "TelegramColor"
+      },
+      "returns": "void"
+    },
+    "setBottomBarColor": {
+      "parameters": {
+        "color": "TelegramBottomBarColor"
+      },
+      "returns": "void"
+    },
+    "setEmojiStatus": {
+      "parameters": {
+        "custom_emoji_id": "string",
+        "params": "EmojiStatusParams",
+        "callback": "(set: boolean) => void"
+      },
+      "returns": "void"
+    },
+    "setHeaderColor": {
+      "parameters": {
+        "color": "TelegramColor"
+      },
+      "returns": "void"
+    },
+    "shareMessage": {
+      "parameters": {
+        "msg_id": "string",
+        "callback": "(sent: boolean) => void"
+      },
+      "returns": "void"
+    },
+    "shareToStory": {
+      "parameters": {
+        "media_url": "string",
+        "params": "StoryShareParams"
+      },
+      "returns": "void"
+    },
+    "showAlert": {
+      "parameters": {
+        "message": "string",
+        "callback": "() => void"
+      },
+      "returns": "void"
+    },
+    "showConfirm": {
+      "parameters": {
+        "message": "string",
+        "callback": "(confirmed: boolean) => void"
+      },
+      "returns": "void"
+    },
+    "showPopup": {
+      "parameters": {
+        "params": "PopupParams",
+        "callback": "(buttonId: string) => void"
+      },
+      "returns": "void"
+    },
+    "showScanQrPopup": {
+      "parameters": {
+        "params": "ScanQrPopupParams",
+        "callback": "(text: string) => boolean | void"
+      },
+      "returns": "void"
+    },
+    "switchInlineQuery": {
+      "parameters": {
+        "query": "string",
+        "choose_chat_types": "InlineQueryChatType[]"
+      },
+      "returns": "void"
+    },
+    "unlockOrientation": {
+      "parameters": {},
+      "returns": "void"
+    }
+  }
+}

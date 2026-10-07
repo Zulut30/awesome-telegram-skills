@@ -408,7 +408,7 @@
       "section": "typescript",
       "title": "Native availability и listener cleanup",
       "example": "examples/api-reference/typescript/native.ts",
-      "limits": "Каталоги и facade не являются полной parameter schema. Presence/platform/version не consent, launch, auth или успешный платеж. Callback и receiver сохраняются; host выбирает arguments/permissions. Listener/dispose подавляют late callbacks, native cleanup failure может требовать повторного dispose.",
+      "limits": "Типы аргументов и результатов каждого пути сгенерированы из официальных сигнатур и документации (scripts/build_native_signatures.py): неверный аргумент ловит tsc, runtime значения не проверяет. Presence/platform/version не consent, launch, auth или успешный платеж. Callback и receiver сохраняются; host выбирает arguments/permissions. Listener/dispose подавляют late callbacks, native cleanup failure может требовать повторного dispose.",
       "api": {
         "@awesome-telegram/patterns": {
           "TelegramNativeAPI": "Проверка поддержки, вызов, подписка и освобождение с проверкой версии",
@@ -417,7 +417,10 @@
           "TELEGRAM_NATIVE_EVENTS": "Имена нативных событий, только чтение",
           "TELEGRAM_NATIVE_EVENT_DETAILS": "Версии и источники событий, только чтение",
           "TelegramNativeMethod": "Literal известных native paths",
-          "TelegramNativeEvent": "Literal известных event names"
+          "TelegramNativeEvent": "Literal известных event names",
+          "TelegramNativeSignatures": "Документированные аргументы и результат каждого native path",
+          "TelegramNativeArguments": "Кортеж аргументов path для call",
+          "TelegramNativeResult": "Результат call по path: void, boolean или объект для цепочки"
         }
       }
     },

@@ -1748,10 +1748,10 @@
       "import": "import {TelegramNativeAPI} from \"@awesome-telegram/patterns\"",
       "recipe": "ref.native",
       "example": "examples/api-reference/typescript/native.ts",
-      "limits": "Каталоги и facade не являются полной parameter schema. Presence/platform/version не consent, launch, auth или успешный платеж. Callback и receiver сохраняются; host выбирает arguments/permissions. Listener/dispose подавляют late callbacks, native cleanup failure может требовать повторного dispose.",
+      "limits": "Типы аргументов и результатов каждого пути сгенерированы из официальных сигнатур и документации (scripts/build_native_signatures.py): неверный аргумент ловит tsc, runtime значения не проверяет. Presence/platform/version не consent, launch, auth или успешный платеж. Callback и receiver сохраняются; host выбирает arguments/permissions. Listener/dispose подавляют late callbacks, native cleanup failure может требовать повторного dispose.",
       "intent": "Проверка поддержки, вызов, подписка и освобождение с проверкой версии",
-      "example_sha256": "dc045786eba0343587d05fbd8a537a5bf892f519bd96e2466ee29d84db7c3e95",
-      "example_source_sha256": "dc045786eba0343587d05fbd8a537a5bf892f519bd96e2466ee29d84db7c3e95",
+      "example_sha256": "bc99b05585a3d4a447fbc8bed31f4d5d2ff350406040ae530988b82220fde8dd",
+      "example_source_sha256": "bc99b05585a3d4a447fbc8bed31f4d5d2ff350406040ae530988b82220fde8dd",
       "kind": "value"
     },
     {
@@ -1760,10 +1760,10 @@
       "import": "import {UnsupportedTelegramCapability} from \"@awesome-telegram/patterns\"",
       "recipe": "ref.native",
       "example": "examples/api-reference/typescript/native.ts",
-      "limits": "Каталоги и facade не являются полной parameter schema. Presence/platform/version не consent, launch, auth или успешный платеж. Callback и receiver сохраняются; host выбирает arguments/permissions. Listener/dispose подавляют late callbacks, native cleanup failure может требовать повторного dispose.",
+      "limits": "Типы аргументов и результатов каждого пути сгенерированы из официальных сигнатур и документации (scripts/build_native_signatures.py): неверный аргумент ловит tsc, runtime значения не проверяет. Presence/platform/version не consent, launch, auth или успешный платеж. Callback и receiver сохраняются; host выбирает arguments/permissions. Listener/dispose подавляют late callbacks, native cleanup failure может требовать повторного dispose.",
       "intent": "Контролируемое отсутствие/disposed native capability",
-      "example_sha256": "dc045786eba0343587d05fbd8a537a5bf892f519bd96e2466ee29d84db7c3e95",
-      "example_source_sha256": "dc045786eba0343587d05fbd8a537a5bf892f519bd96e2466ee29d84db7c3e95",
+      "example_sha256": "bc99b05585a3d4a447fbc8bed31f4d5d2ff350406040ae530988b82220fde8dd",
+      "example_source_sha256": "bc99b05585a3d4a447fbc8bed31f4d5d2ff350406040ae530988b82220fde8dd",
       "kind": "value"
     },
     {
@@ -1772,10 +1772,10 @@
       "import": "import {TELEGRAM_NATIVE_METHODS} from \"@awesome-telegram/patterns\"",
       "recipe": "ref.native",
       "example": "examples/api-reference/typescript/native.ts",
-      "limits": "Каталоги и facade не являются полной parameter schema. Presence/platform/version не consent, launch, auth или успешный платеж. Callback и receiver сохраняются; host выбирает arguments/permissions. Listener/dispose подавляют late callbacks, native cleanup failure может требовать повторного dispose.",
+      "limits": "Типы аргументов и результатов каждого пути сгенерированы из официальных сигнатур и документации (scripts/build_native_signatures.py): неверный аргумент ловит tsc, runtime значения не проверяет. Presence/platform/version не consent, launch, auth или успешный платеж. Callback и receiver сохраняются; host выбирает arguments/permissions. Listener/dispose подавляют late callbacks, native cleanup failure может требовать повторного dispose.",
       "intent": "Каталог путей, минимальных версий и источников, только чтение",
-      "example_sha256": "dc045786eba0343587d05fbd8a537a5bf892f519bd96e2466ee29d84db7c3e95",
-      "example_source_sha256": "dc045786eba0343587d05fbd8a537a5bf892f519bd96e2466ee29d84db7c3e95",
+      "example_sha256": "bc99b05585a3d4a447fbc8bed31f4d5d2ff350406040ae530988b82220fde8dd",
+      "example_source_sha256": "bc99b05585a3d4a447fbc8bed31f4d5d2ff350406040ae530988b82220fde8dd",
       "kind": "value"
     },
     {
@@ -1784,10 +1784,10 @@
       "import": "import {TELEGRAM_NATIVE_EVENTS} from \"@awesome-telegram/patterns\"",
       "recipe": "ref.native",
       "example": "examples/api-reference/typescript/native.ts",
-      "limits": "Каталоги и facade не являются полной parameter schema. Presence/platform/version не consent, launch, auth или успешный платеж. Callback и receiver сохраняются; host выбирает arguments/permissions. Listener/dispose подавляют late callbacks, native cleanup failure может требовать повторного dispose.",
+      "limits": "Типы аргументов и результатов каждого пути сгенерированы из официальных сигнатур и документации (scripts/build_native_signatures.py): неверный аргумент ловит tsc, runtime значения не проверяет. Presence/platform/version не consent, launch, auth или успешный платеж. Callback и receiver сохраняются; host выбирает arguments/permissions. Listener/dispose подавляют late callbacks, native cleanup failure может требовать повторного dispose.",
       "intent": "Имена нативных событий, только чтение",
-      "example_sha256": "dc045786eba0343587d05fbd8a537a5bf892f519bd96e2466ee29d84db7c3e95",
-      "example_source_sha256": "dc045786eba0343587d05fbd8a537a5bf892f519bd96e2466ee29d84db7c3e95",
+      "example_sha256": "bc99b05585a3d4a447fbc8bed31f4d5d2ff350406040ae530988b82220fde8dd",
+      "example_source_sha256": "bc99b05585a3d4a447fbc8bed31f4d5d2ff350406040ae530988b82220fde8dd",
       "kind": "value"
     },
     {
@@ -1796,10 +1796,10 @@
       "import": "import {TELEGRAM_NATIVE_EVENT_DETAILS} from \"@awesome-telegram/patterns\"",
       "recipe": "ref.native",
       "example": "examples/api-reference/typescript/native.ts",
-      "limits": "Каталоги и facade не являются полной parameter schema. Presence/platform/version не consent, launch, auth или успешный платеж. Callback и receiver сохраняются; host выбирает arguments/permissions. Listener/dispose подавляют late callbacks, native cleanup failure может требовать повторного dispose.",
+      "limits": "Типы аргументов и результатов каждого пути сгенерированы из официальных сигнатур и документации (scripts/build_native_signatures.py): неверный аргумент ловит tsc, runtime значения не проверяет. Presence/platform/version не consent, launch, auth или успешный платеж. Callback и receiver сохраняются; host выбирает arguments/permissions. Listener/dispose подавляют late callbacks, native cleanup failure может требовать повторного dispose.",
       "intent": "Версии и источники событий, только чтение",
-      "example_sha256": "dc045786eba0343587d05fbd8a537a5bf892f519bd96e2466ee29d84db7c3e95",
-      "example_source_sha256": "dc045786eba0343587d05fbd8a537a5bf892f519bd96e2466ee29d84db7c3e95",
+      "example_sha256": "bc99b05585a3d4a447fbc8bed31f4d5d2ff350406040ae530988b82220fde8dd",
+      "example_source_sha256": "bc99b05585a3d4a447fbc8bed31f4d5d2ff350406040ae530988b82220fde8dd",
       "kind": "value"
     },
     {
@@ -1808,10 +1808,10 @@
       "import": "import type {TelegramNativeMethod} from \"@awesome-telegram/patterns\"",
       "recipe": "ref.native",
       "example": "examples/api-reference/typescript/native.ts",
-      "limits": "Каталоги и facade не являются полной parameter schema. Presence/platform/version не consent, launch, auth или успешный платеж. Callback и receiver сохраняются; host выбирает arguments/permissions. Listener/dispose подавляют late callbacks, native cleanup failure может требовать повторного dispose.",
+      "limits": "Типы аргументов и результатов каждого пути сгенерированы из официальных сигнатур и документации (scripts/build_native_signatures.py): неверный аргумент ловит tsc, runtime значения не проверяет. Presence/platform/version не consent, launch, auth или успешный платеж. Callback и receiver сохраняются; host выбирает arguments/permissions. Listener/dispose подавляют late callbacks, native cleanup failure может требовать повторного dispose.",
       "intent": "Literal известных native paths",
-      "example_sha256": "dc045786eba0343587d05fbd8a537a5bf892f519bd96e2466ee29d84db7c3e95",
-      "example_source_sha256": "dc045786eba0343587d05fbd8a537a5bf892f519bd96e2466ee29d84db7c3e95",
+      "example_sha256": "bc99b05585a3d4a447fbc8bed31f4d5d2ff350406040ae530988b82220fde8dd",
+      "example_source_sha256": "bc99b05585a3d4a447fbc8bed31f4d5d2ff350406040ae530988b82220fde8dd",
       "kind": "type"
     },
     {
@@ -1820,10 +1820,46 @@
       "import": "import type {TelegramNativeEvent} from \"@awesome-telegram/patterns\"",
       "recipe": "ref.native",
       "example": "examples/api-reference/typescript/native.ts",
-      "limits": "Каталоги и facade не являются полной parameter schema. Presence/platform/version не consent, launch, auth или успешный платеж. Callback и receiver сохраняются; host выбирает arguments/permissions. Listener/dispose подавляют late callbacks, native cleanup failure может требовать повторного dispose.",
+      "limits": "Типы аргументов и результатов каждого пути сгенерированы из официальных сигнатур и документации (scripts/build_native_signatures.py): неверный аргумент ловит tsc, runtime значения не проверяет. Presence/platform/version не consent, launch, auth или успешный платеж. Callback и receiver сохраняются; host выбирает arguments/permissions. Listener/dispose подавляют late callbacks, native cleanup failure может требовать повторного dispose.",
       "intent": "Literal известных event names",
-      "example_sha256": "dc045786eba0343587d05fbd8a537a5bf892f519bd96e2466ee29d84db7c3e95",
-      "example_source_sha256": "dc045786eba0343587d05fbd8a537a5bf892f519bd96e2466ee29d84db7c3e95",
+      "example_sha256": "bc99b05585a3d4a447fbc8bed31f4d5d2ff350406040ae530988b82220fde8dd",
+      "example_source_sha256": "bc99b05585a3d4a447fbc8bed31f4d5d2ff350406040ae530988b82220fde8dd",
+      "kind": "type"
+    },
+    {
+      "module": "@awesome-telegram/patterns",
+      "name": "TelegramNativeSignatures",
+      "import": "import type {TelegramNativeSignatures} from \"@awesome-telegram/patterns\"",
+      "recipe": "ref.native",
+      "example": "examples/api-reference/typescript/native.ts",
+      "limits": "Типы аргументов и результатов каждого пути сгенерированы из официальных сигнатур и документации (scripts/build_native_signatures.py): неверный аргумент ловит tsc, runtime значения не проверяет. Presence/platform/version не consent, launch, auth или успешный платеж. Callback и receiver сохраняются; host выбирает arguments/permissions. Listener/dispose подавляют late callbacks, native cleanup failure может требовать повторного dispose.",
+      "intent": "Документированные аргументы и результат каждого native path",
+      "example_sha256": "bc99b05585a3d4a447fbc8bed31f4d5d2ff350406040ae530988b82220fde8dd",
+      "example_source_sha256": "bc99b05585a3d4a447fbc8bed31f4d5d2ff350406040ae530988b82220fde8dd",
+      "kind": "type"
+    },
+    {
+      "module": "@awesome-telegram/patterns",
+      "name": "TelegramNativeArguments",
+      "import": "import type {TelegramNativeArguments} from \"@awesome-telegram/patterns\"",
+      "recipe": "ref.native",
+      "example": "examples/api-reference/typescript/native.ts",
+      "limits": "Типы аргументов и результатов каждого пути сгенерированы из официальных сигнатур и документации (scripts/build_native_signatures.py): неверный аргумент ловит tsc, runtime значения не проверяет. Presence/platform/version не consent, launch, auth или успешный платеж. Callback и receiver сохраняются; host выбирает arguments/permissions. Listener/dispose подавляют late callbacks, native cleanup failure может требовать повторного dispose.",
+      "intent": "Кортеж аргументов path для call",
+      "example_sha256": "bc99b05585a3d4a447fbc8bed31f4d5d2ff350406040ae530988b82220fde8dd",
+      "example_source_sha256": "bc99b05585a3d4a447fbc8bed31f4d5d2ff350406040ae530988b82220fde8dd",
+      "kind": "type"
+    },
+    {
+      "module": "@awesome-telegram/patterns",
+      "name": "TelegramNativeResult",
+      "import": "import type {TelegramNativeResult} from \"@awesome-telegram/patterns\"",
+      "recipe": "ref.native",
+      "example": "examples/api-reference/typescript/native.ts",
+      "limits": "Типы аргументов и результатов каждого пути сгенерированы из официальных сигнатур и документации (scripts/build_native_signatures.py): неверный аргумент ловит tsc, runtime значения не проверяет. Presence/platform/version не consent, launch, auth или успешный платеж. Callback и receiver сохраняются; host выбирает arguments/permissions. Listener/dispose подавляют late callbacks, native cleanup failure может требовать повторного dispose.",
+      "intent": "Результат call по path: void, boolean или объект для цепочки",
+      "example_sha256": "bc99b05585a3d4a447fbc8bed31f4d5d2ff350406040ae530988b82220fde8dd",
+      "example_source_sha256": "bc99b05585a3d4a447fbc8bed31f4d5d2ff350406040ae530988b82220fde8dd",
       "kind": "type"
     },
     {
@@ -3388,7 +3424,7 @@
     }
   ],
   "python_symbols": 235,
-  "typescript_symbols": 47,
+  "typescript_symbols": 50,
   "recipes": 39,
   "additional_entries": [
     "CLI recipes",

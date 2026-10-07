@@ -166,6 +166,9 @@
 | `TELEGRAM_NATIVE_EVENT_DETAILS` | `import {TELEGRAM_NATIVE_EVENT_DETAILS} from "@awesome-telegram/patterns"` | [ref.native](api-reference-typescript.md#ref-native) | Версии и источники событий, только чтение |
 | `TelegramNativeMethod` | `import type {TelegramNativeMethod} from "@awesome-telegram/patterns"` | [ref.native](api-reference-typescript.md#ref-native) | Literal известных native paths |
 | `TelegramNativeEvent` | `import type {TelegramNativeEvent} from "@awesome-telegram/patterns"` | [ref.native](api-reference-typescript.md#ref-native) | Literal известных event names |
+| `TelegramNativeSignatures` | `import type {TelegramNativeSignatures} from "@awesome-telegram/patterns"` | [ref.native](api-reference-typescript.md#ref-native) | Документированные аргументы и результат каждого native path |
+| `TelegramNativeArguments` | `import type {TelegramNativeArguments} from "@awesome-telegram/patterns"` | [ref.native](api-reference-typescript.md#ref-native) | Кортеж аргументов path для call |
+| `TelegramNativeResult` | `import type {TelegramNativeResult} from "@awesome-telegram/patterns"` | [ref.native](api-reference-typescript.md#ref-native) | Результат call по path: void, boolean или объект для цепочки |
 | `PatternError` | `import {PatternError} from "@awesome-telegram/patterns"` | [ref.errors](api-reference-typescript.md#ref-errors) | Базовая ошибка с кодом, исходом и отчетом |
 | `ValidationFailure` | `import {ValidationFailure} from "@awesome-telegram/patterns"` | [ref.errors](api-reference-typescript.md#ref-errors) | Известная local validation rejection |
 | `InvalidType` | `import {InvalidType} from "@awesome-telegram/patterns"` | [ref.errors](api-reference-typescript.md#ref-errors) | Совместимый с TypeError известный локальный отказ |

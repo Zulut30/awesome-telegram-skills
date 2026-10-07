@@ -917,9 +917,14 @@
     {
       "id": 72,
       "title": "Типизированный native API",
-      "status": "pending",
-      "commit_subject": null,
-      "evidence": [],
+      "status": "done",
+      "commit_subject": "excellence(072): type every native Mini App call from the official signatures",
+      "evidence": [
+        "TelegramNativeAPI.call<P>(path, ...args: TelegramNativeArguments<P>): TelegramNativeResult<P>; TelegramNativeSignatures/Arguments/Result exported (285 symbols)",
+        "scripts/build_native_signatures.py writes packages/typescript/src/native-signatures.ts from catalog/mini-app-index.json (names, optionality) and catalog/mini-app-types.json (types checked against core.telegram.org/bots/webapps); refuses drift; CI --check; tests/test_native_signatures.py",
+        "packages/typescript/tests/types/native-calls.ts in npm test (test:types): 9 wrong calls rejected by tsc; with the old untyped signature the same test reports 14 errors",
+        "verify_pattern_packages PASS 0.24.0, 35 TypeScript tests, browser=passed; API reference consumer compiles the typed native example"
+      ],
       "remaining": null
     },
     {

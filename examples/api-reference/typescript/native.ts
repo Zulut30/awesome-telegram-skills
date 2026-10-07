@@ -1,6 +1,7 @@
 import {TelegramNativeAPI, UnsupportedTelegramCapability, TELEGRAM_NATIVE_METHODS,
   TELEGRAM_NATIVE_EVENTS, TELEGRAM_NATIVE_EVENT_DETAILS,
-  type TelegramNativeMethod, type TelegramNativeEvent} from '@awesome-telegram/patterns';
+  type TelegramNativeMethod, type TelegramNativeEvent, type TelegramNativeSignatures,
+  type TelegramNativeArguments, type TelegramNativeResult} from '@awesome-telegram/patterns';
 import {check} from './check.js';
 
 /** Synchronous synthetic native SDK; physical permissions/haptic не проверяются. */
@@ -11,11 +12,15 @@ export function referenceNative(): void {
   check(TELEGRAM_NATIVE_METHODS[path].minVersion && TELEGRAM_NATIVE_EVENT_DETAILS[event].url.startsWith('https://'));
   let impacts = 0, received = 0;
   const handlers = new Map<string, (...args: unknown[]) => void>();
-  const feedback = {impactOccurred(this: unknown, style: unknown) { check(this === feedback && style === 'light'); impacts++; }};
+  const feedback = {impactOccurred(this: unknown, style: unknown) { check(this === feedback && style === 'light'); impacts++; return feedback; }};
   const app = {platform: 'tdesktop', version: '10.3', HapticFeedback: feedback,
     onEvent: (name: string, listener: (...args: unknown[]) => void) => { handlers.set(name, listener); },
     offEvent: (name: string, listener: (...args: unknown[]) => void) => { if (handlers.get(name) === listener) handlers.delete(name); }};
-  const native = new TelegramNativeAPI(app); check(native.supports(path)); native.call(path, 'light');
+  const native = new TelegramNativeAPI(app); check(native.supports(path));
+  // Arguments and results are typed per path: 'loud' or a missing style fail at tsc, not in the client.
+  const style: TelegramNativeArguments<'HapticFeedback.impactOccurred'>[0] = 'light';
+  const chained: TelegramNativeResult<'HapticFeedback.impactOccurred'> = native.call('HapticFeedback.impactOccurred', style);
+  const documented: keyof TelegramNativeSignatures = path; check(chained === feedback && documented === path);
   const unsubscribe = native.listen(event, () => { received++; });
   const late = handlers.get(event); check(late); late(); check(received === 1);
   unsubscribe(); late(); check(received === 1 && handlers.size === 0);

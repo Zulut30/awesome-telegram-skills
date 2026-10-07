@@ -1,6 +1,7 @@
 /** Native calls keep their documented callbacks/return values; no implicit auth or retry. */
 import { TELEGRAM_NATIVE_EVENTS, TELEGRAM_NATIVE_EVENT_DETAILS, TELEGRAM_NATIVE_METHODS, type TelegramNativeEvent, type TelegramNativeMethod } from './native-catalog.js';
 import {UnsupportedCapability, InvalidType} from './errors.js';
+import type {TelegramNativeArguments, TelegramNativeResult} from './native-signatures.js';
 
 type ObjectLike = Record<string, unknown>;
 type Listener = (...args: unknown[]) => void;
@@ -46,10 +47,11 @@ export class TelegramNativeAPI {
     try { return this.resolve(path) !== undefined; } catch { return false; }
   }
 
-  call(path: TelegramNativeMethod, ...args: unknown[]): unknown {
+  /** Arguments and result follow the documented signature of path (TelegramNativeSignatures). */
+  call<P extends TelegramNativeMethod>(path: P, ...args: TelegramNativeArguments<P>): TelegramNativeResult<P> {
     const method = this.resolve(path);
     if (!method) throw new UnsupportedTelegramCapability();
-    return method.fn.apply(method.owner, args);
+    return method.fn.apply(method.owner, args) as TelegramNativeResult<P>;
   }
 
   /** Each registration gets its own callback, even when consumers reuse a function. */

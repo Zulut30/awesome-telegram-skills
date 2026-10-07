@@ -9,6 +9,7 @@ export type {AppShell, TextFieldControl} from './shell.js';
 export {TELEGRAM_NATIVE_METHODS, TELEGRAM_NATIVE_EVENTS, TELEGRAM_NATIVE_EVENT_DETAILS} from './native-catalog.js';
 export type {TelegramNativeMethod, TelegramNativeEvent} from './native-catalog.js';
 export {TelegramNativeAPI, UnsupportedTelegramCapability} from './native-api.js';
+export type {TelegramNativeSignatures, TelegramNativeArguments, TelegramNativeResult} from './native-signatures.js';
 export {PatternError, ValidationFailure, InvalidType, AuthenticationRequired, PermissionDenied, UnsupportedCapability, UnknownOutcome, safeErrorReport} from './errors.js';
 export type {ErrorCategory, ErrorOutcome, RecoveryAction, OperationKind, ErrorCode, ErrorReport} from './errors.js';
 export type {KeyValueStorage, StorageFactory, FetchTransport} from './adapters.js';

@@ -30,8 +30,9 @@
   "scripts": {
     "build": "tsc -p tsconfig.json && node scripts/copy-assets.mjs",
     "typecheck": "tsc -p tsconfig.json --noEmit",
-    "test": "npm run build && node --test tests/*.test.mjs",
-    "prepack": "npm run build"
+    "test": "npm run build && node --test tests/*.test.mjs && npm run test:types",
+    "prepack": "npm run build",
+    "test:types": "tsc -p tests/types/tsconfig.json"
   },
   "devDependencies": {
     "typescript": "7.0.2"

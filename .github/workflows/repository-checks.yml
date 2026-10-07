@@ -36,6 +36,7 @@ jobs:
       - run: python scripts/add_terms_lines.py --check
       # docs/capability-map.md is generated from catalog/capability-map.json and the recipe/component catalogs.
       - run: python scripts/build_capability_map.py --check
+      - run: python scripts/build_native_signatures.py --check
       # Reference validator of the Agent Skills specification (agentskills.io).
       - run: for skill in .agents/skills/*/; do agentskills validate "$skill"; done
       - run: python -m unittest discover -s tests -v
