@@ -1,0 +1,1885 @@
+{
+ "note": "205 positive requests (5 per skill, ambiguous ones list acceptable alternatives decided before the run) and the 40 negative boundary requests from skill-boundaries.json.",
+ "cases": [
+  {
+   "query": "Нужна админка, где операторы видят заказы и меняют статус",
+   "expected": [
+    "telegram-admin-panel"
+   ],
+   "kind": "positive"
+  },
+  {
+   "query": "Добавь роли модератора и администратора в панель управления сервисом",
+   "expected": [
+    "telegram-admin-panel"
+   ],
+   "kind": "positive"
+  },
+  {
+   "query": "Сделай журнал действий операторов: кто и когда вернул деньги клиенту",
+   "expected": [
+    "telegram-admin-panel"
+   ],
+   "kind": "positive"
+  },
+  {
+   "query": "Панель для поддержки: поиск пользователя по id и блокировка аккаунта",
+   "expected": [
+    "telegram-admin-panel"
+   ],
+   "kind": "positive"
+  },
+  {
+   "query": "Редактирование товаров и баннеров из веб-интерфейса для сотрудников",
+   "expected": [
+    "telegram-admin-panel"
+   ],
+   "kind": "positive"
+  },
+  {
+   "query": "Как отправить сообщение с entities вместо parse_mode через Bot API?",
+   "expected": [
+    "telegram-bot-api"
+   ],
+   "kind": "positive"
+  },
+  {
+   "query": "Какие ограничения у sendMediaGroup по числу файлов?",
+   "expected": [
+    "telegram-bot-api"
+   ],
+   "kind": "positive"
+  },
+  {
+   "query": "Можно ли редактировать сообщение старше 48 часов и что вернет Bot API?",
+   "expected": [
+    "telegram-bot-api"
+   ],
+   "kind": "positive"
+  },
+  {
+   "query": "Как через Bot API переслать сообщение без указания автора?",
+   "expected": [
+    "telegram-bot-api"
+   ],
+   "kind": "positive"
+  },
+  {
+   "query": "Какой метод Bot API ставит реакцию на сообщение и какие типы реакций есть?",
+   "expected": [
+    "telegram-bot-api"
+   ],
+   "kind": "positive"
+  },
+  {
+   "query": "Напиши обработчик /start на aiogram с приветствием",
+   "expected": [
+    "telegram-bot-python"
+   ],
+   "kind": "positive"
+  },
+  {
+   "query": "Перенеси бота с pyTelegramBotAPI на aiogram 3 без потери логики",
+   "expected": [
+    "telegram-bot-python"
+   ],
+   "kind": "positive"
+  },
+  {
+   "query": "Добавь middleware в aiogram, которое логирует время обработки update",
+   "expected": [
+    "telegram-bot-python"
+   ],
+   "kind": "positive"
+  },
+  {
+   "query": "Как корректно завершать polling и закрывать сессию бота на aiogram?",
+   "expected": [
+    "telegram-bot-python"
+   ],
+   "kind": "positive"
+  },
+  {
+   "query": "В python-telegram-bot нужен ConversationHandler заменить на роутеры, помоги",
+   "expected": [
+    "telegram-bot-python"
+   ],
+   "kind": "positive"
+  },
+  {
+   "query": "Подключи бота к моему бизнес-аккаунту, чтобы он отвечал клиентам",
+   "expected": [
+    "telegram-business-bots"
+   ],
+   "kind": "positive"
+  },
+  {
+   "query": "Как обработать business_connection и понять, в какие чаты боту можно писать?",
+   "expected": [
+    "telegram-business-bots"
+   ],
+   "kind": "positive"
+  },
+  {
+   "query": "Бот-секретарь должен отвечать только в разрешенных владельцем чатах",
+   "expected": [
+    "telegram-business-bots"
+   ],
+   "kind": "positive"
+  },
+  {
+   "query": "Что делать, если владелец отключил бизнес-бота от аккаунта?",
+   "expected": [
+    "telegram-business-bots"
+   ],
+   "kind": "positive"
+  },
+  {
+   "query": "Отправить сообщение клиенту от имени бизнес-аккаунта через Bot API",
+   "expected": [
+    "telegram-business-bots",
+    "telegram-bot-api"
+   ],
+   "kind": "positive"
+  },
+  {
+   "query": "Сделай inline-клавиатуру из шести кнопок по три в ряд",
+   "expected": [
+    "telegram-buttons"
+   ],
+   "kind": "positive"
+  },
+  {
+   "query": "Как добавить custom emoji на кнопку и что будет у пользователей без Premium?",
+   "expected": [
+    "telegram-buttons"
+   ],
+   "kind": "positive"
+  },
+  {
+   "query": "Reply-клавиатура с кнопкой Отправить номер телефона",
+   "expected": [
+    "telegram-buttons",
+    "telegram-bot-api"
+   ],
+   "kind": "positive"
+  },
+  {
+   "query": "Покрась кнопку Удалить в красный цвет в inline-клавиатуре",
+   "expected": [
+    "telegram-buttons"
+   ],
+   "kind": "positive"
+  },
+  {
+   "query": "Кнопка-ссылка на сайт рядом с callback-кнопкой в одном ряду",
+   "expected": [
+    "telegram-buttons"
+   ],
+   "kind": "positive"
+  },
+  {
+   "query": "Подключи из awesome-telegram-patterns готовый компонент формы в мой aiogram бот",
+   "expected": [
+    "telegram-code-patterns"
+   ],
+   "kind": "positive"
+  },
+  {
+   "query": "Какие компоненты из библиотеки паттернов подходят для календаря записи?",
+   "expected": [
+    "telegram-code-patterns"
+   ],
+   "kind": "positive"
+  },
+  {
+   "query": "Добавь в общую библиотеку паттернов новый компонент для опросов",
+   "expected": [
+    "telegram-code-patterns"
+   ],
+   "kind": "positive"
+  },
+  {
+   "query": "Мне дали wheel awesome-telegram-patterns, как использовать его TypeScript-часть в Mini App?",
+   "expected": [
+    "telegram-code-patterns"
+   ],
+   "kind": "positive"
+  },
+  {
+   "query": "Переиспользуй готовый ApiClient из библиотеки вместо своего fetch",
+   "expected": [
+    "telegram-code-patterns",
+    "telegram-mini-app-typescript"
+   ],
+   "kind": "positive"
+  },
+  {
+   "query": "Прими оплату в USDT через Crypto Pay и выдай доступ после оплаты",
+   "expected": [
+    "telegram-cryptopay"
+   ],
+   "kind": "positive"
+  },
+  {
+   "query": "Как проверить подпись webhook от CryptoBot?",
+   "expected": [
+    "telegram-cryptopay"
+   ],
+   "kind": "positive"
+  },
+  {
+   "query": "Создай invoice в Crypto Pay на 10 TON с описанием заказа",
+   "expected": [
+    "telegram-cryptopay"
+   ],
+   "kind": "positive"
+  },
+  {
+   "query": "Платеж в CryptoBot прошел, но webhook не пришел, как сверить статус?",
+   "expected": [
+    "telegram-cryptopay",
+    "telegram-debugging"
+   ],
+   "kind": "positive"
+  },
+  {
+   "query": "Возврат и повторная выдача при оплате через Crypto Pay API",
+   "expected": [
+    "telegram-cryptopay"
+   ],
+   "kind": "positive"
+  },
+  {
+   "query": "Бот не получает сообщения в группе после переноса на новый сервер",
+   "expected": [
+    "telegram-debugging"
+   ],
+   "kind": "positive"
+  },
+  {
+   "query": "Mini App показывает белый экран только на Android, разберись",
+   "expected": [
+    "telegram-debugging",
+    "telegram-mini-app-device-qa"
+   ],
+   "kind": "positive"
+  },
+  {
+   "query": "После обновления aiogram бот падает с TelegramBadRequest на редактировании",
+   "expected": [
+    "telegram-debugging"
+   ],
+   "kind": "positive"
+  },
+  {
+   "query": "initData проходит локально, но на продакшене сервер возвращает 401",
+   "expected": [
+    "telegram-debugging"
+   ],
+   "kind": "positive"
+  },
+  {
+   "query": "Вебхук перестал получать update, в getWebhookInfo ошибка SSL",
+   "expected": [
+    "telegram-debugging",
+    "telegram-deploy"
+   ],
+   "kind": "positive"
+  },
+  {
+   "query": "Разверни бота в Docker на VPS с автоматическим перезапуском",
+   "expected": [
+    "telegram-deploy"
+   ],
+   "kind": "positive"
+  },
+  {
+   "query": "Как перевести бота с polling на webhook при выкладке на хостинг?",
+   "expected": [
+    "telegram-deploy"
+   ],
+   "kind": "positive"
+  },
+  {
+   "query": "Опубликуй Mini App по HTTPS и настрой домен для кнопки меню",
+   "expected": [
+    "telegram-deploy",
+    "telegram-mini-app-integration"
+   ],
+   "kind": "positive"
+  },
+  {
+   "query": "Нужен readiness-чек и откат на прошлую версию при неудачном релизе бота",
+   "expected": [
+    "telegram-deploy"
+   ],
+   "kind": "positive"
+  },
+  {
+   "query": "Выкладка бота на Railway с переменными окружения и базой",
+   "expected": [
+    "telegram-deploy"
+   ],
+   "kind": "positive"
+  },
+  {
+   "query": "Сделай регистрацию в боте из четырех шагов с возможностью вернуться назад",
+   "expected": [
+    "telegram-dialogs"
+   ],
+   "kind": "positive"
+  },
+  {
+   "query": "FSM в aiogram теряет состояние после перезапуска, нужен постоянный storage",
+   "expected": [
+    "telegram-dialogs",
+    "telegram-bot-python"
+   ],
+   "kind": "positive"
+  },
+  {
+   "query": "Многошаговое оформление заказа в чате с подтверждением в конце",
+   "expected": [
+    "telegram-dialogs"
+   ],
+   "kind": "positive"
+  },
+  {
+   "query": "Пользователь может отменить анкету на любом шаге командой /cancel",
+   "expected": [
+    "telegram-dialogs"
+   ],
+   "kind": "positive"
+  },
+  {
+   "query": "Меню бота с вложенными разделами и сохранением текущего шага",
+   "expected": [
+    "telegram-dialogs"
+   ],
+   "kind": "positive"
+  },
+  {
+   "query": "Бот должен приветствовать новых участников группы",
+   "expected": [
+    "telegram-groups"
+   ],
+   "kind": "positive"
+  },
+  {
+   "query": "Автоматически одобряй заявки на вступление в закрытый канал по условию",
+   "expected": [
+    "telegram-groups"
+   ],
+   "kind": "positive"
+  },
+  {
+   "query": "Как работать с темами форума в супергруппе: создавать и закрывать?",
+   "expected": [
+    "telegram-groups"
+   ],
+   "kind": "positive"
+  },
+  {
+   "query": "Ограничь участника на сутки за спам в группе",
+   "expected": [
+    "telegram-groups"
+   ],
+   "kind": "positive"
+  },
+  {
+   "query": "Публикуй пост в канал от имени бота с кнопкой под ним",
+   "expected": [
+    "telegram-groups",
+    "telegram-buttons"
+   ],
+   "kind": "positive"
+  },
+  {
+   "query": "Сделай так, чтобы через @mybot можно было искать фильмы в любом чате",
+   "expected": [
+    "telegram-inline-mode"
+   ],
+   "kind": "positive"
+  },
+  {
+   "query": "Как кешировать результаты inline-запроса отдельно для каждого пользователя?",
+   "expected": [
+    "telegram-inline-mode"
+   ],
+   "kind": "positive"
+  },
+  {
+   "query": "Пагинация результатов inline-поиска через next_offset",
+   "expected": [
+    "telegram-inline-mode"
+   ],
+   "kind": "positive"
+  },
+  {
+   "query": "Inline-режим должен отправлять карточку товара с фото",
+   "expected": [
+    "telegram-inline-mode"
+   ],
+   "kind": "positive"
+  },
+  {
+   "query": "Что приходит в chosen_inline_result и как его включить?",
+   "expected": [
+    "telegram-inline-mode"
+   ],
+   "kind": "positive"
+  },
+  {
+   "query": "Что выбрать для Python-бота: aiogram или python-telegram-bot?",
+   "expected": [
+    "telegram-library-selection"
+   ],
+   "kind": "positive"
+  },
+  {
+   "query": "Поддерживает ли aiogram последнюю версию Bot API или ждать обновления?",
+   "expected": [
+    "telegram-library-selection"
+   ],
+   "kind": "positive"
+  },
+  {
+   "query": "Какую библиотеку взять для Mini App на React: официальный SDK или свою обертку?",
+   "expected": [
+    "telegram-library-selection"
+   ],
+   "kind": "positive"
+  },
+  {
+   "query": "Нужен ли Telethon для нашей задачи или хватит Bot API?",
+   "expected": [
+    "telegram-library-selection",
+    "telegram-user-client"
+   ],
+   "kind": "positive"
+  },
+  {
+   "query": "Сравни платежные обертки для Telegram на Python и выбери одну",
+   "expected": [
+    "telegram-library-selection"
+   ],
+   "kind": "positive"
+  },
+  {
+   "query": "Переведи бота на три языка с правильными формами множественного числа",
+   "expected": [
+    "telegram-localization"
+   ],
+   "kind": "positive"
+  },
+  {
+   "query": "Показывай даты и цены в формате страны пользователя",
+   "expected": [
+    "telegram-localization"
+   ],
+   "kind": "positive"
+  },
+  {
+   "query": "Как выбрать язык интерфейса по language_code и дать пользователю сменить его?",
+   "expected": [
+    "telegram-localization"
+   ],
+   "kind": "positive"
+  },
+  {
+   "query": "Длинные немецкие подписи не помещаются на кнопках Mini App",
+   "expected": [
+    "telegram-localization",
+    "telegram-mini-app-ui"
+   ],
+   "kind": "positive"
+  },
+  {
+   "query": "Описание и команды бота на русском и английском",
+   "expected": [
+    "telegram-localization",
+    "telegram-profiles"
+   ],
+   "kind": "positive"
+  },
+  {
+   "query": "Сжимай присланные видео и делай превью первого кадра в фоне",
+   "expected": [
+    "telegram-media-processing"
+   ],
+   "kind": "positive"
+  },
+  {
+   "query": "Проверяй тип и размер загруженных документов перед обработкой",
+   "expected": [
+    "telegram-media-processing"
+   ],
+   "kind": "positive"
+  },
+  {
+   "query": "Конвертируй голосовые сообщения в текст через очередь задач",
+   "expected": [
+    "telegram-media-processing"
+   ],
+   "kind": "positive"
+  },
+  {
+   "query": "Повторно используй file_id, чтобы не загружать одну картинку много раз",
+   "expected": [
+    "telegram-media-processing",
+    "telegram-bot-api"
+   ],
+   "kind": "positive"
+  },
+  {
+   "query": "Обрабатывай пачку фото альбома: водяной знак и сохранение в S3",
+   "expected": [
+    "telegram-media-processing"
+   ],
+   "kind": "positive"
+  },
+  {
+   "query": "Разнеси состояние Mini App по модулям: каталог, корзина, профиль",
+   "expected": [
+    "telegram-mini-app-architecture"
+   ],
+   "kind": "positive"
+  },
+  {
+   "query": "Как организовать навигацию между экранами Mini App с кнопкой Назад Telegram?",
+   "expected": [
+    "telegram-mini-app-architecture",
+    "telegram-mini-app-ux",
+    "telegram-mini-app-typescript"
+   ],
+   "kind": "positive"
+  },
+  {
+   "query": "Mini App должен одинаково работать на телефоне, планшете и десктопе, как устроить код?",
+   "expected": [
+    "telegram-mini-app-architecture",
+    "telegram-mini-app-ui"
+   ],
+   "kind": "positive"
+  },
+  {
+   "query": "Где хранить серверное состояние и кеш в Mini App, чтобы не было рассинхрона?",
+   "expected": [
+    "telegram-mini-app-architecture"
+   ],
+   "kind": "positive"
+  },
+  {
+   "query": "Перепроектируй структуру frontend Mini App: слишком много связей между компонентами",
+   "expected": [
+    "telegram-mini-app-architecture"
+   ],
+   "kind": "positive"
+  },
+  {
+   "query": "Проверь подпись initData на Python backend и выдай JWT",
+   "expected": [
+    "telegram-mini-app-auth"
+   ],
+   "kind": "positive"
+  },
+  {
+   "query": "Сколько живет initData и как отклонять устаревшие запуски?",
+   "expected": [
+    "telegram-mini-app-auth"
+   ],
+   "kind": "positive"
+  },
+  {
+   "query": "Сервер должен узнать пользователя Mini App без пароля",
+   "expected": [
+    "telegram-mini-app-auth"
+   ],
+   "kind": "positive"
+  },
+  {
+   "query": "Как передавать initData с фронта на сервер и не доверять initDataUnsafe?",
+   "expected": [
+    "telegram-mini-app-auth"
+   ],
+   "kind": "positive"
+  },
+  {
+   "query": "Проверка initData через публичный ключ Telegram для сторонних сервисов",
+   "expected": [
+    "telegram-mini-app-auth"
+   ],
+   "kind": "positive"
+  },
+  {
+   "query": "Собери набор токенов цвета и отступов для всех экранов Mini App",
+   "expected": [
+    "telegram-mini-app-design-system"
+   ],
+   "kind": "positive"
+  },
+  {
+   "query": "Сделай переиспользуемые компоненты кнопок, полей и карточек с состояниями",
+   "expected": [
+    "telegram-mini-app-design-system"
+   ],
+   "kind": "positive"
+  },
+  {
+   "query": "Как связать токены дизайна с темой Telegram и темной темой?",
+   "expected": [
+    "telegram-mini-app-design-system",
+    "telegram-mini-app-ui"
+   ],
+   "kind": "positive"
+  },
+  {
+   "query": "Нужна единая библиотека UI-компонентов для трех наших Mini App",
+   "expected": [
+    "telegram-mini-app-design-system"
+   ],
+   "kind": "positive"
+  },
+  {
+   "query": "Опиши варианты компонента Button: primary, secondary, disabled, loading",
+   "expected": [
+    "telegram-mini-app-design-system"
+   ],
+   "kind": "positive"
+  },
+  {
+   "query": "Проверь Mini App на реальном iPhone: прыгает экран при открытии клавиатуры",
+   "expected": [
+    "telegram-mini-app-device-qa"
+   ],
+   "kind": "positive"
+  },
+  {
+   "query": "Протестируй Mini App в Telegram Desktop и Web, отличия поведения",
+   "expected": [
+    "telegram-mini-app-device-qa"
+   ],
+   "kind": "positive"
+  },
+  {
+   "query": "На старом Android не работает MainButton, как проверить и задокументировать?",
+   "expected": [
+    "telegram-mini-app-device-qa",
+    "telegram-debugging",
+    "telegram-mini-app-native-capabilities"
+   ],
+   "kind": "positive"
+  },
+  {
+   "query": "Составь чек-лист ручной приемки Mini App на планшетах",
+   "expected": [
+    "telegram-mini-app-device-qa"
+   ],
+   "kind": "positive"
+  },
+  {
+   "query": "Возврат в Mini App после оплаты на iOS ведет на пустой экран, проверь на устройстве",
+   "expected": [
+    "telegram-mini-app-device-qa",
+    "telegram-debugging"
+   ],
+   "kind": "positive"
+  },
+  {
+   "query": "Как открыть Mini App из inline-кнопки бота и передать параметр?",
+   "expected": [
+    "telegram-mini-app-integration"
+   ],
+   "kind": "positive"
+  },
+  {
+   "query": "Настрой кнопку меню бота, которая открывает наше приложение",
+   "expected": [
+    "telegram-mini-app-integration"
+   ],
+   "kind": "positive"
+  },
+  {
+   "query": "Deep link t.me/bot?startapp=promo должен открывать нужный экран Mini App",
+   "expected": [
+    "telegram-mini-app-integration"
+   ],
+   "kind": "positive"
+  },
+  {
+   "query": "Mini App отправляет результат обратно в чат с ботом",
+   "expected": [
+    "telegram-mini-app-integration",
+    "telegram-bot-api"
+   ],
+   "kind": "positive"
+  },
+  {
+   "query": "Связать заказ, созданный в Mini App, с уведомлением в боте",
+   "expected": [
+    "telegram-mini-app-integration",
+    "telegram-notifications"
+   ],
+   "kind": "positive"
+  },
+  {
+   "query": "Сканируй QR-код из Mini App через Telegram",
+   "expected": [
+    "telegram-mini-app-native-capabilities"
+   ],
+   "kind": "positive"
+  },
+  {
+   "query": "Подключи биометрию для подтверждения платежа в Mini App",
+   "expected": [
+    "telegram-mini-app-native-capabilities"
+   ],
+   "kind": "positive"
+  },
+  {
+   "query": "Сохрани настройки пользователя в CloudStorage Telegram",
+   "expected": [
+    "telegram-mini-app-native-capabilities"
+   ],
+   "kind": "positive"
+  },
+  {
+   "query": "Поделиться результатом в историю из Mini App",
+   "expected": [
+    "telegram-mini-app-native-capabilities"
+   ],
+   "kind": "positive"
+  },
+  {
+   "query": "Скачать файл отчета из Mini App на устройство пользователя",
+   "expected": [
+    "telegram-mini-app-native-capabilities"
+   ],
+   "kind": "positive"
+  },
+  {
+   "query": "Сохраняй корзину Mini App при пропаже интернета и синхронизируй потом",
+   "expected": [
+    "telegram-mini-app-network-recovery"
+   ],
+   "kind": "positive"
+  },
+  {
+   "query": "Запрос оплаты оборвался по таймауту, как понять, прошел ли он?",
+   "expected": [
+    "telegram-mini-app-network-recovery",
+    "telegram-payments"
+   ],
+   "kind": "positive"
+  },
+  {
+   "query": "Повторяй запросы Mini App с backoff, но без двойных заказов",
+   "expected": [
+    "telegram-mini-app-network-recovery"
+   ],
+   "kind": "positive"
+  },
+  {
+   "query": "Пользователь вернулся в Mini App через час, восстанови его экран",
+   "expected": [
+    "telegram-mini-app-network-recovery"
+   ],
+   "kind": "positive"
+  },
+  {
+   "query": "Конфликт: тот же черновик отредактирован на двух устройствах",
+   "expected": [
+    "telegram-mini-app-network-recovery"
+   ],
+   "kind": "positive"
+  },
+  {
+   "query": "Сократи размер бандла Mini App, он весит 2 МБ",
+   "expected": [
+    "telegram-mini-app-performance"
+   ],
+   "kind": "positive"
+  },
+  {
+   "query": "Список из тысячи товаров в Mini App тормозит при прокрутке",
+   "expected": [
+    "telegram-mini-app-performance"
+   ],
+   "kind": "positive"
+  },
+  {
+   "query": "Задай бюджет производительности для первого экрана Mini App",
+   "expected": [
+    "telegram-mini-app-performance"
+   ],
+   "kind": "positive"
+  },
+  {
+   "query": "Как измерить время до интерактивности Mini App внутри Telegram?",
+   "expected": [
+    "telegram-mini-app-performance"
+   ],
+   "kind": "positive"
+  },
+  {
+   "query": "Ленивая загрузка картинок и разделение кода по экранам Mini App",
+   "expected": [
+    "telegram-mini-app-performance"
+   ],
+   "kind": "positive"
+  },
+  {
+   "query": "Подключи telegram-web-app.js и типизируй объект WebApp в TypeScript",
+   "expected": [
+    "telegram-mini-app-typescript"
+   ],
+   "kind": "positive"
+  },
+  {
+   "query": "Напиши типизированный API-клиент Mini App к нашему backend",
+   "expected": [
+    "telegram-mini-app-typescript"
+   ],
+   "kind": "positive"
+  },
+  {
+   "query": "Настрой сборку Mini App на Vite с переменными окружения",
+   "expected": [
+    "telegram-mini-app-typescript"
+   ],
+   "kind": "positive"
+  },
+  {
+   "query": "Как обработать themeChanged и viewportChanged в TypeScript?",
+   "expected": [
+    "telegram-mini-app-typescript",
+    "telegram-mini-app-ui"
+   ],
+   "kind": "positive"
+  },
+  {
+   "query": "Перейди с самописного bridge на официальный SDK в Mini App",
+   "expected": [
+    "telegram-mini-app-typescript"
+   ],
+   "kind": "positive"
+  },
+  {
+   "query": "Сделай экран профиля Mini App адаптивным для телефона и ПК",
+   "expected": [
+    "telegram-mini-app-ui"
+   ],
+   "kind": "positive"
+  },
+  {
+   "query": "Учитывай safe area и вырез экрана в Mini App на iPhone",
+   "expected": [
+    "telegram-mini-app-ui"
+   ],
+   "kind": "positive"
+  },
+  {
+   "query": "Темная тема в Mini App выглядит контрастно неправильно, исправь стили",
+   "expected": [
+    "telegram-mini-app-ui",
+    "telegram-mini-app-design-system"
+   ],
+   "kind": "positive"
+  },
+  {
+   "query": "Сверстай экран корзины Mini App с итогом и кнопкой оформления",
+   "expected": [
+    "telegram-mini-app-ui"
+   ],
+   "kind": "positive"
+  },
+  {
+   "query": "Сделай интерфейс Mini App доступным: контраст, фокус и размеры целей",
+   "expected": [
+    "telegram-mini-app-ui"
+   ],
+   "kind": "positive"
+  },
+  {
+   "query": "Упрости первый запуск Mini App: пользователи не понимают, что делать",
+   "expected": [
+    "telegram-mini-app-ux"
+   ],
+   "kind": "positive"
+  },
+  {
+   "query": "Как показывать ошибки формы, чтобы пользователь сразу понял, что исправить?",
+   "expected": [
+    "telegram-mini-app-ux"
+   ],
+   "kind": "positive"
+  },
+  {
+   "query": "Сократи количество шагов оформления заказа в Mini App",
+   "expected": [
+    "telegram-mini-app-ux"
+   ],
+   "kind": "positive"
+  },
+  {
+   "query": "Какой должна быть навигация, чтобы пользователь не терялся в разделах?",
+   "expected": [
+    "telegram-mini-app-ux",
+    "telegram-mini-app-architecture"
+   ],
+   "kind": "positive"
+  },
+  {
+   "query": "Что показать пользователю, если оплата не подтвердилась?",
+   "expected": [
+    "telegram-mini-app-ux",
+    "telegram-payments"
+   ],
+   "kind": "positive"
+  },
+  {
+   "query": "Настрой Playwright-скриншоты Mini App и сравнение с эталоном в CI",
+   "expected": [
+    "telegram-mini-app-visual-regression"
+   ],
+   "kind": "positive"
+  },
+  {
+   "query": "Как обновлять эталонные скриншоты после согласованного редизайна?",
+   "expected": [
+    "telegram-mini-app-visual-regression"
+   ],
+   "kind": "positive"
+  },
+  {
+   "query": "Снимай экраны Mini App в светлой и темной темах на трех ширинах",
+   "expected": [
+    "telegram-mini-app-visual-regression"
+   ],
+   "kind": "positive"
+  },
+  {
+   "query": "Ложные срабатывания скриншотных тестов из-за шрифтов, как стабилизировать?",
+   "expected": [
+    "telegram-mini-app-visual-regression"
+   ],
+   "kind": "positive"
+  },
+  {
+   "query": "Добавь визуальные тесты для английской и русской версий экранов",
+   "expected": [
+    "telegram-mini-app-visual-regression"
+   ],
+   "kind": "positive"
+  },
+  {
+   "query": "Напоминай клиенту о записи за день до визита",
+   "expected": [
+    "telegram-notifications"
+   ],
+   "kind": "positive"
+  },
+  {
+   "query": "Рассылка новости всем подписчикам бота с соблюдением лимитов",
+   "expected": [
+    "telegram-notifications"
+   ],
+   "kind": "positive"
+  },
+  {
+   "query": "Пользователь отписался от уведомлений, не присылай ему больше рассылки",
+   "expected": [
+    "telegram-notifications"
+   ],
+   "kind": "positive"
+  },
+  {
+   "query": "Очередь отправки сообщений с повтором при ошибке сети",
+   "expected": [
+    "telegram-notifications"
+   ],
+   "kind": "positive"
+  },
+  {
+   "query": "Еженедельный дайджест пользователям по расписанию",
+   "expected": [
+    "telegram-notifications"
+   ],
+   "kind": "positive"
+  },
+  {
+   "query": "Добавь trace id, который проходит от Mini App до воркера",
+   "expected": [
+    "telegram-observability"
+   ],
+   "kind": "positive"
+  },
+  {
+   "query": "Какие метрики собирать для бота: задержка ответа, ошибки, очередь?",
+   "expected": [
+    "telegram-observability"
+   ],
+   "kind": "positive"
+  },
+  {
+   "query": "Логируй update без персональных данных и токенов",
+   "expected": [
+    "telegram-observability",
+    "telegram-security-review"
+   ],
+   "kind": "positive"
+  },
+  {
+   "query": "Настрой алерт, если бот перестал обрабатывать сообщения",
+   "expected": [
+    "telegram-observability"
+   ],
+   "kind": "positive"
+  },
+  {
+   "query": "Дашборд с ошибками Mini App и backend в одном месте",
+   "expected": [
+    "telegram-observability"
+   ],
+   "kind": "positive"
+  },
+  {
+   "query": "Подключи Robokassa к Telegram-магазину и проверяй уведомления",
+   "expected": [
+    "telegram-payment-provider"
+   ],
+   "kind": "positive"
+  },
+  {
+   "query": "Нужен адаптер для нового платежного шлюза банка в нашем боте",
+   "expected": [
+    "telegram-payment-provider"
+   ],
+   "kind": "positive"
+  },
+  {
+   "query": "Stripe webhook: проверка подписи и сверка платежа с заказом",
+   "expected": [
+    "telegram-payment-provider"
+   ],
+   "kind": "positive"
+  },
+  {
+   "query": "Как сделать checkout у внешнего провайдера и вернуть пользователя в бота?",
+   "expected": [
+    "telegram-payment-provider"
+   ],
+   "kind": "positive"
+  },
+  {
+   "query": "Сверка платежей провайдера с заказами раз в сутки",
+   "expected": [
+    "telegram-payment-provider"
+   ],
+   "kind": "positive"
+  },
+  {
+   "query": "Продавай цифровой курс за Telegram Stars",
+   "expected": [
+    "telegram-payments"
+   ],
+   "kind": "positive"
+  },
+  {
+   "query": "Ответь на pre_checkout_query и выдай товар после successful_payment",
+   "expected": [
+    "telegram-payments"
+   ],
+   "kind": "positive"
+  },
+  {
+   "query": "Как сделать возврат Stars пользователю?",
+   "expected": [
+    "telegram-payments"
+   ],
+   "kind": "positive"
+  },
+  {
+   "query": "Выставить счет через createInvoiceLink для оплаты в Mini App",
+   "expected": [
+    "telegram-payments"
+   ],
+   "kind": "positive"
+  },
+  {
+   "query": "Какие правила Telegram для оплаты цифровых товаров внутри бота?",
+   "expected": [
+    "telegram-payments"
+   ],
+   "kind": "positive"
+  },
+  {
+   "query": "Подключи Platega для оплаты по СБП в нашем боте",
+   "expected": [
+    "telegram-platega"
+   ],
+   "kind": "positive"
+  },
+  {
+   "query": "Обработай callback от Platega и обнови статус заказа",
+   "expected": [
+    "telegram-platega"
+   ],
+   "kind": "positive"
+  },
+  {
+   "query": "Сделай подписку с автосписанием через Platega",
+   "expected": [
+    "telegram-platega"
+   ],
+   "kind": "positive"
+  },
+  {
+   "query": "Возврат платежа через Platega API",
+   "expected": [
+    "telegram-platega"
+   ],
+   "kind": "positive"
+  },
+  {
+   "query": "Создай платежную ссылку Platega на сумму заказа",
+   "expected": [
+    "telegram-platega"
+   ],
+   "kind": "positive"
+  },
+  {
+   "query": "Получи фото профиля пользователя и покажи в Mini App",
+   "expected": [
+    "telegram-profiles"
+   ],
+   "kind": "positive"
+  },
+  {
+   "query": "Проверь, есть ли у пользователя Premium",
+   "expected": [
+    "telegram-profiles"
+   ],
+   "kind": "positive"
+  },
+  {
+   "query": "Измени имя и описание бота на разных языках",
+   "expected": [
+    "telegram-profiles",
+    "telegram-localization"
+   ],
+   "kind": "positive"
+  },
+  {
+   "query": "Что можно узнать о пользователе по его id через Bot API?",
+   "expected": [
+    "telegram-profiles"
+   ],
+   "kind": "positive"
+  },
+  {
+   "query": "Обнови bio разрешенного аккаунта по расписанию",
+   "expected": [
+    "telegram-profiles"
+   ],
+   "kind": "positive"
+  },
+  {
+   "query": "Хочу сделать бота для доставки еды, помоги спланировать MVP",
+   "expected": [
+    "telegram-project-planner"
+   ],
+   "kind": "positive"
+  },
+  {
+   "query": "Что лучше для нашей идеи: только бот или бот с Mini App?",
+   "expected": [
+    "telegram-project-planner"
+   ],
+   "kind": "positive"
+  },
+  {
+   "query": "Оцени архитектуру и сроки нового Telegram-сервиса записи к мастерам",
+   "expected": [
+    "telegram-project-planner"
+   ],
+   "kind": "positive"
+  },
+  {
+   "query": "Опиши пользовательские сценарии и минимальный стек для бота-магазина",
+   "expected": [
+    "telegram-project-planner"
+   ],
+   "kind": "positive"
+  },
+  {
+   "query": "Мы меняем продукт: бот превращается в платформу, как перепланировать архитектуру?",
+   "expected": [
+    "telegram-project-planner",
+    "telegram-mini-app-architecture"
+   ],
+   "kind": "positive"
+  },
+  {
+   "query": "Сделай FastAPI-эндпоинт создания заказа с проверкой прав пользователя",
+   "expected": [
+    "telegram-python-backend"
+   ],
+   "kind": "positive"
+  },
+  {
+   "query": "Добавь миграцию БД для таблицы подписок",
+   "expected": [
+    "telegram-python-backend"
+   ],
+   "kind": "positive"
+  },
+  {
+   "query": "Транзакция: списать баланс и создать заказ атомарно",
+   "expected": [
+    "telegram-python-backend"
+   ],
+   "kind": "positive"
+  },
+  {
+   "query": "HTTP API для Mini App: список товаров и пагинация",
+   "expected": [
+    "telegram-python-backend"
+   ],
+   "kind": "positive"
+  },
+  {
+   "query": "Как организовать хранение пользователей Telegram в PostgreSQL?",
+   "expected": [
+    "telegram-python-backend"
+   ],
+   "kind": "positive"
+  },
+  {
+   "query": "Проверь наш бот на уязвимости перед запуском",
+   "expected": [
+    "telegram-security-review"
+   ],
+   "kind": "positive"
+  },
+  {
+   "query": "Где у нас могут утечь токен бота и секреты платежей?",
+   "expected": [
+    "telegram-security-review"
+   ],
+   "kind": "positive"
+  },
+  {
+   "query": "Ревью: можно ли подделать callback_data и получить чужой заказ?",
+   "expected": [
+    "telegram-security-review"
+   ],
+   "kind": "positive"
+  },
+  {
+   "query": "Проверь, безопасно ли мы скачиваем файлы по ссылкам пользователей",
+   "expected": [
+    "telegram-security-review"
+   ],
+   "kind": "positive"
+  },
+  {
+   "query": "Аудит прав доступа в нашем Mini App и backend",
+   "expected": [
+    "telegram-security-review"
+   ],
+   "kind": "positive"
+  },
+  {
+   "query": "Дай доступ в закрытый канал на 30 дней после оплаты",
+   "expected": [
+    "telegram-subscription-access",
+    "telegram-payments"
+   ],
+   "kind": "positive"
+  },
+  {
+   "query": "Продление подписки и напоминание об истечении",
+   "expected": [
+    "telegram-subscription-access"
+   ],
+   "kind": "positive"
+  },
+  {
+   "query": "Отмена подписки с сохранением доступа до конца периода",
+   "expected": [
+    "telegram-subscription-access"
+   ],
+   "kind": "positive"
+  },
+  {
+   "query": "Администратор вручную продлевает доступ пользователю",
+   "expected": [
+    "telegram-subscription-access"
+   ],
+   "kind": "positive"
+  },
+  {
+   "query": "Что делать с доступом при возврате платежа за подписку?",
+   "expected": [
+    "telegram-subscription-access",
+    "telegram-payments"
+   ],
+   "kind": "positive"
+  },
+  {
+   "query": "Напиши тесты aiogram-обработчиков без реального Telegram",
+   "expected": [
+    "telegram-testing"
+   ],
+   "kind": "positive"
+  },
+  {
+   "query": "Проверь, что повторная доставка update не создает второй заказ",
+   "expected": [
+    "telegram-testing"
+   ],
+   "kind": "positive"
+  },
+  {
+   "query": "Тесты проверки initData на backend: подделка и истекший срок",
+   "expected": [
+    "telegram-testing",
+    "telegram-mini-app-auth"
+   ],
+   "kind": "positive"
+  },
+  {
+   "query": "Как протестировать платежный сценарий бота без реальных денег?",
+   "expected": [
+    "telegram-testing",
+    "telegram-payments"
+   ],
+   "kind": "positive"
+  },
+  {
+   "query": "Добавь в CI автотесты бота и Mini App",
+   "expected": [
+    "telegram-testing"
+   ],
+   "kind": "positive"
+  },
+  {
+   "query": "Скачай историю сообщений из моих чатов через Telethon",
+   "expected": [
+    "telegram-user-client"
+   ],
+   "kind": "positive"
+  },
+  {
+   "query": "Слушай новые сообщения в моем личном аккаунте и пересылай их",
+   "expected": [
+    "telegram-user-client"
+   ],
+   "kind": "positive"
+  },
+  {
+   "query": "Авторизуйся в Telegram по номеру телефона из Python-скрипта",
+   "expected": [
+    "telegram-user-client"
+   ],
+   "kind": "positive"
+  },
+  {
+   "query": "Получи список моих диалогов и непрочитанных",
+   "expected": [
+    "telegram-user-client"
+   ],
+   "kind": "positive"
+  },
+  {
+   "query": "Отправь сообщение от моего личного аккаунта через MTProto",
+   "expected": [
+    "telegram-user-client"
+   ],
+   "kind": "positive"
+  },
+  {
+   "query": "Добавь вход через Telegram на наш сайт",
+   "expected": [
+    "telegram-web-login"
+   ],
+   "kind": "positive"
+  },
+  {
+   "query": "Проверь ID token от Telegram Login на Python backend",
+   "expected": [
+    "telegram-web-login"
+   ],
+   "kind": "positive"
+  },
+  {
+   "query": "Привяжи Telegram к существующему аккаунту пользователя на сайте",
+   "expected": [
+    "telegram-web-login"
+   ],
+   "kind": "positive"
+  },
+  {
+   "query": "Чем OIDC-вход Telegram отличается от старого виджета?",
+   "expected": [
+    "telegram-web-login"
+   ],
+   "kind": "positive"
+  },
+  {
+   "query": "Вход через Telegram на лендинге без Mini App",
+   "expected": [
+    "telegram-web-login"
+   ],
+   "kind": "positive"
+  },
+  {
+   "query": "Подключи ЮKassa к боту и проверяй уведомления о платежах",
+   "expected": [
+    "telegram-yookassa"
+   ],
+   "kind": "positive"
+  },
+  {
+   "query": "Двухстадийный платеж в ЮKassa: холд и capture",
+   "expected": [
+    "telegram-yookassa"
+   ],
+   "kind": "positive"
+  },
+  {
+   "query": "Возврат через API ЮKassa с ключом идемпотентности",
+   "expected": [
+    "telegram-yookassa"
+   ],
+   "kind": "positive"
+  },
+  {
+   "query": "Счет через provider_token ЮKassa в Telegram invoice",
+   "expected": [
+    "telegram-yookassa",
+    "telegram-payments"
+   ],
+   "kind": "positive"
+  },
+  {
+   "query": "Статус платежа в ЮKassa завис в pending, как сверить?",
+   "expected": [
+    "telegram-yookassa"
+   ],
+   "kind": "positive"
+  },
+  {
+   "query": "Добавь в бота кнопки Подтвердить и Отмена разных цветов под сообщением",
+   "expected": [
+    "telegram-buttons"
+   ],
+   "not": [
+    "telegram-bot-api"
+   ],
+   "kind": "negative"
+  },
+  {
+   "query": "Как через Bot API закрепить сообщение и какие права для этого нужны?",
+   "expected": [
+    "telegram-bot-api",
+    "telegram-groups"
+   ],
+   "not": [
+    "telegram-buttons"
+   ],
+   "kind": "negative"
+  },
+  {
+   "query": "Сделай экран каталога Mini App удобным на телефоне и планшете, с safe areas",
+   "expected": [
+    "telegram-mini-app-ui"
+   ],
+   "not": [
+    "telegram-mini-app-design-system",
+    "telegram-mini-app-ux"
+   ],
+   "kind": "negative"
+  },
+  {
+   "query": "Нужна общая библиотека кнопок, карточек и токенов цвета для всех экранов Mini App",
+   "expected": [
+    "telegram-mini-app-design-system"
+   ],
+   "not": [
+    "telegram-mini-app-ui"
+   ],
+   "kind": "negative"
+  },
+  {
+   "query": "Пользователи бросают оформление заказа на втором шаге, разберись, где они путаются",
+   "expected": [
+    "telegram-mini-app-ux"
+   ],
+   "not": [
+    "telegram-mini-app-ui"
+   ],
+   "kind": "negative"
+  },
+  {
+   "query": "Напиши тесты для обработчика оплаты и повторной доставки update",
+   "expected": [
+    "telegram-testing"
+   ],
+   "not": [
+    "telegram-mini-app-device-qa",
+    "telegram-mini-app-visual-regression"
+   ],
+   "kind": "negative"
+  },
+  {
+   "query": "Проверь Mini App на реальном iPhone и Android: клавиатура закрывает поле ввода",
+   "expected": [
+    "telegram-mini-app-device-qa"
+   ],
+   "not": [
+    "telegram-testing",
+    "telegram-mini-app-visual-regression"
+   ],
+   "kind": "negative"
+  },
+  {
+   "query": "Хочу в CI сравнивать скриншоты экранов Mini App со светлой и темной темой",
+   "expected": [
+    "telegram-mini-app-visual-regression"
+   ],
+   "not": [
+    "telegram-mini-app-device-qa"
+   ],
+   "kind": "negative"
+  },
+  {
+   "query": "Как выбрать между Stars и картой для продажи цифрового товара в боте?",
+   "expected": [
+    "telegram-payments"
+   ],
+   "not": [
+    "telegram-yookassa",
+    "telegram-subscription-access"
+   ],
+   "kind": "negative"
+  },
+  {
+   "query": "Сделай месячную подписку: продление, истечение и ручное продление админом",
+   "expected": [
+    "telegram-subscription-access"
+   ],
+   "not": [
+    "telegram-payments"
+   ],
+   "kind": "negative"
+  },
+  {
+   "query": "Подключи ЮKassa с idempotence key и обработкой уведомлений о платеже",
+   "expected": [
+    "telegram-yookassa"
+   ],
+   "not": [
+    "telegram-payments",
+    "telegram-payment-provider"
+   ],
+   "kind": "negative"
+  },
+  {
+   "query": "Хочу сделать нового бота для записи к врачу, с чего начать и какой стек выбрать?",
+   "expected": [
+    "telegram-project-planner"
+   ],
+   "not": [
+    "telegram-mini-app-architecture"
+   ],
+   "kind": "negative"
+  },
+  {
+   "query": "В нашем Mini App все состояние в одном файле, разнеси по модулям и навигации",
+   "expected": [
+    "telegram-mini-app-architecture"
+   ],
+   "not": [
+    "telegram-project-planner"
+   ],
+   "kind": "negative"
+  },
+  {
+   "query": "Проверь initData на сервере и выдай сессию пользователю Mini App",
+   "expected": [
+    "telegram-mini-app-auth"
+   ],
+   "not": [
+    "telegram-web-login"
+   ],
+   "kind": "negative"
+  },
+  {
+   "query": "Добавь кнопку Войти через Telegram на наш обычный сайт",
+   "expected": [
+    "telegram-web-login"
+   ],
+   "not": [
+    "telegram-mini-app-auth"
+   ],
+   "kind": "negative"
+  },
+  {
+   "query": "Бот перестал отвечать после деплоя, в логах 409 Conflict",
+   "expected": [
+    "telegram-debugging"
+   ],
+   "not": [
+    "telegram-observability"
+   ],
+   "kind": "negative"
+  },
+  {
+   "query": "Добавь метрики и связанные логи для бота, backend и воркера",
+   "expected": [
+    "telegram-observability"
+   ],
+   "not": [
+    "telegram-debugging"
+   ],
+   "kind": "negative"
+  },
+  {
+   "query": "Сделай поиск товаров по запросу @shop_bot iphone в любом чате",
+   "expected": [
+    "telegram-inline-mode"
+   ],
+   "not": [
+    "telegram-buttons"
+   ],
+   "kind": "negative"
+  },
+  {
+   "query": "Сделай сервер для заказов: таблицы, миграции и HTTP API",
+   "expected": [
+    "telegram-python-backend"
+   ],
+   "not": [
+    "telegram-bot-python"
+   ],
+   "kind": "negative"
+  },
+  {
+   "query": "Нужно читать историю сообщений из моего личного аккаунта Telegram",
+   "expected": [
+    "telegram-user-client"
+   ],
+   "not": [
+    "telegram-bot-python",
+    "telegram-profiles"
+   ],
+   "kind": "negative"
+  },
+  {
+   "query": "Сделай красивые кнопки на главном экране Mini App",
+   "expected": [
+    "telegram-mini-app-ui",
+    "telegram-mini-app-design-system"
+   ],
+   "not": [
+    "telegram-buttons"
+   ],
+   "kind": "negative"
+  },
+  {
+   "query": "Добавь кнопку оплаты звездами за подписку на канал",
+   "expected": [
+    "telegram-payments",
+    "telegram-subscription-access"
+   ],
+   "not": [
+    "telegram-buttons"
+   ],
+   "kind": "negative"
+  },
+  {
+   "query": "Проведи аудит: правильно ли мы проверяем initData и права на заказы",
+   "expected": [
+    "telegram-security-review"
+   ],
+   "not": [
+    "telegram-mini-app-auth"
+   ],
+   "kind": "negative"
+  },
+  {
+   "query": "Сообщай пользователю, когда его заказ будет готов, даже если он давно не писал",
+   "expected": [
+    "telegram-notifications"
+   ],
+   "not": [
+    "telegram-bot-python"
+   ],
+   "kind": "negative"
+  },
+  {
+   "query": "Сделай, чтобы черновик формы в Mini App не терялся при обрыве сети",
+   "expected": [
+    "telegram-mini-app-network-recovery"
+   ],
+   "not": [
+    "telegram-mini-app-performance"
+   ],
+   "kind": "negative"
+  },
+  {
+   "query": "Mini App открывается 6 секунд, уменьши бандл и ускорь первый экран",
+   "expected": [
+    "telegram-mini-app-performance"
+   ],
+   "not": [
+    "telegram-mini-app-network-recovery"
+   ],
+   "kind": "negative"
+  },
+  {
+   "query": "Подключи оплату через Stripe Checkout",
+   "expected": [
+    "telegram-payment-provider"
+   ],
+   "not": [
+    "telegram-payments"
+   ],
+   "kind": "negative"
+  },
+  {
+   "query": "Бот должен отвечать клиентам в личке от имени моего бизнес-аккаунта",
+   "expected": [
+    "telegram-business-bots"
+   ],
+   "not": [
+    "telegram-user-client"
+   ],
+   "kind": "negative"
+  },
+  {
+   "query": "Поменяй аватар и описание нашего бота программно",
+   "expected": [
+    "telegram-profiles"
+   ],
+   "not": [
+    "telegram-bot-api"
+   ],
+   "kind": "negative"
+  },
+  {
+   "query": "Пользователи присылают фото, нужно проверить размер, сжать и сделать превью",
+   "expected": [
+    "telegram-media-processing"
+   ],
+   "not": [
+    "telegram-bot-api"
+   ],
+   "kind": "negative"
+  },
+  {
+   "query": "Отправь пользователю готовый PDF-счет одним сообщением",
+   "expected": [
+    "telegram-bot-api",
+    "telegram-bot-python"
+   ],
+   "not": [
+    "telegram-media-processing"
+   ],
+   "kind": "negative"
+  },
+  {
+   "query": "Нужно, чтобы меню бота и даты показывались на русском и английском",
+   "expected": [
+    "telegram-localization"
+   ],
+   "not": [
+    "telegram-mini-app-ui"
+   ],
+   "kind": "negative"
+  },
+  {
+   "query": "Разверни бота на VPS с webhook и HTTPS",
+   "expected": [
+    "telegram-deploy"
+   ],
+   "not": [
+    "telegram-project-planner"
+   ],
+   "kind": "negative"
+  },
+  {
+   "query": "Какую библиотеку взять для нового бота на Python: aiogram или python-telegram-bot?",
+   "expected": [
+    "telegram-library-selection"
+   ],
+   "not": [
+    "telegram-bot-python"
+   ],
+   "kind": "negative"
+  },
+  {
+   "query": "Подключи готовый компонент меню из awesome-telegram-patterns в мой бот",
+   "expected": [
+    "telegram-code-patterns"
+   ],
+   "not": [
+    "telegram-bot-python"
+   ],
+   "kind": "negative"
+  },
+  {
+   "query": "Добавь в группу бота, который удаляет спам и выдает предупреждения",
+   "expected": [
+    "telegram-groups"
+   ],
+   "not": [
+    "telegram-business-bots"
+   ],
+   "kind": "negative"
+  },
+  {
+   "query": "Сделай анкету из пяти вопросов с кнопкой Назад и сохранением ответов",
+   "expected": [
+    "telegram-dialogs"
+   ],
+   "not": [
+    "telegram-buttons"
+   ],
+   "kind": "negative"
+  },
+  {
+   "query": "Открой Mini App из кнопки меню бота и передай туда номер заказа",
+   "expected": [
+    "telegram-mini-app-integration"
+   ],
+   "not": [
+    "telegram-mini-app-auth"
+   ],
+   "kind": "negative"
+  },
+  {
+   "query": "Запроси геолокацию пользователя внутри Mini App и обработай отказ",
+   "expected": [
+    "telegram-mini-app-native-capabilities"
+   ],
+   "not": [
+    "telegram-mini-app-typescript"
+   ],
+   "kind": "negative"
+  },
+  {
+   "query": "Сделай раздел для операторов: список заказов, роли и журнал действий",
+   "expected": [
+    "telegram-admin-panel"
+   ],
+   "not": [
+    "telegram-mini-app-ui"
+   ],
+   "kind": "negative"
+  }
+ ]
+}

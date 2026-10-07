@@ -33,3 +33,16 @@ python3 scripts/eval_skill_selection.py --cases evaluations/skill-boundaries.jso
 ```
 
 Отчет 2026-10-07 (`reports/skill-boundaries-2026-10-07.json`): 40/40 у haiku и sonnet и с границами «Не для … → telegram-…», и с прежними описаниями. На этих запросах явные границы не изменили точность; они нужны, чтобы агент и человек видели, куда уходит соседняя задача, и проверяются `validate_skills.py`.
+
+## Выбор скилла: полный набор
+
+`skill-selection.json` — 245 запросов: 205 позитивных (по 5 на каждый из 41 скилла; у 37 двусмысленных заранее записаны допустимые альтернативы) и 40 негативных из `skill-boundaries.json`. Порог — 95%.
+
+```bash
+python3 scripts/eval_skill_selection.py --cases evaluations/skill-selection.json --model haiku --workers 6 --output output/selection-haiku.json
+python3 scripts/eval_skill_selection.py --cases evaluations/skill-selection.json --model sonnet --workers 6 --output output/selection-sonnet.json
+```
+
+Отчет `reports/skill-selection-latest.json` хранит отпечаток списка описаний (`descriptions_sha256`). Тест `tests/test_skill_selection_report.py` падает, как только меняется любое description: прогон нужно повторить и обновить отчет.
+
+2026-10-07, Claude Code CLI 2.1.292: haiku 240/245 (98%), sonnet 240/245 (98%); негативные 40/40 у обеих моделей. Промахи — пограничные запросы вроде «сверка платежей провайдера раз в сутки» или «администратор вручную продлевает доступ». Второй агент (Codex, Gemini CLI, Copilot) в этой среде без входа недоступен, поэтому прогон выполнен на двух моделях одного агента.

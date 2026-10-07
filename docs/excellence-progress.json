@@ -467,10 +467,14 @@
     {
       "id": 38,
       "title": "Измерять точность выбора скилла",
-      "status": "pending",
-      "commit_subject": null,
-      "evidence": [],
-      "remaining": null
+      "status": "partial",
+      "commit_subject": "excellence(038): measure skill selection on 245 requests",
+      "evidence": [
+        "evaluations/skill-selection.json: 245 запросов — 205 позитивных (5 на каждый из 41 скилла, 37 двусмысленных с заранее заданными альтернативами) и 40 негативных с полем not",
+        "Claude Code CLI 2.1.292, claude -p без инструментов, агент видит только список name: description: haiku 240/245 = 98%, sonnet 240/245 = 98% (порог 95%); негативные 40/40; промахи — пограничные запросы, перечислены в отчете",
+        "evaluations/reports/skill-selection-latest.json хранит descriptions_sha256; tests/test_skill_selection_report.py падает при любом изменении description (мутация проверена), то есть прогон повторяется при каждом изменении descriptions"
+      ],
+      "remaining": "Прогон на втором агенте: Codex, Gemini CLI или Copilot требуют входа, которого в среде нет (Gemini CLI 0.63.0 установлен, но без ключа). Сейчас — две модели одного агента; нужен запуск того же набора владельцем в другом агенте"
     },
     {
       "id": 39,

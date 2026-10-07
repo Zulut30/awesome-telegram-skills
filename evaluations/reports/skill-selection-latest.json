@@ -1,0 +1,119 @@
+{
+  "date": "2026-10-07",
+  "agent": "Claude Code CLI 2.1.292, claude -p with tools disabled; models haiku and sonnet",
+  "cases": "evaluations/skill-selection.json",
+  "threshold": 0.95,
+  "descriptions_sha256": "0c417312e0ad9986c85723f8edae38dbbb9997ebadc805dbc37fd41747201923",
+  "runs": [
+    {
+      "model": "haiku",
+      "cases": 245,
+      "correct": 240,
+      "accuracy": 0.98,
+      "by_kind": {
+        "positive": {
+          "cases": 205,
+          "correct": 200
+        },
+        "negative": {
+          "cases": 40,
+          "correct": 40
+        }
+      },
+      "misses": [
+        {
+          "query": "Публикуй пост в канал от имени бота с кнопкой под ним",
+          "expected": [
+            "telegram-groups",
+            "telegram-buttons"
+          ],
+          "chosen": "telegram-bot-api"
+        },
+        {
+          "query": "Описание и команды бота на русском и английском",
+          "expected": [
+            "telegram-localization",
+            "telegram-profiles"
+          ],
+          "chosen": "telegram-bot-python"
+        },
+        {
+          "query": "Где хранить серверное состояние и кеш в Mini App, чтобы не было рассинхрона?",
+          "expected": [
+            "telegram-mini-app-architecture"
+          ],
+          "chosen": "telegram-mini-app-network-recovery"
+        },
+        {
+          "query": "Ленивая загрузка картинок и разделение кода по экранам Mini App",
+          "expected": [
+            "telegram-mini-app-performance"
+          ],
+          "chosen": "telegram-mini-app-architecture"
+        },
+        {
+          "query": "Сделай подписку с автосписанием через Platega",
+          "expected": [
+            "telegram-platega"
+          ],
+          "chosen": "telegram-subscription-access"
+        }
+      ]
+    },
+    {
+      "model": "sonnet",
+      "cases": 245,
+      "correct": 240,
+      "accuracy": 0.98,
+      "by_kind": {
+        "positive": {
+          "cases": 205,
+          "correct": 200
+        },
+        "negative": {
+          "cases": 40,
+          "correct": 40
+        }
+      },
+      "misses": [
+        {
+          "query": "В python-telegram-bot нужен ConversationHandler заменить на роутеры, помоги",
+          "expected": [
+            "telegram-bot-python"
+          ],
+          "chosen": "telegram-dialogs"
+        },
+        {
+          "query": "Публикуй пост в канал от имени бота с кнопкой под ним",
+          "expected": [
+            "telegram-groups",
+            "telegram-buttons"
+          ],
+          "chosen": "telegram-bot-api"
+        },
+        {
+          "query": "Описание и команды бота на русском и английском",
+          "expected": [
+            "telegram-localization",
+            "telegram-profiles"
+          ],
+          "chosen": "telegram-bot-api"
+        },
+        {
+          "query": "Сверка платежей провайдера с заказами раз в сутки",
+          "expected": [
+            "telegram-payment-provider"
+          ],
+          "chosen": "telegram-payments"
+        },
+        {
+          "query": "Администратор вручную продлевает доступ пользователю",
+          "expected": [
+            "telegram-subscription-access"
+          ],
+          "chosen": "telegram-admin-panel"
+        }
+      ]
+    }
+  ]
+}

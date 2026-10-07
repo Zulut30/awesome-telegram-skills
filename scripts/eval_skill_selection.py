@@ -8,6 +8,7 @@ from __future__ import annotations
 
 import argparse
 from concurrent.futures import ThreadPoolExecutor
+import hashlib
 import json
 from pathlib import Path
 import re
@@ -38,6 +39,15 @@ def descriptions(ref: str | None) -> dict[str, str]:
     return result
 
 
+def catalog(skills: dict[str, str]) -> str:
+    return '\n'.join(f'- {name}: {text}' for name, text in skills.items())
+
+
+def digest(skills: dict[str, str]) -> str:
+    """Fingerprint of the description list; a report is stale once it differs."""
+    return hashlib.sha256(catalog(skills).encode('utf-8')).hexdigest()
+
+
 def ask(prompt: str, *, model: str, cwd: Path) -> str:
     done = subprocess.run(
         ['claude', '-p', prompt, '--model', model, '--max-turns', '1', '--tools', '', '--output-format', 'json',
@@ -50,11 +60,11 @@ def ask(prompt: str, *, model: str, cwd: Path) -> str:
 
 def evaluate(cases_file: Path, *, ref: str | None, model: str, workers: int) -> dict:
     skills = descriptions(ref)
-    catalog = '\n'.join(f'- {name}: {text}' for name, text in skills.items())
+    listing = catalog(skills)
     cases = json.loads(cases_file.read_text(encoding='utf-8'))
     with tempfile.TemporaryDirectory(prefix='selection-eval-') as folder:
         def run(case: dict) -> dict:
-            prompt = (f'Доступные скиллы:\n{catalog}\n\nЗапрос пользователя: {case["query"]}\n\n'
+            prompt = (f'Доступные скиллы:\n{listing}\n\nЗапрос пользователя: {case["query"]}\n\n'
                       'Какой один скилл ты загрузишь первым? Ответь только его именем.')
             answer = ask(prompt, model=model, cwd=Path(folder))
             found = NAME.findall(answer)
@@ -64,7 +74,8 @@ def evaluate(cases_file: Path, *, ref: str | None, model: str, workers: int) -> 
         with ThreadPoolExecutor(max_workers=workers) as pool:
             results = list(pool.map(run, cases['cases']))
     correct = sum(item['correct'] for item in results)
-    return {'descriptions': ref or 'working tree', 'model': model, 'cases': len(results), 'correct': correct,
+    return {'descriptions': ref or 'working tree', 'descriptions_sha256': digest(skills), 'model': model,
+            'cases': len(results), 'correct': correct,
             'accuracy': round(correct / len(results), 3), 'results': results}
 
 
