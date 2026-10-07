@@ -25,7 +25,7 @@ def main() -> int:
         assert 'PRIVATE_CANARY' not in done.stdout+done.stderr
         (args.output/(label+'.log')).write_text(done.stdout+done.stderr,encoding='utf-8')
         stages.append({'stage':label,'exit_code':done.returncode,'expected_exit':expected})
-        if done.returncode!=expected:raise RuntimeError(label+' failed')
+        if done.returncode!=expected:raise RuntimeError(label+' failed:\n'+'\n'.join((done.stdout+done.stderr).splitlines()[-40:]))
         return done
     origin_code="import json,sys,telegram_patterns,importlib.metadata as m;print(json.dumps({'module':telegram_patterns.__file__,'prefix':sys.prefix,'version':m.version('awesome-telegram-patterns')}))"
     origins=[]
@@ -44,10 +44,11 @@ def main() -> int:
     run('unknown-id',args.core_python,['-m','telegram_patterns','run-recipe','../../PRIVATE_CANARY.py','--offline'],expected=2)
     worker=args.output/'all fixtures';worker.mkdir();(worker/'owned.txt').write_bytes(b'preserve caller notes')
     batch=json.loads(run('all-python-fixtures',args.sdk_python,['-m','telegram_patterns._offline_recipe','--all-python'],cwd=worker).stdout)
-    assert batch['passed'] and batch['recipes']==211 and not batch['telegram_requests']
+    failed=[{k:r.get(k) for k in ('recipe_id','passed','error','checks')} for r in batch['reports'] if not r['passed']]
+    assert batch['passed'] and batch['recipes']==211 and not batch['telegram_requests'],(batch['recipes'],failed[:5])
     assert len({r['recipe_id'] for r in batch['reports']})==211
     assert all(r['passed'] and not r['telegram_requests'] and r['external_network_attempts']==0 and r['checks'] for r in batch['reports'])
-    assert [p.name for p in worker.iterdir()]==['owned.txt'] and (worker/'owned.txt').read_bytes()==b'preserve caller notes'
+    assert [p.name for p in worker.iterdir()]==['owned.txt'] and (worker/'owned.txt').read_bytes()==b'preserve caller notes',sorted(p.name for p in worker.iterdir())
     guards='''import asyncio,json,sys
 from telegram_patterns._offline_recipe import _install_guards
 from aiogram.client.session.aiohttp import AiohttpSession

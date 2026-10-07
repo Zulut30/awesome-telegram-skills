@@ -71,6 +71,8 @@ def main() -> int:
         (output / f'{label}.log').write_text(log, encoding='utf-8')
         stages.append({'stage': label, 'exit_code': result.returncode})
         if result.returncode:
+            # The tail goes to the CI log: the consumers directory is temporary and not uploaded.
+            sys.stderr.write(f'--- last lines of {label}.log ---\n' + '\n'.join(log.splitlines()[-60:]) + '\n')
             raise RuntimeError(f'{label} failed; inspect {output / (label + ".log")}')
         return log
 
