@@ -795,9 +795,14 @@
     {
       "id": 63,
       "title": "Понятные имена модулей",
-      "status": "pending",
-      "commit_subject": null,
-      "evidence": [],
+      "status": "done",
+      "commit_subject": "excellence(063): move aiogram code into a subpackage with module aliases",
+      "evidence": [
+        "18 aiogram-dependent modules moved to telegram_patterns._aiogram without the _aiogram suffix; calendar.py renamed calendar_core.py",
+        "old module paths alias the same module objects (names, patches, private helpers shared); events logger keeps the name telegram_patterns.events; public telegram_patterns.aiogram unchanged (check_api_compatibility)",
+        "packages/python/tests/test_module_layout.py imports each of 21 core modules with aiogram, python-telegram-bot and cryptography blocked and checks no core file imports an SDK",
+        "verify_pattern_packages PASS: 540 Python and 35 TypeScript tests, browser passed"
+      ],
       "remaining": null
     },
     {

@@ -17,9 +17,9 @@ from aiogram.filters import Command, CommandStart
 from aiogram.methods import CreateInvoiceLink
 from aiogram.types import BotCommand, CallbackQuery, InlineKeyboardMarkup, LabeledPrice, Message
 
-from .api import InvalidAPIRequest, MethodSpec, build_request, method_catalog
-from .calendar_aiogram import calendar_keyboard, time_slot_keyboard
-from .dialog_fields import (
+from ._aiogram.api import InvalidAPIRequest, MethodSpec, build_request, method_catalog
+from ._aiogram.calendar_keyboards import calendar_keyboard, time_slot_keyboard
+from ._aiogram.dialog_fields import (
     ContactField,
     DateField,
     EmailField,
@@ -29,12 +29,18 @@ from .dialog_fields import (
     NumberField,
     PhoneField,
 )
-from .dialog_forms import DialogSubmission, dialog_form_router
-from .errors import AuthenticationRequired, InvalidType, PatternError, TransportFailure, ValidationFailure
-from .events import UpdateObserver, UpdatePhase, UpdateTrace, event_router, update_kinds
-from .forms import FormSubmission, InvalidField, TextField, text_form_router
-from .fsm_storage import AtomicFSMStorage, DialogLifetime, FSMConflict, FSMSnapshot, SnapshotFSMStorage, SnapshotStore
-from .inline_mode_aiogram import (
+from ._aiogram.dialog_forms import DialogSubmission, dialog_form_router
+from ._aiogram.events import UpdateObserver, UpdatePhase, UpdateTrace, event_router, update_kinds
+from ._aiogram.forms import FormSubmission, InvalidField, TextField, text_form_router
+from ._aiogram.fsm_storage import (
+    AtomicFSMStorage,
+    DialogLifetime,
+    FSMConflict,
+    FSMSnapshot,
+    SnapshotFSMStorage,
+    SnapshotStore,
+)
+from ._aiogram.inline_mode import (
     InlineAuthorizer,
     InlineCachePolicy,
     InlineChatType,
@@ -45,8 +51,8 @@ from .inline_mode_aiogram import (
     inline_articles,
     inline_query_router,
 )
-from .keyboard_layouts import KeyboardCapabilities, KeyboardLayout, action_layout, inline_layout, reply_layout
-from .keyboards import (
+from ._aiogram.keyboard_layouts import KeyboardCapabilities, KeyboardLayout, action_layout, inline_layout, reply_layout
+from ._aiogram.keyboards import (
     ActionButton,
     ButtonStyle,
     MenuPage,
@@ -56,7 +62,7 @@ from .keyboards import (
     page_number,
     paginated_menu,
 )
-from .media_aiogram import (
+from ._aiogram.media import (
     DownloadedMedia,
     MediaFile,
     MediaItem,
@@ -67,9 +73,15 @@ from .media_aiogram import (
     media_edit,
     media_request,
 )
-from .native_keyboards import ChatType, inline_keyboard, input_prompt, remove_keyboard, reply_keyboard
-from .navigation import MessageNavigation, NavigationResult, NavigationScreen, NavigationState, navigation_router
-from .platform_aiogram import (
+from ._aiogram.native_keyboards import ChatType, inline_keyboard, input_prompt, remove_keyboard, reply_keyboard
+from ._aiogram.navigation import (
+    MessageNavigation,
+    NavigationResult,
+    NavigationScreen,
+    NavigationState,
+    navigation_router,
+)
+from ._aiogram.platform_operations import (
     PlatformAction,
     PlatformContract,
     PlatformEvent,
@@ -89,7 +101,7 @@ from .platform_aiogram import (
     platform_event,
     platform_events_router,
 )
-from .polls_aiogram import (
+from ._aiogram.polls import (
     PollBinding,
     PollChoice,
     PollEvent,
@@ -109,7 +121,7 @@ from .polls_aiogram import (
     poll_state,
     poll_vote,
 )
-from .profiles_aiogram import (
+from ._aiogram.profiles import (
     BotProfile,
     BotProfilePatch,
     ChatProfile,
@@ -125,7 +137,8 @@ from .profiles_aiogram import (
     update_bot_profile,
     user_profile,
 )
-from .selection_aiogram import selection_keyboard, selection_router
+from ._aiogram.selection_ui import selection_keyboard, selection_router
+from .errors import AuthenticationRequired, InvalidType, PatternError, TransportFailure, ValidationFailure
 from .settings import BotSettings
 
 __all__ = [

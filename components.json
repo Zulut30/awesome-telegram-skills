@@ -75,7 +75,7 @@
       "import": "telegram_patterns.aiogram.ChatType, ButtonStyle, inline_keyboard, reply_keyboard, input_prompt, remove_keyboard, KeyboardLayout, KeyboardCapabilities, inline_layout, reply_layout",
       "extra": "aiogram",
       "intent": "Явные строки inline/reply, native actions, styles и интерфейс ответа",
-      "source": "packages/python/src/telegram_patterns/native_keyboards.py",
+      "source": "packages/python/src/telegram_patterns/_aiogram/native_keyboards.py",
       "example": "examples/python/keyboards_bot.py",
       "boundaries": [
         "caller supplies actual context and verified emoji entitlement",
@@ -93,7 +93,7 @@
       "import": "telegram_patterns.aiogram.method_catalog, build_request",
       "extra": "aiogram",
       "intent": "Поиск и native request любого метода установленного SDK",
-      "source": "packages/python/src/telegram_patterns/api.py",
+      "source": "packages/python/src/telegram_patterns/_aiogram/api.py",
       "example": "examples/python/api_catalog.py",
       "boundaries": [
         "SDK construction only; context/rights/semantic limits remain with host",
@@ -109,7 +109,7 @@
       "import": "telegram_patterns.aiogram.UpdatePhase, UpdateTrace, event_router, UpdateObserver, update_kinds",
       "extra": "aiogram",
       "intent": "Обработчики native updates и метаданные фаз без raw payload",
-      "source": "packages/python/src/telegram_patterns/events.py",
+      "source": "packages/python/src/telegram_patterns/_aiogram/events.py",
       "example": "examples/python/keyboards_bot.py",
       "boundaries": [
         "best-effort telemetry, not durable audit/inbox",
@@ -196,7 +196,7 @@
       "import": "telegram_patterns.aiogram.action_keyboard",
       "extra": "aiogram",
       "intent": "Цветная callback-кнопка и emoji fallback",
-      "source": "packages/python/src/telegram_patterns/keyboards.py",
+      "source": "packages/python/src/telegram_patterns/_aiogram/keyboards.py",
       "boundaries": [
         "opaque bounded ASCII key",
         "server-verified emoji entitlement"
@@ -251,7 +251,7 @@
       "import": "telegram_patterns.aiogram.ActionButton, action_menu, action_layout",
       "extra": "aiogram",
       "intent": "Собрать строки callback-кнопок из списка с уникальными ключами",
-      "source": "packages/python/src/telegram_patterns/keyboards.py",
+      "source": "packages/python/src/telegram_patterns/_aiogram/keyboards.py",
       "boundaries": [
         "1..8 columns; up to 100 buttons are component limits",
         "service checks authority; verified emoji capability required"
@@ -265,7 +265,7 @@
       "import": "telegram_patterns.aiogram.MenuPage, paginated_menu, page_number",
       "extra": "aiogram",
       "intent": "Собрать страницу каталога и разобрать callback навигации",
-      "source": "packages/python/src/telegram_patterns/keyboards.py",
+      "source": "packages/python/src/telegram_patterns/_aiogram/keyboards.py",
       "example": "examples/python/bot.py",
       "boundaries": [
         "local in-memory sequence; not DB cursor pagination",
@@ -382,7 +382,7 @@
       "import": "telegram_patterns.aiogram.TextField, InvalidField, FormSubmission, text_form_router",
       "extra": "aiogram",
       "intent": "Собрать текстовую форму в личном чате с проверкой, возвратом и подтверждением",
-      "source": "packages/python/src/telegram_patterns/forms.py",
+      "source": "packages/python/src/telegram_patterns/_aiogram/forms.py",
       "example": "examples/python/form_bot.py",
       "boundaries": [
         "host FSM requires enabled actor-scoped event isolation",
@@ -474,7 +474,7 @@
       "import": "telegram_patterns.aiogram.NavigationScreen, NavigationState, NavigationResult, MessageNavigation, navigation_router",
       "extra": "aiogram",
       "intent": "Экраны, история и возврат в одном owner-bound сообщении с explicit recovery после unknown edit",
-      "source": "packages/python/src/telegram_patterns/navigation.py",
+      "source": "packages/python/src/telegram_patterns/_aiogram/navigation.py",
       "example": "examples/python/navigation_bot.py",
       "boundaries": [
         "Single-process, one event loop; no durable business FSM or cross-worker state",
@@ -507,7 +507,7 @@
       "language": "python",
       "import": "telegram_patterns.aiogram.selection_keyboard, selection_router",
       "intent": "Compose a bot selection keyboard and ACK-first guarded Router with current server rules",
-      "source": "packages/python/src/telegram_patterns/selection_aiogram.py",
+      "source": "packages/python/src/telegram_patterns/_aiogram/selection_ui.py",
       "example": "examples/python/selection_bot.py",
       "boundaries": [
         "Single-process in-memory draft; no durable or multiworker business transaction",
@@ -524,7 +524,7 @@
       "language": "python",
       "import": "telegram_patterns.CalendarMonth, TimeSlot, resolve_local_time",
       "intent": "Календарь, недоступные даты, IANA timezone и явный выбор повторяющегося local time",
-      "source": "packages/python/src/telegram_patterns/calendar.py",
+      "source": "packages/python/src/telegram_patterns/calendar_core.py",
       "example": "examples/api-reference/python/core_calendar.py",
       "boundaries": [
         "SDK-free; optional calendar extra supplies IANA data on Windows",
@@ -555,7 +555,7 @@
       "language": "python",
       "import": "telegram_patterns.aiogram.calendar_keyboard, time_slot_keyboard",
       "intent": "Выбор даты и времени с native disabled grid либо weekday fallback",
-      "source": "packages/python/src/telegram_patterns/calendar_aiogram.py",
+      "source": "packages/python/src/telegram_patterns/_aiogram/calendar_keyboards.py",
       "example": "examples/python/calendar_bot.py",
       "boundaries": [
         "optional aiogram; callback owner/context/revision and reservation checked by controller/service",
@@ -571,7 +571,7 @@
       "language": "python",
       "import": "telegram_patterns.aiogram.FieldValue, NumberField, EmailField, PhoneField, DateField, FileField, ContactField, LocationField, DialogSubmission, dialog_form_router",
       "intent": "Семь проверяемых типов полей, текущий автор/вопрос, native candidate, возврат/отмена и повтор той же заявки",
-      "source": "packages/python/src/telegram_patterns/dialog_forms.py",
+      "source": "packages/python/src/telegram_patterns/_aiogram/dialog_forms.py",
       "example": "examples/python/dialog_fields_bot.py",
       "boundaries": [
         "optional aiogram; ordinary private chat without Business/forum topics; existing host FSM/event isolation",
@@ -680,7 +680,7 @@
       "import": "telegram_patterns.aiogram.MediaKind, MediaSendRequest, MediaFile, MediaItem, DownloadedMedia, media_request, media_album, media_edit, download_media",
       "extra": "aiogram",
       "intent": "Фото, документы, альбомы, literal подписи, замена медиа и bounded скачивание в текущем Bot",
-      "source": "packages/python/src/telegram_patterns/media_aiogram.py",
+      "source": "packages/python/src/telegram_patterns/_aiogram/media.py",
       "example": "examples/python/media_bot.py",
       "boundaries": [
         "Explicit typed bytes or same-bot file_id; no implicit filesystem/URL input or unique_id conversion",
@@ -698,7 +698,7 @@
       "extra": "aiogram",
       "import": "telegram_patterns.aiogram.ProfileSource, ProfileAuthorizer, UserProfile, ChatProfile, ProfilePhotoSize, ProfilePhotos, BotProfile, BotProfilePatch, ProfileEditIncomplete, user_profile, chat_profile, read_profile_photos, read_bot_profile, update_bot_profile",
       "intent": "Доступные данные, nullable Premium/permissions, фото и локализованное оформление собственного бота с текущими host правами",
-      "source": "packages/python/src/telegram_patterns/profiles_aiogram.py",
+      "source": "packages/python/src/telegram_patterns/_aiogram/profiles.py",
       "example": "examples/python/profiles_bot.py",
       "boundaries": [
         "Immutable selected SDK facts with source/time; unknown remains None and does not authorize an actor",
@@ -717,7 +717,7 @@
       "extra": "aiogram",
       "import": "telegram_patterns.aiogram.InlineChatType, InlineAuthorizer, InlineSearchProvider, InlineCachePolicy, InlineItem, InlinePage, InlineSearch, inline_articles, inline_query_router",
       "intent": "Персональный inline-поиск, shareable articles, scoped cursor и явный cache policy",
-      "source": "packages/python/src/telegram_patterns/inline_mode_aiogram.py",
+      "source": "packages/python/src/telegram_patterns/_aiogram/inline_mode.py",
       "example": "examples/python/inline_search_bot.py",
       "boundaries": [
         "Private items default to unshareable; personal Telegram cache is not secrecy of a sent inline message",
@@ -736,7 +736,7 @@
       "extra": "aiogram",
       "import": "telegram_patterns.aiogram.PollKind, PollChoice, PollSpec, PollOptionState, PollState, PollVote, PollOptionAddition, PollBinding, PollLocator, PollObservation, PollEvent, PollObserver, PollLookup, poll_request, poll_state, poll_vote, poll_option_added, poll_events_router",
       "intent": "Modern poll/quiz requests and own-bot scoped observations without hidden-voter inference",
-      "source": "packages/python/src/telegram_patterns/polls_aiogram.py",
+      "source": "packages/python/src/telegram_patterns/_aiogram/polls.py",
       "example": "examples/python/polls_bot.py",
       "boundaries": [
         "1..12 initial options, monotonic multi-correct quiz, revoting and SDK rich media; native limits checked separately from local bounds",
@@ -755,7 +755,7 @@
       "extra": "aiogram",
       "import": "telegram_patterns.aiogram.PlatformContract, PlatformScope, PlatformPermit, PlatformAction, PlatformReceipt, PlatformResult, PlatformHooks, SecretToken, PlatformEvent, PlatformLookup, PlatformObserver, platform_contracts, execute_platform_action, managed_bot_link, platform_event, platform_events_router, StoryPhotoUpload, StoryVideoUpload",
       "intent": "Темы, реакции, заявки, Business, stories, gifts и managed bots с текущими правами и durable host intent",
-      "source": "packages/python/src/telegram_patterns/platform_aiogram.py",
+      "source": "packages/python/src/telegram_patterns/_aiogram/platform_operations.py",
       "example": "examples/python/platform_bot.py",
       "boundaries": [
         "Closed 51-method Bot API allowlist across seven families; native SDK requests and current method-specific rights, not arbitrary MTProto/account history",
@@ -777,7 +777,7 @@
       "language": "python",
       "import": "telegram_patterns.aiogram.FSMSnapshot, FSMConflict, SnapshotStore, AtomicFSMStorage, SnapshotFSMStorage, DialogLifetime",
       "maturity": "experimental",
-      "source": "packages/python/src/telegram_patterns/fsm_storage.py",
+      "source": "packages/python/src/telegram_patterns/_aiogram/fsm_storage.py",
       "example": "examples/python/dialog_restart_bot.py",
       "contracts": [
         "Host-owned SnapshotStore persists every StorageKey field, state and JSON data in one CAS revision",

@@ -36,6 +36,8 @@ python -m pip install ./packages/python
 python -m pip install "./packages/python[aiogram]"
 ```
 
+Модули ядра (`telegram_patterns`, `markup`, `selection`, `calendar_core`, `slots`, `message_text` и другие) не импортируют ни одного SDK — это проверяет `tests/test_module_layout.py`. Код, зависящий от aiogram, лежит в подпакете `telegram_patterns._aiogram`; импортируйте его через публичный `telegram_patterns.aiogram`. Прежние пути (`telegram_patterns.keyboards`, `telegram_patterns.calendar` и т. п.) остаются псевдонимами тех же модулей.
+
 Если бот уже написан на python-telegram-bot, вместо aiogram установите extra `ptb` (`python -m pip install "./packages/python[ptb]"`, python-telegram-bot 22.8+): ядро и `telegram_patterns.ptb` — клавиатуры из JSON ядра (`inline_button`, `inline_markup`, `paginated_markup`, `selection_markup` → `ptb_markup`), литеральный текст (`ptb_text`) и офлайн-`Application` со `StubRequest`. 20 рецептов имеют вариант `ptb-*`; новые поля и методы Bot API идут через `api_kwargs` и `do_api_request`. Подробности — [python-telegram-bot](../../docs/ptb-adapter.md).
 
 Для проверки подписи Ed25519 без токена бота (`validate_init_data_signature`) добавьте extra `signature`: `python -m pip install "./packages/python[signature]"` — он ставит `cryptography`.

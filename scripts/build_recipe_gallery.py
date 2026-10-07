@@ -138,7 +138,7 @@ def build(root: Path = ROOT) -> dict:
             [API + '#inlinekeyboardbutton', API + '#replykeyboardmarkup'], markup,
             tasks=['input'] if key in {'contact-location', 'force-reply', 'remove-reply', 'reply-menu'} else ['keyboards', 'navigation'] if key == 'two-columns' else ['keyboards'],
             contexts=['unspecified'] if key in {'force-reply', 'remove-reply'} else ['private'],
-            source_files=['recipes/bot-api/keyboards.md', 'packages/python/src/telegram_patterns/native_keyboards.py', 'packages/python/src/telegram_patterns/keyboard_layouts.py'],
+            source_files=['recipes/bot-api/keyboards.md', 'packages/python/src/telegram_patterns/_aiogram/native_keyboards.py', 'packages/python/src/telegram_patterns/_aiogram/keyboard_layouts.py'],
             check_files=['scripts/build_recipe_gallery.py', 'packages/python/tests/test_native_features.py', 'packages/python/tests/test_keyboard_layouts.py'])
         if key == 'two-columns': records[-1]['keywords'] += ['назад', 'back']
     for method in api['bot_api']['methods']:
@@ -212,26 +212,26 @@ def build(root: Path = ROOT) -> dict:
             source_files=['examples/python/' + filename], check_files=['examples/python/' + offline])
         if key == 'demo-navigation':
             records[-1]['keywords'] += ['назад', 'история', 'одно', 'сообщение', 'owner', 'stale', 'recovery']
-            records[-1]['source_files'].append('packages/python/src/telegram_patterns/navigation.py')
+            records[-1]['source_files'].append('packages/python/src/telegram_patterns/_aiogram/navigation.py')
             records[-1]['check_files'].append('packages/python/tests/test_navigation.py')
         if key == 'demo-selection':
             records[-1]['keywords'] += ['toggle', 'multiselect', 'переключатель', 'количество', 'фильтр', 'подтверждение', 'выбор', 'confirmation', 'revision']
-            records[-1]['source_files'] += ['packages/python/src/telegram_patterns/selection.py', 'packages/python/src/telegram_patterns/selection_aiogram.py']
+            records[-1]['source_files'] += ['packages/python/src/telegram_patterns/selection.py', 'packages/python/src/telegram_patterns/_aiogram/selection_ui.py']
             records[-1]['check_files'].append('packages/python/tests/test_selection.py')
         if key == 'demo-calendar':
             records[-1]['keywords'] += ['календарь', 'дата', 'время', 'слот', 'запись', 'timezone', 'DST', 'booking', 'receipt']
-            records[-1]['source_files'] += ['packages/python/src/telegram_patterns/calendar.py', 'packages/python/src/telegram_patterns/calendar_aiogram.py', 'packages/python/src/telegram_patterns/slots.py']
+            records[-1]['source_files'] += ['packages/python/src/telegram_patterns/calendar_core.py', 'packages/python/src/telegram_patterns/_aiogram/calendar_keyboards.py', 'packages/python/src/telegram_patterns/slots.py']
             records[-1]['check_files'] += ['packages/python/tests/test_calendar.py', 'packages/python/tests/test_calendar_aiogram.py']
         if key == 'demo-dialog-restart':
             records[-1]['summary'] = 'Host storage: atomic step/version/deadline snapshot и тот же pending operation после рестарта'
             records[-1]['tasks'] = ['input', 'recovery']
             records[-1]['keywords'] += ['рестарт', 'восстановление', 'состояние', 'FSM', 'storage', 'TTL', 'snapshot', 'resume', 'версия', 'unknown']
-            records[-1]['source_files'] += ['packages/python/src/telegram_patterns/fsm_storage.py', 'packages/python/src/telegram_patterns/_dialog_storage.py', 'docs/dialog-restart.md']
+            records[-1]['source_files'] += ['packages/python/src/telegram_patterns/_aiogram/fsm_storage.py', 'packages/python/src/telegram_patterns/_aiogram/dialog_storage.py', 'docs/dialog-restart.md']
             records[-1]['check_files'] += ['packages/python/tests/test_fsm_storage.py', 'scripts/verify_dialog_restart_recipe.py']
             records[-1]['scope'] = 'Three actual processes, file SQLite and synthetic Dispatcher/SDK; atomic local state only, no live delivery, physical device, independent acceptance or distributed business exactly-once claim.'
         if key == 'demo-dialog-fields':
             records[-1]['keywords'] += ['поля', 'число', 'email', 'телефон', 'файл', 'контакт', 'геопозиция', 'ForceReply', 'candidate', 'шаг']
-            records[-1]['source_files'] += ['packages/python/src/telegram_patterns/dialog_fields.py', 'packages/python/src/telegram_patterns/dialog_forms.py']
+            records[-1]['source_files'] += ['packages/python/src/telegram_patterns/_aiogram/dialog_fields.py', 'packages/python/src/telegram_patterns/_aiogram/dialog_forms.py']
             records[-1]['check_files'].append('packages/python/tests/test_dialog_forms.py')
         if key == 'demo-message-text':
             records[-1]['summary'] = 'Literal text + entities с UTF-16 offsets; интеграция в текущий Dispatcher, без polling на import.'
@@ -244,28 +244,28 @@ def build(root: Path = ROOT) -> dict:
             records[-1]['summary'] = 'Typed media, literal captions, one compatible album, replacement and bounded explicit download; attach to current Dispatcher.'
             records[-1]['tasks'] = ['media']
             records[-1]['keywords'] += ['медиа', 'фото', 'документ', 'альбом', 'подпись', 'замена', 'скачивание', 'multipart', 'file_id']
-            records[-1]['source_files'].append('packages/python/src/telegram_patterns/media_aiogram.py')
+            records[-1]['source_files'].append('packages/python/src/telegram_patterns/_aiogram/media.py')
             records[-1]['check_files'].append('packages/python/tests/test_media.py')
             records[-1]['scope'] = 'Actual synthetic Dispatcher, SDK multipart bytes and bounded fixture stream; live upload/rendering/content validation/rights and real download unconfirmed.'
         if key == 'demo-profiles':
             records[-1]['summary'] = 'Nullable user/chat facts, profile photos, localized own-bot edits, current method ACL and explicit unknown reconciliation.'
             records[-1]['tasks'] = ['profiles']
             records[-1]['keywords'] += ['профиль', 'аватар', 'локализация', 'описание', 'Premium', 'unknown', 'setMyDescription', 'права']
-            records[-1]['source_files'].append('packages/python/src/telegram_patterns/profiles_aiogram.py')
+            records[-1]['source_files'].append('packages/python/src/telegram_patterns/_aiogram/profiles.py')
             records[-1]['check_files'].append('packages/python/tests/test_profiles.py')
             records[-1]['scope'] = 'Actual synthetic Dispatcher, localized state and SDK new-file multipart; live profile visibility/codec/rights/rendering unconfirmed.'
         if key == 'demo-inline-search':
             records[-1]['summary'] = 'Персональный inline-поиск, shareable articles, scoped cursor и явный cache policy'
             records[-1]['tasks'] = ['inline']
             records[-1]['keywords'] += ['inline', 'поиск', 'заметки', 'пагинация', 'кеширование', 'cache', 'cursor', 'private']
-            records[-1]['source_files'].append('packages/python/src/telegram_patterns/inline_mode_aiogram.py')
+            records[-1]['source_files'].append('packages/python/src/telegram_patterns/_aiogram/inline_mode.py')
             records[-1]['check_files'].append('packages/python/tests/test_inline_mode.py')
             records[-1]['scope'] = 'Actual synthetic Dispatcher and explicit host policy; local cache/cursor/poll observations, not Telegram live/client delivery or a complete voter ledger.'
         if key == 'demo-polls':
             records[-1]['summary'] = 'Modern poll/quiz requests and own-bot scoped observations without hidden-voter inference'
             records[-1]['tasks'] = ['polls']
             records[-1]['keywords'] += ['опрос', 'quiz', 'голосование', 'persistent', 'poll_answer', 'анонимный', 'revoting', 'correct_option_ids']
-            records[-1]['source_files'].append('packages/python/src/telegram_patterns/polls_aiogram.py')
+            records[-1]['source_files'].append('packages/python/src/telegram_patterns/_aiogram/polls.py')
             records[-1]['check_files'].append('packages/python/tests/test_polls.py')
             records[-1]['scope'] = 'Actual synthetic Dispatcher and explicit host policy; local cache/cursor/poll observations, not Telegram live/client delivery or a complete voter ledger.'
         if key == 'demo-ai-stream':
@@ -332,14 +332,14 @@ def build(root: Path = ROOT) -> dict:
             records[-1]['tasks'] = ['polls']
             records[-1]['contexts'] = ['private', 'group', 'supergroup']
             records[-1]['keywords'] += ['медиа в опросе', 'фото в опросе', 'ссылка в опросе', 'InputMediaLink', 'PollMedia', 'explanation_media']
-            records[-1]['source_files'] += ['packages/python/src/telegram_patterns/polls_aiogram.py']
+            records[-1]['source_files'] += ['packages/python/src/telegram_patterns/_aiogram/polls.py']
             records[-1]['scope'] = 'Actual synthetic Dispatcher/StubSession and SDK serialization of poll media through poll_request; client rendering and media upload unconfirmed.'
         if key == 'demo-platform':
             records[-1]['summary'] = 'Семь семейств: native rights, host ACL/budget/intent, scoped events и explicit unknown reconciliation'
             records[-1]['tasks'] = ['platform']
             records[-1]['contexts'] = ['private', 'group', 'supergroup', 'channel', 'business']
             records[-1]['keywords'] += ['темы', 'реакции', 'заявки', 'Business', 'stories', 'gifts', 'managed', 'Stars', 'права', 'receipt']
-            records[-1]['source_files'] += ['packages/python/src/telegram_patterns/platform_aiogram.py', 'docs/platform-operations.md']
+            records[-1]['source_files'] += ['packages/python/src/telegram_patterns/_aiogram/platform_operations.py', 'docs/platform-operations.md']
             records[-1]['check_files'] += ['packages/python/tests/test_platform.py', 'scripts/verify_platform_recipe.py']
             records[-1]['scope'] = 'Actual synthetic SDK/Dispatcher/file SQLite and multipart story serialization; no live rights, real media validation, remote atomic charge, settlement or physical Telegram proof.'
     ptb_version = importlib.metadata.version('python-telegram-bot')

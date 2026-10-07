@@ -116,7 +116,7 @@ def _execute(recipe_id: str) -> dict[str, Any]:
     if plan.kind == 'sdk-request':
         from aiogram.types import BufferedInputFile
 
-        from .api import build_request
+        from ._aiogram.api import build_request
 
         def materialize(value: Any) -> Any:
             if isinstance(value, dict):
@@ -144,8 +144,8 @@ def _execute(recipe_id: str) -> dict[str, Any]:
             ReplyKeyboardRemove,
         )
 
-        from .keyboard_layouts import KeyboardLayout, inline_layout
-        from .native_keyboards import inline_keyboard, input_prompt, remove_keyboard, reply_keyboard
+        from ._aiogram.keyboard_layouts import KeyboardLayout, inline_layout
+        from ._aiogram.native_keyboards import inline_keyboard, input_prompt, remove_keyboard, reply_keyboard
 
         preview = recipe.preview
         assert preview is not None

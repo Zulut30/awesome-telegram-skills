@@ -1,6 +1,6 @@
 """Core components; importing these does not require a Telegram SDK."""
 
-from .calendar import CalendarMonth, TimeSlot, resolve_local_time
+from .calendar_core import CalendarMonth, TimeSlot, resolve_local_time
 from .ephemeral import EphemeralMessageRef, EphemeralNotAllowed, EphemeralTrigger, ephemeral_parameters
 from .errors import (
     AuthenticationRequired,

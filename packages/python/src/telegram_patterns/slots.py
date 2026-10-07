@@ -13,7 +13,7 @@ from itertools import islice
 from pathlib import Path
 from typing import Any, Callable, Iterator, Literal, Sequence
 
-from .calendar import TimeSlot, _instant, _micros
+from .calendar_core import TimeSlot, _instant, _micros
 from .errors import ConflictFailure, InvalidType, PermissionDenied, ValidationFailure
 from .sqlite_once import OnceResult, OperationConflict, _json, _owned_transaction, _payload_digest
 

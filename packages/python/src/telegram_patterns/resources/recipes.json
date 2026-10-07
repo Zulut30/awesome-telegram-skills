@@ -73,8 +73,8 @@
       "api_version": "bot:10.3",
       "source_files": [
         "recipes/bot-api/keyboards.md",
-        "packages/python/src/telegram_patterns/native_keyboards.py",
-        "packages/python/src/telegram_patterns/keyboard_layouts.py",
+        "packages/python/src/telegram_patterns/_aiogram/native_keyboards.py",
+        "packages/python/src/telegram_patterns/_aiogram/keyboard_layouts.py",
         "packages/python/src/telegram_patterns/execution.py",
         "packages/python/src/telegram_patterns/_offline_recipe.py"
       ],
@@ -177,8 +177,8 @@
       "api_version": "bot:10.3",
       "source_files": [
         "recipes/bot-api/keyboards.md",
-        "packages/python/src/telegram_patterns/native_keyboards.py",
-        "packages/python/src/telegram_patterns/keyboard_layouts.py",
+        "packages/python/src/telegram_patterns/_aiogram/native_keyboards.py",
+        "packages/python/src/telegram_patterns/_aiogram/keyboard_layouts.py",
         "packages/python/src/telegram_patterns/execution.py",
         "packages/python/src/telegram_patterns/_offline_recipe.py"
       ],
@@ -281,8 +281,8 @@
       "api_version": "bot:10.3",
       "source_files": [
         "recipes/bot-api/keyboards.md",
-        "packages/python/src/telegram_patterns/native_keyboards.py",
-        "packages/python/src/telegram_patterns/keyboard_layouts.py",
+        "packages/python/src/telegram_patterns/_aiogram/native_keyboards.py",
+        "packages/python/src/telegram_patterns/_aiogram/keyboard_layouts.py",
         "packages/python/src/telegram_patterns/execution.py",
         "packages/python/src/telegram_patterns/_offline_recipe.py"
       ],
@@ -376,8 +376,8 @@
       "api_version": "bot:10.3",
       "source_files": [
         "recipes/bot-api/keyboards.md",
-        "packages/python/src/telegram_patterns/native_keyboards.py",
-        "packages/python/src/telegram_patterns/keyboard_layouts.py",
+        "packages/python/src/telegram_patterns/_aiogram/native_keyboards.py",
+        "packages/python/src/telegram_patterns/_aiogram/keyboard_layouts.py",
         "packages/python/src/telegram_patterns/execution.py",
         "packages/python/src/telegram_patterns/_offline_recipe.py"
       ],
@@ -458,8 +458,8 @@
       "api_version": "bot:10.3",
       "source_files": [
         "recipes/bot-api/keyboards.md",
-        "packages/python/src/telegram_patterns/native_keyboards.py",
-        "packages/python/src/telegram_patterns/keyboard_layouts.py",
+        "packages/python/src/telegram_patterns/_aiogram/native_keyboards.py",
+        "packages/python/src/telegram_patterns/_aiogram/keyboard_layouts.py",
         "packages/python/src/telegram_patterns/execution.py",
         "packages/python/src/telegram_patterns/_offline_recipe.py"
       ],
@@ -553,8 +553,8 @@
       "api_version": "bot:10.3",
       "source_files": [
         "recipes/bot-api/keyboards.md",
-        "packages/python/src/telegram_patterns/native_keyboards.py",
-        "packages/python/src/telegram_patterns/keyboard_layouts.py",
+        "packages/python/src/telegram_patterns/_aiogram/native_keyboards.py",
+        "packages/python/src/telegram_patterns/_aiogram/keyboard_layouts.py",
         "packages/python/src/telegram_patterns/execution.py",
         "packages/python/src/telegram_patterns/_offline_recipe.py"
       ],
@@ -644,8 +644,8 @@
       "api_version": "bot:10.3",
       "source_files": [
         "recipes/bot-api/keyboards.md",
-        "packages/python/src/telegram_patterns/native_keyboards.py",
-        "packages/python/src/telegram_patterns/keyboard_layouts.py",
+        "packages/python/src/telegram_patterns/_aiogram/native_keyboards.py",
+        "packages/python/src/telegram_patterns/_aiogram/keyboard_layouts.py",
         "packages/python/src/telegram_patterns/execution.py",
         "packages/python/src/telegram_patterns/_offline_recipe.py"
       ],
@@ -723,8 +723,8 @@
       "api_version": "bot:10.3",
       "source_files": [
         "recipes/bot-api/keyboards.md",
-        "packages/python/src/telegram_patterns/native_keyboards.py",
-        "packages/python/src/telegram_patterns/keyboard_layouts.py",
+        "packages/python/src/telegram_patterns/_aiogram/native_keyboards.py",
+        "packages/python/src/telegram_patterns/_aiogram/keyboard_layouts.py",
         "packages/python/src/telegram_patterns/execution.py",
         "packages/python/src/telegram_patterns/_offline_recipe.py"
       ],
@@ -799,8 +799,8 @@
       "api_version": "bot:10.3",
       "source_files": [
         "recipes/bot-api/keyboards.md",
-        "packages/python/src/telegram_patterns/native_keyboards.py",
-        "packages/python/src/telegram_patterns/keyboard_layouts.py",
+        "packages/python/src/telegram_patterns/_aiogram/native_keyboards.py",
+        "packages/python/src/telegram_patterns/_aiogram/keyboard_layouts.py",
         "packages/python/src/telegram_patterns/execution.py",
         "packages/python/src/telegram_patterns/_offline_recipe.py"
       ],
@@ -887,8 +887,8 @@
       "api_version": "bot:10.3",
       "source_files": [
         "recipes/bot-api/keyboards.md",
-        "packages/python/src/telegram_patterns/native_keyboards.py",
-        "packages/python/src/telegram_patterns/keyboard_layouts.py",
+        "packages/python/src/telegram_patterns/_aiogram/native_keyboards.py",
+        "packages/python/src/telegram_patterns/_aiogram/keyboard_layouts.py",
         "packages/python/src/telegram_patterns/execution.py",
         "packages/python/src/telegram_patterns/_offline_recipe.py"
       ],
@@ -977,8 +977,8 @@
       "api_version": "bot:10.3",
       "source_files": [
         "recipes/bot-api/keyboards.md",
-        "packages/python/src/telegram_patterns/native_keyboards.py",
-        "packages/python/src/telegram_patterns/keyboard_layouts.py",
+        "packages/python/src/telegram_patterns/_aiogram/native_keyboards.py",
+        "packages/python/src/telegram_patterns/_aiogram/keyboard_layouts.py",
         "packages/python/src/telegram_patterns/execution.py",
         "packages/python/src/telegram_patterns/_offline_recipe.py"
       ],
@@ -20941,7 +20941,7 @@
       "api_version": "bot:10.3",
       "source_files": [
         "examples/python/navigation_bot.py",
-        "packages/python/src/telegram_patterns/navigation.py",
+        "packages/python/src/telegram_patterns/_aiogram/navigation.py",
         "packages/python/src/telegram_patterns/execution.py",
         "packages/python/src/telegram_patterns/_offline_recipe.py"
       ],
@@ -21026,7 +21026,7 @@
       "source_files": [
         "examples/python/selection_bot.py",
         "packages/python/src/telegram_patterns/selection.py",
-        "packages/python/src/telegram_patterns/selection_aiogram.py",
+        "packages/python/src/telegram_patterns/_aiogram/selection_ui.py",
         "packages/python/src/telegram_patterns/execution.py",
         "packages/python/src/telegram_patterns/_offline_recipe.py"
       ],
@@ -21110,8 +21110,8 @@
       "api_version": "bot:10.3",
       "source_files": [
         "examples/python/calendar_bot.py",
-        "packages/python/src/telegram_patterns/calendar.py",
-        "packages/python/src/telegram_patterns/calendar_aiogram.py",
+        "packages/python/src/telegram_patterns/calendar_core.py",
+        "packages/python/src/telegram_patterns/_aiogram/calendar_keyboards.py",
         "packages/python/src/telegram_patterns/slots.py",
         "packages/python/src/telegram_patterns/execution.py",
         "packages/python/src/telegram_patterns/_offline_recipe.py"
@@ -21197,8 +21197,8 @@
       "api_version": "bot:10.3",
       "source_files": [
         "examples/python/dialog_restart_bot.py",
-        "packages/python/src/telegram_patterns/fsm_storage.py",
-        "packages/python/src/telegram_patterns/_dialog_storage.py",
+        "packages/python/src/telegram_patterns/_aiogram/fsm_storage.py",
+        "packages/python/src/telegram_patterns/_aiogram/dialog_storage.py",
         "docs/dialog-restart.md",
         "packages/python/src/telegram_patterns/execution.py",
         "packages/python/src/telegram_patterns/_offline_recipe.py"
@@ -21285,8 +21285,8 @@
       "api_version": "bot:10.3",
       "source_files": [
         "examples/python/dialog_fields_bot.py",
-        "packages/python/src/telegram_patterns/dialog_fields.py",
-        "packages/python/src/telegram_patterns/dialog_forms.py",
+        "packages/python/src/telegram_patterns/_aiogram/dialog_fields.py",
+        "packages/python/src/telegram_patterns/_aiogram/dialog_forms.py",
         "packages/python/src/telegram_patterns/execution.py",
         "packages/python/src/telegram_patterns/_offline_recipe.py"
       ],
@@ -21365,7 +21365,7 @@
       "api_version": "bot:10.3",
       "source_files": [
         "examples/python/inline_search_bot.py",
-        "packages/python/src/telegram_patterns/inline_mode_aiogram.py",
+        "packages/python/src/telegram_patterns/_aiogram/inline_mode.py",
         "packages/python/src/telegram_patterns/execution.py",
         "packages/python/src/telegram_patterns/_offline_recipe.py"
       ],
@@ -21444,7 +21444,7 @@
       "api_version": "bot:10.3",
       "source_files": [
         "examples/python/polls_bot.py",
-        "packages/python/src/telegram_patterns/polls_aiogram.py",
+        "packages/python/src/telegram_patterns/_aiogram/polls.py",
         "packages/python/src/telegram_patterns/execution.py",
         "packages/python/src/telegram_patterns/_offline_recipe.py"
       ],
@@ -21529,7 +21529,7 @@
       "api_version": "bot:10.3",
       "source_files": [
         "examples/python/platform_bot.py",
-        "packages/python/src/telegram_patterns/platform_aiogram.py",
+        "packages/python/src/telegram_patterns/_aiogram/platform_operations.py",
         "docs/platform-operations.md",
         "packages/python/src/telegram_patterns/execution.py",
         "packages/python/src/telegram_patterns/_offline_recipe.py"
@@ -21614,7 +21614,7 @@
       "api_version": "bot:10.3",
       "source_files": [
         "examples/python/profiles_bot.py",
-        "packages/python/src/telegram_patterns/profiles_aiogram.py",
+        "packages/python/src/telegram_patterns/_aiogram/profiles.py",
         "packages/python/src/telegram_patterns/execution.py",
         "packages/python/src/telegram_patterns/_offline_recipe.py"
       ],
@@ -21694,7 +21694,7 @@
       "api_version": "bot:10.3",
       "source_files": [
         "examples/python/media_bot.py",
-        "packages/python/src/telegram_patterns/media_aiogram.py",
+        "packages/python/src/telegram_patterns/_aiogram/media.py",
         "packages/python/src/telegram_patterns/execution.py",
         "packages/python/src/telegram_patterns/_offline_recipe.py"
       ],
@@ -22593,7 +22593,7 @@
       "api_version": "bot:10.3",
       "source_files": [
         "examples/python/poll_media_bot.py",
-        "packages/python/src/telegram_patterns/polls_aiogram.py",
+        "packages/python/src/telegram_patterns/_aiogram/polls.py",
         "packages/python/src/telegram_patterns/execution.py",
         "packages/python/src/telegram_patterns/_offline_recipe.py"
       ],
