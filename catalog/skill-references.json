@@ -109,6 +109,9 @@
       ".agents/skills/telegram-code-patterns/references/stars-subscriptions.md",
       ".agents/skills/telegram-subscription-access/references/stars-subscriptions.md"
     ],
+    "docs/component-texts.md": [
+      ".agents/skills/telegram-code-patterns/references/component-texts.md"
+    ],
     "docs/starter-selection.md": [
       ".agents/skills/telegram-code-patterns/references/starter-selection.md"
     ],

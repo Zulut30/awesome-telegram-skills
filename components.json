@@ -646,6 +646,21 @@
       "maturity_scope": "All public API symbols in this component; local verification is not a stable 1.0 promise"
     },
     {
+      "id": "component-texts",
+      "language": "python",
+      "import": "telegram_patterns.Texts, TextLocale, default_texts",
+      "intent": "Перевести фразы компонентов на английский или заменить любую строку своей формулировкой",
+      "source": "packages/python/src/telegram_patterns/texts.py",
+      "example": "examples/api-reference/python/core_texts.py",
+      "boundaries": [
+        "built-in ru and en catalogs; the project chooses one Texts per language, nothing is guessed from language_code",
+        "an override keeps the placeholders of the phrase it replaces; values are inserted as plain text",
+        "CLI, doctor and starter templates speak to the developer and are not part of the catalog"
+      ],
+      "maturity": "experimental",
+      "maturity_scope": "All public API symbols in this component; local verification is not a stable 1.0 promise"
+    },
+    {
       "id": "core-markup",
       "language": "python",
       "import": "telegram_patterns.inline_button, reply_button, layout_rows, inline_markup, reply_markup, force_reply_markup, remove_markup, paginated_markup, MarkupPage, markup_page_number, selection_markup",

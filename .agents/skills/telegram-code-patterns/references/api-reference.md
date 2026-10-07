@@ -44,6 +44,9 @@
 | `RenewalState` | `from telegram_patterns import RenewalState` | [ref.core_stars_subscription](api-reference-core.md#ref-core_stars_subscription) | pending, active, canceled или failed |
 | `SubscriptionEventRejected` | `from telegram_patterns import SubscriptionEventRejected` | [ref.core_stars_subscription](api-reference-core.md#ref-core_stars_subscription) | Событие чужого пользователя или payload, не XTR, разовая оплата, неизвестное состояние или конфликт charge |
 | `STARS_SUBSCRIPTION_PERIOD` | `from telegram_patterns import STARS_SUBSCRIPTION_PERIOD` | [ref.core_stars_subscription](api-reference-core.md#ref-core_stars_subscription) | 2592000 секунд — единственный период подписки, который сейчас принимает Telegram |
+| `Texts` | `from telegram_patterns import Texts` | [ref.core_texts](api-reference-core.md#ref-core_texts) | Каталог локали ru или en плюс замены приложения; texts(key, **values) возвращает одну строку |
+| `TextLocale` | `from telegram_patterns import TextLocale` | [ref.core_texts](api-reference-core.md#ref-core_texts) | Литерал 'ru' | 'en' встроенных каталогов |
+| `default_texts` | `from telegram_patterns import default_texts` | [ref.core_texts](api-reference-core.md#ref-core_texts) | Встроенный каталог локали только для чтения: ключ → шаблон с {плейсхолдерами} |
 | `inline_button` | `from telegram_patterns import inline_button` | [ref.core_markup](api-reference-core.md#ref-core_markup) | Inline-кнопка с ровно одним действием: callback_data, url, web_app, copy_text, switch_inline_query или disabled |
 | `reply_button` | `from telegram_patterns import reply_button` | [ref.core_markup](api-reference-core.md#ref-core_markup) | Кнопка reply-клавиатуры: текст или один запрос (контакт, геопозиция, Mini App) |
 | `layout_rows` | `from telegram_patterns import layout_rows` | [ref.core_markup](api-reference-core.md#ref-core_markup) | Ряды из плоского списка по ширинам 1–8, как KeyboardLayout |

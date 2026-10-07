@@ -105,7 +105,6 @@ def env_flag(value: str, name: str) -> bool:
 
 # Time: calendar_core, slots, the aiogram calendar keyboards.
 
-WEEKDAYS = ('Пн', 'Вт', 'Ср', 'Чт', 'Пт', 'Сб', 'Вс')
 _EPOCH = datetime(1970, 1, 1, tzinfo=timezone.utc)
 
 

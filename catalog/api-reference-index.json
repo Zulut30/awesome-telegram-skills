@@ -364,6 +364,42 @@
     },
     {
       "module": "telegram_patterns",
+      "name": "Texts",
+      "import": "from telegram_patterns import Texts",
+      "recipe": "ref.core_texts",
+      "example": "examples/api-reference/python/core_texts.py",
+      "limits": "Каталог содержит фразы, которые видит пользователь бота: шаги и ошибки форм, навигация, составной выбор, календарь, пагинация, публичные сообщения об ошибках, подпись документа в rich-fallback. Сообщения CLI, doctor и шаблонов starter адресованы разработчику и остаются русскими. Замена обязана сохранить плейсхолдеры исходной фразы, значения вставляются как обычный текст. Язык выбирает проект: один Texts на язык, переданный компоненту; автоматического определения по language_code нет.",
+      "intent": "Каталог локали ru или en плюс замены приложения; texts(key, **values) возвращает одну строку",
+      "example_sha256": "13dab75e243a4e3f76635435011706f0fef0b279f8f4803b126061c644eec614",
+      "example_source_sha256": "13dab75e243a4e3f76635435011706f0fef0b279f8f4803b126061c644eec614",
+      "kind": "value"
+    },
+    {
+      "module": "telegram_patterns",
+      "name": "TextLocale",
+      "import": "from telegram_patterns import TextLocale",
+      "recipe": "ref.core_texts",
+      "example": "examples/api-reference/python/core_texts.py",
+      "limits": "Каталог содержит фразы, которые видит пользователь бота: шаги и ошибки форм, навигация, составной выбор, календарь, пагинация, публичные сообщения об ошибках, подпись документа в rich-fallback. Сообщения CLI, doctor и шаблонов starter адресованы разработчику и остаются русскими. Замена обязана сохранить плейсхолдеры исходной фразы, значения вставляются как обычный текст. Язык выбирает проект: один Texts на язык, переданный компоненту; автоматического определения по language_code нет.",
+      "intent": "Литерал 'ru' | 'en' встроенных каталогов",
+      "example_sha256": "13dab75e243a4e3f76635435011706f0fef0b279f8f4803b126061c644eec614",
+      "example_source_sha256": "13dab75e243a4e3f76635435011706f0fef0b279f8f4803b126061c644eec614",
+      "kind": "value"
+    },
+    {
+      "module": "telegram_patterns",
+      "name": "default_texts",
+      "import": "from telegram_patterns import default_texts",
+      "recipe": "ref.core_texts",
+      "example": "examples/api-reference/python/core_texts.py",
+      "limits": "Каталог содержит фразы, которые видит пользователь бота: шаги и ошибки форм, навигация, составной выбор, календарь, пагинация, публичные сообщения об ошибках, подпись документа в rich-fallback. Сообщения CLI, doctor и шаблонов starter адресованы разработчику и остаются русскими. Замена обязана сохранить плейсхолдеры исходной фразы, значения вставляются как обычный текст. Язык выбирает проект: один Texts на язык, переданный компоненту; автоматического определения по language_code нет.",
+      "intent": "Встроенный каталог локали только для чтения: ключ → шаблон с {плейсхолдерами}",
+      "example_sha256": "13dab75e243a4e3f76635435011706f0fef0b279f8f4803b126061c644eec614",
+      "example_source_sha256": "13dab75e243a4e3f76635435011706f0fef0b279f8f4803b126061c644eec614",
+      "kind": "value"
+    },
+    {
+      "module": "telegram_patterns",
       "name": "inline_button",
       "import": "from telegram_patterns import inline_button",
       "recipe": "ref.core_markup",
@@ -3351,9 +3387,9 @@
       "kind": "value"
     }
   ],
-  "python_symbols": 232,
+  "python_symbols": 235,
   "typescript_symbols": 47,
-  "recipes": 38,
+  "recipes": 39,
   "additional_entries": [
     "CLI recipes",
     "CLI init",

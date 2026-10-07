@@ -46,6 +46,7 @@ metadata:
 - [ephemeral-messages](references/ephemeral-messages.md): ответ в группе только нажавшему
 - [communities](references/communities.md): события и права сообществ
 - [stars-subscriptions](references/stars-subscriptions.md): подписка Stars и платный доступ
+- [component-texts](references/component-texts.md): английский язык и своя формулировка фраз компонентов
 - [bot-api-10-features](references/bot-api-10-features.md): guest, bot-to-bot, live photo, заявки, медиа опросов
 - [ptb-adapter](references/ptb-adapter.md): проект на python-telegram-bot
 - [media](references/media.md): фото, документы, альбомы, скачивание

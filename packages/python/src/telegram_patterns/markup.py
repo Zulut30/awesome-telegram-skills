@@ -16,6 +16,7 @@ from typing import Any, Literal
 from urllib.parse import urlsplit
 
 from .errors import InvalidType, ValidationFailure
+from .texts import Texts
 
 ChatType = Literal['private', 'group', 'supergroup', 'channel']
 ButtonStyle = Literal['primary', 'success', 'danger']
@@ -319,11 +320,17 @@ def paginated_markup(
     action_prefix: str = 'act:',
     page_prefix: str = 'page:',
     style: ButtonStyle | None = None,
+    texts: Texts | None = None,
 ) -> MarkupPage:
-    """(text, key) items as pages of callback buttons with ← Назад / Далее →; a page past the end shows the last one.
+    """(text, key) items as pages of callback buttons with previous/next buttons; a page past the end shows the last.
 
-    The same layout and callback data as telegram_patterns.aiogram.paginated_menu.
+    The same layout and callback data as telegram_patterns.aiogram.paginated_menu; texts names the navigation
+    buttons ('page.previous', 'page.next'), Russian by default.
     """
+    if texts is None:
+        texts = Texts()
+    elif not isinstance(texts, Texts):
+        raise InvalidType('Use Texts or None')
     if action_prefix == page_prefix:
         raise ValidationFailure('Action and pagination prefixes must differ')
     if type(page) is not int or page < 0:
@@ -347,9 +354,9 @@ def paginated_markup(
     rows = [shown[offset : offset + columns] for offset in range(0, len(shown), columns)]
     navigation = []
     if current > 0:
-        navigation.append(inline_button('← Назад', callback_data=_callback(page_prefix, str(current - 1))))
+        navigation.append(inline_button(texts('page.previous'), callback_data=_callback(page_prefix, str(current - 1))))
     if current + 1 < count:
-        navigation.append(inline_button('Далее →', callback_data=_callback(page_prefix, str(current + 1))))
+        navigation.append(inline_button(texts('page.next'), callback_data=_callback(page_prefix, str(current + 1))))
     if navigation:
         rows.append(navigation)
     return MarkupPage({'inline_keyboard': rows}, current, count, len(buttons))

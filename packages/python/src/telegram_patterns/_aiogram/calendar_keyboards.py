@@ -7,9 +7,10 @@ from typing import Callable, Sequence
 
 from aiogram.types import DisabledButton, InlineKeyboardButton, InlineKeyboardMarkup
 
-from .._shared import WEEKDAYS, resolve_zone
+from .._shared import resolve_zone
 from ..calendar_core import CalendarMonth, TimeSlot
 from ..errors import InvalidType, ValidationFailure
+from ..texts import Texts
 from .keyboard_layouts import KeyboardCapabilities, KeyboardLayout, inline_layout
 from .native_keyboards import inline_keyboard
 
@@ -21,6 +22,7 @@ def calendar_keyboard(
     navigation: tuple[str, str] | None = None,
     disabled_buttons: bool = False,
     capabilities: KeyboardCapabilities = KeyboardCapabilities(),
+    texts: Texts | None = None,
 ) -> InlineKeyboardMarkup:
     """Monday-first full grid only with host-verified DisabledButton support.
 
@@ -35,9 +37,14 @@ def calendar_keyboard(
         raise InvalidType('Use explicit capabilities and bool disabled_buttons')
     if capabilities.business or capabilities.chat_type == 'channel':
         raise ValidationFailure('Calendar supports ordinary bot chats')
+    if texts is None:
+        texts = Texts()
+    elif not isinstance(texts, Texts):
+        raise InvalidType('Use Texts or None')
+    weekdays = texts.weekdays()
     rows: list[list[InlineKeyboardButton]] = []
     if disabled_buttons:
-        rows.append([InlineKeyboardButton(text=label, disabled=DisabledButton()) for label in WEEKDAYS])
+        rows.append([InlineKeyboardButton(text=label, disabled=DisabledButton()) for label in weekdays])
         for week in month.weeks:
             rows.append(
                 [
@@ -49,7 +56,7 @@ def calendar_keyboard(
             )
     else:
         buttons = [
-            InlineKeyboardButton(text=f'{WEEKDAYS[day.weekday()]} {day.day}', callback_data=callback_for(day))
+            InlineKeyboardButton(text=f'{weekdays[day.weekday()]} {day.day}', callback_data=callback_for(day))
             for day in sorted(month.allowed_dates)
         ]
         if buttons:
@@ -59,8 +66,8 @@ def calendar_keyboard(
             raise InvalidType('Use (previous_callback, next_callback)')
         rows.append(
             [
-                InlineKeyboardButton(text='Предыдущий месяц', callback_data=navigation[0]),
-                InlineKeyboardButton(text='Следующий месяц', callback_data=navigation[1]),
+                InlineKeyboardButton(text=texts('calendar.previous_month'), callback_data=navigation[0]),
+                InlineKeyboardButton(text=texts('calendar.next_month'), callback_data=navigation[1]),
             ]
         )
     return inline_keyboard(rows, chat_type=capabilities.chat_type) if rows else InlineKeyboardMarkup(inline_keyboard=[])

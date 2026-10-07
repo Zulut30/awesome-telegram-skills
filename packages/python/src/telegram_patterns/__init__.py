@@ -81,6 +81,7 @@ from .stars_subscription import (
 )
 from .starter import StarterPlan, create_starter
 from .starter_components import StarterComponent, StarterConflict, starter_components
+from .texts import TextLocale, Texts, default_texts
 
 __all__ = [
     "BotSettings",
@@ -174,4 +175,7 @@ __all__ = [
     "UnsupportedCapability",
     "ValidationFailure",
     "safe_error_report",
+    "TextLocale",
+    "Texts",
+    "default_texts",
 ]

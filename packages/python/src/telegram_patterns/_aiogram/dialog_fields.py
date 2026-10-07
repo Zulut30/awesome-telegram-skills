@@ -13,6 +13,7 @@ from typing import Any, ClassVar, Mapping, TypeAlias
 from aiogram.types import Message
 
 from ..errors import InvalidType, ValidationFailure
+from ..texts import Texts
 from .common import fits_text
 from .forms import InvalidField
 
@@ -21,13 +22,13 @@ FieldValue: TypeAlias = str | Mapping[str, str | int | float | None]
 
 def _text(value: object, maximum: int = 256) -> str:
     if not isinstance(value, str) or not fits_text(value, maximum) or any(ord(c) < 32 or ord(c) == 127 for c in value):
-        raise InvalidField('Введите значение без управляющих символов в указанном формате.')
+        raise InvalidField(key='field.invalid_text')
     return value.strip()
 
 
 def _record(value: object, keys: set[str]) -> dict[str, Any]:
     if not isinstance(value, Mapping) or set(value) != keys:
-        raise InvalidField('Данные поля повреждены. Повторите ввод.')
+        raise InvalidField(key='field.corrupted')
     return dict(value)
 
 
@@ -55,7 +56,7 @@ class _Field:
     def read(self, message: Message) -> FieldValue:
         return self.restore(message.text)
 
-    def display(self, value: FieldValue) -> str:
+    def display(self, value: FieldValue, texts: Texts | None = None) -> str:
         return str(value)
 
 
@@ -99,15 +100,15 @@ class NumberField(_Field):
     def restore(self, value: object) -> str:
         text = _text(value, 64)
         if not re.fullmatch(r'[+-]?[0-9]+(?:[.,][0-9]+)?', text):
-            raise InvalidField('Введите число без экспоненты; разделитель — точка или запятая.')
+            raise InvalidField(key='field.number_format')
         text = text.replace(',', '.')
         if '.' in text and len(text.split('.')[1]) > self.decimal_places:
-            raise InvalidField(f'Допустимо до {self.decimal_places} знаков после разделителя.')
+            raise InvalidField(key='field.decimal_places', values={'places': self.decimal_places})
         number = Decimal(text)
         if (self.minimum is not None and number < _decimal(self.minimum)) or (
             self.maximum is not None and number > _decimal(self.maximum)
         ):
-            raise InvalidField('Число вне разрешенного диапазона.')
+            raise InvalidField(key='field.number_range')
         canonical = format(number, 'f')
         if '.' in canonical:
             canonical = canonical.rstrip('0').rstrip('.')
@@ -123,7 +124,7 @@ class EmailField(_Field):
     def restore(self, value: object) -> str:
         text = _text(value, 254)
         if text.count('@') != 1:
-            raise InvalidField('Введите email в формате name@example.com.')
+            raise InvalidField(key='field.email_format')
         local, domain = text.split('@')
         labels = domain.split('.')
         if (
@@ -135,7 +136,7 @@ class EmailField(_Field):
             or len(labels) < 2
             or any(not re.fullmatch(r'[A-Za-z0-9](?:[A-Za-z0-9-]{0,61}[A-Za-z0-9])?', part) for part in labels)
         ):
-            raise InvalidField('Введите email без пробелов, с корректным именем и доменом.')
+            raise InvalidField(key='field.email_invalid')
         return local + '@' + domain.lower()
 
 
@@ -148,10 +149,10 @@ class PhoneField(_Field):
     def restore(self, value: object) -> str:
         text = _text(value, 64)
         if not re.fullmatch(r'\+[0-9 ()-]+', text):
-            raise InvalidField('Укажите международный номер с + и кодом страны.')
+            raise InvalidField(key='field.phone_format')
         canonical = re.sub(r'[ ()-]', '', text)
         if not re.fullmatch(r'\+[1-9][0-9]{6,14}', canonical):
-            raise InvalidField('Укажите от 7 до 15 цифр, начиная с кода страны.')
+            raise InvalidField(key='field.phone_digits')
         return canonical
 
 
@@ -182,9 +183,9 @@ class DateField(_Field):
                 raise ValueError
             result = date.fromisoformat(text).isoformat()
         except ValueError:
-            raise InvalidField('Введите существующую дату в формате ГГГГ-ММ-ДД.') from None
+            raise InvalidField(key='field.date_format') from None
         if (self.minimum is not None and result < self.minimum) or (self.maximum is not None and result > self.maximum):
-            raise InvalidField('Дата вне разрешенного диапазона.')
+            raise InvalidField(key='field.date_range')
         return result
 
 
@@ -217,15 +218,15 @@ class FileField(_Field):
             if result[key] is not None:
                 result[key] = _text(result[key], 255)
         if type(result['file_size']) is not int or not 0 <= result['file_size'] <= self.max_bytes:
-            raise InvalidField('Размер файла неизвестен или превышает разрешенный лимит.')
+            raise InvalidField(key='field.file_size')
         if self.mime_types and result['mime_type'] not in self.mime_types:
-            raise InvalidField('Этот тип файла не разрешен.')
+            raise InvalidField(key='field.file_type')
         return result
 
     def read(self, message: Message) -> dict[str, Any]:
         document = message.document
         if document is None or message.media_group_id is not None:
-            raise InvalidField('Отправьте один документ ответом на текущий вопрос.')
+            raise InvalidField(key='field.file_single')
         return self.restore(
             {
                 name: getattr(document, name)
@@ -233,9 +234,12 @@ class FileField(_Field):
             }
         )
 
-    def display(self, value: FieldValue) -> str:
+    def display(self, value: FieldValue, texts: Texts | None = None) -> str:
         assert isinstance(value, Mapping)
-        return f"{value['file_name'] or 'Документ'} ({value['file_size']} байт)"
+        texts = texts or Texts()
+        return texts(
+            'field.file_display', name=value['file_name'] or texts('field.file_unnamed'), size=value['file_size']
+        )
 
 
 @dataclass(frozen=True, slots=True)
@@ -260,9 +264,9 @@ class ContactField(_Field):
         if result['user_id'] is not None and (
             type(result['user_id']) is not int or not 0 < result['user_id'] <= 2**63 - 1
         ):
-            raise InvalidField('Контакт имеет некорректный user_id.')
+            raise InvalidField(key='field.contact_user_id')
         if self.own and result['user_id'] is None:
-            raise InvalidField('Поделитесь своим контактом через кнопку.')
+            raise InvalidField(key='field.contact_own')
         return result
 
     def read(self, message: Message) -> dict[str, Any]:
@@ -272,14 +276,12 @@ class ContactField(_Field):
             or message.forward_origin is not None
             or (self.own and (author is None or contact.user_id != author.id))
         ):
-            raise InvalidField(
-                'Поделитесь своим контактом через кнопку.' if self.own else 'Отправьте контакт без пересылки.'
-            )
+            raise InvalidField(key='field.contact_own' if self.own else 'field.contact_not_forwarded')
         return self.restore(
             {name: getattr(contact, name) for name in ('phone_number', 'first_name', 'last_name', 'user_id')}
         )
 
-    def display(self, value: FieldValue) -> str:
+    def display(self, value: FieldValue, texts: Texts | None = None) -> str:
         assert isinstance(value, Mapping)
         return f"{value['first_name']} {value['last_name'] or ''} · {value['phone_number']}"
 
@@ -296,24 +298,24 @@ class LocationField(_Field):
         for key, maximum in (('latitude', 90), ('longitude', 180)):
             number = result[key]
             if type(number) not in (int, float) or not -maximum <= number <= maximum or not math.isfinite(number):
-                raise InvalidField('Координаты вне разрешенного диапазона.')
+                raise InvalidField(key='field.location_range')
             result[key] = float(number)
         accuracy = result['horizontal_accuracy']
         if accuracy is not None and (
             type(accuracy) not in (int, float) or not 0 <= accuracy <= 1500 or not math.isfinite(accuracy)
         ):
-            raise InvalidField('Некорректная точность геопозиции.')
+            raise InvalidField(key='field.location_accuracy')
         result['horizontal_accuracy'] = float(accuracy) if accuracy is not None else None
         return result
 
     def read(self, message: Message) -> dict[str, Any]:
         location = message.location
         if location is None or location.live_period is not None or message.forward_origin is not None:
-            raise InvalidField('Отправьте обычную статичную геопозицию без пересылки.')
+            raise InvalidField(key='field.location_static')
         return self.restore(
             {name: getattr(location, name) for name in ('latitude', 'longitude', 'horizontal_accuracy')}
         )
 
-    def display(self, value: FieldValue) -> str:
+    def display(self, value: FieldValue, texts: Texts | None = None) -> str:
         assert isinstance(value, Mapping)
         return f"{value['latitude']}, {value['longitude']}"

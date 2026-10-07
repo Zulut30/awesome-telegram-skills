@@ -12,6 +12,7 @@ from aiogram.types import CallbackQuery, InlineKeyboardButton, InlineKeyboardMar
 from .._shared import SELECTION_PREFIX
 from ..errors import ConflictFailure, InvalidCompletion, InvalidType, UnknownOutcome, ValidationFailure
 from ..selection import SelectionContext, SelectionMenu, SelectionResult, SelectionSpec, SelectionState
+from ..texts import Texts
 from .common import check_text
 from .keyboard_layouts import KeyboardCapabilities, KeyboardLayout, inline_layout
 
@@ -39,13 +40,20 @@ def selection_keyboard(
     ) -> InlineKeyboardButton:
         return InlineKeyboardButton(text=text, callback_data=state.callback(action), style=style)
 
+    texts = state.spec.texts
     rows = []
     if state.phase == 'confirming':
         if state.confirmation_id is None:
             raise ValidationFailure('Confirming view needs its server confirmation ID')
         rows = [
-            [button('Да: ' + state.spec.confirm_text, 'y:' + state.confirmation_id, 'danger')],
-            [button('Изменить выбор', 'back'), button('Отмена', 'cancel')],
+            [
+                button(
+                    texts('selection.confirm_button', action=state.spec.confirm_text),
+                    'y:' + state.confirmation_id,
+                    'danger',
+                )
+            ],
+            [button(texts('selection.change'), 'back'), button(texts('selection.cancel'), 'cancel')],
         ]
     else:
         choices = [
@@ -68,7 +76,7 @@ def selection_keyboard(
             for key, label in state.spec.filters.items()
         ]
         rows.extend(inline_layout(filters, KeyboardLayout((2,)), capabilities=capabilities).inline_keyboard)
-        rows.append([button(state.spec.confirm_text, 'ask', 'danger'), button('Отмена', 'cancel')])
+        rows.append([button(state.spec.confirm_text, 'ask', 'danger'), button(texts('selection.cancel'), 'cancel')])
     buttons = [b for row in rows for b in row]
     return inline_layout(buttons, KeyboardLayout(tuple(len(row) for row in rows)), capabilities=capabilities)
 
@@ -81,6 +89,7 @@ def selection_router(
     load_spec: Callable[[CallbackQuery, SelectionMenu], Awaitable[SelectionSpec]] | None = None,
     on_result: Callable[[CallbackQuery, SelectionResult], Awaitable[None]] | None = None,
     render: Callable[[SelectionState], tuple[str, InlineKeyboardMarkup]] | None = None,
+    texts: Texts | None = None,
 ) -> Router:
     """ACK first; recheck after host load; commit local intent before host hook/edit.
 
@@ -91,7 +100,13 @@ def selection_router(
     expiry/removal, Bot/session/Dispatcher and any durable operation reconciliation.
     Optional synchronous render(state) composes calendar/custom views after the
     host hook. It cannot change the server guards; invalid output retains intent.
+    texts names results before a menu is found; a found menu speaks through its SelectionSpec.texts.
     """
+    if texts is None:
+        texts = resolve.state.spec.texts if isinstance(resolve, SelectionMenu) else Texts()
+    if not isinstance(texts, Texts):
+        raise InvalidType('Use Texts or None')
+    router_texts = texts
     if prefix is None:
         prefix = resolve.state.prefix if isinstance(resolve, SelectionMenu) else 'sel:'
     if not isinstance(prefix, str) or not SELECTION_PREFIX.fullmatch(prefix):
@@ -138,12 +153,12 @@ def selection_router(
             or message.from_user.id != bot.id
         ):
             if on_result is not None:
-                await on_result(query, SelectionResult('stale', 'Это сообщение не поддерживает такой выбор.'))
+                await on_result(query, SelectionResult('stale', router_texts('selection.unsupported_message')))
             return
         menu = resolve if isinstance(resolve, SelectionMenu) else resolve(query)
         if menu is None:
             if on_result is not None:
-                await on_result(query, SelectionResult('stale', 'Выбор уже закрыт.'))
+                await on_result(query, SelectionResult('stale', router_texts('selection.closed')))
             return
         if not isinstance(menu, SelectionMenu) or menu.state.prefix != prefix:
             raise InvalidType('Resolver must return a menu with the registered prefix or None')

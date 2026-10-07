@@ -4,7 +4,10 @@ from __future__ import annotations
 
 import asyncio
 from dataclasses import asdict, dataclass
-from typing import Literal, TypeAlias, cast
+from typing import TYPE_CHECKING, Literal, TypeAlias, cast
+
+if TYPE_CHECKING:
+    from .texts import Texts
 
 ErrorCategory: TypeAlias = Literal[
     'validation',
@@ -43,23 +46,24 @@ ErrorCode: TypeAlias = Literal[
     'server-error',
 ]
 
-_DESCRIPTORS: dict[str, tuple[ErrorCategory, RecoveryAction, str]] = {
-    'validation-failed': ('validation', 'fix-input', 'Проверьте входные данные.'),
-    'invalid-init-data': ('validation', 'authenticate', 'Откройте приложение заново для входа.'),
-    'invalid-api-request': ('validation', 'fix-input', 'Проверьте параметры запроса.'),
-    'invalid-field': ('validation', 'fix-input', 'Проверьте значение поля.'),
-    'authentication-required': ('permission', 'authenticate', 'Требуется вход в приложение.'),
-    'permission-denied': ('permission', 'check-permissions', 'Недостаточно прав для действия.'),
-    'unsupported-capability': ('unsupported', 'use-fallback', 'Функция недоступна в текущем окружении.'),
-    'timeout': ('timeout', 'retry-read', 'Ответ не получен вовремя.'),
-    'network': ('network', 'retry-read', 'Не удалось получить ответ.'),
-    'operation-conflict': ('conflict', 'reconcile', 'Проверьте состояние существующей операции.'),
-    'cancelled': ('cancelled', 'none', 'Ожидание ответа отменено.'),
-    'internal': ('internal', 'none', 'Не удалось обработать действие.'),
-    'unknown-outcome': ('unknown-outcome', 'reconcile', 'Результат операции пока не подтвержден.'),
-    'invalid-response': ('validation', 'none', 'Получен неподдерживаемый ответ сервера.'),
-    'rate-limited': ('rate-limit', 'retry-later', 'Слишком много запросов. Повторите позже.'),
-    'server-error': ('server', 'retry-read', 'Сервер временно не смог обработать запрос.'),
+# The public message of each code is the text 'error.<code>' of telegram_patterns.texts.
+_DESCRIPTORS: dict[str, tuple[ErrorCategory, RecoveryAction]] = {
+    'validation-failed': ('validation', 'fix-input'),
+    'invalid-init-data': ('validation', 'authenticate'),
+    'invalid-api-request': ('validation', 'fix-input'),
+    'invalid-field': ('validation', 'fix-input'),
+    'authentication-required': ('permission', 'authenticate'),
+    'permission-denied': ('permission', 'check-permissions'),
+    'unsupported-capability': ('unsupported', 'use-fallback'),
+    'timeout': ('timeout', 'retry-read'),
+    'network': ('network', 'retry-read'),
+    'operation-conflict': ('conflict', 'reconcile'),
+    'cancelled': ('cancelled', 'none'),
+    'internal': ('internal', 'none'),
+    'unknown-outcome': ('unknown-outcome', 'reconcile'),
+    'invalid-response': ('validation', 'none'),
+    'rate-limited': ('rate-limit', 'retry-later'),
+    'server-error': ('server', 'retry-read'),
 }
 
 
@@ -81,8 +85,8 @@ class PatternError(Exception):
     code: ErrorCode = 'internal'
     _known_outcome: ErrorOutcome | None = None
 
-    def report(self, *, operation: OperationKind = 'read') -> ErrorReport:
-        return safe_error_report(self, operation=operation)
+    def report(self, *, operation: OperationKind = 'read', texts: Texts | None = None) -> ErrorReport:
+        return safe_error_report(self, operation=operation, texts=texts)
 
 
 class ValidationFailure(PatternError, ValueError):
@@ -135,12 +139,21 @@ class InvalidCompletion(UnknownOutcome, ValueError):
     """An effect may have happened before a callback returned invalid feedback."""
 
 
-def safe_error_report(error: BaseException, *, operation: OperationKind = 'read') -> ErrorReport:
+def safe_error_report(
+    error: BaseException, *, operation: OperationKind = 'read', texts: Texts | None = None
+) -> ErrorReport:
     """Known metadata only, no exception str/args/stack/payload in public output.
 
     Unknown write outcome always requires reconciliation, never automatic retry.
     Callers must supply the actual operation kind; no I/O is performed here.
+    message is the text 'error.<code>' of texts (Russian by default).
     """
+    from .texts import Texts  # texts imports this module
+
+    if texts is None:
+        texts = Texts()
+    elif not isinstance(texts, Texts):
+        raise InvalidType('Use Texts or None')
     if operation not in {'read', 'write'}:
         raise ValidationFailure('Use read or write operation kind')
     if not isinstance(error, BaseException):
@@ -163,8 +176,9 @@ def safe_error_report(error: BaseException, *, operation: OperationKind = 'read'
         if isinstance(known, str) and known in {'rejected', 'read-failed', 'unknown'}
         else ('unknown' if operation == 'write' else 'read-failed')
     )
-    category, recovery, message = _DESCRIPTORS[code]
+    category, recovery = _DESCRIPTORS[code]
+    message = texts('error.' + code)
     if outcome == 'unknown':
         recovery = 'reconcile'
-        message = 'Результат операции пока не подтвержден. Проверьте ее статус.'
+        message = texts('error.unknown-outcome-write')
     return ErrorReport(cast(ErrorCode, code), category, outcome, recovery, message)

@@ -16,20 +16,39 @@ from aiogram.fsm.storage.memory import DisabledEventIsolation
 from aiogram.types import CallbackQuery, InlineKeyboardButton, InlineKeyboardMarkup, Message
 
 from ..errors import ErrorCode, InvalidCompletion, InvalidType, ValidationFailure
+from ..texts import Texts
 from .common import fits_text, message_actor_id, message_bot_id
 from .dialog_storage import DialogData, clear_form, lifetime_data, read_form, save_form
 from .fsm_storage import DialogLifetime
 
 
 class InvalidField(ValidationFailure):
-    """A bounded, user-facing validation message; never include secrets here."""
+    """A bounded, user-facing validation message; never include secrets here.
+
+    Built-in fields raise it with a text key (InvalidField(key='field.date_range')); routers show
+    error.text(texts) in the form's language. A plain message (InvalidField('...')) is shown as written.
+    str(error) is the Russian default for keyed errors.
+    """
 
     code: ErrorCode = 'invalid-field'
 
-    def __init__(self, message: str = "Проверьте значение и попробуйте ещё раз.") -> None:
+    def __init__(
+        self, message: str | None = None, *, key: str | None = None, values: Mapping[str, object] | None = None
+    ) -> None:
+        if message is not None and (key is not None or values):
+            raise InvalidType('Use either a message or a text key with values')
+        if message is None:
+            key = 'form.invalid_value' if key is None else key
+            message = Texts()(key, **dict(values or {}))
         if not fits_text(message, 256):
             raise ValidationFailure("Validation message must be nonempty plain text up to 256 UTF-16 units")
         super().__init__(message)
+        self.key = key
+        self.values: Mapping[str, object] = MappingProxyType(dict(values or {}))
+
+    def text(self, texts: Texts) -> str:
+        """The message in texts' language; a plain message stays as written."""
+        return str(self) if self.key is None else texts(self.key, **self.values)
 
 
 @dataclass(frozen=True, slots=True)
@@ -57,7 +76,7 @@ class TextField:
     def read(self, text: str) -> str:
         value = text.strip() if isinstance(text, str) else ""
         if not fits_text(value, self.max_length):
-            raise InvalidField(f"Введите от 1 до {self.max_length} символов.")
+            raise InvalidField(key='form.length', values={'maximum': self.max_length})
         if self.validate is not None:
             value = self.validate(value)
             if not fits_text(value, self.max_length):
@@ -87,6 +106,7 @@ def text_form_router(
     command: str = "apply",
     schema_version: int = 1,
     lifetime: DialogLifetime | None = None,
+    texts: Texts | None = None,
 ) -> Router:
     """Private-chat form with review, /back, /cancel and explicit submit button.
 
@@ -98,8 +118,14 @@ def text_form_router(
     With DialogLifetime the existing storage must support atomic snapshots;
     /apply resumes accepted answers without extending the original draft deadline.
     Version changes require explicit host migration; pending effects never expire.
+    texts gives every phrase the router sends (keys 'form.*'); Russian by default.
     """
     steps = tuple(fields)
+    if texts is None:
+        texts = Texts()
+    elif not isinstance(texts, Texts):
+        raise InvalidType("Use Texts or None")
+    say = texts
     if not 1 <= len(steps) <= 10 or any(not isinstance(item, TextField) for item in steps):
         raise ValidationFailure("Use 1..10 TextField items")
     if len({item.name for item in steps}) != len(steps):
@@ -119,8 +145,8 @@ def text_form_router(
     namespace = f"telegram_patterns:form:{name}"
     data_key = "__telegram_patterns_form"
     prefix = f"form:{name}:"
-    frozen_text = "Отправка уже началась. Нажмите «Отправить» в последней форме, чтобы проверить результат."
-    stale_text = f"Кнопка устарела. Откройте актуальную форму командой /{command}."
+    frozen_text = say("form.submit_started")
+    stale_text = say("form.stale_button", command=command)
     private = (
         (F.chat.type == "private")
         & F.business_connection_id.is_(None)
@@ -168,7 +194,7 @@ def text_form_router(
             raise RuntimeError("Stored form requires reconciliation or a schema migration")
         if lifetime is not None and lifetime.expired(stored.get("lifetime")) and not stored["submission_started"]:
             await clear_form(state, data_key, stored)
-            await message.answer(f"Срок черновика истёк. Начать заново: /{command}.", parse_mode=None)
+            await message.answer(say("form.expired", command=command), parse_mode=None)
             return None
         return stored
 
@@ -180,23 +206,23 @@ def text_form_router(
 
     async def prompt(message: Message, index: int) -> None:
         await message.answer(
-            f"Шаг {index + 1}/{len(steps)}. {steps[index].prompt}\n/back — назад · /cancel — отмена", parse_mode=None
+            say("form.step", number=index + 1, total=len(steps), prompt=steps[index].prompt), parse_mode=None
         )
 
     async def review(message: Message, state: FSMContext, data: DialogData) -> None:
-        text = "Проверьте ответы:\n" + "\n".join(f"{step.label}: {data['values'][step.name]}" for step in steps)
+        answers = "\n".join(f"{step.label}: {data['values'][step.name]}" for step in steps)
         keyboard = InlineKeyboardMarkup(
             inline_keyboard=[
                 [
-                    InlineKeyboardButton(text="Отправить", callback_data=f"{prefix}{data['operation_id']}:submit"),
+                    InlineKeyboardButton(
+                        text=say("form.submit"), callback_data=f"{prefix}{data['operation_id']}:submit"
+                    ),
                 ]
             ]
         )
         data["review_message_id"] = None
         await save(state, data)  # Reject old review before a potentially unknown send.
-        reply = await message.answer(
-            text + "\n/back — исправить · /cancel — отмена", parse_mode=None, reply_markup=keyboard
-        )
+        reply = await message.answer(say("form.review", answers=answers), parse_mode=None, reply_markup=keyboard)
         data["review_message_id"] = reply.message_id
         await save(state, data)
 
@@ -245,7 +271,7 @@ def text_form_router(
         if data is not None and message.message_id <= data["last_message_id"]:
             return
         await clear(state, data)
-        await message.answer(f"Форма отменена. Начать заново: /{command}.", parse_mode=None)
+        await message.answer(say("form.cancelled", command=command), parse_mode=None)
 
     @router.message(private, StateFilter(namespace), Command("back"))
     async def back(message: Message, dispatcher: Dispatcher, state: FSMContext | None = None) -> None:
@@ -283,7 +309,7 @@ def text_form_router(
         try:
             value = steps[data["index"]].read(message.text)
         except InvalidField as error:
-            await message.answer(str(error), parse_mode=None)
+            await message.answer(error.text(say), parse_mode=None)
             await prompt(message, data["index"])
             return
         data["values"][steps[data["index"]].name] = value
@@ -329,10 +355,7 @@ def text_form_router(
             if not fits_text(text, 4096):
                 raise InvalidCompletion("on_submit must return nonempty plain text up to 4096 UTF-16 units")
         except Exception:
-            await message.answer(
-                "Результат отправки пока не подтверждён. Нажмите «Отправить» ещё раз для проверки той же заявки.",
-                parse_mode=None,
-            )
+            await message.answer(say("form.unconfirmed"), parse_mode=None)
             raise  # Host error handling/observability, never raw errors in chat.
         await clear(state, data)
         await message.answer(text, parse_mode=None)

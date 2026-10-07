@@ -13,6 +13,7 @@ from dataclasses import dataclass
 from typing import Any, Literal, Sequence, TypeAlias, Union
 
 from .message_text import EntityKind, FormattedText, MessageBuilder, utf16_length
+from .texts import Texts
 
 RichButtonStyle = Literal['danger', 'success', 'primary', 'link']
 RichAlign = Literal['left', 'center', 'right']
@@ -194,13 +195,19 @@ class RichMessage:
 
 
 class RichMessageBuilder:
-    """Collects blocks in order; nested content (list items, details) comes from another builder."""
+    """Collects blocks in order; nested content (list items, details) comes from another builder.
 
-    def __init__(self, *, rtl: bool = False, skip_entity_detection: bool = False) -> None:
+    texts names words of the plain-text fallback, such as an uncaptioned document ('rich.document').
+    """
+
+    def __init__(self, *, rtl: bool = False, skip_entity_detection: bool = False, texts: Texts | None = None) -> None:
         if type(rtl) is not bool or type(skip_entity_detection) is not bool:
             raise TypeError('Expected boolean flags')
+        if texts is not None and not isinstance(texts, Texts):
+            raise TypeError('Expected Texts or None')
         self._blocks: list[_Block] = []
         self._rtl, self._skip = rtl, skip_entity_detection
+        self._texts = texts or Texts()
 
     def _add(
         self,
@@ -393,7 +400,7 @@ class RichMessageBuilder:
         _text(media)
         data: dict[str, Any] = {'type': 'document', 'document': {'type': 'document', 'media': media}}
         characters = 0
-        label = 'Документ'
+        label = self._texts('rich.document')
         if caption is not None:
             parts = _parts(caption)
             data['caption'] = {'text': _json(parts)}

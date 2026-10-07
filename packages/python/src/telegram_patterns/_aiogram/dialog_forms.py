@@ -25,6 +25,7 @@ from aiogram.types import (
 )
 
 from ..errors import InvalidCompletion, InvalidType, ValidationFailure
+from ..texts import Texts
 from .common import fits_text, message_actor_id, message_bot_id
 from .dialog_fields import (
     ContactField,
@@ -94,6 +95,7 @@ def dialog_form_router(
     command: str = 'collect',
     schema_version: int = 1,
     lifetime: DialogLifetime | None = None,
+    texts: Texts | None = None,
 ) -> Router:
     """Mixed fields with reply correlation, native candidate confirmation and review.
 
@@ -102,8 +104,14 @@ def dialog_form_router(
     confirms a bounded candidate on an actor/step/message-bound inline button.
     Host still owns current ACL, durable operation_id deduplication, retention,
     FSM persistence and recovery of unknown effects. Never resets pending effects.
+    texts gives every phrase the router sends and field errors (keys 'form.*', 'dialog.*', 'field.*').
     """
     steps = tuple(fields)
+    if texts is None:
+        texts = Texts()
+    elif not isinstance(texts, Texts):
+        raise InvalidType('Use Texts or None')
+    say = texts
     if not 1 <= len(steps) <= 10 or any(
         not isinstance(
             s, (TextField, NumberField, EmailField, PhoneField, DateField, FileField, ContactField, LocationField)
@@ -142,8 +150,8 @@ def dialog_form_router(
         & F.message_thread_id.is_(None)
         & F.is_topic_message.is_not(True)
     )
-    frozen_text = 'Отправка уже началась. Нажмите «Отправить» в последней форме, чтобы проверить результат.'
-    stale_text = f'Действие устарело. Откройте текущий вопрос командой /{command}.'
+    frozen_text = say('form.submit_started')
+    stale_text = say('dialog.stale_action', command=command)
 
     def require(dispatcher: Dispatcher, state: FSMContext | None, message: Message, actor: int) -> FSMContext:
         if state is None or isinstance(dispatcher.fsm.events_isolation, DisabledEventIsolation):
@@ -163,7 +171,7 @@ def dialog_form_router(
             return value  # Custom validators run once at input, never during replay.
         result = step.restore(value)
         if isinstance(step, ContactField) and step.own and isinstance(result, Mapping) and result['user_id'] != actor:
-            raise InvalidField('Поделитесь своим контактом через кнопку.')
+            raise InvalidField(key='field.contact_own')
         return result
 
     def positive(value: object) -> bool:
@@ -232,9 +240,7 @@ def dialog_form_router(
             raise RuntimeError('Stored dialog requires reconciliation or a schema migration') from None
         if lifetime is not None and lifetime.expired(stored.get("lifetime")) and not stored["submission_started"]:
             await clear_form(state, data_key, stored)
-            await message.answer(
-                f"Срок черновика истёк. Начать заново: /{command}.", parse_mode=None, reply_markup=remove_keyboard()
-            )
+            await message.answer(say('form.expired', command=command), parse_mode=None, reply_markup=remove_keyboard())
             return None
         return stored
 
@@ -254,7 +260,7 @@ def dialog_form_router(
             inline_keyboard=[
                 [
                     InlineKeyboardButton(
-                        text='Подтвердить' if action.startswith('v:') else 'Отправить',
+                        text=say('dialog.confirm') if action.startswith('v:') else say('form.submit'),
                         callback_data=f"{prefix}{data['operation_id']}:{action}",
                     )
                 ]
@@ -263,12 +269,12 @@ def dialog_form_router(
 
     async def remove(message: Message, state: FSMContext, data: DialogData) -> None:
         if data['keyboard_active']:
-            await message.answer('Клавиатура ввода закрыта.', parse_mode=None, reply_markup=remove_keyboard())
+            await message.answer(say('dialog.keyboard_closed'), parse_mode=None, reply_markup=remove_keyboard())
             data['keyboard_active'] = False
             await save(state, data)
 
     def display(step: _Step, value: FieldValue) -> str:
-        text = str(value) if isinstance(step, TextField) else step.display(value)
+        text = str(value) if isinstance(step, TextField) else step.display(value, say)
         # Bounded plain text; user metadata cannot overflow Telegram's 4096 units.
         return text if fits_text(text, 280) else text[:120] + '…'
 
@@ -277,9 +283,9 @@ def dialog_form_router(
         await save(state, data)  # Invalidate old UI before a potentially unknown send.
         if data['index'] == len(steps):
             await remove(message, state, data)
-            text = 'Проверьте ответы:\n' + '\n'.join(f"{s.label}: {display(s, data['values'][s.name])}" for s in steps)
+            answers = '\n'.join(f"{s.label}: {display(s, data['values'][s.name])}" for s in steps)
             reply = await message.answer(
-                text + '\n/back — исправить · /cancel — отмена', parse_mode=None, reply_markup=keyboard(data, 'submit')
+                say('form.review', answers=answers), parse_mode=None, reply_markup=keyboard(data, 'submit')
             )
             data['review_message_id'] = sent_id(reply, message)
         else:
@@ -289,7 +295,9 @@ def dialog_form_router(
                 data['keyboard_active'] = True  # Preserve cleanup even if send result is unknown.
                 await save(state, data)
                 button = KeyboardButton(
-                    text='Поделиться контактом' if isinstance(step, ContactField) else 'Поделиться геопозицией',
+                    text=say('dialog.share_contact')
+                    if isinstance(step, ContactField)
+                    else say('dialog.share_location'),
                     request_contact=True if isinstance(step, ContactField) else None,
                     request_location=True if isinstance(step, LocationField) else None,
                 )
@@ -297,7 +305,7 @@ def dialog_form_router(
             else:
                 await remove(message, state, data)
             reply = await message.answer(
-                f"Шаг {data['index'] + 1}/{len(steps)}. {step.prompt}\n/back — назад · /cancel — отмена",
+                say('form.step', number=data['index'] + 1, total=len(steps), prompt=step.prompt),
                 parse_mode=None,
                 reply_markup=markup,
             )
@@ -349,7 +357,7 @@ def dialog_form_router(
         if message.text and message.text.split()[0].split('@')[0] == '/cancel':
             await remove(message, state, data)
             await clear(state, data)
-            await message.answer(f'Форма отменена. Начать заново: /{command}.', parse_mode=None)
+            await message.answer(say('form.cancelled', command=command), parse_mode=None)
             return
         data['index'] = max(0, data['index'] - 1)
         data['values'] = {s.name: data['values'][s.name] for s in steps[: data['index']]}
@@ -385,12 +393,12 @@ def dialog_form_router(
                 or not reply.from_user.is_bot
                 or reply.from_user.id != message_bot_id(message)
             ):
-                await message.answer('Ответьте на текущий вопрос бота.', parse_mode=None)
+                await message.answer(say('dialog.reply_to_question'), parse_mode=None)
                 return
         try:
             value = step.read(message.text or '') if isinstance(step, TextField) else step.read(message)
         except InvalidField as error:
-            await message.answer(str(error), parse_mode=None)
+            await message.answer(error.text(say), parse_mode=None)
             await show(message, state, data)
             return
         if isinstance(step, (ContactField, LocationField)):
@@ -399,7 +407,7 @@ def dialog_form_router(
             await save(state, data)  # Old candidate becomes unusable even after lost send.
             await remove(message, state, data)
             reply = await message.answer(
-                f"{step.label}: {display(step, value)}\nПодтвердите значение для текущего вопроса.",
+                say('dialog.confirm_value', label=step.label, value=display(step, value)),
                 parse_mode=None,
                 reply_markup=keyboard(data, 'v:' + data['candidate']['nonce']),
             )
@@ -459,10 +467,7 @@ def dialog_form_router(
             if not fits_text(text, 4096):
                 raise InvalidCompletion('on_submit must return nonempty plain text up to 4096 UTF-16 units')
         except Exception:
-            await message.answer(
-                'Результат отправки пока не подтверждён. Нажмите «Отправить» ещё раз для проверки той же заявки.',
-                parse_mode=None,
-            )
+            await message.answer(say('form.unconfirmed'), parse_mode=None)
             raise
         await clear(state, data)  # Completion is final even if the following feedback is lost.
         await message.answer(text, parse_mode=None, reply_markup=remove_keyboard())

@@ -8,7 +8,8 @@ from typing import Literal, Sequence
 
 from aiogram.types import InlineKeyboardButton, InlineKeyboardMarkup
 
-from ..errors import ValidationFailure
+from ..errors import InvalidType, ValidationFailure
+from ..texts import Texts
 from .common import callback_data, unique_items
 
 ButtonStyle = Literal["primary", "success", "danger"]
@@ -95,8 +96,16 @@ def paginated_menu(
     action_prefix: str = "act:",
     page_prefix: str = "page:",
     emoji_entitlement_verified: bool = False,
+    texts: Texts | None = None,
 ) -> MenuPage:
-    """Zero-based local view, clamped after list shrink; never grants object access."""
+    """Zero-based local view, clamped after list shrink; never grants object access.
+
+    texts names the previous/next buttons ('page.previous', 'page.next'); Russian by default.
+    """
+    if texts is None:
+        texts = Texts()
+    elif not isinstance(texts, Texts):
+        raise InvalidType('Use Texts or None')
     _columns(columns)
     callback_data("k", action_prefix)
     callback_data("0", page_prefix)
@@ -120,9 +129,9 @@ def paginated_menu(
     )
     navigation = []
     if current > 0:
-        navigation.append(_button(ActionButton("← Назад", str(current - 1)), page_prefix, False))
+        navigation.append(_button(ActionButton(texts('page.previous'), str(current - 1)), page_prefix, False))
     if current + 1 < count:
-        navigation.append(_button(ActionButton("Далее →", str(current + 1)), page_prefix, False))
+        navigation.append(_button(ActionButton(texts('page.next'), str(current + 1)), page_prefix, False))
     if navigation:
         markup.inline_keyboard.append(navigation)
     return MenuPage(markup=markup, page=current, page_count=count, total_items=len(items))

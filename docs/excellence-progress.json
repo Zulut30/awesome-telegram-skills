@@ -834,9 +834,15 @@
     {
       "id": 66,
       "title": "Переопределяемые тексты компонентов",
-      "status": "pending",
-      "commit_subject": null,
-      "evidence": [],
+      "status": "done",
+      "commit_subject": "excellence(066): make component texts overridable with Russian and English catalogs",
+      "evidence": [
+        "packages/python/src/telegram_patterns/texts.py: Texts, TextLocale, default_texts; 129 keys in ru and en with identical placeholders",
+        "texts= on text_form_router, dialog_form_router, MessageNavigation, selection_router, calendar_keyboard, CalendarMonth.text, paginated_menu, paginated_markup, callback_router, safe_error_report, PatternError.report, RichMessageBuilder; SelectionSpec.texts; InvalidField(key=...).text(texts)",
+        "packages/python/tests/test_texts.py: catalog parity, override validation, English form on a real Dispatcher, overrides in navigation/selection/errors/callback_router, test_handlers_hold_no_user_phrases (AST: no Cyrillic literals outside the catalog and developer tooling)",
+        "core_texts API group with executed example; component-texts in components.json; docs/component-texts.md in telegram-code-patterns; docs site verified (471 pages, browser 232 checks)",
+        "verify_pattern_packages PASS 0.24.0: 549 Python and 35 TypeScript tests, browser=passed; 127 root tests"
+      ],
       "remaining": null
     },
     {

@@ -9,24 +9,11 @@ from datetime import date, datetime, timezone
 from itertools import islice
 from typing import Iterable
 
-from ._shared import WEEKDAYS, resolve_zone, to_utc
+from ._shared import resolve_zone, to_utc
 from .errors import InvalidType, ValidationFailure
+from .texts import Texts
 
 _KEY = re.compile(r'[A-Za-z0-9_-]{1,24}\Z', re.ASCII)
-_MONTHS = (
-    'Январь',
-    'Февраль',
-    'Март',
-    'Апрель',
-    'Май',
-    'Июнь',
-    'Июль',
-    'Август',
-    'Сентябрь',
-    'Октябрь',
-    'Ноябрь',
-    'Декабрь',
-)
 
 
 def resolve_local_time(local: datetime, time_zone: str, *, fold: int | None = None) -> datetime:
@@ -150,11 +137,16 @@ class CalendarMonth:
     def allows(self, day: date) -> bool:
         return type(day) is date and day in self.allowed_dates
 
-    def text(self) -> str:
-        rows = [f'{_MONTHS[self.month - 1]} {self.year} · {self.time_zone}', ' '.join(WEEKDAYS)]
+    def text(self, texts: Texts | None = None) -> str:
+        """Monospace month view; texts gives month and weekday names and the legend (Russian by default)."""
+        if texts is None:
+            texts = Texts()
+        elif not isinstance(texts, Texts):
+            raise InvalidType('Use Texts or None')
+        rows = [f'{texts.month(self.month)} {self.year} · {self.time_zone}', ' '.join(texts.weekdays())]
         rows.extend(
             ' '.join('  ' if day is None else f'{day.day:2}' if self.allows(day) else ' ·' for day in week)
             for week in self.weeks
         )
-        rows.append('· — недоступно. Дату выбирайте кнопкой ниже.' if self.allowed_dates else 'Нет доступных дат.')
+        rows.append(texts('calendar.legend') if self.allowed_dates else texts('calendar.no_dates'))
         return '\n'.join(rows)

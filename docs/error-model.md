@@ -10,7 +10,7 @@
 | `category: ErrorCategory` | `validation`, `permission`, `unsupported`, `timeout`, `network`, `conflict`, `cancelled`, `internal`, `unknown-outcome`, `rate-limit`, `server`; не заменяет outcome |
 | `outcome: ErrorOutcome` | `rejected`: доказанное отклонение этой попытки до эффекта; `read-failed`: чтение не завершилось; `unknown`: эффект не подтвержден и не опровергнут |
 | `recovery: RecoveryAction` | `fix-input`, `authenticate`, `check-permissions`, `use-fallback`, `retry-read`, `retry-later`, `reconcile`, `none`; указание для приложения, не выполненная операция |
-| `message: str/string` | Постоянный безопасный русский текст из каталога; локализацию выбирает host по code. Текст исключения, stack, URL, headers, token, response body и пользовательский payload сюда не копируются |
+| `message: str/string` | Постоянный безопасный текст из каталога: русский по умолчанию; в Python `safe_error_report(..., texts=Texts('en'))` дает английский или замененную фразу (ключ `error.<code>`), иначе локализацию выбирает host по code. Текст исключения, stack, URL, headers, token, response body и пользовательский payload сюда не копируются |
 
 Python `ErrorReport` — frozen DTO; `.as_dict()` возвращает новую JSON-совместимую копию пяти полей. TypeScript factory возвращает frozen объект с readonly полями. Гарантия безопасного сообщения относится к результату нормализатора; вручную созданный DTO и внешнее JSON тело сами по себе ей не обладают. Python требует `BaseException`; TypeScript принимает `unknown`, но произвольный объект не признается доверенной ошибкой. Неизвестное поле/объект не может заявить, что запись точно отклонена.
 

@@ -15,6 +15,7 @@ from aiogram.exceptions import TelegramBadRequest
 from aiogram.types import CallbackQuery, InlineKeyboardButton, InlineKeyboardMarkup, Message
 
 from ..errors import ConflictFailure, InvalidType, UnknownOutcome, ValidationFailure
+from ..texts import Texts
 from .common import unique_items
 from .keyboard_layouts import KeyboardCapabilities, KeyboardLayout, inline_layout
 from .keyboards import ActionButton
@@ -123,9 +124,12 @@ class MessageNavigation:
         ttl_seconds: float = 1800,
         max_sessions: int = 1000,
         max_history: int = 50,
-        back_text: str = 'Назад',
-        refresh_text: str = 'Обновить',
+        back_text: str | None = None,
+        refresh_text: str | None = None,
+        texts: Texts | None = None,
     ) -> None:
+        """texts names the buttons and every NavigationResult text (Russian by default); back_text and
+        refresh_text, when given, win over 'navigation.back' and 'navigation.refresh'."""
         if isinstance(screens, (str, bytes)) or not isinstance(screens, Sequence):
             raise InvalidType('Use NavigationScreen sequences')
         items = tuple(screens)
@@ -153,8 +157,15 @@ class MessageNavigation:
             raise ValidationFailure('Use max_sessions in 1..100000')
         if type(max_history) is not int or not 1 <= max_history <= 1000:
             raise ValidationFailure('Use max_history in 1..1000')
+        if texts is None:
+            texts = Texts()
+        elif not isinstance(texts, Texts):
+            raise InvalidType('Use Texts or None')
+        back_text = texts('navigation.back') if back_text is None else back_text
+        refresh_text = texts('navigation.refresh') if refresh_text is None else refresh_text
         _text(back_text, 64)
         _text(refresh_text, 64)
+        self._texts = texts
         self._prefix, self._capabilities = prefix, capabilities
         self._ttl, self._capacity, self._history_limit = float(ttl_seconds), max_sessions, max_history
         self._back_text, self._refresh_text = back_text, refresh_text
@@ -348,7 +359,7 @@ class MessageNavigation:
     def _check(self, bot: Bot, query: CallbackQuery, entry: _Entry, revision: int) -> NavigationResult | None:
         state = entry.state
         if query.from_user.id != state.owner_id:
-            return NavigationResult('denied', 'Это меню другого пользователя.')
+            return NavigationResult('denied', self._texts('navigation.foreign'))
         message = query.message
         if (
             bot.id != state.bot_id
@@ -364,15 +375,15 @@ class MessageNavigation:
             or message.from_user.id != state.bot_id
             or message.chat.type != self._capabilities.chat_type
         ):
-            return NavigationResult('stale', 'Это сообщение не относится к активному меню.')
+            return NavigationResult('stale', self._texts('navigation.other_message'))
         if (
             self._tokens.get(state.session_id) is not entry
             or time.monotonic() >= state.expires_at
             or revision != state.revision
         ):
-            return NavigationResult('stale', 'Кнопка устарела. Откройте меню командой /menu.')
+            return NavigationResult('stale', self._texts('navigation.stale'))
         if state.phase != 'ready':
-            return NavigationResult('unknown', 'Экран требует восстановления. Откройте /menu.', state)
+            return NavigationResult('unknown', self._texts('navigation.recover'), state)
         return None
 
     async def handle(self, query: CallbackQuery) -> NavigationResult:
@@ -384,11 +395,11 @@ class MessageNavigation:
         await query.answer()
         match = self._pattern.fullmatch(query.data or '')
         if match is None:
-            return NavigationResult('stale', 'Некорректная кнопка. Откройте /menu.')
+            return NavigationResult('stale', self._texts('navigation.invalid'))
         token, revision_text, target = match.groups()
         entry = self._tokens.get(token)
         if entry is None:
-            return NavigationResult('stale', 'Меню уже закрыто. Откройте /menu.')
+            return NavigationResult('stale', self._texts('navigation.closed'))
         revision = int(revision_text)
         refused = self._check(bot, query, entry, revision)
         if refused is not None:
@@ -401,31 +412,27 @@ class MessageNavigation:
             history = state.history
             if target == '_back':
                 if not history:
-                    return NavigationResult('stale', 'Предыдущего экрана нет.', state)
+                    return NavigationResult('stale', self._texts('navigation.no_previous'), state)
                 target, history = history[-1], history[:-1]
             elif target == '_refresh':
                 target = state.screen
             elif target not in {b.key for b in self._screens[state.screen].buttons}:
-                return NavigationResult('stale', 'Такого перехода на текущем экране нет.', state)
+                return NavigationResult('stale', self._texts('navigation.no_transition'), state)
             elif target != state.screen:
                 if len(history) >= self._history_limit:
-                    return NavigationResult(
-                        'unavailable', 'История заполнена. Вернитесь назад или откройте /menu.', state
-                    )
+                    return NavigationResult('unavailable', self._texts('navigation.history_full'), state)
                 history = (*history, state.screen)
             try:
                 current = await self._edit(bot, entry, target, history)
             except asyncio.CancelledError:
                 raise
             except TelegramBadRequest:
-                return NavigationResult('unavailable', 'Telegram отклонил редактирование. Откройте /menu.', entry.state)
+                return NavigationResult('unavailable', self._texts('navigation.edit_rejected'), entry.state)
             except ConflictFailure:
-                return NavigationResult('unavailable', 'Переход недоступен. Откройте новое меню.', entry.state)
+                return NavigationResult('unavailable', self._texts('navigation.unavailable'), entry.state)
             except Exception:
-                return NavigationResult(
-                    'unknown', 'Ответ не подтвержден. Откройте /menu для восстановления.', entry.state
-                )
-            return NavigationResult('accepted', 'Экран обновлен.', current)
+                return NavigationResult('unknown', self._texts('navigation.unconfirmed'), entry.state)
+            return NavigationResult('accepted', self._texts('navigation.updated'), current)
 
 
 def navigation_router(

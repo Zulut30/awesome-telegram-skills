@@ -140,6 +140,7 @@ from ._aiogram.profiles import (
 from ._aiogram.selection_ui import selection_keyboard, selection_router
 from .errors import AuthenticationRequired, InvalidType, PatternError, TransportFailure, ValidationFailure
 from .settings import BotSettings
+from .texts import Texts
 
 __all__ = [
     "FSMSnapshot",
@@ -295,13 +296,20 @@ def callback_router(
     notify: Callable[[CallbackQuery, ActionResult], Awaitable[None]],
     *,
     prefix: str = "act:",
+    texts: Texts | None = None,
 ) -> Router:
     """ACK first; execute enforces object owner/version/idempotence itself.
 
     notify chooses a safe response channel including inline/inaccessible cases.
     Errors propagate to the application's error handling, after ACK.
+    texts names the result for malformed callback data ('action.stale'); Russian by default.
     """
     callback_data("k", prefix)
+    if texts is None:
+        texts = Texts()
+    elif not isinstance(texts, Texts):
+        raise InvalidType("Use Texts or None")
+    stale_text = texts("action.stale")
     router = Router()
 
     @router.callback_query(F.data.startswith(prefix))
@@ -311,7 +319,7 @@ def callback_router(
         try:
             callback_data(key, prefix)
         except ValueError:
-            await notify(query, ActionResult("stale", "Кнопка недействительна. Откройте актуальное меню."))
+            await notify(query, ActionResult("stale", stale_text))
             return
         result = await execute(Action(actor_id=query.from_user.id, key=key))
         await notify(query, result)
