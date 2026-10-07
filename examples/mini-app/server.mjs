@@ -6,7 +6,8 @@ import path from 'node:path';
 const root=path.dirname(fileURLToPath(import.meta.url));
 const library=path.resolve(root,'../../packages/typescript');
 const json=(response,status,value)=>{response.writeHead(status,{'Content-Type':'application/json','Cache-Control':'no-store'});response.end(JSON.stringify(value));};
-export function createDemoServer(){
+/** telegramSdk adds the official telegram-web-app.js for opening the demo in real Telegram; tests and CI stay offline. */
+export function createDemoServer({telegramSdk=false}={}){
   const bookings=new Map();let nextId=1;let httpWrites=0;
   const server=createServer(async(request,response)=>{
     try{
@@ -33,7 +34,8 @@ export function createDemoServer(){
       else if(url.pathname==='/lib/styles.css') file=path.join(library,'src/styles.css');
       else if(/^\/lib\/[a-z-]+\.js$/.test(url.pathname)) file=path.join(library,'dist',path.basename(url.pathname));
       else {json(response,404,{error:'missing'});return;}
-      const content=await readFile(file);
+      let content=await readFile(file);
+      if(file.endsWith('index.html')) content=content.toString('utf8').replace('<!-- telegram-sdk -->',telegramSdk?'<script src="https://telegram.org/js/telegram-web-app.js?64"></script>':'');
       response.writeHead(200,{'Content-Type':file.endsWith('.html')?'text/html; charset=utf-8':file.endsWith('.css')?'text/css; charset=utf-8':'text/javascript; charset=utf-8','Cache-Control':'no-store'});response.end(content);
     }catch{json(response,400,{error:'invalid-request'});}
   });
@@ -41,5 +43,8 @@ export function createDemoServer(){
   return Object.assign(server,{demoStats:()=>({httpWrites,effects:bookings.size})});
 }
 if(process.argv[1] && path.resolve(process.argv[1])===fileURLToPath(import.meta.url)){
-  const server=createDemoServer(); server.listen(4173,'127.0.0.1',()=>process.stdout.write('Demo: http://127.0.0.1:4173\n'));
+  // Loopback by default. Device checks: DEMO_HOST=0.0.0.0 DEMO_TELEGRAM=1 serves the demo with the official SDK to
+  // phones on the LAN, opened from a bot menu button in the Telegram test environment (HTTP is allowed there).
+  const host=process.env.DEMO_HOST||'127.0.0.1',port=Number(process.env.DEMO_PORT||4173);
+  const server=createDemoServer({telegramSdk:process.env.DEMO_TELEGRAM==='1'}); server.listen(port,host,()=>process.stdout.write(`Demo: http://${host}:${port}\n`));
 }

@@ -84,6 +84,12 @@ jobs:
             fi
             python scripts/build_release.py --ref "$tag" --output "dist/$tag"
             python scripts/build_release.py --ref "$tag" --notes > "dist/$tag.md"
+            # Device check report from the tag (docs/device-qa-checklist.md): required from 0.25.0, attached as
+            # device-report-<version>.zip with screenshots; its table goes into the release notes.
+            python scripts/device_report.py bundle --ref "$tag" --output "dist/$tag"
+            for summary in dist/"$tag"/device-report-*.md; do
+              if [ -f "$summary" ]; then printf '\n' >> "dist/$tag.md"; cat "$summary" >> "dist/$tag.md"; fi
+            done
           done
       - name: Attest build provenance
         if: steps.select.outputs.tags != ''

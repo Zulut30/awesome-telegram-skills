@@ -1010,10 +1010,15 @@
     {
       "id": 79,
       "title": "Проверка на реальных устройствах при каждом релизе",
-      "status": "pending",
-      "commit_subject": null,
-      "evidence": [],
-      "remaining": null
+      "status": "partial",
+      "commit_subject": "excellence(079): attach a device check report to every release",
+      "evidence": [
+        "docs/device-qa-checklist.md: launch of the demo in the Telegram test environment (DEMO_HOST/DEMO_TELEGRAM add LAN access and the official SDK), 10 cases for iOS, Android, Desktop and Web, statuses passed/failed/blocked/not-run, screenshot rules",
+        "scripts/device_report.py new/check/bundle: validates platforms, cases, notes, derived platform status, PNG/JPEG screenshots up to 2 MiB, refuses tokens, phone numbers and e-mails; bundle reads the report from the tag",
+        "release.yml: from 0.25.0 a tag without a valid report fails; with a report device-report-X.Y.Z.zip is attached and its table appended to the release notes; older tags are skipped",
+        "tests/test_device_report.py: 20 rule violations each fail with their own message; bundle from a temporary git repo is reproducible and ignores the working tree"
+      ],
+      "remaining": "The first real report (release 0.25.0) needs the owner's devices and Telegram test accounts; no report exists yet, so no release carries one"
     },
     {
       "id": 80,

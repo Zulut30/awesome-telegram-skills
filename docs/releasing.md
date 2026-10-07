@@ -19,14 +19,15 @@ python scripts/build_release.py --ref v0.24.0 --notes
 ## Выпустить новую версию
 
 1. Обновите версию в `packages/python/pyproject.toml`, `__version__` в `packages/python/src/telegram_patterns/__init__.py`, `packages/typescript/package.json`, `components.json`, `resources/recipes.json`, `metadata.version` во frontmatter всех скиллов и раздел CHANGELOG. `validate_skills.py` не пропустит скилл с другой версией.
-2. После слияния в `main` поставьте тег на этот коммит и отправьте его:
+2. Проверьте демо Mini App на устройствах по [чек-листу](device-qa-checklist.md): iOS, Android, Desktop и Web в тестовом окружении Telegram. Отчет и скриншоты положите в `docs/device-checks/X.Y.Z/`, проверьте `python scripts/device_report.py check docs/device-checks/X.Y.Z --version X.Y.Z` и закоммитьте. Начиная с 0.25.0 workflow Release без корректного отчета в теге завершается ошибкой; с отчетом прикладывает к релизу `device-report-X.Y.Z.zip` и добавляет таблицу результатов в описание.
+3. После слияния в `main` поставьте тег на этот коммит и отправьте его:
 
    ```bash
    git tag -a v0.25.0 -m "awesome-telegram-patterns 0.25.0"
    git push origin v0.25.0
    ```
 
-3. Workflow Release соберет артефакты из тега и опубликует релиз.
+4. Workflow Release соберет артефакты из тега и опубликует релиз.
 
 ## Релизы для существующих тегов
 

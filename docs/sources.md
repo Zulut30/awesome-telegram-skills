@@ -85,6 +85,10 @@
 
 ## Журнал проверок
 
+### 2026-10-07 — пункт 79
+
+Для чек-листа устройств повторно прочитан раздел [Testing Mini Apps](https://core.telegram.org/bots/webapps#testing-mini-apps) (вход в тестовое окружение на iOS, Telegram Desktop и macOS, HTTP без TLS). Параметр `?test=1` клиента Telegram Web для тестовых серверов описан в [README tweb](https://github.com/morethanwords/tweb) и [документации Pyrogram](https://docs.pyrogram.org/topics/test-servers); официальная страница Mini Apps его не упоминает, поэтому чек-лист разрешает отметить Web как `blocked`.
+
 ### 2026-10-07 — пункт 77
 
 Для сессии магазина прочитаны [Set-Cookie](https://developer.mozilla.org/en-US/docs/Web/HTTP/Reference/Headers/Set-Cookie) (`Strict` — только запросы того же сайта; `Lax` — плюс безопасные навигации верхнего уровня, но не `fetch` и не навигации внутри `<iframe>`; `None` требует `Secure`; `Partitioned` — CHIPS) и [Third-party cookies](https://developer.mozilla.org/en-US/docs/Web/Privacy/Guides/Third-party_cookies) (Safari ITP и Firefox Total Cookie Protection по умолчанию, Chrome блокирует по выбору пользователя). То, что Telegram Web показывает Mini App в `<iframe>`, а Desktop и мобильные клиенты — в WebView через `TelegramWebviewProxy`, подтверждено неофициальной [документацией Telegram Mini Apps](https://docs.telegram-mini-apps.com/platform/methods); официальная страница Mini Apps этого не описывает. Поведение воспроизведено в Chromium 141: во фрейме с другого сайта cookie `SameSite=Strict` не сохраняется. Настоящие клиенты Telegram не открывались.
