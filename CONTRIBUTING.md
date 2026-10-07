@@ -75,6 +75,8 @@ CI задача `python-coverage` выполняет те же команды, �
 
 При изменении публичного API синхронизируйте exports, [components.json](components.json), документацию и [CHANGELOG.md](CHANGELOG.md). `python scripts/check_api_compatibility.py --base auto` сравнивает публичные символы Python и TypeScript с предыдущим тегом (в pull request — с базовой веткой): каждый удаленный или измененный символ нужно назвать в обратных кавычках в верхнем разделе CHANGELOG, иначе CI падает. Различайте SDK/mock/browser/live evidence и статусы experimental/reference/stable. Проверка в браузере не заменяет испытания в Telegram и на реальных устройствах.
 
+Браузерные проверки (демо, галерея рецептов, оба стартера и их цикл разработки на Vite, сайт документации) выполняет задача CI `browser` в Chromium из Playwright; в CI `verify_pattern_packages.py` отказывается пропускать браузер, а `tests/test_ci_workflow.py` не пропустит флаг пропуска в workflow. Задача `required` («Required checks passed») зависит от всех остальных задач и падает, если хоть одна не прошла, была отменена или пропущена. В настройках ветки `main` (Settings → Branches или Rules → Rulesets) обязательной делают только ее; новая задача становится обязательной, когда ее добавляют в `needs`, и тест это проверяет.
+
 ## Выпуск версии
 
 Теги, сборка артефактов и публикация GitHub Release описаны в [docs/releasing.md](docs/releasing.md).

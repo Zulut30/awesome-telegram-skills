@@ -1062,10 +1062,14 @@
     {
       "id": 83,
       "title": "Браузерные тесты в CI",
-      "status": "pending",
-      "commit_subject": null,
-      "evidence": [],
-      "remaining": null
+      "status": "partial",
+      "commit_subject": "excellence(083): run browser tests in required CI and add one aggregate required check",
+      "evidence": [
+        "New job browser: Playwright Chromium via CHROME_PATH, verify_pattern_packages.py (patterns demo, recipe gallery, both starters, Vite dev loop) and docs-browser.mjs",
+        "verify_pattern_packages.py refuses the skip-browser flag when CI is set; tests/test_ci_workflow.py forbids the flag in every workflow and checks the required job needs every other job",
+        "Job required (Required checks passed) fails when any needed job failed, was cancelled or skipped"
+      ],
+      "remaining": "Marking 'Required checks passed' as required in the main branch protection is a repository setting only the owner can change"
     },
     {
       "id": 84,

@@ -25,6 +25,9 @@ def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument('--skip-browser', action='store_true', help='Verify distributions without installed Chrome; report the skipped browser check')
     args = parser.parse_args()
+    # CI must prove the browser stages; a skipped browser check is only for a local machine without Chrome.
+    if args.skip_browser and os.environ.get('CI', '').lower() in {'1', 'true'}:
+        parser.error('--skip-browser is not allowed in CI: install Chromium (npx playwright install chromium) and set CHROME_PATH')
     python_meta = tomllib.loads((ROOT / 'packages/python/pyproject.toml').read_text(encoding='utf-8'))['project']
     ts_meta = json.loads((ROOT / 'packages/typescript/package.json').read_text(encoding='utf-8'))
     catalog = json.loads((ROOT / 'components.json').read_text(encoding='utf-8'))
