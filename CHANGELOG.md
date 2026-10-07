@@ -22,6 +22,7 @@
 - Пункт 18: каждый релиз содержит детерминированный CycloneDX 1.6 SBOM (`awesome-telegram-patterns-X.Y.Z.cdx.json`: оба артефакта с SHA-256, лицензия тега, необязательные зависимости extras), он входит в `SHA256SUMS`; workflow Release создает attestation происхождения для wheel, tarball и SBOM через `actions/attest`. Проверка: `gh attestation verify`.
 - Пункт 19: `docs/versioning.md` содержит политику поддержки: версии библиотеки, Python 3.11–3.15, Node.js 20–26, aiogram и Bot API со сроками, сверенными с Python Developer's Guide и расписанием Node.js. Node.js 20 остается минимальным в `engines`, но upstream не поддерживает его с 30.04.2026.
 - Пункт 20: в начале README таблица «Можно ли брать в production» простыми словами: что можно использовать, что экспериментально и что не проверено вживую, с числами из каталога.
+- Пункт 21: README и `docs/quickstart.md` дают каждую команду для PowerShell (Windows) и bash (Linux, macOS); bash-блок — одна цепочка, которая при ошибке останавливается с подсказкой. На сайте соседние блоки PowerShell и bash показываются вкладками с запоминанием выбора. `verify_quickstart.py` выполняет PowerShell-блоки на Windows и bash-блоки на Linux и macOS, а job CI `quickstart` запускает его на ubuntu, macos и windows.
 
 ## 0.24.0
 

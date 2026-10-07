@@ -47,7 +47,9 @@
 
 ## Быстрый старт
 
-```powershell
+Команды даны для Windows (PowerShell) и для Linux и macOS (bash); где они совпадают, блок один.
+
+```bash
 git clone https://github.com/Zulut30/awesome-telegram-skills.git
 cd awesome-telegram-skills
 ```
@@ -66,15 +68,26 @@ $telegram-mini-app-architecture Спроектируй Mini App для теле�
 python scripts/install_skills.py --project "C:\path\to\my-bot" --skill telegram-bot-python --skill telegram-code-patterns --dry-run
 ```
 
+```bash
+python3 scripts/install_skills.py --project ~/projects/my-bot --skill telegram-bot-python --skill telegram-code-patterns --dry-run
+```
+
 Замените путь на существующий проект. Проверьте список и повторите команду без `--dry-run`, чтобы скопировать навыки. Установка навыков и установка пакетов — отдельные действия.
 
-**Для Python-разработчика.** Нужен Python 3.11 или новее. Команды ниже для PowerShell; активация окружения не требуется.
+**Для Python-разработчика.** Нужен Python 3.11 или новее; активация окружения не требуется.
 
 ```powershell
 python -m venv .venv
 .\.venv\Scripts\python.exe -m pip install "./packages/python[aiogram]"
 .\.venv\Scripts\python.exe -m telegram_patterns recipes --show two-columns
 .\.venv\Scripts\python.exe examples/python/offline_keyboards.py
+```
+
+```bash
+python3 -m venv .venv
+.venv/bin/python -m pip install "./packages/python[aiogram]"
+.venv/bin/python -m telegram_patterns recipes --show two-columns
+.venv/bin/python examples/python/offline_keyboards.py
 ```
 
 Последняя команда выполняет пример через тестовый транспорт без токена и обращений к Telegram. [Пошаговый запуск бота и Mini App](docs/quickstart.md).
@@ -84,6 +97,11 @@ python -m venv .venv
 ```powershell
 npm.cmd ci
 npm.cmd run demo
+```
+
+```bash
+npm ci
+npm run demo
 ```
 
 Откройте **http://127.0.0.1:4173**. Это локальный пример UI и восстановления запросов; для настоящего Mini App подключите Telegram host и свой backend. [Что демонстрирует пример](docs/component-library.md).

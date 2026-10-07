@@ -41,6 +41,13 @@ try{
     verify(await page.locator('.resource-list a').count()>0,`${name}/${theme}: local references discoverable`);
     await page.locator('.resource-list a').first().click();verify(page.url().includes('/references/'),`${name}/${theme}: reference route`);
     verify(await page.locator('html').evaluate(node=>node.scrollWidth<=innerWidth+1),`${name}/${theme}: reference no overflow`);
+    await page.goto(base+'docs/quickstart/');const tabs=page.locator('.code-tabs').first();
+    verify(await page.locator('.code-tabs').count()>=6,`${name}/${theme}: quickstart shell tabs`);
+    await tabs.getByRole('tab',{name:'bash (Linux, macOS)'}).click();
+    verify(await tabs.locator('[role=tabpanel]:visible code').textContent().then(t=>t.includes('TG_ARTIFACTS')),`${name}/${theme}: bash tab`);
+    await tabs.getByRole('tab',{name:'PowerShell (Windows)'}).click();
+    verify(await page.locator('.code-tabs').nth(1).locator('[role=tabpanel]:visible code').textContent().then(t=>t.includes('$ErrorActionPreference')),`${name}/${theme}: choice applies to every group`);
+    verify(await page.locator('html').evaluate(node=>node.scrollWidth<=innerWidth+1),`${name}/${theme}: quickstart no overflow`);
     await page.goto(base+'for-agents/');verify((await page.locator('article').textContent()).includes('ref.*'),`${name}/${theme}: agent guide distinguishes recipe IDs`);
     verify((await page.locator('article').textContent()).includes('не опубликована'),`${name}/${theme}: local distribution clear`);
     await page.goto(base+'recipes/');await page.getByLabel('Что хотите сделать?').fill('две кнопки');
