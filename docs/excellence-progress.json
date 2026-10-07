@@ -270,10 +270,14 @@
     {
       "id": 23,
       "title": "Англоязычный вход",
-      "status": "pending",
-      "commit_subject": null,
-      "evidence": [],
-      "remaining": null
+      "status": "partial",
+      "commit_subject": "excellence(023): add an English entry point",
+      "evidence": [
+        "README.en.md, docs/en/quickstart.md, docs/en/for-agents.md; все 41 скилл описаны по-английски (tests/test_english_docs.py)",
+        "CI run 37559649125 (6c8c8c8): Documented quickstart с docs/en/quickstart.md прошел на ubuntu-latest, macos-latest и windows-latest",
+        "сайт: en/index.html и docs/en/* с lang=en, verify_docs_site passed (432 страницы)"
+      ],
+      "remaining": "Критерий требует проверки англоязычным разработчиком, что он проходит quickstart без переводчика — проверяют люди (пункт 96). Интерфейс сгенерированной формы и инструкции скиллов остаются русскими."
     },
     {
       "id": 24,
