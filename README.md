@@ -42,6 +42,7 @@
 | **Python-пакет** | `telegram_patterns`: ядро и отдельные адаптеры aiogram; [API](packages/python/README.md) |
 | **TypeScript-пакет** | `@awesome-telegram/patterns`: bridge, темы, viewport, safe areas, API-клиент, черновики и UI-основа; [API](packages/typescript/README.md) |
 | **320 рецептов + CLI** | Поиск, фильтры, примеры кода, создание заготовок и `doctor`; [инструкция](docs/developer-tools-review.md) |
+| **Карта возможностей** | 51 возможность Telegram: навык, компонент, сценарий, способ проверки и пробелы; [что умеет бот](docs/capability-map.md) |
 
 <a id="quickstart"></a>
 

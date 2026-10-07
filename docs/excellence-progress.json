@@ -744,9 +744,13 @@
     {
       "id": 59,
       "title": "Карта «что умеет бот»",
-      "status": "pending",
-      "commit_subject": null,
-      "evidence": [],
+      "status": "done",
+      "commit_subject": "excellence(059): generate the capability map from the catalogs",
+      "evidence": [
+        "catalog/capability-map.json: 51 capabilities in 8 areas; every one of 185 Bot API and 99 Mini App methods belongs to exactly one capability",
+        "scripts/build_capability_map.py --check writes docs/capability-map.md with skills, components, recipes, checks (SDK request, Dispatcher, browser, reference, live) and gaps; tests/test_capability_map.py (4 tests); CI step in repository-checks",
+        "Docs site: «Что умеет бот» in the «Начало» sidebar; build_docs_site + verify_docs_site (43027 links) + site tests + docs-browser.mjs (232 checks, 8 viewport/theme cases) pass"
+      ],
       "remaining": null
     },
     {

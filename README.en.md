@@ -25,6 +25,7 @@ Skills help an AI coding agent choose a solution and verify the result. The libr
 | Python components (36 groups) | 🟡 Experimental | Tested with real aiogram and a test transport; the API may change in the next minor version |
 | TypeScript components (7 groups) | 🟡 Experimental | Checked in Chrome at several screen sizes, not inside Telegram on a phone |
 | Recipes (320) | 🟡 Verified without Telegram | 196 run on the real SDK offline, 25 on stubs, 99 are reference snippets that were not executed |
+| [Capability map](docs/capability-map.md) | 🟢 Generated from the catalogs | 51 Telegram capabilities with their skill, component, recipe, check and gaps (in Russian) |
 | Example applications | 🟡 Educational | Show how to build a service bot, a shop and a group bot; not finished products |
 | Real Telegram clients, devices and payments | 🔴 Not verified | No live acceptance on Telegram clients or payment providers yet |
 

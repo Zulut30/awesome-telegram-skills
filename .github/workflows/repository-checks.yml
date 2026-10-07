@@ -34,6 +34,8 @@ jobs:
       - run: python scripts/sync_skill_references.py --check
       # «Термины:» lines explain jargon in each reference; refresh with the script without --check.
       - run: python scripts/add_terms_lines.py --check
+      # docs/capability-map.md is generated from catalog/capability-map.json and the recipe/component catalogs.
+      - run: python scripts/build_capability_map.py --check
       # Reference validator of the Agent Skills specification (agentskills.io).
       - run: for skill in .agents/skills/*/; do agentskills validate "$skill"; done
       - run: python -m unittest discover -s tests -v

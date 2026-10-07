@@ -1,0 +1,73 @@
+{
+  "schema_version": 1,
+  "note": "Curated map of Telegram capabilities. bot_api and mini_app are regular expressions over method names from catalog/telegram-capabilities.json; skills, components and recipes are ids that must exist. scripts/build_capability_map.py derives verification and gaps and writes docs/capability-map.md.",
+  "areas": [
+    {"title": "Сообщения", "capabilities": [
+      {"id": "text", "title": "Текст, форматирование и длинные сообщения", "bot_api": "^(sendMessage|editMessageText|copyMessages?|forwardMessages?|deleteMessages?|sendChatAction|pinChatMessage|unpinChatMessage|unpinAllChatMessages)$", "skills": ["telegram-bot-api", "telegram-bot-python"], "components": ["message-text", "command-replies"], "recipes": ["demo-message-text"]},
+      {"id": "rich-messages", "title": "Rich-сообщения: блоки, таблицы, кнопки", "bot_api": "^sendRichMessage(Draft)?$", "skills": ["telegram-bot-api"], "components": ["rich-message"], "recipes": ["demo-rich-message"]},
+      {"id": "ai-streaming", "title": "Потоковый ответ ИИ и остановка генерации", "bot_api": "^sendMessageDraft$", "skills": ["telegram-ai-bot"], "components": [], "recipes": ["demo-ai-stream"]},
+      {"id": "ephemeral", "title": "Эфемерные сообщения в группах", "bot_api": "^(editEphemeralMessage(Text|Media|Caption|ReplyMarkup)|deleteEphemeralMessage)$", "skills": ["telegram-groups"], "components": ["ephemeral-messages"], "recipes": ["demo-ephemeral"]},
+      {"id": "checklists", "title": "Чек-листы", "bot_api": "^(sendChecklist|editMessageChecklist)$", "skills": ["telegram-bot-api"], "components": [], "recipes": []},
+      {"id": "games-dice", "title": "Игры и кубики", "bot_api": "^(sendGame|setGameScore|getGameHighScores|sendDice)$", "skills": ["telegram-bot-api"], "components": [], "recipes": []}
+    ]},
+    {"title": "Кнопки и диалоги", "capabilities": [
+      {"id": "inline-keyboards", "title": "Inline-кнопки и callback", "bot_api": "^(answerCallbackQuery|editMessageReplyMarkup|savePreparedKeyboardButton)$", "skills": ["telegram-buttons"], "components": ["native-keyboards", "action-keyboard", "callback-router", "action-menu", "paginated-menu"], "recipes": ["demo-keyboards", "demo-catalog", "two-columns", "three-columns", "mixed-rows", "button-colors", "emoji-fallback", "copy-disabled", "url-app"]},
+      {"id": "reply-keyboards", "title": "Reply-клавиатура, контакт и геопозиция", "skills": ["telegram-buttons"], "components": ["native-keyboards"], "recipes": ["reply-menu", "contact-location", "force-reply", "remove-reply"]},
+      {"id": "forms", "title": "Формы и поля диалога", "skills": ["telegram-dialogs"], "components": ["text-form", "dialog-forms", "dialog-restart"], "recipes": ["demo-form", "demo-dialog-fields", "demo-dialog-restart"]},
+      {"id": "selection", "title": "Выбор, переключатели и подтверждение", "skills": ["telegram-dialogs", "telegram-buttons"], "components": ["selection-state", "selection-ui", "selection-draft"], "recipes": ["demo-selection"]},
+      {"id": "navigation", "title": "Экраны и «назад» в одном сообщении", "skills": ["telegram-dialogs"], "components": ["message-navigation"], "recipes": ["demo-navigation"]},
+      {"id": "calendar", "title": "Календарь и запись на время", "skills": ["telegram-dialogs"], "components": ["calendar-core", "slot-booking", "calendar-aiogram"], "recipes": ["demo-calendar"]},
+      {"id": "commands", "title": "Команды и кнопка меню", "bot_api": "^(setMyCommands|getMyCommands|deleteMyCommands|setChatMenuButton|getChatMenuButton)$", "skills": ["telegram-bot-python"], "components": ["bot-start", "command-replies"], "recipes": []}
+    ]},
+    {"title": "Медиа и опросы", "capabilities": [
+      {"id": "media", "title": "Фото, видео, документы, альбомы и файлы", "bot_api": "^(send(Photo|Video|Audio|Document|Animation|Voice|VideoNote|MediaGroup)|editMessage(Media|Caption)|getFile)$", "skills": ["telegram-media-processing"], "components": ["media"], "recipes": ["demo-media"]},
+      {"id": "live-photos", "title": "Live photos", "bot_api": "^sendLivePhoto$", "skills": ["telegram-bot-api"], "components": [], "recipes": ["demo-live-photo"]},
+      {"id": "location-contact", "title": "Геопозиция, места и контакты", "bot_api": "^(send(Location|Venue|Contact)|editMessageLiveLocation|stopMessageLiveLocation)$", "skills": ["telegram-bot-api"], "components": [], "recipes": ["contact-location"]},
+      {"id": "stickers", "title": "Стикеры и custom emoji", "bot_api": "^(sendSticker|addStickerToSet|createNewStickerSet|deleteSticker(FromSet|Set)|getStickerSet|replaceStickerInSet|setSticker\\w+|uploadStickerFile|getCustomEmojiStickers|setCustomEmojiStickerSetThumbnail)$", "skills": ["telegram-bot-api"], "components": [], "recipes": []},
+      {"id": "polls", "title": "Опросы, quiz и медиа в опросах", "bot_api": "^(sendPoll|stopPoll)$", "skills": ["telegram-bot-api"], "components": ["polls"], "recipes": ["demo-polls", "demo-poll-media"]}
+    ]},
+    {"title": "Группы и каналы", "capabilities": [
+      {"id": "moderation", "title": "Участники, права и модерация", "bot_api": "^((ban|unban|restrict|promote)ChatMember|(ban|unban)ChatSenderChat|setChatPermissions|setChatAdministratorCustomTitle|setChatMemberTag|getChatMember(Count)?|getChatAdministrators|leaveChat)$", "skills": ["telegram-groups"], "components": ["platform-operations"], "recipes": ["demo-platform"]},
+      {"id": "forum-topics", "title": "Темы форума", "bot_api": "ForumTopic", "skills": ["telegram-groups"], "components": ["platform-operations"], "recipes": ["demo-platform"]},
+      {"id": "invites", "title": "Пригласительные ссылки и заявки", "bot_api": "^((approve|decline)ChatJoinRequest|(create|edit|revoke|export)Chat(Subscription)?InviteLink)$", "skills": ["telegram-groups"], "components": ["platform-operations"], "recipes": ["demo-platform"]},
+      {"id": "join-queries", "title": "Заявки с проверкой в Mini App", "bot_api": "^(answerChatJoinRequestQuery|sendChatJoinRequestWebApp)$", "skills": ["telegram-groups", "telegram-bot-api"], "components": ["platform-operations", "mini-app-initdata"], "recipes": ["demo-join-query"]},
+      {"id": "reactions", "title": "Реакции", "bot_api": "MessageReactions?$", "skills": ["telegram-groups"], "components": ["platform-operations"], "recipes": ["demo-platform"]},
+      {"id": "chat-settings", "title": "Название, описание и фото чата", "bot_api": "^(setChat(Title|Description|Photo|StickerSet)|deleteChat(Photo|StickerSet)|getChat)$", "skills": ["telegram-groups"], "components": [], "recipes": []},
+      {"id": "communities", "title": "Сообщества", "skills": ["telegram-groups"], "components": [], "recipes": ["demo-community"]},
+      {"id": "suggested-posts", "title": "Предложенные посты в каналах", "bot_api": "SuggestedPost$", "skills": ["telegram-groups"], "components": [], "recipes": []},
+      {"id": "verification-boosts", "title": "Верификация и бусты", "bot_api": "^(verify(Chat|User)|remove(Chat|User)Verification|getUserChatBoosts)$", "skills": ["telegram-bot-api"], "components": [], "recipes": []}
+    ]},
+    {"title": "Боты и аккаунты", "capabilities": [
+      {"id": "inline-mode", "title": "Inline-режим", "bot_api": "^(answerInlineQuery|savePreparedInlineMessage)$", "skills": ["telegram-inline-mode"], "components": ["inline-search"], "recipes": ["demo-inline-search"]},
+      {"id": "guest-mode", "title": "Guest mode", "bot_api": "^answerGuestQuery$", "skills": ["telegram-bot-api"], "components": [], "recipes": ["demo-guest-reply"]},
+      {"id": "bot-to-bot", "title": "Общение ботов между собой", "skills": ["telegram-bot-api"], "components": [], "recipes": ["demo-bot-relay"]},
+      {"id": "profiles", "title": "Профиль бота и пользователей", "bot_api": "^(getMe|(set|get)My(Name|Description|ShortDescription|DefaultAdministratorRights)|setMyProfilePhoto|removeMyProfilePhoto|getUserProfile(Photos|Audios)|setUserEmojiStatus|getUserPersonalChatMessages)$", "skills": ["telegram-profiles"], "components": ["profiles"], "recipes": ["demo-profiles"]},
+      {"id": "business", "title": "Business-аккаунты", "bot_api": "Business", "skills": ["telegram-business-bots"], "components": ["platform-operations"], "recipes": ["demo-platform"]},
+      {"id": "managed-bots", "title": "Управляемые боты", "bot_api": "ManagedBot", "skills": ["telegram-bot-api"], "components": ["platform-operations"], "recipes": ["demo-platform"]},
+      {"id": "stories", "title": "Истории", "bot_api": "Story$", "skills": ["telegram-business-bots"], "components": ["platform-operations"], "recipes": ["demo-platform"]},
+      {"id": "gifts", "title": "Подарки", "bot_api": "^(getAvailableGifts|getUserGifts|getChatGifts|sendGift|transferGift|upgradeGift|convertGiftToStars|giftPremiumSubscription)$", "skills": ["telegram-bot-api"], "components": ["platform-operations"], "recipes": ["demo-platform"]},
+      {"id": "user-account", "title": "Пользовательский аккаунт (MTProto)", "skills": ["telegram-user-client"], "components": [], "recipes": []},
+      {"id": "web-login", "title": "Вход на сайт через Telegram", "skills": ["telegram-web-login"], "components": [], "recipes": []},
+      {"id": "passport", "title": "Telegram Passport", "bot_api": "^setPassportDataErrors$", "skills": ["telegram-bot-api"], "components": [], "recipes": []}
+    ]},
+    {"title": "Платежи", "capabilities": [
+      {"id": "stars-payments", "title": "Оплата Stars и счета", "bot_api": "^(sendInvoice|createInvoiceLink|answer(PreCheckout|Shipping)Query|refundStarPayment|getStarTransactions|getMyStarBalance|sendPaidMedia)$", "skills": ["telegram-payments"], "components": ["stars-invoice"], "recipes": []},
+      {"id": "stars-subscriptions", "title": "Подписки Stars и платный доступ", "bot_api": "^editUserStarSubscription$", "skills": ["telegram-subscription-access"], "components": ["stars-subscription-access"], "recipes": ["demo-stars-subscription"]},
+      {"id": "external-payments", "title": "Внешние платежные провайдеры", "skills": ["telegram-payment-provider", "telegram-yookassa", "telegram-cryptopay", "telegram-platega"], "components": [], "recipes": []}
+    ]},
+    {"title": "Доставка и эксплуатация", "capabilities": [
+      {"id": "updates", "title": "Polling, webhook и запуск", "bot_api": "^(getUpdates|setWebhook|deleteWebhook|getWebhookInfo|logOut|close)$", "skills": ["telegram-deploy", "telegram-python-backend"], "components": ["bot-polling", "bot-settings", "update-events", "bot-start"], "recipes": []},
+      {"id": "recovery", "title": "Ошибки, повтор и потерянный ответ", "skills": ["telegram-observability", "telegram-debugging"], "components": ["python-error-model", "typescript-error-model", "sqlite-once"], "recipes": ["demo-recovery"]},
+      {"id": "testing", "title": "Тесты без Telegram", "skills": ["telegram-testing"], "components": ["bot-test-transport", "python-recipe-execution"], "recipes": []}
+    ]},
+    {"title": "Mini Apps", "capabilities": [
+      {"id": "mini-app-auth", "title": "Проверка initData", "skills": ["telegram-mini-app-auth"], "components": ["mini-app-initdata", "mini-app-initdata-signature"], "recipes": []},
+      {"id": "mini-app-buttons", "title": "Кнопки Mini App", "mini_app": "^(MainButton|SecondaryButton|BackButton|SettingsButton)\\.", "skills": ["telegram-mini-app-native-capabilities"], "components": ["mini-app-native-api"], "recipes": []},
+      {"id": "mini-app-storage", "title": "Хранилища Mini App", "mini_app": "^(CloudStorage|DeviceStorage|SecureStorage)\\.", "skills": ["telegram-mini-app-native-capabilities"], "components": ["mini-app-native-api"], "recipes": []},
+      {"id": "mini-app-device", "title": "Датчики, биометрия, геопозиция и вибрация", "mini_app": "^(Accelerometer|Gyroscope|DeviceOrientation|BiometricManager|LocationManager|HapticFeedback)\\.", "skills": ["telegram-mini-app-native-capabilities"], "components": ["mini-app-native-api"], "recipes": []},
+      {"id": "mini-app-shell", "title": "Окно, тема, всплывающие окна и ссылки", "mini_app": "^(ready|expand|close|requestFullscreen|exitFullscreen|lockOrientation|unlockOrientation|(enable|disable)(ClosingConfirmation|VerticalSwipes)|set(Header|Background|BottomBar)Color|show(Alert|Confirm|Popup)|(show|close)ScanQrPopup|open(Link|TelegramLink)|readTextFromClipboard|hideKeyboard|isVersionAtLeast|(on|off)Event|addToHomeScreen|checkHomeScreenStatus|downloadFile)$", "skills": ["telegram-mini-app-ui", "telegram-mini-app-typescript"], "components": ["mini-app-bridge", "responsive-shell"], "recipes": []},
+      {"id": "mini-app-sharing", "title": "Отправка данных, шаринг и запросы доступа", "mini_app": "^(sendData|switchInlineQuery|shareMessage|shareToStory|request(Chat|Contact|WriteAccess|EmojiStatusAccess)|setEmojiStatus)$", "bot_api": "^answerWebAppQuery$", "skills": ["telegram-mini-app-integration"], "components": ["mini-app-bridge", "api-client"], "recipes": []},
+      {"id": "mini-app-payments", "title": "Оплата из Mini App", "mini_app": "^openInvoice$", "skills": ["telegram-payments"], "components": [], "recipes": []}
+    ]}
+  ]
+}
