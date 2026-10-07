@@ -262,9 +262,14 @@
     {
       "id": 22,
       "title": "Убрать допущения «только Windows» из скриптов",
-      "status": "pending",
-      "commit_subject": null,
-      "evidence": [],
+      "status": "done",
+      "commit_subject": "excellence(022): run the full delivery verifier on Linux and macOS",
+      "evidence": [
+        "verify_quickstart, проверочные скрипты и _environment.py без допущений Windows (PowerShell/bash, пути venv, Chrome по умолчанию на любой ОС, прокси и CA в дочерних процессах)",
+        "CI run 37573760575 на ba44a59 (workflow_dispatch full_delivery=true): 'Full delivery verification (ubuntu-latest)' и '(macos-latest)' — success; macOS-only тест с настоящим /var выполнился",
+        "macOS потребовал исправлений, найденных пошагово по логам CI: канонические пути в smoke и тестах, системные алиасы root (/var, /tmp, /etc → /private) в проверках ссылок библиотеки, примеров и скриптов, синхронизация руководства dialog-restart, таймауты браузерной проверки галереи; ошибки воспроизведены на Linux через корневой алиас /tg-alias как TMPDIR",
+        "Локально на Linux за TLS-прокси verify_pattern_packages.py passed: 472 Python и 30 TypeScript тестов, browser=passed (до этих правок); пакет 501 тест и корневые тесты проходят и с TMPDIR=/tg-alias/tmp"
+      ],
       "remaining": null
     },
     {
