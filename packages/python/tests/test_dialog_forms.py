@@ -21,6 +21,8 @@ OWNER = User(id=42,is_bot=False,first_name='Owner')
 FILE = dict(file_id='opaque-not-a-path',file_unique_id='unique',file_name='report.pdf',mime_type='application/pdf',file_size=1024)
 CONTACT = dict(phone_number='+48123456789',first_name='Owner',last_name=None,user_id=42)
 LOCATION = dict(latitude=52.2,longitude=21.0,horizontal_accuracy=50.0)
+# UTF-8, прочитанный как CP1251: такие пары не встречаются в обычном русском тексте.
+MOJIBAKE = '|'.join(ch.encode('utf-8').decode('cp1251')[:2] for ch in '—анлосиет')
 
 
 class FieldTests(unittest.TestCase):
@@ -152,6 +154,26 @@ class DialogTests(unittest.IsolatedAsyncioTestCase):
         await self.message('/collect');await self.message('Case@EXAMPLE.COM')
         await self.message(contact=CONTACT);await self.click()
         return self.button()
+
+    async def test_visible_texts_match_readable_reference(self):
+        await self.message('/collect')
+        self.assertEqual(self.sent[-1][0].text, 'Шаг 1/2. Email?\n/back — назад · /cancel — отмена')
+        await self.message('Case@EXAMPLE.COM')
+        prompt = self.sent[-1][0]
+        self.assertEqual(prompt.text, 'Шаг 2/2. Контакт?\n/back — назад · /cancel — отмена')
+        self.assertEqual(prompt.reply_markup.keyboard[0][0].text, 'Поделиться контактом')
+        await self.message(contact=CONTACT)
+        self.assertEqual(self.sent[-1][0].reply_markup.inline_keyboard[0][0].text, 'Подтвердить')
+        await self.click()
+        review = self.sent[-1][0]
+        self.assertIn('Клавиатура ввода закрыта.', [method.text for method, _ in self.sent])
+        self.assertTrue(review.text.startswith('Проверьте ответы:\n'))
+        self.assertTrue(review.text.endswith('\n/back — исправить · /cancel — отмена'))
+        self.assertEqual(review.reply_markup.inline_keyboard[0][0].text, 'Отправить')
+        await self.message('/cancel')
+        self.assertEqual(self.sent[-1][0].text, 'Форма отменена. Начать заново: /collect.')
+        for method, _ in self.sent:
+            self.assertNotRegex(method.text, MOJIBAKE)
 
     async def test_native_candidate_not_step_until_confirmation(self):
         await self.replace([EmailField('email','Email','Email?'),ContactField('contact','Контакт','Контакт?')],name='x'*16)

@@ -98,8 +98,8 @@ def dialog_form_router(
     router = Router(name=f'dialog-form:{name}')
     namespace, data_key, prefix = f'telegram_patterns:dialog:{name}', '__telegram_patterns_dialog', f'dlg:{name}:'
     private = (F.chat.type == 'private') & (F.business_connection_id == None) & (F.from_user.is_bot == False) & (F.message_thread_id == None) & (F.is_topic_message != True)
-    frozen_text = 'РћС‚РїСЂР°РІРєР° СѓР¶Рµ РЅР°С‡Р°Р»Р°СЃСЊ. РќР°Р¶РјРёС‚Рµ В«РћС‚РїСЂР°РІРёС‚СЊВ» РІ РїРѕСЃР»РµРґРЅРµР№ С„РѕСЂРјРµ, С‡С‚РѕР±С‹ РїСЂРѕРІРµСЂРёС‚СЊ СЂРµР·СѓР»СЊС‚Р°С‚.'
-    stale_text = f'Р”РµР№СЃС‚РІРёРµ СѓСЃС‚Р°СЂРµР»Рѕ. РћС‚РєСЂРѕР№С‚Рµ С‚РµРєСѓС‰РёР№ РІРѕРїСЂРѕСЃ РєРѕРјР°РЅРґРѕР№ /{command}.'
+    frozen_text = 'Отправка уже началась. Нажмите «Отправить» в последней форме, чтобы проверить результат.'
+    stale_text = f'Действие устарело. Откройте текущий вопрос командой /{command}.'
 
     def require(dispatcher: Dispatcher, state: FSMContext | None, message: Message, actor: int) -> FSMContext:
         if state is None or isinstance(dispatcher.fsm.events_isolation, DisabledEventIsolation):
@@ -115,7 +115,7 @@ def dialog_form_router(
             return value  # Custom validators run once at input, never during replay.
         result = step.restore(value)
         if isinstance(step, ContactField) and step.own and isinstance(result, Mapping) and result['user_id'] != actor:
-            raise InvalidField('РџРѕРґРµР»РёС‚РµСЃСЊ СЃРІРѕРёРј РєРѕРЅС‚Р°РєС‚РѕРј С‡РµСЂРµР· РєРЅРѕРїРєСѓ.')
+            raise InvalidField('Поделитесь своим контактом через кнопку.')
         return result
 
     def positive(value: object) -> bool:
@@ -170,27 +170,27 @@ def dialog_form_router(
 
     def keyboard(data: _DialogData, action: str) -> InlineKeyboardMarkup:
         return InlineKeyboardMarkup(inline_keyboard=[[InlineKeyboardButton(
-            text='РџРѕРґС‚РІРµСЂРґРёС‚СЊ' if action.startswith('v:') else 'РћС‚РїСЂР°РІРёС‚СЊ',
+            text='Подтвердить' if action.startswith('v:') else 'Отправить',
             callback_data=f"{prefix}{data['operation_id']}:{action}")]])
 
     async def remove(message: Message, state: FSMContext, data: _DialogData) -> None:
         if data['keyboard_active']:
-            await message.answer('РљР»Р°РІРёР°С‚СѓСЂР° РІРІРѕРґР° Р·Р°РєСЂС‹С‚Р°.', parse_mode=None, reply_markup=remove_keyboard())
+            await message.answer('Клавиатура ввода закрыта.', parse_mode=None, reply_markup=remove_keyboard())
             data['keyboard_active'] = False
             await save(state, data)
 
     def display(step: _Step, value: FieldValue) -> str:
         text = str(value) if isinstance(step, TextField) else step.display(value)
         # Bounded plain text; user metadata cannot overflow Telegram's 4096 units.
-        return text if _plain(text, 280) else text[:120] + 'вЂ¦'
+        return text if _plain(text, 280) else text[:120] + '…'
 
     async def show(message: Message, state: FSMContext, data: _DialogData) -> None:
         data.update(prompt_message_id=None, review_message_id=None, candidate=None)
         await save(state, data)  # Invalidate old UI before a potentially unknown send.
         if data['index'] == len(steps):
             await remove(message, state, data)
-            text = 'РџСЂРѕРІРµСЂСЊС‚Рµ РѕС‚РІРµС‚С‹:\n' + '\n'.join(f"{s.label}: {display(s, data['values'][s.name])}" for s in steps)
-            reply = await message.answer(text + '\n/back вЂ” РёСЃРїСЂР°РІРёС‚СЊ В· /cancel вЂ” РѕС‚РјРµРЅР°', parse_mode=None,
+            text = 'Проверьте ответы:\n' + '\n'.join(f"{s.label}: {display(s, data['values'][s.name])}" for s in steps)
+            reply = await message.answer(text + '\n/back — исправить · /cancel — отмена', parse_mode=None,
                                          reply_markup=keyboard(data, 'submit'))
             data['review_message_id'] = sent_id(reply, message)
         else:
@@ -199,13 +199,13 @@ def dialog_form_router(
             if isinstance(step, (ContactField, LocationField)):
                 data['keyboard_active'] = True  # Preserve cleanup even if send result is unknown.
                 await save(state, data)
-                button = KeyboardButton(text='РџРѕРґРµР»РёС‚СЊСЃСЏ РєРѕРЅС‚Р°РєС‚РѕРј' if isinstance(step, ContactField) else 'РџРѕРґРµР»РёС‚СЊСЃСЏ РіРµРѕРїРѕР·РёС†РёРµР№',
+                button = KeyboardButton(text='Поделиться контактом' if isinstance(step, ContactField) else 'Поделиться геопозицией',
                                         request_contact=True if isinstance(step, ContactField) else None,
                                         request_location=True if isinstance(step, LocationField) else None)
                 markup = reply_keyboard([[button]], chat_type='private', one_time=True)
             else:
                 await remove(message, state, data)
-            reply = await message.answer(f"РЁР°Рі {data['index'] + 1}/{len(steps)}. {step.prompt}\n/back вЂ” РЅР°Р·Р°Рґ В· /cancel вЂ” РѕС‚РјРµРЅР°",
+            reply = await message.answer(f"Шаг {data['index'] + 1}/{len(steps)}. {step.prompt}\n/back — назад · /cancel — отмена",
                                          parse_mode=None, reply_markup=markup)
             data['prompt_message_id'] = sent_id(reply, message)
         await save(state, data)
@@ -243,7 +243,7 @@ def dialog_form_router(
         if message.text and message.text.split()[0].split('@')[0] == '/cancel':
             await remove(message, state, data)
             await clear(state, data)
-            await message.answer(f'Р¤РѕСЂРјР° РѕС‚РјРµРЅРµРЅР°. РќР°С‡Р°С‚СЊ Р·Р°РЅРѕРІРѕ: /{command}.', parse_mode=None)
+            await message.answer(f'Форма отменена. Начать заново: /{command}.', parse_mode=None)
             return
         data['index'] = max(0, data['index'] - 1)
         data['values'] = {s.name: data['values'][s.name] for s in steps[:data['index']]}
@@ -273,7 +273,7 @@ def dialog_form_router(
             reply = message.reply_to_message
             if (reply is None or reply.message_id != data['prompt_message_id'] or reply.chat.id != message.chat.id
                     or reply.from_user is None or not reply.from_user.is_bot or reply.from_user.id != _bot_id(message)):
-                await message.answer('РћС‚РІРµС‚СЊС‚Рµ РЅР° С‚РµРєСѓС‰РёР№ РІРѕРїСЂРѕСЃ Р±РѕС‚Р°.', parse_mode=None)
+                await message.answer('Ответьте на текущий вопрос бота.', parse_mode=None)
                 return
         try:
             value = step.read(message.text or '') if isinstance(step, TextField) else step.read(message)
@@ -286,7 +286,7 @@ def dialog_form_router(
             data['candidate'] = {'value': dict(value), 'nonce': secrets.token_hex(4), 'message_id': None}
             await save(state, data)  # Old candidate becomes unusable even after lost send.
             await remove(message, state, data)
-            reply = await message.answer(f"{step.label}: {display(step, value)}\nРџРѕРґС‚РІРµСЂРґРёС‚Рµ Р·РЅР°С‡РµРЅРёРµ РґР»СЏ С‚РµРєСѓС‰РµРіРѕ РІРѕРїСЂРѕСЃР°.",
+            reply = await message.answer(f"{step.label}: {display(step, value)}\nПодтвердите значение для текущего вопроса.",
                                          parse_mode=None, reply_markup=keyboard(data, 'v:' + data['candidate']['nonce']))
             data['candidate']['message_id'] = sent_id(reply, message)
             await save(state, data)
@@ -327,7 +327,7 @@ def dialog_form_router(
             if not _plain(text, 4096):
                 raise InvalidCompletion('on_submit must return nonempty plain text up to 4096 UTF-16 units')
         except Exception:
-            await message.answer('Р РµР·СѓР»СЊС‚Р°С‚ РѕС‚РїСЂР°РІРєРё РїРѕРєР° РЅРµ РїРѕРґС‚РІРµСЂР¶РґС‘РЅ. РќР°Р¶РјРёС‚Рµ В«РћС‚РїСЂР°РІРёС‚СЊВ» РµС‰С‘ СЂР°Р· РґР»СЏ РїСЂРѕРІРµСЂРєРё С‚РѕР№ Р¶Рµ Р·Р°СЏРІРєРё.', parse_mode=None)
+            await message.answer('Результат отправки пока не подтверждён. Нажмите «Отправить» ещё раз для проверки той же заявки.', parse_mode=None)
             raise
         await clear(state, data)  # Completion is final even if the following feedback is lost.
         await message.answer(text, parse_mode=None, reply_markup=remove_keyboard())

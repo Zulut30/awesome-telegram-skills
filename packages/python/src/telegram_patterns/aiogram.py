@@ -97,7 +97,7 @@ def callback_router(
         try:
             _callback_data(key, prefix)
         except ValueError:
-            await notify(query, ActionResult("stale", "РљРЅРѕРїРєР° РЅРµРґРµР№СЃС‚РІРёС‚РµР»СЊРЅР°. РћС‚РєСЂРѕР№С‚Рµ Р°РєС‚СѓР°Р»СЊРЅРѕРµ РјРµРЅСЋ."))
+            await notify(query, ActionResult("stale", "Кнопка недействительна. Откройте актуальное меню."))
             return
         result = await execute(Action(actor_id=query.from_user.id, key=key))
         await notify(query, result)

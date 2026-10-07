@@ -200,12 +200,14 @@ class SDKTests(unittest.IsolatedAsyncioTestCase):
             self.assertIsInstance(session.calls[-1], AnswerCallbackQuery)
             observations.append(('execute', action.actor_id, action.key))
             return ActionResult('denied', 'Нет доступа')
-        async def notify(query, result): observations.append(('notify', result.status))
+        texts = []
+        async def notify(query, result): observations.append(('notify', result.status)); texts.append(result.text)
         dp.include_router(callback_router(execute, notify))
         for uid, data in [(99, 'act:key'), (99, 'act:bad!')]:
             update = Update(update_id=len(session.calls)+1, callback_query=CallbackQuery(id=str(len(session.calls)+1), from_user=User(id=uid, is_bot=False, first_name='Test'), chat_instance='test', data=data))
             await dp.feed_update(bot, update)
         self.assertEqual(observations, [('execute',99,'key'),('notify','denied'),('notify','stale')])
+        self.assertEqual(texts, ['Нет доступа', 'Кнопка недействительна. Откройте актуальное меню.'])
         self.assertEqual(len(session.calls), 2)
         await bot.session.close()
 

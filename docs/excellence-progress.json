@@ -19,9 +19,14 @@
     {
       "id": 2,
       "title": "Исправить испорченную кодировку сообщений",
-      "status": "pending",
-      "commit_subject": null,
-      "evidence": [],
+      "status": "done",
+      "commit_subject": "excellence(002): fix mojibake in visible bot texts",
+      "evidence": [
+        "15 строк aiogram.py/dialog_forms.py перекодированы без потерь (cp1251 -> utf-8)",
+        "test_visible_texts_match_readable_reference и проверка stale текста callback_router: 63 OK",
+        "tests/test_text_encoding.py находит все 15 строк в версии HEAD~ и 0 после исправления",
+        "build_api_reference --check и build_recipe_gallery --check: passed"
+      ],
       "remaining": null
     },
     {
