@@ -171,7 +171,7 @@ class ValidateSkillsTests(unittest.TestCase):
     def test_repository_skills_pass(self):
         count, errors = self.validator.validate(ROOT)
         self.assertEqual(errors, [])
-        self.assertEqual(count, 42)
+        self.assertEqual(count, len(list((ROOT / '.agents/skills').glob('*/SKILL.md'))))
 
 
 if __name__ == '__main__':

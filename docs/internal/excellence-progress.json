@@ -1253,10 +1253,14 @@
     {
       "id": 98,
       "title": "Руководство для контрибьюторов",
-      "status": "pending",
-      "commit_subject": null,
-      "evidence": [],
-      "remaining": null
+      "status": "partial",
+      "commit_subject": "excellence(098): Add a skill scaffold command and a contributor guide with checklist",
+      "evidence": [
+        "scripts/new_skill.py creates SKILL.md in the standard outline and agents/openai.yaml with [TODO] markers the validator rejects as an unfinished scaffold; --next-steps prints the remaining steps",
+        "docs/contributing-skills.md: text rules, registration (README catalogs, counts, generated sources table, terms), Claude CLI evaluations, checks, checklist, example commits; a component section; PR template checklist",
+        "Dry run in a temporary worktree following the guide reached only the two evaluation tests that need a Claude CLI run; three tests no longer hardcode 42 skills"
+      ],
+      "remaining": "An external contributor has not yet added a skill with only the guide; confirm with their merged pull request"
     },
     {
       "id": 99,

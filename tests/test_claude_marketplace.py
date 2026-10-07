@@ -20,7 +20,7 @@ class ClaudeMarketplaceTests(unittest.TestCase):
         root = (ROOT / plugin['source']).resolve()
         self.assertFalse((root / '.claude-plugin').exists(), 'no manifest: Claude Code scans the default skills/ layout')
         skills = sorted(path.parent.name for path in (root / 'skills').glob('*/SKILL.md'))
-        self.assertEqual(len(skills), 42)
+        self.assertTrue(skills)
         self.assertRegex(plugin['description'], rf'^{len(skills)} skills')
         for name in skills:
             frontmatter = (root / 'skills' / name / 'SKILL.md').read_text(encoding='utf-8').split('---')[1]

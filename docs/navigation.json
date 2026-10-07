@@ -255,6 +255,11 @@
           "path": "docs/usability-study.md"
         },
         {
+          "title": "Свой скилл или компонент",
+          "goal": "Добавить скилл или компонент библиотеки от каркаса до pull request без помощи мейнтейнера.",
+          "path": "docs/contributing-skills.md"
+        },
+        {
           "title": "Выпуск версии",
           "goal": "Выпустить новую версию библиотеки с проверками и файлами релиза.",
           "path": "docs/releasing.md"
