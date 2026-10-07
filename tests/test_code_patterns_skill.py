@@ -10,7 +10,8 @@ SKILL = ROOT / '.agents/skills/telegram-code-patterns'
 class CodePatternsSkillTests(unittest.TestCase):
     def test_short_and_every_reference_reachable(self):
         text = (SKILL / 'SKILL.md').read_text(encoding='utf-8')
-        self.assertLessEqual(len(text.split()), 400)
+        # 400 words of intent table plus the shared SKILL.md template (headings, scope, three mistakes).
+        self.assertLessEqual(len(text.split()), 470)
         direct = set(re.findall(r'\(references/([a-z0-9-]+\.md)\)', text))
         reachable = set(direct)
         for name in direct:

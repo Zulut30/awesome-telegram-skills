@@ -96,6 +96,35 @@ def check_sources(body: str, today: date | None = None) -> str | None:
     return None
 
 
+TEMPLATE = ("Когда использовать", "Когда не использовать", "Алгоритм", "Проверка", "Типичные ошибки", "Источники")
+# Extra sections (an example, a sample result) may sit between these two, as part of the algorithm.
+EXTRAS_AFTER, EXTRAS_BEFORE = "Алгоритм", "Проверка"
+
+
+def check_template(body: str) -> str | None:
+    """SKILL.md follows one outline: the six sections in order, nothing after the sources."""
+    # Headings inside code blocks are code, not sections; the code itself still counts as content.
+    prose = re.sub(r"^```.*?^```", lambda block: re.sub(r"^#", " #", block.group(0), flags=re.MULTILINE), body,
+                   flags=re.MULTILINE | re.DOTALL)
+    headings = re.findall(r"^## (.+?)\s*$", prose, re.MULTILINE)
+    required = [heading for heading in headings if heading in TEMPLATE]
+    if required != list(TEMPLATE):
+        return "sections must be: " + " / ".join(TEMPLATE) + f" in this order, each once (found: {' / '.join(headings)})"
+    start, end = headings.index(EXTRAS_AFTER), headings.index(EXTRAS_BEFORE)
+    extras = [heading for index, heading in enumerate(headings) if heading not in TEMPLATE and not start < index < end]
+    if extras:
+        return f"extra section {extras[0]!r} is allowed only between '{EXTRAS_AFTER}' and '{EXTRAS_BEFORE}'"
+    sections = dict(zip(headings, re.split(r"^## .+$", prose, flags=re.MULTILINE)[1:]))
+    for heading in TEMPLATE:
+        if not sections[heading].strip():
+            return f"section '{heading}' is empty"
+    if len(re.findall(r"^- \S", sections["Типичные ошибки"], re.MULTILINE)) < 3:
+        return "section 'Типичные ошибки' needs at least three list items"
+    if re.search(r"^#{1,6} ", sections["Источники"], re.MULTILINE):
+        return "nothing may follow the sources section"
+    return None
+
+
 def load_mapping(text: str, label: Path, errors: list[str]) -> dict:
     try:
         result = yaml.safe_load(text)
@@ -180,6 +209,9 @@ def validate(root: Path) -> tuple[int, list[str]]:
         sources_error = check_sources(text[match.end():])
         if sources_error:
             errors.append(f"{entry}: {sources_error}")
+        template_error = check_template(text[match.end():])
+        if template_error:
+            errors.append(f"{entry}: {template_error}")
         errors.extend(check_skill_files(root, folder, {path.name for path in folders}, expected_version))
 
         metadata_path = folder / "agents" / "openai.yaml"

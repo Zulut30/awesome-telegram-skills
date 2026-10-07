@@ -613,9 +613,14 @@
     {
       "id": 49,
       "title": "Единый шаблон `SKILL.md`",
-      "status": "pending",
-      "commit_subject": null,
-      "evidence": [],
+      "status": "done",
+      "commit_subject": "excellence(049): give every SKILL.md the same outline and check it",
+      "evidence": [
+        "42 SKILL.md: Когда использовать / Когда не использовать / Алгоритм / Проверка / Типичные ошибки / Источники; прежние разделы стали подразделами алгоритма",
+        "scripts/validate_skills.py check_template: порядок и единственность разделов, дополнительные разделы только между Алгоритмом и Проверкой, >=3 типичных ошибки, ничего после Источников; tests/test_validate_skills.py test_skill_follows_the_template (8 отказов, 3 допустимых варианта)",
+        "agentskills validate: 42/42; корень 113 OK; сайт 443 страницы без ошибок",
+        "evaluations/reports/skill-value-latest.json: полный прогон 126 задач после шаблона — haiku 294/447 (было 278), 59 задач (55); sonnet 419/447 (406), 118 задач (115)"
+      ],
       "remaining": null
     },
     {
