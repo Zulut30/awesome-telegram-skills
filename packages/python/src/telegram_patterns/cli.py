@@ -5,12 +5,13 @@ import json
 from pathlib import Path
 import sys
 import tarfile
+from typing import Any
 import zipfile
 
 from importlib.resources import files
 
 from .diagnostics import diagnose
-from .errors import PatternError, safe_error_report
+from .errors import OperationKind, PatternError, safe_error_report
 from .recipes import RecipeCatalog
 from .execution import plan_recipe, run_recipe_offline
 from .starter import create_starter
@@ -60,7 +61,7 @@ def _echo(text: str) -> None:
     print(text.encode(encoding, 'backslashreplace').decode(encoding) if encoding else text, file=sys.stderr)
 
 
-def _report(payload: dict, *, as_json: bool) -> None:
+def _report(payload: dict[str, Any], *, as_json: bool) -> None:
     if as_json:
         # ASCII JSON stays decodable across redirected console encodings.
         print(json.dumps(payload), file=sys.stderr)
@@ -149,7 +150,7 @@ def main(argv: list[str] | None = None) -> int:
     except (PatternError, ValueError, OSError, KeyError, TypeError, zipfile.BadZipFile, tarfile.TarError) as error:
         # Do not expose config/env payloads or arbitrary exception text.
         problem = _problem(error)
-        operation = 'write' if args.command == 'init' and not args.dry_run and problem != 'installation' else 'read'
+        operation: OperationKind = 'write' if args.command == 'init' and not args.dry_run and problem != 'installation' else 'read'
         _report({'passed': False, 'error': type(error).__name__, 'problem': problem,
                  'failure': safe_error_report(error, operation=operation).as_dict(),
                  'detail': 'Invalid input, existing target or unavailable local artifact. No existing files replaced; failed new project creation may leave partial files.'},
