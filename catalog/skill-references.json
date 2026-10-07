@@ -82,6 +82,10 @@
       ".agents/skills/telegram-code-patterns/references/profiles.md",
       ".agents/skills/telegram-profiles/references/profiles.md"
     ],
+    "docs/ptb-adapter.md": [
+      ".agents/skills/telegram-code-patterns/references/ptb-adapter.md",
+      ".agents/skills/telegram-library-selection/references/ptb-adapter.md"
+    ],
     "docs/quickstart.md": [
       ".agents/skills/telegram-code-patterns/references/quickstart.md"
     ],

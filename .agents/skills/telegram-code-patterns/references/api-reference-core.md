@@ -190,6 +190,45 @@ assert StarsSubscription.from_dict(json.loads(json.dumps(sub.as_dict()))) == sub
 print(json.dumps({'case': 'core_stars_subscription', 'passed': True, 'network': False}))
 ```
 
+<a id="ref-core_markup"></a>
+
+## Клавиатуры как JSON для любого SDK — ref.core_markup
+
+Файл: `core_markup.py`. Символы: `inline_button`, `reply_button`, `layout_rows`, `inline_markup`, `reply_markup`, `force_reply_markup`, `remove_markup`, `paginated_markup`, `MarkupPage`, `markup_page_number`, `selection_markup`
+
+Границы: Ядро без SDK строит reply_markup в формате Bot API JSON с теми же проверками, что и aiogram-адаптер: одно действие на inline-кнопку, callback_data 1–64 байта UTF-8, HTTPS Mini App только в обычном личном чате, 1–8 кнопок в ряду и до 100 кнопок, иконка custom emoji только с подтвержденным entitlement. JSON совпадает с выводом telegram_patterns.aiogram; aiogram превращает его в модели через model_validate, python-telegram-bot — через telegram_patterns.ptb.ptb_markup. Права, авторизацию callback и разбор нажатий делает приложение.
+
+```python
+"""SDK-free keyboards as Bot API JSON: the same reply_markup for aiogram, python-telegram-bot or raw HTTP; no network."""
+import json
+from telegram_patterns import (MarkupPage, SelectionContext, SelectionMenu, SelectionOption, SelectionSpec, ValidationFailure,
+                               force_reply_markup, inline_button, inline_markup, layout_rows, markup_page_number, paginated_markup,
+                               remove_markup, reply_button, reply_markup, selection_markup)
+
+buttons = [inline_button(name, callback_data=f'menu:{key}') for name, key in [('Каталог', 'catalog'), ('Помощь', 'help'), ('Назад', 'back')]]
+menu = inline_markup(layout_rows(buttons, (2,)))
+assert menu == {'inline_keyboard': [[{'text': 'Каталог', 'callback_data': 'menu:catalog'}, {'text': 'Помощь', 'callback_data': 'menu:help'}],
+                                    [{'text': 'Назад', 'callback_data': 'menu:back'}]]}
+icon = inline_button('Готово', callback_data='ok', icon_custom_emoji_id='5368324170671202286')
+assert 'icon_custom_emoji_id' not in inline_markup([[icon]])['inline_keyboard'][0][0]  # no verified entitlement: text only
+ask = reply_markup([[reply_button('Отправить контакт', request_contact=True)], ['Отмена']], one_time=True)
+assert ask['keyboard'][0][0] == {'text': 'Отправить контакт', 'request_contact': True}
+assert force_reply_markup('Ваше имя')['force_reply'] is True and remove_markup() == {'remove_keyboard': True, 'selective': False}
+try:
+    inline_markup([[inline_button('Приложение', web_app='https://example.com/app')]], chat_type='group')
+except ValidationFailure:
+    pass  # Mini App buttons need an ordinary private chat
+else:
+    raise AssertionError('Web App button accepted in a group')
+page: MarkupPage = paginated_markup([(f'Товар {n}', f'item-{n}') for n in range(1, 8)], page=1, page_size=3)
+assert (page.page, page.page_count) == (1, 3) and page.markup['inline_keyboard'][-1][1] == {'text': 'Далее →', 'callback_data': 'page:2'}
+assert markup_page_number('page:2') == 2 and markup_page_number('page:../2') is None
+draft = SelectionMenu(SelectionSpec([SelectionOption('a', 'Alpha'), SelectionOption('b', 'Beta')], max_selected=1),
+                      SelectionContext(100, 7, 7, 50))
+assert selection_markup(draft.state)['inline_keyboard'][0][0]['text'] == '□ Alpha'  # the same rows as selection_keyboard
+print(json.dumps({'case': 'core_markup', 'passed': True, 'network': False}))
+```
+
 <a id="ref-core_storage"></a>
 
 ## SQLite effect и повтор — ref.core_storage
@@ -335,7 +374,7 @@ catalog = RecipeCatalog()
 recipe: Recipe = catalog.search('две кнопки', maturity=maturity, verification=verification,
                                task='keyboards', context='private', sdk='aiogram', sdk_version='3.31.0', api_version='bot:10.3')[0]
 assert recipe.id == 'two-columns' and catalog.get(recipe.id) == recipe
-assert len(catalog.recipes) == 320 and catalog.library_version
+assert len(catalog.recipes) == 340 and catalog.library_version
 assert recipe.source_files and recipe.check_files and 'keyboards' in recipe.tasks
 lost = catalog.search('потерянный ответ', task='recovery', context='backend')[0]
 assert lost.id == 'demo-recovery' and lost.sdk == 'python-core' and lost.api_version == 'none'

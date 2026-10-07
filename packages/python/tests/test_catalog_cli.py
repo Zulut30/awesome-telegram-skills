@@ -27,7 +27,8 @@ class RecipeTests(unittest.TestCase):
         self.assertIn('native.BackButton.show', {r.id for r in catalog.search('назад', sdk='telegram-webapp')})
         lost = catalog.search('потерянный ответ', context='backend', task='recovery')[0]
         self.assertEqual((lost.id, lost.sdk, lost.api_version), ('demo-recovery', 'python-core', 'none'))
-        self.assertEqual(catalog.search('потерянный ответ', context='private'), ())
+        # The backend fixture is not a private-chat recipe; only the python-telegram-bot bot variant is.
+        self.assertEqual([r.id for r in catalog.search('потерянный ответ', context='private')], ['ptb-demo-recovery'])
         self.assertEqual(catalog.search(sdk='aiogram', sdk_version='0.0.0'), ())
         self.assertEqual(catalog.get('api.getUpdates').contexts, ('unspecified',))
         self.assertNotIn(catalog.get('api.getUpdates'), catalog.search(context='group', limit=1000))
@@ -50,7 +51,7 @@ class RecipeTests(unittest.TestCase):
 
     def test_maturity_does_not_promote_evidence_to_stable(self):
         catalog = RecipeCatalog()
-        self.assertEqual(len(catalog.search(maturity='experimental', limit=1000)), 36)
+        self.assertEqual(len(catalog.search(maturity='experimental', limit=1000)), 56)
         self.assertEqual(len(catalog.search(maturity='reference', limit=1000)), 284)
         self.assertEqual(catalog.search(maturity='stable'), ())
         self.assertEqual(catalog.get('api.sendPhoto').maturity, 'reference')
@@ -74,13 +75,14 @@ class RecipeTests(unittest.TestCase):
 
     def test_packaged_catalog_search_ranking_filters_and_scopes(self):
         catalog = RecipeCatalog()
-        self.assertEqual(len(catalog.recipes), 320)
+        self.assertEqual(len(catalog.recipes), 340)
         self.assertEqual(catalog.search('ДВЕ кнопки')[0].id, 'two-columns')
         self.assertEqual(catalog.search('три кнопки')[0].id, 'three-columns')
         self.assertEqual(catalog.search()[0].id, 'two-columns')
-        self.assertEqual(len(catalog.search(category='keyboards', limit=1000)), 11)
+        self.assertEqual(len(catalog.search(category='keyboards', limit=1000)), 22)
+        self.assertEqual(len(catalog.search(category='keyboards', sdk='python-telegram-bot', limit=1000)), 11)
         self.assertEqual(len(catalog.search(language='typescript', limit=1000)), 99)
-        self.assertEqual(len(catalog.search(verification='mock', limit=1000)), 25)
+        self.assertEqual(len(catalog.search(verification='mock', limit=1000)), 34)
         self.assertEqual(catalog.search(verification='live'), ())
         self.assertEqual(catalog.search('токен_НЕТ_РЕЦЕПТА'), ())
         self.assertEqual(catalog.get('api.sendPhoto').verification, 'sdk')
@@ -269,7 +271,7 @@ class GalleryGeneratorTests(unittest.TestCase):
             output=Path(folder)/'site'
             with patch('sys.argv',['builder','--output-dir',str(output)]),redirect_stdout(io.StringIO()):builder.main()
             self.assertTrue((output/'index.html').is_file());self.assertTrue((output/'gallery.js').is_file())
-            self.assertEqual(len(json.loads((output/'recipes.json').read_text(encoding='utf-8'))['recipes']),320)
+            self.assertEqual(len(json.loads((output/'recipes.json').read_text(encoding='utf-8'))['recipes']),340)
             with patch('sys.argv',['builder','--output-dir',str(output),'--check']),redirect_stdout(io.StringIO()):builder.main()
             (output/'index.html').write_text('drift')
             with patch('sys.argv',['builder','--output-dir',str(output),'--check']),self.assertRaisesRegex(ValueError,'drift'):builder.main()

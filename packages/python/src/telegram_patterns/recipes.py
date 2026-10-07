@@ -83,7 +83,7 @@ class RecipeCatalog:
             metadata: dict[str, Any] = {}
             execution = item.get('execution')
             if execution is not None:
-                if not isinstance(execution, dict) or execution.get('kind') not in {'sdk-request', 'sdk-markup', 'dispatcher', 'sqlite', 'reference'}:
+                if not isinstance(execution, dict) or execution.get('kind') not in {'sdk-request', 'sdk-markup', 'ptb-markup', 'dispatcher', 'application', 'sqlite', 'reference'}:
                     raise ValidationFailure('Invalid execution requirements')
                 for field in ('dependencies', 'offline_environment', 'offline_permissions', 'offline_data', 'live_environment', 'live_permissions', 'live_data', 'effects'):
                     if not isinstance(execution.get(field), list) or any(not isinstance(v, str) or not 1 <= len(v) <= 1000 for v in execution[field]):

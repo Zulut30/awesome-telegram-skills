@@ -8,7 +8,9 @@ from .message_text import EntityKind, TextEntity, TextPayload, FormattedText, Me
 from .rich_message import RichButton, RichButtonStyle, RichMessage, RichMessageBuilder, RichSpan, RichText
 from .ephemeral import EphemeralMessageRef, EphemeralNotAllowed, EphemeralTrigger, ephemeral_parameters
 from .stars_subscription import STARS_SUBSCRIPTION_PERIOD, RenewalState, StarsCharge, StarsSubscription, SubscriptionEventRejected
-from .selection import SelectionOption, SelectionSpec, SelectionContext, SelectionState, SelectionResult, SelectionMenu
+from .markup import (MarkupPage, force_reply_markup, inline_button, inline_markup, layout_rows, markup_page_number, paginated_markup,
+                     remove_markup, reply_button, reply_markup)
+from .selection import SelectionOption, SelectionSpec, SelectionContext, SelectionState, SelectionResult, SelectionMenu, selection_markup
 from .recipes import Maturity, Recipe, RecipeCatalog, VerificationLevel
 from .execution import RecipeRunPlan, RecipeRunResult, plan_recipe, run_recipe_offline
 from .starter import StarterPlan, create_starter
@@ -26,7 +28,9 @@ __all__ = [
     "RichMessageBuilder", "RichMessage", "RichButton", "RichButtonStyle", "RichSpan", "RichText",
     "EphemeralTrigger", "EphemeralMessageRef", "EphemeralNotAllowed", "ephemeral_parameters",
     "StarsSubscription", "StarsCharge", "RenewalState", "SubscriptionEventRejected", "STARS_SUBSCRIPTION_PERIOD",
-    "SelectionOption", "SelectionSpec", "SelectionContext", "SelectionState", "SelectionResult", "SelectionMenu",
+    "inline_button", "reply_button", "layout_rows", "inline_markup", "reply_markup", "force_reply_markup", "remove_markup",
+    "paginated_markup", "MarkupPage", "markup_page_number",
+    "SelectionOption", "SelectionSpec", "SelectionContext", "SelectionState", "SelectionResult", "SelectionMenu", "selection_markup",
     "OnceResult", "OperationConflict", "SQLiteOnce",
     "CalendarMonth", "TimeSlot", "resolve_local_time", "SlotBooking", "SlotSchedule", "SQLiteSlotStore",
     "Maturity", "VerificationLevel", "Recipe", "RecipeCatalog",

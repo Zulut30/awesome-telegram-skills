@@ -15,12 +15,12 @@ telegram-patterns recipes --show two-columns
 
 Эквивалент команды: `python -m telegram_patterns`. `recipes` не требует aiogram, не исполняет найденный код и не обращается в Telegram. В wheel находится тот же снимок каталога, что и в галерее; по умолчанию показываются до 20 совпадений. Фильтры: `--category`, `--language`, `--verification`, `--limit`.
 
-298 записей состоят из 11 клавиатур/сценариев ввода, 185 Bot API requests, 99 Mini App references и трех полных бот-примеров. Для каждого приведены код, источники и область проверки:
+340 записей состоят из 22 клавиатур/сценариев ввода (11 — python-telegram-bot), 185 Bot API requests, 99 Mini App references, 33 полных бот-примеров (9 — python-telegram-bot) и сценария восстановления. Для каждого приведены код, источники и область проверки:
 
 | Статус | Что сделано | Что остается у проекта |
 | --- | --- | --- |
-| `sdk` — 196 | Построены объекты установленного aiogram 3.31.0 | Реальные IDs/files, права, контекст и отправка запроса |
-| `mock` — 3 | Исполнен настоящий Dispatcher с явным StubSession | Живой Telegram, durable state и нужная бизнес-логика |
+| `sdk` — 207 | Построены объекты установленного aiogram 3.31.0 или python-telegram-bot 22.8 | Реальные IDs/files, права, контекст и отправка запроса |
+| `mock` — 34 | Исполнен настоящий Dispatcher с StubSession или Application python-telegram-bot с StubRequest | Живой Telegram, durable state и нужная бизнес-логика |
 | `not_run` — 99 | Справочный native фрагмент из каталога API | Аргументы, version/platform gates, permissions и реальное испытание |
 | `live` — 0 | Ни одного сценария здесь не заявлено проверенным живьем | Проверка конкретного бота/клиента с отдельными credentials |
 

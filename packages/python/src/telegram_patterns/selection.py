@@ -8,7 +8,7 @@ import secrets
 import threading
 import time
 from types import MappingProxyType
-from typing import Literal, Mapping, Sequence
+from typing import Any, Literal, Mapping, Sequence
 
 from .errors import ConflictFailure, InvalidType, ValidationFailure
 
@@ -331,3 +331,37 @@ class SelectionMenu:
             text = {'accepted': 'Выбор обновлен.', 'confirming': 'Проверьте выбор перед подтверждением.',
                     'confirmed': 'Выбор подтвержден.', 'cancelled': 'Выбор отменен.'}[status]
             return SelectionResult(status, text, current)
+
+
+def selection_markup(state: SelectionState, *, columns: int = 2, styles: bool = False) -> dict[str, Any]:
+    """InlineKeyboardMarkup JSON for a selection snapshot, for any SDK; every press still goes through menu.apply.
+
+    Without styles it matches telegram_patterns.aiogram.selection_keyboard with default capabilities.
+    """
+    from .markup import inline_button, inline_markup, layout_rows
+    if not isinstance(state, SelectionState):
+        raise InvalidType('Use the server SelectionState')
+    if type(styles) is not bool:
+        raise InvalidType('styles must be bool')
+    if state.phase in {'confirmed', 'cancelled'}:
+        return {'inline_keyboard': []}
+
+    def button(text: str, action: str, style: Literal['primary', 'success', 'danger'] | None = None) -> dict[str, Any]:
+        return inline_button(text, callback_data=state.callback(action), style=style if styles else None)
+    rows: list[list[dict[str, Any]]] = []
+    if state.phase == 'confirming':
+        if state.confirmation_id is None:
+            raise ValidationFailure('Confirming view needs its server confirmation ID')
+        rows = [[button('Да: ' + state.spec.confirm_text, 'y:' + state.confirmation_id, 'danger')],
+                [button('Изменить выбор', 'back'), button('Отмена', 'cancel')]]
+    else:
+        choices = [button(('✓ ' if o.key in state.selected else '□ ') + o.label, 's:' + o.key, 'success' if o.key in state.selected else None)
+                   for o in state.spec.options if o.enabled and (state.filter_key == 'all' or state.filter_key in o.filters)]
+        if choices:
+            rows.extend(layout_rows(choices, (columns,)))
+        rows.extend([[button(('✓ ' if value else '□ ') + state.spec.toggles[key], 't:' + key)] for key, value in state.toggles])
+        rows.append([button('−1', 'q:dec'), button(str(state.quantity) + ' ↻', 'refresh'), button('+1', 'q:inc')])
+        filters = [button(('✓ ' if key == state.filter_key else '') + label, 'f:' + key) for key, label in state.spec.filters.items()]
+        rows.extend(layout_rows(filters, (2,)))
+        rows.append([button(state.spec.confirm_text, 'ask', 'danger'), button('Отмена', 'cancel')])
+    return inline_markup(rows)

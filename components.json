@@ -646,6 +646,35 @@
       "maturity_scope": "All public API symbols in this component; local verification is not a stable 1.0 promise"
     },
     {
+      "id": "core-markup",
+      "language": "python",
+      "import": "telegram_patterns.inline_button, reply_button, layout_rows, inline_markup, reply_markup, force_reply_markup, remove_markup, paginated_markup, MarkupPage, markup_page_number, selection_markup",
+      "intent": "Собрать клавиатуру как Bot API JSON без SDK: для aiogram, python-telegram-bot или прямого HTTP",
+      "source": "packages/python/src/telegram_patterns/markup.py",
+      "example": "examples/ptb/ptb_catalog_bot.py",
+      "boundaries": [
+        "the same checks and JSON as the aiogram keyboards; tested for equality",
+        "no callback authorization, rights or sending; the host owns them"
+      ],
+      "maturity": "experimental",
+      "maturity_scope": "All public API symbols in this component; local verification is not a stable 1.0 promise"
+    },
+    {
+      "id": "ptb-adapter",
+      "language": "python",
+      "import": "telegram_patterns.ptb.ptb_markup, ptb_inline_markup, ptb_text, StubRequest, offline_application",
+      "extra": "ptb",
+      "intent": "Подключить ядро библиотеки к python-telegram-bot и проверить Application без сети",
+      "source": "packages/python/src/telegram_patterns/ptb.py",
+      "example": "examples/ptb/offline_ptb_catalog.py",
+      "boundaries": [
+        "python-telegram-bot 22.8 implements Bot API 10.0: newer fields go through api_kwargs, newer methods through do_api_request",
+        "StubRequest never reaches the network; live delivery and rights are not proven"
+      ],
+      "maturity": "experimental",
+      "maturity_scope": "All public API symbols in this component; local verification is not a stable 1.0 promise"
+    },
+    {
       "id": "media",
       "language": "python",
       "import": "telegram_patterns.aiogram.MediaKind, MediaSendRequest, MediaFile, MediaItem, DownloadedMedia, media_request, media_album, media_edit, download_media",

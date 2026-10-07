@@ -756,9 +756,15 @@
     {
       "id": 60,
       "title": "python-telegram-bot как второй SDK",
-      "status": "pending",
-      "commit_subject": null,
-      "evidence": [],
+      "status": "done",
+      "commit_subject": "excellence(060): add python-telegram-bot as a second SDK",
+      "evidence": [
+        "packages/python/src/telegram_patterns/markup.py: SDK-free Bot API JSON keyboards, pagination; selection_markup in selection.py; tests/test_markup.py checks equality with aiogram builders",
+        "packages/python/src/telegram_patterns/ptb.py (extra ptb): ptb_markup, ptb_inline_markup, ptb_text, StubRequest, offline_application; tests/test_ptb.py",
+        "20 PTB variants: 11 keyboard recipes (wire JSON equal to aiogram) and 9 scenarios on a real Application in examples/ptb; run-recipe kinds ptb-markup and application; --all-python passes 241 fixtures",
+        "docs/ptb-adapter.md in telegram-code-patterns and telegram-library-selection; capability map has an SDK column",
+        "verify_pattern_packages PASS: 537 Python and 35 TypeScript tests, browser passed"
+      ],
       "remaining": null
     },
     {

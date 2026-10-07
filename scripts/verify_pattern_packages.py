@@ -101,7 +101,7 @@ from telegram_patterns import BotSettings, validate_init_data, RecipeCatalog, cr
 assert importlib.util.find_spec('aiogram') is None
 assert Path(telegram_patterns.__file__).resolve().is_relative_to(Path(sys.argv[1]).resolve())
 assert BotSettings.from_env(environ={'BOT_TOKEN':'100:CORE_FIXTURE'}).token=='100:CORE_FIXTURE'
-assert len(RecipeCatalog().recipes)==320
+assert len(RecipeCatalog().recipes)==340
 assert RecipeCatalog().search('две кнопки')[0].id=='two-columns'
 assert RecipeCatalog().get('two-columns').maturity=='experimental'
 assert RecipeCatalog().get('api.sendPhoto').maturity=='reference'
@@ -140,7 +140,7 @@ print(json.dumps({'core_without_sdk':True,'python':sys.version.split()[0]}))
 
         sdk = consumers / 'sdk'
         run('sdk-environment', [uv, 'venv', '--python', sys.executable, str(sdk)])
-        run('sdk-install', [uv, 'pip', 'install', '--python', str(python_in(sdk)), str(wheel), 'aiogram==3.31.0', 'tzdata==2026.5', 'cryptography==50.0.2'])
+        run('sdk-install', [uv, 'pip', 'install', '--python', str(python_in(sdk)), str(wheel), 'aiogram==3.31.0', 'tzdata==2026.5', 'cryptography==50.0.2', 'python-telegram-bot==22.8'])
         run('typing-install', [uv, 'pip', 'install', '--python', str(python_in(sdk)), 'mypy==2.4.0'])
         run('python-typecheck', [str(python_in(sdk)), '-m', 'mypy', '--follow-imports=silent', '--no-incremental', str(ROOT / 'packages/python/src/telegram_patterns')], consumers)
         public_python_types = consumers / 'public_types.py'

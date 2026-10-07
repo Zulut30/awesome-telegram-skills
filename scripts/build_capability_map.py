@@ -15,6 +15,7 @@ import sys
 
 ROOT = Path(__file__).resolve().parents[1]
 OUTPUT = 'docs/capability-map.md'
+SDK_LABELS = {'aiogram': 'aiogram', 'python-telegram-bot': 'python-telegram-bot', 'python-core': 'без SDK'}
 CHECKS = (('sdk', 'SDK-запрос'), ('dispatcher', 'Dispatcher'), ('browser', 'браузер'), ('reference', 'справка'), ('live', 'live'))
 
 
@@ -69,7 +70,8 @@ def build(root: Path = ROOT) -> tuple[str, dict]:
                 gaps.append('сценарий')
             if 'live' not in checks:
                 gaps.append('live')
-            rows.append({'id': ident, 'area': area['title'], 'title': item['title'], 'skills': item['skills'],
+            sdks = [label for key, label in SDK_LABELS.items() if any(recipe['sdk'] == key for recipe in linked)]
+            rows.append({'id': ident, 'area': area['title'], 'title': item['title'], 'skills': item['skills'], 'sdks': sdks,
                          'components': item['components'], 'recipes': item['recipes'], 'methods': len(methods),
                          'mini_app_methods': len(natives), 'checks': [key for key, _ in CHECKS if key in checks], 'gaps': gaps})
     problems += [f'Bot API method {name} has no capability' for name in bot if 'Bot API ' + name not in owner]
@@ -97,16 +99,18 @@ def render(rows: list[dict], summary: dict, telegram: dict) -> str:
              f'{summary["with_recipe"]}, проверены на настоящем Dispatcher без сети — {summary["dispatcher"]}, в браузере — '
              f'{summary["browser"]}, live — {summary["live"]}. На карте все {summary["bot_api_methods"]} методов Bot API '
              f'{telegram["bot_api"]["version"]} и {summary["mini_app_methods"]} методов Mini App.', '',
-             'Проверка: **SDK-запрос** — aiogram собирает запрос метода без сети; **Dispatcher** — сценарий проходит на настоящем '
-             'Dispatcher с заглушкой транспорта; **браузер** — TypeScript-компонент проверен в Chrome; **справка** — фрагмент '
+             'SDK — на каких SDK есть исполняемые сценарии. Проверка: **SDK-запрос** — SDK собирает запрос метода без сети; '
+             '**Dispatcher** — сценарий проходит на настоящем Dispatcher aiogram или Application python-telegram-bot с заглушкой транспорта; **браузер** — TypeScript-компонент проверен в Chrome; **справка** — фрагмент '
              'Mini App не исполнялся; **live** — проверено на настоящем Telegram. Сценарии запускаются командой '
              '`telegram-patterns run-recipe <id> --offline`.', '']
     area = None
     for row in rows:
         if row['area'] != area:
             area = row['area']
-            lines += [f'## {area}', '', '| Возможность | Навыки | Компоненты | Сценарии | Проверка | Пробелы |', '| --- | --- | --- | --- | --- | --- |']
+            lines += [f'## {area}', '', '| Возможность | Навыки | Компоненты | Сценарии | SDK | Проверка | Пробелы |',
+                      '| --- | --- | --- | --- | --- | --- | --- |']
         lines.append(f'| {row["title"]} | {names(row["skills"])} | {names(row["components"])} | {names(row["recipes"])} | '
+                     f'{", ".join(row["sdks"]) or "—"} | '
                      f'{", ".join(label[key] for key in row["checks"]) or "—"} | {", ".join(row["gaps"]) or "—"} |')
         if row is rows[-1] or rows[rows.index(row) + 1]['area'] != area:
             lines.append('')

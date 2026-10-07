@@ -5,7 +5,7 @@
 Календарь и UTC/DST: `CalendarMonth`, `TimeSlot`, `resolve_local_time`; current ACL и atomic booking/replay: `SlotSchedule`, `SlotBooking`, `SQLiteSlotStore`; optional aiogram: `calendar_keyboard`, `time_slot_keyboard`. IANA data на Windows — extra `calendar` (проверено tzdata 2026.5). [Контракт и пример](../../docs/calendar-slots.md). UI snapshot не резервирует ресурс; receipt отличается от current booking status.
 
 
-`plan_recipe` / `run_recipe_offline` и CLI `run-recipe` показывают требования всех 320 cookbook recipes и запускают 210 известных Python fixtures без токена. Core SQLite работает без SDK; 99 native references отклоняются без host/аргументов. [План, effects и ограничения](../../docs/recipe-execution.md). Требуется установленный пакет; runner не выполняет найденный recipe.code.
+`plan_recipe` / `run_recipe_offline` и CLI `run-recipe` показывают требования всех 340 cookbook recipes и запускают 210 известных Python fixtures без токена. Core SQLite работает без SDK; 99 native references отклоняются без host/аргументов. [План, effects и ограничения](../../docs/recipe-execution.md). Требуется установленный пакет; runner не выполняет найденный recipe.code.
 
 RecipeCatalog.search добавляет optional task/context/sdk/sdk_version/api_version. Recipe хранит immutable metadata и repository source/check links; legacy schema 1 defaults сохранены. Поиск SDK-free, без исполнения: [навигация рецептов](../../docs/gallery-navigation.md).
 
@@ -35,6 +35,8 @@ Root экспортирует `Maturity`, `VerificationLevel`; aiogram — `Butt
 python -m pip install ./packages/python
 python -m pip install "./packages/python[aiogram]"
 ```
+
+Если бот уже написан на python-telegram-bot, вместо aiogram установите extra `ptb` (`python -m pip install "./packages/python[ptb]"`, python-telegram-bot 22.8+): ядро и `telegram_patterns.ptb` — клавиатуры из JSON ядра (`inline_button`, `inline_markup`, `paginated_markup`, `selection_markup` → `ptb_markup`), литеральный текст (`ptb_text`) и офлайн-`Application` со `StubRequest`. 20 рецептов имеют вариант `ptb-*`; новые поля и методы Bot API идут через `api_kwargs` и `do_api_request`. Подробности — [python-telegram-bot](../../docs/ptb-adapter.md).
 
 Для проверки подписи Ed25519 без токена бота (`validate_init_data_signature`) добавьте extra `signature`: `python -m pip install "./packages/python[signature]"` — он ставит `cryptography`.
 

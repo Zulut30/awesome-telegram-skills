@@ -74,7 +74,7 @@ import telegram_patterns
 assert Path(telegram_patterns.__file__).resolve().is_relative_to(Path(sys.prefix))
 assert (importlib.util.find_spec('aiogram') is not None)==(sys.argv[1]=='yes')
 modules=['telegram_patterns','telegram_patterns.cli']
-if sys.argv[1]=='yes':modules+=['telegram_patterns.aiogram','telegram_patterns.testing']
+if sys.argv[1]=='yes':modules+=['telegram_patterns.aiogram','telegram_patterns.testing','telegram_patterns.ptb']
 exports={name:(importlib.import_module(name).__all__ if name!='telegram_patterns.cli' else ['doctor']) for name in modules}
 print(json.dumps({'version':m.version('awesome-telegram-patterns'),'module':telegram_patterns.__file__,'exports':exports}))
 """

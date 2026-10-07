@@ -39,7 +39,8 @@ class CapabilityMapTests(unittest.TestCase):
         self.assertEqual(summary['bot_api_methods'], len(telegram['bot_api']['methods']))
         self.assertEqual(summary['mini_app_methods'], len(telegram['mini_app']['methods']))
         page = (ROOT / 'docs/capability-map.md').read_text(encoding='utf-8')
-        self.assertIn('| Эфемерные сообщения в группах | `telegram-groups` | `ephemeral-messages` | `demo-ephemeral` | SDK-запрос, Dispatcher | live |', page)
+        self.assertIn('| Эфемерные сообщения в группах | `telegram-groups` | `ephemeral-messages` | `demo-ephemeral`, `ptb-demo-ephemeral` | '
+                      'aiogram, python-telegram-bot | SDK-запрос, Dispatcher | live |', page)
         self.assertIn(f'Без live-проверки: {summary["capabilities"]} из {summary["capabilities"]}', page)
 
     def test_new_telegram_method_or_unknown_id_fails(self):
@@ -69,7 +70,7 @@ class CapabilityMapTests(unittest.TestCase):
             data['areas'][0]['capabilities'][1]['recipes'] = []
         self.edit(root, 'catalog/capability-map.json', drop)
         page, summary = capability_map.build(root)
-        self.assertIn('| Rich-сообщения: блоки, таблицы, кнопки | `telegram-bot-api` | — | — | SDK-запрос | компонент, сценарий, live |', page)
+        self.assertIn('| Rich-сообщения: блоки, таблицы, кнопки | `telegram-bot-api` | — | — | — | SDK-запрос | компонент, сценарий, live |', page)
         before = json.loads(subprocess.run([sys.executable, str(ROOT / 'scripts/build_capability_map.py'), '--check'],
                                            capture_output=True, text=True, encoding='utf-8', check=True).stdout)
         self.assertEqual(summary['with_component'], before['with_component'] - 1)

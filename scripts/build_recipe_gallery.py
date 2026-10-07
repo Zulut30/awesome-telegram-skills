@@ -32,8 +32,8 @@ NAVIGATION = {
     'contexts': {'private': 'Личный чат', 'group': 'Группа', 'supergroup': 'Супергруппа', 'channel': 'Канал',
                  'business': 'Business connection', 'mini-app': 'Mini App', 'backend': 'Backend без чата',
                  'unspecified': 'Уточнить контекст'},
-    'sdks': {'aiogram': 'aiogram', 'python-core': 'Python core без SDK', 'telegram-webapp': 'Telegram WebApp (снимок)',
-             'unspecified': 'SDK не указан'},
+    'sdks': {'aiogram': 'aiogram', 'python-telegram-bot': 'python-telegram-bot', 'python-core': 'Python core без SDK',
+             'telegram-webapp': 'Telegram WebApp (снимок)', 'unspecified': 'SDK не указан'},
 }
 # Curated subset checked against official docs 2026-10-04. Unknown is never all chats.
 CONTEXTS = {'sendMessage': ['private', 'group', 'supergroup', 'channel'],
@@ -53,6 +53,46 @@ def method_tasks(name: str) -> list[str]:
     if 'Poll' in name: return ['polls']
     if 'Message' in name: return ['messages']
     return ['other']
+PTB_VERSION = '22.8'  # python-telegram-bot release the variants were checked with; it implements Bot API 10.0
+PTB_IMPORTS = ('from telegram_patterns import force_reply_markup, inline_button, inline_markup, layout_rows, remove_markup, reply_button, reply_markup\n'
+               'from telegram_patterns.ptb import ptb_markup\n\n')
+# python-telegram-bot variants of the keyboard recipes: SDK-free markup JSON, the same wire JSON as the aiogram recipe.
+PTB_MANUAL = {
+    'two-columns': 'buttons = [inline_button(text, callback_data=f"menu:{key}") for text, key in [("Каталог", "catalog"), ("Помощь", "help"), ("Назад", "back"), ("Закрыть", "close")]]\nmarkup = ptb_markup(inline_markup(layout_rows(buttons, (2,))))',
+    'three-columns': 'buttons = [inline_button(str(n), callback_data=f"item:{n}") for n in range(1, 7)]\nmarkup = ptb_markup(inline_markup(layout_rows(buttons, (3,))))',
+    'mixed-rows': 'buttons = [inline_button(str(n), callback_data=f"item:{n}") for n in range(1, 7)]\nmarkup = ptb_markup(inline_markup(layout_rows(buttons, (1, 2, 3))))',
+    'button-colors': 'markup = ptb_markup(inline_markup([[inline_button("Основная", callback_data="a", style="primary"), inline_button("Готово", callback_data="b", style="success"), inline_button("Отмена", callback_data="c", style="danger")]]))',
+    'emoji-fallback': 'button = inline_button("Готово", callback_data="ok", icon_custom_emoji_id="123456789")\n# ID-пример заменяется реальным; без подтвержденного entitlement иконка заменяется текстом.\nmarkup = ptb_markup(inline_markup([[button]]))',
+    'reply-menu': 'markup = ptb_markup(reply_markup([["Каталог", "Помощь"], ["Закрыть"]], placeholder="Выберите действие"))',
+    'contact-location': 'markup = ptb_markup(reply_markup([[reply_button("Контакт", request_contact=True), reply_button("Геопозиция", request_location=True)]], chat_type="private", one_time=True))',
+    'force-reply': 'markup = ptb_markup(force_reply_markup("Ваше имя"))\n# Host сохраняет actor/chat/prompt.message_id и проверяет reply_to_message.',
+    'remove-reply': 'markup = ptb_markup(remove_markup())',
+    'copy-disabled': 'markup = ptb_markup(inline_markup([[inline_button("Копировать", copy_text="READY-CODE"), inline_button("Недоступно", disabled=True)]]))\n# disabled (Bot API 10.3) неизвестен python-telegram-bot 22.8 и уходит на провод через api_kwargs.',
+    'url-app': 'markup = ptb_markup(inline_markup([[inline_button("Документация", url="https://core.telegram.org/bots/api"), inline_button("Приложение", web_app="https://example.invalid/replace")]], chat_type="private"))',
+}
+# python-telegram-bot scenario variants: (bot, offline check, id, title, aiogram original, tasks, contexts).
+PTB_DEMOS = (
+    ('ptb_catalog_bot.py', 'offline_ptb_catalog.py', 'ptb-demo-catalog', 'Каталог с пагинацией · python-telegram-bot', 'demo-catalog', ['bot', 'keyboards'], ['private']),
+    ('ptb_selection_bot.py', 'offline_ptb_selection.py', 'ptb-demo-selection', 'Выбор и подтверждение · python-telegram-bot', 'demo-selection', ['input', 'keyboards'], ['private']),
+    ('ptb_message_text_bot.py', 'offline_ptb_message_text.py', 'ptb-demo-message-text', 'Безопасный длинный текст · python-telegram-bot', 'demo-message-text', ['messages'], ['private']),
+    ('ptb_rich_message_bot.py', 'offline_ptb_rich_message.py', 'ptb-demo-rich-message', 'Rich-сообщение и запасной текст · python-telegram-bot', 'demo-rich-message', ['messages'], ['private']),
+    ('ptb_ephemeral_bot.py', 'offline_ptb_ephemeral.py', 'ptb-demo-ephemeral', 'Эфемерный ответ в группе · python-telegram-bot', 'demo-ephemeral', ['messages', 'bot'], ['group', 'supergroup']),
+    ('ptb_stars_subscription_bot.py', 'offline_ptb_stars_subscription.py', 'ptb-demo-stars-subscription', 'Подписка Stars · python-telegram-bot', 'demo-stars-subscription', ['payments', 'bot'], ['private']),
+    ('ptb_community_bot.py', 'offline_ptb_community.py', 'ptb-demo-community', 'События сообщества · python-telegram-bot', 'demo-community', ['moderation', 'bot'], ['group', 'supergroup', 'channel']),
+    ('ptb_join_query_bot.py', 'offline_ptb_join_query.py', 'ptb-demo-join-query', 'Заявка с проверкой в Mini App · python-telegram-bot', 'demo-join-query', ['moderation', 'bot'], ['supergroup', 'mini-app']),
+    ('ptb_recovery_bot.py', 'offline_ptb_recovery.py', 'ptb-demo-recovery', 'Потерянный ответ без второго заказа · python-telegram-bot', 'demo-recovery', ['recovery', 'bot'], ['private']),
+)
+PTB_SUMMARIES = {
+    'ptb-demo-catalog': 'Каталог с переходом по страницам: кнопки из SDK-независимого JSON, правка того же сообщения',
+    'ptb-demo-selection': 'Выбор вариантов на SelectionMenu ядра: ревизии, чужой пользователь, подтверждение один раз',
+    'ptb-demo-message-text': 'Длинный отчет с entities и parse_mode=None: текст остается буквальным при HTML по умолчанию',
+    'ptb-demo-rich-message': 'Карточка заказа через do_api_request(sendRichMessage) или тем же текстом с клавиатурой',
+    'ptb-demo-ephemeral': 'Эфемерный ответ на кнопку через api_kwargs, правка и удаление через do_api_request',
+    'ptb-demo-stars-subscription': 'Ежемесячная подписка Stars; update subscription из api_kwargs меняет только продление',
+    'ptb-demo-community': 'Сервисные сообщения сообщества из api_kwargs, сверка через getChat',
+    'ptb-demo-join-query': 'Заявка с query_id: Mini App за 10 секунд, пользователь из подписанного initData, решение один раз',
+    'ptb-demo-recovery': 'Ответ потерян после записи заказа: повторный update возвращает тот же заказ через SQLiteOnce',
+}
 IMPORTS = ('from aiogram.types import InlineKeyboardButton as Button, KeyboardButton, CopyTextButton, DisabledButton, WebAppInfo\n'
            'from telegram_patterns.aiogram import inline_keyboard, reply_keyboard, input_prompt, remove_keyboard, KeyboardLayout, inline_layout\n\n')
 MANUAL = [
@@ -302,6 +342,43 @@ def build(root: Path = ROOT) -> dict:
             records[-1]['source_files'] += ['packages/python/src/telegram_patterns/platform_aiogram.py', 'docs/platform-operations.md']
             records[-1]['check_files'] += ['packages/python/tests/test_platform.py', 'scripts/verify_platform_recipe.py']
             records[-1]['scope'] = 'Actual synthetic SDK/Dispatcher/file SQLite and multipart story serialization; no live rights, real media validation, remote atomic charge, settlement or physical Telegram proof.'
+    ptb_version = importlib.metadata.version('python-telegram-bot')
+    if ptb_version != PTB_VERSION: raise ValueError('Installed python-telegram-bot differs from the checked variants')
+    import telegram
+    ptb_api = 'bot:' + telegram.__bot_api_version__
+    previews = {record['id']: record for record in records}
+    for key, body in PTB_MANUAL.items():
+        code = PTB_IMPORTS + body + '\n# В handler: await update.effective_message.reply_text("Пример", reply_markup=markup)\n'
+        namespace = {}; exec(compile(code, 'ptb-' + key, 'exec'), namespace)
+        original = previews[key]
+        if namespace['markup'].to_dict() != original['preview']: raise ValueError('python-telegram-bot markup differs from aiogram: ' + key)
+        add('ptb-' + key, original['title'] + ' · python-telegram-bot', 'Та же разметка, что и в aiogram-рецепте, из SDK-независимого JSON.', 'keyboards', 'python',
+            [*key.split('-'), 'ptb', 'python-telegram-bot'], code, 'sdk',
+            'Построено SDK-независимым ядром и python-telegram-bot при генерации; JSON на проводе совпадает с aiogram-рецептом. Права и chat/actor проверяет ваш handler.',
+            [API + '#inlinekeyboardbutton', API + '#replykeyboardmarkup'], original['preview'],
+            tasks=original['tasks'], contexts=original['contexts'], sdk='python-telegram-bot', sdk_ver=PTB_VERSION, api_version=ptb_api,
+            source_files=['packages/python/src/telegram_patterns/markup.py', 'packages/python/src/telegram_patterns/ptb.py'],
+            check_files=['scripts/build_recipe_gallery.py', 'packages/python/tests/test_markup.py', 'packages/python/tests/test_ptb.py'])
+        records[-1]['variant_of'] = key
+    def execute_ptb(offline: str) -> subprocess.CompletedProcess[str]:
+        return subprocess.run([sys.executable, str(root / 'examples/ptb' / offline)], capture_output=True,
+                              text=True, encoding='utf-8', env=environment, timeout=60)
+    with ThreadPoolExecutor(max_workers=min(8, os.cpu_count() or 1)) as pool:
+        ptb_results = dict(zip((demo[2] for demo in PTB_DEMOS), pool.map(execute_ptb, (demo[1] for demo in PTB_DEMOS))))
+    for filename, offline, key, title, original, tasks, contexts in PTB_DEMOS:
+        result = ptb_results[key]
+        if result.returncode: raise ValueError('Offline recipe failed: ' + key)
+        evidence = json.loads(result.stdout)
+        if evidence.get('passed') is not True or evidence.get('network') is not False or evidence.get('sdk') != 'python-telegram-bot':
+            raise ValueError('Invalid offline evidence: ' + key)
+        add(key, title, PTB_SUMMARIES[key],
+            'scenarios', 'python', ['ptb', 'python-telegram-bot', 'application', *original.removeprefix('demo-').split('-')],
+            (root / 'examples/ptb' / filename).read_text(encoding='utf-8'), 'mock',
+            'Synthetic python-telegram-bot Application + StubRequest исполнен при генерации. Telegram delivery/physical clients не проверены.', [API],
+            tasks=tasks, contexts=contexts, sdk='python-telegram-bot', sdk_ver=PTB_VERSION, api_version=ptb_api,
+            source_files=['examples/ptb/' + filename, 'packages/python/src/telegram_patterns/ptb.py'],
+            check_files=['examples/ptb/' + offline, 'packages/python/tests/test_ptb.py'])
+        records[-1]['variant_of'] = original
     recovery_file = root / 'examples/python/error_recovery.py'
     recovery = subprocess.run([sys.executable, str(recovery_file)], capture_output=True, text=True, encoding='utf-8', env=environment, timeout=60)
     if recovery.returncode: raise ValueError('Recovery fixture failed')
@@ -326,7 +403,9 @@ def build(root: Path = ROOT) -> dict:
     }
     for record in records:
         native = record['category'] == 'mini-app'
-        kind = 'reference' if native else 'sdk-request' if record['category'] == 'bot-api' else 'sdk-markup' if record['category'] == 'keyboards' else 'sqlite' if record['id'] == 'demo-recovery' else 'dispatcher'
+        ptb = record['sdk'] == 'python-telegram-bot'
+        kind = ('reference' if native else 'sdk-request' if record['category'] == 'bot-api' else ('ptb-markup' if ptb else 'sdk-markup') if record['category'] == 'keyboards'
+                else 'sqlite' if record['id'] == 'demo-recovery' else 'application' if ptb else 'dispatcher')
         permissions = []
         live_data = []
         if kind == 'sdk-request':
@@ -335,13 +414,14 @@ def build(root: Path = ROOT) -> dict:
             model = getattr(sdk_methods, spec['sdk_class'])
             hints = sorted(set(re.findall(r'\bcan_[a-z_]+\b', model.__doc__ or '')))
             permissions = rights.get(spec['name'], ['SDK упоминает ' + ', '.join(hints) + '; обязательность и условия проверить в официальном методе.'] if hints else ['Права и контекст метода не полностью индексированы: проверить официальные ограничения.'])
-        elif kind == 'sdk-markup':
+        elif kind in {'sdk-markup', 'ptb-markup'}:
             live_data = ['Реальные chat/actor, handler и callback/message correlation']
             permissions = ['Проверить фактический chat type, отправку и права автора действия.']
             if record['id'] == 'emoji-fallback': permissions.append('Реальный custom emoji ID и доступность; по умолчанию текстовый fallback.')
             if record['id'] in {'contact-location', 'url-app'}: permissions.append('Обычный private bot chat; соответствующее действие подтверждает пользователь.')
-        elif kind == 'dispatcher':
-            live_data = ['Текущий Dispatcher, реальные actor/chat и сервис приложения', 'Проверка объекта, автора и состояния до effect/replay']
+        elif kind in {'dispatcher', 'application'}:
+            host = 'Текущий Application python-telegram-bot' if kind == 'application' else 'Текущий Dispatcher'
+            live_data = [host + ', реальные actor/chat и сервис приложения', 'Проверка объекта, автора и состояния до effect/replay']
             permissions = ['Прикладная авторизация сервиса; fixture actor не доказывает server ACL.']
         elif kind == 'sqlite':
             live_data = ['Путь к БД сервиса, проверенный actor scope и неизменяемый operation key']
@@ -354,13 +434,14 @@ def build(root: Path = ROOT) -> dict:
                 permissions = ['Запуск из attachment menu и действие пользователя.']
         record['execution'] = {
             'kind': kind,
-            'dependencies': [] if kind == 'sqlite' else ['Предоставленный TypeScript tarball и host Mini App'] if native else ['aiogram==' + sdk_version],
+            'dependencies': [] if kind == 'sqlite' else ['Предоставленный TypeScript tarball и host Mini App'] if native
+            else ['python-telegram-bot==' + PTB_VERSION + ' (extra ptb)'] if ptb else ['aiogram==' + sdk_version],
             'offline_environment': [], 'offline_permissions': [],
             'offline_data': [] if native else ['Только поставляемые синтетические данные; реальные IDs и secrets не принимаются.'],
             'live_environment': [] if kind == 'sqlite' else ['HTTPS_APP_URL', 'TELEGRAM_WEBAPP_CONTEXT'] if native else ['BOT_TOKEN'],
             'live_permissions': permissions, 'live_data': live_data,
             'live_review': 'Live executor отсутствует. Перед интеграцией проверить источники, ограничения конкретного метода/контекста, auth и ACL; metadata не подтверждает права.',
-            'effects': ['Локальные SDK объекты без HTTP'] if kind.startswith('sdk-') else ['Временные файлы/SQLite fixture, очищаемые после обычного завершения'] if kind == 'sqlite' else ['Synthetic Dispatcher + StubSession; временная fixture, без polling'] if kind == 'dispatcher' else ['Offline fragment execution недоступен без host/аргументов'],
+            'effects': ['Локальные SDK объекты без HTTP'] if kind.startswith('sdk-') or kind == 'ptb-markup' else ['python-telegram-bot Application + StubRequest; временная fixture, без polling'] if kind == 'application' else ['Временные файлы/SQLite fixture, очищаемые после обычного завершения'] if kind == 'sqlite' else ['Synthetic Dispatcher + StubSession; временная fixture, без polling'] if kind == 'dispatcher' else ['Offline fragment execution недоступен без host/аргументов'],
         }
         if not native:
             record['source_files'] += ['packages/python/src/telegram_patterns/execution.py', 'packages/python/src/telegram_patterns/_offline_recipe.py']
@@ -413,7 +494,8 @@ def main():
     else:
         products[ROOT / 'packages/python/src/telegram_patterns/resources/request-fixtures.json'] = (ROOT / 'catalog/bot-api-request-fixtures.json').read_bytes()
         for name in sorted({name for names in _FIXTURES.values() for name in names}):
-            products[ROOT / 'packages/python/src/telegram_patterns/resources/offline' / (name + '.txt')] = (ROOT / 'examples/python' / name).read_bytes()
+            folder = 'examples/ptb' if name.startswith(('ptb_', 'offline_ptb_')) else 'examples/python'
+            products[ROOT / 'packages/python/src/telegram_patterns/resources/offline' / (name + '.txt')] = (ROOT / folder / name).read_bytes()
         products[ROOT / 'packages/python/src/telegram_patterns/resources/recipes.json'] = encoded
         products[ROOT / 'catalog/recipe-gallery.json'] = encoded
     for path in products:

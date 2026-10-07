@@ -21,7 +21,8 @@ SECTION = {'core': ('api-reference-core.md', 'Python core'),
 
 def public_inventory() -> dict[str, tuple[str, ...]]:
     result = {}
-    for file, module in [('__init__', 'telegram_patterns'), ('aiogram', 'telegram_patterns.aiogram'), ('testing', 'telegram_patterns.testing')]:
+    for file, module in [('__init__', 'telegram_patterns'), ('aiogram', 'telegram_patterns.aiogram'), ('testing', 'telegram_patterns.testing'),
+                         ('ptb', 'telegram_patterns.ptb')]:
         tree = ast.parse((ROOT / f'packages/python/src/telegram_patterns/{file}.py').read_text(encoding='utf-8'))
         value = next(n.value for n in tree.body if isinstance(n, ast.Assign) and
                      any(isinstance(t, ast.Name) and t.id == '__all__' for t in n.targets))
@@ -63,7 +64,8 @@ def build() -> tuple[dict[str, str], dict]:
                        'core_doctor намеренно проверяет SDK-free окружение.\n\n')
     bodies['bot'] += ('Нужны предоставленный wheel с aiogram extra и установленный совместимый SDK. '
                      'В той же папке создайте bot_fixture.py из блока ниже, затем запускайте `python <FILE.py>`. '
-                     'Фиктивный token применяется только с StubSession: HTTP fallback отсутствует.\n\n'
+                     'Фиктивный token применяется только с StubSession: HTTP fallback отсутствует. '
+                     'Группа ptb_adapter вместо aiogram требует ptb extra (python-telegram-bot) и не использует bot_fixture.py.\n\n'
                      '## Общая fixture — bot_fixture.py\n\n```python\n' +
                      (ROOT / 'examples/api-reference/python/bot_fixture.py').read_text(encoding='utf-8').rstrip() + '\n```\n\n')
     bodies['typescript'] += ('Установите предоставленный local tarball в отдельный consumer, сохраните файлы в src/, '

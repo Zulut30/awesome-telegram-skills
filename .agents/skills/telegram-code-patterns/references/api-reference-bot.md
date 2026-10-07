@@ -4,7 +4,7 @@
 
 [Индекс всех символов](api-reference.md). Образцы ниже воспроизводятся через установленный wheel/tarball вне исходного дерева. Assert — проверка fixture, не бизнес-правило production приложения.
 
-Нужны предоставленный wheel с aiogram extra и установленный совместимый SDK. В той же папке создайте bot_fixture.py из блока ниже, затем запускайте `python <FILE.py>`. Фиктивный token применяется только с StubSession: HTTP fallback отсутствует.
+Нужны предоставленный wheel с aiogram extra и установленный совместимый SDK. В той же папке создайте bot_fixture.py из блока ниже, затем запускайте `python <FILE.py>`. Фиктивный token применяется только с StubSession: HTTP fallback отсутствует. Группа ptb_adapter вместо aiogram требует ptb extra (python-telegram-bot) и не использует bot_fixture.py.
 
 ## Общая fixture — bot_fixture.py
 
@@ -856,4 +856,50 @@ async def main() -> None:
 
 
 if __name__ == '__main__': asyncio.run(main())
+```
+
+<a id="ref-ptb_adapter"></a>
+
+## python-telegram-bot: разметка, текст и офлайн-Application — ref.ptb_adapter
+
+Файл: `ptb_adapter.py`. Символы: `ptb_markup`, `ptb_inline_markup`, `ptb_text`, `StubRequest`, `offline_application`
+
+Границы: Адаптер ptb extra для python-telegram-bot 22.8 (Bot API 10.0): разметку из JSON ядра превращает в объекты PTB, поля новее релиза PTB (например disabled из Bot API 10.3) сохраняет в api_kwargs. Пустая inline-клавиатура отклоняется: PTB отправил бы {}, а правка сообщения без reply_markup и так убирает клавиатуру. StubRequest отвечает только зарегистрированными результатами и ошибками Telegram, незарегистрированный метод падает без обращения к сети; offline_application собирает Application без updater. Новые методы Bot API вызывайте через Bot.do_api_request, новые типы update читайте из api_kwargs.
+
+```python
+"""python-telegram-bot adapter: markup objects from JSON, literal text and an offline Application; no network."""
+import asyncio
+import json
+from telegram import InlineKeyboardMarkup, Update
+from telegram.ext import CommandHandler
+from telegram_patterns import MessageBuilder, inline_button, inline_markup
+from telegram_patterns.ptb import StubRequest, offline_application, ptb_inline_markup, ptb_markup, ptb_text
+
+markup = ptb_markup(inline_markup([[inline_button('Копировать', copy_text='CODE'), inline_button('Недоступно', disabled=True)]]))
+assert markup.to_dict()['inline_keyboard'][0][1] == {'text': 'Недоступно', 'disabled': {}}  # Bot API 10.3 field kept in api_kwargs
+assert isinstance(ptb_inline_markup(inline_markup([[inline_button('OK', callback_data='ok')]])), InlineKeyboardMarkup)
+text = ptb_text(MessageBuilder().style('<b>буквально</b>', 'bold').build())
+assert text['text'] == '<b>буквально</b>' and text['parse_mode'] is None and text['entities'][0].type == 'bold'
+
+
+async def main() -> list[tuple[str, dict]]:
+    stub = StubRequest()
+    application, _ = offline_application(request=stub)
+    stub.respond('sendMessage', lambda p: {'message_id': 2, 'date': 1, 'chat': {'id': p['chat_id'], 'type': 'private'}, 'text': p['text']})
+
+    async def start(update, context):
+        await update.effective_message.reply_text('Меню', reply_markup=markup)
+    application.add_handler(CommandHandler('start', start))
+    await application.initialize()
+    try:
+        await application.process_update(Update.de_json({'update_id': 1, 'message': {
+            'message_id': 1, 'date': 1, 'chat': {'id': 7, 'type': 'private'}, 'from': {'id': 7, 'is_bot': False, 'first_name': 'A'},
+            'text': '/start', 'entities': [{'type': 'bot_command', 'offset': 0, 'length': 6}]}}, application.bot))
+    finally:
+        await application.shutdown()
+    return stub.calls
+
+calls = asyncio.run(main())
+assert calls[0][0] == 'sendMessage' and calls[0][1]['reply_markup'] == markup.to_dict()
+print(json.dumps({'case': 'ptb_adapter', 'passed': True, 'network': False}))
 ```

@@ -18,8 +18,11 @@ class ReadmeStatusTests(unittest.TestCase):
                           json.loads((ROOT / 'catalog/recipe-gallery.json').read_text(encoding='utf-8'))['recipes'])
         skills = len(list((ROOT / '.agents/skills').glob('*/SKILL.md')))
         self.assertIn(f'{skills} скилл', section)
-        self.assertIn(f"Python-компоненты ({languages['python']} групп)", section)
-        self.assertIn(f"TypeScript-компоненты ({languages['typescript']} групп)", section)
+        def groups(count):  # Russian plural: 1 группа, 2-4 группы, 5-20 групп
+            last, tens = count % 10, count % 100
+            return f'{count} ' + ('группа' if last == 1 and tens != 11 else 'группы' if 2 <= last <= 4 and not 12 <= tens <= 14 else 'групп')
+        self.assertIn(f"Python-компоненты ({groups(languages['python'])})", section)
+        self.assertIn(f"TypeScript-компоненты ({groups(languages['typescript'])})", section)
         self.assertIn(f'Рецепты ({sum(recipes.values())})', section)
         self.assertIn(f"{recipes['sdk']} — на настоящем SDK", section)
         self.assertIn(f"{recipes['mock']} — на заглушках", section)

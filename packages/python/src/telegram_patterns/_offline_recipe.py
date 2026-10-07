@@ -40,12 +40,21 @@ _FIXTURES = {
     'demo-join-query': ('join_query_bot.py', 'offline_join_query.py'),
     'demo-poll-media': ('poll_media_bot.py', 'offline_poll_media.py'),
     'demo-recovery': ('error_recovery.py',),
+    'ptb-demo-catalog': ('ptb_catalog_bot.py', 'offline_ptb_catalog.py'),
+    'ptb-demo-selection': ('ptb_selection_bot.py', 'offline_ptb_selection.py'),
+    'ptb-demo-message-text': ('ptb_message_text_bot.py', 'offline_ptb_message_text.py'),
+    'ptb-demo-rich-message': ('ptb_rich_message_bot.py', 'offline_ptb_rich_message.py'),
+    'ptb-demo-ephemeral': ('ptb_ephemeral_bot.py', 'offline_ptb_ephemeral.py'),
+    'ptb-demo-stars-subscription': ('ptb_stars_subscription_bot.py', 'offline_ptb_stars_subscription.py'),
+    'ptb-demo-community': ('ptb_community_bot.py', 'offline_ptb_community.py'),
+    'ptb-demo-join-query': ('ptb_join_query_bot.py', 'offline_ptb_join_query.py'),
+    'ptb-demo-recovery': ('ptb_recovery_bot.py', 'offline_ptb_recovery.py'),
 }
 _ATTEMPTS = [0]
 _AUDIT_INSTALLED = False
 
 
-def _install_guards(*, sdk: bool) -> list[int]:
+def _install_guards(*, sdk: bool, ptb: bool = False) -> list[int]:
     global _AUDIT_INSTALLED
     # Local socketpair activity used by asyncio is permitted; external DNS/connect
     # and every real aiogram HTTP transport are denied before any fixture runs.
@@ -72,6 +81,12 @@ def _install_guards(*, sdk: bool) -> list[int]:
             attempts[0] += 1
             raise RuntimeError('Real Telegram HTTP transport is unavailable')
         AiohttpSession.make_request = no_http  # type: ignore[method-assign]
+    if ptb:
+        from telegram.request import HTTPXRequest
+        async def no_ptb_http(*args, **kwargs):
+            attempts[0] += 1
+            raise RuntimeError('Real Telegram HTTP transport is unavailable')
+        HTTPXRequest.do_request = no_ptb_http  # type: ignore[method-assign]
     return attempts
 
 
@@ -79,9 +94,10 @@ def _execute(recipe_id: str) -> dict:
     plan = plan_recipe(recipe_id)
     if not plan.offline_ready:
         raise RuntimeError('Offline prerequisites failed')
-    attempts = _install_guards(sdk=plan.kind != 'sqlite')
     catalog = RecipeCatalog()
     recipe = catalog.get(recipe_id)
+    ptb = recipe.sdk == 'python-telegram-bot'
+    attempts = _install_guards(sdk=plan.kind not in {'sqlite', 'ptb-markup', 'application'}, ptb=ptb)
     checks = []
     if plan.kind == 'sdk-request':
         from aiogram.types import BufferedInputFile
@@ -125,7 +141,25 @@ def _execute(recipe_id: str) -> dict:
             raise RuntimeError('Unknown markup fixture')
         assert markup.model_dump(mode='json', exclude_none=True) == preview
         checks.append('sdk-markup:' + recipe_id)
-    elif plan.kind in {'dispatcher', 'sqlite'}:
+    elif plan.kind == 'ptb-markup':
+        from .markup import force_reply_markup, inline_markup, remove_markup, reply_markup
+        from .ptb import ptb_markup
+        preview = recipe.preview
+        assert preview is not None
+        # Rebuild through the SDK-free checks, then python-telegram-bot: the wire JSON must not change.
+        if 'inline_keyboard' in preview:
+            core = inline_markup(preview['inline_keyboard'])
+        elif 'keyboard' in preview:
+            core = reply_markup(preview['keyboard'], placeholder=preview.get('input_field_placeholder'), one_time=bool(preview.get('one_time_keyboard')))
+        elif 'force_reply' in preview:
+            core = force_reply_markup(preview.get('input_field_placeholder'))
+        elif 'remove_keyboard' in preview:
+            core = remove_markup()
+        else:
+            raise RuntimeError('Unknown markup fixture')
+        assert core == preview and ptb_markup(core).to_dict() == preview
+        checks.extend(('core-markup-json', 'ptb-markup:' + recipe_id))
+    elif plan.kind in {'dispatcher', 'sqlite', 'application'}:
         supplied = _FIXTURES[recipe_id]
         with TemporaryDirectory(prefix='fixture-', dir=Path.cwd()) as folder:
             for name in supplied:
@@ -208,6 +242,11 @@ def _execute(recipe_id: str) -> dict:
                 assert evidence['families'] == 7 and evidence['contracts'] == 51 and evidence['confirmed_operations'] == 7
                 assert all(evidence[key] for key in ('durable_intents', 'unknown_send_no_retry', 'current_actor_acl', 'fresh_native_rights', 'financial_quote_budget', 'scoped_event_dedup', 'existing_dispatcher_preserved', 'user_confirmed_managed_link'))
                 checks.extend(('seven-native-platform-families', 'current-method-rights-host-acl', 'sqlite-intent-budget-no-retry', 'scoped-event-dedup'))
+        elif plan.kind == 'application':
+            # Every claim a python-telegram-bot fixture prints is a checked boolean; the transport is closed.
+            assert evidence['session_closed'] is True and evidence['sdk'] == 'python-telegram-bot'
+            assert all(value is True for key, value in evidence.items() if isinstance(value, bool) and key != 'network')
+            checks.extend(('ptb-application', 'stub-request-closed'))
         else:
             assert evidence['effect_count'] == 1 and evidence['replayed'] is True
             checks.extend(('sqlite-one-effect', 'same-key-replay'))

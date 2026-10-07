@@ -44,6 +44,17 @@
 | `RenewalState` | `from telegram_patterns import RenewalState` | [ref.core_stars_subscription](api-reference-core.md#ref-core_stars_subscription) | pending, active, canceled или failed |
 | `SubscriptionEventRejected` | `from telegram_patterns import SubscriptionEventRejected` | [ref.core_stars_subscription](api-reference-core.md#ref-core_stars_subscription) | Событие чужого пользователя или payload, не XTR, разовая оплата, неизвестное состояние или конфликт charge |
 | `STARS_SUBSCRIPTION_PERIOD` | `from telegram_patterns import STARS_SUBSCRIPTION_PERIOD` | [ref.core_stars_subscription](api-reference-core.md#ref-core_stars_subscription) | 2592000 секунд — единственный период подписки, который сейчас принимает Telegram |
+| `inline_button` | `from telegram_patterns import inline_button` | [ref.core_markup](api-reference-core.md#ref-core_markup) | Inline-кнопка с ровно одним действием: callback_data, url, web_app, copy_text, switch_inline_query или disabled |
+| `reply_button` | `from telegram_patterns import reply_button` | [ref.core_markup](api-reference-core.md#ref-core_markup) | Кнопка reply-клавиатуры: текст или один запрос (контакт, геопозиция, Mini App) |
+| `layout_rows` | `from telegram_patterns import layout_rows` | [ref.core_markup](api-reference-core.md#ref-core_markup) | Ряды из плоского списка по ширинам 1–8, как KeyboardLayout |
+| `inline_markup` | `from telegram_patterns import inline_markup` | [ref.core_markup](api-reference-core.md#ref-core_markup) | InlineKeyboardMarkup JSON с проверкой контекста чата |
+| `reply_markup` | `from telegram_patterns import reply_markup` | [ref.core_markup](api-reference-core.md#ref-core_markup) | ReplyKeyboardMarkup JSON; строки становятся текстовыми кнопками |
+| `force_reply_markup` | `from telegram_patterns import force_reply_markup` | [ref.core_markup](api-reference-core.md#ref-core_markup) | ForceReply JSON с подсказкой поля ввода |
+| `remove_markup` | `from telegram_patterns import remove_markup` | [ref.core_markup](api-reference-core.md#ref-core_markup) | ReplyKeyboardRemove JSON |
+| `paginated_markup` | `from telegram_patterns import paginated_markup` | [ref.core_markup](api-reference-core.md#ref-core_markup) | Страница длинного меню с кнопками «← Назад» и «Далее →», как paginated_menu |
+| `MarkupPage` | `from telegram_patterns import MarkupPage` | [ref.core_markup](api-reference-core.md#ref-core_markup) | Результат paginated_markup: markup, page, page_count, total_items |
+| `markup_page_number` | `from telegram_patterns import markup_page_number` | [ref.core_markup](api-reference-core.md#ref-core_markup) | Номер страницы из канонического callback или None |
+| `selection_markup` | `from telegram_patterns import selection_markup` | [ref.core_markup](api-reference-core.md#ref-core_markup) | Клавиатура SelectionMenu как JSON, как selection_keyboard |
 | `OnceResult` | `from telegram_patterns import OnceResult` | [ref.core_storage](api-reference-core.md#ref-core_storage) | Результат эффекта с replay flag |
 | `OperationConflict` | `from telegram_patterns import OperationConflict` | [ref.core_storage](api-reference-core.md#ref-core_storage) | Тот же scoped key с другим payload |
 | `SQLiteOnce` | `from telegram_patterns import SQLiteOnce` | [ref.core_storage](api-reference-core.md#ref-core_storage) | Инициализация и атомарный run в файле SQLite |
@@ -277,6 +288,11 @@
 | `AtomicFSMStorage` | `from telegram_patterns.aiogram import AtomicFSMStorage` | [ref.bot_fsm_storage](api-reference-bot.md#ref-bot_fsm_storage) | Необязательная атомарная возможность текущего хранилища проекта |
 | `SnapshotFSMStorage` | `from telegram_patterns.aiogram import SnapshotFSMStorage` | [ref.bot_fsm_storage](api-reference-bot.md#ref-bot_fsm_storage) | Фасад aiogram BaseStorage над хранилищем приложения |
 | `DialogLifetime` | `from telegram_patterns.aiogram import DialogLifetime` | [ref.bot_fsm_storage](api-reference-bot.md#ref-bot_fsm_storage) | Абсолютный срок черновика, при котором ожидающие эффекты не истекают |
+| `ptb_markup` | `from telegram_patterns.ptb import ptb_markup` | [ref.ptb_adapter](api-reference-bot.md#ref-ptb_adapter) | Объект PTB для reply_markup JSON: inline, reply, remove или force reply |
+| `ptb_inline_markup` | `from telegram_patterns.ptb import ptb_inline_markup` | [ref.ptb_adapter](api-reference-bot.md#ref-ptb_adapter) | InlineKeyboardMarkup для правок сообщения |
+| `ptb_text` | `from telegram_patterns.ptb import ptb_text` | [ref.ptb_adapter](api-reference-bot.md#ref-ptb_adapter) | text, entities и parse_mode=None из FormattedText для send_message |
+| `StubRequest` | `from telegram_patterns.ptb import StubRequest` | [ref.ptb_adapter](api-reference-bot.md#ref-ptb_adapter) | Офлайн-транспорт PTB: ответы по методам, ошибки Telegram, журнал вызовов |
+| `offline_application` | `from telegram_patterns.ptb import offline_application` | [ref.ptb_adapter](api-reference-bot.md#ref-ptb_adapter) | Application без updater поверх StubRequest, с Defaults проекта |
 
 ## CLI и CSS
 

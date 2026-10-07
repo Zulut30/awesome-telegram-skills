@@ -19,6 +19,7 @@ telegram-patterns = "telegram_patterns.cli:main"
 aiogram = ["aiogram>=3.31,<4"]
 calendar = ["tzdata>=2026.5,<2027"]
 signature = ["cryptography>=46,<52"]
+ptb = ["python-telegram-bot>=22.8,<23"]
 
 [tool.setuptools.packages.find]
 where = ["src"]

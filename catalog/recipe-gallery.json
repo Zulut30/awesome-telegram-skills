@@ -22627,6 +22627,1674 @@
       }
     },
     {
+      "id": "ptb-two-columns",
+      "title": "Две кнопки в ряд · python-telegram-bot",
+      "summary": "Та же разметка, что и в aiogram-рецепте, из SDK-независимого JSON.",
+      "category": "keyboards",
+      "language": "python",
+      "maturity": "experimental",
+      "keywords": [
+        "two",
+        "columns",
+        "ptb",
+        "python-telegram-bot",
+        "кнопки",
+        "и",
+        "раскладки",
+        "возврат",
+        "навигация",
+        "личный",
+        "чат"
+      ],
+      "code": "from telegram_patterns import force_reply_markup, inline_button, inline_markup, layout_rows, remove_markup, reply_button, reply_markup\nfrom telegram_patterns.ptb import ptb_markup\n\nbuttons = [inline_button(text, callback_data=f\"menu:{key}\") for text, key in [(\"Каталог\", \"catalog\"), (\"Помощь\", \"help\"), (\"Назад\", \"back\"), (\"Закрыть\", \"close\")]]\nmarkup = ptb_markup(inline_markup(layout_rows(buttons, (2,))))\n# В handler: await update.effective_message.reply_text(\"Пример\", reply_markup=markup)\n",
+      "verification": "sdk",
+      "scope": "Построено SDK-независимым ядром и python-telegram-bot при генерации; JSON на проводе совпадает с aiogram-рецептом. Права и chat/actor проверяет ваш handler.",
+      "sources": [
+        "https://core.telegram.org/bots/api#inlinekeyboardbutton",
+        "https://core.telegram.org/bots/api#replykeyboardmarkup"
+      ],
+      "preview": {
+        "inline_keyboard": [
+          [
+            {
+              "text": "Каталог",
+              "callback_data": "menu:catalog"
+            },
+            {
+              "text": "Помощь",
+              "callback_data": "menu:help"
+            }
+          ],
+          [
+            {
+              "text": "Назад",
+              "callback_data": "menu:back"
+            },
+            {
+              "text": "Закрыть",
+              "callback_data": "menu:close"
+            }
+          ]
+        ]
+      },
+      "code_sha256": "8fda5fb79c238659d376d988c743041e9f0995430d8a82691768fa3d72311582",
+      "tasks": [
+        "keyboards",
+        "navigation"
+      ],
+      "contexts": [
+        "private"
+      ],
+      "sdk": "python-telegram-bot",
+      "sdk_version": "22.8",
+      "api_version": "bot:10.0",
+      "source_files": [
+        "packages/python/src/telegram_patterns/markup.py",
+        "packages/python/src/telegram_patterns/ptb.py",
+        "packages/python/src/telegram_patterns/execution.py",
+        "packages/python/src/telegram_patterns/_offline_recipe.py"
+      ],
+      "check_files": [
+        "scripts/build_recipe_gallery.py",
+        "packages/python/tests/test_markup.py",
+        "packages/python/tests/test_ptb.py"
+      ],
+      "variant_of": "two-columns",
+      "execution": {
+        "kind": "ptb-markup",
+        "dependencies": [
+          "python-telegram-bot==22.8 (extra ptb)"
+        ],
+        "offline_environment": [],
+        "offline_permissions": [],
+        "offline_data": [
+          "Только поставляемые синтетические данные; реальные IDs и secrets не принимаются."
+        ],
+        "live_environment": [
+          "BOT_TOKEN"
+        ],
+        "live_permissions": [
+          "Проверить фактический chat type, отправку и права автора действия."
+        ],
+        "live_data": [
+          "Реальные chat/actor, handler и callback/message correlation"
+        ],
+        "live_review": "Live executor отсутствует. Перед интеграцией проверить источники, ограничения конкретного метода/контекста, auth и ACL; metadata не подтверждает права.",
+        "effects": [
+          "Локальные SDK объекты без HTTP"
+        ]
+      }
+    },
+    {
+      "id": "ptb-three-columns",
+      "title": "Три кнопки в ряд · python-telegram-bot",
+      "summary": "Та же разметка, что и в aiogram-рецепте, из SDK-независимого JSON.",
+      "category": "keyboards",
+      "language": "python",
+      "maturity": "experimental",
+      "keywords": [
+        "three",
+        "columns",
+        "ptb",
+        "python-telegram-bot",
+        "кнопки",
+        "и",
+        "раскладки",
+        "личный",
+        "чат"
+      ],
+      "code": "from telegram_patterns import force_reply_markup, inline_button, inline_markup, layout_rows, remove_markup, reply_button, reply_markup\nfrom telegram_patterns.ptb import ptb_markup\n\nbuttons = [inline_button(str(n), callback_data=f\"item:{n}\") for n in range(1, 7)]\nmarkup = ptb_markup(inline_markup(layout_rows(buttons, (3,))))\n# В handler: await update.effective_message.reply_text(\"Пример\", reply_markup=markup)\n",
+      "verification": "sdk",
+      "scope": "Построено SDK-независимым ядром и python-telegram-bot при генерации; JSON на проводе совпадает с aiogram-рецептом. Права и chat/actor проверяет ваш handler.",
+      "sources": [
+        "https://core.telegram.org/bots/api#inlinekeyboardbutton",
+        "https://core.telegram.org/bots/api#replykeyboardmarkup"
+      ],
+      "preview": {
+        "inline_keyboard": [
+          [
+            {
+              "text": "1",
+              "callback_data": "item:1"
+            },
+            {
+              "text": "2",
+              "callback_data": "item:2"
+            },
+            {
+              "text": "3",
+              "callback_data": "item:3"
+            }
+          ],
+          [
+            {
+              "text": "4",
+              "callback_data": "item:4"
+            },
+            {
+              "text": "5",
+              "callback_data": "item:5"
+            },
+            {
+              "text": "6",
+              "callback_data": "item:6"
+            }
+          ]
+        ]
+      },
+      "code_sha256": "9d221825956a814ce5ba61f70eeaf34005db114d61cf1691453d7a0389779a5a",
+      "tasks": [
+        "keyboards"
+      ],
+      "contexts": [
+        "private"
+      ],
+      "sdk": "python-telegram-bot",
+      "sdk_version": "22.8",
+      "api_version": "bot:10.0",
+      "source_files": [
+        "packages/python/src/telegram_patterns/markup.py",
+        "packages/python/src/telegram_patterns/ptb.py",
+        "packages/python/src/telegram_patterns/execution.py",
+        "packages/python/src/telegram_patterns/_offline_recipe.py"
+      ],
+      "check_files": [
+        "scripts/build_recipe_gallery.py",
+        "packages/python/tests/test_markup.py",
+        "packages/python/tests/test_ptb.py"
+      ],
+      "variant_of": "three-columns",
+      "execution": {
+        "kind": "ptb-markup",
+        "dependencies": [
+          "python-telegram-bot==22.8 (extra ptb)"
+        ],
+        "offline_environment": [],
+        "offline_permissions": [],
+        "offline_data": [
+          "Только поставляемые синтетические данные; реальные IDs и secrets не принимаются."
+        ],
+        "live_environment": [
+          "BOT_TOKEN"
+        ],
+        "live_permissions": [
+          "Проверить фактический chat type, отправку и права автора действия."
+        ],
+        "live_data": [
+          "Реальные chat/actor, handler и callback/message correlation"
+        ],
+        "live_review": "Live executor отсутствует. Перед интеграцией проверить источники, ограничения конкретного метода/контекста, auth и ACL; metadata не подтверждает права.",
+        "effects": [
+          "Локальные SDK объекты без HTTP"
+        ]
+      }
+    },
+    {
+      "id": "ptb-mixed-rows",
+      "title": "Строки по одной, две и три кнопки · python-telegram-bot",
+      "summary": "Та же разметка, что и в aiogram-рецепте, из SDK-независимого JSON.",
+      "category": "keyboards",
+      "language": "python",
+      "maturity": "experimental",
+      "keywords": [
+        "mixed",
+        "rows",
+        "ptb",
+        "python-telegram-bot",
+        "кнопки",
+        "и",
+        "раскладки",
+        "личный",
+        "чат"
+      ],
+      "code": "from telegram_patterns import force_reply_markup, inline_button, inline_markup, layout_rows, remove_markup, reply_button, reply_markup\nfrom telegram_patterns.ptb import ptb_markup\n\nbuttons = [inline_button(str(n), callback_data=f\"item:{n}\") for n in range(1, 7)]\nmarkup = ptb_markup(inline_markup(layout_rows(buttons, (1, 2, 3))))\n# В handler: await update.effective_message.reply_text(\"Пример\", reply_markup=markup)\n",
+      "verification": "sdk",
+      "scope": "Построено SDK-независимым ядром и python-telegram-bot при генерации; JSON на проводе совпадает с aiogram-рецептом. Права и chat/actor проверяет ваш handler.",
+      "sources": [
+        "https://core.telegram.org/bots/api#inlinekeyboardbutton",
+        "https://core.telegram.org/bots/api#replykeyboardmarkup"
+      ],
+      "preview": {
+        "inline_keyboard": [
+          [
+            {
+              "text": "1",
+              "callback_data": "item:1"
+            }
+          ],
+          [
+            {
+              "text": "2",
+              "callback_data": "item:2"
+            },
+            {
+              "text": "3",
+              "callback_data": "item:3"
+            }
+          ],
+          [
+            {
+              "text": "4",
+              "callback_data": "item:4"
+            },
+            {
+              "text": "5",
+              "callback_data": "item:5"
+            },
+            {
+              "text": "6",
+              "callback_data": "item:6"
+            }
+          ]
+        ]
+      },
+      "code_sha256": "7edf0658de2014073f20f8e77a0a70b7ccd122352aacb70cc7e7b271a41bc1a7",
+      "tasks": [
+        "keyboards"
+      ],
+      "contexts": [
+        "private"
+      ],
+      "sdk": "python-telegram-bot",
+      "sdk_version": "22.8",
+      "api_version": "bot:10.0",
+      "source_files": [
+        "packages/python/src/telegram_patterns/markup.py",
+        "packages/python/src/telegram_patterns/ptb.py",
+        "packages/python/src/telegram_patterns/execution.py",
+        "packages/python/src/telegram_patterns/_offline_recipe.py"
+      ],
+      "check_files": [
+        "scripts/build_recipe_gallery.py",
+        "packages/python/tests/test_markup.py",
+        "packages/python/tests/test_ptb.py"
+      ],
+      "variant_of": "mixed-rows",
+      "execution": {
+        "kind": "ptb-markup",
+        "dependencies": [
+          "python-telegram-bot==22.8 (extra ptb)"
+        ],
+        "offline_environment": [],
+        "offline_permissions": [],
+        "offline_data": [
+          "Только поставляемые синтетические данные; реальные IDs и secrets не принимаются."
+        ],
+        "live_environment": [
+          "BOT_TOKEN"
+        ],
+        "live_permissions": [
+          "Проверить фактический chat type, отправку и права автора действия."
+        ],
+        "live_data": [
+          "Реальные chat/actor, handler и callback/message correlation"
+        ],
+        "live_review": "Live executor отсутствует. Перед интеграцией проверить источники, ограничения конкретного метода/контекста, auth и ACL; metadata не подтверждает права.",
+        "effects": [
+          "Локальные SDK объекты без HTTP"
+        ]
+      }
+    },
+    {
+      "id": "ptb-button-colors",
+      "title": "Цветные кнопки: синий, зеленый, красный · python-telegram-bot",
+      "summary": "Та же разметка, что и в aiogram-рецепте, из SDK-независимого JSON.",
+      "category": "keyboards",
+      "language": "python",
+      "maturity": "experimental",
+      "keywords": [
+        "button",
+        "colors",
+        "ptb",
+        "python-telegram-bot",
+        "кнопки",
+        "и",
+        "раскладки",
+        "личный",
+        "чат"
+      ],
+      "code": "from telegram_patterns import force_reply_markup, inline_button, inline_markup, layout_rows, remove_markup, reply_button, reply_markup\nfrom telegram_patterns.ptb import ptb_markup\n\nmarkup = ptb_markup(inline_markup([[inline_button(\"Основная\", callback_data=\"a\", style=\"primary\"), inline_button(\"Готово\", callback_data=\"b\", style=\"success\"), inline_button(\"Отмена\", callback_data=\"c\", style=\"danger\")]]))\n# В handler: await update.effective_message.reply_text(\"Пример\", reply_markup=markup)\n",
+      "verification": "sdk",
+      "scope": "Построено SDK-независимым ядром и python-telegram-bot при генерации; JSON на проводе совпадает с aiogram-рецептом. Права и chat/actor проверяет ваш handler.",
+      "sources": [
+        "https://core.telegram.org/bots/api#inlinekeyboardbutton",
+        "https://core.telegram.org/bots/api#replykeyboardmarkup"
+      ],
+      "preview": {
+        "inline_keyboard": [
+          [
+            {
+              "text": "Основная",
+              "style": "primary",
+              "callback_data": "a"
+            },
+            {
+              "text": "Готово",
+              "style": "success",
+              "callback_data": "b"
+            },
+            {
+              "text": "Отмена",
+              "style": "danger",
+              "callback_data": "c"
+            }
+          ]
+        ]
+      },
+      "code_sha256": "75cec65fea51f3289f421d0ce74fcb656cd5d9e66cc0227cf10700946561c86b",
+      "tasks": [
+        "keyboards"
+      ],
+      "contexts": [
+        "private"
+      ],
+      "sdk": "python-telegram-bot",
+      "sdk_version": "22.8",
+      "api_version": "bot:10.0",
+      "source_files": [
+        "packages/python/src/telegram_patterns/markup.py",
+        "packages/python/src/telegram_patterns/ptb.py",
+        "packages/python/src/telegram_patterns/execution.py",
+        "packages/python/src/telegram_patterns/_offline_recipe.py"
+      ],
+      "check_files": [
+        "scripts/build_recipe_gallery.py",
+        "packages/python/tests/test_markup.py",
+        "packages/python/tests/test_ptb.py"
+      ],
+      "variant_of": "button-colors",
+      "execution": {
+        "kind": "ptb-markup",
+        "dependencies": [
+          "python-telegram-bot==22.8 (extra ptb)"
+        ],
+        "offline_environment": [],
+        "offline_permissions": [],
+        "offline_data": [
+          "Только поставляемые синтетические данные; реальные IDs и secrets не принимаются."
+        ],
+        "live_environment": [
+          "BOT_TOKEN"
+        ],
+        "live_permissions": [
+          "Проверить фактический chat type, отправку и права автора действия."
+        ],
+        "live_data": [
+          "Реальные chat/actor, handler и callback/message correlation"
+        ],
+        "live_review": "Live executor отсутствует. Перед интеграцией проверить источники, ограничения конкретного метода/контекста, auth и ACL; metadata не подтверждает права.",
+        "effects": [
+          "Локальные SDK объекты без HTTP"
+        ]
+      }
+    },
+    {
+      "id": "ptb-emoji-fallback",
+      "title": "Custom emoji с запасным оформлением · python-telegram-bot",
+      "summary": "Та же разметка, что и в aiogram-рецепте, из SDK-независимого JSON.",
+      "category": "keyboards",
+      "language": "python",
+      "maturity": "experimental",
+      "keywords": [
+        "emoji",
+        "fallback",
+        "ptb",
+        "python-telegram-bot",
+        "кнопки",
+        "и",
+        "раскладки",
+        "личный",
+        "чат"
+      ],
+      "code": "from telegram_patterns import force_reply_markup, inline_button, inline_markup, layout_rows, remove_markup, reply_button, reply_markup\nfrom telegram_patterns.ptb import ptb_markup\n\nbutton = inline_button(\"Готово\", callback_data=\"ok\", icon_custom_emoji_id=\"123456789\")\n# ID-пример заменяется реальным; без подтвержденного entitlement иконка заменяется текстом.\nmarkup = ptb_markup(inline_markup([[button]]))\n# В handler: await update.effective_message.reply_text(\"Пример\", reply_markup=markup)\n",
+      "verification": "sdk",
+      "scope": "Построено SDK-независимым ядром и python-telegram-bot при генерации; JSON на проводе совпадает с aiogram-рецептом. Права и chat/actor проверяет ваш handler.",
+      "sources": [
+        "https://core.telegram.org/bots/api#inlinekeyboardbutton",
+        "https://core.telegram.org/bots/api#replykeyboardmarkup"
+      ],
+      "preview": {
+        "inline_keyboard": [
+          [
+            {
+              "text": "Готово",
+              "callback_data": "ok"
+            }
+          ]
+        ]
+      },
+      "code_sha256": "550c5e3adf901830c148ec64c5af286bd7ed93f20eea77bb91bfb36011179540",
+      "tasks": [
+        "keyboards"
+      ],
+      "contexts": [
+        "private"
+      ],
+      "sdk": "python-telegram-bot",
+      "sdk_version": "22.8",
+      "api_version": "bot:10.0",
+      "source_files": [
+        "packages/python/src/telegram_patterns/markup.py",
+        "packages/python/src/telegram_patterns/ptb.py",
+        "packages/python/src/telegram_patterns/execution.py",
+        "packages/python/src/telegram_patterns/_offline_recipe.py"
+      ],
+      "check_files": [
+        "scripts/build_recipe_gallery.py",
+        "packages/python/tests/test_markup.py",
+        "packages/python/tests/test_ptb.py"
+      ],
+      "variant_of": "emoji-fallback",
+      "execution": {
+        "kind": "ptb-markup",
+        "dependencies": [
+          "python-telegram-bot==22.8 (extra ptb)"
+        ],
+        "offline_environment": [],
+        "offline_permissions": [],
+        "offline_data": [
+          "Только поставляемые синтетические данные; реальные IDs и secrets не принимаются."
+        ],
+        "live_environment": [
+          "BOT_TOKEN"
+        ],
+        "live_permissions": [
+          "Проверить фактический chat type, отправку и права автора действия."
+        ],
+        "live_data": [
+          "Реальные chat/actor, handler и callback/message correlation"
+        ],
+        "live_review": "Live executor отсутствует. Перед интеграцией проверить источники, ограничения конкретного метода/контекста, auth и ACL; metadata не подтверждает права.",
+        "effects": [
+          "Локальные SDK объекты без HTTP"
+        ]
+      }
+    },
+    {
+      "id": "ptb-reply-menu",
+      "title": "Клавиатура под полем ввода · python-telegram-bot",
+      "summary": "Та же разметка, что и в aiogram-рецепте, из SDK-независимого JSON.",
+      "category": "keyboards",
+      "language": "python",
+      "maturity": "experimental",
+      "keywords": [
+        "reply",
+        "menu",
+        "ptb",
+        "python-telegram-bot",
+        "ввод",
+        "и",
+        "формы",
+        "личный",
+        "чат"
+      ],
+      "code": "from telegram_patterns import force_reply_markup, inline_button, inline_markup, layout_rows, remove_markup, reply_button, reply_markup\nfrom telegram_patterns.ptb import ptb_markup\n\nmarkup = ptb_markup(reply_markup([[\"Каталог\", \"Помощь\"], [\"Закрыть\"]], placeholder=\"Выберите действие\"))\n# В handler: await update.effective_message.reply_text(\"Пример\", reply_markup=markup)\n",
+      "verification": "sdk",
+      "scope": "Построено SDK-независимым ядром и python-telegram-bot при генерации; JSON на проводе совпадает с aiogram-рецептом. Права и chat/actor проверяет ваш handler.",
+      "sources": [
+        "https://core.telegram.org/bots/api#inlinekeyboardbutton",
+        "https://core.telegram.org/bots/api#replykeyboardmarkup"
+      ],
+      "preview": {
+        "keyboard": [
+          [
+            {
+              "text": "Каталог"
+            },
+            {
+              "text": "Помощь"
+            }
+          ],
+          [
+            {
+              "text": "Закрыть"
+            }
+          ]
+        ],
+        "is_persistent": false,
+        "resize_keyboard": true,
+        "one_time_keyboard": false,
+        "input_field_placeholder": "Выберите действие",
+        "selective": false
+      },
+      "code_sha256": "d251ffa9afdf75d321b449122decacccb4d03089d3ab2377d05ca66b9eb376c6",
+      "tasks": [
+        "input"
+      ],
+      "contexts": [
+        "private"
+      ],
+      "sdk": "python-telegram-bot",
+      "sdk_version": "22.8",
+      "api_version": "bot:10.0",
+      "source_files": [
+        "packages/python/src/telegram_patterns/markup.py",
+        "packages/python/src/telegram_patterns/ptb.py",
+        "packages/python/src/telegram_patterns/execution.py",
+        "packages/python/src/telegram_patterns/_offline_recipe.py"
+      ],
+      "check_files": [
+        "scripts/build_recipe_gallery.py",
+        "packages/python/tests/test_markup.py",
+        "packages/python/tests/test_ptb.py"
+      ],
+      "variant_of": "reply-menu",
+      "execution": {
+        "kind": "ptb-markup",
+        "dependencies": [
+          "python-telegram-bot==22.8 (extra ptb)"
+        ],
+        "offline_environment": [],
+        "offline_permissions": [],
+        "offline_data": [
+          "Только поставляемые синтетические данные; реальные IDs и secrets не принимаются."
+        ],
+        "live_environment": [
+          "BOT_TOKEN"
+        ],
+        "live_permissions": [
+          "Проверить фактический chat type, отправку и права автора действия."
+        ],
+        "live_data": [
+          "Реальные chat/actor, handler и callback/message correlation"
+        ],
+        "live_review": "Live executor отсутствует. Перед интеграцией проверить источники, ограничения конкретного метода/контекста, auth и ACL; metadata не подтверждает права.",
+        "effects": [
+          "Локальные SDK объекты без HTTP"
+        ]
+      }
+    },
+    {
+      "id": "ptb-contact-location",
+      "title": "Запрос контакта и геопозиции · python-telegram-bot",
+      "summary": "Та же разметка, что и в aiogram-рецепте, из SDK-независимого JSON.",
+      "category": "keyboards",
+      "language": "python",
+      "maturity": "experimental",
+      "keywords": [
+        "contact",
+        "location",
+        "ptb",
+        "python-telegram-bot",
+        "ввод",
+        "и",
+        "формы",
+        "личный",
+        "чат"
+      ],
+      "code": "from telegram_patterns import force_reply_markup, inline_button, inline_markup, layout_rows, remove_markup, reply_button, reply_markup\nfrom telegram_patterns.ptb import ptb_markup\n\nmarkup = ptb_markup(reply_markup([[reply_button(\"Контакт\", request_contact=True), reply_button(\"Геопозиция\", request_location=True)]], chat_type=\"private\", one_time=True))\n# В handler: await update.effective_message.reply_text(\"Пример\", reply_markup=markup)\n",
+      "verification": "sdk",
+      "scope": "Построено SDK-независимым ядром и python-telegram-bot при генерации; JSON на проводе совпадает с aiogram-рецептом. Права и chat/actor проверяет ваш handler.",
+      "sources": [
+        "https://core.telegram.org/bots/api#inlinekeyboardbutton",
+        "https://core.telegram.org/bots/api#replykeyboardmarkup"
+      ],
+      "preview": {
+        "keyboard": [
+          [
+            {
+              "text": "Контакт",
+              "request_contact": true
+            },
+            {
+              "text": "Геопозиция",
+              "request_location": true
+            }
+          ]
+        ],
+        "is_persistent": false,
+        "resize_keyboard": true,
+        "one_time_keyboard": true,
+        "selective": false
+      },
+      "code_sha256": "47d9fa1e9f7fe6b5611a3261d04bc8317763e6341e903a3cea846b0cec66ad51",
+      "tasks": [
+        "input"
+      ],
+      "contexts": [
+        "private"
+      ],
+      "sdk": "python-telegram-bot",
+      "sdk_version": "22.8",
+      "api_version": "bot:10.0",
+      "source_files": [
+        "packages/python/src/telegram_patterns/markup.py",
+        "packages/python/src/telegram_patterns/ptb.py",
+        "packages/python/src/telegram_patterns/execution.py",
+        "packages/python/src/telegram_patterns/_offline_recipe.py"
+      ],
+      "check_files": [
+        "scripts/build_recipe_gallery.py",
+        "packages/python/tests/test_markup.py",
+        "packages/python/tests/test_ptb.py"
+      ],
+      "variant_of": "contact-location",
+      "execution": {
+        "kind": "ptb-markup",
+        "dependencies": [
+          "python-telegram-bot==22.8 (extra ptb)"
+        ],
+        "offline_environment": [],
+        "offline_permissions": [],
+        "offline_data": [
+          "Только поставляемые синтетические данные; реальные IDs и secrets не принимаются."
+        ],
+        "live_environment": [
+          "BOT_TOKEN"
+        ],
+        "live_permissions": [
+          "Проверить фактический chat type, отправку и права автора действия."
+        ],
+        "live_data": [
+          "Реальные chat/actor, handler и callback/message correlation"
+        ],
+        "live_review": "Live executor отсутствует. Перед интеграцией проверить источники, ограничения конкретного метода/контекста, auth и ACL; metadata не подтверждает права.",
+        "effects": [
+          "Локальные SDK объекты без HTTP"
+        ]
+      }
+    },
+    {
+      "id": "ptb-force-reply",
+      "title": "Ответ на конкретное сообщение · python-telegram-bot",
+      "summary": "Та же разметка, что и в aiogram-рецепте, из SDK-независимого JSON.",
+      "category": "keyboards",
+      "language": "python",
+      "maturity": "experimental",
+      "keywords": [
+        "force",
+        "reply",
+        "ptb",
+        "python-telegram-bot",
+        "ввод",
+        "и",
+        "формы",
+        "уточнить",
+        "контекст"
+      ],
+      "code": "from telegram_patterns import force_reply_markup, inline_button, inline_markup, layout_rows, remove_markup, reply_button, reply_markup\nfrom telegram_patterns.ptb import ptb_markup\n\nmarkup = ptb_markup(force_reply_markup(\"Ваше имя\"))\n# Host сохраняет actor/chat/prompt.message_id и проверяет reply_to_message.\n# В handler: await update.effective_message.reply_text(\"Пример\", reply_markup=markup)\n",
+      "verification": "sdk",
+      "scope": "Построено SDK-независимым ядром и python-telegram-bot при генерации; JSON на проводе совпадает с aiogram-рецептом. Права и chat/actor проверяет ваш handler.",
+      "sources": [
+        "https://core.telegram.org/bots/api#inlinekeyboardbutton",
+        "https://core.telegram.org/bots/api#replykeyboardmarkup"
+      ],
+      "preview": {
+        "force_reply": true,
+        "input_field_placeholder": "Ваше имя",
+        "selective": false
+      },
+      "code_sha256": "37d43b2c541c685a464cf8b287acc0aedcbecf82a84074425e648a46bca66e85",
+      "tasks": [
+        "input"
+      ],
+      "contexts": [
+        "unspecified"
+      ],
+      "sdk": "python-telegram-bot",
+      "sdk_version": "22.8",
+      "api_version": "bot:10.0",
+      "source_files": [
+        "packages/python/src/telegram_patterns/markup.py",
+        "packages/python/src/telegram_patterns/ptb.py",
+        "packages/python/src/telegram_patterns/execution.py",
+        "packages/python/src/telegram_patterns/_offline_recipe.py"
+      ],
+      "check_files": [
+        "scripts/build_recipe_gallery.py",
+        "packages/python/tests/test_markup.py",
+        "packages/python/tests/test_ptb.py"
+      ],
+      "variant_of": "force-reply",
+      "execution": {
+        "kind": "ptb-markup",
+        "dependencies": [
+          "python-telegram-bot==22.8 (extra ptb)"
+        ],
+        "offline_environment": [],
+        "offline_permissions": [],
+        "offline_data": [
+          "Только поставляемые синтетические данные; реальные IDs и secrets не принимаются."
+        ],
+        "live_environment": [
+          "BOT_TOKEN"
+        ],
+        "live_permissions": [
+          "Проверить фактический chat type, отправку и права автора действия."
+        ],
+        "live_data": [
+          "Реальные chat/actor, handler и callback/message correlation"
+        ],
+        "live_review": "Live executor отсутствует. Перед интеграцией проверить источники, ограничения конкретного метода/контекста, auth и ACL; metadata не подтверждает права.",
+        "effects": [
+          "Локальные SDK объекты без HTTP"
+        ]
+      }
+    },
+    {
+      "id": "ptb-remove-reply",
+      "title": "Скрыть reply-клавиатуру · python-telegram-bot",
+      "summary": "Та же разметка, что и в aiogram-рецепте, из SDK-независимого JSON.",
+      "category": "keyboards",
+      "language": "python",
+      "maturity": "experimental",
+      "keywords": [
+        "remove",
+        "reply",
+        "ptb",
+        "python-telegram-bot",
+        "ввод",
+        "и",
+        "формы",
+        "уточнить",
+        "контекст"
+      ],
+      "code": "from telegram_patterns import force_reply_markup, inline_button, inline_markup, layout_rows, remove_markup, reply_button, reply_markup\nfrom telegram_patterns.ptb import ptb_markup\n\nmarkup = ptb_markup(remove_markup())\n# В handler: await update.effective_message.reply_text(\"Пример\", reply_markup=markup)\n",
+      "verification": "sdk",
+      "scope": "Построено SDK-независимым ядром и python-telegram-bot при генерации; JSON на проводе совпадает с aiogram-рецептом. Права и chat/actor проверяет ваш handler.",
+      "sources": [
+        "https://core.telegram.org/bots/api#inlinekeyboardbutton",
+        "https://core.telegram.org/bots/api#replykeyboardmarkup"
+      ],
+      "preview": {
+        "remove_keyboard": true,
+        "selective": false
+      },
+      "code_sha256": "f6934efd6e2f195e6d052c5e0a93a4dd1851cf18ff6ce2959844264120386b45",
+      "tasks": [
+        "input"
+      ],
+      "contexts": [
+        "unspecified"
+      ],
+      "sdk": "python-telegram-bot",
+      "sdk_version": "22.8",
+      "api_version": "bot:10.0",
+      "source_files": [
+        "packages/python/src/telegram_patterns/markup.py",
+        "packages/python/src/telegram_patterns/ptb.py",
+        "packages/python/src/telegram_patterns/execution.py",
+        "packages/python/src/telegram_patterns/_offline_recipe.py"
+      ],
+      "check_files": [
+        "scripts/build_recipe_gallery.py",
+        "packages/python/tests/test_markup.py",
+        "packages/python/tests/test_ptb.py"
+      ],
+      "variant_of": "remove-reply",
+      "execution": {
+        "kind": "ptb-markup",
+        "dependencies": [
+          "python-telegram-bot==22.8 (extra ptb)"
+        ],
+        "offline_environment": [],
+        "offline_permissions": [],
+        "offline_data": [
+          "Только поставляемые синтетические данные; реальные IDs и secrets не принимаются."
+        ],
+        "live_environment": [
+          "BOT_TOKEN"
+        ],
+        "live_permissions": [
+          "Проверить фактический chat type, отправку и права автора действия."
+        ],
+        "live_data": [
+          "Реальные chat/actor, handler и callback/message correlation"
+        ],
+        "live_review": "Live executor отсутствует. Перед интеграцией проверить источники, ограничения конкретного метода/контекста, auth и ACL; metadata не подтверждает права.",
+        "effects": [
+          "Локальные SDK объекты без HTTP"
+        ]
+      }
+    },
+    {
+      "id": "ptb-copy-disabled",
+      "title": "Копирование и недоступная кнопка · python-telegram-bot",
+      "summary": "Та же разметка, что и в aiogram-рецепте, из SDK-независимого JSON.",
+      "category": "keyboards",
+      "language": "python",
+      "maturity": "experimental",
+      "keywords": [
+        "copy",
+        "disabled",
+        "ptb",
+        "python-telegram-bot",
+        "кнопки",
+        "и",
+        "раскладки",
+        "личный",
+        "чат"
+      ],
+      "code": "from telegram_patterns import force_reply_markup, inline_button, inline_markup, layout_rows, remove_markup, reply_button, reply_markup\nfrom telegram_patterns.ptb import ptb_markup\n\nmarkup = ptb_markup(inline_markup([[inline_button(\"Копировать\", copy_text=\"READY-CODE\"), inline_button(\"Недоступно\", disabled=True)]]))\n# disabled (Bot API 10.3) неизвестен python-telegram-bot 22.8 и уходит на провод через api_kwargs.\n# В handler: await update.effective_message.reply_text(\"Пример\", reply_markup=markup)\n",
+      "verification": "sdk",
+      "scope": "Построено SDK-независимым ядром и python-telegram-bot при генерации; JSON на проводе совпадает с aiogram-рецептом. Права и chat/actor проверяет ваш handler.",
+      "sources": [
+        "https://core.telegram.org/bots/api#inlinekeyboardbutton",
+        "https://core.telegram.org/bots/api#replykeyboardmarkup"
+      ],
+      "preview": {
+        "inline_keyboard": [
+          [
+            {
+              "text": "Копировать",
+              "copy_text": {
+                "text": "READY-CODE"
+              }
+            },
+            {
+              "text": "Недоступно",
+              "disabled": {}
+            }
+          ]
+        ]
+      },
+      "code_sha256": "77645d0daf0e10c7b9b1ffd958c3d880654a5355f57fe145213428fb3b621595",
+      "tasks": [
+        "keyboards"
+      ],
+      "contexts": [
+        "private"
+      ],
+      "sdk": "python-telegram-bot",
+      "sdk_version": "22.8",
+      "api_version": "bot:10.0",
+      "source_files": [
+        "packages/python/src/telegram_patterns/markup.py",
+        "packages/python/src/telegram_patterns/ptb.py",
+        "packages/python/src/telegram_patterns/execution.py",
+        "packages/python/src/telegram_patterns/_offline_recipe.py"
+      ],
+      "check_files": [
+        "scripts/build_recipe_gallery.py",
+        "packages/python/tests/test_markup.py",
+        "packages/python/tests/test_ptb.py"
+      ],
+      "variant_of": "copy-disabled",
+      "execution": {
+        "kind": "ptb-markup",
+        "dependencies": [
+          "python-telegram-bot==22.8 (extra ptb)"
+        ],
+        "offline_environment": [],
+        "offline_permissions": [],
+        "offline_data": [
+          "Только поставляемые синтетические данные; реальные IDs и secrets не принимаются."
+        ],
+        "live_environment": [
+          "BOT_TOKEN"
+        ],
+        "live_permissions": [
+          "Проверить фактический chat type, отправку и права автора действия."
+        ],
+        "live_data": [
+          "Реальные chat/actor, handler и callback/message correlation"
+        ],
+        "live_review": "Live executor отсутствует. Перед интеграцией проверить источники, ограничения конкретного метода/контекста, auth и ACL; metadata не подтверждает права.",
+        "effects": [
+          "Локальные SDK объекты без HTTP"
+        ]
+      }
+    },
+    {
+      "id": "ptb-url-app",
+      "title": "Ссылка и кнопка Mini App · python-telegram-bot",
+      "summary": "Та же разметка, что и в aiogram-рецепте, из SDK-независимого JSON.",
+      "category": "keyboards",
+      "language": "python",
+      "maturity": "experimental",
+      "keywords": [
+        "url",
+        "app",
+        "ptb",
+        "python-telegram-bot",
+        "кнопки",
+        "и",
+        "раскладки",
+        "личный",
+        "чат"
+      ],
+      "code": "from telegram_patterns import force_reply_markup, inline_button, inline_markup, layout_rows, remove_markup, reply_button, reply_markup\nfrom telegram_patterns.ptb import ptb_markup\n\nmarkup = ptb_markup(inline_markup([[inline_button(\"Документация\", url=\"https://core.telegram.org/bots/api\"), inline_button(\"Приложение\", web_app=\"https://example.invalid/replace\")]], chat_type=\"private\"))\n# В handler: await update.effective_message.reply_text(\"Пример\", reply_markup=markup)\n",
+      "verification": "sdk",
+      "scope": "Построено SDK-независимым ядром и python-telegram-bot при генерации; JSON на проводе совпадает с aiogram-рецептом. Права и chat/actor проверяет ваш handler.",
+      "sources": [
+        "https://core.telegram.org/bots/api#inlinekeyboardbutton",
+        "https://core.telegram.org/bots/api#replykeyboardmarkup"
+      ],
+      "preview": {
+        "inline_keyboard": [
+          [
+            {
+              "text": "Документация",
+              "url": "https://core.telegram.org/bots/api"
+            },
+            {
+              "text": "Приложение",
+              "web_app": {
+                "url": "https://example.invalid/replace"
+              }
+            }
+          ]
+        ]
+      },
+      "code_sha256": "40550d302d93747ec9bded55800bfc81ec883dd3297cde6e0c34900726da82b3",
+      "tasks": [
+        "keyboards"
+      ],
+      "contexts": [
+        "private"
+      ],
+      "sdk": "python-telegram-bot",
+      "sdk_version": "22.8",
+      "api_version": "bot:10.0",
+      "source_files": [
+        "packages/python/src/telegram_patterns/markup.py",
+        "packages/python/src/telegram_patterns/ptb.py",
+        "packages/python/src/telegram_patterns/execution.py",
+        "packages/python/src/telegram_patterns/_offline_recipe.py"
+      ],
+      "check_files": [
+        "scripts/build_recipe_gallery.py",
+        "packages/python/tests/test_markup.py",
+        "packages/python/tests/test_ptb.py"
+      ],
+      "variant_of": "url-app",
+      "execution": {
+        "kind": "ptb-markup",
+        "dependencies": [
+          "python-telegram-bot==22.8 (extra ptb)"
+        ],
+        "offline_environment": [],
+        "offline_permissions": [],
+        "offline_data": [
+          "Только поставляемые синтетические данные; реальные IDs и secrets не принимаются."
+        ],
+        "live_environment": [
+          "BOT_TOKEN"
+        ],
+        "live_permissions": [
+          "Проверить фактический chat type, отправку и права автора действия."
+        ],
+        "live_data": [
+          "Реальные chat/actor, handler и callback/message correlation"
+        ],
+        "live_review": "Live executor отсутствует. Перед интеграцией проверить источники, ограничения конкретного метода/контекста, auth и ACL; metadata не подтверждает права.",
+        "effects": [
+          "Локальные SDK объекты без HTTP"
+        ]
+      }
+    },
+    {
+      "id": "ptb-demo-catalog",
+      "title": "Каталог с пагинацией · python-telegram-bot",
+      "summary": "Каталог с переходом по страницам: кнопки из SDK-независимого JSON, правка того же сообщения",
+      "category": "scenarios",
+      "language": "python",
+      "maturity": "experimental",
+      "keywords": [
+        "ptb",
+        "python-telegram-bot",
+        "application",
+        "catalog",
+        "композиция",
+        "бота",
+        "кнопки",
+        "и",
+        "раскладки",
+        "личный",
+        "чат"
+      ],
+      "code": "\"\"\"python-telegram-bot: paged catalog from the SDK-free markup core; no polling on import.\"\"\"\nfrom telegram import Update\nfrom telegram.ext import Application, CallbackQueryHandler, CommandHandler, ContextTypes\nfrom telegram_patterns import MarkupPage, markup_page_number, paginated_markup\nfrom telegram_patterns.ptb import ptb_inline_markup, ptb_markup\n\nITEMS = [(f'Компонент {index}', f'item-{index}') for index in range(1, 8)]\nPAGE, ACTION = 'catalog-page:', 'act:'\n\n\ndef catalog(page: int = 0) -> MarkupPage:\n    # The same buttons and callback data as the aiogram demo-catalog.\n    return paginated_markup(ITEMS, page=page, page_size=3, page_prefix=PAGE, action_prefix=ACTION, style='primary')\n\n\ndef heading(page: MarkupPage) -> str:\n    return f'Пример каталога · страница {page.page + 1}/{page.page_count}\\nВыберите компонент.'\n\n\ndef attach_catalog(application: Application) -> None:  # type: ignore[type-arg]\n    async def start(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:\n        if update.effective_message is not None:\n            first = catalog()\n            await update.effective_message.reply_text(heading(first), reply_markup=ptb_markup(first.markup))\n\n    async def change_page(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:\n        query = update.callback_query\n        if query is None:\n            return\n        target = markup_page_number(query.data, prefix=PAGE)\n        if target is None or query.message is None:\n            await query.answer('Откройте актуальное меню командой /start.')\n            return\n        await query.answer()\n        page = catalog(target)\n        await query.edit_message_text(heading(page), reply_markup=ptb_inline_markup(page.markup))\n\n    async def choose(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:\n        query = update.callback_query\n        if query is None:\n            return\n        # Public fixtures only; a private object needs service ACL and idempotence before any effect.\n        selected = next((text for text, key in ITEMS if ACTION + key == query.data), None)\n        await query.answer()\n        if query.message is not None and update.effective_chat is not None:\n            text = f'Вы выбрали: {selected}.' if selected else 'Откройте новый каталог командой /start.'\n            await context.bot.send_message(update.effective_chat.id, text)\n\n    application.add_handler(CommandHandler('start', start))\n    application.add_handler(CallbackQueryHandler(change_page, pattern='^' + PAGE))\n    application.add_handler(CallbackQueryHandler(choose, pattern='^' + ACTION))\n",
+      "verification": "mock",
+      "scope": "Synthetic python-telegram-bot Application + StubRequest исполнен при генерации. Telegram delivery/physical clients не проверены.",
+      "sources": [
+        "https://core.telegram.org/bots/api"
+      ],
+      "preview": null,
+      "code_sha256": "452890132de78e81e9c0fc95e9f9267df720f9d66c3d4db159cb9817a33d32a8",
+      "tasks": [
+        "bot",
+        "keyboards"
+      ],
+      "contexts": [
+        "private"
+      ],
+      "sdk": "python-telegram-bot",
+      "sdk_version": "22.8",
+      "api_version": "bot:10.0",
+      "source_files": [
+        "examples/ptb/ptb_catalog_bot.py",
+        "packages/python/src/telegram_patterns/ptb.py",
+        "packages/python/src/telegram_patterns/execution.py",
+        "packages/python/src/telegram_patterns/_offline_recipe.py"
+      ],
+      "check_files": [
+        "examples/ptb/offline_ptb_catalog.py",
+        "packages/python/tests/test_ptb.py"
+      ],
+      "variant_of": "demo-catalog",
+      "execution": {
+        "kind": "application",
+        "dependencies": [
+          "python-telegram-bot==22.8 (extra ptb)"
+        ],
+        "offline_environment": [],
+        "offline_permissions": [],
+        "offline_data": [
+          "Только поставляемые синтетические данные; реальные IDs и secrets не принимаются."
+        ],
+        "live_environment": [
+          "BOT_TOKEN"
+        ],
+        "live_permissions": [
+          "Прикладная авторизация сервиса; fixture actor не доказывает server ACL."
+        ],
+        "live_data": [
+          "Текущий Application python-telegram-bot, реальные actor/chat и сервис приложения",
+          "Проверка объекта, автора и состояния до effect/replay"
+        ],
+        "live_review": "Live executor отсутствует. Перед интеграцией проверить источники, ограничения конкретного метода/контекста, auth и ACL; metadata не подтверждает права.",
+        "effects": [
+          "python-telegram-bot Application + StubRequest; временная fixture, без polling"
+        ]
+      }
+    },
+    {
+      "id": "ptb-demo-selection",
+      "title": "Выбор и подтверждение · python-telegram-bot",
+      "summary": "Выбор вариантов на SelectionMenu ядра: ревизии, чужой пользователь, подтверждение один раз",
+      "category": "scenarios",
+      "language": "python",
+      "maturity": "experimental",
+      "keywords": [
+        "ptb",
+        "python-telegram-bot",
+        "application",
+        "selection",
+        "ввод",
+        "и",
+        "формы",
+        "кнопки",
+        "раскладки",
+        "личный",
+        "чат"
+      ],
+      "code": "\"\"\"python-telegram-bot: server-owned selection with the SDK-free SelectionMenu; no polling on import.\"\"\"\nfrom telegram import Update\nfrom telegram.ext import Application, CallbackQueryHandler, CommandHandler, ContextTypes\nfrom telegram_patterns import SelectionContext, SelectionMenu, SelectionOption, SelectionSpec, selection_markup\nfrom telegram_patterns.ptb import ptb_inline_markup\n\n\ndef demo_spec() -> SelectionSpec:\n    return SelectionSpec([SelectionOption('alpha', 'Пакет Alpha', ['basic']), SelectionOption('beta', 'Пакет Beta', ['extra']),\n                          SelectionOption('gamma', 'Пакет Gamma', ['extra'])],\n                         toggles={'notify': 'Уведомлять'}, filters={'all': 'Все', 'basic': 'Основные', 'extra': 'Дополнительные'},\n                         quantity_min=1, quantity_max=5, min_selected=1, max_selected=2, confirm_text='Подтвердить выбор')\n\n\ndef attach_selection(application: Application, menus: dict[int, SelectionMenu]) -> None:  # type: ignore[type-arg]\n    \"\"\"menus is the host registry: one menu per private chat; the host owns its lifetime.\"\"\"\n\n    async def choose(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:\n        message, user = update.effective_message, update.effective_user\n        if message is None or user is None or message.chat.type != 'private':\n            return\n        sent = await message.reply_text('Открываю выбор…')  # an explicit command sends once, no retry\n        menu = SelectionMenu(demo_spec(), SelectionContext(context.bot.id, user.id, message.chat.id, sent.message_id))\n        menus[message.chat.id] = menu\n        await context.bot.edit_message_text(menu.state.text(), chat_id=message.chat.id, message_id=sent.message_id,\n                                            reply_markup=ptb_inline_markup(selection_markup(menu.state)))\n\n    async def pressed(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:\n        query = update.callback_query\n        if query is None or query.message is None:\n            return\n        await query.answer()  # ACK first: it is not approval\n        menu = menus.get(query.message.chat.id)\n        if menu is None:\n            return\n        # Identity comes from the update, never from callback data; apply re-checks owner, message and revision.\n        result = menu.apply(query.data or '', SelectionContext(context.bot.id, query.from_user.id, query.message.chat.id, query.message.message_id))\n        if result.status in ('denied', 'stale', 'invalid'):\n            await query.answer(result.text, show_alert=result.status == 'denied')\n            return\n        state = menu.state\n        markup = selection_markup(state)\n        # A closed menu has no buttons: editing without reply_markup removes the keyboard.\n        await query.edit_message_text(state.text(), reply_markup=ptb_inline_markup(markup) if markup['inline_keyboard'] else None)\n\n    application.add_handler(CommandHandler('choose', choose))\n    application.add_handler(CallbackQueryHandler(pressed, pattern='^sel:'))\n",
+      "verification": "mock",
+      "scope": "Synthetic python-telegram-bot Application + StubRequest исполнен при генерации. Telegram delivery/physical clients не проверены.",
+      "sources": [
+        "https://core.telegram.org/bots/api"
+      ],
+      "preview": null,
+      "code_sha256": "fc16cbe47b3a3e6c9048d927fa94f8df4fab111aa8d4364222d2eb04e29b4d1c",
+      "tasks": [
+        "input",
+        "keyboards"
+      ],
+      "contexts": [
+        "private"
+      ],
+      "sdk": "python-telegram-bot",
+      "sdk_version": "22.8",
+      "api_version": "bot:10.0",
+      "source_files": [
+        "examples/ptb/ptb_selection_bot.py",
+        "packages/python/src/telegram_patterns/ptb.py",
+        "packages/python/src/telegram_patterns/execution.py",
+        "packages/python/src/telegram_patterns/_offline_recipe.py"
+      ],
+      "check_files": [
+        "examples/ptb/offline_ptb_selection.py",
+        "packages/python/tests/test_ptb.py"
+      ],
+      "variant_of": "demo-selection",
+      "execution": {
+        "kind": "application",
+        "dependencies": [
+          "python-telegram-bot==22.8 (extra ptb)"
+        ],
+        "offline_environment": [],
+        "offline_permissions": [],
+        "offline_data": [
+          "Только поставляемые синтетические данные; реальные IDs и secrets не принимаются."
+        ],
+        "live_environment": [
+          "BOT_TOKEN"
+        ],
+        "live_permissions": [
+          "Прикладная авторизация сервиса; fixture actor не доказывает server ACL."
+        ],
+        "live_data": [
+          "Текущий Application python-telegram-bot, реальные actor/chat и сервис приложения",
+          "Проверка объекта, автора и состояния до effect/replay"
+        ],
+        "live_review": "Live executor отсутствует. Перед интеграцией проверить источники, ограничения конкретного метода/контекста, auth и ACL; metadata не подтверждает права.",
+        "effects": [
+          "python-telegram-bot Application + StubRequest; временная fixture, без polling"
+        ]
+      }
+    },
+    {
+      "id": "ptb-demo-message-text",
+      "title": "Безопасный длинный текст · python-telegram-bot",
+      "summary": "Длинный отчет с entities и parse_mode=None: текст остается буквальным при HTML по умолчанию",
+      "category": "scenarios",
+      "language": "python",
+      "maturity": "experimental",
+      "keywords": [
+        "ptb",
+        "python-telegram-bot",
+        "application",
+        "message",
+        "text",
+        "сообщения",
+        "личный",
+        "чат"
+      ],
+      "code": "\"\"\"python-telegram-bot: a literal report with entities from the SDK-free MessageBuilder; no polling on import.\"\"\"\nfrom telegram import Update\nfrom telegram.ext import Application, CommandHandler, ContextTypes, filters\nfrom telegram_patterns import FormattedText, MessageBuilder\nfrom telegram_patterns.ptb import ptb_text\n\n\ndef compose_report(name: str, notes: str) -> tuple[FormattedText, ...]:\n    # Both values stay literal even when they contain Telegram markup; entities carry the formatting.\n    builder = MessageBuilder().style('Отчет\\n', 'bold').text('Имя: ').style(name, 'italic')\n    builder = builder.text('\\nЗаметки:\\n').text(notes).text('\\n').style('Документация', 'text_link', url='https://core.telegram.org/bots/api')\n    return builder.build().split()  # parts of at most 4096 UTF-16 units, entities split with them\n\n\ndef attach_reports(application: Application) -> None:  # type: ignore[type-arg]\n    async def report(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:\n        message, user = update.effective_message, update.effective_user\n        if message is None or user is None or user.is_bot:\n            return\n        for part in compose_report(user.full_name, '<b>буквальный текст</b> *_ [] & 😀\\n' * 160):\n            # parse_mode=None overrides any Defaults; a failed part stops the sequence, nothing is retried blindly.\n            await context.bot.send_message(message.chat.id, **ptb_text(part))\n\n    application.add_handler(CommandHandler('report', report, filters=filters.ChatType.PRIVATE))\n",
+      "verification": "mock",
+      "scope": "Synthetic python-telegram-bot Application + StubRequest исполнен при генерации. Telegram delivery/physical clients не проверены.",
+      "sources": [
+        "https://core.telegram.org/bots/api"
+      ],
+      "preview": null,
+      "code_sha256": "b2b4b9107a0bc7ffe1855b9988e9d00923d9218a89e30c2bb9d04efc875cfe48",
+      "tasks": [
+        "messages"
+      ],
+      "contexts": [
+        "private"
+      ],
+      "sdk": "python-telegram-bot",
+      "sdk_version": "22.8",
+      "api_version": "bot:10.0",
+      "source_files": [
+        "examples/ptb/ptb_message_text_bot.py",
+        "packages/python/src/telegram_patterns/ptb.py",
+        "packages/python/src/telegram_patterns/execution.py",
+        "packages/python/src/telegram_patterns/_offline_recipe.py"
+      ],
+      "check_files": [
+        "examples/ptb/offline_ptb_message_text.py",
+        "packages/python/tests/test_ptb.py"
+      ],
+      "variant_of": "demo-message-text",
+      "execution": {
+        "kind": "application",
+        "dependencies": [
+          "python-telegram-bot==22.8 (extra ptb)"
+        ],
+        "offline_environment": [],
+        "offline_permissions": [],
+        "offline_data": [
+          "Только поставляемые синтетические данные; реальные IDs и secrets не принимаются."
+        ],
+        "live_environment": [
+          "BOT_TOKEN"
+        ],
+        "live_permissions": [
+          "Прикладная авторизация сервиса; fixture actor не доказывает server ACL."
+        ],
+        "live_data": [
+          "Текущий Application python-telegram-bot, реальные actor/chat и сервис приложения",
+          "Проверка объекта, автора и состояния до effect/replay"
+        ],
+        "live_review": "Live executor отсутствует. Перед интеграцией проверить источники, ограничения конкретного метода/контекста, auth и ACL; metadata не подтверждает права.",
+        "effects": [
+          "python-telegram-bot Application + StubRequest; временная fixture, без polling"
+        ]
+      }
+    },
+    {
+      "id": "ptb-demo-rich-message",
+      "title": "Rich-сообщение и запасной текст · python-telegram-bot",
+      "summary": "Карточка заказа через do_api_request(sendRichMessage) или тем же текстом с клавиатурой",
+      "category": "scenarios",
+      "language": "python",
+      "maturity": "experimental",
+      "keywords": [
+        "ptb",
+        "python-telegram-bot",
+        "application",
+        "rich",
+        "message",
+        "сообщения",
+        "личный",
+        "чат"
+      ],
+      "code": "\"\"\"python-telegram-bot: a rich order card through do_api_request, or the same content as text; no polling on import.\"\"\"\nfrom collections.abc import Callable\n\nfrom telegram import Update\nfrom telegram.ext import Application, CallbackQueryHandler, CommandHandler, ContextTypes, filters\nfrom telegram_patterns import RichButton, RichMessage, RichMessageBuilder, RichSpan\nfrom telegram_patterns.ptb import ptb_markup, ptb_text\n\n\ndef order_card(order_id: int) -> RichMessage:\n    rows = [['Товар', 'Кол-во', 'Цена'], ['Книга', '1', '500 ₽'], ['Ручка', '2', '100 ₽']]\n    return (RichMessageBuilder()\n            .heading(f'Заказ №{order_id}', size=1)\n            .paragraph(['Статус: ', RichSpan('bold', 'оплачен')])\n            .table(rows, compact=True, caption='Итого: 700 ₽')\n            .checklist([('Оплата получена', True), ('Передан в доставку', False)])\n            .buttons([RichButton('Подтвердить', callback_data=f'order:confirm:{order_id}', style='success')])\n            .build())\n\n\ndef attach_order_cards(application: Application, *,  # type: ignore[type-arg]\n                       rich_supported: Callable[[Update], bool] = lambda update: True) -> None:\n    \"\"\"python-telegram-bot 22.8 implements Bot API 10.0: sendRichMessage (10.1) goes through do_api_request.\"\"\"\n\n    async def show(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:\n        message = update.effective_message\n        if message is None:\n            return\n        card = order_card(42)\n        if rich_supported(update):\n            await context.bot.do_api_request('sendRichMessage', api_kwargs={'chat_id': message.chat.id, 'rich_message': card.as_input()})\n            return\n        parts, keyboard = card.fallback().split(), card.fallback_keyboard()\n        for index, part in enumerate(parts):\n            markup = ptb_markup({'inline_keyboard': keyboard}) if keyboard and index == len(parts) - 1 else None\n            await context.bot.send_message(message.chat.id, **ptb_text(part), reply_markup=markup)\n\n    async def act(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:\n        if update.callback_query is not None:\n            await update.callback_query.answer('Запрос принят')  # the service checks the user and the order itself\n\n    application.add_handler(CommandHandler('order', show, filters=filters.ChatType.PRIVATE))\n    application.add_handler(CallbackQueryHandler(act, pattern='^order:'))\n",
+      "verification": "mock",
+      "scope": "Synthetic python-telegram-bot Application + StubRequest исполнен при генерации. Telegram delivery/physical clients не проверены.",
+      "sources": [
+        "https://core.telegram.org/bots/api"
+      ],
+      "preview": null,
+      "code_sha256": "ad3eb4c00d9dd3df56a2cf6e3d564091b91354795d302c926b0d2d52b0b00e31",
+      "tasks": [
+        "messages"
+      ],
+      "contexts": [
+        "private"
+      ],
+      "sdk": "python-telegram-bot",
+      "sdk_version": "22.8",
+      "api_version": "bot:10.0",
+      "source_files": [
+        "examples/ptb/ptb_rich_message_bot.py",
+        "packages/python/src/telegram_patterns/ptb.py",
+        "packages/python/src/telegram_patterns/execution.py",
+        "packages/python/src/telegram_patterns/_offline_recipe.py"
+      ],
+      "check_files": [
+        "examples/ptb/offline_ptb_rich_message.py",
+        "packages/python/tests/test_ptb.py"
+      ],
+      "variant_of": "demo-rich-message",
+      "execution": {
+        "kind": "application",
+        "dependencies": [
+          "python-telegram-bot==22.8 (extra ptb)"
+        ],
+        "offline_environment": [],
+        "offline_permissions": [],
+        "offline_data": [
+          "Только поставляемые синтетические данные; реальные IDs и secrets не принимаются."
+        ],
+        "live_environment": [
+          "BOT_TOKEN"
+        ],
+        "live_permissions": [
+          "Прикладная авторизация сервиса; fixture actor не доказывает server ACL."
+        ],
+        "live_data": [
+          "Текущий Application python-telegram-bot, реальные actor/chat и сервис приложения",
+          "Проверка объекта, автора и состояния до effect/replay"
+        ],
+        "live_review": "Live executor отсутствует. Перед интеграцией проверить источники, ограничения конкретного метода/контекста, auth и ACL; metadata не подтверждает права.",
+        "effects": [
+          "python-telegram-bot Application + StubRequest; временная fixture, без polling"
+        ]
+      }
+    },
+    {
+      "id": "ptb-demo-ephemeral",
+      "title": "Эфемерный ответ в группе · python-telegram-bot",
+      "summary": "Эфемерный ответ на кнопку через api_kwargs, правка и удаление через do_api_request",
+      "category": "scenarios",
+      "language": "python",
+      "maturity": "experimental",
+      "keywords": [
+        "ptb",
+        "python-telegram-bot",
+        "application",
+        "ephemeral",
+        "сообщения",
+        "композиция",
+        "бота",
+        "группа",
+        "супергруппа"
+      ],
+      "code": "\"\"\"python-telegram-bot: answer a group button press with an ephemeral message (Bot API 10.2) via api_kwargs; no polling on import.\"\"\"\nimport time\nfrom collections.abc import Awaitable, Callable\n\nfrom telegram import Update\nfrom telegram.ext import Application, CallbackQueryHandler, CommandHandler, ContextTypes, filters\nfrom telegram_patterns import EphemeralMessageRef, EphemeralNotAllowed, EphemeralTrigger, ephemeral_parameters, inline_button, inline_markup\nfrom telegram_patterns.ptb import ptb_markup\n\nPANEL = inline_markup([[inline_button('Мой статус', callback_data='me:status')]])\nOWN = inline_markup([[inline_button('Обновить', callback_data='me:refresh'), inline_button('Скрыть', callback_data='me:hide')]])\n\n\ndef attach_ephemeral_status(application: Application, *, status: Callable[[int, int], Awaitable[str]],  # type: ignore[type-arg]\n                            clock: Callable[[], float] = time.monotonic) -> None:\n    \"\"\"python-telegram-bot 22.8 implements Bot API 10.0: new fields go in api_kwargs, new methods through do_api_request.\"\"\"\n\n    async def panel(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:\n        if update.effective_message is not None:\n            await update.effective_message.reply_text('Нажмите — ответ увидите только вы.', reply_markup=ptb_markup(PANEL))\n\n    async def show(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:\n        received = clock()\n        query = update.callback_query\n        if query is None or query.message is None:\n            return\n        chat = query.message.chat\n        text = await status(chat.id, query.from_user.id)\n        try:\n            extra = ephemeral_parameters(chat_type=chat.type, receiver_user_id=query.from_user.id, receiver_is_bot=query.from_user.is_bot,\n                                         trigger=EphemeralTrigger.callback(query.id, received), now=clock())\n        except EphemeralNotAllowed:\n            await query.answer(text[:200], show_alert=True)  # an alert is also seen only by the presser\n            return\n        await context.bot.send_message(chat.id, text, reply_markup=ptb_markup(OWN), api_kwargs=extra)\n        await query.answer()\n\n    async def own(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:\n        query = update.callback_query\n        if query is None or query.message is None:\n            return\n        ephemeral_id = query.message.api_kwargs.get('ephemeral_message_id')  # message_id of an ephemeral message is 0\n        if not isinstance(ephemeral_id, int):\n            await query.answer()\n            return\n        target = EphemeralMessageRef(query.message.chat.id, query.from_user.id, ephemeral_id).target()\n        if query.data == 'me:hide':\n            await context.bot.do_api_request('deleteEphemeralMessage', api_kwargs=dict(target))\n        else:\n            text = await status(query.message.chat.id, query.from_user.id)\n            await context.bot.do_api_request('editEphemeralMessageText', api_kwargs={**target, 'text': text, 'reply_markup': OWN})\n        await query.answer()\n\n    groups = filters.ChatType.GROUPS\n    application.add_handler(CommandHandler('panel', panel, filters=groups))\n    application.add_handler(CallbackQueryHandler(show, pattern='^me:status$'))\n    application.add_handler(CallbackQueryHandler(own, pattern='^me:(refresh|hide)$'))\n",
+      "verification": "mock",
+      "scope": "Synthetic python-telegram-bot Application + StubRequest исполнен при генерации. Telegram delivery/physical clients не проверены.",
+      "sources": [
+        "https://core.telegram.org/bots/api"
+      ],
+      "preview": null,
+      "code_sha256": "801fb5c27fb2fc3c02cb01d67d76853b231b5c227e447c97f097f2151c41d252",
+      "tasks": [
+        "messages",
+        "bot"
+      ],
+      "contexts": [
+        "group",
+        "supergroup"
+      ],
+      "sdk": "python-telegram-bot",
+      "sdk_version": "22.8",
+      "api_version": "bot:10.0",
+      "source_files": [
+        "examples/ptb/ptb_ephemeral_bot.py",
+        "packages/python/src/telegram_patterns/ptb.py",
+        "packages/python/src/telegram_patterns/execution.py",
+        "packages/python/src/telegram_patterns/_offline_recipe.py"
+      ],
+      "check_files": [
+        "examples/ptb/offline_ptb_ephemeral.py",
+        "packages/python/tests/test_ptb.py"
+      ],
+      "variant_of": "demo-ephemeral",
+      "execution": {
+        "kind": "application",
+        "dependencies": [
+          "python-telegram-bot==22.8 (extra ptb)"
+        ],
+        "offline_environment": [],
+        "offline_permissions": [],
+        "offline_data": [
+          "Только поставляемые синтетические данные; реальные IDs и secrets не принимаются."
+        ],
+        "live_environment": [
+          "BOT_TOKEN"
+        ],
+        "live_permissions": [
+          "Прикладная авторизация сервиса; fixture actor не доказывает server ACL."
+        ],
+        "live_data": [
+          "Текущий Application python-telegram-bot, реальные actor/chat и сервис приложения",
+          "Проверка объекта, автора и состояния до effect/replay"
+        ],
+        "live_review": "Live executor отсутствует. Перед интеграцией проверить источники, ограничения конкретного метода/контекста, auth и ACL; metadata не подтверждает права.",
+        "effects": [
+          "python-telegram-bot Application + StubRequest; временная fixture, без polling"
+        ]
+      }
+    },
+    {
+      "id": "ptb-demo-stars-subscription",
+      "title": "Подписка Stars · python-telegram-bot",
+      "summary": "Ежемесячная подписка Stars; update subscription из api_kwargs меняет только продление",
+      "category": "scenarios",
+      "language": "python",
+      "maturity": "experimental",
+      "keywords": [
+        "ptb",
+        "python-telegram-bot",
+        "application",
+        "stars",
+        "subscription",
+        "платежные",
+        "запросы",
+        "композиция",
+        "бота",
+        "личный",
+        "чат"
+      ],
+      "code": "\"\"\"python-telegram-bot: monthly Stars subscription; charges, renewal updates and refunds decide access; no polling on import.\"\"\"\nimport time\nfrom collections.abc import Awaitable, Callable\nfrom typing import Any\n\nfrom telegram import LabeledPrice, Update\nfrom telegram.ext import Application, CommandHandler, ContextTypes, MessageHandler, PreCheckoutQueryHandler, TypeHandler, filters\nfrom telegram_patterns import STARS_SUBSCRIPTION_PERIOD, StarsSubscription, SubscriptionEventRejected, inline_button, inline_markup\nfrom telegram_patterns.ptb import ptb_markup\n\nLoad = Callable[[int, str], Awaitable[StarsSubscription | None]]\nSave = Callable[[StarsSubscription], Awaitable[None]]\n\n\ndef plan_payload(user_id: int) -> str:\n    return f'pro:{user_id}'  # BotSubscriptionUpdated names the subscription by user and payload only\n\n\ndef attach_stars_subscription(application: Application, *, load: Load, save: Save, price: int = 250,  # type: ignore[type-arg]\n                              clock: Callable[[], float] = time.time) -> None:\n    \"\"\"Bot API 10.2 `subscription` updates are unknown to python-telegram-bot 22.8 and arrive in Update.api_kwargs;\n    list \"subscription\" in allowed_updates explicitly when polling or setting the webhook.\"\"\"\n\n    async def state(user_id: int) -> StarsSubscription:\n        return await load(user_id, plan_payload(user_id)) or StarsSubscription(user_id, plan_payload(user_id))\n\n    async def subscribe(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:\n        message, user = update.effective_message, update.effective_user\n        if message is None or user is None:\n            return\n        link = await context.bot.create_invoice_link('Pro на месяц', 'Доступ к разделу Pro, продление каждые 30 дней', plan_payload(user.id),\n                                                     'XTR', [LabeledPrice('Pro на месяц', price)], subscription_period=STARS_SUBSCRIPTION_PERIOD)\n        await message.reply_text('Подписка продлевается каждые 30 дней.', reply_markup=ptb_markup(inline_markup([[inline_button(f'Оплатить {price} ⭐', url=link)]])))\n\n    async def checkout(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:\n        query = update.pre_checkout_query\n        if query is None:\n            return\n        ok = query.currency == 'XTR' and query.invoice_payload == plan_payload(query.from_user.id) and query.total_amount == price\n        await query.answer(ok, error_message=None if ok else 'Счет устарел, запросите новый: /subscribe')\n\n    async def paid(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:\n        message = update.effective_message\n        if message is None or message.successful_payment is None or message.from_user is None:\n            return\n        try:\n            sub = (await state(message.from_user.id)).record_payment(message.successful_payment.to_dict(), user_id=message.from_user.id,\n                                                                      paid_at=int(message.date.timestamp()))\n        except SubscriptionEventRejected:\n            return  # another product's payment or a conflicting duplicate: reconcile, grant nothing\n        await save(sub)\n\n    async def renewal(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:\n        event: Any = update.api_kwargs.get('subscription')\n        if not isinstance(event, dict) or not isinstance(event.get('user'), dict):\n            return\n        try:\n            sub = (await state(event['user']['id'])).record_update(event)\n        except SubscriptionEventRejected:\n            return\n        await save(sub)\n        if event.get('state') == 'failed' and sub.has_access(clock()):\n            await context.bot.send_message(event['user']['id'], 'Продление не прошло. Pro работает до конца оплаченного месяца.')\n\n    async def pro(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:\n        message, user = update.effective_message, update.effective_user\n        if message is not None and user is not None:\n            # Every protected action asks the stored charges with the current time.\n            await message.reply_text('Раздел Pro открыт.' if (await state(user.id)).has_access(clock()) else 'Нужна подписка: /subscribe')\n\n    application.add_handler(CommandHandler('subscribe', subscribe, filters=filters.ChatType.PRIVATE))\n    application.add_handler(PreCheckoutQueryHandler(checkout))\n    application.add_handler(MessageHandler(filters.SUCCESSFUL_PAYMENT, paid))\n    application.add_handler(CommandHandler('pro', pro))\n    application.add_handler(TypeHandler(Update, renewal), group=1)  # sees updates of every type, including unknown ones\n",
+      "verification": "mock",
+      "scope": "Synthetic python-telegram-bot Application + StubRequest исполнен при генерации. Telegram delivery/physical clients не проверены.",
+      "sources": [
+        "https://core.telegram.org/bots/api"
+      ],
+      "preview": null,
+      "code_sha256": "19c31081f1a2ab5814e6b81f61fc43bb153ce8af9eb407a255fdab50c27dda8f",
+      "tasks": [
+        "payments",
+        "bot"
+      ],
+      "contexts": [
+        "private"
+      ],
+      "sdk": "python-telegram-bot",
+      "sdk_version": "22.8",
+      "api_version": "bot:10.0",
+      "source_files": [
+        "examples/ptb/ptb_stars_subscription_bot.py",
+        "packages/python/src/telegram_patterns/ptb.py",
+        "packages/python/src/telegram_patterns/execution.py",
+        "packages/python/src/telegram_patterns/_offline_recipe.py"
+      ],
+      "check_files": [
+        "examples/ptb/offline_ptb_stars_subscription.py",
+        "packages/python/tests/test_ptb.py"
+      ],
+      "variant_of": "demo-stars-subscription",
+      "execution": {
+        "kind": "application",
+        "dependencies": [
+          "python-telegram-bot==22.8 (extra ptb)"
+        ],
+        "offline_environment": [],
+        "offline_permissions": [],
+        "offline_data": [
+          "Только поставляемые синтетические данные; реальные IDs и secrets не принимаются."
+        ],
+        "live_environment": [
+          "BOT_TOKEN"
+        ],
+        "live_permissions": [
+          "Прикладная авторизация сервиса; fixture actor не доказывает server ACL."
+        ],
+        "live_data": [
+          "Текущий Application python-telegram-bot, реальные actor/chat и сервис приложения",
+          "Проверка объекта, автора и состояния до effect/replay"
+        ],
+        "live_review": "Live executor отсутствует. Перед интеграцией проверить источники, ограничения конкретного метода/контекста, auth и ACL; metadata не подтверждает права.",
+        "effects": [
+          "python-telegram-bot Application + StubRequest; временная fixture, без polling"
+        ]
+      }
+    },
+    {
+      "id": "ptb-demo-community",
+      "title": "События сообщества · python-telegram-bot",
+      "summary": "Сервисные сообщения сообщества из api_kwargs, сверка через getChat",
+      "category": "scenarios",
+      "language": "python",
+      "maturity": "experimental",
+      "keywords": [
+        "ptb",
+        "python-telegram-bot",
+        "application",
+        "community",
+        "группы",
+        "и",
+        "модерация",
+        "композиция",
+        "бота",
+        "группа",
+        "супергруппа",
+        "канал"
+      ],
+      "code": "\"\"\"python-telegram-bot: community service messages (Bot API 10.2-10.3) from Message.api_kwargs; no polling on import.\"\"\"\nfrom collections.abc import Awaitable, Callable\nfrom typing import Any\n\nfrom telegram import Message, Update\nfrom telegram.ext import Application, CommandHandler, ContextTypes, MessageHandler, filters\n\nSave = Callable[[int, dict[str, Any] | None], Awaitable[None]]  # (chat_id, {'id', 'name'} or None)\nJoined = Callable[[int, int, dict[str, Any]], Awaitable[None]]\n\n\ndef attach_community_events(application: Application, *, save: Save, joined: Joined) -> None:  # type: ignore[type-arg]\n    \"\"\"Fields unknown to python-telegram-bot 22.8 keep their Bot API JSON in api_kwargs.\"\"\"\n\n    async def service(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:\n        message: Message | None = update.effective_message  # message or channel_post\n        if message is None:\n            return\n        extra = message.api_kwargs\n        if isinstance(extra.get('community_chat_added'), dict):\n            await save(message.chat.id, extra['community_chat_added']['community'])\n        elif 'community_chat_removed' in extra:\n            await save(message.chat.id, None)  # the event names no community: the stored link says which\n        elif isinstance(extra.get('community_chat_joined'), dict) and message.from_user is not None and not message.from_user.is_bot:\n            await joined(message.chat.id, message.from_user.id, extra['community_chat_joined']['community'])\n\n    async def show(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:\n        message = update.effective_message\n        if message is None:\n            return\n        chat = await context.bot.get_chat(message.chat.id)\n        community = chat.api_kwargs.get('community')  # ChatFullInfo.community, also unknown to this release\n        await save(message.chat.id, community if isinstance(community, dict) else None)\n        await message.reply_text(f'Группа входит в сообщество «{community[\"name\"]}».' if isinstance(community, dict)\n                                 else 'Группа не входит в сообщество.')\n\n    application.add_handler(CommandHandler('community', show, filters=filters.ChatType.GROUPS))\n    # Service messages arrive regardless of privacy mode; in a channel only to an administrator bot.\n    application.add_handler(MessageHandler(filters.ALL & ~filters.COMMAND, service), group=1)\n",
+      "verification": "mock",
+      "scope": "Synthetic python-telegram-bot Application + StubRequest исполнен при генерации. Telegram delivery/physical clients не проверены.",
+      "sources": [
+        "https://core.telegram.org/bots/api"
+      ],
+      "preview": null,
+      "code_sha256": "8c9da558607cc1851c4039c36e2a4d3b52eacc2d333958a39dbadb9bfdec4576",
+      "tasks": [
+        "moderation",
+        "bot"
+      ],
+      "contexts": [
+        "group",
+        "supergroup",
+        "channel"
+      ],
+      "sdk": "python-telegram-bot",
+      "sdk_version": "22.8",
+      "api_version": "bot:10.0",
+      "source_files": [
+        "examples/ptb/ptb_community_bot.py",
+        "packages/python/src/telegram_patterns/ptb.py",
+        "packages/python/src/telegram_patterns/execution.py",
+        "packages/python/src/telegram_patterns/_offline_recipe.py"
+      ],
+      "check_files": [
+        "examples/ptb/offline_ptb_community.py",
+        "packages/python/tests/test_ptb.py"
+      ],
+      "variant_of": "demo-community",
+      "execution": {
+        "kind": "application",
+        "dependencies": [
+          "python-telegram-bot==22.8 (extra ptb)"
+        ],
+        "offline_environment": [],
+        "offline_permissions": [],
+        "offline_data": [
+          "Только поставляемые синтетические данные; реальные IDs и secrets не принимаются."
+        ],
+        "live_environment": [
+          "BOT_TOKEN"
+        ],
+        "live_permissions": [
+          "Прикладная авторизация сервиса; fixture actor не доказывает server ACL."
+        ],
+        "live_data": [
+          "Текущий Application python-telegram-bot, реальные actor/chat и сервис приложения",
+          "Проверка объекта, автора и состояния до effect/replay"
+        ],
+        "live_review": "Live executor отсутствует. Перед интеграцией проверить источники, ограничения конкретного метода/контекста, auth и ACL; metadata не подтверждает права.",
+        "effects": [
+          "python-telegram-bot Application + StubRequest; временная fixture, без polling"
+        ]
+      }
+    },
+    {
+      "id": "ptb-demo-join-query",
+      "title": "Заявка с проверкой в Mini App · python-telegram-bot",
+      "summary": "Заявка с query_id: Mini App за 10 секунд, пользователь из подписанного initData, решение один раз",
+      "category": "scenarios",
+      "language": "python",
+      "maturity": "experimental",
+      "keywords": [
+        "ptb",
+        "python-telegram-bot",
+        "application",
+        "join",
+        "query",
+        "группы",
+        "и",
+        "модерация",
+        "композиция",
+        "бота",
+        "супергруппа",
+        "mini",
+        "app"
+      ],
+      "code": "\"\"\"python-telegram-bot: join request queries (Bot API 10.1) with a Mini App check and signed initData; no polling on import.\"\"\"\nimport time\nfrom collections.abc import Callable\nfrom typing import Any\nfrom urllib.parse import urlencode\n\nfrom telegram import Bot, Update\nfrom telegram.error import TelegramError\nfrom telegram.ext import Application, ChatJoinRequestHandler, ContextTypes\nfrom telegram_patterns import InvalidInitData, validate_init_data\n\nQUERY_WINDOW, MARGIN = 10.0, 2.0  # seconds to call sendChatJoinRequestWebApp or answerChatJoinRequestQuery\n\n\nclass JoinVerification:\n    \"\"\"pending holds (chat_id, user_id) -> query_id; production keeps it in shared durable storage.\"\"\"\n\n    def __init__(self, *, web_app_url: str, bot_token: str, clock: Callable[[], float] = time.time) -> None:\n        if not web_app_url.startswith('https://'):\n            raise ValueError('The Mini App URL must be HTTPS')\n        self.web_app_url, self.bot_token, self.clock = web_app_url, bot_token, clock\n        self.pending: dict[tuple[int, int], str] = {}\n        self.outcomes: list[tuple[int, int, str]] = []\n\n    def attach(self, application: Application) -> None:  # type: ignore[type-arg]\n        async def requested(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:\n            request = update.chat_join_request\n            query_id: Any = request.api_kwargs.get('query_id') if request is not None else None  # unknown to python-telegram-bot 22.8\n            if request is None or not isinstance(query_id, str) or request.from_user.is_bot:\n                return\n            key = (request.chat.id, request.from_user.id)\n            if self.clock() - request.date.timestamp() >= QUERY_WINDOW - MARGIN:\n                self.outcomes.append((*key, 'expired'))  # too late: the request stays with administrators\n                return\n            self.pending[key] = query_id\n            url = f'{self.web_app_url}?{urlencode({\"chat_id\": request.chat.id})}'\n            try:\n                await context.bot.do_api_request('sendChatJoinRequestWebApp', api_kwargs={'chat_join_request_query_id': query_id, 'web_app_url': url})\n            except TelegramError:\n                self.pending.pop(key, None)\n                await context.bot.do_api_request('answerChatJoinRequestQuery', api_kwargs={'chat_join_request_query_id': query_id, 'result': 'queue'})\n                self.outcomes.append((*key, 'queued'))\n\n        application.add_handler(ChatJoinRequestHandler(requested))\n\n    async def complete(self, bot: Bot, *, init_data: str, chat_id: int, passed: bool) -> str:\n        \"\"\"The Mini App backend calls this with raw initData; the user comes only from the signed data.\"\"\"\n        try:\n            launch = validate_init_data(init_data, self.bot_token, max_age_seconds=600, now=int(self.clock()))\n        except InvalidInitData:\n            return 'invalid'\n        query_id = self.pending.pop((chat_id, launch.user_id), None)\n        if query_id is None:\n            return 'unknown'\n        result = 'approve' if passed else 'decline'\n        try:\n            await bot.do_api_request('answerChatJoinRequestQuery', api_kwargs={'chat_join_request_query_id': query_id, 'result': result})\n        except TelegramError:\n            self.outcomes.append((chat_id, launch.user_id, 'unanswered'))\n            return 'unanswered'\n        self.outcomes.append((chat_id, launch.user_id, result))\n        return result\n",
+      "verification": "mock",
+      "scope": "Synthetic python-telegram-bot Application + StubRequest исполнен при генерации. Telegram delivery/physical clients не проверены.",
+      "sources": [
+        "https://core.telegram.org/bots/api"
+      ],
+      "preview": null,
+      "code_sha256": "a022991df077591d72cb32fb7be16d40d6a87216c0ca1021cce85baa3fb9cec1",
+      "tasks": [
+        "moderation",
+        "bot"
+      ],
+      "contexts": [
+        "supergroup",
+        "mini-app"
+      ],
+      "sdk": "python-telegram-bot",
+      "sdk_version": "22.8",
+      "api_version": "bot:10.0",
+      "source_files": [
+        "examples/ptb/ptb_join_query_bot.py",
+        "packages/python/src/telegram_patterns/ptb.py",
+        "packages/python/src/telegram_patterns/execution.py",
+        "packages/python/src/telegram_patterns/_offline_recipe.py"
+      ],
+      "check_files": [
+        "examples/ptb/offline_ptb_join_query.py",
+        "packages/python/tests/test_ptb.py"
+      ],
+      "variant_of": "demo-join-query",
+      "execution": {
+        "kind": "application",
+        "dependencies": [
+          "python-telegram-bot==22.8 (extra ptb)"
+        ],
+        "offline_environment": [],
+        "offline_permissions": [],
+        "offline_data": [
+          "Только поставляемые синтетические данные; реальные IDs и secrets не принимаются."
+        ],
+        "live_environment": [
+          "BOT_TOKEN"
+        ],
+        "live_permissions": [
+          "Прикладная авторизация сервиса; fixture actor не доказывает server ACL."
+        ],
+        "live_data": [
+          "Текущий Application python-telegram-bot, реальные actor/chat и сервис приложения",
+          "Проверка объекта, автора и состояния до effect/replay"
+        ],
+        "live_review": "Live executor отсутствует. Перед интеграцией проверить источники, ограничения конкретного метода/контекста, auth и ACL; metadata не подтверждает права.",
+        "effects": [
+          "python-telegram-bot Application + StubRequest; временная fixture, без polling"
+        ]
+      }
+    },
+    {
+      "id": "ptb-demo-recovery",
+      "title": "Потерянный ответ без второго заказа · python-telegram-bot",
+      "summary": "Ответ потерян после записи заказа: повторный update возвращает тот же заказ через SQLiteOnce",
+      "category": "scenarios",
+      "language": "python",
+      "maturity": "experimental",
+      "keywords": [
+        "ptb",
+        "python-telegram-bot",
+        "application",
+        "recovery",
+        "восстановление",
+        "операций",
+        "композиция",
+        "бота",
+        "личный",
+        "чат"
+      ],
+      "code": "\"\"\"python-telegram-bot: an order is created once; a lost response is reconciled with the same key; no polling on import.\"\"\"\nimport asyncio\nimport sqlite3\nfrom typing import Any\n\nfrom telegram import Update\nfrom telegram.ext import Application, CommandHandler, ContextTypes\nfrom telegram_patterns import SQLiteOnce\n\n\ndef attach_orders(application: Application, once: SQLiteOnce) -> None:  # type: ignore[type-arg]\n    \"\"\"once owns the orders table; the operation key comes from the chat and message, never from the text.\"\"\"\n\n    async def order(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:\n        message, user = update.effective_message, update.effective_user\n        if message is None or user is None:\n            return\n        scope, key = f'user:{user.id}', f'order:{message.chat.id}:{message.message_id}'  # a redelivered update has the same key\n\n        def create(db: sqlite3.Connection) -> dict[str, Any]:\n            cursor = db.execute('INSERT INTO orders(user_id, product) VALUES (?, ?)', (user.id, 'book'))\n            return {'id': cursor.lastrowid}\n        result = await asyncio.to_thread(once.run, scope, key, {'product': 'book'}, create)  # SQLite off the event loop\n        text = f'Заказ №{result.value[\"id\"]} уже создан.' if result.replayed else f'Заказ №{result.value[\"id\"]} создан.'\n        await message.reply_text(text)\n\n    application.add_handler(CommandHandler('order', order))\n",
+      "verification": "mock",
+      "scope": "Synthetic python-telegram-bot Application + StubRequest исполнен при генерации. Telegram delivery/physical clients не проверены.",
+      "sources": [
+        "https://core.telegram.org/bots/api"
+      ],
+      "preview": null,
+      "code_sha256": "a7d308e7311b9164a858ec086e096e0729ceb9fb5886e93de0fc5456ace4a9c6",
+      "tasks": [
+        "recovery",
+        "bot"
+      ],
+      "contexts": [
+        "private"
+      ],
+      "sdk": "python-telegram-bot",
+      "sdk_version": "22.8",
+      "api_version": "bot:10.0",
+      "source_files": [
+        "examples/ptb/ptb_recovery_bot.py",
+        "packages/python/src/telegram_patterns/ptb.py",
+        "packages/python/src/telegram_patterns/execution.py",
+        "packages/python/src/telegram_patterns/_offline_recipe.py"
+      ],
+      "check_files": [
+        "examples/ptb/offline_ptb_recovery.py",
+        "packages/python/tests/test_ptb.py"
+      ],
+      "variant_of": "demo-recovery",
+      "execution": {
+        "kind": "application",
+        "dependencies": [
+          "python-telegram-bot==22.8 (extra ptb)"
+        ],
+        "offline_environment": [],
+        "offline_permissions": [],
+        "offline_data": [
+          "Только поставляемые синтетические данные; реальные IDs и secrets не принимаются."
+        ],
+        "live_environment": [
+          "BOT_TOKEN"
+        ],
+        "live_permissions": [
+          "Прикладная авторизация сервиса; fixture actor не доказывает server ACL."
+        ],
+        "live_data": [
+          "Текущий Application python-telegram-bot, реальные actor/chat и сервис приложения",
+          "Проверка объекта, автора и состояния до effect/replay"
+        ],
+        "live_review": "Live executor отсутствует. Перед интеграцией проверить источники, ограничения конкретного метода/контекста, auth и ACL; metadata не подтверждает права.",
+        "effects": [
+          "python-telegram-bot Application + StubRequest; временная fixture, без polling"
+        ]
+      }
+    },
+    {
       "id": "demo-recovery",
       "title": "Потерянный ответ: сверка той же операции",
       "summary": "SQLite effect уже сохранен; unknown outcome сверяется тем же scoped ID без второго заказа.",
@@ -22725,6 +24393,7 @@
     },
     "sdks": {
       "aiogram": "aiogram",
+      "python-telegram-bot": "python-telegram-bot",
       "python-core": "Python core без SDK",
       "telegram-webapp": "Telegram WebApp (снимок)",
       "unspecified": "SDK не указан"

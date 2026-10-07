@@ -69,6 +69,14 @@ def plan_recipe(recipe_id: str) -> RecipeRunPlan:
         else:
             if installed != recipe.sdk_version:
                 blocked.append('sdk-differs-from-checked-fixture')
+    if recipe.sdk == 'python-telegram-bot':
+        try:
+            installed = importlib.metadata.version('python-telegram-bot')
+        except importlib.metadata.PackageNotFoundError:
+            blocked.append('ptb-extra-required')
+        else:
+            if installed != recipe.sdk_version:
+                blocked.append('sdk-differs-from-checked-fixture')
     if recipe.id == 'demo-calendar':
         try:
             data_version = importlib.metadata.version('tzdata')
