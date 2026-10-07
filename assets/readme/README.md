@@ -1,7 +1,7 @@
 # Визуальные материалы
 
 - `cover.png` — обложка, созданная встроенным imagegen 6 октября 2026 года. Это иллюстрация проекта, а не скриншот готового Telegram-приложения.
-- `gallery-light.png` — неизмененный скриншот Chrome из принятой проверки галереи 0.24.0. Исходный файл: `output/pattern-library-0.24.0/gallery-browser/desktop-light.png`; приемка: [031](../../docs/v1-checks/031.json). На снимке показан поиск цветных кнопок и веб-превью.
+- `gallery-light.png` — неизмененный скриншот Chrome из принятой проверки галереи 0.24.0. Исходный файл: `output/pattern-library-0.24.0/gallery-browser/desktop-light.png`; приемка: [031](https://github.com/Zulut30/awesome-telegram-skills/blob/fe16ba3ea3a2b4d5bbdc69ba09e7b2ed50c0c215/docs/v1-checks/031.json). На снимке показан поиск цветных кнопок и веб-превью.
 
 ## Промпт обложки
 

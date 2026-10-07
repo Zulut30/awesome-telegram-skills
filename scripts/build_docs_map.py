@@ -25,7 +25,7 @@ SECTIONS = ('learn', 'how-to', 'reference', 'explanation')
 def user_documents(root: Path) -> set[str]:
     docs = root / 'docs'
     return {path.relative_to(root).as_posix() for path in docs.rglob('*.md')
-            if not path.relative_to(docs).as_posix().startswith(('internal/', 'v1-checks/')) and path != root / 'docs/README.md'}
+            if not path.relative_to(docs).as_posix().startswith('internal/') and path != root / 'docs/README.md'}
 
 
 def problems(manifest: dict, root: Path) -> list[str]:

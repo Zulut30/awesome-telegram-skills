@@ -79,7 +79,7 @@
 
 Обновлять общую дату можно после повторной проверки всего указанного набора. Для частичного обновления укажите отдельно источник, дату и измененный инвариант в соответствующей reference.
 
-Логи и снимки с путями `output/…` — локальные артефакты исторических проверок. Они не входят в Git и не доступны в свежем клоне. Для текущей принятой версии смотрите [сохраненную приемку 031](v1-checks/031.json); для нового прогона выполните `python scripts/verify_pattern_packages.py`.
+Логи и снимки с путями `output/…` — локальные артефакты исторических проверок. Они не входят в Git и не доступны в свежем клоне. Для текущей принятой версии смотрите [сохраненную приемку 031](https://github.com/Zulut30/awesome-telegram-skills/blob/fe16ba3ea3a2b4d5bbdc69ba09e7b2ed50c0c215/docs/v1-checks/031.json); для нового прогона выполните `python scripts/verify_pattern_packages.py`.
 
 Изменения Bot API и Mini Apps отслеживает еженедельный workflow `.github/workflows/telegram-docs-watch.yml`. Задача Bot API пересобирает индекс со страницы core.telegram.org и сравнивает `scripts/diff_api_index.py` версию, имена методов и типов и их поля с индексом в репозитории. Задача Mini Apps строит `scripts/mini_app_index.py` индекс методов и событий с их `min_version` и свойств и сравнивает его `scripts/diff_mini_app_index.py` с `catalog/mini-app-index.json`; метод нового модуля без указанной в документации версии попадает в отчет с пометкой «версия не указана». SHA-256 страниц меняется при каждой пересборке и не сравнивается. При изменении открывается issue со списком новых, удаленных и измененных элементов; одно и то же изменение не дублируется.
 
@@ -225,7 +225,7 @@
 
 ### 2026-10-04 — пункт 10
 
-Для пункта 010 2026-10-04 отдельно сверены Bot API Update/Business rights/profile chat, Mini App launch/auth, Bot Features guest/bot-to-bot и MTProto auth/history; конкретные положения и расхождения источников — в [API boundaries](telegram-api-boundaries.md). Это не обновляет дату всего каталога; SDK/model probes находятся в docs/v1-checks/010.json.
+Для пункта 010 2026-10-04 отдельно сверены Bot API Update/Business rights/profile chat, Mini App launch/auth, Bot Features guest/bot-to-bot и MTProto auth/history; конкретные положения и расхождения источников — в [API boundaries](telegram-api-boundaries.md). Это не обновляет дату всего каталога; SDK/model probes находятся в https://github.com/Zulut30/awesome-telegram-skills/blob/fe16ba3ea3a2b4d5bbdc69ba09e7b2ed50c0c215/docs/v1-checks/010.json.
 
 ### 2026-10-04 — библиотека 0.5.0: CLI и стартеры
 

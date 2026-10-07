@@ -71,4 +71,4 @@ python -m unittest discover -s tests -v
 
 Первичные источники и точный контракт 0.1.1 указаны в [Python README](../../packages/python/README.md), [TypeScript README](../../packages/typescript/README.md) и [sources.md](../sources.md). Дата относится только к перечисленным проверенным контрактам.
 
-Логи и снимки с путями `output/…` — локальные артефакты исторических проверок. Они не входят в Git и не доступны в свежем клоне. Для текущей принятой версии смотрите [сохраненную приемку 031](../v1-checks/031.json); для нового прогона выполните `python scripts/verify_pattern_packages.py`.
+Логи и снимки с путями `output/…` — локальные артефакты исторических проверок. Они не входят в Git и не доступны в свежем клоне. Для текущей принятой версии смотрите [сохраненную приемку 031](https://github.com/Zulut30/awesome-telegram-skills/blob/fe16ba3ea3a2b4d5bbdc69ba09e7b2ed50c0c215/docs/v1-checks/031.json); для нового прогона выполните `python scripts/verify_pattern_packages.py`.

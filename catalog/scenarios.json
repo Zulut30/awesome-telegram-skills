@@ -12,7 +12,7 @@
       "guide": "docs/service-bot.md",
       "portable_guide": ".agents/skills/telegram-code-patterns/references/service-bot.md",
       "verification_command": "python scripts/verify_service_bot.py --wheel <PROVIDED_PATTERN_WHEEL> --output <NEW_PROOF_DIR>",
-      "evidence": "docs/v1-checks/017.json",
+      "evidence": "https://github.com/Zulut30/awesome-telegram-skills/blob/fe16ba3ea3a2b4d5bbdc69ba09e7b2ed50c0c215/docs/v1-checks/017.json",
       "maturity": "experimental",
       "verification": [
         "sdk",
@@ -39,7 +39,7 @@
       "guide": "docs/shop-example.md",
       "portable_guide": ".agents/skills/telegram-code-patterns/references/shop-example.md",
       "verification_command": "python scripts/verify_shop_example.py --wheel <PROVIDED_PATTERN_WHEEL> --tarball <PROVIDED_PATTERN_TARBALL> --output <NEW_PROOF_DIR>",
-      "evidence": "docs/v1-checks/018.json",
+      "evidence": "https://github.com/Zulut30/awesome-telegram-skills/blob/fe16ba3ea3a2b4d5bbdc69ba09e7b2ed50c0c215/docs/v1-checks/018.json",
       "maturity": "experimental",
       "verification": [
         "sdk",
@@ -72,7 +72,7 @@
       "guide": "docs/group-bot.md",
       "portable_guide": ".agents/skills/telegram-code-patterns/references/group-bot.md",
       "verification_command": "python scripts/verify_group_bot.py --wheel <PROVIDED_PATTERN_WHEEL> --output <NEW_PROOF_DIR>",
-      "evidence": "docs/v1-checks/019.json",
+      "evidence": "https://github.com/Zulut30/awesome-telegram-skills/blob/fe16ba3ea3a2b4d5bbdc69ba09e7b2ed50c0c215/docs/v1-checks/019.json",
       "maturity": "experimental",
       "verification": [
         "sdk",

@@ -185,7 +185,7 @@ Start with `telegram-project-planner` for a new project, `telegram-code-patterns
 
 ## Quality and limits
 
-Release 0.24.0 passed 77 acceptance stages: 460 Python tests, 26 TypeScript tests, 2435 automated browser checks and 60 first-run checks. The built wheel and tarball were installed into separate consumer projects. [Acceptance report](docs/v1-checks/031.json) · [Support matrix](docs/support-matrix.md) · [Support policy](docs/versioning.md#политика-поддержки).
+Release 0.24.0 passed 77 acceptance stages: 460 Python tests, 26 TypeScript tests, 2435 automated browser checks and 60 first-run checks. The built wheel and tarball were installed into separate consumer projects. [Acceptance report](https://github.com/Zulut30/awesome-telegram-skills/blob/fe16ba3ea3a2b4d5bbdc69ba09e7b2ed50c0c215/docs/v1-checks/031.json) · [Support matrix](docs/support-matrix.md) · [Support policy](docs/versioning.md#политика-поддержки).
 
 The API catalog contains request examples; it does not mean that every Telegram feature is implemented and tested in a production app. Bot API, Mini Apps and user MTProto sessions have separate access boundaries.
 

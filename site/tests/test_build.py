@@ -96,7 +96,8 @@ class DocumentationOperations(unittest.TestCase):
         typescript = source / 'packages/typescript/package.json'
         typescript.parent.mkdir(parents=True)
         typescript.write_text('{"version":"0.0.0-unaccepted"}', encoding='utf-8')
-        (source / 'docs/v1-checks').mkdir(parents=True)
+        (source / 'docs').mkdir()
+        (source / 'docs/acceptance-history.json').write_text(json.dumps({'reports': [{'version': '0.24.0', 'passed': True}]}), encoding='utf-8')
         destination = self.base / 'refused-site'
         with self.assertRaisesRegex(ValueError, 'accepted version'):
             Builder(source, destination, 'https://example.test/', 'preview')

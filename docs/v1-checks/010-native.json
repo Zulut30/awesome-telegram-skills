@@ -1,8 +1,0 @@
-{
-  "passed": true,
-  "network": false,
-  "native_presence_checks": 3,
-  "keyboard_calls": 1,
-  "inline_calls": 0,
-  "limits": "Synthetic SDK/host launch guard, not real client acceptance"
-}

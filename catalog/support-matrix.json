@@ -82,7 +82,7 @@
     "platform_families": 7,
     "portable_platform_blocks": 1
   },
-  "evidence": "docs/v1-checks/030.json",
+  "evidence": "https://github.com/Zulut30/awesome-telegram-skills/blob/fe16ba3ea3a2b4d5bbdc69ba09e7b2ed50c0c215/docs/v1-checks/030.json",
   "artifacts": [
     {
       "name": "awesome_telegram_patterns-0.23.0-py3-none-any.whl",
@@ -118,7 +118,7 @@
     "service-bot": {
       "version": "0.1.0",
       "library_version": "0.13.0",
-      "evidence": "docs/v1-checks/017.json",
+      "evidence": "https://github.com/Zulut30/awesome-telegram-skills/blob/fe16ba3ea3a2b4d5bbdc69ba09e7b2ed50c0c215/docs/v1-checks/017.json",
       "verified": {
         "os": "Windows 11 AMD64",
         "python": "3.13.12",
@@ -138,7 +138,7 @@
     "shop-mini-app": {
       "version": "0.1.0",
       "library_version": "0.13.0",
-      "evidence": "docs/v1-checks/018.json",
+      "evidence": "https://github.com/Zulut30/awesome-telegram-skills/blob/fe16ba3ea3a2b4d5bbdc69ba09e7b2ed50c0c215/docs/v1-checks/018.json",
       "verified": {
         "os": "Windows 11 AMD64",
         "python": "3.13.12",
@@ -165,7 +165,7 @@
     "group-bot": {
       "version": "0.1.0",
       "library_version": "0.13.0",
-      "evidence": "docs/v1-checks/019.json",
+      "evidence": "https://github.com/Zulut30/awesome-telegram-skills/blob/fe16ba3ea3a2b4d5bbdc69ba09e7b2ed50c0c215/docs/v1-checks/019.json",
       "verified": {
         "os": "Windows 11 AMD64",
         "python": "3.13.12",

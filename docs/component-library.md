@@ -1,6 +1,6 @@
 # Общая библиотека компонентов
 
-Текущая локальная поставка 0.24.0: 51 группа компонентов, 285 публичных Python/TypeScript-символов и 340 рецептов. 241 Python fixtures имеют закрытый executor, 99 native references требуют host/аргументов. [Восстановление диалога](dialog-restart.md) сохраняет atomic step/version/deadline и pending ID; текущие Dispatcher/storage остаются проектными. [Приемка 031](v1-checks/031.json) привязана к matching wheel/tarball; исторические отчеты сохраняют версии.
+Текущая локальная поставка 0.24.0: 51 группа компонентов, 285 публичных Python/TypeScript-символов и 340 рецептов. 241 Python fixtures имеют закрытый executor, 99 native references требуют host/аргументов. [Восстановление диалога](dialog-restart.md) сохраняет atomic step/version/deadline и pending ID; текущие Dispatcher/storage остаются проектными. [Приемка 031](https://github.com/Zulut30/awesome-telegram-skills/blob/fe16ba3ea3a2b4d5bbdc69ba09e7b2ed50c0c215/docs/v1-checks/031.json) привязана к matching wheel/tarball; исторические отчеты сохраняют версии.
 
 [Формы 0.3.0](internal/form-tools-review.md) добавляют поля с проверкой, возврат, отмену и подтверждение со стабильным ID заявки. Готовый [бот формы](../examples/python/form_bot.py) и [offline-проверка](../examples/python/offline_form.py) используют один create_app; backend сохраняет заявку и replay result в SQLite.
 
@@ -110,8 +110,8 @@ Playwright — только dev dependency проверки, не runtime при
 
 Составные элементы выбора: `SelectionOption/Spec/Context/State/Result/SelectionMenu` из SDK-free root и `selection_keyboard/selection_router` из optional aiogram. [Server rules и confirmation](selection-controls.md) описывают границы локального намерения и бизнес-транзакции host.
 
-[Медиа 0.20.0](media.md): requests/bytes/file_id/album/edit и bounded explicit read; optional aiogram, без нового обязательного сервиса. Полная приемка — [027](v1-checks/027.json).
+[Медиа 0.20.0](media.md): requests/bytes/file_id/album/edit и bounded explicit read; optional aiogram, без нового обязательного сервиса. Полная приемка — [027](https://github.com/Zulut30/awesome-telegram-skills/blob/fe16ba3ea3a2b4d5bbdc69ba09e7b2ed50c0c215/docs/v1-checks/027.json).
 
-[Профили 0.21.0](profiles.md): immutable nullable facts/photos, локализация и current method ACL собственного бота; полная приемка — [028](v1-checks/028.json).
+[Профили 0.21.0](profiles.md): immutable nullable facts/photos, локализация и current method ACL собственного бота; полная приемка — [028](https://github.com/Zulut30/awesome-telegram-skills/blob/fe16ba3ea3a2b4d5bbdc69ba09e7b2ed50c0c215/docs/v1-checks/028.json).
 
 [Темы и специальные операции](platform-operations.md): `telegram_patterns.aiogram` сохраняет SDK/Dispatcher/storage проекта и требует current host policy/atomic intent; все семь семейств представлены исполняемой композицией.

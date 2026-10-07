@@ -28,6 +28,7 @@ python scripts/build_release.py --ref v0.24.0 --notes
    ```
 
 4. Workflow Release соберет артефакты из тега и опубликует релиз. Тот же тег запускает workflow [Full acceptance](../.github/workflows/full-acceptance.yml): полный `verify_pattern_packages.py` на Ubuntu и macOS с отчетами в артефактах запуска.
+5. Когда Full acceptance пройдет, его задача `release-report` приложит `distribution-report.json` к релизу, а в сводке запуска покажет SHA-256 и команду. Скачайте файл и добавьте строку в [историю приемки](acceptance-history.md): `python scripts/build_acceptance_history.py --add distribution-report.json --name X.Y.Z-distribution.json --url https://github.com/Zulut30/awesome-telegram-skills/releases/download/vX.Y.Z/distribution-report.json`, затем закоммитьте `docs/acceptance-history.json` и `.md`. Сам отчет в репозиторий не кладите.
 
 ## Релизы для существующих тегов
 

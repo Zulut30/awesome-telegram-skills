@@ -12,7 +12,7 @@
 
 ## Подтвержденное локальное состояние
 
-Прочитаны Git HEAD `14fc770`, README, manifests двух пакетов, `components.json`, план, регистр, scope и [приемка 027](../v1-checks/027.json). Статус done у **1–19 и 21–27**, всего **26/100**. Пункт **20 pending**: нет предусмотренного человеческого и независимого AI baseline. Существующие незакоммиченные `catalog/first-use-tasks.json` и `docs/first-use-study.md` не изменялись.
+Прочитаны Git HEAD `14fc770`, README, manifests двух пакетов, `components.json`, план, регистр, scope и [приемка 027](https://github.com/Zulut30/awesome-telegram-skills/blob/fe16ba3ea3a2b4d5bbdc69ba09e7b2ed50c0c215/docs/v1-checks/027.json). Статус done у **1–19 и 21–27**, всего **26/100**. Пункт **20 pending**: нет предусмотренного человеческого и независимого AI baseline. Существующие незакоммиченные `catalog/first-use-tasks.json` и `docs/first-use-study.md` не изменялись.
 
 Версия — **0.20.0**, **38 групп компонентов**, все experimental, **174 публичных символа**, **41 навык**, **305 рецептов**. Число рецептов не является оценкой полноты production-сценариев Telegram.
 

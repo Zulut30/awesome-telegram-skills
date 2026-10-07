@@ -100,6 +100,12 @@ class CiWorkflowTests(unittest.TestCase):
         self.assertIn('issues: write', text)
         self.assertIn('gh issue create', text)
         self.assertIn('gh issue comment', text)
+        # On a tag the full report becomes a release asset; only that short job may write.
+        release = text.split('\n  release-report:\n', 1)[1].split('\n  report:\n', 1)[0]
+        self.assertIn("if: github.event_name == 'push' && startsWith(github.ref, 'refs/tags/v')", release)
+        self.assertIn('contents: write', release)
+        self.assertIn('gh release upload "$TAG"', release)
+        self.assertNotIn('contents: write', text.split('\n  release-report:\n', 1)[0])
 
     def test_dependabot_covers_pins_and_keeps_sha_pinned_actions(self):
         config = (ROOT / '.github/dependabot.yml').read_text(encoding='utf-8')

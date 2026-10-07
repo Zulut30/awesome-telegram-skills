@@ -30,10 +30,10 @@
         "packages/python/src/telegram_patterns/recipes.py",
         "gallery/index.html",
         ".agents/skills/telegram-code-patterns/references/maturity.md",
-        "docs/v1-checks/002.json"
+        "https://github.com/Zulut30/awesome-telegram-skills/blob/fe16ba3ea3a2b4d5bbdc69ba09e7b2ed50c0c215/docs/v1-checks/002.json"
       ],
       "evidence": [
-        "docs/v1-checks/002.json",
+        "https://github.com/Zulut30/awesome-telegram-skills/blob/fe16ba3ea3a2b4d5bbdc69ba09e7b2ed50c0c215/docs/v1-checks/002.json",
         "36 distribution stages passed; 84 Python passed + 1 skip; 21 TypeScript passed; 452 Chrome checks",
         "Installed core maturity CLI and portable skill recipes passed; generator write/check in temporary directory preserved owned file"
       ]
@@ -91,10 +91,10 @@
         "tests/public_types.py",
         "tests/public-types.ts",
         "packages/python/tests/test_public_api.py",
-        "docs/v1-checks/006.json"
+        "https://github.com/Zulut30/awesome-telegram-skills/blob/fe16ba3ea3a2b4d5bbdc69ba09e7b2ed50c0c215/docs/v1-checks/006.json"
       ],
       "evidence": [
-        "docs/v1-checks/006.json",
+        "https://github.com/Zulut30/awesome-telegram-skills/blob/fe16ba3ea3a2b4d5bbdc69ba09e7b2ed50c0c215/docs/v1-checks/006.json",
         "19 original Mypy errors fixed without blanket ignores; all public symbols resolve; old explicit SDK import remains accessible",
         "39 distribution stages, 87 Python passed + 1 skip, 21 TypeScript passed, 452 Chrome checks; source/wheel bytes match"
       ]
@@ -111,10 +111,10 @@
         "docs/error-model.md",
         "examples/python/error_recovery.py",
         ".agents/skills/telegram-code-patterns/references/errors.md",
-        "docs/v1-checks/007.json"
+        "https://github.com/Zulut30/awesome-telegram-skills/blob/fe16ba3ea3a2b4d5bbdc69ba09e7b2ed50c0c215/docs/v1-checks/007.json"
       ],
       "evidence": [
-        "docs/v1-checks/007.json",
+        "https://github.com/Zulut30/awesome-telegram-skills/blob/fe16ba3ea3a2b4d5bbdc69ba09e7b2ed50c0c215/docs/v1-checks/007.json",
         "41 distribution stages passed; 94 Python passed + 1 skip; 25 TypeScript passed; 452 Chrome checks",
         "Installed wheel/tarball types and core lost-response reconciliation passed; same form operation identity preserved; portable skill example executed; wheel files match source bytes"
       ]
@@ -131,10 +131,10 @@
         "docs/extension-model.md",
         "examples/python/custom_adapters.py",
         ".agents/skills/telegram-code-patterns/references/extensions.md",
-        "docs/v1-checks/008.json"
+        "https://github.com/Zulut30/awesome-telegram-skills/blob/fe16ba3ea3a2b4d5bbdc69ba09e7b2ed50c0c215/docs/v1-checks/008.json"
       ],
       "evidence": [
-        "docs/v1-checks/008.json",
+        "https://github.com/Zulut30/awesome-telegram-skills/blob/fe16ba3ea3a2b4d5bbdc69ba09e7b2ed50c0c215/docs/v1-checks/008.json",
         "43 distribution stages passed; 96 Python passed + 1 skip; 26 TypeScript passed; 452 Chrome checks",
         "Installed core custom SQLite/transport/provider fixture passed outside source tree; Mypy structural assignment passed; tarball custom storage/fetch types/runtime passed; wheel source bytes exact"
       ]
@@ -149,10 +149,10 @@
         "scripts/verify_distribution_contract.py",
         "tests/test_distribution_contract.py",
         "docs/distribution-contract.md",
-        "docs/v1-checks/009.json"
+        "https://github.com/Zulut30/awesome-telegram-skills/blob/fe16ba3ea3a2b4d5bbdc69ba09e7b2ed50c0c215/docs/v1-checks/009.json"
       ],
       "evidence": [
-        "docs/v1-checks/009.json",
+        "https://github.com/Zulut30/awesome-telegram-skills/blob/fe16ba3ea3a2b4d5bbdc69ba09e7b2ed50c0c215/docs/v1-checks/009.json",
         "44 distribution stages passed; 96 Python passed + 1 skip; 26 TypeScript passed; 452 Chrome checks",
         "7 negative archive cases + 23 root tests; source/resources/RECORD, all 9 JS/declaration pairs, CSS and export map verified; installed wheel/tarball consumers passed"
       ]
@@ -169,10 +169,10 @@
         ".agents/skills/telegram-code-patterns/references/api-boundaries.md",
         "scripts/check_telegram_boundaries.py",
         "scripts/check_native_boundaries.mjs",
-        "docs/v1-checks/010.json"
+        "https://github.com/Zulut30/awesome-telegram-skills/blob/fe16ba3ea3a2b4d5bbdc69ba09e7b2ed50c0c215/docs/v1-checks/010.json"
       ],
       "evidence": [
-        "docs/v1-checks/010.json",
+        "https://github.com/Zulut30/awesome-telegram-skills/blob/fe16ba3ea3a2b4d5bbdc69ba09e7b2ed50c0c215/docs/v1-checks/010.json",
         "Four API/identity surfaces and 12 scenario boundaries reviewed against fresh primary docs; bot-to-bot/guest and business right naming discrepancies recorded",
         "Installed wheel SDK probe and tarball native presence/host launch gate passed outside source tree; wrong history route and Python -O rejected; 23 root tests and 41 standalone skills passed"
       ]
@@ -189,11 +189,11 @@
         "scripts/verify_quickstart.py",
         "scripts/check_quickstart_browser.mjs",
         "packages/python/src/telegram_patterns/starter.py",
-        "docs/v1-checks/011.json"
+        "https://github.com/Zulut30/awesome-telegram-skills/blob/fe16ba3ea3a2b4d5bbdc69ba09e7b2ed50c0c215/docs/v1-checks/011.json"
       ],
       "evidence": [
-        "docs/v1-checks/011.json",
-        "docs/v1-checks/011-first-run.json",
+        "https://github.com/Zulut30/awesome-telegram-skills/blob/fe16ba3ea3a2b4d5bbdc69ba09e7b2ed50c0c215/docs/v1-checks/011.json",
+        "https://github.com/Zulut30/awesome-telegram-skills/blob/fe16ba3ea3a2b4d5bbdc69ba09e7b2ed50c0c215/docs/v1-checks/011-first-run.json",
         "0.9.1 npm encoded-path regression fixed in 0.9.2; all documented commands executed in a new external Windows consumer with spaces",
         "44 distribution stages; 97 Python passed + 1 skip; 26 TypeScript; 452 distribution Chrome checks plus 60 documented-first-run checks; 23 root tests and 41 skills",
         "Installed origins, offline Dispatcher, doctor, build, six screen/theme combinations and repeat-setup preservation passed; no live Telegram or usability study claimed"
@@ -215,12 +215,12 @@
         "tests/selected-starter-browser.mjs",
         "docs/starter-selection.md",
         ".agents/skills/telegram-code-patterns/references/starter-selection.md",
-        "docs/v1-checks/012.json"
+        "https://github.com/Zulut30/awesome-telegram-skills/blob/fe16ba3ea3a2b4d5bbdc69ba09e7b2ed50c0c215/docs/v1-checks/012.json"
       ],
       "evidence": [
-        "docs/v1-checks/012.json",
-        "docs/v1-checks/012-selection.json",
-        "docs/v1-checks/012-first-run.json",
+        "https://github.com/Zulut30/awesome-telegram-skills/blob/fe16ba3ea3a2b4d5bbdc69ba09e7b2ed50c0c215/docs/v1-checks/012.json",
+        "https://github.com/Zulut30/awesome-telegram-skills/blob/fe16ba3ea3a2b4d5bbdc69ba09e7b2ed50c0c215/docs/v1-checks/012-selection.json",
+        "https://github.com/Zulut30/awesome-telegram-skills/blob/fe16ba3ea3a2b4d5bbdc69ba09e7b2ed50c0c215/docs/v1-checks/012-first-run.json",
         "52 distribution stages; 103 Python passed + 1 skip; 26 TypeScript; 528 distribution Chrome checks plus 60 first-run checks; 23 root tests and 41 skills",
         "15 selectable starter groups compose real routes/modules; exact 19-file dry-run, version/path/command/callback preflight and repeat preservation",
         "Installed selected app origin outside generated tree; seven commands, foreign form callback ACK before service, storage/native fallback and disposal checked; no live/device/payment acceptance claimed"
@@ -239,13 +239,13 @@
         "scripts/verify_doctor_consumer.py",
         "docs/doctor.md",
         ".agents/skills/telegram-code-patterns/references/doctor.md",
-        "docs/v1-checks/013.json"
+        "https://github.com/Zulut30/awesome-telegram-skills/blob/fe16ba3ea3a2b4d5bbdc69ba09e7b2ed50c0c215/docs/v1-checks/013.json"
       ],
       "evidence": [
-        "docs/v1-checks/013.json",
-        "docs/v1-checks/013-doctor.json",
-        "docs/v1-checks/013-first-run.json",
-        "docs/v1-checks/013-regression.json",
+        "https://github.com/Zulut30/awesome-telegram-skills/blob/fe16ba3ea3a2b4d5bbdc69ba09e7b2ed50c0c215/docs/v1-checks/013.json",
+        "https://github.com/Zulut30/awesome-telegram-skills/blob/fe16ba3ea3a2b4d5bbdc69ba09e7b2ed50c0c215/docs/v1-checks/013-doctor.json",
+        "https://github.com/Zulut30/awesome-telegram-skills/blob/fe16ba3ea3a2b4d5bbdc69ba09e7b2ed50c0c215/docs/v1-checks/013-first-run.json",
+        "https://github.com/Zulut30/awesome-telegram-skills/blob/fe16ba3ea3a2b4d5bbdc69ba09e7b2ed50c0c215/docs/v1-checks/013-regression.json",
         "53 distribution stages; 112 Python passed + 1 skip; 26 TypeScript; 528 distribution Chrome checks plus 60 first-run checks; 23 root tests and 41 skills",
         "12 installed doctor cases and 5 explicit repair commands; configuration preserved, token/config/process payloads not reflected",
         "Real project SDK shadow regression reproduced and fixed; isolated installed adapter imports prevent aiogram/aiohttp fixture side effects; no network checks or live/device/usability claim"
@@ -267,10 +267,10 @@
         "examples/api-reference",
         "scripts/build_api_reference.py",
         "scripts/verify_api_reference.py",
-        "docs/v1-checks/014.json"
+        "https://github.com/Zulut30/awesome-telegram-skills/blob/fe16ba3ea3a2b4d5bbdc69ba09e7b2ed50c0c215/docs/v1-checks/014.json"
       ],
       "evidence": [
-        "docs/v1-checks/014.json",
+        "https://github.com/Zulut30/awesome-telegram-skills/blob/fe16ba3ea3a2b4d5bbdc69ba09e7b2ed50c0c215/docs/v1-checks/014.json",
         "55 distribution stages; 112 Python passed + 1 skip; 26 TypeScript passed; 564 Chrome checks plus 60 first-run checks",
         "116 public symbols, 18 exact fenced doc examples in installed wheel/tarball consumers; Mypy/strict TS, 41 compiler bindings, CLI/CSS and 7 negative typing cases",
         "26 root tests; 41 standalone skills; real temporary generator write/check/negative drift cases; actual installed unused-type rejection with byte-exact restoration"
@@ -291,10 +291,10 @@
         "packages/python/src/telegram_patterns/cli.py",
         "scripts/build_recipe_gallery.py",
         "scripts/verify_gallery_export.py",
-        "docs/v1-checks/015.json"
+        "https://github.com/Zulut30/awesome-telegram-skills/blob/fe16ba3ea3a2b4d5bbdc69ba09e7b2ed50c0c215/docs/v1-checks/015.json"
       ],
       "evidence": [
-        "docs/v1-checks/015.json",
+        "https://github.com/Zulut30/awesome-telegram-skills/blob/fe16ba3ea3a2b4d5bbdc69ba09e7b2ed50c0c215/docs/v1-checks/015.json",
         "56 distribution stages; 114 Python passed + 1 skip; 26 TypeScript; 1147 full Chrome checks plus 60 first-run checks; 26 root tests and 41 skills",
         "299 records with intersecting task/context/SDK/version/maturity/evidence filters; three requested searches, negative context/version, reset/focus and source link cases",
         "201 byte-exact standalone source/check files; installed SDK-free CLI, read-only export check and owned-note preservation outside repository",
@@ -315,13 +315,13 @@
         "docs/recipe-execution.md",
         ".agents/skills/telegram-code-patterns/references/recipe-execution.md",
         "gallery/index.html",
-        "docs/v1-checks/016.json"
+        "https://github.com/Zulut30/awesome-telegram-skills/blob/fe16ba3ea3a2b4d5bbdc69ba09e7b2ed50c0c215/docs/v1-checks/016.json"
       ],
       "evidence": [
-        "docs/v1-checks/016.json",
-        "docs/v1-checks/016-execution.json",
-        "docs/v1-checks/016-first-run.json",
-        "docs/v1-checks/016-regression.json",
+        "https://github.com/Zulut30/awesome-telegram-skills/blob/fe16ba3ea3a2b4d5bbdc69ba09e7b2ed50c0c215/docs/v1-checks/016.json",
+        "https://github.com/Zulut30/awesome-telegram-skills/blob/fe16ba3ea3a2b4d5bbdc69ba09e7b2ed50c0c215/docs/v1-checks/016-execution.json",
+        "https://github.com/Zulut30/awesome-telegram-skills/blob/fe16ba3ea3a2b4d5bbdc69ba09e7b2ed50c0c215/docs/v1-checks/016-first-run.json",
+        "https://github.com/Zulut30/awesome-telegram-skills/blob/fe16ba3ea3a2b4d5bbdc69ba09e7b2ed50c0c215/docs/v1-checks/016-regression.json",
         "57 distribution stages; 119 Python passed + 1 skip; 26 TypeScript; 1259 Chrome plus 60 documented first-run checks; 26 root tests; 41 skills",
         "299 prerequisite plans; all 200 Python fixtures in installed SDK/core consumers; native/missing SDK pre-child refusal, no inherited credentials, caller files preserved, two guard refusals",
         "Windows isolated JSON encoding and generic gallery locator failures reproduced and corrected; failed candidate preserved; maturity unchanged, no live/physical client/OS sandbox claim"
@@ -338,7 +338,7 @@
         "scripts/verify_service_bot.py",
         "docs/service-bot.md",
         "catalog/scenarios.json",
-        "docs/v1-checks/017.json"
+        "https://github.com/Zulut30/awesome-telegram-skills/blob/fe16ba3ea3a2b4d5bbdc69ba09e7b2ed50c0c215/docs/v1-checks/017.json"
       ],
       "evidence": [
         "Separate application wheel built and installed with accepted library 0.13.0 wheel outside repository; exact 6 application source files, installed module origins and 5-file Mypy pass.",
@@ -359,7 +359,7 @@
         "scripts/check_shop_browser.mjs",
         "docs/shop-example.md",
         "catalog/scenarios.json",
-        "docs/v1-checks/018.json"
+        "https://github.com/Zulut30/awesome-telegram-skills/blob/fe16ba3ea3a2b4d5bbdc69ba09e7b2ed50c0c215/docs/v1-checks/018.json"
       ],
       "evidence": [
         "Installed separate application wheel + accepted library 0.13.0 wheel/tarball in external consumer; exact 8 Python source files, RECORD and installed console help; 19 byte-exact vendor files; Mypy 7 source files and strict TypeScript build.",
@@ -382,11 +382,11 @@
         "catalog/scenarios.json",
         "catalog/support-matrix.json",
         ".agents/skills/telegram-code-patterns/references/group-bot.md",
-        "docs/v1-checks/019.json",
-        "docs/v1-checks/019-group.json"
+        "https://github.com/Zulut30/awesome-telegram-skills/blob/fe16ba3ea3a2b4d5bbdc69ba09e7b2ed50c0c215/docs/v1-checks/019.json",
+        "https://github.com/Zulut30/awesome-telegram-skills/blob/fe16ba3ea3a2b4d5bbdc69ba09e7b2ed50c0c215/docs/v1-checks/019-group.json"
       ],
       "evidence": [
-        "docs/v1-checks/019.json",
+        "https://github.com/Zulut30/awesome-telegram-skills/blob/fe16ba3ea3a2b4d5bbdc69ba09e7b2ed50c0c215/docs/v1-checks/019.json",
         "Separate installed application wheel; exact six source files/RECORD/entrypoint; Mypy; 19 SDK/file-SQLite behavioral tests; four distinct process phases including actual exit 77 and unknown recovery without resend",
         "Bot/actor rights refreshed before preview, effect and replay; context/prompt ACL; queue/new-version/membership/migration; temporary moderation; shutdown joins active handlers before OS unlock",
         "32 root tests and 41 standalone skills; existing output and real junction refusal preserve caller files; library 0.13.0 artifacts/public exports unchanged",
@@ -413,13 +413,13 @@
         "packages/python/tests/test_keyboard_layouts.py",
         "examples/python/keyboard_layouts.py",
         "docs/keyboard-layouts.md",
-        "docs/v1-checks/021.json",
-        "docs/v1-checks/021-distribution.json",
-        "docs/v1-checks/021-first-run.json",
-        "docs/v1-checks/021-portable.json"
+        "https://github.com/Zulut30/awesome-telegram-skills/blob/fe16ba3ea3a2b4d5bbdc69ba09e7b2ed50c0c215/docs/v1-checks/021.json",
+        "https://github.com/Zulut30/awesome-telegram-skills/blob/fe16ba3ea3a2b4d5bbdc69ba09e7b2ed50c0c215/docs/v1-checks/021-distribution.json",
+        "https://github.com/Zulut30/awesome-telegram-skills/blob/fe16ba3ea3a2b4d5bbdc69ba09e7b2ed50c0c215/docs/v1-checks/021-first-run.json",
+        "https://github.com/Zulut30/awesome-telegram-skills/blob/fe16ba3ea3a2b4d5bbdc69ba09e7b2ed50c0c215/docs/v1-checks/021-portable.json"
       ],
       "evidence": [
-        "docs/v1-checks/021.json",
+        "https://github.com/Zulut30/awesome-telegram-skills/blob/fe16ba3ea3a2b4d5bbdc69ba09e7b2ed50c0c215/docs/v1-checks/021.json",
         "0.14.0 synchronized local wheel/tarball; 58 distribution stages, 126 Python passed + 1 skip, 26 TypeScript, 1259 browser checks + 60 quickstart checks",
         "Seven layout tests; immutable widths and native model snapshots; 2/3/mixed last/cycle tail; invalid native fields/context rejected before style/emoji fallback; previous builders preserved",
         "125 public symbols/19 documented examples; installed SDK composition and exact two portable guide blocks; source Mypy 22 files, 32 root tests and 41 standalone skills",
@@ -442,13 +442,13 @@
         "examples/api-reference/python/bot_navigation.py",
         "docs/message-navigation.md",
         ".agents/skills/telegram-code-patterns/references/message-navigation.md",
-        "docs/v1-checks/022.json",
-        "docs/v1-checks/022-distribution.json",
-        "docs/v1-checks/022-first-run.json",
-        "docs/v1-checks/022-portable.json"
+        "https://github.com/Zulut30/awesome-telegram-skills/blob/fe16ba3ea3a2b4d5bbdc69ba09e7b2ed50c0c215/docs/v1-checks/022.json",
+        "https://github.com/Zulut30/awesome-telegram-skills/blob/fe16ba3ea3a2b4d5bbdc69ba09e7b2ed50c0c215/docs/v1-checks/022-distribution.json",
+        "https://github.com/Zulut30/awesome-telegram-skills/blob/fe16ba3ea3a2b4d5bbdc69ba09e7b2ed50c0c215/docs/v1-checks/022-first-run.json",
+        "https://github.com/Zulut30/awesome-telegram-skills/blob/fe16ba3ea3a2b4d5bbdc69ba09e7b2ed50c0c215/docs/v1-checks/022-portable.json"
       ],
       "evidence": [
-        "docs/v1-checks/022.json",
+        "https://github.com/Zulut30/awesome-telegram-skills/blob/fe16ba3ea3a2b4d5bbdc69ba09e7b2ed50c0c215/docs/v1-checks/022.json",
         "0.15.0 synchronized local wheel/tarball; 59 stages, 143 Python passed + 1 Windows skip, 26 TypeScript, 1371 browser checks + 60 first-run checks",
         "17 navigation tests: same-message history/back/reopen, owner/bot/chat/thread/message/revision guards, ACK before lock, concurrent stale denial, rejection/timeout/cancellation and unknown recovery even after TTL",
         "Installed one-message Dispatcher composition; 130 public symbols/20 example groups, 300 recipes/201 Python fixtures, 23 source typing files; exact copied guide integrates with existing /help router",
@@ -471,13 +471,13 @@
         "examples/api-reference/python/bot_selection.py",
         "docs/selection-controls.md",
         ".agents/skills/telegram-code-patterns/references/selection-controls.md",
-        "docs/v1-checks/023.json",
-        "docs/v1-checks/023-distribution.json",
-        "docs/v1-checks/023-first-run.json",
-        "docs/v1-checks/023-portable.json"
+        "https://github.com/Zulut30/awesome-telegram-skills/blob/fe16ba3ea3a2b4d5bbdc69ba09e7b2ed50c0c215/docs/v1-checks/023.json",
+        "https://github.com/Zulut30/awesome-telegram-skills/blob/fe16ba3ea3a2b4d5bbdc69ba09e7b2ed50c0c215/docs/v1-checks/023-distribution.json",
+        "https://github.com/Zulut30/awesome-telegram-skills/blob/fe16ba3ea3a2b4d5bbdc69ba09e7b2ed50c0c215/docs/v1-checks/023-first-run.json",
+        "https://github.com/Zulut30/awesome-telegram-skills/blob/fe16ba3ea3a2b4d5bbdc69ba09e7b2ed50c0c215/docs/v1-checks/023-portable.json"
       ],
       "evidence": [
-        "docs/v1-checks/023.json",
+        "https://github.com/Zulut30/awesome-telegram-skills/blob/fe16ba3ea3a2b4d5bbdc69ba09e7b2ed50c0c215/docs/v1-checks/023.json",
         "0.16.0 local wheel/tarball: 60 stages, 170 Python passed + 1 Windows skip, 26 TypeScript, 1483 browser checks + 60 first-run checks",
         "27 behavioral tests: all composite fields, server rules/values/context/revision, concurrent clicks, bounded exact confirmation, expiry/back/cancel and failure recovery",
         "SDK-free core, installed Dispatcher and exact portable guide preserve current app; 138 symbols/22 API example groups, 301 recipes/202 Python fixtures, 25 source typing files",
@@ -504,13 +504,13 @@
         "examples/api-reference/python/bot_calendar.py",
         "docs/calendar-slots.md",
         ".agents/skills/telegram-code-patterns/references/calendar-slots.md",
-        "docs/v1-checks/024.json",
-        "docs/v1-checks/024-distribution.json",
-        "docs/v1-checks/024-first-run.json",
-        "docs/v1-checks/024-portable.json"
+        "https://github.com/Zulut30/awesome-telegram-skills/blob/fe16ba3ea3a2b4d5bbdc69ba09e7b2ed50c0c215/docs/v1-checks/024.json",
+        "https://github.com/Zulut30/awesome-telegram-skills/blob/fe16ba3ea3a2b4d5bbdc69ba09e7b2ed50c0c215/docs/v1-checks/024-distribution.json",
+        "https://github.com/Zulut30/awesome-telegram-skills/blob/fe16ba3ea3a2b4d5bbdc69ba09e7b2ed50c0c215/docs/v1-checks/024-first-run.json",
+        "https://github.com/Zulut30/awesome-telegram-skills/blob/fe16ba3ea3a2b4d5bbdc69ba09e7b2ed50c0c215/docs/v1-checks/024-portable.json"
       ],
       "evidence": [
-        "docs/v1-checks/024.json",
+        "https://github.com/Zulut30/awesome-telegram-skills/blob/fe16ba3ea3a2b4d5bbdc69ba09e7b2ed50c0c215/docs/v1-checks/024.json",
         "0.17.0 local wheel/tarball: 61 stages, 199 Python passed + 1 Windows skip, 26 TypeScript, 1595 browser checks + 60 first-run checks",
         "28 calendar behavioral tests plus offline prerequisites; actual spawned-process races for one slot, overlapping aliases and replay",
         "Explicit IANA fold/gap, unavailable dates, current same-transaction ACL/CAS, atomic booking+receipt, rollback and restart/status",
@@ -533,13 +533,13 @@
         "docs/dialog-fields.md",
         ".agents/skills/telegram-code-patterns/references/dialog-fields.md",
         ".agents/skills/telegram-dialogs/references/dialog-fields.md",
-        "docs/v1-checks/025.json",
-        "docs/v1-checks/025-distribution.json",
-        "docs/v1-checks/025-first-run.json",
-        "docs/v1-checks/025-portable.json"
+        "https://github.com/Zulut30/awesome-telegram-skills/blob/fe16ba3ea3a2b4d5bbdc69ba09e7b2ed50c0c215/docs/v1-checks/025.json",
+        "https://github.com/Zulut30/awesome-telegram-skills/blob/fe16ba3ea3a2b4d5bbdc69ba09e7b2ed50c0c215/docs/v1-checks/025-distribution.json",
+        "https://github.com/Zulut30/awesome-telegram-skills/blob/fe16ba3ea3a2b4d5bbdc69ba09e7b2ed50c0c215/docs/v1-checks/025-first-run.json",
+        "https://github.com/Zulut30/awesome-telegram-skills/blob/fe16ba3ea3a2b4d5bbdc69ba09e7b2ed50c0c215/docs/v1-checks/025-portable.json"
       ],
       "evidence": [
-        "docs/v1-checks/025.json",
+        "https://github.com/Zulut30/awesome-telegram-skills/blob/fe16ba3ea3a2b4d5bbdc69ba09e7b2ed50c0c215/docs/v1-checks/025.json",
         "0.18.0 local wheel/tarball: 63 stages, 222 Python passed + 1 Windows skip, 26 TypeScript, 1707 browser checks + 60 first-run",
         "23 behavioral tests: seven input types, current owner/question/candidate, stale/foreign/reordered/concurrent guards and preserved host FSM/help",
         "Actual file SQLite commit then lost receipt; same-intent reconciliation and one effect; lost prompts and success feedback, task cancellation and corruption",
@@ -565,13 +565,13 @@
         "docs/message-text.md",
         ".agents/skills/telegram-code-patterns/references/message-text.md",
         ".agents/skills/telegram-bot-api/references/message-text.md",
-        "docs/v1-checks/026.json",
-        "docs/v1-checks/026-distribution.json",
-        "docs/v1-checks/026-first-run.json",
-        "docs/v1-checks/026-portable.json"
+        "https://github.com/Zulut30/awesome-telegram-skills/blob/fe16ba3ea3a2b4d5bbdc69ba09e7b2ed50c0c215/docs/v1-checks/026.json",
+        "https://github.com/Zulut30/awesome-telegram-skills/blob/fe16ba3ea3a2b4d5bbdc69ba09e7b2ed50c0c215/docs/v1-checks/026-distribution.json",
+        "https://github.com/Zulut30/awesome-telegram-skills/blob/fe16ba3ea3a2b4d5bbdc69ba09e7b2ed50c0c215/docs/v1-checks/026-first-run.json",
+        "https://github.com/Zulut30/awesome-telegram-skills/blob/fe16ba3ea3a2b4d5bbdc69ba09e7b2ed50c0c215/docs/v1-checks/026-portable.json"
       ],
       "evidence": [
-        "docs/v1-checks/026.json",
+        "https://github.com/Zulut30/awesome-telegram-skills/blob/fe16ba3ea3a2b4d5bbdc69ba09e7b2ed50c0c215/docs/v1-checks/026.json",
         "0.19.0 local wheel/tarball: 65 stages, 249 Python passed + 1 Windows skip, 26 TypeScript, 1819 browser checks + 60 first-run",
         "27 meaningful formatting/SDK tests, including 150 independent per-unit partition oracle cases and stopped partial unknown delivery",
         "Nine public SDK-free symbols, 165 total exports/26 groups; exact installed API reference and copied full recipe pass",
@@ -597,13 +597,13 @@
         "docs/media.md",
         ".agents/skills/telegram-code-patterns/references/media.md",
         ".agents/skills/telegram-bot-api/references/media.md",
-        "docs/v1-checks/027.json",
-        "docs/v1-checks/027-distribution.json",
-        "docs/v1-checks/027-first-run.json",
-        "docs/v1-checks/027-portable.json"
+        "https://github.com/Zulut30/awesome-telegram-skills/blob/fe16ba3ea3a2b4d5bbdc69ba09e7b2ed50c0c215/docs/v1-checks/027.json",
+        "https://github.com/Zulut30/awesome-telegram-skills/blob/fe16ba3ea3a2b4d5bbdc69ba09e7b2ed50c0c215/docs/v1-checks/027-distribution.json",
+        "https://github.com/Zulut30/awesome-telegram-skills/blob/fe16ba3ea3a2b4d5bbdc69ba09e7b2ed50c0c215/docs/v1-checks/027-first-run.json",
+        "https://github.com/Zulut30/awesome-telegram-skills/blob/fe16ba3ea3a2b4d5bbdc69ba09e7b2ed50c0c215/docs/v1-checks/027-portable.json"
       ],
       "evidence": [
-        "docs/v1-checks/027.json",
+        "https://github.com/Zulut30/awesome-telegram-skills/blob/fe16ba3ea3a2b4d5bbdc69ba09e7b2ed50c0c215/docs/v1-checks/027.json",
         "0.20.0 exact local wheel/tarball: 67 stages, 274 Python passed + 1 Windows skip, 26 TypeScript, 1931 browser checks + 60 first-run",
         "25 meaningful media/SDK/stream/Dispatcher tests; valid small PNG, exact multipart bytes, safe partial unknown delivery and stream close",
         "Nine optional aiogram public symbols, 174 total exports/27 API groups; exact installed API example and copied full media guide pass",
@@ -633,13 +633,13 @@
         ".agents/skills/telegram-profiles/SKILL.md",
         ".agents/skills/telegram-profiles/references/profile-access.md",
         "scripts/verify_profile_recipe.py",
-        "docs/v1-checks/028.json",
-        "docs/v1-checks/028-distribution.json",
-        "docs/v1-checks/028-first-run.json",
-        "docs/v1-checks/028-portable.json"
+        "https://github.com/Zulut30/awesome-telegram-skills/blob/fe16ba3ea3a2b4d5bbdc69ba09e7b2ed50c0c215/docs/v1-checks/028.json",
+        "https://github.com/Zulut30/awesome-telegram-skills/blob/fe16ba3ea3a2b4d5bbdc69ba09e7b2ed50c0c215/docs/v1-checks/028-distribution.json",
+        "https://github.com/Zulut30/awesome-telegram-skills/blob/fe16ba3ea3a2b4d5bbdc69ba09e7b2ed50c0c215/docs/v1-checks/028-first-run.json",
+        "https://github.com/Zulut30/awesome-telegram-skills/blob/fe16ba3ea3a2b4d5bbdc69ba09e7b2ed50c0c215/docs/v1-checks/028-portable.json"
       ],
       "evidence": [
-        "docs/v1-checks/028.json",
+        "https://github.com/Zulut30/awesome-telegram-skills/blob/fe16ba3ea3a2b4d5bbdc69ba09e7b2ed50c0c215/docs/v1-checks/028.json",
         "0.21.0 exact local wheel/tarball: 69 stages, 311 Python passed + 1 Windows skip, 26 TypeScript, 2043 browser checks + 60 first-run",
         "37 meaningful profile/SDK/rights/Dispatcher tests; nullable immutable observations, localization omission/clear, exact new-avatar multipart and fresh readback",
         "Fresh host ACL before each native action; lost receipt/partial edit and denied readback stop safely without retry or rollback",
@@ -681,13 +681,13 @@
         ".agents/skills/telegram-bot-api/SKILL.md",
         "scripts/verify_inline_search_recipe.py",
         "scripts/verify_poll_recipe.py",
-        "docs/v1-checks/029.json",
-        "docs/v1-checks/029-distribution.json",
-        "docs/v1-checks/029-first-run.json",
-        "docs/v1-checks/029-portable.json"
+        "https://github.com/Zulut30/awesome-telegram-skills/blob/fe16ba3ea3a2b4d5bbdc69ba09e7b2ed50c0c215/docs/v1-checks/029.json",
+        "https://github.com/Zulut30/awesome-telegram-skills/blob/fe16ba3ea3a2b4d5bbdc69ba09e7b2ed50c0c215/docs/v1-checks/029-distribution.json",
+        "https://github.com/Zulut30/awesome-telegram-skills/blob/fe16ba3ea3a2b4d5bbdc69ba09e7b2ed50c0c215/docs/v1-checks/029-first-run.json",
+        "https://github.com/Zulut30/awesome-telegram-skills/blob/fe16ba3ea3a2b4d5bbdc69ba09e7b2ed50c0c215/docs/v1-checks/029-portable.json"
       ],
       "evidence": [
-        "docs/v1-checks/029.json",
+        "https://github.com/Zulut30/awesome-telegram-skills/blob/fe16ba3ea3a2b4d5bbdc69ba09e7b2ed50c0c215/docs/v1-checks/029.json",
         "0.22.0 exact local wheel/tarball: 73 stages, 377 Python passed + 1 Windows skip, 26 TypeScript, 2267 browser checks + 60 first-run",
         "66 meaningful inline/poll tests; per-user search, public shared-cache pagination, stale/forged cursors, modern quiz, persistent IDs and scoped events",
         "Host current ACL/durable pending+unknown creation/receipt dedup; lost response and repeated command after SQLite reopen do not create another poll",
@@ -728,10 +728,10 @@
         ".agents/skills/telegram-business-bots/references/platform-operations.md",
         "components.json",
         "catalog/api-reference.json",
-        "docs/v1-checks/030-distribution.json",
-        "docs/v1-checks/030-first-run.json",
-        "docs/v1-checks/030-portable.json",
-        "docs/v1-checks/030.json"
+        "https://github.com/Zulut30/awesome-telegram-skills/blob/fe16ba3ea3a2b4d5bbdc69ba09e7b2ed50c0c215/docs/v1-checks/030-distribution.json",
+        "https://github.com/Zulut30/awesome-telegram-skills/blob/fe16ba3ea3a2b4d5bbdc69ba09e7b2ed50c0c215/docs/v1-checks/030-first-run.json",
+        "https://github.com/Zulut30/awesome-telegram-skills/blob/fe16ba3ea3a2b4d5bbdc69ba09e7b2ed50c0c215/docs/v1-checks/030-portable.json",
+        "https://github.com/Zulut30/awesome-telegram-skills/blob/fe16ba3ea3a2b4d5bbdc69ba09e7b2ed50c0c215/docs/v1-checks/030.json"
       ],
       "evidence": [
         "Full original seven-family requirement: 51 exact native contracts executed, current method rights/host scopes and SDK upload wire proof",
@@ -772,10 +772,10 @@
         ".agents/skills/telegram-dialogs/references/dialog-restart.md",
         "components.json",
         "catalog/api-reference-index.json",
-        "docs/v1-checks/031-distribution.json",
-        "docs/v1-checks/031-first-run.json",
-        "docs/v1-checks/031-portable.json",
-        "docs/v1-checks/031.json"
+        "https://github.com/Zulut30/awesome-telegram-skills/blob/fe16ba3ea3a2b4d5bbdc69ba09e7b2ed50c0c215/docs/v1-checks/031-distribution.json",
+        "https://github.com/Zulut30/awesome-telegram-skills/blob/fe16ba3ea3a2b4d5bbdc69ba09e7b2ed50c0c215/docs/v1-checks/031-first-run.json",
+        "https://github.com/Zulut30/awesome-telegram-skills/blob/fe16ba3ea3a2b4d5bbdc69ba09e7b2ed50c0c215/docs/v1-checks/031-portable.json",
+        "https://github.com/Zulut30/awesome-telegram-skills/blob/fe16ba3ea3a2b4d5bbdc69ba09e7b2ed50c0c215/docs/v1-checks/031.json"
       ],
       "evidence": [
         "Full matching wheel/tarball consumers: 77 stages; 460 Python passed and 1 Windows symlink skip; 26 TypeScript; browser and 60 first-run checks",

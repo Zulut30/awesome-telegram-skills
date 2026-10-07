@@ -177,7 +177,8 @@ class Builder:
                     json.loads((source / 'packages/typescript/package.json').read_text(encoding='utf-8'))['version']]
         if any(version != self.version for version in versions):
             raise ValueError('Documentation source versions disagree')
-        accepted = [json.loads(file.read_text(encoding='utf-8')) for file in (source / 'docs/v1-checks').glob('[0-9][0-9][0-9].json')]
+        # Summary lines of acceptance reports; the full reports are commit permalinks or release assets.
+        accepted = json.loads((source / 'docs/acceptance-history.json').read_text(encoding='utf-8'))['reports']
         if not any(item.get('version') == self.version and item.get('passed') is True for item in accepted):
             raise ValueError('Publish documentation only for an accepted version; use a clean source snapshot')
         # Sections, goals and sidebar entries of user pages; docs/internal is published but not navigated or searched.

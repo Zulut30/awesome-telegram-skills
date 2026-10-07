@@ -1179,9 +1179,14 @@
     {
       "id": 92,
       "title": "Отчеты приемки вне основного дерева",
-      "status": "pending",
-      "commit_subject": null,
-      "evidence": [],
+      "status": "done",
+      "commit_subject": "excellence(092): Keep acceptance reports out of the working tree with a small summary and permalinks",
+      "evidence": [
+        "83 docs/v1-checks reports (2.1 MB) removed from the tree; 203 references rewritten to commit permalinks at fe16ba3 (GitHub blob verified equal to the local file)",
+        "docs/acceptance-history.json (38 KB) and .md keep version, result, date, stages, tests, size and SHA-256 per report; scripts/build_acceptance_history.py renders, checks in CI, forbids docs/v1-checks and --add appends new reports without copying them",
+        "Full acceptance release-report job attaches distribution-report.json to the tag release with a job-scoped write token; the docs site checks the accepted version from the summary",
+        "tests/test_acceptance_history.py and workflow assertions; root, site and generator checks pass; actionlint clean"
+      ],
       "remaining": null
     },
     {

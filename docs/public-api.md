@@ -100,7 +100,7 @@ CLI `recipes [query] [--show ID] [--category ...] [--language ...] [--verificati
 
 ## Источники контрактов и проверка
 
-Поведение таблиц сверено с текущими исходниками и declarations 0.6.0, не с предположениями о Telegram. [Полная поставка пункта 002](v1-checks/002.json) подтверждает существующие package/consumer/browser проверки. [Поименный справочник](api-reference.md) пункта 014 содержит 120 публичных символов, полные installed consumer примеры и CLI/CSS. Compatibility regression suite относится к 084 и не объявляется выполненным этим справочником.
+Поведение таблиц сверено с текущими исходниками и declarations 0.6.0, не с предположениями о Telegram. [Полная поставка пункта 002](https://github.com/Zulut30/awesome-telegram-skills/blob/fe16ba3ea3a2b4d5bbdc69ba09e7b2ed50c0c215/docs/v1-checks/002.json) подтверждает существующие package/consumer/browser проверки. [Поименный справочник](api-reference.md) пункта 014 содержит 120 публичных символов, полные installed consumer примеры и CLI/CSS. Compatibility regression suite относится к 084 и не объявляется выполненным этим справочником.
 
 При добавлении публичного API обновляются этот контракт, группа в components.json, exports/types, пример, существенные tests и changelog. Контракт helpers не отменяет [границы сценариев](v1-scope.md).
 

@@ -347,6 +347,11 @@
           "path": "docs/distribution-contract.md"
         },
         {
+          "title": "История приемки",
+          "goal": "Найти отчет приемки любой версии и сверить скачанный файл по SHA-256.",
+          "path": "docs/acceptance-history.md"
+        },
+        {
           "title": "Источники",
           "goal": "Найти официальные источники и дату их сверки.",
           "path": "docs/sources.md"

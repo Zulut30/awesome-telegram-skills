@@ -59,6 +59,7 @@ jobs:
       # Shop client types and decoders from examples/shop/openapi.json.
       - run: python scripts/build_openapi_types.py --check
       - run: python scripts/build_docs_map.py --check
+      - run: python scripts/build_acceptance_history.py --check
 
   python-style:
     name: Python library style (ruff)
