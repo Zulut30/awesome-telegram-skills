@@ -207,7 +207,7 @@ class CLITests(unittest.TestCase):
     def test_errors_are_readable_by_default_and_json_on_request(self):
         import shutil
         from importlib.resources import files
-        library=Path(str(files('telegram_patterns'))).parents[1]
+        library=ROOT/'packages/python'  # library source directory, independent of how the package is installed
         with tempfile.TemporaryDirectory(prefix='telegram-cli-errors-') as folder:
             root=Path(folder);artifact=root/'bad.whl';artifact.write_bytes(b'INVALID_FIXTURE')
             def run(*arguments):
