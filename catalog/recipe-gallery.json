@@ -22016,14 +22016,14 @@
         "скрыть",
         "обновить"
       ],
-      "code": "\"\"\"In a group, answer a button press with a message only the presser sees; no polling on import.\"\"\"\nimport time\nfrom typing import Awaitable, Callable\n\nfrom aiogram import Dispatcher, F, Router\nfrom aiogram.filters import Command\nfrom aiogram.methods import DeleteEphemeralMessage, EditEphemeralMessageText, SendMessage\nfrom aiogram.types import CallbackQuery, InlineKeyboardButton, InlineKeyboardMarkup, Message\nfrom telegram_patterns import EphemeralMessageRef, EphemeralNotAllowed, EphemeralTrigger, ephemeral_parameters\n\nGROUPS = ('group', 'supergroup')\nPANEL = InlineKeyboardMarkup(inline_keyboard=[[InlineKeyboardButton(text='Мой статус', callback_data='me:status'),\n                                               InlineKeyboardButton(text='Статус вместо панели', callback_data='me:replace')]])\nOWN = InlineKeyboardMarkup(inline_keyboard=[[InlineKeyboardButton(text='Обновить', callback_data='me:refresh'),\n                                             InlineKeyboardButton(text='Скрыть', callback_data='me:hide')]])\n\n\ndef attach_ephemeral_status(dispatcher: Dispatcher, *, status: Callable[[int, int], Awaitable[str]],\n                            clock: Callable[[], float] = time.monotonic, bot_is_admin: bool = False) -> Router:\n    \"\"\"status(chat_id, user_id) is the service call; it checks the user's access and returns the text.\"\"\"\n    router = Router(name='ephemeral-status')\n\n    @router.message(Command('panel'), F.chat.type.in_(GROUPS))\n    async def panel(message: Message) -> None:\n        await message.bot(SendMessage(chat_id=message.chat.id, text='Нажмите — ответ увидите только вы.', reply_markup=PANEL))\n\n    @router.callback_query(F.data.in_({'me:status', 'me:replace'}))\n    async def show(query: CallbackQuery) -> None:\n        received = clock()\n        message = query.message\n        if not isinstance(message, Message) or message.chat.type not in GROUPS:\n            await query.answer('Эта кнопка работает в группе', show_alert=True)\n            return\n        text = await status(message.chat.id, query.from_user.id)\n        try:\n            extra = ephemeral_parameters(chat_type=message.chat.type, receiver_user_id=query.from_user.id,\n                                         receiver_is_bot=query.from_user.is_bot, bot_is_admin=bot_is_admin,\n                                         trigger=EphemeralTrigger.callback(query.id, received), now=clock(),\n                                         replace_original=query.data == 'me:replace')\n        except EphemeralNotAllowed:\n            # The 15-second window passed: an alert is also seen only by the presser.\n            await query.answer(text[:200], show_alert=True)\n            return\n        # The answer names this press by callback_query_id; delivery is not guaranteed, nothing is retried.\n        await query.bot(SendMessage.model_validate({'chat_id': message.chat.id, 'text': text, 'reply_markup': OWN, **extra}))\n        await query.answer()\n\n    @router.callback_query(F.data.in_({'me:refresh', 'me:hide'}))\n    async def own(query: CallbackQuery) -> None:\n        message = query.message\n        if not isinstance(message, Message) or message.ephemeral_message_id is None:\n            await query.answer()\n            return\n        # Buttons on an ephemeral message are answered by editing or deleting it, never by replacing.\n        ref = EphemeralMessageRef(message.chat.id, query.from_user.id, message.ephemeral_message_id)\n        if query.data == 'me:hide':\n            await query.bot(DeleteEphemeralMessage(**ref.target()))\n        else:\n            text = await status(message.chat.id, query.from_user.id)\n            await query.bot(EditEphemeralMessageText(**ref.target(), text=text, reply_markup=OWN))\n        await query.answer()\n\n    dispatcher.include_router(router)\n    return router\n",
+      "code": "\"\"\"In a group, answer a button press with a message only the presser sees; no polling on import.\"\"\"\nimport time\nfrom typing import Awaitable, Callable\n\nfrom aiogram import Bot, Dispatcher, F, Router\nfrom aiogram.filters import Command\nfrom aiogram.methods import DeleteEphemeralMessage, EditEphemeralMessageText, SendMessage\nfrom aiogram.types import CallbackQuery, InlineKeyboardButton, InlineKeyboardMarkup, Message\nfrom telegram_patterns import EphemeralMessageRef, EphemeralNotAllowed, EphemeralTrigger, ephemeral_parameters\n\nGROUPS = ('group', 'supergroup')\nPANEL = InlineKeyboardMarkup(inline_keyboard=[[InlineKeyboardButton(text='Мой статус', callback_data='me:status'),\n                                               InlineKeyboardButton(text='Статус вместо панели', callback_data='me:replace')]])\nOWN = InlineKeyboardMarkup(inline_keyboard=[[InlineKeyboardButton(text='Обновить', callback_data='me:refresh'),\n                                             InlineKeyboardButton(text='Скрыть', callback_data='me:hide')]])\n\n\ndef attach_ephemeral_status(dispatcher: Dispatcher, *, status: Callable[[int, int], Awaitable[str]],\n                            clock: Callable[[], float] = time.monotonic, bot_is_admin: bool = False) -> Router:\n    \"\"\"status(chat_id, user_id) is the service call; it checks the user's access and returns the text.\"\"\"\n    router = Router(name='ephemeral-status')\n\n    @router.message(Command('panel'), F.chat.type.in_(GROUPS))\n    async def panel(message: Message, bot: Bot) -> None:\n        await bot(SendMessage(chat_id=message.chat.id, text='Нажмите — ответ увидите только вы.', reply_markup=PANEL))\n\n    @router.callback_query(F.data.in_({'me:status', 'me:replace'}))\n    async def show(query: CallbackQuery, bot: Bot) -> None:\n        received = clock()\n        message = query.message\n        if not isinstance(message, Message) or message.chat.type not in GROUPS:\n            await query.answer('Эта кнопка работает в группе', show_alert=True)\n            return\n        text = await status(message.chat.id, query.from_user.id)\n        try:\n            extra = ephemeral_parameters(chat_type=message.chat.type, receiver_user_id=query.from_user.id,\n                                         receiver_is_bot=query.from_user.is_bot, bot_is_admin=bot_is_admin,\n                                         trigger=EphemeralTrigger.callback(query.id, received), now=clock(),\n                                         replace_original=query.data == 'me:replace')\n        except EphemeralNotAllowed:\n            # The 15-second window passed: an alert is also seen only by the presser.\n            await query.answer(text[:200], show_alert=True)\n            return\n        # The answer names this press by callback_query_id; delivery is not guaranteed, nothing is retried.\n        await bot(SendMessage.model_validate({'chat_id': message.chat.id, 'text': text, 'reply_markup': OWN, **extra}))\n        await query.answer()\n\n    @router.callback_query(F.data.in_({'me:refresh', 'me:hide'}))\n    async def own(query: CallbackQuery, bot: Bot) -> None:\n        message = query.message\n        if not isinstance(message, Message) or message.ephemeral_message_id is None:\n            await query.answer()\n            return\n        # Buttons on an ephemeral message are answered by editing or deleting it, never by replacing.\n        ref = EphemeralMessageRef(message.chat.id, query.from_user.id, message.ephemeral_message_id)\n        if query.data == 'me:hide':\n            await bot(DeleteEphemeralMessage.model_validate(ref.target()))\n        else:\n            text = await status(message.chat.id, query.from_user.id)\n            await bot(EditEphemeralMessageText.model_validate({**ref.target(), 'text': text, 'reply_markup': OWN}))\n        await query.answer()\n\n    dispatcher.include_router(router)\n    return router\n",
       "verification": "mock",
       "scope": "Actual synthetic Dispatcher/StubSession and SDK serialization of ephemeral send/edit/delete; delivery to real clients, disappearance and administrator rights unconfirmed.",
       "sources": [
         "https://core.telegram.org/bots/api"
       ],
       "preview": null,
-      "code_sha256": "5c9ee879a9de94ec15e4ad99a66268fce5f5d4b83b3bd9df36ab499bed460768",
+      "code_sha256": "6390a4d7abfd5c23e228dded21edee3ee6f47f9125411acad19fe2a218f24d4a",
       "tasks": [
         "messages",
         "bot"
@@ -22044,6 +22044,87 @@
       "check_files": [
         "examples/python/offline_ephemeral.py",
         "packages/python/tests/test_ephemeral.py"
+      ],
+      "execution": {
+        "kind": "dispatcher",
+        "dependencies": [
+          "aiogram==3.31.0"
+        ],
+        "offline_environment": [],
+        "offline_permissions": [],
+        "offline_data": [
+          "Только поставляемые синтетические данные; реальные IDs и secrets не принимаются."
+        ],
+        "live_environment": [
+          "BOT_TOKEN"
+        ],
+        "live_permissions": [
+          "Прикладная авторизация сервиса; fixture actor не доказывает server ACL."
+        ],
+        "live_data": [
+          "Текущий Dispatcher, реальные actor/chat и сервис приложения",
+          "Проверка объекта, автора и состояния до effect/replay"
+        ],
+        "live_review": "Live executor отсутствует. Перед интеграцией проверить источники, ограничения конкретного метода/контекста, auth и ACL; metadata не подтверждает права.",
+        "effects": [
+          "Synthetic Dispatcher + StubSession; временная fixture, без polling"
+        ]
+      }
+    },
+    {
+      "id": "demo-community",
+      "title": "События сообщества в группе и канале",
+      "summary": "Сервисные сообщения сообщества: чат добавлен, удален, участник пришел из сообщества; сверка с getChat",
+      "category": "scenarios",
+      "language": "python",
+      "maturity": "experimental",
+      "keywords": [
+        "бот",
+        "пример",
+        "callback",
+        "меню",
+        "события",
+        "композиция",
+        "бота",
+        "личный",
+        "чат",
+        "сообщество",
+        "сообщества",
+        "community",
+        "communities",
+        "сервисное сообщение",
+        "группа",
+        "канал",
+        "вступление",
+        "getChat"
+      ],
+      "code": "\"\"\"Track which community a group or channel belongs to from service messages; no polling on import.\"\"\"\nfrom typing import Awaitable, Callable\n\nfrom aiogram import Bot, Dispatcher, F, Router\nfrom aiogram.filters import Command\nfrom aiogram.methods import GetChat, SendMessage\nfrom aiogram.types import Community, Message\n\nGROUPS = ('group', 'supergroup')\n# save(chat_id, community or None) stores the link; joined(chat_id, user_id, community) counts arrivals.\nSave = Callable[[int, Community | None], Awaitable[None]]\nJoined = Callable[[int, int, Community], Awaitable[None]]\n\n\ndef attach_community_events(dispatcher: Dispatcher, *, save: Save, joined: Joined) -> Router:\n    \"\"\"Service messages arrive regardless of privacy mode; in a channel only to an administrator bot.\"\"\"\n    router = Router(name='community-events')\n\n    @router.message(F.community_chat_added)\n    @router.channel_post(F.community_chat_added)\n    async def added(message: Message) -> None:\n        # The chat (or a bot) now belongs to this community; the id may exceed 32 bits.\n        if message.community_chat_added is not None:\n            await save(message.chat.id, message.community_chat_added.community)\n\n    @router.message(F.community_chat_removed)\n    @router.channel_post(F.community_chat_removed)\n    async def removed(message: Message) -> None:\n        # CommunityChatRemoved holds no fields: which community is known only from the stored link.\n        await save(message.chat.id, None)\n\n    @router.message(F.community_chat_joined)\n    async def arrived(message: Message) -> None:\n        # A community member joined without an invite link; the service message names the community.\n        event = message.community_chat_joined\n        if event is not None and message.from_user is not None and not message.from_user.is_bot:\n            await joined(message.chat.id, message.from_user.id, event.community)\n\n    @router.message(Command('community'), F.chat.type.in_(GROUPS))\n    async def show(message: Message, bot: Bot) -> None:\n        # A missed service message is reconciled from getChat; nothing else about the community is readable.\n        chat = await bot(GetChat(chat_id=message.chat.id))\n        await save(message.chat.id, chat.community)\n        text = (f'Группа входит в сообщество «{chat.community.name}».' if chat.community\n                else 'Группа не входит в сообщество.')\n        await bot(SendMessage(chat_id=message.chat.id, text=text, message_thread_id=message.message_thread_id))\n\n    dispatcher.include_router(router)\n    return router\n",
+      "verification": "mock",
+      "scope": "Actual synthetic Dispatcher/StubSession and SDK models of community service messages and ChatFullInfo.community; real delivery, hidden chats and join behaviour unconfirmed.",
+      "sources": [
+        "https://core.telegram.org/bots/api"
+      ],
+      "preview": null,
+      "code_sha256": "0ea4a9539360d677c42bc78cde9b91c9ffe076fc92084022857b25261771ac1a",
+      "tasks": [
+        "moderation",
+        "bot"
+      ],
+      "contexts": [
+        "group",
+        "supergroup",
+        "channel"
+      ],
+      "sdk": "aiogram",
+      "sdk_version": "3.31.0",
+      "api_version": "bot:10.3",
+      "source_files": [
+        "examples/python/community_bot.py",
+        "packages/python/src/telegram_patterns/execution.py",
+        "packages/python/src/telegram_patterns/_offline_recipe.py"
+      ],
+      "check_files": [
+        "examples/python/offline_community.py"
       ],
       "execution": {
         "kind": "dispatcher",

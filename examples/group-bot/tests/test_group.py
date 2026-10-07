@@ -8,7 +8,7 @@ import threading
 import unittest
 
 from aiogram.exceptions import TelegramBadRequest
-from aiogram.methods import AnswerCallbackQuery, AnswerChatJoinRequestQuery, CreateForumTopic, GetChatMember, RestrictChatMember
+from aiogram.methods import AnswerCallbackQuery, AnswerChatJoinRequestQuery, CreateForumTopic, GetChat, GetChatMember, RestrictChatMember
 from aiogram.types import CallbackQuery, Chat, ChatMemberMember, Message, Update, User
 
 from telegram_group_example.bot import Application
@@ -45,6 +45,26 @@ class GroupTests(unittest.IsolatedAsyncioTestCase):
         self.assertIn('Не удалось проверить',self.f.sent[-1][0].text)
         self.assertNotIn('PRIVATE_CANARY',self.f.sent[-1][0].text)
         self.assertFalse(self.f.effects())
+
+    async def test_community_is_read_only_and_grants_no_rights(self):
+        await self.f.command('/community')
+        self.assertEqual(self.f.sent[-1][0].text,'Группа не входит в сообщество.')
+        self.f.communities[CHAT] = {'id':2**51+7,'name':'Город'}
+        await self.f.command('/community')
+        self.assertIn('«Город» (2251799813685255)',self.f.sent[-1][0].text)
+        self.assertEqual(self.f.sent[-1][0].message_thread_id,10)
+        # Rights stay per chat: a member of the same community without rights still gets no preview.
+        self.f.communities[OTHER] = self.f.communities[CHAT]
+        self.f.members[(OTHER,OWNER.id)] = ChatMemberMember(user=OWNER)
+        await self.f.command('/topic_create Not here',chat=OTHER)
+        self.assertIn('нет прав администратора',self.f.sent[-1][0].text)
+        def failed(method): raise TimeoutError('PRIVATE_CANARY')
+        self.f.session.respond(GetChat,failed)
+        await self.f.command('/community')
+        self.assertIn('Не удалось прочитать сообщество',self.f.sent[-1][0].text)
+        self.assertNotIn('PRIVATE_CANARY',self.f.sent[-1][0].text)
+        self.assertFalse(self.f.effects())
+        with connection(self.database) as db: self.assertEqual(db.execute('SELECT count(*) FROM group_operations').fetchone()[0],0)
 
     async def test_revocation_between_preview_and_confirmation_and_replay(self):
         op = await self.preview()

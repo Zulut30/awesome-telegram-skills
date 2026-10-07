@@ -299,7 +299,7 @@ catalog = RecipeCatalog()
 recipe: Recipe = catalog.search('две кнопки', maturity=maturity, verification=verification,
                                task='keyboards', context='private', sdk='aiogram', sdk_version='3.31.0', api_version='bot:10.3')[0]
 assert recipe.id == 'two-columns' and catalog.get(recipe.id) == recipe
-assert len(catalog.recipes) == 313 and catalog.library_version
+assert len(catalog.recipes) == 314 and catalog.library_version
 assert recipe.source_files and recipe.check_files and 'keyboards' in recipe.tasks
 lost = catalog.search('потерянный ответ', task='recovery', context='backend')[0]
 assert lost.id == 'demo-recovery' and lost.sdk == 'python-core' and lost.api_version == 'none'

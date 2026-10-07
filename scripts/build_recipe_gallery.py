@@ -143,6 +143,7 @@ def build(root: Path = ROOT) -> dict:
         ('ai_stream_bot.py', 'offline_ai_stream.py', 'demo-ai-stream', 'ИИ-ответ потоком с остановкой генерации'),
         ('rich_message_bot.py', 'offline_rich_message.py', 'demo-rich-message', 'Rich-сообщение: карточка заказа и запасной текст'),
         ('ephemeral_bot.py', 'offline_ephemeral.py', 'demo-ephemeral', 'Эфемерный ответ на кнопку в группе'),
+        ('community_bot.py', 'offline_community.py', 'demo-community', 'События сообщества в группе и канале'),
     ):
         result = subprocess.run([sys.executable, str(root / 'examples/python' / offline)], capture_output=True,
                                 text=True, encoding='utf-8', env=environment, timeout=60)
@@ -233,6 +234,12 @@ def build(root: Path = ROOT) -> dict:
             records[-1]['source_files'] += ['packages/python/src/telegram_patterns/ephemeral.py']
             records[-1]['check_files'] += ['packages/python/tests/test_ephemeral.py']
             records[-1]['scope'] = 'Actual synthetic Dispatcher/StubSession and SDK serialization of ephemeral send/edit/delete; delivery to real clients, disappearance and administrator rights unconfirmed.'
+        if key == 'demo-community':
+            records[-1]['summary'] = 'Сервисные сообщения сообщества: чат добавлен, удален, участник пришел из сообщества; сверка с getChat'
+            records[-1]['tasks'] = ['moderation', 'bot']
+            records[-1]['contexts'] = ['group', 'supergroup', 'channel']
+            records[-1]['keywords'] += ['сообщество', 'сообщества', 'community', 'communities', 'сервисное сообщение', 'группа', 'канал', 'вступление', 'getChat']
+            records[-1]['scope'] = 'Actual synthetic Dispatcher/StubSession and SDK models of community service messages and ChatFullInfo.community; real delivery, hidden chats and join behaviour unconfirmed.'
         if key == 'demo-platform':
             records[-1]['summary'] = 'Семь семейств: native rights, host ACL/budget/intent, scoped events и explicit unknown reconciliation'
             records[-1]['tasks'] = ['platform']

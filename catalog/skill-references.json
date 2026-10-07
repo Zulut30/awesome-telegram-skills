@@ -22,6 +22,10 @@
     "docs/calendar-slots.md": [
       ".agents/skills/telegram-code-patterns/references/calendar-slots.md"
     ],
+    "docs/communities.md": [
+      ".agents/skills/telegram-code-patterns/references/communities.md",
+      ".agents/skills/telegram-groups/references/communities.md"
+    ],
     "docs/dialog-fields.md": [
       ".agents/skills/telegram-code-patterns/references/dialog-fields.md",
       ".agents/skills/telegram-dialogs/references/dialog-fields.md"

@@ -705,9 +705,14 @@
     {
       "id": 56,
       "title": "Communities (10.2–10.3)",
-      "status": "pending",
-      "commit_subject": null,
-      "evidence": [],
+      "status": "done",
+      "commit_subject": "excellence(056): track community events and keep rights per chat",
+      "evidence": [
+        "examples/python/community_bot.py, offline_community.py: run-recipe demo-community --offline passed (group, channel_post, joined, removed, getChat reconciliation)",
+        "examples/group-bot: read-only /community, rights still checked per chat; verify_group_bot PASS with 20 tests",
+        "docs/communities.md with permission boundaries in telegram-groups and telegram-code-patterns",
+        "verify_pattern_packages PASS: 523 Python and 35 TypeScript tests, browser passed"
+      ],
       "remaining": null
     },
     {

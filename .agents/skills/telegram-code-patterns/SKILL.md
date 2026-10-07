@@ -44,6 +44,7 @@ metadata:
 - [message-text](references/message-text.md): entities, экранирование, длинный текст
 - [rich-messages](references/rich-messages.md): rich-сообщения: блоки, таблицы, кнопки, запасной текст
 - [ephemeral-messages](references/ephemeral-messages.md): ответ в группе, который видит только нажавший
+- [communities](references/communities.md): события сообществ и границы прав
 - [media](references/media.md): фото, документы, альбомы, скачивание
 - [profiles](references/profiles.md): профили, фото пользователя, оформление бота
 - [inline-search](references/inline-search.md): inline-поиск

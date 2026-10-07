@@ -12,9 +12,9 @@ from typing import Any
 
 from aiogram import Bot
 from aiogram.methods import (AnswerCallbackQuery, AnswerChatJoinRequestQuery, ApproveChatJoinRequest, CloseForumTopic,
-    CreateForumTopic, DeclineChatJoinRequest, GetChatMember, ReopenForumTopic, RestrictChatMember, SendMessage)
+    CreateForumTopic, DeclineChatJoinRequest, GetChat, GetChatMember, ReopenForumTopic, RestrictChatMember, SendMessage)
 from aiogram.methods.base import TelegramMethod
-from aiogram.types import (CallbackQuery, Chat, ChatJoinRequest, ChatMember, ChatMemberAdministrator, ChatMemberMember, ChatMemberUpdated,
+from aiogram.types import (CallbackQuery, Chat, ChatFullInfo, ChatJoinRequest, ChatMember, ChatMemberAdministrator, ChatMemberMember, ChatMemberUpdated,
     ForumTopic, InlineKeyboardMarkup, Message, Update, User)
 from telegram_patterns.testing import StubSession
 
@@ -52,6 +52,14 @@ class Fixture:
             assert isinstance(method,GetChatMember) and isinstance(method.chat_id,int)
             return self.members[(method.chat_id,method.user_id)]
         self.session.respond(GetChatMember,member_response)
+        self.communities: dict[int,dict[str,Any]] = {}
+        def chat_response(method: TelegramMethod[Any]) -> ChatFullInfo:
+            assert isinstance(method,GetChat) and isinstance(method.chat_id,int)
+            gifts = dict.fromkeys(('unlimited_gifts','limited_gifts','unique_gifts','premium_subscription','gifts_from_channels'),False)
+            community = self.communities.get(method.chat_id)
+            return ChatFullInfo.model_validate({'id':method.chat_id,'type':'supergroup','is_forum':True,'accent_color_id':0,'max_reaction_count':11,
+                'accepted_gift_types':gifts,**({'community':community} if community else {})})
+        self.session.respond(GetChat,chat_response)
         self.sent: list[tuple[SendMessage,Message]] = []
         def response(method: TelegramMethod[Any]) -> Message:
             assert isinstance(method,SendMessage)

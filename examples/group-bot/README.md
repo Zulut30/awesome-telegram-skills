@@ -11,6 +11,7 @@
 | `/group_help` | Меню и правила подтверждения |
 | `/rights` | Проверка bot/actor admin; нужное право проверяется для каждого действия отдельно |
 | `/topic_info` | ID текущей группы и темы без изменения состояния |
+| `/community` | Сообщество группы из `getChat` без записи и без новых прав |
 | `/topic_create Название` | Предпросмотр создания темы; название 1–128 символов |
 | `/topic_close`, `/topic_reopen` | Предпросмотр изменения конкретной текущей темы; General не поддержан |
 | `/joins` | До 30 последних наблюдаемых заявок этой группы, не полный Telegram backlog |
@@ -33,7 +34,7 @@ python scripts/build_release.py --ref HEAD --output output/release
 python scripts/verify_group_bot.py --wheel output/release/awesome_telegram_patterns-0.24.0-py3-none-any.whl --output output/group-bot-check
 ```
 
-Output должен быть новым каталогом, существующие каталоги и известные links отклоняются до build/install. Helper собирает отдельный app wheel и проверяет его source bytes, RECORD и entrypoint. В новом consumer вне репозитория устанавливает предоставленную библиотеку и приложение, проверяет installed origins, console `--help`, Mypy, 19 тестов с SDK Dispatcher и настоящей file SQLite, четыре отдельные процессные фазы и OS lock. Фазы: сохранение предпросмотра → подтверждение после рестарта → реальный `os._exit(77)` после synthetic createForumTopic до сохранения результата → восстановление unknown без повторной отправки. Shadow modules/.env текущего проекта не читаются и не исполняются.
+Output должен быть новым каталогом, существующие каталоги и известные links отклоняются до build/install. Helper собирает отдельный app wheel и проверяет его source bytes, RECORD и entrypoint. В новом consumer вне репозитория устанавливает предоставленную библиотеку и приложение, проверяет installed origins, console `--help`, Mypy, 20 тестов с SDK Dispatcher и настоящей file SQLite, четыре отдельные процессные фазы и OS lock. Фазы: сохранение предпросмотра → подтверждение после рестарта → реальный `os._exit(77)` после synthetic createForumTopic до сохранения результата → восстановление unknown без повторной отправки. Shadow modules/.env текущего проекта не читаются и не исполняются.
 
 Используется `StubSession` с обязательными зарегистрированными ответами; fixture не может переключиться на HTTP. В процессных фазах реальный SDK HTTP и Python DNS/connect запрещены. Fixtures искусственные: нет live модерации, Telegram permission/delivery acceptance или проверки privacy mode. Это не OS sandbox для чужого кода.
 
@@ -69,6 +70,10 @@ Live запуск выполняется отдельно владельцем �
 
 Один процесс на одну SQLite-базу и локальный диск; второй владелец отклоняется OS lock. Дополнительные workers/сетевой storage не приняты. Отмена coroutine дожидается owned SQLite work. Shutdown запрещает новые updates, отменяет и дожидается уже запущенных обработчиков перед закрытием SDK session и освобождением OS lock. Другой bot ID/schema не может переиспользовать базу. БД содержит IDs, названия созданных тем и результаты операций; защищайте её как прикладные данные. Invite links, bio, временный user_chat_id и query_id в таблицы не записываются. Срок подтверждения 5 минут и окно `/joins` 2 часа не удаляют journal и неизвестные результаты; retention/backup/restore настраивает владелец приложения.
 
+## Сообщества
+
+`/community` читает `ChatFullInfo.community` через `getChat` и ничего не сохраняет. Принадлежность группы к сообществу не дает прав: бот и инициатор по-прежнему проверяются `getChatMember` в каждой группе отдельно, и участник без прав в другой группе того же сообщества получает отказ. Сервисные сообщения `community_chat_added`, `community_chat_removed` и `community_chat_joined` пример не обрабатывает; учет связей и приходов — в рецепте `demo-community` и документе о сообществах (`docs/communities.md`). Bot API не управляет составом сообщества и не перечисляет его чаты.
+
 ## Права и повтор
 
 Перед предпросмотром и перед эффектом приложение сначала запрашивает bot membership, затем actor membership. Нужны admin/creator и соответствующее право: can_manage_topics, can_invite_users или can_restrict_members. Timeout/ошибка чтения/несовпадение identity запрещают действие. Для mute заново проверяется обычный target member. Дополнительная проверка автора — правило приложения; сервер Telegram проверяет права самого бота. Между чтением и запросом возможна гонка изменения прав, которую локальный код полностью не устраняет.
@@ -87,6 +92,6 @@ Journal проходит `draft → ready → sending → done/rejected/unknown`
 
 ## Источники и границы
 
-Частично проверено 2026-10-05: [Bot API getChatMember](https://core.telegram.org/bots/api#getchatmember), [forum topics](https://core.telegram.org/bots/api#createforumtopic), [close/reopen](https://core.telegram.org/bots/api#closeforumtopic), [restrictChatMember](https://core.telegram.org/bots/api#restrictchatmember), [join requests](https://core.telegram.org/bots/api#chatjoinrequest), [query queue](https://core.telegram.org/bots/api#answerchatjoinrequestquery), [Update delivery](https://core.telegram.org/bots/api#update), [migrations](https://core.telegram.org/bots/api#message), [privacy mode](https://core.telegram.org/bots/faq#what-messages-will-my-bot-get). Установленный aiogram 3.31.0 подтверждён настоящим импортом методов/types и Dispatcher event_update. Дата относится к перечисленным правилам этого примера; остальные источники проекта не обновлены.
+Частично проверено 2026-10-05: [Bot API getChatMember](https://core.telegram.org/bots/api#getchatmember), [forum topics](https://core.telegram.org/bots/api#createforumtopic), [close/reopen](https://core.telegram.org/bots/api#closeforumtopic), [restrictChatMember](https://core.telegram.org/bots/api#restrictchatmember), [join requests](https://core.telegram.org/bots/api#chatjoinrequest), [query queue](https://core.telegram.org/bots/api#answerchatjoinrequestquery), [Update delivery](https://core.telegram.org/bots/api#update), [migrations](https://core.telegram.org/bots/api#message), [privacy mode](https://core.telegram.org/bots/faq#what-messages-will-my-bot-get). Установленный aiogram 3.31.0 подтверждён настоящим импортом методов/types и Dispatcher event_update. Дата относится к перечисленным правилам этого примера; остальные источники проекта не обновлены. Команда `/community` сверена 2026-10-07 с [Community](https://core.telegram.org/bots/api#community) и [ChatFullInfo](https://core.telegram.org/bots/api#chatfullinfo) Bot API 10.3.
 
 Реальные права, delivery, бот/actor revoke, две группы/темы и migration проверяются отдельно в выбранных владельцем тестовых группах. Offline результат не делает библиотеку stable 1.0 и не подтверждает эксплуатационные лимиты.

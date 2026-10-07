@@ -10,7 +10,7 @@
 
 Это независимо от `verification`: `sdk` означает построение объекта, `mock` — synthetic execution, `browser` — конкретную браузерную проверку, `live` — подтвержденный сценарий настоящего Telegram, `not_run` — отсутствие исполнения. Live само по себе не присваивает stable, а стабильный request builder не обещает весь платежный workflow.
 
-В поставке 0.24.0: 46 групп experimental; 29 рецептов experimental, 284 reference; stable/live пока не заявлены. При выборе посмотрите `scope` и обязанности host: права, состояние и восстановление могут требовать прикладной реализации.
+В поставке 0.24.0: 46 групп experimental; 30 рецептов experimental, 284 reference; stable/live пока не заявлены. При выборе посмотрите `scope` и обязанности host: права, состояние и восстановление могут требовать прикладной реализации.
 
 ```python
 from telegram_patterns import RecipeCatalog

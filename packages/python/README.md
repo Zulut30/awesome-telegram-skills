@@ -5,7 +5,7 @@
 Календарь и UTC/DST: `CalendarMonth`, `TimeSlot`, `resolve_local_time`; current ACL и atomic booking/replay: `SlotSchedule`, `SlotBooking`, `SQLiteSlotStore`; optional aiogram: `calendar_keyboard`, `time_slot_keyboard`. IANA data на Windows — extra `calendar` (проверено tzdata 2026.5). [Контракт и пример](../../docs/calendar-slots.md). UI snapshot не резервирует ресурс; receipt отличается от current booking status.
 
 
-`plan_recipe` / `run_recipe_offline` и CLI `run-recipe` показывают требования всех 313 cookbook recipes и запускают 210 известных Python fixtures без токена. Core SQLite работает без SDK; 99 native references отклоняются без host/аргументов. [План, effects и ограничения](../../docs/recipe-execution.md). Требуется установленный пакет; runner не выполняет найденный recipe.code.
+`plan_recipe` / `run_recipe_offline` и CLI `run-recipe` показывают требования всех 314 cookbook recipes и запускают 210 известных Python fixtures без токена. Core SQLite работает без SDK; 99 native references отклоняются без host/аргументов. [План, effects и ограничения](../../docs/recipe-execution.md). Требуется установленный пакет; runner не выполняет найденный recipe.code.
 
 RecipeCatalog.search добавляет optional task/context/sdk/sdk_version/api_version. Recipe хранит immutable metadata и repository source/check links; legacy schema 1 defaults сохранены. Поиск SDK-free, без исполнения: [навигация рецептов](../../docs/gallery-navigation.md).
 

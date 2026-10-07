@@ -2,7 +2,7 @@
 import time
 from typing import Awaitable, Callable
 
-from aiogram import Dispatcher, F, Router
+from aiogram import Bot, Dispatcher, F, Router
 from aiogram.filters import Command
 from aiogram.methods import DeleteEphemeralMessage, EditEphemeralMessageText, SendMessage
 from aiogram.types import CallbackQuery, InlineKeyboardButton, InlineKeyboardMarkup, Message
@@ -21,11 +21,11 @@ def attach_ephemeral_status(dispatcher: Dispatcher, *, status: Callable[[int, in
     router = Router(name='ephemeral-status')
 
     @router.message(Command('panel'), F.chat.type.in_(GROUPS))
-    async def panel(message: Message) -> None:
-        await message.bot(SendMessage(chat_id=message.chat.id, text='Нажмите — ответ увидите только вы.', reply_markup=PANEL))
+    async def panel(message: Message, bot: Bot) -> None:
+        await bot(SendMessage(chat_id=message.chat.id, text='Нажмите — ответ увидите только вы.', reply_markup=PANEL))
 
     @router.callback_query(F.data.in_({'me:status', 'me:replace'}))
-    async def show(query: CallbackQuery) -> None:
+    async def show(query: CallbackQuery, bot: Bot) -> None:
         received = clock()
         message = query.message
         if not isinstance(message, Message) or message.chat.type not in GROUPS:
@@ -42,11 +42,11 @@ def attach_ephemeral_status(dispatcher: Dispatcher, *, status: Callable[[int, in
             await query.answer(text[:200], show_alert=True)
             return
         # The answer names this press by callback_query_id; delivery is not guaranteed, nothing is retried.
-        await query.bot(SendMessage.model_validate({'chat_id': message.chat.id, 'text': text, 'reply_markup': OWN, **extra}))
+        await bot(SendMessage.model_validate({'chat_id': message.chat.id, 'text': text, 'reply_markup': OWN, **extra}))
         await query.answer()
 
     @router.callback_query(F.data.in_({'me:refresh', 'me:hide'}))
-    async def own(query: CallbackQuery) -> None:
+    async def own(query: CallbackQuery, bot: Bot) -> None:
         message = query.message
         if not isinstance(message, Message) or message.ephemeral_message_id is None:
             await query.answer()
@@ -54,10 +54,10 @@ def attach_ephemeral_status(dispatcher: Dispatcher, *, status: Callable[[int, in
         # Buttons on an ephemeral message are answered by editing or deleting it, never by replacing.
         ref = EphemeralMessageRef(message.chat.id, query.from_user.id, message.ephemeral_message_id)
         if query.data == 'me:hide':
-            await query.bot(DeleteEphemeralMessage(**ref.target()))
+            await bot(DeleteEphemeralMessage.model_validate(ref.target()))
         else:
             text = await status(message.chat.id, query.from_user.id)
-            await query.bot(EditEphemeralMessageText(**ref.target(), text=text, reply_markup=OWN))
+            await bot(EditEphemeralMessageText.model_validate({**ref.target(), 'text': text, 'reply_markup': OWN}))
         await query.answer()
 
     dispatcher.include_router(router)

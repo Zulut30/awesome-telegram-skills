@@ -32,6 +32,7 @@ _FIXTURES = {
     'demo-ai-stream': ('ai_stream_bot.py', 'offline_ai_stream.py'),
     'demo-rich-message': ('rich_message_bot.py', 'offline_rich_message.py'),
     'demo-ephemeral': ('ephemeral_bot.py', 'offline_ephemeral.py'),
+    'demo-community': ('community_bot.py', 'offline_community.py'),
     'demo-recovery': ('error_recovery.py',),
 }
 _ATTEMPTS = [0]
@@ -176,6 +177,9 @@ def _execute(recipe_id: str) -> dict:
             if recipe_id == 'demo-ephemeral':
                 assert evidence['ephemeral_answers'] == 2 and all(evidence[key] for key in ('callback_query_named', 'replace_original', 'edit_by_reference', 'delete_by_reference', 'window_expired_alert', 'groups_only', 'callback_acknowledged', 'existing_dispatcher_preserved'))
                 checks.extend(('ephemeral-callback-answer', 'edit-delete-by-reference', 'fifteen-second-window'))
+            if recipe_id == 'demo-community':
+                assert evidence['joined_counted'] == 1 and evidence['community_id_bits'] > 32 and all(evidence[key] for key in ('added_group', 'added_channel', 'bot_arrival_ignored', 'removed_without_fields', 'reconciled_from_get_chat', 'existing_dispatcher_preserved'))
+                checks.extend(('community-service-messages', 'channel-post-events', 'get-chat-reconciliation'))
             if recipe_id == 'demo-platform':
                 assert evidence['families'] == 7 and evidence['contracts'] == 51 and evidence['confirmed_operations'] == 7
                 assert all(evidence[key] for key in ('durable_intents', 'unknown_send_no_retry', 'current_actor_acl', 'fresh_native_rights', 'financial_quote_budget', 'scoped_event_dedup', 'existing_dispatcher_preserved', 'user_confirmed_managed_link'))
