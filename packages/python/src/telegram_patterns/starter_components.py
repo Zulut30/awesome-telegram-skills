@@ -168,9 +168,11 @@ def resolve_components(template: str, requested: Sequence[str] | None) -> tuple[
         '.env.example',
         '.telegram-patterns.json',
         'offline_components.py',
+        'mini_app_server.py',
         'mini-app/index.html',
         'mini-app/package.json',
         'mini-app/tsconfig.json',
+        'mini-app/vite.config.ts',
         'mini-app/src/main.ts',
     }
     prefixes: list[str] = []

@@ -843,6 +843,7 @@ def diagnose(
     except OSError:
         mini_present = True
     if mini_present:
+        uses_vite = False
         text, reason = _read_manifest(mini_dir / 'package.json')
         if text is None:
             check(
@@ -869,6 +870,8 @@ def diagnose(
             else:
                 dependencies = data.get('dependencies') if isinstance(data, dict) else None
                 dependency = dependencies.get('@awesome-telegram/patterns') if isinstance(dependencies, dict) else None
+                tools = data.get('devDependencies') if isinstance(data, dict) else None
+                uses_vite = isinstance(tools, dict) and 'vite' in tools
                 valid = isinstance(dependency, str) and bool(dependency.strip())
                 check(
                     'mini-app-manifest',
@@ -919,21 +922,30 @@ def diagnose(
                     env=environment,
                     shell=False,
                 )
-                match = re.fullmatch(r'v(\d+)\.\d+\.\d+', result.stdout.strip())
-                node_ok = bool(result.returncode == 0 and match and int(match.group(1)) >= 20)
+                match = re.fullmatch(r'v(\d+)\.(\d+)\.\d+', result.stdout.strip())
+                version = (int(match.group(1)), int(match.group(2))) if match and result.returncode == 0 else None
+                # Vite 8 (devDependencies шаблона) объявляет engines ^20.19.0 || >=22.12.0.
+                vite_ok = version is not None and (version >= (22, 12) or (version[0] == 20 and version[1] >= 19))
+                node_ok = version is not None and version[0] >= 20 and (vite_ok or not uses_vite)
                 reason = (
                     'node-supported'
                     if node_ok
-                    else 'node-too-old'
-                    if result.returncode == 0 and match
                     else 'node-probe-failed'
+                    if version is None
+                    else 'node-too-old-for-vite'
+                    if version[0] >= 20
+                    else 'node-too-old'
                 )
                 check(
                     'node',
                     'pass' if node_ok else 'fail',
                     reason,
-                    match.group(0) if match and result.returncode == 0 else 'Не удалось прочитать версию Node.',
-                    fix='' if node_ok else 'Проверьте установленный Node и PATH; используйте поддерживаемую LTS >=20.',
+                    match.group(0) if version is not None and match else 'Не удалось прочитать версию Node.',
+                    fix=''
+                    if node_ok
+                    else 'Vite в mini-app требует Node ^20.19 или >=22.12: обновите Node LTS.'
+                    if reason == 'node-too-old-for-vite'
+                    else 'Проверьте установленный Node и PATH; используйте поддерживаемую LTS >=20.',
                     commands=[] if node_ok else [_command(['node', '--version'], cwd='mini-app')],
                 )
                 if node_ok and match and int(match.group(1)) != 24:

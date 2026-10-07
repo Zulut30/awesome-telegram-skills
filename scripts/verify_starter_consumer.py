@@ -48,7 +48,7 @@ def main() -> int:
         assert created['created'] and not created['network']
         files = {str(path.relative_to(target)).replace('\\', '/'): path.read_bytes()
                  for path in target.rglob('*') if path.is_file()}
-        assert len(files) == (7 if template == 'bot' else 11)
+        assert len(files) == (7 if template == 'bot' else 13)
         cli(*command, expected=2)
         assert files == {str(path.relative_to(target)).replace('\\', '/'): path.read_bytes()
                          for path in target.rglob('*') if path.is_file()}
@@ -61,12 +61,16 @@ def main() -> int:
         assert offline.returncode == 0, 'Generated starter offline scenario failed'
         proof = json.loads(offline.stdout)
         assert proof['passed'] and not proof['network']
+        if template == 'bot-mini-app':  # generated backend: signed initData accepted, changed and missing refused
+            assert proof['mini_app_backend'] == {'signed': [200, 'Анна'], 'changed': [401, 'init-data-invalid'],
+                                                 'missing': [401, 'authentication-required']}
         diagnostics = cli('doctor', str(target))
         assert diagnostics['passed'] and not diagnostics['network']
         assert cli('doctor', str(target), '--require-token', expected=1)['passed'] is False
         if template == 'bot-mini-app':
             mini = json.loads((target / 'mini-app/package.json').read_text(encoding='utf-8'))
             assert mini['dependencies']['@awesome-telegram/patterns'] == 'file:' + args.tarball.resolve().as_posix()
+            assert mini['scripts']['dev'] == 'vite' and 'vite' in mini['devDependencies']
         results.append({'template': template, 'files': len(files), 'offline': proof, 'doctor': diagnostics})
     report = {'passed': True, 'network': False, 'installed_console': True, 'starters': results, 'cli_stages': cli_stages}
     (args.output / 'report.json').write_text(json.dumps(report, indent=2), encoding='utf-8')

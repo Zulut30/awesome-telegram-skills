@@ -7,7 +7,7 @@ export function mount(host:HTMLElement, _app:unknown):()=>void {
   const section=document.createElement('section');section.dataset.component='api-client';
   const button=document.createElement('button');button.type='button';button.textContent='Проверить fixture API';
   const status=document.createElement('p');status.setAttribute('role','status');let disposed=false;
-  const fixture:FetchTransport=async()=>new Response(JSON.stringify({message:'Fixture прочитан. Backend auth не подключен.'}),{status:200,headers:{'Content-Type':'application/json'}});
+  const fixture:FetchTransport=async()=>new Response(JSON.stringify({message:'Fixture прочитан без запроса к серверу.'}),{status:200,headers:{'Content-Type':'application/json'}});
   const client=createClient(location.origin,()=>({}),fixture);
   const action=async()=>{
     button.disabled=true;

@@ -22,10 +22,15 @@ try {
       const page = await context.newPage();
       const errors = [], external = [];
       page.on('pageerror', error => errors.push(error.message));
-      // Refuse external traffic, rather than merely detecting it after dispatch.
+      // Refuse external traffic, rather than merely detecting it after dispatch. The official SDK script
+      // (telegram-web-app.js in <head>) gets an empty body: outside Telegram the screen must work without it.
+      let sdk = 0;
       await page.route('**/*', async route => {
-        if (new URL(route.request().url()).origin !== base.origin) {
-          external.push(route.request().url()); await route.abort();
+        const url = route.request().url();
+        if (url.startsWith('https://telegram.org/js/telegram-web-app.js')) {
+          sdk++; await route.fulfill({contentType:'text/javascript',body:''});
+        } else if (new URL(url).origin !== base.origin) {
+          external.push(url); await route.abort();
         } else await route.continue();
       });
       await page.goto(base.href);
@@ -49,7 +54,8 @@ try {
       await page.waitForFunction(previous => document.querySelector('.tp-shell').dataset.theme !== previous, theme);
       verify(await field.inputValue() === 'Анна', `${name}/${theme}: theme change preserves input`);
       verify((await page.getByRole('status').textContent()).includes('Отправка на сервер не подключена'), `${name}/${theme}: theme change preserves feedback`);
-      verify(errors.length === 0 && external.length === 0, `${name}/${theme}: no errors or external requests`);
+      verify(errors.length === 0 && external.length === 0 && sdk === 1, `${name}/${theme}: official SDK only, no errors or other external requests`);
+      verify((await page.locator('[data-identity]').textContent()).startsWith('Откройте Mini App из Telegram'), `${name}/${theme}: no identity claimed outside Telegram`);
       cases.push({name,width,height,theme,appearance});
       await context.close();
     }

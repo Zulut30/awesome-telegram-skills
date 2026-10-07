@@ -1,0 +1,22 @@
+    # Backend Mini App без сети и сокетов: подписанная initData принимается, измененная и пустая — нет.
+    import hmac
+    from urllib.parse import urlencode
+    from aiohttp.test_utils import make_mocked_request
+    from telegram_patterns import BotSettings
+    from mini_app_server import create_web_app, me
+    token = '100:OFFLINE_FIXTURE'
+    fields = {'auth_date': str(int(datetime.now(timezone.utc).timestamp())),
+              'user': json.dumps({'id': 42, 'first_name': 'Анна'}, ensure_ascii=False)}
+    secret = hmac.digest(b'WebAppData', token.encode(), 'sha256')
+    check = '\n'.join(f'{key}={value}' for key, value in sorted(fields.items()))
+    signed = urlencode({**fields, 'hash': hmac.digest(secret, check.encode(), 'sha256').hex()})
+    app = create_web_app(BotSettings(token))
+    backend = {}
+    for case, header in (('signed', signed), ('changed', signed.replace('auth_date=', 'auth_date=1')),
+                         ('missing', None)):
+        request = make_mocked_request('GET', '/api/me', headers={'X-Init-Data': header} if header else {}, app=app)
+        response = await me(request)
+        backend[case] = [response.status, json.loads(response.text).get('first_name') or json.loads(response.text)['code']]
+    assert backend == {'signed': [200, 'Анна'], 'changed': [401, 'init-data-invalid'],
+                       'missing': [401, 'authentication-required']}, backend
+    report['mini_app_backend'] = backend

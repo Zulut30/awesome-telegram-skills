@@ -46,7 +46,7 @@ for check in report['checks']:
 | `toml-invalid`, `json-invalid` | Исправьте синтаксис в редакторе и повторите doctor. Payload не включается в сообщение. |
 | `token-missing`, `token-format-invalid`, `token-placeholder`, `env-file-invalid` | Для offline token не нужен; для live задайте BOT_TOKEN через механизм секретов приложения. `--require-token` и `--webhook` превращают эту проверку в fail. `token-placeholder` — в BOT_TOKEN осталась заглушка из `.env.example`; `env-file-invalid` — `.env` проекта (читается только с `--webhook`) не разбирается как строки KEY=VALUE до 64 KiB. Формат не доказывает действительность token. |
 | `mini-app-dependency-missing` | `dependencies` должен быть object, а значение `@awesome-telegram/patterns` — непустая строка. Рекомендация установки предоставленного tarball применяется отдельно в mini-app; doctor сам не подтверждает installed version/build. |
-| `npm-missing`, `node-missing`, `node-too-old`, `node-probe-failed` | Проверьте PATH и поддерживаемую Node LTS. Probe имеет timeout 10 секунд; stdout/stderr не отражаются при ошибке. В child передаются только PATH и системные переменные, без BOT_TOKEN, NODE_OPTIONS и payment secrets. |
+| `npm-missing`, `node-missing`, `node-too-old`, `node-too-old-for-vite`, `node-probe-failed` | Проверьте PATH и поддерживаемую Node LTS. Если в `devDependencies` mini-app есть `vite`, нужен Node ^20.19 или >=22.12 (engines Vite 8). Probe имеет timeout 10 секунд; stdout/stderr не отражаются при ошибке. В child передаются только PATH и системные переменные, без BOT_TOKEN, NODE_OPTIONS и payment secrets. |
 
 
 ## Webhook и очередь updates: `--webhook`

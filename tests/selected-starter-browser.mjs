@@ -1,10 +1,12 @@
-/** Real Chrome checks of all selected modules installed from the supplied tarball. */
+/** Real Chrome checks of all selected modules installed from the supplied tarball, in the Vite build (mini-app/dist).
+ * The official SDK script is stubbed; HMR and disposal run in tests/starter-dev-loop.mjs. */
 import assert from 'node:assert/strict';
 import {chromium} from 'playwright';
 import {createServer} from 'node:http';
 import {readFile,mkdir,writeFile,realpath} from 'node:fs/promises';
 import path from 'node:path';
-const root=await realpath(process.argv[2]);
+const root=await realpath(path.join(process.argv[2],'dist'));
+const SDK='https://telegram.org/js/telegram-web-app.js';
 const version=JSON.parse(await readFile('packages/typescript/package.json','utf8')).version;
 const output=path.resolve('output',`pattern-library-${version}`,'selected-starter-browser');
 await mkdir(output,{recursive:true});
@@ -23,14 +25,16 @@ const base=`http://127.0.0.1:${server.address().port}`;
 let browser,checks=0;
 const cases=[];
 function verify(value,message){assert.ok(value,message);checks++;}
+async function stubSdk(context){await context.route(SDK+'*',route=>route.fulfill({contentType:'text/javascript',body:''}));}
 try {
   browser=await chromium.launch(process.env.CHROME_PATH?{executablePath:process.env.CHROME_PATH,headless:true}:{channel:'chrome',headless:true});
   for(const [name,width,height] of [['phone',320,568],['tablet',768,1024],['desktop',1440,900]])for(const theme of ['light','dark']){
-    const context=await browser.newContext({viewport:{width,height},colorScheme:theme});
+    const context=await browser.newContext({viewport:{width,height},colorScheme:theme});await stubSdk(context);
     const page=await context.newPage(),errors=[],external=[];
     page.on('pageerror',error=>errors.push(error.message));
     await page.route('**/*',async route=>{
-      if(!route.request().url().startsWith(base+'/')){external.push(route.request().url());await route.abort();}
+      if(route.request().url().startsWith(SDK))await route.fallback();
+      else if(!route.request().url().startsWith(base+'/')){external.push(route.request().url());await route.abort();}
       else await route.continue();
     });
     await page.goto(base);await page.getByRole('heading',{name:'Мой Mini App'}).waitFor();
@@ -39,8 +43,8 @@ try {
     await page.getByRole('button',{name:'Отклик Telegram',exact:true}).click();
     verify(await page.getByText('Отклик недоступен; интерфейс работает.',{exact:true}).isVisible(),`${name}/${theme}: native fallback`);
     await page.getByRole('button',{name:'Проверить fixture API',exact:true}).click();
-    await page.getByText('Fixture прочитан. Backend auth не подключен.',{exact:true}).waitFor();
-    verify(await page.getByText('Fixture прочитан. Backend auth не подключен.',{exact:true}).isVisible(),`${name}/${theme}: fixture decode`);
+    await page.getByText('Fixture прочитан без запроса к серверу.',{exact:true}).waitFor();
+    verify(await page.getByText('Fixture прочитан без запроса к серверу.',{exact:true}).isVisible(),`${name}/${theme}: fixture decode`);
     await page.getByLabel('Ваше имя').fill('Анна');
     await page.getByRole('button',{name:'Сохранить публичный выбор',exact:true}).click();
     verify(await page.getByText('Сохранен публичный выбор.',{exact:true}).isVisible(),`${name}/${theme}: write draft`);
@@ -60,7 +64,7 @@ try {
     await page.screenshot({path:path.join(output,`${name}-${theme}.png`),fullPage:true});
     cases.push({name,width,height,theme});await context.close();
   }
-  const native=await browser.newContext(),nativePage=await native.newPage();
+  const native=await browser.newContext();await stubSdk(native);const nativePage=await native.newPage();
   await nativePage.addInitScript(()=>{
     window.hapticCalls=0;window.listeners=new Map();
     const haptic={impactOccurred(style){if(this!==haptic||style!=='light')throw Error('Wrong receiver or style');window.hapticCalls++;}};
@@ -69,10 +73,8 @@ try {
   });
   await nativePage.goto(base);await nativePage.getByRole('button',{name:'Отклик Telegram',exact:true}).click();
   verify(await nativePage.evaluate(()=>window.hapticCalls===1),'fake native receiver and style');
-  await nativePage.evaluate(async()=>{window.detachedButton=document.querySelector('[data-component="mini-app-native-api"] button');const module=await import('./dist/main.js');module.disposeApp();window.detachedButton.click();});
-  verify(await nativePage.evaluate(()=>window.hapticCalls===1&&window.listeners.size===0)&&await nativePage.locator('.tp-shell').count()===0,'dispose all module UI, events and detached handlers');
   await native.close();
-  const blocked=await browser.newContext(),blockedPage=await blocked.newPage();
+  const blocked=await browser.newContext();await stubSdk(blocked);const blockedPage=await blocked.newPage();
   await blockedPage.addInitScript(()=>Object.defineProperty(window,'localStorage',{get(){throw new DOMException('Unavailable','SecurityError')}}));
   await blockedPage.goto(base);await blockedPage.getByRole('button',{name:'Сохранить публичный выбор',exact:true}).click();
   verify(await blockedPage.getByText('Storage недоступен; продолжайте без сохранения.',{exact:true}).isVisible(),'storage denial fallback');
@@ -80,6 +82,6 @@ try {
   verify(await blockedPage.getByText('Поле заполнено. Отправка на сервер не подключена.',{exact:true}).isVisible(),'storage denial preserves base form');
   await blocked.close();
   const report={passed:true,version,browser:browser.version(),checks,cases,externalRequests:0,
-    scope:'Installed tarball, selected modules; native SDK is synthetic, fixture transport offline; not real Telegram/backend auth'};
+    scope:'Installed tarball, selected modules, Vite build; native SDK is synthetic, fixture transport offline; backend initData and HMR are in starter-dev-loop; not real Telegram'};
   await writeFile(path.join(output,'report.json'),JSON.stringify(report,null,2)+'\n');console.log(JSON.stringify(report));
 } finally {await browser?.close();await new Promise(resolve=>server.close(resolve));}

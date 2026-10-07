@@ -339,6 +339,12 @@ print(json.dumps({'core_without_sdk':True,'python':sys.version.split()[0]}))
             report['starter_browser'] = json.loads((output / 'starter-browser/report.json').read_text(encoding='utf-8'))
             run('selected-starter-browser', [node, str(ROOT / 'tests/selected-starter-browser.mjs'), str(selected_mini)])
             report['selected_starter_browser'] = json.loads((output / 'selected-starter-browser/report.json').read_text(encoding='utf-8'))
+            # Development loop: real Vite dev server with HMR, the generated backend verifying signed initData
+            # through the proxy, and the backend serving the built dist; Python is each starter's own environment.
+            run('starter-dev-loop', [node, str(ROOT / 'tests/starter-dev-loop.mjs'), str(starter_root / 'bot-mini-app'), str(python_in(sdk)), 'bot-mini-app'])
+            run('selected-starter-dev-loop', [node, str(ROOT / 'tests/starter-dev-loop.mjs'), str(selected_project), str(python_in(selected_sdk)), 'selected'])
+            report['starter_dev_loop'] = [json.loads((output / 'starter-dev-loop' / label / 'report.json').read_text(encoding='utf-8'))
+                                          for label in ('bot-mini-app', 'selected')]
         python_report = json.loads(next(line for line in python_log.splitlines() if line.startswith('{"passed"')))
         report['python_tests'] = python_report['tests']
         report['python_test_seconds'] = python_report['seconds']

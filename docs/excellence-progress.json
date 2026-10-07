@@ -956,9 +956,16 @@
     {
       "id": 75,
       "title": "Шаблон Mini App с быстрым циклом разработки",
-      "status": "pending",
-      "commit_subject": null,
-      "evidence": [],
+      "status": "done",
+      "commit_subject": "excellence(075): add a Vite Mini App starter with a test-environment dev loop",
+      "evidence": [
+        "bot-mini-app starter: Vite 8.3.3 dev server with HMR (import.meta.hot.dispose(disposeApp)), /api proxy to mini_app_server.py, official telegram-web-app.js in <head>; npm run build serves dist from the same backend",
+        "mini_app_server.py: GET /api/me validates raw initData (X-Init-Data) with validate_init_data; python app.py runs bot and backend together and sets the menu button from MINI_APP_URL (HTTP only with TELEGRAM_TEST_ENVIRONMENT=1)",
+        "README of the generated project: 'Mini App за 15 минут' in the Telegram test environment, 7 steps totalling 15 minutes; anchors and SDK URL checked against core.telegram.org/bots/webapps on 2026-10-07",
+        "tests/starter-dev-loop.mjs in verify_pattern_packages PASS for both starters: Vite ready ~30 ms, signed initData verified through the proxy ~0.3 s, hot update ~90 ms without reload or listener leak (mutation without dispose fails), built dist via backend",
+        "test_mini_app_starter.py (7 tests), doctor node-too-old-for-vite, verify_quickstart ru and en PASS with vite preview",
+        "Limit: a real Telegram client is not opened in CI; account and @BotFather steps are estimated"
+      ],
       "remaining": null
     },
     {

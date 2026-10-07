@@ -127,6 +127,8 @@ def main() -> int:
     offline = json.loads(run('offline', [str(python), 'offline.py'], cwd=project))
     if not offline['passed'] or offline['network'] or not offline['session_closed'] or offline['methods'] != ['SendMessage', 'AnswerCallbackQuery', 'SendMessage']:
         raise RuntimeError('Offline bot behavior differs from the documented result')
+    if offline.get('mini_app_backend') != {'signed': [200, 'Анна'], 'changed': [401, 'init-data-invalid'], 'missing': [401, 'authentication-required']}:
+        raise RuntimeError('Mini App backend initData check differs from the documented result')
     doctor = json.loads(run('doctor', [str(python), '-m', 'telegram_patterns', 'doctor', '.'], cwd=project))
     if not doctor['passed'] or doctor['network']:
         raise RuntimeError('Local doctor did not pass without a token')
@@ -174,7 +176,7 @@ def main() -> int:
               'origins': origins, 'offline': offline, 'doctor_passed': doctor['passed'],
               'existing_workspace_unchanged': True, 'browser': browser, 'telegram_requests': False,
               'shell': 'powershell' if WINDOWS else 'bash', 'platform': sys.platform,
-              'limits': 'Documented commands for this OS and Chrome viewport preview; installers may use registries; no real Telegram client, live bot, backend auth or usability study'}
+              'limits': 'Documented commands for this OS and Chrome viewport preview; installers may use registries; backend initData checked offline only; no real Telegram client, live bot or usability study'}
     (output / 'report.json').write_text(json.dumps(report, ensure_ascii=False, indent=2) + '\n', encoding='utf-8', newline='\n')
     print(json.dumps(report, ensure_ascii=False))
     return 0

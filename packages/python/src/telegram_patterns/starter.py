@@ -155,19 +155,35 @@ def create_starter(
                 alias = module.replace('-', '_')
                 ts_imports.append(f"import {{mount as {alias}}} from './{module}.js';")
                 ts_mounts.append(f'{alias}(shell.content, window.Telegram?.WebApp)')
+    mini = template == 'bot-mini-app'
+    if mini:
+        # Backend Mini App: проверка initData и раздача dist в одном процессе с ботом.
+        output['mini_app_server.py'] = root.joinpath('mini_app_server.py.txt').read_text(encoding='utf-8')
+        imports.insert(0, 'from mini_app_server import run_with_mini_app')
+    else:
+        imports.insert(0, 'from telegram_patterns.aiogram import run_bot')
+    output['app.py'] = output['app.py'].replace('__RUN_BOT__', 'run_with_mini_app' if mini else 'run_bot')
     output['app.py'] = output['app.py'].replace('__COMPONENT_IMPORTS__', '\n'.join(imports))
     output['app.py'] = output['app.py'].replace('__DISPATCHER__', dispatcher)
     output['app.py'] = output['app.py'].replace('__COMPONENT_SETUP__', '\n'.join(setup))
-    output['pyproject.toml'] = output['pyproject.toml'].replace(
-        '__PROJECT_MODULES__', json.dumps(['app', *[Path(name).stem for name in feature_files if name.endswith('.py')]])
-    )
+    modules = ['app', *(['mini_app_server'] if mini else [])]
+    modules += [Path(name).stem for name in feature_files if name.endswith('.py')]
+    output['pyproject.toml'] = output['pyproject.toml'].replace('__PROJECT_MODULES__', json.dumps(modules))
+    fragments = {
+        'README.md': ('__MINI_APP_README__', 'mini-app-readme.md.txt', 'В шаблоне bot каталога mini-app нет.\n'),
+        '.env.example': ('__MINI_APP_ENV__', 'mini-app-env.txt', ''),
+        'offline.py': ('__OFFLINE_MINI_APP__', 'mini-app-offline.py.txt', ''),
+    }
+    for filename, (marker, fragment, absent) in fragments.items():
+        text = root.joinpath(fragment).read_text(encoding='utf-8') if mini else absent
+        output[filename] = output[filename].replace(marker + '\n', text)
     output['README.md'] += '\nПодключенные группы: ' + ', '.join(selected) + '.\n'
     if feature_files:
         output['README.md'] += (
             '\nВыбранные модули подключены к app.py/frontend; Python-проверка: '
             '`python offline_components.py`. Форма использует transient MemoryStorage; '
             'наблюдение не durable audit. Каталог и клавиатуры публичные, без private effect. '
-            'API client frontend использует fixture transport; backend auth/session не созданы. '
+            'API client frontend использует fixture transport; сессии backend не созданы. '
             'Черновик хранит только публичный ID под demo scope; '
             'реальные учетные записи требуют server-derived scope.\n'
         )
@@ -186,7 +202,7 @@ def create_starter(
     }
     output['.telegram-patterns.json'] = json.dumps(config, ensure_ascii=False, indent=2) + '\n'
     if ts_source:
-        for filename in ('index.html', 'tsconfig.json', 'src/main.ts'):
+        for filename in ('index.html', 'tsconfig.json', 'vite.config.ts', 'src/main.ts'):
             output['mini-app/' + filename] = root.joinpath('mini-app/' + filename + '.txt').read_text(encoding='utf-8')
         output['mini-app/src/main.ts'] = output['mini-app/src/main.ts'].replace(
             '__COMPONENT_IMPORTS__', '\n'.join(ts_imports)
@@ -200,11 +216,16 @@ def create_starter(
                     'name': name + '-mini-app',
                     'private': True,
                     'type': 'module',
-                    'scripts': {'build': 'tsc -p tsconfig.json', 'typecheck': 'tsc -p tsconfig.json --noEmit'},
+                    'scripts': {
+                        'dev': 'vite',
+                        'build': 'tsc -p tsconfig.json && vite build',
+                        'typecheck': 'tsc -p tsconfig.json',
+                        'preview': 'vite preview',
+                    },
                     # npm file specs are filesystem paths, not percent-encoded file URLs.
                     # Keep literal spaces/Unicode/% in the provided local tarball path.
                     'dependencies': {'@awesome-telegram/patterns': 'file:' + ts_source.as_posix()},
-                    'devDependencies': {'typescript': '7.0.2'},
+                    'devDependencies': {'typescript': '7.0.2', 'vite': '8.3.3'},
                 },
                 indent=2,
             )

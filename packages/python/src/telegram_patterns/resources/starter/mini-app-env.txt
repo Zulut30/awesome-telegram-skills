@@ -1,0 +1,5 @@
+# Mini App. Backend (app.py или mini_app_server.py) слушает 127.0.0.1:MINI_APP_API_PORT, Vite проксирует /api туда.
+MINI_APP_API_PORT=8080
+# Адрес, который открывает кнопка меню бота. В тестовом окружении допустим HTTP, например адрес Vite в локальной
+# сети: http://192.168.1.10:5173 (npm run dev -- --host). В основном окружении нужен HTTPS (туннель или deploy).
+# MINI_APP_URL=http://192.168.1.10:5173

@@ -1,8 +1,8 @@
 # First run: a bot and a Mini App screen
 
-This example is verified on Windows (PowerShell), Ubuntu and macOS (bash) with Python 3.13, Node.js 24 and the local release **0.24.0**. Every step has two variants: PowerShell for Windows and bash for Linux and macOS; run one of them. You need Python >=3.11 and Node.js >=20 (22 or newer recommended). The packages are not on PyPI or npm yet: download the wheel and tarball from GitHub Releases or get them from the project owner. Both files must come from the same release.
+This example is verified on Windows (PowerShell), Ubuntu and macOS (bash) with Python 3.13, Node.js 24 and the local release **0.24.0**. Every step has two variants: PowerShell for Windows and bash for Linux and macOS; run one of them. You need Python >=3.11 and Node.js ^20.19 or >=22.12 (the minimum of Vite 8 used by the Mini App template). The packages are not on PyPI or npm yet: download the wheel and tarball from GitHub Releases or get them from the project owner. Both files must come from the same release.
 
-Before you start: installing Python/npm dependencies may use the internet. `init`, `offline.py` and the local form need no real token, no Telegram account and no payment keys. The bot runs a real aiogram Dispatcher through `StubSession`; the screen validates input locally. A backend, server-side authorization and form submission are not connected here yet.
+Before you start: installing Python/npm dependencies may use the internet. `init`, `offline.py` and the local form need no real token, no Telegram account and no payment keys. The bot runs a real aiogram Dispatcher through `StubSession`; the screen validates input locally. The template backend verifies the initData signature, but this run has no Telegram and no initData, and form submission is not connected.
 
 ## 1. Install the local CLI
 
@@ -52,7 +52,7 @@ The `tools` environment holds the CLI and the library core; aiogram is installed
 
 ## 2. Create a new project
 
-The first command lists the 11 files to be created with `created: false`. The second creates `my-bot` with a Python bot and a TypeScript form. The CLI does not install dependencies. The manifests contain absolute local references (a Python file URI and an npm file path): if you move the project, provide new paths to the artifacts.
+The first command lists the 13 files to be created with `created: false`. The second creates `my-bot` with a Python bot, a Mini App backend (`mini_app_server.py`) and a TypeScript screen built with Vite. The CLI does not install dependencies. The manifests contain absolute local references (a Python file URI and an npm file path): if you move the project, provide new paths to the artifacts.
 
 <!-- quickstart:init -->
 ```powershell
@@ -94,7 +94,7 @@ python3 -m venv .venv &&
 { echo 'The offline scenario or doctor failed: read the output above' >&2; false; }
 ```
 
-Expected `offline.py` result: `passed: true`, `network: false`, methods `SendMessage`, `AnswerCallbackQuery`, `SendMessage`, then `session_closed: true`. That is `/start`, a press on the help button and the bot's answer. `app.py` contains the composition in use. A `token-format` warning from `doctor` is fine for this run; `passed` does not prove that a real token or backend works.
+Expected `offline.py` result: `passed: true`, `network: false`, methods `SendMessage`, `AnswerCallbackQuery`, `SendMessage`, then `session_closed: true`. That is `/start`, a press on the help button and the bot's answer. `mini_app_backend` shows that the backend accepted signed initData and refused changed and missing initData. `app.py` contains the composition in use. A `token-format` warning from `doctor` is fine for this run; `passed` does not prove that a real token or backend works.
 
 ## 4. Open the Mini App screen
 
@@ -120,15 +120,15 @@ npm run build ||
 
 <!-- quickstart:preview -->
 ```powershell
-& ..\.venv\Scripts\python.exe -m http.server $tgPreviewPort --bind 127.0.0.1 --directory .
+npm.cmd run preview -- --host 127.0.0.1 --port $tgPreviewPort
 ```
 
 <!-- quickstart-bash:preview -->
 ```bash
-../.venv/bin/python -m http.server "$TG_PREVIEW_PORT" --bind 127.0.0.1 --directory .
+npm run preview -- --host 127.0.0.1 --port "$TG_PREVIEW_PORT"
 ```
 
-Open **http://127.0.0.1:4173** in a browser (use your port if you changed it). HTTP is required because the page imports ES modules. The interface of the generated screen is in Russian: press the check button with an empty field, an error appears and focus moves to the field. Enter a name and repeat: a message confirms the local check and that nothing was sent. Resize the window and switch the OS light/dark theme: the entered name is kept. The server listens on loopback only; stop it with `Ctrl+C` in this window.
+Open **http://127.0.0.1:4173** in a browser (use your port if you changed it). `vite preview` serves the built `dist`. Outside Telegram the screen says that without initData the user is not confirmed. The interface of the generated screen is in Russian: press the check button with an empty field, an error appears and focus moves to the field. Enter a name and repeat: a message confirms the local check and that nothing was sent. Resize the window and switch the OS light/dark theme: the entered name is kept. The server listens on loopback only; stop it with `Ctrl+C` in this window.
 
 ## When you need Telegram
 
@@ -136,6 +136,6 @@ For a real bot get a separate test BOT_TOKEN from BotFather, copy `.env.example`
 
 You do not need your main account for this: in the [Telegram test environment](https://core.telegram.org/bots/features#testing-your-bot) create a separate account, make a bot with its @BotFather and add `TELEGRAM_TEST_ENVIRONMENT=1` to `.env` (details in Russian: [test-environment.md](../test-environment.md)).
 
-A Mini App inside Telegram needs HTTPS hosting, the official WebApp SDK and a chosen launch point. Before handling user data, connect a backend, raw initData validation, a session and object permissions. The local form grants no access and proves no identity. Business permissions and a user MTProto session are never connected automatically. Real Telegram clients and payments are verified separately.
+To open the Mini App in Telegram follow the 15-minute Mini App guide in the project `README.md` (in Russian): the test environment accepts the HTTP address of Vite (`npm run dev -- --host`, hot reload), and `python app.py` sets the menu button from `MINI_APP_URL` and starts the backend that verifies initData. The main environment requires HTTPS. Before handling user data add a session and object permissions: initData verification proves only the launch, and the local form grants no access. Business permissions and a user MTProto session are never connected automatically. Real Telegram clients and payments are verified separately.
 
 If an existing project uses React, Vue, another bot library or database, plug the public APIs you need into its current architecture. This starter is meant for a new small example; 1.0 stability is not declared for it yet.

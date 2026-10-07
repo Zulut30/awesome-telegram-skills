@@ -19,7 +19,7 @@ python -m telegram_patterns init --list-components
 | Выбор | Подключение и проверяемое поведение |
 | --- | --- |
 | База Python: `bot-settings`, `command-replies`, `action-menu`, `callback-router`, `bot-polling`, `bot-test-transport` | /start, /help, кнопка с ACK, explicit live lifecycle и offline.py. Эти группы всегда нужны текущему шаблону |
-| База bot-mini-app: mini-app-bridge, responsive-shell | Форма, тема/lifecycle, compiled ESM; backend еще не подключен |
+| База bot-mini-app: mini-app-bridge, responsive-shell | Форма, тема/lifecycle, Vite (`npm run dev` с горячей перезагрузкой), `mini_app_server.py` с проверкой initData и кнопкой меню из `MINI_APP_URL`; сессия и права на объекты не создаются |
 | native-keyboards | /keyboard, две/три кнопки в рядах, стили primary/success, разрешенный публичный выбор и stale fallback |
 | paginated-menu | /catalog, страницы 1–3, редактирование сообщения и отдельные namespaces выбора/страницы |
 | text-form | /apply, проверка Python/TypeScript, review, /back, /cancel, явное подтверждение. SimpleEventIsolation включается; MemoryStorage временный. Service проверяет собственный private scope и только валидирует ввод |

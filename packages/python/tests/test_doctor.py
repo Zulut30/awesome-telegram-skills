@@ -147,12 +147,45 @@ class DoctorTests(unittest.TestCase):
             self.assertEqual(self.by_name(doctor(root), 'pyproject')['reason'], 'toml-invalid')
             self.assert_guidance(report)
 
+    def test_vite_mini_app_requires_node_20_19_or_22_12(self):
+        with tempfile.TemporaryDirectory() as folder:
+            root = Path(folder).resolve()
+            self.manifest(root)
+            (root / 'mini-app/package.json').write_text(
+                '{"dependencies":{"@awesome-telegram/patterns":"file:x.tgz"},"devDependencies":{"vite":"8.3.3"}}',
+                encoding='utf-8',
+            )
+            for stdout, reason in (
+                ('v20.19.0', 'node-supported'),
+                ('v22.12.0', 'node-supported'),
+                ('v24.1.0', 'node-supported'),
+                ('v20.18.3', 'node-too-old-for-vite'),
+                ('v21.7.3', 'node-too-old-for-vite'),
+                ('v22.11.0', 'node-too-old-for-vite'),
+                ('v18.20.0', 'node-too-old'),
+            ):
+                with (
+                    self.subTest(version=stdout),
+                    patch.object(diagnostics.shutil, 'which', return_value='trusted-node'),
+                    patch.object(
+                        diagnostics.subprocess, 'run', return_value=subprocess.CompletedProcess([], 0, stdout, '')
+                    ),
+                ):
+                    report = doctor(root)
+                node = self.by_name(report, 'node')
+                self.assertEqual(node['reason'], reason)
+                self.assertEqual(node['status'], 'pass' if reason == 'node-supported' else 'fail')
+                if reason == 'node-too-old-for-vite':
+                    self.assertIn('^20.19', node['remediation']['summary'])
+                self.assert_guidance(report)
+
     def test_node_probe_uses_only_fixed_args_and_allowlisted_env_never_echoes_output(self):
         with tempfile.TemporaryDirectory() as folder:
             root = Path(folder).resolve()
             self.manifest(root)  # doctor reports the canonical project path
             for stdout, code, reason in (
                 ('v24.19.0\n', 0, 'node-supported'),
+                ('v20.10.0', 0, 'node-supported'),  # without vite the package minimum is Node 20
                 ('v18.1.0', 0, 'node-too-old'),
                 (CANARY, 0, 'node-probe-failed'),
                 ('v24.19.0', 1, 'node-probe-failed'),
