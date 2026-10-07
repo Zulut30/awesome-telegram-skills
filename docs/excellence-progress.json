@@ -930,9 +930,14 @@
     {
       "id": 73,
       "title": "Надежный bridge",
-      "status": "pending",
-      "commit_subject": null,
-      "evidence": [],
+      "status": "done",
+      "commit_subject": "excellence(073): keep every bridge listener notified and share launch detection",
+      "evidence": [
+        "TelegramBridge.emit notifies every listener, then rethrows one failure or an AggregateError",
+        "src/launch.ts isInsideTelegram used by TelegramBridge and TelegramNativeAPI: non-empty platform string other than 'unknown'",
+        "packages/typescript/tests/core.test.mjs: later listeners still updated, AggregateError for two failures, parity on 9 platform values and 4 non-objects (37 TypeScript tests)",
+        "verify_pattern_packages PASS 0.24.0, 571 Python and 37 TypeScript tests, browser=passed"
+      ],
       "remaining": null
     },
     {

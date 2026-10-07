@@ -395,3 +395,34 @@ test('actual HTTP redirect cannot forward CSRF headers to another origin', async
     await Promise.all([new Promise(resolve=>destination.close(resolve)),new Promise(resolve=>redirect.close(resolve))]);
   }
 });
+
+test('a failing bridge listener does not stop the others; failures surface after everyone is notified', () => {
+  const app=new FakeApp();app.platform='ios';
+  const bridge=new TelegramBridge(app,new EventTarget()),seen=[];
+  bridge.subscribe(()=>{});bridge.start();
+  let fail=false;
+  bridge.subscribe(()=>{if(fail)throw new Error('first listener');});
+  bridge.subscribe(snapshot=>seen.push(snapshot.colorScheme));
+  fail=true;app.colorScheme='dark';
+  assert.throws(()=>app.emit('themeChanged'),/first listener/);
+  assert.deepEqual(seen,['light','dark'],'the later listener still received the update');
+  bridge.subscribe(snapshot=>{if(fail&&snapshot.colorScheme==='light')throw new TypeError('third listener');});
+  app.colorScheme='light';
+  assert.throws(()=>app.emit('themeChanged'),error=>error instanceof AggregateError&&error.errors.length===2);
+  assert.deepEqual(seen,['light','dark','light']);
+  fail=false;app.colorScheme='dark';app.emit('themeChanged');assert.equal(seen.at(-1),'dark');
+  bridge.dispose();
+});
+
+test('bridge and native API agree on running inside Telegram', () => {
+  for (const platform of [undefined,'','unknown',42,null,'ios','android','tdesktop','weba']) {
+    const app={platform,version:'10.3',ready(){},onEvent(){},offEvent(){},isVersionAtLeast:()=>true};
+    const inside=new TelegramBridge(app,undefined).snapshot().insideTelegram;
+    assert.equal(new TelegramNativeAPI(app).supports('ready'),inside,`platform ${String(platform)}`);
+    assert.equal(inside,typeof platform==='string'&&platform!==''&&platform!=='unknown');
+  }
+  for (const app of [undefined,null,'telegram',7]) {
+    assert.equal(new TelegramBridge(app,undefined).snapshot().insideTelegram,false);
+    assert.equal(new TelegramNativeAPI(app).supports('ready'),false);
+  }
+});
