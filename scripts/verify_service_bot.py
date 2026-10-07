@@ -27,7 +27,7 @@ def main() -> int:
         if p.is_symlink() or bool(getattr(p,'is_junction',lambda:False)()):raise ValueError('Output links are not supported')
     wheel=args.wheel.resolve(strict=True)
     if not wheel.is_file() or wheel.suffix!='.whl':raise ValueError('Provide the trusted local pattern wheel')
-    output=args.output.resolve();output.mkdir()
+    output=args.output.resolve();output.mkdir(parents=True)  # parent links were refused above; the leaf must be new
     project=Path(tempfile.mkdtemp(prefix='telegram service consumer '))
     env=minimal_environment()
     env['PYTHONUTF8']='1'
