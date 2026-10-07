@@ -16,6 +16,7 @@
 | [Сервисный бот](service-bot.md) ★ | Собрать бота записи на услугу с напоминанием и проверить его без сети. |
 | [Групповой бот](group-bot.md) ★ | Собрать бота для групп с темами, правами, заявками и модерацией. |
 | [Магазин и Mini App](shop-example.md) ★ | Собрать магазин с Mini App, заказом и оплатой в Telegram Stars. |
+| [Витрина проектов](showcase.md) | Посмотреть работающих ботов и Mini Apps на этих скиллах и добавить свой проект. |
 | [Quickstart (English)](en/quickstart.md) | Run the first bot and Mini App screen step by step, in English. |
 
 ## Как сделать

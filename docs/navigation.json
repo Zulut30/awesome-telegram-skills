@@ -72,6 +72,11 @@
           "nav": true
         },
         {
+          "title": "Витрина проектов",
+          "goal": "Посмотреть работающих ботов и Mini Apps на этих скиллах и добавить свой проект.",
+          "path": "docs/showcase.md"
+        },
+        {
           "title": "Quickstart (English)",
           "goal": "Run the first bot and Mini App screen step by step, in English.",
           "path": "docs/en/quickstart.md"

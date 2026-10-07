@@ -60,6 +60,7 @@ jobs:
       - run: python scripts/build_openapi_types.py --check
       - run: python scripts/build_docs_map.py --check
       - run: python scripts/build_acceptance_history.py --check
+      - run: python scripts/build_showcase.py --check
 
   history:
     name: Commit messages and CHANGELOG against tags

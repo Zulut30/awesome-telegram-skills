@@ -1205,10 +1205,14 @@
     {
       "id": 94,
       "title": "Витрина реальных проектов",
-      "status": "pending",
-      "commit_subject": null,
-      "evidence": [],
-      "remaining": null
+      "status": "partial",
+      "commit_subject": "excellence(094): Add a showcase page, a checked catalog and an issue form for projects",
+      "evidence": [
+        "docs/showcase.md (site page, README link) rendered by scripts/build_showcase.py from catalog/showcase.json; CI checks kind, t.me or https link, description without private data, known skills and components, issue number and dates; --check-links opens links",
+        "Issue form .github/ISSUE_TEMPLATE/showcase.yml collects the same fields and author confirmations; tests/test_showcase.py",
+        "Repository examples are listed separately and do not count toward the target"
+      ],
+      "remaining": "No external project has been submitted yet: at least 10 working projects must come through the form and be checked by a maintainer; nothing is listed without a real, opened link"
     },
     {
       "id": 95,

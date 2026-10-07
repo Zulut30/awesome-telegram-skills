@@ -16,7 +16,7 @@
 
 [English](README.en.md) · [Быстрый старт](#quickstart) · [Пример кнопок](#buttons) · [Галерея](#gallery) · [Все скиллы](#skills) · [План 1.0](docs/internal/library-roadmap-100.md)
 
-**[Документация на GitHub Pages](https://zulut30.github.io/awesome-telegram-skills/)** · [Каждый скилл](https://zulut30.github.io/awesome-telegram-skills/skills/) · [Справочник API](https://zulut30.github.io/awesome-telegram-skills/api/) · [Карта документации](docs/README.md) · [Инструкция для ИИ-агента](docs/for-agents.md).
+**[Документация на GitHub Pages](https://zulut30.github.io/awesome-telegram-skills/)** · [Каждый скилл](https://zulut30.github.io/awesome-telegram-skills/skills/) · [Справочник API](https://zulut30.github.io/awesome-telegram-skills/api/) · [Карта документации](docs/README.md) · [Витрина проектов](docs/showcase.md) · [Инструкция для ИИ-агента](docs/for-agents.md).
 
 > **Версия 0.24.0 — экспериментальная локальная поставка.** Приняты 30 из 100 пунктов плана. Пакеты пока не опубликованы в PyPI/npm; проверка на реальных Telegram-клиентах и платежных провайдерах остается отдельным этапом. Какие версии Python, Node.js, aiogram и Bot API поддерживаются и до какого срока — в [политике поддержки](docs/versioning.md#политика-поддержки).
 
