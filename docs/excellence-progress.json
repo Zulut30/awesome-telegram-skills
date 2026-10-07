@@ -546,9 +546,13 @@
     {
       "id": 44,
       "title": "Расширить валидатор скиллов",
-      "status": "pending",
-      "commit_subject": null,
-      "evidence": [],
+      "status": "done",
+      "commit_subject": "excellence(044): check paths, neighbour skill names and LF in every skill file",
+      "evidence": [
+        "validate_skills.py: repository paths in inline code/code blocks must exist (SKILL.md: inside the skill; references: skill or repo; output/ and artifacts only with the current version)",
+        "Unknown telegram-* skill names rejected (CLI/package identifiers listed explicitly); CRLF rejected in skill text files; 18 skill files and 5 docs sources converted to LF; update_api_index.py writes LF",
+        "tests/test_validate_skills.py: test_skill_files_use_lf, test_paths_in_code_must_exist_where_the_reader_looks, test_named_skills_must_exist"
+      ],
       "remaining": null
     },
     {

@@ -90,6 +90,51 @@ class ValidateSkillsTests(unittest.TestCase):
         self.assertIsNone(self.validator.check_sources(self.SOURCES, today=self.validator.date(2026, 10, 6)),
                           'one day of slack for time zones')
 
+    def reference(self, text, name='notes.md', raw=None):
+        path = self.root / '.agents/skills/telegram-sample/references' / name
+        path.parent.mkdir(parents=True, exist_ok=True)
+        path.write_bytes(raw if raw is not None else text.encode('utf-8'))
+        return path
+
+    def test_skill_files_use_lf(self):
+        self.skill(self.BASE)
+        self.reference('', raw=b'# Notes\r\n\r\nText.\r\n')
+        self.assertTrue(any('CRLF' in error for error in self.errors()))
+        self.reference('# Notes\n\nText.\n')
+        self.assertEqual(self.errors(), [])
+
+    def test_paths_in_code_must_exist_where_the_reader_looks(self):
+        (self.root / 'scripts').mkdir()
+        (self.root / 'scripts/verify.py').write_text('', encoding='utf-8')
+        self.skill(self.BASE, body='# Sample\n\nRun `scripts/verify.py`.\n\n' + self.SOURCES)
+        self.assertTrue(any('not inside the skill folder' in error for error in self.errors()),
+                        'SKILL.md is the standalone entry point')
+        own = self.root / '.agents/skills/telegram-sample/scripts/verify.py'
+        own.parent.mkdir(); own.write_text('', encoding='utf-8')
+        self.assertEqual(self.errors(), [])
+        cases = {
+            'missing repository script': '```bash\npython scripts/removed.py\n```\n',
+            'old output version': 'Report: `output/pattern-library-0.13.0/report.json`.\n',
+            'old artifact': '```bash\npip install output/release/awesome_telegram_patterns-0.13.0-py3-none-any.whl\n```\n',
+        }
+        for label, text in cases.items():
+            with self.subTest(label):
+                self.reference(text)
+                self.assertTrue(self.errors(), label)
+        self.reference('Run `scripts/verify.py`, write `output/check` and `output/pattern-library-9.9.9/report.json`; '
+                       'copy `examples/app/.env.example` to `examples/app/.env`.\n'
+                       'Ссылка вне кода на scripts/removed.py не проверяется.\n')
+        (self.root / 'examples/app').mkdir(parents=True)
+        (self.root / 'examples/app/.env.example').write_text('', encoding='utf-8')
+        self.assertEqual(self.errors(), [])
+
+    def test_named_skills_must_exist(self):
+        self.skill(self.BASE)
+        self.reference('Для оплаты открой telegram-payments-v2.\n')
+        self.assertTrue(any('unknown skill telegram-payments-v2' in error for error in self.errors()))
+        self.reference('Соседний скилл telegram-other; CLI `telegram-patterns`; пакет `awesome-telegram-patterns`.\n')
+        self.assertEqual(self.errors(), [])
+
     def test_repository_skills_pass(self):
         count, errors = self.validator.validate(ROOT)
         self.assertEqual(errors, [])

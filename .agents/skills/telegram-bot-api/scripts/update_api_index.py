@@ -115,7 +115,7 @@ def main() -> int:
     index["retrieval"] = "saved_html" if args.html_file else "official_https"
     args.output.parent.mkdir(parents=True, exist_ok=True)
     temporary = args.output.with_name(args.output.name + ".tmp")
-    temporary.write_text(json.dumps(index, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
+    temporary.write_text(json.dumps(index, ensure_ascii=False, indent=2) + "\n", encoding="utf-8", newline="\n")
     temporary.replace(args.output)
     print(f"Bot API {index['bot_api_version']}: {len(index['methods'])} methods, "
           f"{len(index['types'])} types; wrote {args.output}")

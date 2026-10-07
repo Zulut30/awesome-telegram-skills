@@ -27,6 +27,50 @@ LINK_PATTERN = re.compile(r"!?\[[^\]\n]+\]\(([^)\n]+)\)")
 # Agent Skills specification (agentskills.io/specification), checked 2026-10-07.
 ALLOWED_FIELDS = {"name", "description", "license", "compatibility", "metadata", "allowed-tools"}
 SOURCES_HEADING = "## Источники"
+TEXT_SUFFIXES = {".md", ".yaml", ".yml", ".json", ".py", ".txt"}
+# Repository-style paths named in inline code or code blocks. A skill is copied on its own, so
+# SKILL.md may only name files inside its folder; references may also name repository files.
+REPO_PATH = re.compile(r"(?<![\w./-])((?:scripts|docs|output|catalog|packages|examples|tests|recipes|gallery|site)"
+                       r"/[\w./-]*[\w-]|components\.json)")
+VERSIONED_OUTPUT = re.compile(r"(?:pattern-library-|awesome[_-]telegram[_-]patterns-)(\d+\.\d+\.\d+)")
+SKILL_NAME = re.compile(r"(?<![\w@/.-])(telegram-[a-z0-9]+(?:-[a-z0-9]+)*)")
+# Identifiers that look like skill names but are a CLI, SDK id, script or distribution.
+NOT_SKILLS = {"telegram-patterns", "telegram-environment", "telegram-first-run", "telegram-group-example",
+              "telegram-service-example", "telegram-shop-example", "telegram-web-app", "telegram-webapp"}
+
+
+def code_spans(text: str) -> list[str]:
+    blocks = re.findall(r"^```[^\n]*\n(.*?)^```", text, re.MULTILINE | re.DOTALL)
+    inline = re.findall(r"`([^`\n]+)`", re.sub(r"^```[^\n]*\n.*?^```", "", text, flags=re.MULTILINE | re.DOTALL))
+    return blocks + inline
+
+
+def check_skill_files(root: Path, folder: Path, skills: set[str], library_version: str | None) -> list[str]:
+    """LF endings, paths that exist where a reader will look, and neighbour names that are real skills."""
+    errors = []
+    for path in sorted(folder.rglob("*")):
+        if not path.is_file() or path.suffix not in TEXT_SUFFIXES or "__pycache__" in path.parts:
+            continue
+        raw = path.read_bytes()
+        if b"\r\n" in raw:
+            errors.append(f"{path}: CRLF line endings; skill files use LF")
+        text = raw.decode("utf-8", errors="replace")
+        for name in sorted(set(SKILL_NAME.findall(text)) - skills - NOT_SKILLS):
+            errors.append(f"{path}: names unknown skill {name}")
+        if path.suffix != ".md":
+            continue
+        for span in code_spans(text):
+            for target in REPO_PATH.findall(span):
+                version = VERSIONED_OUTPUT.search(target)
+                if version and library_version and version.group(1) != library_version:
+                    errors.append(f"{path}: {target} points at version {version.group(1)}, not {library_version}")
+                if (folder / target).exists():
+                    continue
+                if path.name == "SKILL.md":
+                    errors.append(f"{path}: SKILL.md names {target}, which is not inside the skill folder")
+                elif not (target.startswith("output/") or target.endswith("/.env") or (root / target).exists()):
+                    errors.append(f"{path}: {target} exists neither in the skill nor in the repository")
+    return errors
 CHECKED = re.compile(r"^Проверено: (\d{4}-\d{2}-\d{2}), \S.*$", re.MULTILINE)
 
 
@@ -136,6 +180,7 @@ def validate(root: Path) -> tuple[int, list[str]]:
         sources_error = check_sources(text[match.end():])
         if sources_error:
             errors.append(f"{entry}: {sources_error}")
+        errors.extend(check_skill_files(root, folder, {path.name for path in folders}, expected_version))
 
         metadata_path = folder / "agents" / "openai.yaml"
         if not metadata_path.is_file():
