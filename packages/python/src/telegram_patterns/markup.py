@@ -368,6 +368,6 @@ def markup_page_number(data: str | None, *, prefix: str = 'page:') -> int | None
     if not isinstance(data, str) or not data.startswith(prefix):
         return None
     key = data[len(prefix) :]
-    if not re.fullmatch(r'0|[1-9][0-9]{0,47}', key):
+    if not re.fullmatch(r'0|[1-9][0-9]{0,47}', key) or len(data) > 64:  # ASCII: characters are bytes
         return None
     return int(key)

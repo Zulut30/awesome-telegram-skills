@@ -76,7 +76,7 @@ jobs:
       - uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97 # v7.0.0
         with:
           python-version: '3.13'
-      - run: python -m pip install 'aiogram==3.31.0' 'python-telegram-bot==22.8' 'cryptography==50.0.2' 'tzdata==2026.5'
+      - run: python -m pip install 'aiogram==3.31.0' 'python-telegram-bot==22.8' 'cryptography==50.0.2' 'tzdata==2026.5' 'hypothesis==6.168.5'
       # In-process tests in parallel shards; any child process fails the run. The delivery job runs the
       # integration tests (subprocesses, generators, multiprocessing) against the built wheel.
       - run: python scripts/run_python_tests.py --unit --budget 30
@@ -95,7 +95,7 @@ jobs:
       - uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97 # v7.0.0
         with:
           python-version: '3.13'
-      - run: python -m pip install 'coverage==7.16.2' 'aiogram==3.31.0' 'python-telegram-bot==22.8' 'cryptography==50.0.2' 'tzdata==2026.5'
+      - run: python -m pip install 'coverage==7.16.2' 'aiogram==3.31.0' 'python-telegram-bot==22.8' 'cryptography==50.0.2' 'tzdata==2026.5' 'hypothesis==6.168.5'
       - run: python -m coverage run --rcfile=packages/python/pyproject.toml -m unittest discover -s packages/python/tests
       - run: python -m coverage report --rcfile=packages/python/pyproject.toml --skip-covered --sort=cover
       - run: python -m coverage json --rcfile=packages/python/pyproject.toml -o coverage.json

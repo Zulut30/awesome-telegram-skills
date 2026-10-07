@@ -146,7 +146,8 @@ print(json.dumps({'core_without_sdk':True,'python':sys.version.split()[0]}))
 
         sdk = consumers / 'sdk'
         run('sdk-environment', [uv, 'venv', '--python', sys.executable, str(sdk)])
-        run('sdk-install', [uv, 'pip', 'install', '--python', str(python_in(sdk)), str(wheel), 'aiogram==3.31.0', 'tzdata==2026.5', 'cryptography==50.0.2', 'python-telegram-bot==22.8'])
+        run('sdk-install', [uv, 'pip', 'install', '--python', str(python_in(sdk)), str(wheel), 'aiogram==3.31.0', 'tzdata==2026.5', 'cryptography==50.0.2', 'python-telegram-bot==22.8',
+            'hypothesis==6.168.5'])  # test-only: property tests of the parsers
         run('typing-install', [uv, 'pip', 'install', '--python', str(python_in(sdk)), 'mypy==2.4.0'])
         run('python-typecheck', [str(python_in(sdk)), '-m', 'mypy', '--strict', '--follow-imports=silent', '--no-incremental', str(ROOT / 'packages/python/src/telegram_patterns')], consumers)
         public_python_types = consumers / 'public_types.py'

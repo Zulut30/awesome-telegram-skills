@@ -25,3 +25,6 @@ output/
 .coverage.*
 coverage.json
 coverage-html/
+
+# Hypothesis example database (HYPOTHESIS_PROFILE=explore)
+.hypothesis/

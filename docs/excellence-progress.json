@@ -877,9 +877,14 @@
     {
       "id": 69,
       "title": "Property-based и fuzz-тесты парсеров",
-      "status": "pending",
-      "commit_subject": null,
-      "evidence": [],
+      "status": "done",
+      "commit_subject": "excellence(069): test the parsers with Hypothesis properties and keep found cases",
+      "evidence": [
+        "packages/python/tests/test_properties.py: 11 properties over initData, escape_html/escape_markdown_v2, split_formatted, page_number/markup_page_number, SelectionMenu.apply, stars_invoice payload, SQLiteOnce operation payloads",
+        "found and fixed: markup_page_number accepted callback data over 64 bytes while page_number refused it; kept as @example with the control-character and foreign-session cases",
+        "ci profile deterministic (derandomize, no database), 2.4 s; HYPOTHESIS_PROFILE=explore 5000 examples, 52 s, no new cases",
+        "hypothesis==6.168.5 in python-unit, python-coverage and the delivery sdk environment; verify_pattern_packages PASS 0.24.0, 570 Python tests, browser=passed"
+      ],
       "remaining": null
     },
     {
