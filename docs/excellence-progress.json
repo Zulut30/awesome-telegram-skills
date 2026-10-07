@@ -239,10 +239,13 @@
     {
       "id": 20,
       "title": "Честный статус за 30 секунд",
-      "status": "pending",
-      "commit_subject": null,
-      "evidence": [],
-      "remaining": null
+      "status": "partial",
+      "commit_subject": "excellence(020): state production readiness plainly in README",
+      "evidence": [
+        "README: таблица «Можно ли брать в production» (скиллы, Python/TS компоненты, 310 рецептов 196/15/99, примеры, live) и итог без внутренних терминов",
+        "tests/test_readme_status.py сверяет числа таблицы с components.json, recipe-gallery.json и числом скиллов"
+      ],
+      "remaining": "Критерий требует проверки на 5 новых читателях (правильно ли они понимают, что можно ставить в production) — это делают люди, см. пункт 96."
     },
     {
       "id": 21,
