@@ -1,0 +1,4 @@
+interface:
+  display_name: "Telegram: AI Bot"
+  short_description: "Потоковые ответы модели, остановка, лимиты и приватность"
+  default_prompt: "Используй $telegram-ai-bot. Подключи модель к боту с потоковым ответом через sendMessageDraft, кнопкой остановки и лимитами запросов."

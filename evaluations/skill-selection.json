@@ -1,5 +1,5 @@
 {
- "note": "205 positive requests (5 per skill, ambiguous ones list acceptable alternatives decided before the run) and the 40 negative boundary requests from skill-boundaries.json.",
+ "note": "210 positive requests (5 per skill, ambiguous ones list acceptable alternatives decided before the run) and 41 negative requests: the 40 boundary requests from skill-boundaries.json plus one for telegram-ai-bot.",
  "cases": [
   {
    "query": "Нужна админка, где операторы видят заказы и меняют статус",
@@ -33,6 +33,41 @@
    "query": "Редактирование товаров и баннеров из веб-интерфейса для сотрудников",
    "expected": [
     "telegram-admin-panel"
+   ],
+   "kind": "positive"
+  },
+  {
+   "query": "Подключи ChatGPT к боту, чтобы ответ печатался постепенно, а не приходил целиком",
+   "expected": [
+    "telegram-ai-bot"
+   ],
+   "kind": "positive"
+  },
+  {
+   "query": "Дай пользователю кнопку остановить генерацию ответа нейросети",
+   "expected": [
+    "telegram-ai-bot"
+   ],
+   "kind": "positive"
+  },
+  {
+   "query": "Ограничь число запросов к LLM на пользователя в день, чтобы счет за модель не вырос",
+   "expected": [
+    "telegram-ai-bot"
+   ],
+   "kind": "positive"
+  },
+  {
+   "query": "ИИ-ассистент в боте помнит контекст диалога: как хранить историю и дать ее удалить",
+   "expected": [
+    "telegram-ai-bot"
+   ],
+   "kind": "positive"
+  },
+  {
+   "query": "Используй sendMessageDraft для стриминга ответа модели",
+   "expected": [
+    "telegram-ai-bot"
    ],
    "kind": "positive"
   },
@@ -1878,6 +1913,16 @@
    ],
    "not": [
     "telegram-mini-app-ui"
+   ],
+   "kind": "negative"
+  },
+  {
+   "query": "Проверь, может ли пользователь через prompt injection заставить нашего ИИ-бота выдать секреты",
+   "expected": [
+    "telegram-security-review"
+   ],
+   "not": [
+    "telegram-ai-bot"
    ],
    "kind": "negative"
   }

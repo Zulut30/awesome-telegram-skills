@@ -26,7 +26,7 @@ class LicenseTests(unittest.TestCase):
 
     def test_every_skill_declares_the_license(self):
         skills = sorted((ROOT / '.agents/skills').glob('*/SKILL.md'))
-        self.assertEqual(len(skills), 41)
+        self.assertEqual(len(skills), 42)
         for skill in skills:
             front = skill.read_text(encoding='utf-8').split('---', 2)[1]
             self.assertRegex(front, re.compile(r'^license: MIT\r?$', re.M), skill.parent.name)

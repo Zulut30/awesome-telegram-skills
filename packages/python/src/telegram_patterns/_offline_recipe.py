@@ -29,6 +29,7 @@ _FIXTURES = {
     'demo-inline-search': ('inline_search_bot.py', 'offline_inline_search.py'),
     'demo-polls': ('polls_bot.py', 'offline_polls.py'),
     'demo-platform': ('platform_bot.py', 'offline_platform.py'),
+    'demo-ai-stream': ('ai_stream_bot.py', 'offline_ai_stream.py'),
     'demo-recovery': ('error_recovery.py',),
 }
 _ATTEMPTS = [0]
@@ -164,6 +165,9 @@ def _execute(recipe_id: str) -> dict:
             if recipe_id == 'demo-polls':
                 assert all(evidence[key] for key in ('modern_quiz', 'own_poll_binding', 'persistent_vote_ids', 'anonymous_limits', 'unknown_addition_not_guessed', 'durable_host_dedup', 'unknown_send_no_retry', 'fresh_acl', 'existing_dispatcher_preserved'))
                 checks.extend(('own-bot-modern-quiz', 'persistent-id-vote-retraction', 'unknown-association-not-guessed', 'host-sqlite-dedup-unknown-intent'))
+            if recipe_id == 'demo-ai-stream':
+                assert all(evidence[key] for key in ('stop_closes_model_stream', 'stale_stop_ignored', 'one_generation_per_chat', 'bounded_queue', 'budget_checked_first', 'preview_429_paused', 'history_forget', 'prompt_not_logged', 'long_answer_split', 'shutdown_cancels'))
+                checks.extend(('draft-stream-stop-button', 'stop-closes-model-stream', 'bounded-queue-budget', 'final-message-split'))
             if recipe_id == 'demo-platform':
                 assert evidence['families'] == 7 and evidence['contracts'] == 51 and evidence['confirmed_operations'] == 7
                 assert all(evidence[key] for key in ('durable_intents', 'unknown_send_no_retry', 'current_actor_acl', 'fresh_native_rights', 'financial_quote_budget', 'scoped_event_dedup', 'existing_dispatcher_preserved', 'user_confirmed_managed_link'))

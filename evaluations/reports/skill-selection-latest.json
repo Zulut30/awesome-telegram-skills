@@ -3,24 +3,31 @@
   "agent": "Claude Code CLI 2.1.292, claude -p with tools disabled; models haiku and sonnet",
   "cases": "evaluations/skill-selection.json",
   "threshold": 0.95,
-  "descriptions_sha256": "0c417312e0ad9986c85723f8edae38dbbb9997ebadc805dbc37fd41747201923",
+  "descriptions_sha256": "ce7a7163e6762c4e814f325e49d47a20c5422b30f0b23e3d3c67c03d53fa8401",
   "runs": [
     {
       "model": "haiku",
-      "cases": 245,
-      "correct": 240,
+      "cases": 251,
+      "correct": 246,
       "accuracy": 0.98,
       "by_kind": {
         "positive": {
-          "cases": 205,
-          "correct": 200
+          "cases": 210,
+          "correct": 205
         },
         "negative": {
-          "cases": 40,
-          "correct": 40
+          "cases": 41,
+          "correct": 41
         }
       },
       "misses": [
+        {
+          "query": "initData проходит локально, но на продакшене сервер возвращает 401",
+          "expected": [
+            "telegram-debugging"
+          ],
+          "chosen": "telegram-mini-app-auth"
+        },
         {
           "query": "Публикуй пост в канал от имени бота с кнопкой под ним",
           "expected": [
@@ -30,14 +37,6 @@
           "chosen": "telegram-bot-api"
         },
         {
-          "query": "Описание и команды бота на русском и английском",
-          "expected": [
-            "telegram-localization",
-            "telegram-profiles"
-          ],
-          "chosen": "telegram-bot-python"
-        },
-        {
           "query": "Где хранить серверное состояние и кеш в Mini App, чтобы не было рассинхрона?",
           "expected": [
             "telegram-mini-app-architecture"
@@ -45,34 +44,35 @@
           "chosen": "telegram-mini-app-network-recovery"
         },
         {
+          "query": "Запрос оплаты оборвался по таймауту, как понять, прошел ли он?",
+          "expected": [
+            "telegram-mini-app-network-recovery",
+            "telegram-payments"
+          ],
+          "chosen": "telegram-payment-provider"
+        },
+        {
           "query": "Ленивая загрузка картинок и разделение кода по экранам Mini App",
           "expected": [
             "telegram-mini-app-performance"
           ],
           "chosen": "telegram-mini-app-architecture"
-        },
-        {
-          "query": "Сделай подписку с автосписанием через Platega",
-          "expected": [
-            "telegram-platega"
-          ],
-          "chosen": "telegram-subscription-access"
         }
       ]
     },
     {
       "model": "sonnet",
-      "cases": 245,
-      "correct": 240,
-      "accuracy": 0.98,
+      "cases": 251,
+      "correct": 248,
+      "accuracy": 0.988,
       "by_kind": {
         "positive": {
-          "cases": 205,
-          "correct": 200
+          "cases": 210,
+          "correct": 207
         },
         "negative": {
-          "cases": 40,
-          "correct": 40
+          "cases": 41,
+          "correct": 41
         }
       },
       "misses": [
@@ -92,26 +92,12 @@
           "chosen": "telegram-bot-api"
         },
         {
-          "query": "Описание и команды бота на русском и английском",
+          "query": "Измени имя и описание бота на разных языках",
           "expected": [
-            "telegram-localization",
-            "telegram-profiles"
+            "telegram-profiles",
+            "telegram-localization"
           ],
           "chosen": "telegram-bot-api"
-        },
-        {
-          "query": "Сверка платежей провайдера с заказами раз в сутки",
-          "expected": [
-            "telegram-payment-provider"
-          ],
-          "chosen": "telegram-payments"
-        },
-        {
-          "query": "Администратор вручную продлевает доступ пользователю",
-          "expected": [
-            "telegram-subscription-access"
-          ],
-          "chosen": "telegram-admin-panel"
         }
       ]
     }

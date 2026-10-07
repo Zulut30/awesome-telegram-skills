@@ -68,7 +68,7 @@ class ValidateSkillsTests(unittest.TestCase):
     def test_repository_skills_pass(self):
         count, errors = self.validator.validate(ROOT)
         self.assertEqual(errors, [])
-        self.assertEqual(count, 41)
+        self.assertEqual(count, 42)
 
 
 if __name__ == '__main__':

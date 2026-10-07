@@ -21811,6 +21811,96 @@
       }
     },
     {
+      "id": "demo-ai-stream",
+      "title": "ИИ-ответ потоком с остановкой генерации",
+      "summary": "Черновик sendMessageDraft с кнопкой остановки, окончательный sendMessage, очередь, бюджет и история",
+      "category": "scenarios",
+      "language": "python",
+      "maturity": "experimental",
+      "keywords": [
+        "бот",
+        "пример",
+        "callback",
+        "меню",
+        "события",
+        "композиция",
+        "бота",
+        "личный",
+        "чат",
+        "ИИ",
+        "LLM",
+        "нейросеть",
+        "стриминг",
+        "поток",
+        "черновик",
+        "sendMessageDraft",
+        "остановка",
+        "генерация",
+        "can_stop",
+        "нейросети",
+        "ответа",
+        "ChatGPT",
+        "GPT",
+        "ассистент",
+        "модели",
+        "остановить",
+        "стоп",
+        "генерацию",
+        "стриминга"
+      ],
+      "code": "\"\"\"Stream a generated answer with sendMessageDraft and a stop button; no polling on import.\n\nThe host supplies `generate(user_id, history, prompt)` — an async iterator of text pieces from\nits model client — and `allow(user_id)` for its budget policy. A draft is a 30-second ephemeral\npreview in a private chat; only sendMessage persists the answer.\n\"\"\"\nfrom __future__ import annotations\n\nimport asyncio\nfrom collections import deque\nfrom contextlib import aclosing\nfrom dataclasses import dataclass\nimport logging\nimport time\nfrom typing import AsyncIterator, Awaitable, Callable\n\nfrom aiogram import Bot, Dispatcher, F, Router\nfrom aiogram.exceptions import TelegramAPIError, TelegramRetryAfter\nfrom aiogram.filters import Command\nfrom aiogram.methods import SendMessage, SendMessageDraft\nfrom aiogram.types import Message, MessageGenerationStopped\nfrom telegram_patterns import MessageBuilder\n\nHistory = tuple[tuple[str, str], ...]\nGenerate = Callable[[int, History, str], AsyncIterator[str]]\nAllow = Callable[[int], Awaitable[bool]]\nSTOPPED = '\\n\\n(генерация остановлена)'\nlogger = logging.getLogger(__name__)\n\n\n@dataclass\nclass _Generation:\n    chat_id: int\n    draft_id: int\n    task: asyncio.Task | None = None\n    text: str = ''\n    stopped: bool = False\n\n\ndef _chunks(text: str):\n    # LLM output is untrusted: literal text, parse_mode=None, at most 4096 UTF-16 units per part.\n    return MessageBuilder().text(text).build().split()\n\n\nclass AiStream:\n    def __init__(self, generate: Generate, allow: Allow, *, max_active: int = 4, max_waiting: int = 8,\n                 max_turns: int = 6, max_prompt: int = 4000, draft_interval: float = 0.5,\n                 clock: Callable[[], float] = time.monotonic) -> None:\n        self._generate, self._allow, self._clock = generate, allow, clock\n        self._slots = asyncio.Semaphore(max_active)\n        self._capacity, self._waiting = max_active + max_waiting, 0\n        self._max_turns, self._max_prompt, self._interval = max_turns, max_prompt, draft_interval\n        self._active: dict[int, _Generation] = {}  # one generation per private chat\n        self._history: dict[int, deque[tuple[str, str]]] = {}  # memory only; host may persist with consent\n        self._previews_paused_until = 0.0\n\n    def router(self) -> Router:\n        router = Router(name='ai-stream')\n        private = (F.chat.type == 'private') & (F.business_connection_id == None) & (F.from_user.is_bot == False)\n\n        @router.message(Command('forget'), private)\n        async def forget(message: Message) -> None:\n            self._history.pop(message.from_user.id, None)\n            await message.answer('История диалога удалена.', parse_mode=None)\n\n        @router.message(private, F.text, ~F.text.startswith('/'))\n        async def ask(message: Message) -> None:\n            user_id, prompt = message.from_user.id, message.text\n            if message.chat.id in self._active:\n                await message.answer('Я еще отвечаю на прошлый вопрос: дождитесь ответа или нажмите «Остановить».', parse_mode=None)\n                return\n            if len(prompt) > self._max_prompt:\n                await message.answer(f'Слишком длинный вопрос: не больше {self._max_prompt} символов.', parse_mode=None)\n                return\n            if not await self._allow(user_id):\n                await message.answer('Лимит запросов на сегодня исчерпан.', parse_mode=None)\n                return\n            if len(self._active) >= self._capacity:\n                await message.answer('Сейчас много запросов. Попробуйте через минуту.', parse_mode=None)\n                return\n            generation = _Generation(message.chat.id, message.message_id)  # message_id is non-zero\n            self._active[message.chat.id] = generation\n            # Managed task: the handler returns at once, so the stop update can arrive meanwhile.\n            generation.task = asyncio.create_task(self._run(message.bot, generation, user_id, prompt))\n\n        @router.stopped_message_generation()\n        async def stop(event: MessageGenerationStopped) -> None:\n            generation = self._active.get(event.chat.id)\n            if generation is None or generation.draft_id != event.draft_id or generation.task is None:\n                return  # a stale or foreign draft changes nothing\n            generation.stopped = True\n            generation.task.cancel()\n\n        return router\n\n    async def _draft(self, bot: Bot, generation: _Generation) -> None:\n        if self._clock() < self._previews_paused_until:\n            return\n        parts = _chunks(generation.text)\n        fields = parts[-1].as_kwargs() if parts else {'text': '', 'parse_mode': None}  # empty text shows «Thinking…»\n        try:\n            await bot(SendMessageDraft(chat_id=generation.chat_id, draft_id=generation.draft_id, can_stop=True, **fields))\n        except TelegramRetryAfter as error:\n            self._previews_paused_until = self._clock() + error.retry_after\n        except TelegramAPIError:\n            pass  # previews are best effort; the final message carries the answer\n\n    async def _run(self, bot: Bot, generation: _Generation, user_id: int, prompt: str) -> None:\n        history = tuple(self._history.get(user_id, ()))\n        try:\n            await self._draft(bot, generation)\n            self._waiting += 1\n            try:\n                await self._slots.acquire()\n            finally:\n                self._waiting -= 1\n            try:\n                last = float('-inf')\n                async with aclosing(self._generate(user_id, history, prompt)) as pieces:\n                    async for piece in pieces:\n                        generation.text += piece\n                        if self._clock() - last >= self._interval:\n                            await self._draft(bot, generation)\n                            last = self._clock()\n            finally:\n                self._slots.release()\n            answer = generation.text\n        except asyncio.CancelledError:\n            if not generation.stopped:\n                raise  # shutdown: nothing is sent on the bot's behalf\n            answer = generation.text + STOPPED  # aclosing() has already closed the model stream\n        except Exception as error:\n            logger.warning('generation failed: %s', type(error).__name__)  # category only, never the prompt\n            await self._send(bot, generation.chat_id, 'Не удалось получить ответ. Попробуйте еще раз.')\n            return\n        finally:\n            if self._active.get(generation.chat_id) is generation:\n                del self._active[generation.chat_id]\n        self._history.setdefault(user_id, deque(maxlen=self._max_turns)).append((prompt, answer))\n        await self._send(bot, generation.chat_id, answer.strip() or 'Пустой ответ.')\n\n    async def _send(self, bot: Bot, chat_id: int, text: str) -> None:\n        for part in _chunks(text):\n            try:\n                await bot(SendMessage(chat_id=chat_id, **part.as_kwargs()))\n            except TelegramAPIError:\n                return  # the outcome may be unknown: no blind resend of an answer the user may have\n\n    async def drain(self) -> None:\n        \"\"\"Wait for the current generations; tests and graceful restarts use it.\"\"\"\n        tasks = [item.task for item in self._active.values() if item.task is not None]\n        await asyncio.gather(*tasks, return_exceptions=True)\n\n    async def close(self) -> None:\n        for item in list(self._active.values()):\n            if item.task is not None:\n                item.task.cancel()\n        await self.drain()\n\n\ndef attach_ai_stream(dispatcher: Dispatcher, generate: Generate, allow: Allow, **options) -> AiStream:\n    stream = AiStream(generate, allow, **options)\n    dispatcher.include_router(stream.router())\n    dispatcher.shutdown.register(stream.close)\n    return stream\n",
+      "verification": "mock",
+      "scope": "Actual synthetic Dispatcher/StubSession and a scripted model stream; Telegram draft rendering, the client stop button, real model latency and cost unconfirmed.",
+      "sources": [
+        "https://core.telegram.org/bots/api"
+      ],
+      "preview": null,
+      "code_sha256": "657ac112bec93b21608263d246d226c69b71c88151948eaa056d8b773186cafd",
+      "tasks": [
+        "messages",
+        "bot"
+      ],
+      "contexts": [
+        "private"
+      ],
+      "sdk": "aiogram",
+      "sdk_version": "3.31.0",
+      "api_version": "bot:10.3",
+      "source_files": [
+        "examples/python/ai_stream_bot.py",
+        "packages/python/src/telegram_patterns/execution.py",
+        "packages/python/src/telegram_patterns/_offline_recipe.py"
+      ],
+      "check_files": [
+        "examples/python/offline_ai_stream.py"
+      ],
+      "execution": {
+        "kind": "dispatcher",
+        "dependencies": [
+          "aiogram==3.31.0"
+        ],
+        "offline_environment": [],
+        "offline_permissions": [],
+        "offline_data": [
+          "Только поставляемые синтетические данные; реальные IDs и secrets не принимаются."
+        ],
+        "live_environment": [
+          "BOT_TOKEN"
+        ],
+        "live_permissions": [
+          "Прикладная авторизация сервиса; fixture actor не доказывает server ACL."
+        ],
+        "live_data": [
+          "Текущий Dispatcher, реальные actor/chat и сервис приложения",
+          "Проверка объекта, автора и состояния до effect/replay"
+        ],
+        "live_review": "Live executor отсутствует. Перед интеграцией проверить источники, ограничения конкретного метода/контекста, auth и ACL; metadata не подтверждает права.",
+        "effects": [
+          "Synthetic Dispatcher + StubSession; временная fixture, без polling"
+        ]
+      }
+    },
+    {
       "id": "demo-recovery",
       "title": "Потерянный ответ: сверка той же операции",
       "summary": "SQLite effect уже сохранен; unknown outcome сверяется тем же scoped ID без второго заказа.",

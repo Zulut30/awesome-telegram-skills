@@ -493,9 +493,15 @@
     {
       "id": 40,
       "title": "Новый скилл: ИИ-бот в Telegram",
-      "status": "pending",
-      "commit_subject": null,
-      "evidence": [],
+      "status": "done",
+      "commit_subject": "excellence(040): add telegram-ai-bot with streamed drafts, stop button and an offline recipe",
+      "evidence": [
+        ".agents/skills/telegram-ai-bot: SKILL.md, references/streaming.md (Bot API 10.3 draft/stop facts, standalone aiogram example with bounded queue and budget), agents/openai.yaml",
+        "examples/python/ai_stream_bot.py + offline_ai_stream.py: recipe demo-ai-stream (311 recipes, 16 mock); run-recipe --offline passes from an installed wheel consumer with aiogram 3.31.0",
+        "packages/python/tests/test_ai_stream_reference.py executes the skill's example: drafts, stop with model stream closed, foreign draft ignored, 429 pause, long split, queue/budget refusal, shutdown",
+        "evaluations: selection 251 requests haiku 246 / sonnet 248, all AI-bot cases correct; skill value haiku 0/12 -> 7/12, sonnet 4/12 -> 12/12",
+        "Sources checked 2026-10-07: sendMessageDraft, sendRichMessageDraft, MessageGenerationStopped, getUpdates allowed_updates, changelog 9.3/9.5/10.2/10.3"
+      ],
       "remaining": null
     },
     {

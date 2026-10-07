@@ -5,7 +5,7 @@
 # Awesome Telegram Skills
 
 [![Version](https://img.shields.io/badge/version-0.24.0-229ED9)](CHANGELOG.md)
-[![Skills](https://img.shields.io/badge/skills-41-334155)](#skills)
+[![Skills](https://img.shields.io/badge/skills-42-334155)](#skills)
 [![Status](https://img.shields.io/badge/status-experimental-f59e0b)](docs/v1-maturity.md)
 [![License: MIT](https://img.shields.io/badge/license-MIT-16a34a)](LICENSE)
 
@@ -21,10 +21,10 @@ Skills help an AI coding agent choose a solution and verify the result. The libr
 
 | Part | Status | What it means for you |
 | --- | --- | --- |
-| 41 skills for AI agents | 🟢 Ready to use | They are instructions: the agent applies them to your code, you keep the decisions and the review |
+| 42 skills for AI agents | 🟢 Ready to use | They are instructions: the agent applies them to your code, you keep the decisions and the review |
 | Python components (36 groups) | 🟡 Experimental | Tested with real aiogram and a test transport; the API may change in the next minor version |
 | TypeScript components (7 groups) | 🟡 Experimental | Checked in Chrome at several screen sizes, not inside Telegram on a phone |
-| Recipes (310) | 🟡 Verified without Telegram | 196 run on the real SDK offline, 15 on stubs, 99 are reference snippets that were not executed |
+| Recipes (311) | 🟡 Verified without Telegram | 196 run on the real SDK offline, 16 on stubs, 99 are reference snippets that were not executed |
 | Example applications | 🟡 Educational | Show how to build a service bot, a shop and a group bot; not finished products |
 | Real Telegram clients, devices and payments | 🔴 Not verified | No live acceptance on Telegram clients or payment providers yet |
 
@@ -47,7 +47,7 @@ $telegram-code-patterns Add the ready-made forms and calendar.
 $telegram-mini-app-architecture Design a Mini App for phone, tablet and desktop.
 ```
 
-In Claude Code, all 41 skills install with one command as a plugin from this repository:
+In Claude Code, all 42 skills install with one command as a plugin from this repository:
 
 ```bash
 claude plugin marketplace add Zulut30/awesome-telegram-skills && claude plugin install telegram-skills@awesome-telegram-skills
@@ -151,6 +151,7 @@ Start with `telegram-project-planner` for a new project, `telegram-code-patterns
 | [telegram-mini-app-native-capabilities](.agents/skills/telegram-mini-app-native-capabilities/SKILL.md) | Use location, biometrics, QR, storage, sharing and downloads with fallbacks |
 | [telegram-dialogs](.agents/skills/telegram-dialogs/SKILL.md) | Build multi-step dialogs, FSM, menus and scenario recovery |
 | [telegram-notifications](.agents/skills/telegram-notifications/SKILL.md) | Add reminders and broadcasts with a queue, unsubscribe and controlled retries |
+| [telegram-ai-bot](.agents/skills/telegram-ai-bot/SKILL.md) | Connect a language model: streamed answers, stopping generation, limits and privacy |
 | [telegram-inline-mode](.agents/skills/telegram-inline-mode/SKILL.md) | Implement search and sending results via `@bot query` |
 | [telegram-groups](.agents/skills/telegram-groups/SKILL.md) | Work with groups, channels, moderation and topics |
 | [telegram-mini-app-ui](.agents/skills/telegram-mini-app-ui/SKILL.md) | Create a polished adaptive Mini App UI with themes, safe areas and accessibility |

@@ -5,7 +5,7 @@
 # Awesome Telegram Skills
 
 [![Version](https://img.shields.io/badge/version-0.24.0-229ED9)](CHANGELOG.md)
-[![Skills](https://img.shields.io/badge/skills-41-334155)](#skills)
+[![Skills](https://img.shields.io/badge/skills-42-334155)](#skills)
 [![Status](https://img.shields.io/badge/status-experimental-f59e0b)](docs/v1-maturity.md)
 [![License: MIT](https://img.shields.io/badge/license-MIT-16a34a)](LICENSE)
 [![Repository checks](https://github.com/Zulut30/awesome-telegram-skills/actions/workflows/repository-checks.yml/badge.svg)](https://github.com/Zulut30/awesome-telegram-skills/actions/workflows/repository-checks.yml)
@@ -24,10 +24,10 @@
 
 | Часть | Статус | Что это значит для вас |
 | --- | --- | --- |
-| 41 скилл для ИИ-агентов | 🟢 Можно использовать | Это инструкции: агент применяет их к вашему коду, решение и проверку вы оставляете за собой |
+| 42 скилла для ИИ-агентов | 🟢 Можно использовать | Это инструкции: агент применяет их к вашему коду, решение и проверку вы оставляете за собой |
 | Python-компоненты (36 групп) | 🟡 Экспериментально | Покрыты тестами с настоящим aiogram и тестовым транспортом; API может измениться в следующей минорной версии |
 | TypeScript-компоненты (7 групп) | 🟡 Экспериментально | Проверены в Chrome на разных размерах экрана, но не в Telegram на телефоне |
-| Рецепты (310) | 🟡 Проверены без Telegram | 196 — на настоящем SDK без сети, 15 — на заглушках, 99 — справочные и не запускались |
+| Рецепты (311) | 🟡 Проверены без Telegram | 196 — на настоящем SDK без сети, 16 — на заглушках, 99 — справочные и не запускались |
 | Примеры приложений | 🟡 Учебные | Показывают, как собрать бота, магазин и групповой бот; это не готовые продукты |
 | Работа в настоящем Telegram, на устройствах и с платежами | 🔴 Не проверено | Живой приемки на клиентах Telegram и у платежных провайдеров еще не было |
 
@@ -37,11 +37,11 @@
 
 | Часть | Что получите |
 | --- | --- |
-| **41 скилл** | Архитектура, Bot API, Mini Apps, платежи, профили, безопасность, тестирование и развертывание |
+| **42 скилла** | Архитектура, Bot API, Mini Apps, платежи, профили, безопасность, тестирование и развертывание |
 | **43 группы компонентов** | Клавиатуры, формы, навигация, календари, медиа, состояния и проверка `initData`; [каталог](components.json) |
 | **Python-пакет** | `telegram_patterns`: ядро и отдельные адаптеры aiogram; [API](packages/python/README.md) |
 | **TypeScript-пакет** | `@awesome-telegram/patterns`: bridge, темы, viewport, safe areas, API-клиент, черновики и UI-основа; [API](packages/typescript/README.md) |
-| **310 рецептов + CLI** | Поиск, фильтры, примеры кода, создание заготовок и `doctor`; [инструкция](docs/developer-tools-review.md) |
+| **311 рецептов + CLI** | Поиск, фильтры, примеры кода, создание заготовок и `doctor`; [инструкция](docs/developer-tools-review.md) |
 
 <a id="quickstart"></a>
 
@@ -64,7 +64,7 @@ $telegram-code-patterns Подключи готовые формы и кален
 $telegram-mini-app-architecture Спроектируй Mini App для телефона, планшета и ПК.
 ```
 
-В Claude Code все 41 скилл ставятся одной командой как плагин из этого репозитория:
+В Claude Code все 42 скилла ставятся одной командой как плагин из этого репозитория:
 
 ```bash
 claude plugin marketplace add Zulut30/awesome-telegram-skills && claude plugin install telegram-skills@awesome-telegram-skills
@@ -181,7 +181,7 @@ keyboard = action_menu([
 Начните с `telegram-project-planner` для нового проекта, `telegram-code-patterns` для готового кода или профильного скилла для узкой задачи. Каждый каталог самостоятельный; загружать весь набор не нужно.
 
 <details>
-<summary><strong>Открыть каталог всех 41 скилла</strong></summary>
+<summary><strong>Открыть каталог всех 42 скиллов</strong></summary>
 
 | Навык | Когда использовать |
 | --- | --- |
@@ -197,6 +197,7 @@ keyboard = action_menu([
 | [telegram-mini-app-native-capabilities](.agents/skills/telegram-mini-app-native-capabilities/SKILL.md) | Подключить геолокацию, биометрию, QR, storage, sharing и скачивание с fallback |
 | [telegram-dialogs](.agents/skills/telegram-dialogs/SKILL.md) | Сделать многошаговый диалог, FSM, меню и восстановление сценария |
 | [telegram-notifications](.agents/skills/telegram-notifications/SKILL.md) | Добавить напоминания и рассылки с очередью, отпиской и управляемыми повторами |
+| [telegram-ai-bot](.agents/skills/telegram-ai-bot/SKILL.md) | Подключить языковую модель: потоковый ответ, остановка генерации, лимиты и приватность |
 | [telegram-inline-mode](.agents/skills/telegram-inline-mode/SKILL.md) | Реализовать поиск и отправку результатов через `@bot query` |
 | [telegram-groups](.agents/skills/telegram-groups/SKILL.md) | Работать с группами, каналами, модерацией и темами |
 | [telegram-mini-app-ui](.agents/skills/telegram-mini-app-ui/SKILL.md) | Создать красивый адаптивный UI Mini App с темами, safe areas и доступностью |

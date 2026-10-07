@@ -140,6 +140,7 @@ def build(root: Path = ROOT) -> dict:
         ('profiles_bot.py', 'offline_profiles.py', 'demo-profiles', 'Профили, фото и локализация бота'),
         ('media_bot.py', 'offline_media.py', 'demo-media', 'Фото, документы, альбомы и скачивание'),
         ('message_text_bot.py', 'offline_message_text.py', 'demo-message-text', 'Безопасные сообщения и разбиение текста'),
+        ('ai_stream_bot.py', 'offline_ai_stream.py', 'demo-ai-stream', 'ИИ-ответ потоком с остановкой генерации'),
     ):
         result = subprocess.run([sys.executable, str(root / 'examples/python' / offline)], capture_output=True,
                                 text=True, encoding='utf-8', env=environment, timeout=60)
@@ -210,6 +211,11 @@ def build(root: Path = ROOT) -> dict:
             records[-1]['source_files'].append('packages/python/src/telegram_patterns/polls_aiogram.py')
             records[-1]['check_files'].append('packages/python/tests/test_polls.py')
             records[-1]['scope'] = 'Actual synthetic Dispatcher and explicit host policy; local cache/cursor/poll observations, not Telegram live/client delivery or a complete voter ledger.'
+        if key == 'demo-ai-stream':
+            records[-1]['summary'] = 'Черновик sendMessageDraft с кнопкой остановки, окончательный sendMessage, очередь, бюджет и история'
+            records[-1]['tasks'] = ['messages', 'bot']
+            records[-1]['keywords'] += ['ИИ', 'LLM', 'нейросеть', 'стриминг', 'поток', 'черновик', 'sendMessageDraft', 'остановка', 'генерация', 'can_stop', 'нейросети', 'ответа', 'ChatGPT', 'GPT', 'ассистент', 'модели', 'остановить', 'стоп', 'генерацию', 'стриминга']
+            records[-1]['scope'] = 'Actual synthetic Dispatcher/StubSession and a scripted model stream; Telegram draft rendering, the client stop button, real model latency and cost unconfirmed.'
         if key == 'demo-platform':
             records[-1]['summary'] = 'Семь семейств: native rights, host ACL/budget/intent, scoped events и explicit unknown reconciliation'
             records[-1]['tasks'] = ['platform']
