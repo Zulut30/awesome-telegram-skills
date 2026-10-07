@@ -70,6 +70,24 @@ test('API preflight rejection is actionable and happens before transport', async
   assert.equal(calls,0);
 });
 
+test('API paths resolve inside the base path and cannot escape it', async () => {
+  const calls=[];
+  const transport=async(input)=>{calls.push(input.href);return Response.json({});};
+  for (const base of ['https://x.test/api/v1','https://x.test/api/v1/','https://x.test/api/v1?ignored=1']) {
+    const api=new ApiClient({baseUrl:base,fetch:transport});
+    for (const path of ['/orders','orders','orders?id=1','/orders/7','']) await api.request(path,x=>x);
+    for (const path of ['../admin','/../admin','%2e%2e/admin','https://x.test/admin','https://x.test/api/v10/x','//other.test/x','https://other.test/api/v1/x']) {
+      await assert.rejects(api.request(path,x=>x),ValidationFailure,`${base} ${path}`);
+    }
+    await api.request('https://x.test/api/v1/same-origin',x=>x);
+  }
+  assert.deepEqual(calls.slice(0,6),['https://x.test/api/v1/orders','https://x.test/api/v1/orders','https://x.test/api/v1/orders?id=1',
+    'https://x.test/api/v1/orders/7','https://x.test/api/v1/','https://x.test/api/v1/same-origin']);
+  const root=new ApiClient({baseUrl:'https://x.test',fetch:transport});calls.length=0;
+  await root.request('/orders',x=>x);await root.request('orders',x=>x);
+  assert.deepEqual(calls,['https://x.test/orders','https://x.test/orders']);
+});
+
 test('consumer adapters preserve existing storage and transport ownership and account isolation', async () => {
   const values=new Map(),calls=[];
   const storage={getItem:key=>values.get(key)??null,setItem:(key,value)=>values.set(key,value),removeItem:key=>values.delete(key)};

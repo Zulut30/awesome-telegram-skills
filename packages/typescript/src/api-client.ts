@@ -29,6 +29,8 @@ export interface ClientOptions {
  */
 export class ApiClient {
   private readonly base: URL;
+  /** Base URL as a directory: `/api/v1` becomes `/api/v1/`, without query or fragment. */
+  private readonly prefix: URL;
   private readonly transport: FetchTransport;
   constructor(private readonly options: ClientOptions) {
     try { this.base = new URL(options.baseUrl); }
@@ -36,13 +38,23 @@ export class ApiClient {
     if (!['http:', 'https:'].includes(this.base.protocol) || this.base.username || this.base.password) {
       throw new ValidationFailure('Configure an HTTP(S) base URL without credentials');
     }
+    this.prefix = new URL(this.base.href);
+    this.prefix.search = ''; this.prefix.hash = '';
+    if (!this.prefix.pathname.endsWith('/')) this.prefix.pathname += '/';
     this.transport = options.fetch ?? globalThis.fetch.bind(globalThis);
   }
-  async request<T>(path: string, decode: (value: unknown) => T, options: RequestOptions = {}): Promise<T> {
+  /** `orders` and `/orders` both resolve inside the base path; absolute URLs must stay there too. */
+  private resolve(path: string): URL {
+    if (typeof path !== 'string' || path.startsWith('//')) throw new ValidationFailure('Configure a valid API path');
     let url: URL;
-    try { url = new URL(path, this.base); }
+    try { url = /^[a-z][a-z\d+.-]*:/i.test(path) ? new URL(path) : new URL(path.replace(/^\//, ''), this.prefix); }
     catch { throw new ValidationFailure('Configure a valid API path'); }
     if (url.origin !== this.base.origin) throw new ValidationFailure('Cross-origin API path rejected');
+    if (!url.pathname.startsWith(this.prefix.pathname)) throw new ValidationFailure('API path escapes the configured base path');
+    return url;
+  }
+  async request<T>(path: string, decode: (value: unknown) => T, options: RequestOptions = {}): Promise<T> {
+    const url = this.resolve(path);
     const method = options.method ?? 'GET';
     const outcome = method === 'GET' || method === 'HEAD' ? 'read-failed' : 'unknown';
     const timeout = options.timeoutMs ?? 10000;

@@ -45,9 +45,13 @@
     {
       "id": 4,
       "title": "Сохранять путь `baseUrl` в `ApiClient`",
-      "status": "pending",
-      "commit_subject": null,
-      "evidence": [],
+      "status": "done",
+      "commit_subject": "excellence(004): keep baseUrl path prefix in ApiClient",
+      "evidence": [
+        "core.test.mjs: /orders, orders, orders?id=1, '' при трех формах base дают https://x.test/api/v1/...; ../, %2e%2e, //host, чужой origin, /api/v10 отклонены",
+        "npm test: 27/27",
+        "README пакета и docs/public-api.md описывают разрешение пути; build_api_reference --check passed"
+      ],
       "remaining": null
     },
     {
