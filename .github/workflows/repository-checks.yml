@@ -223,7 +223,7 @@ jobs:
           if-no-files-found: warn
 
   browser:
-    name: Browser tests (patterns, gallery, starters, docs) in Playwright Chromium
+    name: Browser tests (patterns, gallery, starters) in Playwright Chromium
     runs-on: ubuntu-latest
     timeout-minutes: 60
     steps:
@@ -242,10 +242,6 @@ jobs:
       - run: echo "CHROME_PATH=$(node -e "console.log(require('playwright').chromium.executablePath())")" >> "$GITHUB_ENV"
       # Wheel/tarball consumers with the patterns demo, recipe gallery, both starters and their Vite dev loop.
       - run: python scripts/verify_pattern_packages.py
-      - run: python scripts/build_docs_site.py --source . --output output/docs-site --revision '${{ github.sha }}'
-      - run: node tests/docs-browser.mjs output/docs-site output/playwright/docs-site
-        env:
-          DOCS_BROWSER: chromium
       - if: always()
         uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
         with:
@@ -254,8 +250,12 @@ jobs:
             output/pattern-library-*/*.json
             output/pattern-library-*/*.log
             output/pattern-library-*/**/*.png
-            output/playwright
           if-no-files-found: warn
+
+  docs-site:
+    name: Documentation site
+    # The same build, link and browser checks that Documentation Pages runs before publishing from main.
+    uses: ./.github/workflows/docs-site.yml
 
   api-compatibility:
     name: Public API compatibility and CHANGELOG
@@ -367,7 +367,7 @@ jobs:
     # The one check to mark as required in branch protection: it fails when any job below failed, was
     # cancelled or skipped, so adding a job to `needs` is enough to make it block merging.
     if: always()
-    needs: [skills, generated-files, python-style, python-types, python-unit, python-package, python-coverage, typescript, mini-app-quality, browser, api-compatibility, quickstart, fresh-install, examples, docker]
+    needs: [skills, generated-files, python-style, python-types, python-unit, python-package, python-coverage, typescript, mini-app-quality, browser, docs-site, api-compatibility, quickstart, fresh-install, examples, docker]
     runs-on: ubuntu-latest
     timeout-minutes: 5
     steps:

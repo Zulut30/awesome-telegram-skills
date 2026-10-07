@@ -45,7 +45,31 @@ class CiWorkflowTests(unittest.TestCase):
         self.assertIn('npx playwright install --with-deps chromium', block)
         self.assertIn("require('playwright').chromium.executablePath()", block)
         self.assertIn('python scripts/verify_pattern_packages.py', block)
-        self.assertIn('node tests/docs-browser.mjs', block)
+
+    def test_docs_site_is_built_once_by_a_shared_workflow_and_deploy_is_never_cancelled(self):
+        shared = (ROOT / '.github/workflows/docs-site.yml').read_text(encoding='utf-8')
+        pages = (ROOT / '.github/workflows/docs-pages.yml').read_text(encoding='utf-8')
+        self.assertIn('  workflow_call:\n', shared)
+        for step in ('python scripts/build_docs_site.py', 'python scripts/verify_docs_site.py',
+                     'python -m unittest discover -s site/tests', 'node tests/docs-browser.mjs'):
+            with self.subTest(step):
+                self.assertIn(step, shared)
+                self.assertNotIn(step, pages)
+                self.assertNotIn(step, CHECKS)
+        # Only a publishing caller uploads the Pages artifact.
+        self.assertIn('if: inputs.pages-artifact\n        uses: actions/upload-pages-artifact@', shared)
+        block = CHECKS.split('\n  docs-site:\n', 1)[1].split('\n  api-compatibility:\n', 1)[0]
+        self.assertIn('uses: ./.github/workflows/docs-site.yml', block)
+        self.assertNotIn('pages-artifact', block)
+        # Pull requests are checked by Repository checks; Pages runs only to publish and never cancels a deploy.
+        self.assertNotIn('pull_request', pages)
+        self.assertIn('concurrency:\n  group: pages\n  cancel-in-progress: false\n', pages)
+        self.assertNotIn('cancel-in-progress: true', pages)
+        self.assertIn('uses: ./.github/workflows/docs-site.yml', pages)
+        self.assertIn('pages-artifact: true', pages)
+        self.assertIn("if: github.ref == 'refs/heads/main'\n    needs: build", pages)
+        # A called workflow cannot raise the caller's token permissions: it declares none of its own.
+        self.assertNotIn('permissions:', shared)
 
     def test_fresh_install_runs_on_three_systems_with_the_oldest_python(self):
         block = CHECKS.split('\n  fresh-install:\n', 1)[1].split('\n  examples:\n', 1)[0]
@@ -85,7 +109,8 @@ class CiWorkflowTests(unittest.TestCase):
         # Every action is pinned by a full commit SHA with a version comment Dependabot can update.
         for workflow in WORKFLOWS:
             for line in workflow.read_text(encoding='utf-8').splitlines():
-                if line.strip().startswith(('- uses:', 'uses:')):
+                if line.strip().startswith(('- uses:', 'uses:')) and 'uses: ./.github/workflows/' not in line:
+                    # A reusable workflow of this repository runs from the same commit and needs no pin.
                     with self.subTest(workflow=workflow.name, line=line.strip()):
                         self.assertRegex(line, r'uses: [\w./-]+@[0-9a-f]{40} # v\d+(\.\d+)*$')
         # Tool and SDK versions live in requirements files that Dependabot reads, not inline in workflows.

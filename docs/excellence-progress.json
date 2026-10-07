@@ -1139,9 +1139,14 @@
     {
       "id": 89,
       "title": "Разделить сборку и публикацию сайта",
-      "status": "pending",
-      "commit_subject": null,
-      "evidence": [],
+      "status": "done",
+      "commit_subject": "excellence(089): Split documentation site build from publishing: shared reusable workflow, deploy never cancelled",
+      "evidence": [
+        ".github/workflows/docs-site.yml (workflow_call): site tests, build_docs_site, verify_docs_site, Chromium docs-browser checks; uploads the Pages artifact only when pages-artifact is true",
+        "repository-checks docs-site job calls it for PRs and pushes and is part of required; browser job no longer builds the site",
+        "docs-pages.yml runs on main and manually only, calls the shared workflow, concurrency group pages with cancel-in-progress false; duplicated skill validation and root tests removed",
+        "tests/test_ci_workflow.py guards the split; actionlint 1.7.12 passes on every workflow and rejects an unknown input; local site build and verify passed (475 pages, 44217 links)"
+      ],
       "remaining": null
     },
     {
