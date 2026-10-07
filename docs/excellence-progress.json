@@ -282,10 +282,15 @@
     {
       "id": 24,
       "title": "Пути по ролям",
-      "status": "pending",
-      "commit_subject": null,
-      "evidence": [],
-      "remaining": null
+      "status": "partial",
+      "commit_subject": "excellence(024): add one-screen start pages for each role",
+      "evidence": [
+        "docs/start.md + 4 страницы (first-bot, existing-aiogram-bot, mini-app, ai-agent), каждая <= 330 слов прозы, ссылка из README (tests/test_start_pages.py)",
+        "packages/python/tests/test_start_guides.py выполняет фрагмент existing-bot: ['AnswerCallbackQuery', 'SendMessage'] Выбрано: catalog",
+        "TypeScript-фрагмент mini-app компилируется против упакованного tarball (strict, NodeNext; CSS — декларация бандлера)",
+        "сайт документации собирается без ошибок"
+      ],
+      "remaining": "Критерий требует замера на 5 людях (каждая страница за <= 10 минут) — пункт 96."
     },
     {
       "id": 25,
