@@ -46,4 +46,4 @@ metadata:
 
 [Crypto Pay API](https://help.send.tg/en/articles/10279948-crypto-pay-api), [Telegram Stars и внешние платежи](https://core.telegram.org/bots/payments-stars).
 
-Проверено: 2026-10-02, Crypto Pay API; 7 октября 2026 года официальная страница отвечает 403 на автоматические запросы, повторная сверка не выполнена.
+Проверено: 2026-10-02, методы, параметры и подпись webhook Crypto Pay API; 7 октября 2026 года документация отвечает 403 на автоматические запросы, а живой запрос без токена к pay.crypt.bot и testnet-pay.crypt.bot подтвердил только адреса API и формат ошибки `{ok: false, error}`.

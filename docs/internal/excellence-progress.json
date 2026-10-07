@@ -1265,9 +1265,13 @@
     {
       "id": 99,
       "title": "Ежеквартальная сверка внешних источников",
-      "status": "pending",
-      "commit_subject": null,
-      "evidence": [],
+      "status": "done",
+      "commit_subject": "excellence(099): Review external sources every quarter and record only what was checked",
+      "evidence": [
+        "Live check on 2026-10-07: Bot API changelog latest 10.3 equals the saved index; aiogram 3.31.0 on PyPI equals requirements/sdk.txt; YooKassa, Platega and Telegram payment pages answer 200 with anchors",
+        "Crypto Pay docs answer 403 even to a browser tool; a tokenless live request to pay.crypt.bot and testnet-pay.crypt.bot confirmed hosts and the error envelope only, so telegram-cryptopay keeps 2026-10-02 and its check line and the docs/sources.md journal say exactly what was confirmed",
+        "scripts/sources_review.py (skill ages, stale after 92 days, live probes) and the quarterly Sources review workflow that opens an issue with a checklist; tests/test_sources_review.py"
+      ],
       "remaining": null
     },
     {
