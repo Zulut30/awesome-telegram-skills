@@ -117,6 +117,8 @@ keyboard = action_menu([
 
 Use `columns=3` for three buttons per row. Permissions, click handling and style availability are checked by your application.
 
+More ready-made layouts are in the **[recipe gallery](https://zulut30.github.io/awesome-telegram-skills/recipes/)**: search by task, SDK and chat context filters, keyboard previews and copyable code; it works on phones too. The interface is in Russian.
+
 ## Skills
 
 Start with `telegram-project-planner` for a new project, `telegram-code-patterns` for ready-made code, or a specific skill for a narrow task. Every directory is self-contained; you never need to load the whole set.

@@ -27,7 +27,7 @@ let browser,checks=0;const results=[];
 function verify(value,message){assert.ok(value,message);checks++;}
 try{
   browser=await chromium.launch(process.env.CHROME_PATH?{executablePath:process.env.CHROME_PATH,headless:true}:{channel:'chrome',headless:true});
-  for(const [name,width,height] of [['phone',320,568],['phone-large',390,844],['landscape',844,390],['tablet',768,1024],['wide-tablet',1024,768],['desktop',1440,900],['large-desktop',1920,1080]]){
+  for(const [name,width,height] of [['phone',320,568],['phone-360',360,740],['phone-large',390,844],['landscape',844,390],['tablet',768,1024],['wide-tablet',1024,768],['desktop',1440,900],['large-desktop',1920,1080]]){
     for(const theme of ['light','dark']){
       const context=await browser.newContext({viewport:{width,height},colorScheme:theme});const page=await context.newPage();const errors=[],outside=[];
       page.on('pageerror',error=>errors.push(error.message));page.on('request',request=>{if(!request.url().startsWith(base))outside.push(request.url());});
@@ -54,6 +54,16 @@ try{
       await page.getByLabel('Что хотите сделать?').fill('две кнопки');
       await page.getByRole('button',{name:'Две кнопки в ряд',exact:true}).click();
       verify((await page.locator('#preview .keyboard-row').evaluateAll(rows=>rows.map(row=>row.children.length))).join(',')==='2,2',`${name}/${theme}: two rows`);
+      if(width===360){
+        // A common Android width: copy must really reach the clipboard, not only show a message.
+        await context.grantPermissions(['clipboard-read','clipboard-write'],{origin:base});
+        const copy=page.getByRole('button',{name:'Копировать',exact:true});await copy.scrollIntoViewIfNeeded();
+        const box=await copy.boundingBox();verify(box.width>=44&&box.height>=44&&box.x>=0&&box.x+box.width<=width,`${name}/${theme}: copy target fits`);
+        await copy.click();await page.waitForFunction(()=>document.querySelector('#copy-status').textContent!=='',null,{timeout:5000});
+        verify((await page.locator('#copy-status').textContent())==='Код скопирован.',`${name}/${theme}: copy confirmed`);
+        verify((await page.evaluate(()=>navigator.clipboard.readText()))===(await page.locator('#code').textContent()),`${name}/${theme}: clipboard holds the shown code`);
+        await page.screenshot({path:path.join(output,`phone-360-${theme}-copied.png`),fullPage:false});
+      }
       await page.getByLabel('Что хотите сделать?').fill('три кнопки');
       await page.getByRole('button',{name:'Три кнопки в ряд',exact:true}).click();
       verify((await page.locator('#preview .keyboard-row').evaluateAll(rows=>rows.map(row=>row.children.length))).join(',')==='3,3',`${name}/${theme}: three rows`);

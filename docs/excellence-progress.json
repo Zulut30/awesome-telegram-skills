@@ -361,9 +361,14 @@
     {
       "id": 30,
       "title": "Галерея на сайте как главный вход",
-      "status": "pending",
-      "commit_subject": null,
-      "evidence": [],
+      "status": "done",
+      "commit_subject": "excellence(030): make the published gallery the main entry and check it at 360 px",
+      "evidence": [
+        "README.md, README.en.md и gallery/README.md ведут на https://zulut30.github.io/awesome-telegram-skills/recipes/ (опубликовано: 200, recipes.json 0.24.0, 310 рецептов на 2026-10-07); локальный gallery/index.html — запасной вариант без интернета",
+        "tests/gallery-browser.mjs: новый вьюпорт phone-360 360×740 в светлой и темной темах — поиск, фильтры (зрелость, проверка, раздел, SDK, задача, контекст), превью клавиатур 2/3 в ряд, отсутствие горизонтальной прокрутки; кнопка «Копировать» ≥44 px и в пределах экрана, статус «Код скопирован.» и navigator.clipboard.readText() равен показанному коду",
+        "Chrome headless: 1214 проверок, 16 комбинаций вьюпорта и темы — passed для gallery/ и для собранного сайта (site/recipes); скриншоты phone-360-*-copied.png просмотрены",
+        "Превью клавиатур и копирование с запасным выделением уже были; первая версия теста ловила гонку асинхронного статуса и исправлена ожиданием"
+      ],
       "remaining": null
     },
     {
