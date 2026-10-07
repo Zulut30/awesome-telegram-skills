@@ -1241,10 +1241,14 @@
     {
       "id": 97,
       "title": "Канал поддержки",
-      "status": "pending",
-      "commit_subject": null,
-      "evidence": [],
-      "remaining": null
+      "status": "partial",
+      "commit_subject": "excellence(097): Add a support channel with a 3-business-day promise and its daily check",
+      "evidence": [
+        "SUPPORT.md: where to ask, what to attach, scope and a maintainer answer within 3 business days; linked from README, README.en and the issue chooser",
+        "Question issue form and a Q&A discussion category form ready for when Discussions is enabled",
+        "Support response workflow measures first maintainer responses in business days every weekday, uploads the report and fails on an overdue open issue; passes on the repository today (no external issues yet); tests/test_support.py"
+      ],
+      "remaining": "The owner must enable GitHub Discussions (Settings, Features) and create the project chat in Telegram, then add the chat link to SUPPORT.md and README; compliance with the promise can only be shown once questions arrive"
     },
     {
       "id": 98,

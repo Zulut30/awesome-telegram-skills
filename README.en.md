@@ -191,4 +191,4 @@ The API catalog contains request examples; it does not mean that every Telegram 
 
 ## License and community
 
-MIT licensed ([LICENSE](LICENSE)). Report vulnerabilities privately according to [SECURITY.md](SECURITY.md). Contributors follow the [code of conduct](CODE_OF_CONDUCT.md); see [CONTRIBUTING.md](CONTRIBUTING.md) (Russian) for how to propose changes.
+Questions go through the [question form](https://github.com/Zulut30/awesome-telegram-skills/issues/new?template=question.yml); a maintainer answers within 3 business days, see [SUPPORT.md](SUPPORT.md). MIT licensed ([LICENSE](LICENSE)). Report vulnerabilities privately according to [SECURITY.md](SECURITY.md). Contributors follow the [code of conduct](CODE_OF_CONDUCT.md); see [CONTRIBUTING.md](CONTRIBUTING.md) (Russian) for how to propose changes.

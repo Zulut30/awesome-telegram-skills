@@ -1,0 +1,33 @@
+name: Support response
+
+# The support promise (SUPPORT.md): a maintainer answers every issue within 3 business days. Every weekday this
+# workflow measures first responses and turns red when an open issue waits longer, so the owner is notified.
+# The report (median first response, share answered in time) is attached to the run for the quality board.
+on:
+  schedule:
+    - cron: '41 6 * * 1-5'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  issues: read
+
+jobs:
+  response:
+    name: First responses within 3 business days
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97 # v7.0.0
+        with:
+          python-version: '3.13'
+      - env:
+          GITHUB_TOKEN: ${{ github.token }}
+        run: python scripts/support_response.py --repo "$GITHUB_REPOSITORY" --output output/support-response.json
+      - if: always()
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        with:
+          name: support-response
+          path: output/support-response.json
+          if-no-files-found: warn
