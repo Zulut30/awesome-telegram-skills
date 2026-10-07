@@ -30,8 +30,12 @@ class ClaudeMarketplaceTests(unittest.TestCase):
         manifest = json.loads((ROOT / '.claude-plugin/marketplace.json').read_text(encoding='utf-8'))
         command = (f"claude plugin marketplace add Zulut30/awesome-telegram-skills && "
                    f"claude plugin install {manifest['plugins'][0]['name']}@{manifest['name']}")
+        gemini = 'gemini skills install https://github.com/Zulut30/awesome-telegram-skills.git --path .agents/skills'
+        self.assertTrue((ROOT / '.agents/skills').is_dir())
         for page in ('README.md', 'README.en.md', 'docs/start/ai-agent.md'):
-            self.assertIn(command, (ROOT / page).read_text(encoding='utf-8'), page)
+            text = (ROOT / page).read_text(encoding='utf-8')
+            self.assertIn(command, text, page)
+            self.assertIn(gemini, text, page)
 
 
 if __name__ == '__main__':

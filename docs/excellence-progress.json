@@ -399,10 +399,15 @@
     {
       "id": 33,
       "title": "Установка одной командой",
-      "status": "pending",
-      "commit_subject": null,
-      "evidence": [],
-      "remaining": null
+      "status": "partial",
+      "commit_subject": "excellence(033): install all skills in Claude Code with one command",
+      "evidence": [
+        "Репозиторий — marketplace Claude Code (.claude-plugin/marketplace.json), плагин telegram-skills с корнем ./.agents: стандартный skills/ — те же 41 скилл без копий; claude plugin validate . и --strict — Validation passed",
+        "Claude Code 2.1.292, изолированный CLAUDE_CONFIG_DIR: marketplace add из локального каталога и с GitHub ('Zulut30/awesome-telegram-skills#claude/excellence-plan-100' --sparse .claude-plugin .agents), install telegram-skills@awesome-telegram-skills, plugin details — Skills (41), headless-сессия — 41 команда telegram-skills:*",
+        "Gemini CLI 0.63.0 из npm в отдельном HOME: gemini skills install https://github.com/Zulut30/awesome-telegram-skills.git --path .agents/skills --consent ставит 41 скилл в ~/.gemini/skills, gemini skills list показывает их Enabled",
+        "tests/test_claude_marketplace.py сверяет manifest, дерево скиллов и документированные команды в README, README.en.md и docs/start/ai-agent.md"
+      ],
+      "remaining": "Документированная команда Claude Code без #ref берет ветку main: заработает после слияния этой ветки владельцем (проверена на ветке). Для Codex, Copilot и Cursor однокомандного каталога не сделано: Codex $skill-installer и аналоги не проверены в этой среде; для них остается install_skills.py --agent из клона"
     },
     {
       "id": 34,

@@ -55,6 +55,12 @@ claude plugin marketplace add Zulut30/awesome-telegram-skills && claude plugin i
 
 After restarting the session the skills are available as `/telegram-skills:telegram-bot-python` and so on; update with `claude plugin marketplace update awesome-telegram-skills`. Inside a session, `/plugin marketplace add Zulut30/awesome-telegram-skills` and `/plugin install telegram-skills@awesome-telegram-skills` do the same.
 
+In Gemini CLI it is one command as well; all skills go to `~/.gemini/skills/`:
+
+```bash
+gemini skills install https://github.com/Zulut30/awesome-telegram-skills.git --path .agents/skills
+```
+
 To use skills in an existing project, copy whole directories from `.agents/skills/`, including `references`, or use the [installer](scripts/install_skills.py):
 
 ```bash
