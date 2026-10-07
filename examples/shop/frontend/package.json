@@ -1,5 +1,5 @@
 {
-  "name":"@awesome-telegram/shop-example",
+  "name":"@awesome-telegram/shop-example","license":"MIT",
   "version":"0.1.0",
   "private":true,
   "type":"module",

@@ -1,6 +1,7 @@
 ---
 name: telegram-bot-python
 description: "Создает и изменяет Telegram-ботов на Python с aiogram, python-telegram-bot или pyTelegramBotAPI: обработчики, middleware и lifecycle. Используй при работе с Python-кодом бота."
+license: MIT
 ---
 
 # Telegram-бот на Python

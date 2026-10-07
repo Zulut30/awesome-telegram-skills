@@ -1,6 +1,7 @@
 ---
 name: telegram-payment-provider
 description: "Подключает другие платежные провайдеры к Telegram-проекту: adapter, checkout, проверку уведомлений и reconciliation. Используй для Stripe, Robokassa или нового провайдера без отдельного навыка."
+license: MIT
 ---
 
 # Другой платежный провайдер

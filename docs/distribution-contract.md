@@ -6,7 +6,7 @@
 
 ## Что входит в артефакт
 
-Wheel содержит Python modules, `py.typed`, bundled recipes JSON и все starter templates, включая `.env.example.txt` и mini-app templates. Это шаблон с искусственным token placeholder, а не конфигурация владельца. В core нет runtime зависимостей; aiogram подключается только extra. Console entry point совпадает с pyproject.scripts. Сейчас поставляется pure Python `py3-none-any`, Python >=3.11; это формат совместимости, а не подтверждение каждого Python/OS из диапазона.
+Wheel содержит Python modules, `py.typed`, bundled recipes JSON и все starter templates, включая `.env.example.txt` и mini-app templates, а также `dist-info/licenses/LICENSE` с `License-Expression: MIT` (PEP 639, setuptools ≥77). Tarball содержит `package/LICENSE` и поле `license: MIT`. Это шаблон с искусственным token placeholder, а не конфигурация владельца. В core нет runtime зависимостей; aiogram подключается только extra. Console entry point совпадает с pyproject.scripts. Сейчас поставляется pure Python `py3-none-any`, Python >=3.11; это формат совместимости, а не подтверждение каждого Python/OS из диапазона.
 
 В 0.10.0 wheel содержит 42 файла: 37 точных source/resource файлов и 5 metadata файлов. В resources входят восемь шаблонов выбираемых компонентов; каждый остается доступен установленному генератору без исходного дерева. Tarball содержит 21 файл, включая 9 пар JavaScript/declarations и CSS. Accepted evidence — [012.json](v1-checks/012.json).
 

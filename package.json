@@ -1,6 +1,7 @@
 {
   "name": "awesome-telegram-skills-workspace",
   "private": true,
+  "license": "MIT",
   "type": "module",
   "workspaces": ["packages/typescript", "examples/mini-app"],
   "scripts": {

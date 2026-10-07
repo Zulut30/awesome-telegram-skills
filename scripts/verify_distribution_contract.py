@@ -121,12 +121,15 @@ def verify_distributions(root: Path, wheel: Path, tarball: Path) -> dict:
     for name, value in expected.items():
         _require(py_files.get(name) == value, 'Wheel source/resource bytes mismatch')
     metadata_names = {'METADATA', 'WHEEL', 'RECORD', 'entry_points.txt', 'top_level.txt'}
-    allowed = set(expected) | {prefix + name for name in metadata_names}
+    allowed = set(expected) | {prefix + name for name in metadata_names} | {prefix + 'licenses/LICENSE'}
     _require(set(py_files) == allowed, 'Wheel includes missing or undeclared files')
     metadata = BytesParser().parsebytes(py_files[prefix + 'METADATA'])
     _require(metadata.get('Name') == python['name'] and metadata.get('Version') == version,
              'Wheel identity mismatch')
     _require(metadata.get('Requires-Python') == python['requires-python'], 'Wheel Python constraint mismatch')
+    _require(metadata.get('License-Expression') == python['license'] == 'MIT'
+             and py_files.get(prefix + 'licenses/LICENSE') == (root / 'packages/python/LICENSE').read_bytes(),
+             'Wheel license metadata or file mismatch')
     # Our current core has no runtime dependencies; every requirement belongs
     # to the explicitly enabled SDK or IANA-data extras. No mandatory core deps.
     _require(not python.get('dependencies'), 'Update the contract for a new core dependency')
@@ -147,6 +150,7 @@ def verify_distributions(root: Path, wheel: Path, tarball: Path) -> dict:
     ts_files = _read_archive(tarball, wheel=False)
     ts_expected = {'package/package.json': (ts_path / 'package.json').read_bytes(),
                    'package/README.md': (ts_path / 'README.md').read_bytes(),
+                   'package/LICENSE': (ts_path / 'LICENSE').read_bytes(),
                    'package/src/styles.css': (ts_path / 'src/styles.css').read_bytes()}
     sources = list((ts_path / 'src').rglob('*.ts'))
     for source in sources:
@@ -162,6 +166,7 @@ def verify_distributions(root: Path, wheel: Path, tarball: Path) -> dict:
     _require(manifest['exports'] == {'.': {'types': './dist/index.d.ts', 'import': './dist/index.js'}, './styles.css': './src/styles.css'},
              'TypeScript public export map changed')
     _require('**/*.css' in manifest.get('sideEffects', []), 'CSS must remain a declared side effect')
+    _require(manifest.get('license') == 'MIT', 'TypeScript package license changed')
     return {'passed': True, 'version': version, 'network': False, 'extracts_files': False,
             'wheel': {'files': len(py_files), 'source_files_exact': len(expected), 'record_verified': True},
             'tarball': {'files': len(ts_files), 'modules_with_types': len(sources), 'css_exact': True},

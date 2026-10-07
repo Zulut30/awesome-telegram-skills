@@ -1,6 +1,7 @@
 ---
 name: telegram-localization
 description: "Локализует Telegram-бот и Mini App согласованно: строки, plural forms, даты, валюты, timezone и длинные подписи. Используй для нескольких языков продукта и locale-aware UI; обычный перевод отдельного абзаца не требует этого навыка."
+license: MIT
 ---
 
 # Локализация бота и Mini App

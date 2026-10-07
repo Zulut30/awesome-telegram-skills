@@ -2,6 +2,7 @@
   "name": "@awesome-telegram/patterns",
   "version": "0.24.0",
   "description": "Reusable TypeScript components for Telegram Mini Apps",
+  "license": "MIT",
   "type": "module",
   "sideEffects": [
     "**/*.css"
@@ -16,7 +17,8 @@
   "files": [
     "dist",
     "src/styles.css",
-    "README.md"
+    "README.md",
+    "LICENSE"
   ],
   "engines": {
     "node": ">=20"

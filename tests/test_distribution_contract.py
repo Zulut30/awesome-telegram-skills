@@ -26,12 +26,14 @@ class DistributionContractTests(unittest.TestCase):
         self.prefix = 'awesome_telegram_patterns-0.9.0.dist-info/'
         self.py_source = {'telegram_patterns/__init__.py':b'__all__=[]\n', 'telegram_patterns/py.typed':b'',
                           'telegram_patterns/resources/recipes.json':b'{"library_version":"0.9.0"}\n'}
-        self.ts_manifest = {'name':'@awesome-telegram/patterns','version':'0.9.0','type':'module','sideEffects':['**/*.css'],
+        self.license = b'MIT License\nfixture\n'
+        self.ts_manifest = {'name':'@awesome-telegram/patterns','version':'0.9.0','type':'module','license':'MIT','sideEffects':['**/*.css'],
             'exports':{'.':{'types':'./dist/index.d.ts','import':'./dist/index.js'},'./styles.css':'./src/styles.css'}}
-        self.ts_files = {'package/package.json':json.dumps(self.ts_manifest).encode(),'package/README.md':b'fixture\n',
+        self.ts_files = {'package/package.json':json.dumps(self.ts_manifest).encode(),'package/README.md':b'fixture\n','package/LICENSE':self.license,
                         'package/src/styles.css':b'.fixture{color:red}\n','package/dist/index.js':b'export const fixture=1;\n',
                         'package/dist/index.d.ts':b'export declare const fixture: number;\n'}
-        self.write('packages/python/pyproject.toml', b'[project]\nname="awesome-telegram-patterns"\nversion="0.9.0"\nrequires-python=">=3.11"\ndependencies=[]\n[project.scripts]\ntelegram-patterns="telegram_patterns.cli:main"\n')
+        self.write('packages/python/pyproject.toml', b'[project]\nname="awesome-telegram-patterns"\nversion="0.9.0"\nrequires-python=">=3.11"\nlicense="MIT"\nlicense-files=["LICENSE"]\ndependencies=[]\n[project.scripts]\ntelegram-patterns="telegram_patterns.cli:main"\n')
+        self.write('packages/python/LICENSE',self.license)
         for name, value in self.py_source.items(): self.write('packages/python/src/'+name,value)
         for name, value in self.ts_files.items(): self.write('packages/typescript/'+name.removeprefix('package/'),value)
         self.write('packages/typescript/src/index.ts',b'export const fixture=1;\n')
@@ -43,10 +45,10 @@ class DistributionContractTests(unittest.TestCase):
 
     def zip(self, mutate=None):
         values={**self.py_source,
-          self.prefix+'METADATA':b'Name: awesome-telegram-patterns\nVersion: 0.9.0\nRequires-Python: >=3.11\nRequires-Dist: aiogram<4,>=3.31; extra == "aiogram"\nRequires-Dist: tzdata<2027,>=2026.5; extra == "calendar"\n\n',
+          self.prefix+'METADATA':b'Name: awesome-telegram-patterns\nVersion: 0.9.0\nRequires-Python: >=3.11\nLicense-Expression: MIT\nLicense-File: LICENSE\nRequires-Dist: aiogram<4,>=3.31; extra == "aiogram"\nRequires-Dist: tzdata<2027,>=2026.5; extra == "calendar"\n\n',
           self.prefix+'WHEEL':b'Wheel-Version: 1.0\nRoot-Is-Purelib: true\nTag: py3-none-any\n',
           self.prefix+'entry_points.txt':b'[console_scripts]\ntelegram-patterns = telegram_patterns.cli:main\n',
-          self.prefix+'top_level.txt':b'telegram_patterns\n'}
+          self.prefix+'top_level.txt':b'telegram_patterns\n',self.prefix+'licenses/LICENSE':self.license}
         if mutate: mutate(values)
         output=io.StringIO();writer=csv.writer(output,lineterminator='\n')
         for name,value in values.items():
@@ -86,6 +88,16 @@ class DistributionContractTests(unittest.TestCase):
         with self.assertRaisesRegex(DistributionViolation,'bytes mismatch'): self.verify()
         self.zip(lambda values:values.update({'.env':b'private fixture token'}))
         with self.assertRaisesRegex(DistributionViolation,'undeclared'): self.verify()
+
+    def test_missing_or_changed_license_is_rejected(self):
+        self.zip(lambda values: values.pop(self.prefix+'licenses/LICENSE'))
+        with self.assertRaisesRegex(DistributionViolation,'missing or undeclared'): self.verify()
+        self.zip(lambda values: values.update({self.prefix+'licenses/LICENSE':b'Other\n'}))
+        with self.assertRaisesRegex(DistributionViolation,'license'): self.verify()
+        self.zip()
+        self.tar(lambda values: values.update({'package/package.json':json.dumps({**self.ts_manifest,'license':'GPL-3.0'}).encode()}))
+        self.write('packages/typescript/package.json',json.dumps({**self.ts_manifest,'license':'GPL-3.0'}).encode())
+        with self.assertRaisesRegex(DistributionViolation,'license'): self.verify()
 
     def test_record_digest_tampering_is_detected(self):
         with zipfile.ZipFile(self.wheel) as archive: values={item.filename:archive.read(item) for item in archive.infolist()}

@@ -1,6 +1,7 @@
 ---
 name: telegram-web-login
 description: "Подключает Telegram Login к обычному сайту на TypeScript с Python backend: OIDC, проверку ID token и привязку аккаунта сервиса. Используй для входа вне Mini App; initData, legacy widget и авторизация MTProto имеют другие протоколы."
+license: MIT
 ---
 
 # Telegram Login для сайта

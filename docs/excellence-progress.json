@@ -134,10 +134,14 @@
     {
       "id": 11,
       "title": "Добавить лицензию",
-      "status": "pending",
-      "commit_subject": null,
-      "evidence": [],
-      "remaining": null
+      "status": "partial",
+      "commit_subject": "excellence(011): license the project under MIT",
+      "evidence": [
+        "wheel: dist-info/licenses/LICENSE + License-Expression: MIT; tarball: package/LICENSE + license MIT; verify_distribution_contract на реальных артефактах passed",
+        "tests/test_license.py: копии LICENSE идентичны, manifests пакетов и примеров MIT, все 41 SKILL.md содержат license: MIT",
+        "negative: отсутствующая/измененная лицензия в wheel или tarball отклоняется"
+      ],
+      "remaining": "Выбор MIT сделан по поручению выполнить все пункты; владелец может заменить лицензию. GitHub показывает лицензию в шапке репозитория только для ветки по умолчанию — после слияния claude/excellence-plan-100 в main."
     },
     {
       "id": 12,

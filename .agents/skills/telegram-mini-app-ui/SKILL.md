@@ -1,6 +1,7 @@
 ---
 name: telegram-mini-app-ui
 description: "Создает и улучшает интерфейс Telegram Mini App для телефонов, планшетов и ПК: адаптивную компоновку, визуальную систему, темы, safe areas и доступность. Используй для экранов и взаимодействия внутри Telegram."
+license: MIT
 ---
 
 # Интерфейс Mini App

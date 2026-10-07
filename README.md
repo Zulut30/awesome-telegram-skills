@@ -7,6 +7,7 @@
 [![Version](https://img.shields.io/badge/version-0.24.0-229ED9)](CHANGELOG.md)
 [![Skills](https://img.shields.io/badge/skills-41-334155)](#skills)
 [![Status](https://img.shields.io/badge/status-experimental-f59e0b)](docs/v1-maturity.md)
+[![License: MIT](https://img.shields.io/badge/license-MIT-16a34a)](LICENSE)
 [![Repository checks](https://github.com/Zulut30/awesome-telegram-skills/actions/workflows/repository-checks.yml/badge.svg)](https://github.com/Zulut30/awesome-telegram-skills/actions/workflows/repository-checks.yml)
 
 **Практические скиллы для ИИ, готовые компоненты и примеры разработки Telegram-ботов и Mini Apps.**
@@ -175,5 +176,9 @@ keyboard = action_menu([
 Поставка 0.24.0 прошла 77 этапов приемки: **460 Python-тестов, один пропуск, 26 TypeScript-тестов, 2435 автоматических браузерных проверок и 60 проверок первого запуска**. Собранные wheel/tarball устанавливались в отдельные consumer-проекты. [Отчет приемки](docs/v1-checks/031.json) · [Матрица поддержки](docs/support-matrix.md).
 
 Каталог API содержит request-примеры; он не означает, что все возможности Telegram реализованы и испытаны в боевом приложении. Mini App UI — основа для вашего продукта; полная приемка на реальных телефонах, планшетах и ПК еще впереди. Платежные скиллы описывают интеграции Stars, Crypto Pay, Platega и ЮКассы; merchant-настройки и live-проверки относятся к конкретному проекту. Bot API, Mini Apps и пользовательские MTProto-сессии имеют отдельные границы доступа.
+
+## Лицензия
+
+Скиллы, библиотеки и примеры распространяются по лицензии [MIT](LICENSE): их можно использовать, изменять и включать в коммерческие проекты при сохранении уведомления об авторских правах. Файл лицензии входит в Python wheel и npm tarball, а поле `license: MIT` — во frontmatter каждого скилла, поэтому скопированный каталог скилла сохраняет условия.
 
 Для изменений набора: [CONTRIBUTING.md](CONTRIBUTING.md). Источники: [docs/sources.md](docs/sources.md). Развитие: [план из 100 пунктов](docs/library-roadmap-100.md) и [регистр выполнения](docs/v1-progress.json).

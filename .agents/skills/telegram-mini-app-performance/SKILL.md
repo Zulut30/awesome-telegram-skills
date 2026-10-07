@@ -1,6 +1,7 @@
 ---
 name: telegram-mini-app-performance
 description: "Измеряет и улучшает скорость Telegram Mini App: загрузку, размер сборки, отзывчивость, списки и запросы. Используй при тормозах, оптимизации или задании бюджета производительности TypeScript frontend."
+license: MIT
 ---
 
 # Производительность Mini App
