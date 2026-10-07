@@ -36,7 +36,7 @@ python scripts/build_release.py --ref v0.24.0 --notes
 
 Включить публикацию может только владелец:
 
-1. Занять имена (пункт 15): проект `awesome-telegram-patterns` на PyPI и scope `@awesome-telegram` на npm.
+1. Занять имена. `python scripts/check_registry_names.py` показывает, свободны ли они. На 7 октября 2026 проект `awesome-telegram-patterns` на PyPI и пакет `@awesome-telegram/patterns` на npm не существуют, scope `@awesome-telegram` не найден. На npm создайте организацию `awesome-telegram` (бесплатно для публичных пакетов). На PyPI pending publisher не резервирует имя: оно закрепляется первой загрузкой, поэтому выпустите первую версию вскоре после настройки. Если имя занято другим автором, выберите новое и замените его в `pyproject.toml`, `package.json`, README, документации и workflow.
 2. В GitHub создать environments `pypi` и `npm` (Settings → Environments), при желании с обязательным подтверждением.
 3. PyPI: в аккаунте **Publishing → Add a new pending publisher** указать проект `awesome-telegram-patterns`, владельца `Zulut30`, репозиторий `awesome-telegram-skills`, workflow `publish.yml`, environment `pypi`. Pending publisher создает проект при первой загрузке.
 4. npm: в настройках пакета `@awesome-telegram/patterns` → **Trusted publishing** указать GitHub Actions, `Zulut30/awesome-telegram-skills`, workflow `publish.yml`, environment `npm`. Если npm не позволяет настроить trusted publisher для еще не существующего пакета, первую версию опубликуйте вручную с 2FA. Trusted publishing требует npm ≥ 11.5.1 — workflow ставит npm 11.

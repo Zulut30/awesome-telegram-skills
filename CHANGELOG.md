@@ -16,6 +16,7 @@
 - Пункт 12: `SECURITY.md` с поддерживаемыми версиями, приватным каналом GitHub Private Vulnerability Reporting, областью, сроками ответа и правилами добросовестного исследования; шаблоны issues ведут уязвимости в приватный канал.
 - Пункт 13: версии 0.5.0–0.24.0 и коммиты, которые их ввели, перечислены в `.github/release-tags.json`; ручной запуск workflow Release создает из этого списка аннотированные теги `vX.Y.Z`. `scripts/build_release.py` воспроизводимо собирает wheel, npm tarball и `SHA256SUMS` из дерева тега (`git archive`, `SOURCE_DATE_EPOCH`), а workflow Release публикует их в GitHub Release при пуше тега и по ручному запуску. Две независимые сборки каждой из 23 версий дали одинаковые SHA256. Порядок — в `docs/releasing.md`.
 - Пункт 14: workflow Publish загружает файлы GitHub Release в PyPI и npm через trusted publishing (OIDC, provenance npm) после сверки `SHA256SUMS`; он выключен, пока владелец не настроит publishers и переменную `PUBLISH_TO_REGISTRIES`. README объясняет установку из GitHub Release на всех ОС.
+- Пункт 15: `scripts/check_registry_names.py` проверяет без изменений, свободны ли имена пакетов в PyPI и npm, и показывает опубликованных мейнтейнеров занятого имени. На 7 октября 2026 оба имени свободны, scope `@awesome-telegram` не создан.
 
 ## 0.24.0
 

@@ -181,10 +181,13 @@
     {
       "id": 15,
       "title": "Закрепить имена пакетов",
-      "status": "pending",
-      "commit_subject": null,
-      "evidence": [],
-      "remaining": null
+      "status": "partial",
+      "commit_subject": "excellence(015): check registry name availability",
+      "evidence": [
+        "2026-10-07: PyPI awesome-telegram-patterns 404, npm @awesome-telegram/patterns 404, npm scope awesome-telegram не найден (scripts/check_registry_names.py)",
+        "tests/test_check_registry_names.py проверяет свободные и занятые имена без сети"
+      ],
+      "remaining": "Владелец создает npm-организацию awesome-telegram и закрепляет имя на PyPI первой загрузкой через pending publisher; занять имена из этой сессии нельзя (нет учетных записей реестров)."
     },
     {
       "id": 16,
