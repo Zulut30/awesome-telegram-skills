@@ -1,0 +1,19 @@
+{
+  "skill": "telegram-code-patterns",
+  "question": "Какой reference-файл этого скилла ты откроешь первым? Ответь только именем файла, например components.md.",
+  "note": "Held-out set written after the routing table was tuned on telegram-code-patterns-routing.json",
+  "cases": [
+    {"query": "Как вывести список заказов по 10 штук с кнопками вперед и назад под сообщением бота?", "expected": ["bot-recipes.md", "message-navigation.md"]},
+    {"query": "У меня Django-бэкенд, хочу свой storage для идемпотентности вместо встроенного", "expected": ["extensions.md"]},
+    {"query": "Как безопасно вставить имя пользователя в сообщение с HTML-разметкой?", "expected": ["message-text.md"]},
+    {"query": "Пользователь прислал голосовое и PDF, их надо сохранить на сервер", "expected": ["media.md"]},
+    {"query": "Какие права нужны боту, чтобы закреплять темы в форуме, и есть ли готовый компонент?", "expected": ["platform-operations.md", "group-bot.md", "api-boundaries.md"]},
+    {"query": "Где посмотреть, проверялся ли компонент на живом Telegram или только в моках?", "expected": ["maturity.md"]},
+    {"query": "Нужно спросить у пользователя геолокацию и подтвердить ее кнопкой", "expected": ["dialog-fields.md"]},
+    {"query": "Сохрани прогресс опросника в базе, чтобы после деплоя пользователь продолжил с того же вопроса", "expected": ["dialog-restart.md"]},
+    {"query": "Сделай выбор времени визита только на свободные слоты", "expected": ["calendar-slots.md"]},
+    {"query": "Как подключить ApiClient к своему backend и обработать 429?", "expected": ["api-reference.md", "errors.md"]},
+    {"query": "Пакет установлен, но import telegram_patterns.aiogram падает, как понять причину?", "expected": ["doctor.md"]},
+    {"query": "Нужен готовый пример цифрового магазина с корзиной и оплатой", "expected": ["shop-example.md"]}
+  ]
+}

@@ -1,0 +1,134 @@
+{
+  "date": "2026-10-07",
+  "agent": "Claude Code CLI 2.1.292 (claude -p, tools disabled, empty working directory)",
+  "skill": "telegram-code-patterns",
+  "threshold": 0.9,
+  "word_count_metric": "whitespace-separated tokens of SKILL.md (wc -w in a UTF-8 locale)",
+  "versions": {
+    "new": "SKILL.md after item 35: 398 words",
+    "old": "SKILL.md before item 35: 1332 words"
+  },
+  "cases": {
+    "main": "evaluations/telegram-code-patterns-routing.json",
+    "holdout": "evaluations/telegram-code-patterns-routing-holdout.json"
+  },
+  "summary": {
+    "new": {
+      "main": {
+        "haiku": {
+          "correct": 39,
+          "cases": 40,
+          "accuracy": 0.975
+        },
+        "sonnet": {
+          "correct": 40,
+          "cases": 40,
+          "accuracy": 1.0
+        }
+      },
+      "holdout": {
+        "haiku": {
+          "correct": 12,
+          "cases": 12,
+          "accuracy": 1.0
+        },
+        "sonnet": {
+          "correct": 12,
+          "cases": 12,
+          "accuracy": 1.0
+        }
+      }
+    },
+    "old": {
+      "main": {
+        "haiku": {
+          "correct": 38,
+          "cases": 40,
+          "accuracy": 0.95
+        },
+        "sonnet": {
+          "correct": 39,
+          "cases": 40,
+          "accuracy": 0.975
+        }
+      },
+      "holdout": {
+        "haiku": {
+          "correct": 11,
+          "cases": 12,
+          "accuracy": 0.917
+        },
+        "sonnet": {
+          "correct": 12,
+          "cases": 12,
+          "accuracy": 1.0
+        }
+      }
+    }
+  },
+  "misses": {
+    "new": {
+      "main": {
+        "haiku": [
+          {
+            "query": "Создай новый проект бота с мини-приложением из wheel и tarball, которые лежат у меня в Загрузках",
+            "expected": [
+              "quickstart.md",
+              "starter-selection.md"
+            ],
+            "chosen": "agent-onboarding.md"
+          }
+        ],
+        "sonnet": []
+      },
+      "holdout": {
+        "haiku": [],
+        "sonnet": []
+      }
+    },
+    "old": {
+      "main": {
+        "haiku": [
+          {
+            "query": "Создай новый проект бота с мини-приложением из wheel и tarball, которые лежат у меня в Загрузках",
+            "expected": [
+              "quickstart.md",
+              "starter-selection.md"
+            ],
+            "chosen": "agent-onboarding.md"
+          },
+          {
+            "query": "Нужны три кнопки в ряд, а последняя красная, как кнопка отмены",
+            "expected": [
+              "keyboard-layouts.md"
+            ],
+            "chosen": "keyboard-recipes.md"
+          }
+        ],
+        "sonnet": [
+          {
+            "query": "Как проверить, что стартер собран правильно, и что значит warning token-format?",
+            "expected": [
+              "doctor.md",
+              "quickstart.md"
+            ],
+            "chosen": "starter-selection.md"
+          }
+        ]
+      },
+      "holdout": {
+        "haiku": [
+          {
+            "query": "Как подключить ApiClient к своему backend и обработать 429?",
+            "expected": [
+              "api-reference.md",
+              "errors.md"
+            ],
+            "chosen": "extensions.md"
+          }
+        ],
+        "sonnet": []
+      }
+    }
+  }
+}

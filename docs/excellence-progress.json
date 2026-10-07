@@ -425,9 +425,14 @@
     {
       "id": 35,
       "title": "Сократить `telegram-code-patterns`",
-      "status": "pending",
-      "commit_subject": null,
-      "evidence": [],
+      "status": "done",
+      "commit_subject": "excellence(035): turn telegram-code-patterns into a short intent list",
+      "evidence": [
+        "SKILL.md: 1332 → 398 слов (wc -w в UTF-8): 4 шага и список «reference: намерение» на 32 прямых reference, остальные достижимы через api-reference; инварианты остаются в references (проверено поиском ключевых правил по файлам)",
+        "scripts/eval_reference_routing.py + evaluations/telegram-code-patterns-routing.json (40) и -holdout.json (12, написан после настройки): Claude Code CLI 2.1.292 без инструментов — haiku 39/40 и 12/12, sonnet 40/40 и 12/12 (порог 90%); прежняя версия — haiku 38/40 и 11/12, sonnet 39/40 и 12/12; отчет evaluations/reports/telegram-code-patterns-routing-2026-10-07.json",
+        "Промежуточная версия давала у sonnet 20/40: формулировка «видишь скилл впервые» уводила любую задачу в onboarding — условие сужено и перепроверено",
+        "tests/test_code_patterns_skill.py: не больше 400 слов, все references достижимы, ожидаемые файлы наборов существуют; validate_skills и корневые тесты проходят"
+      ],
       "remaining": null
     },
     {
