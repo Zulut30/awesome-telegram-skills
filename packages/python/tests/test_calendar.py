@@ -84,7 +84,7 @@ class CalendarTests(unittest.TestCase):
             resolve_local_time(NOW, 'UTC')
 
     def test_missing_zone_is_explicit_and_utc_still_works(self):
-        with patch('telegram_patterns.calendar.ZoneInfo', side_effect=ZoneInfoNotFoundError):
+        with patch('telegram_patterns._shared.ZoneInfo', side_effect=ZoneInfoNotFoundError):
             with self.assertRaises(UnsupportedCapability):
                 resolve_local_time(datetime(2026, 1, 1), 'Europe/Warsaw')
             self.assertEqual(timezone.utc, resolve_local_time(datetime(2026, 1, 1), 'UTC').tzinfo)
@@ -247,18 +247,18 @@ class SlotStoreTests(unittest.TestCase):
             self.assertEqual(1, c.execute('SELECT revision FROM telegram_slot_schedules').fetchone()[0])
 
     def test_failure_between_booking_and_receipt_rolls_back_both(self):
-        from telegram_patterns.slots import _json
+        from telegram_patterns._shared import canonical_json
 
         calls = []
 
         def serialize(value):
             calls.append(value)
-            # The payload digest uses sqlite_once; slots._json serializes only the receipt.
+            # The payload digest serializes in _shared; slots.canonical_json is only the receipt.
             if len(calls) == 1:
                 raise RuntimeError('fixture receipt serialization failure')
-            return _json(value)
+            return canonical_json(value)
 
-        with patch('telegram_patterns.slots._json', side_effect=serialize):
+        with patch('telegram_patterns.slots.canonical_json', side_effect=serialize):
             with self.assertRaises(RuntimeError):
                 self.reserve()
         with closing(sqlite3.connect(self.database)) as c:

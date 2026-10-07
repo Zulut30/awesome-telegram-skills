@@ -1,4 +1,7 @@
-"""Core modules import without any Telegram SDK; aiogram code lives in telegram_patterns._aiogram."""
+"""Core modules import without any Telegram SDK; aiogram code lives in telegram_patterns._aiogram.
+
+Shared helpers live in _shared (core) and _aiogram/common (adapter), never behind cross-module `_name` imports.
+"""
 
 import ast
 import importlib
@@ -75,7 +78,7 @@ class ModuleLayoutTests(unittest.TestCase):
                 self.assertFalse([m for m in modules if m.split('.')[0] in {'aiogram', 'telegram'}], name)
 
     def test_aiogram_code_lives_in_the_subpackage_and_old_paths_alias_it(self):
-        moved = {path.stem for path in (PACKAGE / '_aiogram').glob('*.py')} - {'__init__'}
+        moved = {path.stem for path in (PACKAGE / '_aiogram').glob('*.py')} - {'__init__', 'common'}
         self.assertEqual(len(moved), 18)
         for alias in _aliases() - {'calendar'}:
             module = importlib.import_module('telegram_patterns.' + alias)
@@ -89,6 +92,21 @@ class ModuleLayoutTests(unittest.TestCase):
             {'calendar', 'aiogram'} & {path.stem for path in (PACKAGE / '_aiogram').glob('*.py')},
             'no implementation module is named after the stdlib or the SDK',
         )
+
+    def test_modules_never_import_private_names_from_each_other(self):
+        found = []
+        for path in sorted(PACKAGE.rglob('*.py')):
+            for node in ast.walk(ast.parse(path.read_text(encoding='utf-8'))):
+                if isinstance(node, ast.ImportFrom) and (
+                    node.level or (node.module or '').startswith('telegram_patterns')
+                ):
+                    found += [
+                        f'{path.relative_to(PACKAGE).as_posix()}:{node.lineno} {alias.name}'
+                        for alias in node.names
+                        if alias.name.startswith('_') and not alias.name.startswith('__')
+                    ]
+        self.assertEqual(found, [], 'move shared helpers to _shared.py or _aiogram/common.py')
+        self.assertIn('canonical_json', vars(importlib.import_module('telegram_patterns._shared')))
 
 
 if __name__ == '__main__':

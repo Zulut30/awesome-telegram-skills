@@ -15,6 +15,7 @@ from aiogram.types import (
 )
 
 from ..errors import InvalidType, ValidationFailure
+from .common import check_chat_context, check_text
 
 ChatType = Literal['private', 'group', 'supergroup', 'channel']
 INLINE_ACTIONS = (
@@ -41,23 +42,6 @@ REPLY_ACTIONS = (
 )
 
 
-def _context(chat_type: ChatType, business: bool) -> None:
-    if chat_type not in {'private', 'group', 'supergroup', 'channel'} or type(business) is not bool:
-        raise ValidationFailure('Specify a supported chat_type and a bool business flag')
-
-
-def _text(text: str, *, limit: int | None = None) -> None:
-    try:
-        valid = isinstance(text, str) and bool(text.strip())
-        if valid:
-            length = len(text.encode('utf-16-le')) // 2
-            valid = limit is None or length <= limit
-    except UnicodeError:
-        valid = False
-    if not valid:
-        raise ValidationFailure('Use nonempty valid text within the requested limit')
-
-
 def _rows(rows: Sequence[Sequence[object]]) -> list[list[object]]:
     if isinstance(rows, (str, bytes)):
         raise InvalidType('Use a sequence of button rows')
@@ -77,7 +61,7 @@ def _rows(rows: Sequence[Sequence[object]]) -> list[list[object]]:
 def _presentation(button: InlineKeyboardButton | KeyboardButton, verified: bool) -> None:
     if button.model_extra:
         raise ValidationFailure('Unknown button fields in the installed SDK')
-    _text(button.text)
+    check_text(button.text)
     if type(verified) is not bool:
         raise ValidationFailure('Emoji entitlement flag must be bool')
     if button.style not in {None, 'primary', 'success', 'danger'}:
@@ -109,7 +93,7 @@ def inline_keyboard(
     URL/copy/switch-inline/disabled buttons do not emit callback_query. Login,
     invoice and object authorization remain with the host application.
     """
-    _context(chat_type, business)
+    check_chat_context(chat_type, business)
     if type(invoice) is not bool or type(force_reply) is not bool:
         raise ValidationFailure('Invoice and force_reply flags must be bool')
     result = []
@@ -142,7 +126,7 @@ def inline_keyboard(
             if action == 'copy_text':
                 if button.copy_text is None:
                     raise ValidationFailure('Missing copy text action')
-                _text(button.copy_text.text, limit=256)
+                check_text(button.copy_text.text, limit=256)
             if action == 'url':
                 parsed = urlsplit(button.url)
                 if parsed.scheme not in {'http', 'https', 'tg'} or (parsed.scheme != 'tg' and not parsed.hostname):
@@ -179,13 +163,13 @@ def reply_keyboard(
     emoji_entitlement_verified: bool = False,
 ) -> ReplyKeyboardMarkup:
     """Reply buttons send text or requested service data, never callback_query."""
-    _context(chat_type, business)
+    check_chat_context(chat_type, business)
     if chat_type == 'channel' or business:
         raise ValidationFailure('Reply keyboard is unavailable in channels/Business messages')
     if any(type(flag) is not bool for flag in (resize, one_time, persistent, selective, force_reply)):
         raise ValidationFailure('Keyboard flags must be bool')
     if placeholder is not None:
-        _text(placeholder, limit=64)
+        check_text(placeholder, limit=64)
     result, request_ids = [], set()
     for row in _rows(rows):
         buttons = []
@@ -228,7 +212,7 @@ def reply_keyboard(
 def input_prompt(placeholder: str | None = None, *, selective: bool = False) -> ForceReply:
     """Request the client's reply UI; the host binds/validates the actual response."""
     if placeholder is not None:
-        _text(placeholder, limit=64)
+        check_text(placeholder, limit=64)
     if type(selective) is not bool:
         raise ValidationFailure('Selective flag must be bool')
     return ForceReply(force_reply=True, input_field_placeholder=placeholder, selective=selective)

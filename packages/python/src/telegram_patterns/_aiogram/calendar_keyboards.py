@@ -7,7 +7,8 @@ from typing import Callable, Sequence
 
 from aiogram.types import DisabledButton, InlineKeyboardButton, InlineKeyboardMarkup
 
-from ..calendar_core import _WEEKDAYS, CalendarMonth, TimeSlot, _zone
+from .._shared import WEEKDAYS, resolve_zone
+from ..calendar_core import CalendarMonth, TimeSlot
 from ..errors import InvalidType, ValidationFailure
 from .keyboard_layouts import KeyboardCapabilities, KeyboardLayout, inline_layout
 from .native_keyboards import inline_keyboard
@@ -36,7 +37,7 @@ def calendar_keyboard(
         raise ValidationFailure('Calendar supports ordinary bot chats')
     rows: list[list[InlineKeyboardButton]] = []
     if disabled_buttons:
-        rows.append([InlineKeyboardButton(text=label, disabled=DisabledButton()) for label in _WEEKDAYS])
+        rows.append([InlineKeyboardButton(text=label, disabled=DisabledButton()) for label in WEEKDAYS])
         for week in month.weeks:
             rows.append(
                 [
@@ -48,7 +49,7 @@ def calendar_keyboard(
             )
     else:
         buttons = [
-            InlineKeyboardButton(text=f'{_WEEKDAYS[day.weekday()]} {day.day}', callback_data=callback_for(day))
+            InlineKeyboardButton(text=f'{WEEKDAYS[day.weekday()]} {day.day}', callback_data=callback_for(day))
             for day in sorted(month.allowed_dates)
         ]
         if buttons:
@@ -84,7 +85,7 @@ def time_slot_keyboard(
         raise ValidationFailure('Time slots support ordinary bot chats')
     if not isinstance(layout, KeyboardLayout):
         raise InvalidType('Use KeyboardLayout')
-    _zone(time_zone)
+    resolve_zone(time_zone)
     items = tuple(slots)
     if (
         len(items) > 100

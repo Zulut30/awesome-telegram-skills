@@ -13,9 +13,10 @@ from itertools import islice
 from pathlib import Path
 from typing import Any, Callable, Iterator, Literal, Sequence
 
-from .calendar_core import TimeSlot, _instant, _micros
+from ._shared import canonical_json, instant, micros, owned_transaction, payload_digest
+from .calendar_core import TimeSlot
 from .errors import ConflictFailure, InvalidType, PermissionDenied, ValidationFailure
-from .sqlite_once import OnceResult, OperationConflict, _json, _owned_transaction, _payload_digest
+from .sqlite_once import OnceResult, OperationConflict
 
 
 def _string(value: str, maximum: int = 128) -> str:
@@ -113,7 +114,7 @@ class SQLiteSlotStore:
         connection = sqlite3.connect(self.database, timeout=self.timeout, isolation_level=None)
         try:
             connection.execute('BEGIN IMMEDIATE' if write else 'BEGIN')
-            connection.set_authorizer(_owned_transaction)
+            connection.set_authorizer(owned_transaction)
             try:
                 yield connection
             finally:
@@ -173,7 +174,7 @@ class SQLiteSlotStore:
             c.execute('DELETE FROM telegram_time_slots WHERE resource=?', (resource,))
             c.executemany(
                 'INSERT INTO telegram_time_slots VALUES(?,?,?,?,?)',
-                [(resource, s.key, _micros(s.start), _micros(s.end), int(s.enabled)) for s in schedule.slots],
+                [(resource, s.key, micros(s.start), micros(s.end), int(s.enabled)) for s in schedule.slots],
             )
         return schedule
 
@@ -192,7 +193,7 @@ class SQLiteSlotStore:
         """Current eligible snapshot; a later reserve always rechecks in a write transaction."""
         _string(resource)
         _actor(actor_id)
-        current_time = _micros(now)
+        current_time = micros(now)
         with self._transaction(write=False) as c:
             self._guard(c, actor_id, resource)
             revision = c.execute(
@@ -209,8 +210,8 @@ class SQLiteSlotStore:
             slots = tuple(
                 TimeSlot(
                     key,
-                    _instant(start),
-                    _instant(end),
+                    instant(start),
+                    instant(end),
                     bool(
                         enabled
                         and key not in active_keys
@@ -230,7 +231,7 @@ class SQLiteSlotStore:
         _string(resource)
         _actor(actor_id)
         _string(operation_id, 256)
-        digest = _payload_digest(payload)
+        digest = payload_digest(payload)
         with self._transaction() as c:
             self._guard(c, actor_id, resource)
             old = c.execute(
@@ -242,7 +243,7 @@ class SQLiteSlotStore:
                 if old[0] != digest:
                     raise OperationConflict('Operation ID was reused with another payload')
                 return OnceResult(json.loads(old[1]), True)
-            serialized = _json(apply(c))
+            serialized = canonical_json(apply(c))
             c.execute(
                 'INSERT INTO telegram_slot_operations VALUES(?,?,?,?,?)',
                 (resource, actor_id, operation_id, digest, serialized),
@@ -261,7 +262,7 @@ class SQLiteSlotStore:
         _string(slot_key, 24)
         if type(expected_revision) is not int or not 1 <= expected_revision <= 2**63 - 1:
             raise ValidationFailure('Use a positive expected schedule revision')
-        current_time = _micros(now)
+        current_time = micros(now)
 
         def apply(c: sqlite3.Connection) -> dict[str, Any]:
             revision = c.execute(
@@ -293,8 +294,8 @@ class SQLiteSlotStore:
                 'resource': resource,
                 'slot_key': slot_key,
                 'owner_id': actor_id,
-                'start': _instant(row[0]).isoformat(),
-                'end': _instant(row[1]).isoformat(),
+                'start': instant(row[0]).isoformat(),
+                'end': instant(row[1]).isoformat(),
                 'status': 'active',
                 'schedule_revision': expected_revision,
             }
@@ -322,7 +323,7 @@ class SQLiteSlotStore:
                 return None
             if row[1] != actor_id:
                 raise PermissionDenied('Booking belongs to another actor')
-            return SlotBooking(booking_id, resource, row[0], row[1], _instant(row[2]), _instant(row[3]), row[4])
+            return SlotBooking(booking_id, resource, row[0], row[1], instant(row[2]), instant(row[3]), row[4])
 
     def cancel(self, resource: str, booking_id: str, *, actor_id: int, operation_id: str) -> OnceResult:
         """Owner-only cancellation and receipt in one transaction; no external calls."""

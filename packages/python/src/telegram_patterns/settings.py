@@ -3,46 +3,12 @@
 from __future__ import annotations
 
 import os
-import re
 from dataclasses import dataclass, field
 from pathlib import Path
 from typing import Mapping
 
+from ._shared import ENV_KEY, env_flag, read_env_file
 from .errors import ValidationFailure
-
-_ENV_FILE_LIMIT = 65536
-_KEY = re.compile(r"[A-Za-z_][A-Za-z0-9_]*")
-
-
-def _read_env_file(path: Path) -> dict[str, str]:
-    """KEY=VALUE lines, optional `export`, quotes and # comments; no interpolation or code."""
-    raw = path.read_bytes()
-    if len(raw) > _ENV_FILE_LIMIT:
-        raise ValidationFailure(f"{path.name} exceeds 64 KiB")
-    values: dict[str, str] = {}
-    for number, line in enumerate(raw.decode('utf-8-sig').splitlines(), 1):
-        line = line.strip()
-        if not line or line.startswith('#'):
-            continue
-        key, separator, value = line.removeprefix('export ').partition('=')
-        key, value = key.strip(), value.strip()
-        if not separator or not _KEY.fullmatch(key):
-            raise ValidationFailure(f"Invalid line {number} in {path.name}: expected KEY=VALUE")  # value never echoed
-        if len(value) >= 2 and value[0] == value[-1] and value[0] in '\'"':
-            value = value[1:-1]
-        else:
-            value = value.split(' #', 1)[0].rstrip()
-        values[key] = value
-    return values
-
-
-def _flag(value: str, name: str) -> bool:
-    normalized = value.strip().lower()
-    if normalized in ("", "0", "false", "no", "off"):
-        return False
-    if normalized in ("1", "true", "yes", "on"):
-        return True
-    raise ValidationFailure(f"{name} must be 1/true/yes/on or 0/false/no/off")  # value never echoed
 
 
 @dataclass(frozen=True, slots=True)
@@ -75,13 +41,13 @@ class BotSettings:
         The file is parsed as plain KEY=VALUE lines and never changes os.environ.
         test_environment_var set to 1/true/yes/on selects the separate Telegram test environment.
         """
-        if not isinstance(token_var, str) or not _KEY.fullmatch(token_var):
+        if not isinstance(token_var, str) or not ENV_KEY.fullmatch(token_var):
             raise ValidationFailure("Invalid token environment variable name")
-        if not isinstance(test_environment_var, str) or not _KEY.fullmatch(test_environment_var):
+        if not isinstance(test_environment_var, str) or not ENV_KEY.fullmatch(test_environment_var):
             raise ValidationFailure("Invalid test environment variable name")
         values: dict[str, str] = {}
         if env_file is not None and Path(env_file).is_file():
-            values.update(_read_env_file(Path(env_file)))
+            values.update(read_env_file(Path(env_file)))
         values.update(os.environ if environ is None else environ)
         token = values.get(token_var)
         if token is None or token == "":
@@ -89,4 +55,4 @@ class BotSettings:
             raise ValidationFailure(f"Set {token_var} in the environment{where} before starting the bot")
         if "REPLACE_WITH" in token:
             raise ValidationFailure(f"Replace the {token_var} placeholder with the token issued by @BotFather")
-        return cls(token=token, test_environment=_flag(values.get(test_environment_var, ""), test_environment_var))
+        return cls(token=token, test_environment=env_flag(values.get(test_environment_var, ""), test_environment_var))

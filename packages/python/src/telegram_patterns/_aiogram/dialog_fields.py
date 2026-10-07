@@ -13,13 +13,14 @@ from typing import Any, ClassVar, Mapping, TypeAlias
 from aiogram.types import Message
 
 from ..errors import InvalidType, ValidationFailure
-from .forms import InvalidField, _plain
+from .common import fits_text
+from .forms import InvalidField
 
 FieldValue: TypeAlias = str | Mapping[str, str | int | float | None]
 
 
 def _text(value: object, maximum: int = 256) -> str:
-    if not isinstance(value, str) or not _plain(value, maximum) or any(ord(c) < 32 or ord(c) == 127 for c in value):
+    if not isinstance(value, str) or not fits_text(value, maximum) or any(ord(c) < 32 or ord(c) == 127 for c in value):
         raise InvalidField('Введите значение без управляющих символов в указанном формате.')
     return value.strip()
 
@@ -41,7 +42,7 @@ class _Field:
     def __post_init__(self) -> None:
         if not isinstance(self.name, str) or not re.fullmatch(r'[a-z][a-z0-9_]{0,31}', self.name):
             raise ValidationFailure('Use a unique 1..32 lowercase ASCII field name')
-        if not _plain(self.label, 64) or not _plain(self.prompt, 512):
+        if not fits_text(self.label, 64) or not fits_text(self.prompt, 512):
             raise ValidationFailure('Use a bounded label and prompt')
 
     def signature(self) -> str:

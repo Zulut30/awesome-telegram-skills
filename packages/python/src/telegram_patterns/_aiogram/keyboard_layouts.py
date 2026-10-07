@@ -8,8 +8,9 @@ from typing import Sequence, TypeVar
 from aiogram.types import InlineKeyboardButton, InlineKeyboardMarkup, KeyboardButton, ReplyKeyboardMarkup
 
 from ..errors import InvalidType, ValidationFailure
-from .keyboards import ActionButton, _callback_data, _items
-from .native_keyboards import ChatType, _context, inline_keyboard, reply_keyboard
+from .common import callback_data, check_chat_context, unique_items
+from .keyboards import ActionButton
+from .native_keyboards import ChatType, inline_keyboard, reply_keyboard
 
 T = TypeVar('T')
 
@@ -54,7 +55,7 @@ class KeyboardCapabilities:
     emoji_entitlement_verified: bool = False
 
     def __post_init__(self) -> None:
-        _context(self.chat_type, self.business)
+        check_chat_context(self.chat_type, self.business)
         if any(type(flag) is not bool for flag in (self.styles, self.custom_emoji, self.emoji_entitlement_verified)):
             raise InvalidType('Presentation capabilities must be bool')
 
@@ -147,12 +148,12 @@ def action_layout(
     # a presentation enhancement is stripped.
     if isinstance(buttons, (str, bytes)):
         raise InvalidType('Use ActionButton items')
-    items = _items(buttons)
+    items = unique_items(buttons, ActionButton)
     _rows(items, layout, capabilities)
     native = [
         InlineKeyboardButton(
             text=item.text,
-            callback_data=_callback_data(item.key, prefix),
+            callback_data=callback_data(item.key, prefix),
             style=item.style,
             icon_custom_emoji_id=item.custom_emoji_id,
         )

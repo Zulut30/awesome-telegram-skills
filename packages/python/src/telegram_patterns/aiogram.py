@@ -19,6 +19,7 @@ from aiogram.types import BotCommand, CallbackQuery, InlineKeyboardMarkup, Label
 
 from ._aiogram.api import InvalidAPIRequest, MethodSpec, build_request, method_catalog
 from ._aiogram.calendar_keyboards import calendar_keyboard, time_slot_keyboard
+from ._aiogram.common import callback_data
 from ._aiogram.dialog_fields import (
     ContactField,
     DateField,
@@ -56,7 +57,6 @@ from ._aiogram.keyboards import (
     ActionButton,
     ButtonStyle,
     MenuPage,
-    _callback_data,
     action_keyboard,
     action_menu,
     page_number,
@@ -301,7 +301,7 @@ def callback_router(
     notify chooses a safe response channel including inline/inaccessible cases.
     Errors propagate to the application's error handling, after ACK.
     """
-    _callback_data("k", prefix)
+    callback_data("k", prefix)
     router = Router()
 
     @router.callback_query(F.data.startswith(prefix))
@@ -309,7 +309,7 @@ def callback_router(
         await query.answer()  # Spinner ACK; no assertion of business success.
         key = (query.data or "")[len(prefix) :]
         try:
-            _callback_data(key, prefix)
+            callback_data(key, prefix)
         except ValueError:
             await notify(query, ActionResult("stale", "Кнопка недействительна. Откройте актуальное меню."))
             return

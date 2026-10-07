@@ -11,10 +11,10 @@ from dataclasses import dataclass, field, replace
 from types import MappingProxyType
 from typing import Any, Literal, Mapping, Sequence
 
+from ._shared import SELECTION_PREFIX
 from .errors import ConflictFailure, InvalidType, ValidationFailure
 
 _KEY = re.compile(r'[A-Za-z0-9_-]{1,24}')
-_PREFIX = re.compile(r'[A-Za-z0-9_-]{1,8}:')
 _ACTION = re.compile(r'(?:[stf]:[A-Za-z0-9_-]{1,24}|q:(?:inc|dec)|y:[0-9a-f]{16}|ask|back|cancel|refresh)')
 _MAX_REVISION = 9_999_999_999
 
@@ -166,7 +166,7 @@ class SelectionState:
         if (
             not isinstance(action, str)
             or not _ACTION.fullmatch(action)
-            or not _PREFIX.fullmatch(self.prefix)
+            or not SELECTION_PREFIX.fullmatch(self.prefix)
             or not re.fullmatch(r'[0-9a-f]{16}', self.session_id)
             or type(self.revision) is not int
             or not 0 <= self.revision <= _MAX_REVISION
@@ -229,7 +229,7 @@ class SelectionMenu:
     ) -> None:
         if not isinstance(spec, SelectionSpec) or not isinstance(context, SelectionContext):
             raise InvalidType('Use SelectionSpec and SelectionContext')
-        if not isinstance(prefix, str) or not _PREFIX.fullmatch(prefix):
+        if not isinstance(prefix, str) or not SELECTION_PREFIX.fullmatch(prefix):
             raise ValidationFailure('Use 1..8 ASCII prefix characters followed by colon')
         for value in (ttl_seconds, confirmation_ttl_seconds):
             if isinstance(value, bool) or not isinstance(value, (int, float)) or not math.isfinite(value) or value <= 0:

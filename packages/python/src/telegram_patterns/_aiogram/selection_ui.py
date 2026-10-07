@@ -9,10 +9,11 @@ from typing import Awaitable, Callable, Literal
 from aiogram import F, Router
 from aiogram.types import CallbackQuery, InlineKeyboardButton, InlineKeyboardMarkup, Message
 
+from .._shared import SELECTION_PREFIX
 from ..errors import ConflictFailure, InvalidCompletion, InvalidType, UnknownOutcome, ValidationFailure
 from ..selection import SelectionContext, SelectionMenu, SelectionResult, SelectionSpec, SelectionState
+from .common import check_text
 from .keyboard_layouts import KeyboardCapabilities, KeyboardLayout, inline_layout
-from .native_keyboards import _text
 
 
 def selection_keyboard(
@@ -91,11 +92,9 @@ def selection_router(
     Optional synchronous render(state) composes calendar/custom views after the
     host hook. It cannot change the server guards; invalid output retains intent.
     """
-    from ..selection import _PREFIX
-
     if prefix is None:
         prefix = resolve.state.prefix if isinstance(resolve, SelectionMenu) else 'sel:'
-    if not isinstance(prefix, str) or not _PREFIX.fullmatch(prefix):
+    if not isinstance(prefix, str) or not SELECTION_PREFIX.fullmatch(prefix):
         raise ValidationFailure('Use 1..8 ASCII prefix characters followed by colon')
     if not isinstance(resolve, SelectionMenu) and not callable(resolve):
         raise InvalidType('Use a SelectionMenu or synchronous menu resolver')
@@ -172,7 +171,7 @@ def selection_router(
             if not isinstance(view, tuple) or len(view) != 2 or not isinstance(view[1], InlineKeyboardMarkup):
                 raise InvalidCompletion('Renderer must return (plain text, InlineKeyboardMarkup); intent retained')
             try:
-                _text(view[0], limit=4096)
+                check_text(view[0], limit=4096)
             except ValidationFailure:
                 raise InvalidCompletion('Renderer text is invalid; intent retained') from None
             edited = await bot.edit_message_text(

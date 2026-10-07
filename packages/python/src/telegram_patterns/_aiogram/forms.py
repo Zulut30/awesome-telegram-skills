@@ -16,15 +16,9 @@ from aiogram.fsm.storage.memory import DisabledEventIsolation
 from aiogram.types import CallbackQuery, InlineKeyboardButton, InlineKeyboardMarkup, Message
 
 from ..errors import ErrorCode, InvalidCompletion, InvalidType, ValidationFailure
-from .dialog_storage import _clear_form, _DialogData, _lifetime_data, _read_form, _save_form
+from .common import fits_text, message_actor_id, message_bot_id
+from .dialog_storage import DialogData, clear_form, lifetime_data, read_form, save_form
 from .fsm_storage import DialogLifetime
-
-
-def _plain(text: str, limit: int) -> bool:
-    try:
-        return isinstance(text, str) and bool(text.strip()) and len(text.encode("utf-16-le")) // 2 <= limit
-    except UnicodeError:
-        return False
 
 
 class InvalidField(ValidationFailure):
@@ -33,23 +27,9 @@ class InvalidField(ValidationFailure):
     code: ErrorCode = 'invalid-field'
 
     def __init__(self, message: str = "Проверьте значение и попробуйте ещё раз.") -> None:
-        if not _plain(message, 256):
+        if not fits_text(message, 256):
             raise ValidationFailure("Validation message must be nonempty plain text up to 256 UTF-16 units")
         super().__init__(message)
-
-
-def _bot_id(message: Message) -> int:
-    bot = message.bot
-    if bot is None:
-        raise RuntimeError('Forms require a Message bound to the current Bot')
-    return bot.id
-
-
-def _actor_id(message: Message) -> int:
-    user = message.from_user
-    if user is None:
-        raise RuntimeError('Forms require a user author')
-    return user.id
 
 
 @dataclass(frozen=True, slots=True)
@@ -63,7 +43,7 @@ class TextField:
     def __post_init__(self) -> None:
         if not isinstance(self.name, str) or not re.fullmatch(r"[a-z][a-z0-9_]{0,31}", self.name):
             raise ValidationFailure("Field name must be 1..32 lowercase ASCII characters")
-        if not _plain(self.label, 64) or not _plain(self.prompt, 512):
+        if not fits_text(self.label, 64) or not fits_text(self.prompt, 512):
             raise ValidationFailure("Use a label up to 64 and a prompt up to 512 UTF-16 units")
         if type(self.max_length) is not int or not 1 <= self.max_length <= 256:
             raise ValidationFailure("Field max_length must be 1..256 UTF-16 units")
@@ -76,11 +56,11 @@ class TextField:
 
     def read(self, text: str) -> str:
         value = text.strip() if isinstance(text, str) else ""
-        if not _plain(value, self.max_length):
+        if not fits_text(value, self.max_length):
             raise InvalidField(f"Введите от 1 до {self.max_length} символов.")
         if self.validate is not None:
             value = self.validate(value)
-            if not _plain(value, self.max_length):
+            if not fits_text(value, self.max_length):
                 raise ValidationFailure("Validator must return a bounded nonempty string")
         return value
 
@@ -152,12 +132,16 @@ def text_form_router(
     def require_fsm(dispatcher: Dispatcher, state: FSMContext | None, message: Message, actor: int) -> FSMContext:
         if state is None or isinstance(dispatcher.fsm.events_isolation, DisabledEventIsolation):
             raise RuntimeError("Text forms require enabled FSM and events_isolation on the existing Dispatcher")
-        if (state.key.bot_id, state.key.chat_id, state.key.user_id) != (_bot_id(message), message.chat.id, actor):
+        if (state.key.bot_id, state.key.chat_id, state.key.user_id) != (
+            message_bot_id(message),
+            message.chat.id,
+            actor,
+        ):
             raise RuntimeError("Text forms require an actor-scoped FSM key")
         return state
 
-    async def load(state: FSMContext, message: Message, actor: int) -> _DialogData | None:
-        stored = await _read_form(state, namespace, data_key, lifetime)
+    async def load(state: FSMContext, message: Message, actor: int) -> DialogData | None:
+        stored = await read_form(state, namespace, data_key, lifetime)
         if stored is None:
             return None
         if (
@@ -167,7 +151,7 @@ def text_form_router(
             or stored.get("form_version", 1) != schema_version
             or (lifetime is not None and "form_version" not in stored)
             or (lifetime is None and "lifetime" in stored)
-            or stored.get("owner") != [_bot_id(message), message.chat.id, actor]
+            or stored.get("owner") != [message_bot_id(message), message.chat.id, actor]
             or type(stored.get("index")) is not int
             or not 0 <= stored["index"] <= len(steps)
             or not isinstance(stored.get("values"), dict)
@@ -177,29 +161,29 @@ def text_form_router(
             or type(stored.get("submission_started")) is not bool
             or type(stored.get("last_message_id")) is not int
             or (stored.get("review_message_id") is not None and type(stored["review_message_id"]) is not int)
-            or any(not _plain(stored["values"][step.name], step.max_length) for step in steps[: stored["index"]])
+            or any(not fits_text(stored["values"][step.name], step.max_length) for step in steps[: stored["index"]])
         ):
             # Never silently reset potentially pending identity after a schema
             # change or storage corruption. The host must reconcile/migrate it.
             raise RuntimeError("Stored form requires reconciliation or a schema migration")
         if lifetime is not None and lifetime.expired(stored.get("lifetime")) and not stored["submission_started"]:
-            await _clear_form(state, data_key, stored)
+            await clear_form(state, data_key, stored)
             await message.answer(f"Срок черновика истёк. Начать заново: /{command}.", parse_mode=None)
             return None
         return stored
 
-    async def save(state: FSMContext, data: _DialogData) -> None:
-        await _save_form(state, namespace, data_key, data)
+    async def save(state: FSMContext, data: DialogData) -> None:
+        await save_form(state, namespace, data_key, data)
 
-    async def clear(state: FSMContext, data: _DialogData | None) -> None:
-        await _clear_form(state, data_key, data)
+    async def clear(state: FSMContext, data: DialogData | None) -> None:
+        await clear_form(state, data_key, data)
 
     async def prompt(message: Message, index: int) -> None:
         await message.answer(
             f"Шаг {index + 1}/{len(steps)}. {steps[index].prompt}\n/back — назад · /cancel — отмена", parse_mode=None
         )
 
-    async def review(message: Message, state: FSMContext, data: _DialogData) -> None:
+    async def review(message: Message, state: FSMContext, data: DialogData) -> None:
         text = "Проверьте ответы:\n" + "\n".join(f"{step.label}: {data['values'][step.name]}" for step in steps)
         keyboard = InlineKeyboardMarkup(
             inline_keyboard=[
@@ -218,8 +202,8 @@ def text_form_router(
 
     @router.message(private, StateFilter(None, namespace), Command(command))
     async def start(message: Message, dispatcher: Dispatcher, state: FSMContext | None = None) -> None:
-        state = require_fsm(dispatcher, state, message, _actor_id(message))
-        previous = await load(state, message, _actor_id(message))
+        state = require_fsm(dispatcher, state, message, message_actor_id(message))
+        previous = await load(state, message, message_actor_id(message))
         if previous is not None and previous["submission_started"]:
             await message.answer(frozen_text, parse_mode=None)
             return
@@ -233,9 +217,9 @@ def text_form_router(
             else:
                 await prompt(message, previous["index"])
             return
-        data = _DialogData(
+        data = DialogData(
             {
-                "owner": [_bot_id(message), message.chat.id, _actor_id(message)],
+                "owner": [message_bot_id(message), message.chat.id, message_actor_id(message)],
                 "schema": [step.name for step in steps],
                 "values": {},
                 "index": 0,
@@ -244,7 +228,7 @@ def text_form_router(
                 "review_message_id": None,
                 "last_message_id": message.message_id,
                 "form_version": schema_version,
-                **_lifetime_data(lifetime),
+                **lifetime_data(lifetime),
             },
             previous.snapshot if previous is not None else None,
         )
@@ -253,8 +237,8 @@ def text_form_router(
 
     @router.message(private, StateFilter(namespace), Command("cancel"))
     async def cancel(message: Message, dispatcher: Dispatcher, state: FSMContext | None = None) -> None:
-        state = require_fsm(dispatcher, state, message, _actor_id(message))
-        data = await load(state, message, _actor_id(message))
+        state = require_fsm(dispatcher, state, message, message_actor_id(message))
+        data = await load(state, message, message_actor_id(message))
         if data is not None and data["submission_started"]:
             await message.answer(frozen_text, parse_mode=None)
             return
@@ -265,8 +249,8 @@ def text_form_router(
 
     @router.message(private, StateFilter(namespace), Command("back"))
     async def back(message: Message, dispatcher: Dispatcher, state: FSMContext | None = None) -> None:
-        state = require_fsm(dispatcher, state, message, _actor_id(message))
-        data = await load(state, message, _actor_id(message))
+        state = require_fsm(dispatcher, state, message, message_actor_id(message))
+        data = await load(state, message, message_actor_id(message))
         if data is None:
             await message.answer(stale_text, parse_mode=None)
             return
@@ -283,8 +267,8 @@ def text_form_router(
 
     @router.message(private, StateFilter(namespace), lambda event: not event.text or not event.text.startswith("/"))
     async def receive(message: Message, dispatcher: Dispatcher, state: FSMContext | None = None) -> None:
-        state = require_fsm(dispatcher, state, message, _actor_id(message))
-        data = await load(state, message, _actor_id(message))
+        state = require_fsm(dispatcher, state, message, message_actor_id(message))
+        data = await load(state, message, message_actor_id(message))
         if data is None:
             await message.answer(stale_text, parse_mode=None)
             return
@@ -338,11 +322,11 @@ def text_form_router(
         data["submission_started"] = True
         await save(state, data)  # Keep stable identity even after unknown outcome.
         submission = FormSubmission(
-            _bot_id(message), query.from_user.id, message.chat.id, data["operation_id"], data["values"]
+            message_bot_id(message), query.from_user.id, message.chat.id, data["operation_id"], data["values"]
         )
         try:
             text = await on_submit(submission)
-            if not _plain(text, 4096):
+            if not fits_text(text, 4096):
                 raise InvalidCompletion("on_submit must return nonempty plain text up to 4096 UTF-16 units")
         except Exception:
             await message.answer(

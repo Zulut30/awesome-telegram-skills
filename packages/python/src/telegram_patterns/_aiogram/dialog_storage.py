@@ -1,4 +1,4 @@
-"""Internal form transitions; old MemoryStorage path remains a demonstration."""
+"""Internal form transitions shared by forms and dialog_forms; old MemoryStorage path remains a demonstration."""
 
 from __future__ import annotations
 
@@ -10,7 +10,7 @@ from aiogram.fsm.context import FSMContext
 from .fsm_storage import AtomicFSMStorage, DialogLifetime, FSMConflict, FSMSnapshot
 
 
-class _DialogData(dict[str, Any]):
+class DialogData(dict[str, Any]):
     snapshot: FSMSnapshot | None
 
     def __init__(self, values: dict[str, Any], snapshot: FSMSnapshot | None = None) -> None:
@@ -18,9 +18,7 @@ class _DialogData(dict[str, Any]):
         self.snapshot = snapshot
 
 
-async def _read_form(
-    state: FSMContext, namespace: str, key: str, lifetime: DialogLifetime | None
-) -> _DialogData | None:
+async def read_form(state: FSMContext, namespace: str, key: str, lifetime: DialogLifetime | None) -> DialogData | None:
     atomic = isinstance(state.storage, AtomicFSMStorage)
     if lifetime is not None and not atomic:
         raise RuntimeError('Durable dialog lifetime requires AtomicFSMStorage on the existing Dispatcher')
@@ -37,10 +35,10 @@ async def _read_form(
     stored = values.get(key)
     if not isinstance(stored, dict):
         raise RuntimeError('Stored dialog requires migration or reconciliation')
-    return _DialogData(stored, snapshot)
+    return DialogData(stored, snapshot)
 
 
-async def _save_form(state: FSMContext, namespace: str, key: str, data: _DialogData) -> None:
+async def save_form(state: FSMContext, namespace: str, key: str, data: DialogData) -> None:
     if isinstance(state.storage, AtomicFSMStorage):
         old = data.snapshot or await state.storage.read_snapshot(state.key)
         if old.state not in (None, namespace) or (data.snapshot is None and key in old.data):
@@ -54,7 +52,7 @@ async def _save_form(state: FSMContext, namespace: str, key: str, data: _DialogD
             await state.set_state(namespace)
 
 
-async def _clear_form(state: FSMContext, key: str, data: _DialogData | None) -> None:
+async def clear_form(state: FSMContext, key: str, data: DialogData | None) -> None:
     if data is None:
         return
     if isinstance(state.storage, AtomicFSMStorage):
@@ -70,5 +68,5 @@ async def _clear_form(state: FSMContext, key: str, data: _DialogData | None) -> 
         await state.set_data(values)
 
 
-def _lifetime_data(lifetime: DialogLifetime | None) -> dict[str, Any]:
+def lifetime_data(lifetime: DialogLifetime | None) -> dict[str, Any]:
     return {'lifetime': lifetime.start()} if lifetime is not None else {}

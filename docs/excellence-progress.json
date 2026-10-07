@@ -808,9 +808,14 @@
     {
       "id": 64,
       "title": "Без импорта приватных функций между модулями",
-      "status": "pending",
-      "commit_subject": null,
-      "evidence": [],
+      "status": "done",
+      "commit_subject": "excellence(064): share helpers through internal modules instead of private imports",
+      "evidence": [
+        "packages/python/src/telegram_patterns/_shared.py: canonical_json, payload_digest, owned_transaction, read_env_file, env_flag, resolve_zone, to_utc, micros, instant, WEEKDAYS, SELECTION_PREFIX",
+        "packages/python/src/telegram_patterns/_aiogram/common.py: callback_data, unique_items, check_chat_context, fits_text, check_text, message_bot_id, message_actor_id",
+        "packages/python/tests/test_module_layout.py::test_modules_never_import_private_names_from_each_other (fails on the old tree with 31 names in 10 modules)",
+        "ruff, mypy --strict, 541 package tests, 126 root tests, verify_pattern_packages PASS 0.24.0 browser=passed"
+      ],
       "remaining": null
     },
     {

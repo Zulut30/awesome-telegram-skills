@@ -15,8 +15,9 @@ from aiogram.exceptions import TelegramBadRequest
 from aiogram.types import CallbackQuery, InlineKeyboardButton, InlineKeyboardMarkup, Message
 
 from ..errors import ConflictFailure, InvalidType, UnknownOutcome, ValidationFailure
+from .common import unique_items
 from .keyboard_layouts import KeyboardCapabilities, KeyboardLayout, inline_layout
-from .keyboards import ActionButton, _items
+from .keyboards import ActionButton
 
 _KEY = re.compile(r'[A-Za-z0-9_-]{1,24}')
 _RESERVED = {'_back', '_refresh'}
@@ -60,7 +61,7 @@ class NavigationScreen:
         _text(self.text, 4096)
         if isinstance(self.buttons, (str, bytes)) or not isinstance(self.buttons, Sequence):
             raise InvalidType('Use ActionButton sequences for screen links')
-        buttons = _items(self.buttons)
+        buttons = unique_items(self.buttons, ActionButton)
         if len(buttons) > 98:
             raise ValidationFailure('Use up to 98 links (room for back and refresh; component limit)')
         for button in buttons:

@@ -19,7 +19,8 @@ import urllib.request
 from pathlib import Path
 from typing import Any, Mapping
 
-from .settings import BotSettings, _flag, _read_env_file
+from ._shared import env_flag, read_env_file
+from .settings import BotSettings
 
 _MAX_MANIFEST_BYTES = 256 * 1024
 _VERSION = re.compile(r'\d+\.\d+\.\d+')
@@ -433,7 +434,7 @@ def _token_value(env_file: Path | None) -> str | None:
     if value is not None or env_file is None:
         return value or ''
     try:
-        return _read_env_file(env_file).get('BOT_TOKEN', '') if env_file.is_file() else ''
+        return read_env_file(env_file).get('BOT_TOKEN', '') if env_file.is_file() else ''
     except (ValueError, OSError):
         return None
 
@@ -718,11 +719,11 @@ def diagnose(
         flag = os.environ.get('TELEGRAM_TEST_ENVIRONMENT')
         if flag is None and env_file is not None:
             try:
-                flag = _read_env_file(env_file).get('TELEGRAM_TEST_ENVIRONMENT') if env_file.is_file() else None
+                flag = read_env_file(env_file).get('TELEGRAM_TEST_ENVIRONMENT') if env_file.is_file() else None
             except (ValueError, OSError):
                 flag = None  # already reported as env-file-invalid
         try:
-            test_environment = _flag(flag or '', 'TELEGRAM_TEST_ENVIRONMENT')
+            test_environment = env_flag(flag or '', 'TELEGRAM_TEST_ENVIRONMENT')
         except ValueError:
             check(
                 'telegram-environment',
@@ -797,7 +798,7 @@ def diagnose(
                 secret = os.environ.get(webhook_secret_env)
                 if secret is None and env_file is not None:
                     try:
-                        secret = _read_env_file(env_file).get(webhook_secret_env) if env_file.is_file() else None
+                        secret = read_env_file(env_file).get(webhook_secret_env) if env_file.is_file() else None
                     except (ValueError, OSError):
                         secret = None
                 for name, status, reason, detail, *repair in _webhook_checks(

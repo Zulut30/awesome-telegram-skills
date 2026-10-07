@@ -5,15 +5,14 @@ from __future__ import annotations
 import calendar as _calendar
 import re
 from dataclasses import dataclass, field
-from datetime import date, datetime, timedelta, timezone, tzinfo
+from datetime import date, datetime, timezone
 from itertools import islice
 from typing import Iterable
-from zoneinfo import ZoneInfo, ZoneInfoNotFoundError
 
-from .errors import InvalidType, UnsupportedCapability, ValidationFailure
+from ._shared import WEEKDAYS, resolve_zone, to_utc
+from .errors import InvalidType, ValidationFailure
 
 _KEY = re.compile(r'[A-Za-z0-9_-]{1,24}\Z', re.ASCII)
-_EPOCH = datetime(1970, 1, 1, tzinfo=timezone.utc)
 _MONTHS = (
     'Январь',
     'Февраль',
@@ -28,45 +27,6 @@ _MONTHS = (
     'Ноябрь',
     'Декабрь',
 )
-_WEEKDAYS = ('Пн', 'Вт', 'Ср', 'Чт', 'Пт', 'Сб', 'Вс')
-
-
-def _zone(key: str) -> tzinfo:
-    if not isinstance(key, str) or not key or len(key) > 128:
-        raise ValidationFailure('Use a bounded IANA time-zone key')
-    if key == 'UTC':
-        return timezone.utc
-    try:
-        return ZoneInfo(key)
-    except ValueError:
-        raise ValidationFailure('Use a normalized IANA time-zone key') from None
-    except ZoneInfoNotFoundError:
-        raise UnsupportedCapability(
-            'Unknown time zone or missing IANA database; install the calendar extra when needed'
-        ) from None
-
-
-def _utc(value: datetime) -> datetime:
-    if not isinstance(value, datetime) or value.tzinfo is None or value.utcoffset() is None:
-        raise InvalidType('Use an aware datetime')
-    try:
-        result = value.astimezone(timezone.utc)
-        if result.astimezone(value.tzinfo).replace(tzinfo=None) != value.replace(tzinfo=None):
-            raise ValidationFailure('The local time does not exist')
-        return result
-    except (OverflowError, ValueError) as error:
-        if isinstance(error, ValidationFailure):
-            raise
-        raise ValidationFailure('Datetime conversion is outside the supported range') from None
-
-
-def _micros(value: datetime) -> int:
-    delta = _utc(value) - _EPOCH
-    return (delta.days * 86400 + delta.seconds) * 1_000_000 + delta.microseconds
-
-
-def _instant(value: int) -> datetime:
-    return _EPOCH + timedelta(microseconds=value)
 
 
 def resolve_local_time(local: datetime, time_zone: str, *, fold: int | None = None) -> datetime:
@@ -80,7 +40,7 @@ def resolve_local_time(local: datetime, time_zone: str, *, fold: int | None = No
         raise InvalidType('Use a naive local datetime and explicit time zone')
     if fold is not None and (type(fold) is not int or fold not in (0, 1)):
         raise ValidationFailure('Fold must be None, 0 or 1')
-    zone = _zone(time_zone)
+    zone = resolve_zone(time_zone)
     candidates: dict[int, datetime] = {}
     try:
         for choice in (0, 1):
@@ -115,7 +75,7 @@ class TimeSlot:
             raise ValidationFailure('Use a unique 1..24 ASCII slot key')
         if type(self.enabled) is not bool:
             raise InvalidType('Enabled must be bool')
-        start, end = _utc(self.start), _utc(self.end)
+        start, end = to_utc(self.start), to_utc(self.end)
         if start >= end:
             raise ValidationFailure('Slot end must be after start in UTC')
         object.__setattr__(self, 'start', start)
@@ -123,7 +83,7 @@ class TimeSlot:
 
     def label(self, time_zone: str) -> str:
         """Include UTC offset so repeated DST wall times stay distinguishable."""
-        zone = _zone(time_zone)
+        zone = resolve_zone(time_zone)
         try:
             start, end = self.start.astimezone(zone), self.end.astimezone(zone)
         except (OverflowError, ValueError):
@@ -164,7 +124,7 @@ class CalendarMonth:
             or not 1 <= self.month <= 12
         ):
             raise ValidationFailure('Use year 1..9999 and month 1..12')
-        _zone(self.time_zone)
+        resolve_zone(self.time_zone)
         values = []
         for dates in (self.available_dates, self.blocked_dates):
             if isinstance(dates, (str, bytes)):
@@ -191,7 +151,7 @@ class CalendarMonth:
         return type(day) is date and day in self.allowed_dates
 
     def text(self) -> str:
-        rows = [f'{_MONTHS[self.month - 1]} {self.year} · {self.time_zone}', ' '.join(_WEEKDAYS)]
+        rows = [f'{_MONTHS[self.month - 1]} {self.year} · {self.time_zone}', ' '.join(WEEKDAYS)]
         rows.extend(
             ' '.join('  ' if day is None else f'{day.day:2}' if self.allows(day) else ' ·' for day in week)
             for week in self.weeks
