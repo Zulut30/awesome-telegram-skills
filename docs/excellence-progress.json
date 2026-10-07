@@ -731,9 +731,14 @@
     {
       "id": 58,
       "title": "Остальные новинки 10.0–10.3",
-      "status": "pending",
-      "commit_subject": null,
-      "evidence": [],
+      "status": "done",
+      "commit_subject": "excellence(058): add recipes for guest mode, bot-to-bot, live photos, join queries and poll media",
+      "evidence": [
+        "examples/python: guest_bot, bot_relay_bot, live_photo_bot, join_query_bot, poll_media_bot with offline scenarios; run-recipe demo-guest-reply, demo-bot-relay, demo-live-photo, demo-join-query, demo-poll-media --offline passed",
+        "docs/bot-api-10-features.md: a limits section per feature, in telegram-bot-api and telegram-code-patterns",
+        "scripts/build_recipe_gallery.py runs offline scenarios in parallel (catalog tests ~117 s instead of ~400 s)",
+        "verify_pattern_packages PASS: 529 Python and 35 TypeScript tests, browser passed"
+      ],
       "remaining": null
     },
     {

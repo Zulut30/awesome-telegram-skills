@@ -34,6 +34,11 @@ _FIXTURES = {
     'demo-ephemeral': ('ephemeral_bot.py', 'offline_ephemeral.py'),
     'demo-community': ('community_bot.py', 'offline_community.py'),
     'demo-stars-subscription': ('stars_subscription_bot.py', 'offline_stars_subscription.py'),
+    'demo-guest-reply': ('guest_bot.py', 'offline_guest.py'),
+    'demo-bot-relay': ('bot_relay_bot.py', 'offline_bot_relay.py'),
+    'demo-live-photo': ('live_photo_bot.py', 'offline_live_photo.py'),
+    'demo-join-query': ('join_query_bot.py', 'offline_join_query.py'),
+    'demo-poll-media': ('poll_media_bot.py', 'offline_poll_media.py'),
     'demo-recovery': ('error_recovery.py',),
 }
 _ATTEMPTS = [0]
@@ -184,6 +189,21 @@ def _execute(recipe_id: str) -> dict:
             if recipe_id == 'demo-stars-subscription':
                 assert all(evidence[key] for key in ('monthly_invoice', 'checkout_grants_nothing', 'charge_grants_period', 'renewal_extends', 'duplicate_ignored', 'canceled_keeps_paid_month', 'failed_notifies_and_expires', 'refund_withdraws_its_month', 'state_round_trips_json', 'existing_dispatcher_preserved'))
                 checks.extend(('stars-subscription-charges', 'bot-subscription-updated', 'refund-withdraws-charge'))
+            if recipe_id == 'demo-guest-reply':
+                assert evidence['guest_answers'] == 2 and all(evidence[key] for key in ('reply_context_used', 'one_reply_per_query', 'separate_update_type', 'no_send_message_to_foreign_chat', 'existing_dispatcher_preserved'))
+                checks.extend(('guest-message-update', 'one-reply-per-query'))
+            if recipe_id == 'demo-bot-relay':
+                assert evidence['answers'] == 4 and all(evidence[key] for key in ('dedup', 'pause_per_peer', 'depth_limit', 'endless_peer_bounded', 'self_ignored', 'person_resets', 'existing_dispatcher_preserved'))
+                checks.extend(('bot-to-bot-loop-guard', 'endless-peer-bounded'))
+            if recipe_id == 'demo-live-photo':
+                assert all(evidence[key] for key in ('received_saved', 'missing_static_photo_refused', 'resent_by_file_id', 'album_of_live_photos', 'url_refused', 'upload_size_checked', 'existing_dispatcher_preserved'))
+                checks.extend(('live-photo-sdk-wire', 'live-photo-album', 'no-url-source'))
+            if recipe_id == 'demo-join-query':
+                assert all(evidence[key] for key in ('mini_app_shown', 'signed_user_only', 'approve_once', 'decline_on_failed_check', 'stale_query_untouched', 'ordinary_request_ignored', 'queue_when_mini_app_fails', 'existing_dispatcher_preserved'))
+                checks.extend(('join-query-mini-app', 'signed-init-data', 'ten-second-window'))
+            if recipe_id == 'demo-poll-media':
+                assert evidence['option_media'] == 3 and all(evidence[key] for key in ('description_media', 'explanation_media', 'link_only_in_options', 'explanation_needs_quiz', 'incoming_media_kinds', 'existing_dispatcher_preserved'))
+                checks.extend(('poll-option-media', 'poll-media-types'))
             if recipe_id == 'demo-platform':
                 assert evidence['families'] == 7 and evidence['contracts'] == 51 and evidence['confirmed_operations'] == 7
                 assert all(evidence[key] for key in ('durable_intents', 'unknown_send_no_retry', 'current_actor_acl', 'fresh_native_rights', 'financial_quote_budget', 'scoped_event_dedup', 'existing_dispatcher_preserved', 'user_confirmed_managed_link'))

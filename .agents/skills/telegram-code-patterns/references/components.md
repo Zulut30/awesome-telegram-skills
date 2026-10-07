@@ -59,7 +59,7 @@ Storage/transport/provider interfaces (с 0.9.0): OnceStore/AsyncTransport/Provi
 
 Core starter (с 0.10.0): StarterComponent, StarterConflict, starter_components; create_starter components keyword и StarterPlan.components/requested_components. Закрытый набор и сценарии — [выбор компонентов](starter-selection.md).
 
-Планы и локальный runner добавлены в 0.13.0: `RecipeRunPlan`, `RecipeRunResult`, `plan_recipe`, `run_recipe_offline` из Python root; [requirements/fixtures/границы](recipe-execution.md). В текущей 0.24.0 есть 216 Python fixtures и 99 native references без executor; offline_ready не означает live разрешение.
+Планы и локальный runner добавлены в 0.13.0: `RecipeRunPlan`, `RecipeRunResult`, `plan_recipe`, `run_recipe_offline` из Python root; [requirements/fixtures/границы](recipe-execution.md). В текущей 0.24.0 есть 221 Python fixtures и 99 native references без executor; offline_ready не означает live разрешение.
 
 С 0.14.0 KeyboardLayout/KeyboardCapabilities и action_layout/inline_layout/reply_layout описаны в [композициях клавиатур](keyboard-layouts.md): плоский список кнопок, шаблон ширины рядов, проверка снимка и контекста, запасной вариант, если клиент не поддерживает возможность.
 

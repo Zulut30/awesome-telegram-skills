@@ -46,6 +46,7 @@ metadata:
 - [ephemeral-messages](references/ephemeral-messages.md): ответ в группе только нажавшему
 - [communities](references/communities.md): события и права сообществ
 - [stars-subscriptions](references/stars-subscriptions.md): подписка Stars и платный доступ
+- [bot-api-10-features](references/bot-api-10-features.md): guest, bot-to-bot, live photo, заявки, медиа опросов
 - [media](references/media.md): фото, документы, альбомы, скачивание
 - [profiles](references/profiles.md): профили, фото пользователя, оформление бота
 - [inline-search](references/inline-search.md): inline-поиск

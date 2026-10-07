@@ -1,6 +1,7 @@
 """Build offline recipe catalog/gallery. SDK requests and demo Dispatchers run locally."""
 from __future__ import annotations
 import argparse
+from concurrent.futures import ThreadPoolExecutor
 import hashlib
 import importlib.util
 import importlib.metadata
@@ -125,7 +126,7 @@ def build(root: Path = ROOT) -> dict:
             check_files=['scripts/build_telegram_catalog.py', 'packages/typescript/tests/core.test.mjs'])
         if path.startswith('BackButton.'): records[-1]['keywords'] += ['назад', 'back']
     environment = dict(os.environ); environment.pop('BOT_TOKEN', None); environment['PYTHONUTF8'] = '1'
-    for filename, offline, key, title in (
+    demos = (
         ('keyboards_bot.py', 'offline_keyboards.py', 'demo-keyboards', 'Рабочий бот клавиатур и событий'),
         ('bot.py', 'offline_bot.py', 'demo-catalog', 'Каталог с пагинацией и callbacks'),
         ('form_bot.py', 'offline_form.py', 'demo-form', 'Форма с проверкой и подтверждением'),
@@ -145,9 +146,21 @@ def build(root: Path = ROOT) -> dict:
         ('ephemeral_bot.py', 'offline_ephemeral.py', 'demo-ephemeral', 'Эфемерный ответ на кнопку в группе'),
         ('community_bot.py', 'offline_community.py', 'demo-community', 'События сообщества в группе и канале'),
         ('stars_subscription_bot.py', 'offline_stars_subscription.py', 'demo-stars-subscription', 'Подписка Stars: продление, отмена и возврат'),
-    ):
-        result = subprocess.run([sys.executable, str(root / 'examples/python' / offline)], capture_output=True,
-                                text=True, encoding='utf-8', env=environment, timeout=60)
+        ('guest_bot.py', 'offline_guest.py', 'demo-guest-reply', 'Guest mode: один ответ в чужом чате'),
+        ('bot_relay_bot.py', 'offline_bot_relay.py', 'demo-bot-relay', 'Общение ботов с защитой от циклов'),
+        ('live_photo_bot.py', 'offline_live_photo.py', 'demo-live-photo', 'Live photo и альбомы из них'),
+        ('join_query_bot.py', 'offline_join_query.py', 'demo-join-query', 'Заявка на вступление с проверкой в Mini App'),
+        ('poll_media_bot.py', 'offline_poll_media.py', 'demo-poll-media', 'Опрос с фото, ссылками и местами'),
+    )
+
+    def execute(offline: str) -> subprocess.CompletedProcess[str]:
+        # Each offline scenario keeps its state in its own temporary directory, so they run side by side.
+        return subprocess.run([sys.executable, str(root / 'examples/python' / offline)], capture_output=True,
+                              text=True, encoding='utf-8', env=environment, timeout=60)
+    with ThreadPoolExecutor(max_workers=min(8, os.cpu_count() or 1)) as pool:
+        results = dict(zip((demo[2] for demo in demos), pool.map(execute, (demo[1] for demo in demos))))
+    for filename, offline, key, title in demos:
+        result = results[key]
         if result.returncode: raise ValueError('Offline recipe failed: ' + key)
         evidence = json.loads(result.stdout)
         if evidence.get('passed') is not True or evidence.get('network') is not False: raise ValueError('Invalid offline evidence')
@@ -249,6 +262,38 @@ def build(root: Path = ROOT) -> dict:
             records[-1]['source_files'] += ['packages/python/src/telegram_patterns/stars_subscription.py']
             records[-1]['check_files'] += ['packages/python/tests/test_stars_subscription.py']
             records[-1]['scope'] = 'Actual synthetic Dispatcher/StubSession and SDK models of Stars subscription charges, BotSubscriptionUpdated and RefundedPayment; real payments, renewal timing and event order unconfirmed.'
+        if key == 'demo-guest-reply':
+            records[-1]['summary'] = 'Бот без членства в чате отвечает один раз на упоминание: guest_message, answerGuestQuery, контекст ответа, без истории'
+            records[-1]['tasks'] = ['messages', 'bot']
+            records[-1]['contexts'] = ['group', 'supergroup', 'private']
+            records[-1]['keywords'] += ['guest', 'гостевой', 'guest mode', 'упоминание', 'answerGuestQuery', 'чужой чат', 'ИИ-ассистент']
+            records[-1]['scope'] = 'Actual synthetic Dispatcher/StubSession and SDK serialization of guest_message and answerGuestQuery; BotFather Guest Mode, delivery and client rendering unconfirmed.'
+        if key == 'demo-bot-relay':
+            records[-1]['summary'] = 'Ответы другим ботам в группе: дедупликация, пауза на собеседника, предел глубины и сброс человеком'
+            records[-1]['tasks'] = ['moderation', 'bot']
+            records[-1]['contexts'] = ['group', 'supergroup']
+            records[-1]['keywords'] += ['bot-to-bot', 'боты между собой', 'общение ботов', 'цикл', 'loop', 'агент', 'rate limit']
+            records[-1]['scope'] = 'Actual synthetic Dispatcher/StubSession with an endlessly answering peer; BotFather Bot-to-Bot mode, delivery rules and multi-worker counters unconfirmed.'
+        if key == 'demo-live-photo':
+            records[-1]['summary'] = 'Сохранить присланное live photo, отправить его по file_id и альбомом; без URL, загрузка до 10 МБ'
+            records[-1]['tasks'] = ['media']
+            records[-1]['contexts'] = ['private', 'group', 'supergroup']
+            records[-1]['keywords'] += ['live photo', 'живое фото', 'sendLivePhoto', 'альбом', 'InputMediaLivePhoto']
+            records[-1]['scope'] = 'Actual synthetic Dispatcher/StubSession and SDK serialization of sendLivePhoto and live photo albums; upload, 10-second limit and client playback unconfirmed.'
+        if key == 'demo-join-query':
+            records[-1]['summary'] = 'Бот, назначенный разбирать заявки: Mini App в течение 10 секунд, пользователь из подписанного initData, approve/decline один раз'
+            records[-1]['tasks'] = ['moderation', 'bot']
+            records[-1]['contexts'] = ['supergroup', 'mini-app']
+            records[-1]['keywords'] += ['заявка', 'вступление', 'join request', 'query_id', 'sendChatJoinRequestWebApp', 'answerChatJoinRequestQuery', 'капча', 'проверка']
+            records[-1]['source_files'] += ['packages/python/src/telegram_patterns/initdata.py']
+            records[-1]['scope'] = 'Actual synthetic Dispatcher/StubSession, SDK serialization and real initData HMAC validation; guard bot assignment, Mini App launch data and answer deadlines unconfirmed.'
+        if key == 'demo-poll-media':
+            records[-1]['summary'] = 'Опрос с медиа в вариантах (фото, ссылка, место), описании и пояснении quiz; ссылка только в вариантах'
+            records[-1]['tasks'] = ['polls']
+            records[-1]['contexts'] = ['private', 'group', 'supergroup']
+            records[-1]['keywords'] += ['медиа в опросе', 'фото в опросе', 'ссылка в опросе', 'InputMediaLink', 'PollMedia', 'explanation_media']
+            records[-1]['source_files'] += ['packages/python/src/telegram_patterns/polls_aiogram.py']
+            records[-1]['scope'] = 'Actual synthetic Dispatcher/StubSession and SDK serialization of poll media through poll_request; client rendering and media upload unconfirmed.'
         if key == 'demo-platform':
             records[-1]['summary'] = 'Семь семейств: native rights, host ACL/budget/intent, scoped events и explicit unknown reconciliation'
             records[-1]['tasks'] = ['platform']

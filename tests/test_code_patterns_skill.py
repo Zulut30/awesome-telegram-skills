@@ -12,7 +12,7 @@ class CodePatternsSkillTests(unittest.TestCase):
         text = (SKILL / 'SKILL.md').read_text(encoding='utf-8')
         # 400 words of intent table plus the shared SKILL.md template (headings, scope, three mistakes);
         # each reference adds one short intent line, so the cap grows by its words only.
-        self.assertLessEqual(len(text.split()), 490)
+        self.assertLessEqual(len(text.split()), 500)
         direct = set(re.findall(r'\(references/([a-z0-9-]+\.md)\)', text))
         reachable = set(direct)
         for name in direct:

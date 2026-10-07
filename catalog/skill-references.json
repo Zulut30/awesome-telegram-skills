@@ -19,6 +19,10 @@
     "docs/api-reference.md": [
       ".agents/skills/telegram-code-patterns/references/api-reference.md"
     ],
+    "docs/bot-api-10-features.md": [
+      ".agents/skills/telegram-bot-api/references/bot-api-10-features.md",
+      ".agents/skills/telegram-code-patterns/references/bot-api-10-features.md"
+    ],
     "docs/calendar-slots.md": [
       ".agents/skills/telegram-code-patterns/references/calendar-slots.md"
     ],

@@ -22236,6 +22236,397 @@
       }
     },
     {
+      "id": "demo-guest-reply",
+      "title": "Guest mode: один ответ в чужом чате",
+      "summary": "Бот без членства в чате отвечает один раз на упоминание: guest_message, answerGuestQuery, контекст ответа, без истории",
+      "category": "scenarios",
+      "language": "python",
+      "maturity": "experimental",
+      "keywords": [
+        "бот",
+        "пример",
+        "callback",
+        "меню",
+        "события",
+        "композиция",
+        "бота",
+        "личный",
+        "чат",
+        "guest",
+        "гостевой",
+        "guest mode",
+        "упоминание",
+        "answerGuestQuery",
+        "чужой чат",
+        "ИИ-ассистент"
+      ],
+      "code": "\"\"\"Guest mode: answer once when summoned in a chat the bot is not a member of; no polling on import.\"\"\"\nfrom typing import Awaitable, Callable\n\nfrom aiogram import Bot, Dispatcher, Router\nfrom aiogram.methods import AnswerGuestQuery\nfrom aiogram.types import InlineQueryResultArticle, InputTextMessageContent, Message\n\n# reply(summoning text, text of the replied-to message or None) -> answer; claim(guest_query_id) -> first time?\nReply = Callable[[str, str | None], Awaitable[str]]\nClaim = Callable[[str], Awaitable[bool]]\n\n\ndef attach_guest_replies(dispatcher: Dispatcher, *, reply: Reply, claim: Claim) -> Router:\n    \"\"\"guest_message is its own update type: ordinary message handlers never see it, and it sees nothing else.\"\"\"\n    router = Router(name='guest-replies')\n\n    @router.guest_message()\n    async def guest(message: Message, bot: Bot) -> None:\n        query_id = message.guest_query_id\n        if not query_id:\n            return\n        # The update carries the summoning message and, if present, the message it replies to; no history.\n        replied = message.reply_to_message\n        context = (replied.text or replied.caption) if replied is not None else None\n        answer = await reply(message.text or message.caption or '', context)\n        # One reply per summon: claim durably before the call, so a redelivery or a lost response sends nothing twice.\n        if not await claim(query_id):\n            return\n        result = InlineQueryResultArticle(id='answer', title='Ответ',\n                                          input_message_content=InputTextMessageContent(message_text=answer[:4096]))\n        await bot(AnswerGuestQuery(guest_query_id=query_id, result=result))\n\n    dispatcher.include_router(router)\n    return router\n",
+      "verification": "mock",
+      "scope": "Actual synthetic Dispatcher/StubSession and SDK serialization of guest_message and answerGuestQuery; BotFather Guest Mode, delivery and client rendering unconfirmed.",
+      "sources": [
+        "https://core.telegram.org/bots/api"
+      ],
+      "preview": null,
+      "code_sha256": "f638e6a40402e0d100ebd787d663558db0f3807acb1ed71ba69bd293a3cad996",
+      "tasks": [
+        "messages",
+        "bot"
+      ],
+      "contexts": [
+        "group",
+        "supergroup",
+        "private"
+      ],
+      "sdk": "aiogram",
+      "sdk_version": "3.31.0",
+      "api_version": "bot:10.3",
+      "source_files": [
+        "examples/python/guest_bot.py",
+        "packages/python/src/telegram_patterns/execution.py",
+        "packages/python/src/telegram_patterns/_offline_recipe.py"
+      ],
+      "check_files": [
+        "examples/python/offline_guest.py"
+      ],
+      "execution": {
+        "kind": "dispatcher",
+        "dependencies": [
+          "aiogram==3.31.0"
+        ],
+        "offline_environment": [],
+        "offline_permissions": [],
+        "offline_data": [
+          "Только поставляемые синтетические данные; реальные IDs и secrets не принимаются."
+        ],
+        "live_environment": [
+          "BOT_TOKEN"
+        ],
+        "live_permissions": [
+          "Прикладная авторизация сервиса; fixture actor не доказывает server ACL."
+        ],
+        "live_data": [
+          "Текущий Dispatcher, реальные actor/chat и сервис приложения",
+          "Проверка объекта, автора и состояния до effect/replay"
+        ],
+        "live_review": "Live executor отсутствует. Перед интеграцией проверить источники, ограничения конкретного метода/контекста, auth и ACL; metadata не подтверждает права.",
+        "effects": [
+          "Synthetic Dispatcher + StubSession; временная fixture, без polling"
+        ]
+      }
+    },
+    {
+      "id": "demo-bot-relay",
+      "title": "Общение ботов с защитой от циклов",
+      "summary": "Ответы другим ботам в группе: дедупликация, пауза на собеседника, предел глубины и сброс человеком",
+      "category": "scenarios",
+      "language": "python",
+      "maturity": "experimental",
+      "keywords": [
+        "бот",
+        "пример",
+        "callback",
+        "меню",
+        "события",
+        "композиция",
+        "бота",
+        "личный",
+        "чат",
+        "bot-to-bot",
+        "боты между собой",
+        "общение ботов",
+        "цикл",
+        "loop",
+        "агент",
+        "rate limit"
+      ],
+      "code": "\"\"\"Bot-to-bot replies in a group with loop prevention: dedup, a pause per peer and a depth limit; no polling on import.\"\"\"\nimport hashlib\nimport time\nfrom collections.abc import Awaitable, Callable\nfrom typing import Any\n\nfrom aiogram import BaseMiddleware, Bot, Dispatcher, F, Router\nfrom aiogram.methods import SendMessage\nfrom aiogram.types import Message, ReplyParameters, TelegramObject\n\nGROUPS = ('group', 'supergroup')\nRespond = Callable[[str], Awaitable[str | None]]\n\n\nclass LoopGuard:\n    \"\"\"Counters of one process; several workers keep the same counters in shared storage.\"\"\"\n\n    def __init__(self, *, max_depth: int = 3, pause: float = 5.0, dedup_window: float = 300.0,\n                 clock: Callable[[], float] = time.monotonic) -> None:\n        self.max_depth, self.pause, self.dedup_window, self.clock = max_depth, pause, dedup_window, clock\n        self.depth: dict[tuple[int, int], int] = {}\n        self.last: dict[tuple[int, int], float] = {}\n        self.seen: dict[tuple[int, int, str], float] = {}\n\n    def allow(self, chat_id: int, peer_id: int, text: str) -> bool:\n        \"\"\"True if this bot may answer one more message of peer_id in chat_id now; the answer is then counted.\"\"\"\n        now, pair = self.clock(), (chat_id, peer_id)\n        self.seen = {key: at for key, at in self.seen.items() if now - at < self.dedup_window}\n        key = (chat_id, peer_id, hashlib.sha256(text.encode()).hexdigest())\n        if key in self.seen or now - self.last.get(pair, float('-inf')) < self.pause or self.depth.get(pair, 0) >= self.max_depth:\n            return False\n        self.seen[key], self.last[pair], self.depth[pair] = now, now, self.depth.get(pair, 0) + 1\n        return True\n\n    def human(self, chat_id: int) -> None:\n        \"\"\"A person spoke in the chat: bot exchanges there may start again.\"\"\"\n        self.depth = {pair: depth for pair, depth in self.depth.items() if pair[0] != chat_id}\n\n\nclass _PersonResets(BaseMiddleware):\n    \"\"\"Sees every group message before routing, so a person resets the depth even when another handler answers.\"\"\"\n\n    def __init__(self, guard: LoopGuard) -> None:\n        self.guard = guard\n\n    async def __call__(self, handler: Callable[[TelegramObject, dict[str, Any]], Awaitable[Any]],\n                       event: TelegramObject, data: dict[str, Any]) -> Any:\n        if isinstance(event, Message) and event.chat.type in GROUPS and event.from_user is not None and not event.from_user.is_bot:\n            self.guard.human(event.chat.id)\n        return await handler(event, data)\n\n\ndef attach_bot_relay(dispatcher: Dispatcher, *, respond: Respond, guard: LoopGuard) -> Router:\n    \"\"\"respond(text) -> answer or None; messages of other bots arrive only by mention, reply or the mode settings.\"\"\"\n    router = Router(name='bot-relay')\n\n    @router.message(F.chat.type.in_(GROUPS), F.from_user.is_bot, F.text)\n    async def from_bot(message: Message, bot: Bot) -> None:\n        peer = message.from_user\n        if peer is None or peer.id == bot.id or message.text is None:\n            return\n        if not guard.allow(message.chat.id, peer.id, message.text):\n            return  # silence ends the loop; never answer a guard refusal with another message\n        answer = await respond(message.text)\n        if answer:\n            await bot(SendMessage(chat_id=message.chat.id, text=answer, message_thread_id=message.message_thread_id,\n                                  reply_parameters=ReplyParameters(message_id=message.message_id)))\n\n    dispatcher.message.outer_middleware(_PersonResets(guard))\n    dispatcher.include_router(router)\n    return router\n",
+      "verification": "mock",
+      "scope": "Actual synthetic Dispatcher/StubSession with an endlessly answering peer; BotFather Bot-to-Bot mode, delivery rules and multi-worker counters unconfirmed.",
+      "sources": [
+        "https://core.telegram.org/bots/api"
+      ],
+      "preview": null,
+      "code_sha256": "7d9ced53b7f8636460653e97155ff967a3fde18b26f84f6cdf790dac119a3c09",
+      "tasks": [
+        "moderation",
+        "bot"
+      ],
+      "contexts": [
+        "group",
+        "supergroup"
+      ],
+      "sdk": "aiogram",
+      "sdk_version": "3.31.0",
+      "api_version": "bot:10.3",
+      "source_files": [
+        "examples/python/bot_relay_bot.py",
+        "packages/python/src/telegram_patterns/execution.py",
+        "packages/python/src/telegram_patterns/_offline_recipe.py"
+      ],
+      "check_files": [
+        "examples/python/offline_bot_relay.py"
+      ],
+      "execution": {
+        "kind": "dispatcher",
+        "dependencies": [
+          "aiogram==3.31.0"
+        ],
+        "offline_environment": [],
+        "offline_permissions": [],
+        "offline_data": [
+          "Только поставляемые синтетические данные; реальные IDs и secrets не принимаются."
+        ],
+        "live_environment": [
+          "BOT_TOKEN"
+        ],
+        "live_permissions": [
+          "Прикладная авторизация сервиса; fixture actor не доказывает server ACL."
+        ],
+        "live_data": [
+          "Текущий Dispatcher, реальные actor/chat и сервис приложения",
+          "Проверка объекта, автора и состояния до effect/replay"
+        ],
+        "live_review": "Live executor отсутствует. Перед интеграцией проверить источники, ограничения конкретного метода/контекста, auth и ACL; metadata не подтверждает права.",
+        "effects": [
+          "Synthetic Dispatcher + StubSession; временная fixture, без polling"
+        ]
+      }
+    },
+    {
+      "id": "demo-live-photo",
+      "title": "Live photo и альбомы из них",
+      "summary": "Сохранить присланное live photo, отправить его по file_id и альбомом; без URL, загрузка до 10 МБ",
+      "category": "scenarios",
+      "language": "python",
+      "maturity": "experimental",
+      "keywords": [
+        "бот",
+        "пример",
+        "callback",
+        "меню",
+        "события",
+        "композиция",
+        "бота",
+        "личный",
+        "чат",
+        "live photo",
+        "живое фото",
+        "sendLivePhoto",
+        "альбом",
+        "InputMediaLivePhoto"
+      ],
+      "code": "\"\"\"Live photos: keep what users send, resend it by file_id alone or in an album; no polling on import.\"\"\"\nfrom collections.abc import Awaitable, Callable\nfrom pathlib import Path\n\nfrom aiogram import Bot, Dispatcher, F, Router\nfrom aiogram.filters import Command\nfrom aiogram.methods import SendLivePhoto, SendMediaGroup, SendMessage\nfrom aiogram.types import FSInputFile, InputMediaAudio, InputMediaDocument, InputMediaLivePhoto, InputMediaPhoto, InputMediaVideo, Message\nfrom telegram_patterns import ValidationFailure\n\nMAX_UPLOAD = 10 * 1024 * 1024  # the video of a live photo: at most 10 MB and 10 seconds\nRemember = Callable[[int, str, str], Awaitable[None]]  # (chat_id, video file_id, photo file_id)\nRecall = Callable[[int], Awaitable[list[tuple[str, str]]]]\n\n\ndef live_photo_source(value: str | Path) -> str | FSInputFile:\n    \"\"\"A file_id to reuse or a local file to upload; Telegram does not take live photos by URL.\"\"\"\n    if isinstance(value, Path):\n        if not value.is_file() or value.stat().st_size > MAX_UPLOAD:\n            raise ValidationFailure('Upload a local live photo file of at most 10 MB')\n        return FSInputFile(value)\n    if not isinstance(value, str) or not value or value.lower().startswith(('http://', 'https://', 'attach://')):\n        raise ValidationFailure('Live photos are sent by file_id or upload, not by URL')\n    return value\n\n\ndef attach_live_photos(dispatcher: Dispatcher, *, remember: Remember, recall: Recall) -> Router:\n    router = Router(name='live-photos')\n\n    @router.message(F.live_photo)\n    async def received(message: Message, bot: Bot) -> None:\n        live = message.live_photo\n        if live is None or not live.photo:\n            # Without the static photo the pair cannot be resent as a live photo.\n            await bot(SendMessage(chat_id=message.chat.id, text='Не удалось сохранить: нет статичного кадра.'))\n            return\n        await remember(message.chat.id, live.file_id, live.photo[-1].file_id)\n        await bot(SendMessage(chat_id=message.chat.id, text=f'Сохранено: {live.duration} с, {live.width}×{live.height}.'))\n\n    @router.message(Command('last'))\n    async def last(message: Message, bot: Bot) -> None:\n        saved = await recall(message.chat.id)\n        if not saved:\n            await bot(SendMessage(chat_id=message.chat.id, text='Пришлите live photo.'))\n            return\n        video, photo = saved[-1]\n        await bot(SendLivePhoto(chat_id=message.chat.id, live_photo=live_photo_source(video), photo=live_photo_source(photo),\n                                caption='Последнее live photo'))\n\n    @router.message(Command('album'))\n    async def album(message: Message, bot: Bot) -> None:\n        saved = (await recall(message.chat.id))[-10:]  # an album holds 2-10 items\n        if len(saved) < 2:\n            await bot(SendMessage(chat_id=message.chat.id, text='Для альбома нужно хотя бы два live photo.'))\n            return\n        media: list[InputMediaAudio | InputMediaDocument | InputMediaLivePhoto | InputMediaPhoto | InputMediaVideo] = [\n            InputMediaLivePhoto(media=video, photo=photo) for video, photo in saved]\n        await bot(SendMediaGroup(chat_id=message.chat.id, media=media))\n\n    dispatcher.include_router(router)\n    return router\n",
+      "verification": "mock",
+      "scope": "Actual synthetic Dispatcher/StubSession and SDK serialization of sendLivePhoto and live photo albums; upload, 10-second limit and client playback unconfirmed.",
+      "sources": [
+        "https://core.telegram.org/bots/api"
+      ],
+      "preview": null,
+      "code_sha256": "8cbc4c331daa98a71a6432e82724f2f905b995253347fe61b8bedecaa6274bc4",
+      "tasks": [
+        "media"
+      ],
+      "contexts": [
+        "private",
+        "group",
+        "supergroup"
+      ],
+      "sdk": "aiogram",
+      "sdk_version": "3.31.0",
+      "api_version": "bot:10.3",
+      "source_files": [
+        "examples/python/live_photo_bot.py",
+        "packages/python/src/telegram_patterns/execution.py",
+        "packages/python/src/telegram_patterns/_offline_recipe.py"
+      ],
+      "check_files": [
+        "examples/python/offline_live_photo.py"
+      ],
+      "execution": {
+        "kind": "dispatcher",
+        "dependencies": [
+          "aiogram==3.31.0"
+        ],
+        "offline_environment": [],
+        "offline_permissions": [],
+        "offline_data": [
+          "Только поставляемые синтетические данные; реальные IDs и secrets не принимаются."
+        ],
+        "live_environment": [
+          "BOT_TOKEN"
+        ],
+        "live_permissions": [
+          "Прикладная авторизация сервиса; fixture actor не доказывает server ACL."
+        ],
+        "live_data": [
+          "Текущий Dispatcher, реальные actor/chat и сервис приложения",
+          "Проверка объекта, автора и состояния до effect/replay"
+        ],
+        "live_review": "Live executor отсутствует. Перед интеграцией проверить источники, ограничения конкретного метода/контекста, auth и ACL; metadata не подтверждает права.",
+        "effects": [
+          "Synthetic Dispatcher + StubSession; временная fixture, без polling"
+        ]
+      }
+    },
+    {
+      "id": "demo-join-query",
+      "title": "Заявка на вступление с проверкой в Mini App",
+      "summary": "Бот, назначенный разбирать заявки: Mini App в течение 10 секунд, пользователь из подписанного initData, approve/decline один раз",
+      "category": "scenarios",
+      "language": "python",
+      "maturity": "experimental",
+      "keywords": [
+        "бот",
+        "пример",
+        "callback",
+        "меню",
+        "события",
+        "композиция",
+        "бота",
+        "личный",
+        "чат",
+        "заявка",
+        "вступление",
+        "join request",
+        "query_id",
+        "sendChatJoinRequestWebApp",
+        "answerChatJoinRequestQuery",
+        "капча",
+        "проверка"
+      ],
+      "code": "\"\"\"Join request queries: a bot assigned to join requests shows a Mini App check, then approves or declines; no polling on import.\"\"\"\nimport time\nfrom collections.abc import Callable\nfrom urllib.parse import urlencode\n\nfrom aiogram import Bot, Dispatcher, Router\nfrom aiogram.exceptions import TelegramAPIError\nfrom aiogram.methods import AnswerChatJoinRequestQuery, SendChatJoinRequestWebApp\nfrom aiogram.types import ChatJoinRequest\nfrom telegram_patterns import InvalidInitData, validate_init_data\n\nQUERY_WINDOW = 10.0  # seconds to call sendChatJoinRequestWebApp or answerChatJoinRequestQuery\nMARGIN = 2.0  # network time to the server; a later call is not attempted\n\n\nclass JoinVerification:\n    \"\"\"pending holds (chat_id, user_id) -> query_id; production keeps it in shared durable storage.\"\"\"\n\n    def __init__(self, *, web_app_url: str, bot_token: str, clock: Callable[[], float] = time.time) -> None:\n        if not web_app_url.startswith('https://'):\n            raise ValueError('The Mini App URL must be HTTPS')\n        self.web_app_url, self.bot_token, self.clock = web_app_url, bot_token, clock\n        self.pending: dict[tuple[int, int], str] = {}\n        self.outcomes: list[tuple[int, int, str]] = []  # for administrators: queued, expired, approve, decline\n\n    def attach(self, dispatcher: Dispatcher) -> Router:\n        router = Router(name='join-verification')\n\n        @router.chat_join_request()\n        async def requested(request: ChatJoinRequest, bot: Bot) -> None:\n            if not request.query_id or request.from_user.is_bot:\n                return  # an ordinary request: administrators or approveChatJoinRequest decide\n            key = (request.chat.id, request.from_user.id)\n            if self.clock() - request.date.timestamp() >= QUERY_WINDOW - MARGIN:\n                self.outcomes.append((*key, 'expired'))  # too late to answer: the request stays with administrators\n                return\n            self.pending[key] = request.query_id\n            url = f'{self.web_app_url}?{urlencode({\"chat_id\": request.chat.id})}'\n            try:\n                await bot(SendChatJoinRequestWebApp(chat_join_request_query_id=request.query_id, web_app_url=url))\n            except TelegramAPIError:\n                # The Mini App could not be shown: leave the decision to administrators while the window is open.\n                self.pending.pop(key, None)\n                await bot(AnswerChatJoinRequestQuery(chat_join_request_query_id=request.query_id, result='queue'))\n                self.outcomes.append((*key, 'queued'))\n\n        dispatcher.include_router(router)\n        return router\n\n    async def complete(self, bot: Bot, *, init_data: str, chat_id: int, passed: bool) -> str:\n        \"\"\"The Mini App backend calls this with raw initData; the user comes only from the signed data.\"\"\"\n        try:\n            launch = validate_init_data(init_data, self.bot_token, max_age_seconds=600, now=int(self.clock()))\n        except InvalidInitData:\n            return 'invalid'\n        query_id = self.pending.pop((chat_id, launch.user_id), None)\n        if query_id is None:\n            return 'unknown'  # no request of this user in this chat, or it was already answered\n        result = 'approve' if passed else 'decline'\n        try:\n            await bot(AnswerChatJoinRequestQuery(chat_join_request_query_id=query_id, result=result))\n        except TelegramAPIError:\n            self.outcomes.append((chat_id, launch.user_id, 'unanswered'))\n            return 'unanswered'  # the query may have expired: administrators check the request\n        self.outcomes.append((chat_id, launch.user_id, result))\n        return result\n",
+      "verification": "mock",
+      "scope": "Actual synthetic Dispatcher/StubSession, SDK serialization and real initData HMAC validation; guard bot assignment, Mini App launch data and answer deadlines unconfirmed.",
+      "sources": [
+        "https://core.telegram.org/bots/api"
+      ],
+      "preview": null,
+      "code_sha256": "2fc0673590377aef867115bacf0d8b360290558e955c5b26309c4ab608a78c37",
+      "tasks": [
+        "moderation",
+        "bot"
+      ],
+      "contexts": [
+        "supergroup",
+        "mini-app"
+      ],
+      "sdk": "aiogram",
+      "sdk_version": "3.31.0",
+      "api_version": "bot:10.3",
+      "source_files": [
+        "examples/python/join_query_bot.py",
+        "packages/python/src/telegram_patterns/initdata.py",
+        "packages/python/src/telegram_patterns/execution.py",
+        "packages/python/src/telegram_patterns/_offline_recipe.py"
+      ],
+      "check_files": [
+        "examples/python/offline_join_query.py"
+      ],
+      "execution": {
+        "kind": "dispatcher",
+        "dependencies": [
+          "aiogram==3.31.0"
+        ],
+        "offline_environment": [],
+        "offline_permissions": [],
+        "offline_data": [
+          "Только поставляемые синтетические данные; реальные IDs и secrets не принимаются."
+        ],
+        "live_environment": [
+          "BOT_TOKEN"
+        ],
+        "live_permissions": [
+          "Прикладная авторизация сервиса; fixture actor не доказывает server ACL."
+        ],
+        "live_data": [
+          "Текущий Dispatcher, реальные actor/chat и сервис приложения",
+          "Проверка объекта, автора и состояния до effect/replay"
+        ],
+        "live_review": "Live executor отсутствует. Перед интеграцией проверить источники, ограничения конкретного метода/контекста, auth и ACL; metadata не подтверждает права.",
+        "effects": [
+          "Synthetic Dispatcher + StubSession; временная fixture, без polling"
+        ]
+      }
+    },
+    {
+      "id": "demo-poll-media",
+      "title": "Опрос с фото, ссылками и местами",
+      "summary": "Опрос с медиа в вариантах (фото, ссылка, место), описании и пояснении quiz; ссылка только в вариантах",
+      "category": "scenarios",
+      "language": "python",
+      "maturity": "experimental",
+      "keywords": [
+        "бот",
+        "пример",
+        "callback",
+        "меню",
+        "события",
+        "композиция",
+        "бота",
+        "личный",
+        "чат",
+        "медиа в опросе",
+        "фото в опросе",
+        "ссылка в опросе",
+        "InputMediaLink",
+        "PollMedia",
+        "explanation_media"
+      ],
+      "code": "\"\"\"Polls with media: photos, links and places in options, media in the description and quiz explanation; no polling on import.\"\"\"\nfrom collections.abc import Awaitable, Callable\nfrom typing import cast\n\nfrom aiogram import Bot, Dispatcher, F, Router\nfrom aiogram.filters import Command\nfrom aiogram.types import InputMediaLink, InputMediaPhoto, InputMediaVenue, Message, PollMedia\nfrom telegram_patterns.aiogram import ChatType, PollChoice, PollSpec, poll_request\n\nPhotos = Callable[[], Awaitable[dict[str, str]]]  # name -> photo file_id uploaded earlier by the bot\nSeen = Callable[[int, list[str | None]], Awaitable[None]]  # (chat_id, media kind per option)\n\n\ndef media_kind(media: PollMedia | None) -> str | None:\n    \"\"\"What a received option or description holds: one of photo, link, venue, location, video, ...\"\"\"\n    if media is None:\n        return None\n    return next((name for name, value in media if value), None)\n\n\ndef attach_poll_media(dispatcher: Dispatcher, *, photos: Photos, seen: Seen) -> Router:\n    router = Router(name='poll-media')\n\n    @router.message(Command('place'))\n    async def place(message: Message, bot: Bot) -> None:\n        files = await photos()\n        # Option media: photo, link, venue, location, sticker, animation, video or live photo (InputPollOptionMedia).\n        spec = PollSpec(question='Где встречаемся в субботу?', is_anonymous=False, description='Голосование до пятницы',\n                        options=[PollChoice('Кафе у парка', media=InputMediaPhoto(media=files['cafe'])),\n                                 PollChoice('Коворкинг', media=InputMediaLink(url='https://example.com/coworking')),\n                                 PollChoice('Набережная', media=InputMediaVenue(latitude=55.75, longitude=37.62,\n                                                                               title='Набережная', address='Причал 1'))])\n        # Description media takes InputPollMedia: no links or stickers there.\n        await bot(poll_request(spec, chat_id=message.chat.id, chat_type=cast(ChatType, message.chat.type),\n                               media=InputMediaPhoto(media=files['map'])))\n\n    @router.message(Command('quiz'))\n    async def quiz(message: Message, bot: Bot) -> None:\n        files = await photos()\n        spec = PollSpec(question='Какая река на фото?', kind='quiz', options=['Нева', 'Волга', 'Ока'],\n                        correct_option_ids=[0], explanation='Это Нева у Дворцовой набережной')\n        await bot(poll_request(spec, chat_id=message.chat.id, chat_type=cast(ChatType, message.chat.type),\n                               media=InputMediaPhoto(media=files['river']), explanation_media=InputMediaPhoto(media=files['answer'])))\n\n    @router.message(F.poll)\n    async def received(message: Message) -> None:\n        # Incoming polls carry PollMedia; audio and documents are never received in options.\n        if message.poll is not None:\n            await seen(message.chat.id, [media_kind(option.media) for option in message.poll.options])  # nothing is downloaded\n\n    dispatcher.include_router(router)\n    return router\n",
+      "verification": "mock",
+      "scope": "Actual synthetic Dispatcher/StubSession and SDK serialization of poll media through poll_request; client rendering and media upload unconfirmed.",
+      "sources": [
+        "https://core.telegram.org/bots/api"
+      ],
+      "preview": null,
+      "code_sha256": "609a0f6ebb18c7b42a1d98160143ff5d4a28f2f5910455f13314d47219b6db9f",
+      "tasks": [
+        "polls"
+      ],
+      "contexts": [
+        "private",
+        "group",
+        "supergroup"
+      ],
+      "sdk": "aiogram",
+      "sdk_version": "3.31.0",
+      "api_version": "bot:10.3",
+      "source_files": [
+        "examples/python/poll_media_bot.py",
+        "packages/python/src/telegram_patterns/polls_aiogram.py",
+        "packages/python/src/telegram_patterns/execution.py",
+        "packages/python/src/telegram_patterns/_offline_recipe.py"
+      ],
+      "check_files": [
+        "examples/python/offline_poll_media.py"
+      ],
+      "execution": {
+        "kind": "dispatcher",
+        "dependencies": [
+          "aiogram==3.31.0"
+        ],
+        "offline_environment": [],
+        "offline_permissions": [],
+        "offline_data": [
+          "Только поставляемые синтетические данные; реальные IDs и secrets не принимаются."
+        ],
+        "live_environment": [
+          "BOT_TOKEN"
+        ],
+        "live_permissions": [
+          "Прикладная авторизация сервиса; fixture actor не доказывает server ACL."
+        ],
+        "live_data": [
+          "Текущий Dispatcher, реальные actor/chat и сервис приложения",
+          "Проверка объекта, автора и состояния до effect/replay"
+        ],
+        "live_review": "Live executor отсутствует. Перед интеграцией проверить источники, ограничения конкретного метода/контекста, auth и ACL; metadata не подтверждает права.",
+        "effects": [
+          "Synthetic Dispatcher + StubSession; временная fixture, без polling"
+        ]
+      }
+    },
+    {
       "id": "demo-recovery",
       "title": "Потерянный ответ: сверка той же операции",
       "summary": "SQLite effect уже сохранен; unknown outcome сверяется тем же scoped ID без второго заказа.",

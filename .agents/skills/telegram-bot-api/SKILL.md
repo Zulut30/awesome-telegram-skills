@@ -27,6 +27,8 @@ metadata:
 
 Для rich-сообщений (`sendRichMessage`: заголовки, таблицы, цитаты, кнопки внутри сообщения) прочитайте [references/rich-messages.md](references/rich-messages.md): блоки, лимиты Telegram и запасной вариант обычным текстом.
 
+Для функций Bot API 10.0–10.3 — guest mode (`answerGuestQuery`), общение ботов между собой, live photos, join request queries с Mini App и медиа в опросах — прочитайте [references/bot-api-10-features.md](references/bot-api-10-features.md): ограничения каждой функции и офлайн-рецепт.
+
 С библиотекой awesome-telegram-patterns, если она уже есть в проекте: [текст и entities](references/message-text.md), [медиа](references/media.md), [опросы и quiz](references/polls.md). Пакет для навыка не обязателен.
 
 ### Построить операцию

@@ -43,7 +43,7 @@ QUOTES = [
     ('docs/library-roadmap-100.md', r'(\d+) групп[аы]? компонентов, (\d+) публичных Python/TypeScript-символ(?:а|ов)?, (\d+) навыка и (\d+) рецептов?',
      ['groups', 'symbols', 'skills', 'recipes']),
     ('docs/recipe-execution.md', r'У всех (\d+) cookbook-рецептов', ['recipes']),
-    ('docs/recipe-execution.md', r'(\d+) Python-рецептов имеют локальный исполнитель', ['executors']),
+    ('docs/recipe-execution.md', r'(\d+) Python-рецепт(?:ов|а)? име(?:ют|ет) локальный исполнитель', ['executors']),
     ('docs/recipe-execution.md', r'все (\d+) Python fixtures', ['executors']),
     ('.agents/skills/telegram-code-patterns/references/components.md', r'есть (\d+) Python fixtures и (\d+) native references',
      ['executors', 'reference']),
