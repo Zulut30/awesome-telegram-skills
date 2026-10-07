@@ -479,9 +479,15 @@
     {
       "id": 39,
       "title": "Доказывать пользу скиллов",
-      "status": "pending",
-      "commit_subject": null,
-      "evidence": [],
+      "status": "done",
+      "commit_subject": "excellence(039): measure each skill with and without it on 123 judged tasks",
+      "evidence": [
+        "evaluations/skill-value.json: 3 tasks with criteria per each of 41 skills (123 tasks, 435 criteria)",
+        "scripts/eval_skill_value.py: same Read/Glob/Grep tools in an empty folder and with a copy of the skill; blind sonnet judge per criterion; --report merges runs, --skill reruns chosen skills",
+        "evaluations/reports/skill-value-latest.json (2026-10-07, Claude Code CLI 2.1.292): haiku 91/435 -> 256/435, tasks passed 2 -> 47; sonnet 236/435 -> 390/435, tasks passed 40 -> 110",
+        "evaluations/README.md: uplift table for all 41 skills, weak spots for item 48 and limitations (one answer per condition, same-vendor judge)",
+        "tests/test_skill_value.py: coverage, report-vs-cases, totals from verdicts, README table, partial merge"
+      ],
       "remaining": null
     },
     {
