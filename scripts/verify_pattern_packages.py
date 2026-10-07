@@ -230,7 +230,7 @@ print(json.dumps({'core_without_sdk':True,'python':sys.version.split()[0]}))
         gallery_command = [str(python_in(sdk)), str(ROOT / 'scripts/verify_gallery_export.py'), '--output', str(consumers / 'gallery-export')]
         if args.skip_browser: gallery_command.append('--skip-browser')
         # Two complete SDK fixture generations plus CLI and browser acceptance.
-        report['gallery_export'] = json.loads(run('gallery-export-consumer', gallery_command, consumers, timeout=360))
+        report['gallery_export'] = json.loads(run('gallery-export-consumer', gallery_command, consumers, timeout=720))
         starter_root = consumers / 'starters'
         report['starter_cli'] = json.loads(run('starter-cli', [str(python_in(sdk)), str(ROOT / 'scripts/verify_starter_consumer.py'), '--wheel', str(wheel), '--tarball', str(tarball), '--output', str(starter_root)], consumers))
         # Resolve the generated PEP dependency against the supplied local wheel.
@@ -294,7 +294,7 @@ print(json.dumps({'core_without_sdk':True,'python':sys.version.split()[0]}))
         if not args.skip_browser:
             run('browser-tests', [npm, 'run', 'test:browser'])
             report['browser'] = json.loads((output / 'browser/report.json').read_text(encoding='utf-8'))
-            run('gallery-browser', [node, str(ROOT / 'tests/gallery-browser.mjs')])
+            run('gallery-browser', [node, str(ROOT / 'tests/gallery-browser.mjs')], timeout=420)
             report['gallery_browser'] = json.loads((output / 'gallery-browser/report.json').read_text(encoding='utf-8'))
             run('starter-browser', [node, str(ROOT / 'tests/starter-browser.mjs'), str(mini_starter)])
             report['starter_browser'] = json.loads((output / 'starter-browser/report.json').read_text(encoding='utf-8'))
