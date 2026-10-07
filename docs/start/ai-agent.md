@@ -27,6 +27,12 @@ python scripts/install_skills.py --project "C:\projects\my-bot" --skill telegram
 
 Copilot и Cursor читают и `.agents/skills/`, и `.claude/skills/`, поэтому после `all` они видят две одинаковые копии.
 
+В Claude Code можно поставить все скиллы сразу одной командой, без клона репозитория; они появятся как `/telegram-skills:<имя>`:
+
+```bash
+claude plugin marketplace add Zulut30/awesome-telegram-skills && claude plugin install telegram-skills@awesome-telegram-skills
+```
+
 ## 2. Попросите агента
 
 ```text

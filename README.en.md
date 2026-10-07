@@ -47,6 +47,14 @@ $telegram-code-patterns Add the ready-made forms and calendar.
 $telegram-mini-app-architecture Design a Mini App for phone, tablet and desktop.
 ```
 
+In Claude Code, all 41 skills install with one command as a plugin from this repository:
+
+```bash
+claude plugin marketplace add Zulut30/awesome-telegram-skills && claude plugin install telegram-skills@awesome-telegram-skills
+```
+
+After restarting the session the skills are available as `/telegram-skills:telegram-bot-python` and so on; update with `claude plugin marketplace update awesome-telegram-skills`. Inside a session, `/plugin marketplace add Zulut30/awesome-telegram-skills` and `/plugin install telegram-skills@awesome-telegram-skills` do the same.
+
 To use skills in an existing project, copy whole directories from `.agents/skills/`, including `references`, or use the [installer](scripts/install_skills.py):
 
 ```bash

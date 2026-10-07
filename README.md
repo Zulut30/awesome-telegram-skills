@@ -64,6 +64,14 @@ $telegram-code-patterns Подключи готовые формы и кален
 $telegram-mini-app-architecture Спроектируй Mini App для телефона, планшета и ПК.
 ```
 
+В Claude Code все 41 скилл ставятся одной командой как плагин из этого репозитория:
+
+```bash
+claude plugin marketplace add Zulut30/awesome-telegram-skills && claude plugin install telegram-skills@awesome-telegram-skills
+```
+
+После перезапуска сессии скиллы доступны как `/telegram-skills:telegram-bot-python` и т. п.; обновление — `claude plugin marketplace update awesome-telegram-skills`. Внутри сессии то же делают `/plugin marketplace add Zulut30/awesome-telegram-skills` и `/plugin install telegram-skills@awesome-telegram-skills`.
+
 Для существующего проекта перенесите нужные каталоги из `.agents/skills/` целиком вместе с `references`. Или используйте [установщик](scripts/install_skills.py):
 
 ```powershell

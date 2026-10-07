@@ -1,0 +1,18 @@
+{
+  "name": "awesome-telegram-skills",
+  "description": "Self-contained Agent Skills for Telegram bots and Mini Apps",
+  "owner": {
+    "name": "Zulut30"
+  },
+  "plugins": [
+    {
+      "name": "telegram-skills",
+      "source": "./.agents",
+      "description": "41 skills for Telegram bots and Mini Apps: Bot API, aiogram, keyboards, dialogs, groups, payments, Mini Apps, testing, debugging and deployment",
+      "license": "MIT",
+      "homepage": "https://zulut30.github.io/awesome-telegram-skills/",
+      "repository": "https://github.com/Zulut30/awesome-telegram-skills",
+      "keywords": ["telegram", "bot-api", "aiogram", "mini-apps", "agent-skills"]
+    }
+  ]
+}
