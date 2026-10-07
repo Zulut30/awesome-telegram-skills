@@ -57,9 +57,14 @@
     {
       "id": 5,
       "title": "Точно классифицировать ответы сервера в `ApiClient`",
-      "status": "pending",
-      "commit_subject": null,
-      "evidence": [],
+      "status": "done",
+      "commit_subject": "excellence(005): classify HTTP statuses precisely in ApiClient",
+      "evidence": [
+        "core.test.mjs: 13 статусов x чтение/запись x с контрактом и без, retryAfterMs для 429/503; Retry-After секунды/HTTP-date/мусор",
+        "npm test 29/29; tests/public-types.ts компилируется против упакованного tarball",
+        "tests/test_error_model_parity.py: коды/категории/действия/тексты Python == TypeScript, падает при расхождении",
+        "README пакета: таблица статусов; docs/error-model.md обновлен"
+      ],
       "remaining": null
     },
     {

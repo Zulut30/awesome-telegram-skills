@@ -53,6 +53,26 @@ unsubscribe(); bridge.dispose(); shell.dispose();
 
 ApiClient требует runtime decoder вместо `as Order`. Base URL задается доверенной конфигурацией приложения; запрос к иному origin отклоняется. Путь всегда относителен base URL как каталога: при `baseUrl: "https://x/api/v1"` и `/orders`, и `orders` дают `https://x/api/v1/orders`. Выход за префикс (`../admin`, `%2e%2e/`, абсолютный URL вне `/api/v1/`) и `//host` отклоняются до запроса; query и fragment из base URL не наследуются. Authentication/CSRF headers передаются по контракту backend, секреты в storage не сохраняются. Успешные HEAD/204/205 передают decoder значение null; decoder должен разрешать его для такого endpoint. Обрыв чтения тела дает `network`, некорректный JSON или отказ decoder — `invalid-response`; timeout/abort сохраняют свои категории. HTTP body/исключение сервера не добавляются в ApiError. Ошибка любой записи помечается `outcome: unknown` консервативно; endpoint может доказать отказ своим контрактом. Library не повторяет запись, не считает AbortController отменой серверного effect и не реализует payments outbox.
 
+### HTTP-статусы и восстановление
+
+Тело ответа не разбирается: решение принимается только по статусу. По умолчанию ошибка любой записи остается `outcome: unknown` с `recovery: reconcile`, потому что 4xx после POST сам по себе не доказывает отсутствие эффекта. Если контракт backend гарантирует, что статус возвращается только **до** эффекта, перечислите его в `rejectedBeforeEffect` клиента или конкретного запроса — тогда запись получает `outcome: rejected` и действие из таблицы.
+
+| Статус | `code` | `recovery` для чтения и для записи из `rejectedBeforeEffect` |
+| --- | --- | --- |
+| 400, 422 | `validation-failed` | `fix-input` |
+| 401 | `authentication-required` | `authenticate` |
+| 403 | `permission-denied` | `check-permissions` |
+| 404, 405, 413 и прочие 4xx | `invalid-api-request` | `fix-input` |
+| 408 | `timeout` | `retry-read` |
+| 409 | `operation-conflict` | `reconcile` |
+| 429 | `rate-limited` | `retry-later`; `retryAfterMs` из `Retry-After` (секунды или HTTP-date, не больше суток) |
+| 5xx | `server-error` | `retry-read`; для 503 также `retryAfterMs` |
+
+```typescript
+const api = new ApiClient({baseUrl: location.origin, rejectedBeforeEffect: [400, 401, 403, 409, 422, 429]});
+```
+
+
 Draft scope берется из подтвержденной сессии/tenant, не initDataUnsafe. Namespace, scope и TTL фиксируются при создании store; изменение переданного options-объекта не переключает аккаунт. При смене подтвержденной сессии создайте новый store и восстановите выбор из его scope. В нем сохраняются только идентификаторы выбора; дополнительные поля отбрасываются. Личные контакты, цены, auth и неизвестные operation IDs этим компонентом не хранятся. Recovery неизвестной записи и ее retention должны оставаться отдельными от TTL выбора. `write=false`/`unavailable` дают UI возможность предупредить о несохраненном черновике.
 
 Shell не владеет состоянием формы и ее навигацией: приложение сохраняет их при resize/theme/back. При смене темы не remount поля. Цвета секции, подсказки, разделителя и ошибки берутся из соответствующих optional ThemeParams с CSS fallback; для native controls задается светлая/темная color-scheme. ID полей непрозрачны для приложения, проверяются вместе с hint/error против существующего DOM; доступен fallback без randomUUID. Подтверждение связывайте с прикладной операцией; disabled button не заменяет backend protection. Проверяйте контраст фактических theme colors и достижимость действия при настоящей клавиатуре Telegram. CSS/браузерные tests не подтверждают physical device QA или screen reader.

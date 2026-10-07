@@ -60,6 +60,46 @@ test('HTTP denial and invalid response after write keep unknown result and a sin
   assert.equal(calls,1);
 });
 
+test('each HTTP status maps to a precise code for reads and writes, with an explicit backend contract', async () => {
+  const expected={400:['validation-failed','fix-input'],401:['authentication-required','authenticate'],403:['permission-denied','check-permissions'],
+    404:['invalid-api-request','fix-input'],405:['invalid-api-request','fix-input'],408:['timeout','retry-read'],409:['operation-conflict','reconcile'],
+    413:['invalid-api-request','fix-input'],422:['validation-failed','fix-input'],429:['rate-limited','retry-later'],
+    500:['server-error','retry-read'],502:['server-error','retry-read'],503:['server-error','retry-read']};
+  const contract=Object.keys(expected).map(Number);
+  for (const [text,[code,recovery]] of Object.entries(expected)) {
+    const status=Number(text);
+    const fetch=async()=>new Response('private body',{status,headers:{'Retry-After':'7'}});
+    const plain=new ApiClient({baseUrl:'https://x.test',fetch});
+    const declared=new ApiClient({baseUrl:'https://x.test',fetch,rejectedBeforeEffect:contract});
+    const check=async(promise,outcome,expectedRecovery)=>assert.rejects(promise,error=>{
+      assert.equal(error instanceof ApiError,true);assert.equal(error.status,status);
+      const report=error.report();
+      assert.deepEqual([report.code,report.outcome,report.recovery],[code,outcome,expectedRecovery],`${status} ${outcome}`);
+      assert.equal(JSON.stringify(report).includes('private'),false);
+      assert.equal(error.retryAfterMs,status===429||status===503?7000:undefined);
+      return true;
+    });
+    await check(plain.request('/r',x=>x),'read-failed',recovery);
+    await check(declared.request('/r',x=>x),'read-failed',recovery);
+    await check(plain.request('/w',x=>x,{method:'POST',body:{}}),'unknown','reconcile');
+    await check(declared.request('/w',x=>x,{method:'POST',body:{}}),'rejected',recovery);
+    await check(declared.request('/w',x=>x,{method:'POST',body:{},rejectedBeforeEffect:[]}),'unknown','reconcile');
+    await check(plain.request('/w',x=>x,{method:'POST',body:{},rejectedBeforeEffect:[status]}),'rejected',recovery);
+  }
+  for (const invalid of [[200],[399],[600],[400.5],['400'],'400']) {
+    assert.throws(()=>new ApiClient({baseUrl:'https://x.test',rejectedBeforeEffect:invalid}),ValidationFailure);
+  }
+});
+
+test('Retry-After accepts seconds and HTTP dates, is bounded and ignores garbage', async () => {
+  const at=Date.now()+90_000;
+  for (const [header,check] of [['0',v=>v===0],['120',v=>v===120000],[new Date(at).toUTCString(),v=>v>80_000&&v<=90_000],
+      ['999999999',v=>v===86_400_000],['soon',v=>v===undefined],['-5',v=>v===undefined],['Thu, 01 Jan 1970 00:00:00 GMT',v=>v===0]]) {
+    const api=new ApiClient({baseUrl:'https://x.test',fetch:async()=>new Response('',{status:429,headers:{'Retry-After':header}})});
+    await assert.rejects(api.request('/r',x=>x),error=>{assert.equal(check(error.retryAfterMs),true,`${header} -> ${error.retryAfterMs}`);return true;});
+  }
+});
+
 test('API preflight rejection is actionable and happens before transport', async () => {
   let calls=0;
   const api=new ApiClient({baseUrl:'https://example.test',fetch:async()=>{calls++;return Response.json({});}});

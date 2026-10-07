@@ -2,12 +2,37 @@ import {PatternError, ValidationFailure, type ErrorCode} from './errors.js';
 import type {FetchTransport} from './adapters.js';
 
 export type FailureKind = 'http' | 'network' | 'timeout' | 'aborted' | 'invalid-response';
+const MAX_RETRY_AFTER_MS = 86_400_000;
+
+/** HTTP status → error code. The response body is never parsed for classification. */
+function httpErrorCode(status: number): ErrorCode {
+  if (status === 400 || status === 422) return 'validation-failed';
+  if (status === 401) return 'authentication-required';
+  if (status === 403) return 'permission-denied';
+  if (status === 408) return 'timeout';
+  if (status === 409) return 'operation-conflict';
+  if (status === 429) return 'rate-limited';
+  if (status >= 400 && status <= 499) return 'invalid-api-request';
+  if (status >= 500 && status <= 599) return 'server-error';
+  return 'network';
+}
+
+/** `Retry-After` as delay-seconds or HTTP-date, bounded to one day; invalid values are ignored. */
+function parseRetryAfter(value: string | null, now: number = Date.now()): number | undefined {
+  if (value === null) return undefined;
+  const text = value.trim();
+  if (/^\d{1,9}$/.test(text)) return Math.min(Number(text) * 1000, MAX_RETRY_AFTER_MS);
+  // Every HTTP-date form (RFC 9110) starts with a day name; Date.parse alone accepts '-5'.
+  const date = /^[A-Za-z]{3}/.test(text) ? Date.parse(text) : Number.NaN;
+  return Number.isNaN(date) ? undefined : Math.min(Math.max(0, date - now), MAX_RETRY_AFTER_MS);
+}
+
 export class ApiError extends PatternError {
-  declare readonly outcome: 'unknown' | 'read-failed';
+  declare readonly outcome: 'unknown' | 'read-failed' | 'rejected';
   constructor(readonly kind: FailureKind, readonly status: number | undefined,
-              outcome: 'unknown' | 'read-failed') {
+              outcome: 'unknown' | 'read-failed' | 'rejected', readonly retryAfterMs?: number) {
     const code: ErrorCode = kind === 'aborted' ? 'cancelled'
-      : kind === 'http' ? (status === 401 ? 'authentication-required' : status === 403 ? 'permission-denied' : status === 400 || status === 422 ? 'validation-failed' : 'network') : kind;
+      : kind === 'http' ? (status === undefined ? 'network' : httpErrorCode(status)) : kind;
     super(code, outcome, `API request failed: ${kind}`);
     this.name = 'ApiError';
   }
@@ -17,11 +42,27 @@ export interface RequestOptions {
   body?: unknown;
   signal?: AbortSignal;
   timeoutMs?: number;
+  /** Overrides ClientOptions.rejectedBeforeEffect for this endpoint's contract. */
+  rejectedBeforeEffect?: readonly number[];
 }
 export interface ClientOptions {
   baseUrl: string;
   headers?: () => HeadersInit;
   fetch?: FetchTransport;
+  /**
+   * HTTP statuses that the backend contract returns only before any effect.
+   * A write failing with one of them is `rejected` (fix input, sign in, retry later)
+   * instead of the conservative `unknown` + reconcile. Reads are unaffected.
+   */
+  rejectedBeforeEffect?: readonly number[];
+}
+
+function statusSet(values: readonly number[] | undefined): ReadonlySet<number> {
+  if (values === undefined) return new Set();
+  if (!Array.isArray(values) || values.some(v => !Number.isInteger(v) || v < 400 || v > 599)) {
+    throw new ValidationFailure('rejectedBeforeEffect accepts HTTP error statuses 400-599');
+  }
+  return new Set(values);
 }
 
 /** One fetch invocation, runtime decoding, no application retry or token storage.
@@ -32,6 +73,7 @@ export class ApiClient {
   /** Base URL as a directory: `/api/v1` becomes `/api/v1/`, without query or fragment. */
   private readonly prefix: URL;
   private readonly transport: FetchTransport;
+  private readonly rejected: ReadonlySet<number>;
   constructor(private readonly options: ClientOptions) {
     try { this.base = new URL(options.baseUrl); }
     catch { throw new ValidationFailure('Configure a valid absolute HTTP(S) base URL'); }
@@ -41,6 +83,7 @@ export class ApiClient {
     this.prefix = new URL(this.base.href);
     this.prefix.search = ''; this.prefix.hash = '';
     if (!this.prefix.pathname.endsWith('/')) this.prefix.pathname += '/';
+    this.rejected = statusSet(options.rejectedBeforeEffect);
     this.transport = options.fetch ?? globalThis.fetch.bind(globalThis);
   }
   /** `orders` and `/orders` both resolve inside the base path; absolute URLs must stay there too. */
@@ -57,6 +100,7 @@ export class ApiClient {
     const url = this.resolve(path);
     const method = options.method ?? 'GET';
     const outcome = method === 'GET' || method === 'HEAD' ? 'read-failed' : 'unknown';
+    const rejected = options.rejectedBeforeEffect === undefined ? this.rejected : statusSet(options.rejectedBeforeEffect);
     const timeout = options.timeoutMs ?? 10000;
     if (!Number.isFinite(timeout) || timeout <= 0) throw new ValidationFailure('Positive timeout required');
     const headers = new Headers(this.options.headers?.());
@@ -77,7 +121,11 @@ export class ApiClient {
       const init: RequestInit = { method, headers, credentials: 'same-origin', redirect: 'error', signal: controller.signal };
       if (body !== undefined) init.body = body;
       const response = await this.transport(url, init);
-      if (!response.ok) throw new ApiError('http', response.status, outcome);
+      if (!response.ok) {
+        const known = outcome === 'unknown' && rejected.has(response.status) ? 'rejected' : outcome;
+        throw new ApiError('http', response.status, known,
+          response.status === 429 || response.status === 503 ? parseRetryAfter(response.headers.get('Retry-After')) : undefined);
+      }
       let value: unknown = null;
       if (method !== 'HEAD' && response.status !== 204 && response.status !== 205) {
         try { value = await response.json(); }

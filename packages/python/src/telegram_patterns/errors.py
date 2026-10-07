@@ -5,11 +5,11 @@ import asyncio
 from dataclasses import asdict, dataclass
 from typing import Literal, TypeAlias, cast
 
-ErrorCategory: TypeAlias = Literal['validation', 'permission', 'unsupported', 'timeout', 'network', 'conflict', 'cancelled', 'internal', 'unknown-outcome']
+ErrorCategory: TypeAlias = Literal['validation', 'permission', 'unsupported', 'timeout', 'network', 'conflict', 'cancelled', 'internal', 'unknown-outcome', 'rate-limit', 'server']
 ErrorOutcome: TypeAlias = Literal['rejected', 'read-failed', 'unknown']
-RecoveryAction: TypeAlias = Literal['fix-input', 'authenticate', 'check-permissions', 'use-fallback', 'retry-read', 'reconcile', 'none']
+RecoveryAction: TypeAlias = Literal['fix-input', 'authenticate', 'check-permissions', 'use-fallback', 'retry-read', 'retry-later', 'reconcile', 'none']
 OperationKind: TypeAlias = Literal['read', 'write']
-ErrorCode: TypeAlias = Literal['validation-failed', 'invalid-init-data', 'invalid-api-request', 'invalid-field', 'authentication-required', 'permission-denied', 'unsupported-capability', 'timeout', 'network', 'operation-conflict', 'cancelled', 'internal', 'unknown-outcome', 'invalid-response']
+ErrorCode: TypeAlias = Literal['validation-failed', 'invalid-init-data', 'invalid-api-request', 'invalid-field', 'authentication-required', 'permission-denied', 'unsupported-capability', 'timeout', 'network', 'operation-conflict', 'cancelled', 'internal', 'unknown-outcome', 'invalid-response', 'rate-limited', 'server-error']
 
 _DESCRIPTORS: dict[str, tuple[ErrorCategory, RecoveryAction, str]] = {
     'validation-failed': ('validation', 'fix-input', 'Проверьте входные данные.'),
@@ -26,6 +26,8 @@ _DESCRIPTORS: dict[str, tuple[ErrorCategory, RecoveryAction, str]] = {
     'internal': ('internal', 'none', 'Не удалось обработать действие.'),
     'unknown-outcome': ('unknown-outcome', 'reconcile', 'Результат операции пока не подтвержден.'),
     'invalid-response': ('validation', 'none', 'Получен неподдерживаемый ответ сервера.'),
+    'rate-limited': ('rate-limit', 'retry-later', 'Слишком много запросов. Повторите позже.'),
+    'server-error': ('server', 'retry-read', 'Сервер временно не смог обработать запрос.'),
 }
 
 
