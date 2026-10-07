@@ -1091,7 +1091,7 @@
       "commit_subject": "excellence(085): check components.json against real exports and every version",
       "evidence": [
         "tests/test_component_catalog.py: every name in each component import is exported (__all__ via AST, index.ts and framework subpaths), every public export is catalogued, versions agree in pyproject, __version__, package.json, package-lock, components.json, recipes.json, API index, examples and all SKILL.md",
-        "Found 41 uncatalogued symbols (25 TypeScript incl. ApiError, 15 Python, 1 Svelte type) and added them to their components",
+        "Found 40 uncatalogued symbols (25 TypeScript root incl. ApiError, 1 Svelte type, 14 Python) and added them to their components",
         "Mutations: a nonexistent name, a missing export and another version in recipes.json each fail the test",
         "Runs in the skills job with the other repository tests; docs site, API reference and gallery checks still pass"
       ],
