@@ -20,7 +20,12 @@ class StartGuideTests(unittest.TestCase):
         expected = re.search(r'Ожидаемый вывод: `([^`]+)`', page).group(1)
         with tempfile.TemporaryDirectory() as folder:
             done = subprocess.run(
-                [sys.executable, '-c', code], cwd=folder, capture_output=True, text=True, encoding='utf-8', timeout=60
+                [sys.executable, '-X', 'utf8', '-c', code],
+                cwd=folder,
+                capture_output=True,
+                text=True,
+                encoding='utf-8',
+                timeout=60,
             )
         self.assertEqual(done.returncode, 0, done.stderr)
         self.assertEqual(done.stdout.strip(), expected)

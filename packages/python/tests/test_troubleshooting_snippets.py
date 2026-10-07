@@ -24,7 +24,7 @@ class TroubleshootingSnippetTests(unittest.TestCase):
             expected = [line.split('# → ', 1)[1].strip() for line in code.splitlines() if '# → ' in line]
             with self.subTest(code=code.splitlines()[0]), tempfile.TemporaryDirectory() as folder:
                 done = subprocess.run(
-                    [sys.executable, '-c', code],
+                    [sys.executable, '-X', 'utf8', '-c', code],
                     cwd=folder,
                     capture_output=True,
                     text=True,
@@ -45,7 +45,7 @@ class TroubleshootingSnippetTests(unittest.TestCase):
             environment = {key: value for key, value in os.environ.items() if key != 'BOT_TOKEN'}
             for argv in (['getUpdates'], ['deleteWebhook'], ['sendMessage?chat_id=1&text=x'], []):
                 done = subprocess.run(
-                    [sys.executable, '-I', str(script), *argv],
+                    [sys.executable, '-I', '-X', 'utf8', str(script), *argv],
                     cwd=folder,
                     capture_output=True,
                     text=True,
@@ -56,7 +56,7 @@ class TroubleshootingSnippetTests(unittest.TestCase):
                 self.assertNotEqual(done.returncode, 0, argv)
                 self.assertIn('Использование', done.stderr)
             done = subprocess.run(
-                [sys.executable, '-I', str(script), 'getMe'],
+                [sys.executable, '-I', '-X', 'utf8', str(script), 'getMe'],
                 cwd=folder,
                 capture_output=True,
                 text=True,

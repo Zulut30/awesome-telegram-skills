@@ -6,6 +6,7 @@ Shared helpers live in _shared (core) and _aiogram/common (adapter), never behin
 import ast
 import importlib
 import json
+import os
 import subprocess
 import sys
 import unittest
@@ -58,7 +59,8 @@ class ModuleLayoutTests(unittest.TestCase):
             capture_output=True,
             text=True,
             check=True,
-            env={'PYTHONPATH': str(PACKAGE.parent)},
+            # Windows cannot start Python without SYSTEMROOT, even with an otherwise empty environment.
+            env={'PYTHONPATH': str(PACKAGE.parent), **{k: v for k, v in os.environ.items() if k == 'SYSTEMROOT'}},
             cwd=PACKAGE.parent,
         )
         report = json.loads(result.stdout)

@@ -178,7 +178,7 @@ def main() -> int:
               'shell': 'powershell' if WINDOWS else 'bash', 'platform': sys.platform,
               'limits': 'Documented commands for this OS and Chrome viewport preview; installers may use registries; backend initData checked offline only; no real Telegram client, live bot or usability study'}
     (output / 'report.json').write_text(json.dumps(report, ensure_ascii=False, indent=2) + '\n', encoding='utf-8', newline='\n')
-    print(json.dumps(report, ensure_ascii=False))
+    print(json.dumps(report))  # ASCII: a cp1252 console (Windows CI) cannot print Cyrillic
     return 0
 
 

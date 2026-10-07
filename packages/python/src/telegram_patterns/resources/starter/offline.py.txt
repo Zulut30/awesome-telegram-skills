@@ -28,7 +28,7 @@ async def main():
     await dispatcher.fsm.close()
     report = {'passed': True, 'network': False, 'methods': methods, 'session_closed': session.closed}
 __OFFLINE_MINI_APP__
-    print(json.dumps(report, ensure_ascii=False))
+    print(json.dumps(report))  # ASCII escapes: safe on any console code page
 
 
 if __name__ == '__main__': asyncio.run(main())

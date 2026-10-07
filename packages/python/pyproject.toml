@@ -35,6 +35,8 @@ follow_imports = "silent"
 [tool.ruff]
 line-length = 120
 target-version = "py311"
+# README examples are documentation, formatted for reading; ruff checks the package and its tests.
+extend-exclude = ["*.md"]
 
 [tool.ruff.format]
 # The library mixes single and double quotes; the formatter keeps each literal as written.

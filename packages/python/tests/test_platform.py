@@ -231,7 +231,8 @@ class PlatformTests(unittest.IsolatedAsyncioTestCase):
         self.session.respond(m.CreateForumTopic, slow_send)
         action = self.action(m.CreateForumTopic(chat_id=-100, name='Topic'), chat_id=-100)
         with self.assertRaises((TimeoutError, UnknownOutcome)):
-            await execute_platform_action(self.bot, action, self.hooks, timeout=0.03)
+            # Long enough for the claim and the send to start on a slow runner; the send itself never returns.
+            await execute_platform_action(self.bot, action, self.hooks, timeout=0.5)
         self.assertEqual(self.status(), ('unknown',))
         with self.assertRaises(ConflictFailure):
             await self.run_action(action)
