@@ -151,9 +151,9 @@ def read_directory(folder: Path) -> tuple[dict, dict[str, bytes]]:
         raise ReportError('report.json is not valid JSON') from None
 
 
-def read_ref(ref: str, version: str, root: Path = ROOT) -> tuple[dict, dict[str, bytes]] | None:
+def read_ref(ref: str, version: str, root: Path = ROOT, reports: str = REPORTS) -> tuple[dict, dict[str, bytes]] | None:
     """Report files of the ref via git archive; None when the ref has no report directory."""
-    prefix = f'{REPORTS}/{version}'
+    prefix = f'{reports}/{version}'
     listed = subprocess.run(['git', 'ls-tree', '--name-only', ref, prefix + '/'], cwd=root, capture_output=True, text=True)
     if listed.returncode or not listed.stdout.strip():
         return None

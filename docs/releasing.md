@@ -20,15 +20,16 @@ python scripts/build_release.py --ref v0.24.0 --notes
 
 1. Обновите версию в `packages/python/pyproject.toml`, `__version__` в `packages/python/src/telegram_patterns/__init__.py`, `packages/typescript/package.json`, `components.json`, `resources/recipes.json`, `metadata.version` во frontmatter всех скиллов и раздел CHANGELOG. `validate_skills.py` не пропустит скилл с другой версией.
 2. Проверьте демо Mini App на устройствах по [чек-листу](device-qa-checklist.md): iOS, Android, Desktop и Web в тестовом окружении Telegram. Отчет и скриншоты положите в `docs/device-checks/X.Y.Z/`, проверьте `python scripts/device_report.py check docs/device-checks/X.Y.Z --version X.Y.Z` и закоммитьте. Начиная с 0.25.0 workflow Release без корректного отчета в теге завершается ошибкой; с отчетом прикладывает к релизу `device-report-X.Y.Z.zip` и добавляет таблицу результатов в описание.
-3. После слияния в `main` поставьте тег на этот коммит и отправьте его:
+3. Проведите [живую приемку](live-acceptance.md) сервисного, группового бота и магазина в тестовом окружении Telegram: `python scripts/live_acceptance.py new --version X.Y.Z`, `probe` для каждого бота, ручные случаи, затем `check`. Отчет закоммитьте; с 0.25.0 Release без него завершается ошибкой и с ним прикладывает `live-report-X.Y.Z.zip`.
+4. После слияния в `main` поставьте тег на этот коммит и отправьте его:
 
    ```bash
    git tag -a v0.25.0 -m "awesome-telegram-patterns 0.25.0"
    git push origin v0.25.0
    ```
 
-4. Workflow Release соберет артефакты из тега и опубликует релиз. Тот же тег запускает workflow [Full acceptance](../.github/workflows/full-acceptance.yml): полный `verify_pattern_packages.py` на Ubuntu и macOS с отчетами в артефактах запуска.
-5. Когда Full acceptance пройдет, его задача `release-report` приложит `distribution-report.json` к релизу, а в сводке запуска покажет SHA-256 и команду. Скачайте файл и добавьте строку в [историю приемки](acceptance-history.md): `python scripts/build_acceptance_history.py --add distribution-report.json --name X.Y.Z-distribution.json --url https://github.com/Zulut30/awesome-telegram-skills/releases/download/vX.Y.Z/distribution-report.json`, затем закоммитьте `docs/acceptance-history.json` и `.md`. Сам отчет в репозиторий не кладите.
+5. Workflow Release соберет артефакты из тега и опубликует релиз. Тот же тег запускает workflow [Full acceptance](../.github/workflows/full-acceptance.yml): полный `verify_pattern_packages.py` на Ubuntu и macOS с отчетами в артефактах запуска.
+6. Когда Full acceptance пройдет, его задача `release-report` приложит `distribution-report.json` к релизу, а в сводке запуска покажет SHA-256 и команду. Скачайте файл и добавьте строку в [историю приемки](acceptance-history.md): `python scripts/build_acceptance_history.py --add distribution-report.json --name X.Y.Z-distribution.json --url https://github.com/Zulut30/awesome-telegram-skills/releases/download/vX.Y.Z/distribution-report.json`, затем закоммитьте `docs/acceptance-history.json` и `.md`. Сам отчет в репозиторий не кладите.
 
 ## Релизы для существующих тегов
 

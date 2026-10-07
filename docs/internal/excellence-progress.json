@@ -1217,10 +1217,14 @@
     {
       "id": 95,
       "title": "Живая приемка в тестовом окружении Telegram",
-      "status": "pending",
-      "commit_subject": null,
-      "evidence": [],
-      "remaining": null
+      "status": "partial",
+      "commit_subject": "excellence(095): Add a dated live acceptance report for the test environment",
+      "evidence": [
+        "scripts/live_acceptance.py: report template with 14 cases for the service bot, group bot and shop (test Stars payment and refund), validation (statuses, notes, date, public bot username, no tokens, phones or e-mail) and release bundling live-report-X.Y.Z.zip with a notes table; required from 0.25.0 in the Release workflow",
+        "probe calls the test Bot API (https://api.telegram.org/bot<token>/test/METHOD, checked against Telegram docs on 2026-10-07): getMe, webhook, commands and a createInvoiceLink XTR link for the shop; the token is never stored",
+        "docs/live-acceptance.md and the release steps; tests/test_live_acceptance.py runs the probe against a local fake Bot API"
+      ],
+      "remaining": "No live run has happened: it needs bots created in the Telegram test environment, their tokens and people pressing the buttons; the first dated report is due for 0.25.0"
     },
     {
       "id": 96,
