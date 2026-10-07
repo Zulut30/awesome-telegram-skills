@@ -558,9 +558,14 @@
     {
       "id": 45,
       "title": "Единые переводы строк",
-      "status": "pending",
-      "commit_subject": null,
-      "evidence": [],
+      "status": "done",
+      "commit_subject": "excellence(045): store every text file with LF",
+      "evidence": [
+        ".gitattributes: '* text=auto eol=lf' plus binary formats",
+        "237 CRLF files normalized (186 generated Bot API recipes, docs/v1-checks reports, catalogs, verifier scripts); git ls-files --eol shows no i/crlf",
+        "api-reference-index example_source_sha256 recomputed; build_api_reference/build_telegram_catalog/build_recipe_gallery/sync_skill_references --check pass; Python 507, TypeScript 30, root and site tests pass",
+        "tests/test_line_endings.py checks git ls-files --eol and the .gitattributes rule"
+      ],
       "remaining": null
     },
     {

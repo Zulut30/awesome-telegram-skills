@@ -467,7 +467,7 @@
       "limits": "Чтение не исполняет recipe code. Maturity отдельно от verification; SDK/mock не доказывают live/device. Preview — независимая копия. Этот пример ищет существующий cookbook recipe two-columns; ref.* — имена справочника API.",
       "intent": "Literal stable/experimental/reference",
       "example_sha256": "56fb799776fea231e058db0d81a23e3b0b10cfc92e6bf07114e36a1047ea4897",
-      "example_source_sha256": "0482cc06bae4eaf7e7e2bbdda9abcbed41c29656ce5c3350303cdb0c0c6a9832",
+      "example_source_sha256": "56fb799776fea231e058db0d81a23e3b0b10cfc92e6bf07114e36a1047ea4897",
       "kind": "value"
     },
     {
@@ -479,7 +479,7 @@
       "limits": "Чтение не исполняет recipe code. Maturity отдельно от verification; SDK/mock не доказывают live/device. Preview — независимая копия. Этот пример ищет существующий cookbook recipe two-columns; ref.* — имена справочника API.",
       "intent": "Literal sdk/mock/browser/live/not_run",
       "example_sha256": "56fb799776fea231e058db0d81a23e3b0b10cfc92e6bf07114e36a1047ea4897",
-      "example_source_sha256": "0482cc06bae4eaf7e7e2bbdda9abcbed41c29656ce5c3350303cdb0c0c6a9832",
+      "example_source_sha256": "56fb799776fea231e058db0d81a23e3b0b10cfc92e6bf07114e36a1047ea4897",
       "kind": "value"
     },
     {
@@ -491,7 +491,7 @@
       "limits": "Чтение не исполняет recipe code. Maturity отдельно от verification; SDK/mock не доказывают live/device. Preview — независимая копия. Этот пример ищет существующий cookbook recipe two-columns; ref.* — имена справочника API.",
       "intent": "Неизменяемая запись и копия preview",
       "example_sha256": "56fb799776fea231e058db0d81a23e3b0b10cfc92e6bf07114e36a1047ea4897",
-      "example_source_sha256": "0482cc06bae4eaf7e7e2bbdda9abcbed41c29656ce5c3350303cdb0c0c6a9832",
+      "example_source_sha256": "56fb799776fea231e058db0d81a23e3b0b10cfc92e6bf07114e36a1047ea4897",
       "kind": "value"
     },
     {
@@ -503,7 +503,7 @@
       "limits": "Чтение не исполняет recipe code. Maturity отдельно от verification; SDK/mock не доказывают live/device. Preview — независимая копия. Этот пример ищет существующий cookbook recipe two-columns; ref.* — имена справочника API.",
       "intent": "Версия, recipes, get/search с фильтрами",
       "example_sha256": "56fb799776fea231e058db0d81a23e3b0b10cfc92e6bf07114e36a1047ea4897",
-      "example_source_sha256": "0482cc06bae4eaf7e7e2bbdda9abcbed41c29656ce5c3350303cdb0c0c6a9832",
+      "example_source_sha256": "56fb799776fea231e058db0d81a23e3b0b10cfc92e6bf07114e36a1047ea4897",
       "kind": "value"
     },
     {
