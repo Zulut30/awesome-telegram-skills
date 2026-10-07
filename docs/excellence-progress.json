@@ -997,9 +997,14 @@
     {
       "id": 78,
       "title": "Скорость и доступность Mini App в CI",
-      "status": "pending",
-      "commit_subject": null,
-      "evidence": [],
+      "status": "done",
+      "commit_subject": "excellence(078): gate the Mini App demo on Lighthouse, axe and bundle budgets",
+      "evidence": [
+        "CI job mini-app-quality: npm run build, then tools/mini-app-quality/check.mjs with Lighthouse 13.5.0 (mobile, median of 3 runs) and axe-core 4.14.0 (WCAG 2.0-2.2 A/AA)",
+        "Budgets in budgets.json: performance >= 0.9, accessibility >= 0.95, zero axe violations, <= 72 KiB scripts, 4 KiB styles, 16 requests; current demo 0.99 / 1.0 / 66362 B / 2670 B / 13 requests, axe clean in 8 states",
+        "gates.test.mjs checks pass-at-limit and fail-past-limit for every budget; mutation (1.5 s blocking script and light-grey text) gave performance 0.66 and color-contrast violations, exit 1",
+        "Tools have their own lockfile so other CI jobs do not install them; report.json and the Lighthouse JSON are uploaded as an artifact"
+      ],
       "remaining": null
     },
     {

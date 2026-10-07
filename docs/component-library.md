@@ -55,7 +55,7 @@ npm.cmd ci
 npm.cmd run demo
 ```
 
-Открой http://127.0.0.1:4173. [Пример](../examples/mini-app/src/index.ts) импортирует общий пакет: форма, темы, scoped выбор и потерянный ответ. Loopback server без Telegram-аутентификации/оплаты/календаря, store в памяти очищается при перезапуске. Контакты остаются в форме и не отправляются mock endpoint. Recovery неизвестной записи работает до закрытия страницы; production reload/account switch требует отдельного durable operation record. Для реального Mini App host подключает выбранный SDK и свой backend.
+Открой http://127.0.0.1:4173. [Пример](../examples/mini-app/src/index.ts) импортирует общий пакет: форма, темы, scoped выбор и потерянный ответ. Loopback server без Telegram-аутентификации/оплаты/календаря, store в памяти очищается при перезапуске. Контакты остаются в форме и не отправляются mock endpoint. Recovery неизвестной записи работает до закрытия страницы; production reload/account switch требует отдельного durable operation record. Для реального Mini App host подключает выбранный SDK и свой backend. CI держит демо в бюджетах [скорости, доступности и размера](../tools/mini-app-quality/README.md): Lighthouse performance не ниже 0.9 и accessibility не ниже 0.95, ноль нарушений axe, не больше 72 КиБ скриптов.
 
 Пакеты пока распространяются локально, без публикации на PyPI/npm. Полная проверка ниже сама строит артефакты; для отдельной сборки из корня:
 

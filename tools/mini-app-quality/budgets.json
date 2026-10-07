@@ -1,0 +1,24 @@
+{
+  "lighthouse": {
+    "runs": 3,
+    "min_scores": {
+      "performance": 0.9,
+      "accessibility": 0.95
+    }
+  },
+  "bundle": {
+    "max_script_bytes": 73728,
+    "max_stylesheet_bytes": 4096,
+    "max_requests": 16
+  },
+  "axe": {
+    "tags": [
+      "wcag2a",
+      "wcag2aa",
+      "wcag21a",
+      "wcag21aa",
+      "wcag22aa"
+    ],
+    "max_violations": 0
+  }
+}
