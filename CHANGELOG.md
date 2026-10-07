@@ -13,6 +13,7 @@
 - Пункт 9: `VerifiedLaunch` возвращает подписанные поля запуска `query_id`, `chat_type`, `chat_instance`, `start_param`, `can_send_after`, `chat`, `receiver` (новые поля имеют значения по умолчанию, прежний конструктор работает). `user`, `chat` и `receiver` теперь глубоко read-only: вложенные объекты — mapping, массивы — tuple; JSON-копию дает новый `.as_dict()`. NaN/Infinity в JSON и неверный `can_send_after` отклоняются как `InvalidInitData`.
 - Пункт 10: ошибки CLI по умолчанию печатаются понятным русским текстом («Ошибка / Что сделать») с безопасной кодировкой для перенаправленной консоли. Прежний машинный формат — один ASCII JSON объект в stderr — включается флагом `--json` и получил поле `problem` (`input`, `artifact`, `target-exists`, `installation`, `filesystem`). Отсутствующий встроенный ресурс теперь `installation` с исходом `read-failed`, а не «внутренняя ошибка, результат неизвестен». Скрипты проверки поставки переведены на `--json`.
 - Пункт 11: проект распространяется по лицензии MIT. `LICENSE` в корне и в обоих пакетах, `license = "MIT"` с `license-files` в pyproject (PEP 639, сборка требует setuptools ≥77), `"license": "MIT"` в package.json пакета и примеров, `license: MIT` во frontmatter всех 41 скилла. Контракт поставки проверяет файл лицензии и метаданные в wheel и tarball.
+- Пункт 12: `SECURITY.md` с поддерживаемыми версиями, приватным каналом GitHub Private Vulnerability Reporting, областью, сроками ответа и правилами добросовестного исследования; шаблоны issues ведут уязвимости в приватный канал.
 
 ## 0.24.0
 

@@ -146,10 +146,13 @@
     {
       "id": 12,
       "title": "Добавить `SECURITY.md`",
-      "status": "pending",
-      "commit_subject": null,
-      "evidence": [],
-      "remaining": null
+      "status": "partial",
+      "commit_subject": "excellence(012): add a security policy with a private channel",
+      "evidence": [
+        "SECURITY.md: версии, приватный канал, область, сроки, добросовестное исследование; .github/ISSUE_TEMPLATE/config.yml ведет в advisories/new",
+        "ссылки проверены: core.telegram.org/bug-bounty 200; API private-vulnerability-reporting отвечает enabled=false"
+      ],
+      "remaining": "Владелец включает Settings → Code security → Private vulnerability reporting (сейчас API показывает enabled=false) и отправляет тестовое сообщение со второго аккаунта."
     },
     {
       "id": 13,
