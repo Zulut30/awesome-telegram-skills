@@ -32,16 +32,12 @@ class LinkPortabilityTests(unittest.TestCase):
         with patch.object(Path, 'is_symlink', lambda self: self == alias):
             for module in (diagnostics, starter):
                 with self.subTest(module=module.__name__):
-                    with (
-                        patch.object(module.os, 'name', 'posix'),
-                        patch.object(Path, 'lstat', lambda self: fake_stat(0)),
-                    ):
-                        self.assertFalse(module._linked(alias), 'macOS /var-like alias is trusted')
-                    with (
-                        patch.object(module.os, 'name', 'posix'),
-                        patch.object(Path, 'lstat', lambda self: fake_stat(501)),
-                    ):
-                        self.assertTrue(module._linked(alias), 'a user-owned link under / stays refused')
+                    # A POSIX layout: on Windows '/var-alias-fixture' has no drive, so it is not an absolute path.
+                    if os.name != 'nt':
+                        with patch.object(Path, 'lstat', lambda self: fake_stat(0)):
+                            self.assertFalse(module._linked(alias), 'macOS /var-like alias is trusted')
+                        with patch.object(Path, 'lstat', lambda self: fake_stat(501)):
+                            self.assertTrue(module._linked(alias), 'a user-owned link under / stays refused')
                     with patch.object(module.os, 'name', 'nt'), patch.object(Path, 'lstat', lambda self: fake_stat(0)):
                         self.assertTrue(module._linked(alias), 'Windows junctions stay refused')
 
