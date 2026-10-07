@@ -38,7 +38,7 @@ python scripts/build_release.py --ref HEAD --output output/release
 python scripts/verify_service_bot.py --wheel output/release/awesome_telegram_patterns-0.24.0-py3-none-any.whl --output output/service-bot-check
 ```
 
-Output должен быть новым каталогом. Скрипт собирает и устанавливает приложение с wheel библиотеки в отдельный consumer вне репозитория. Проверяет origin, типы, восемь тестов, живые SQLite-транзакции, отдельные процессы диалога, аварийный выход после commit, повтор того же подтверждения и напоминание после рестарта. Получатель напоминания сопоставляется с владельцем записи. Второй процесс на ту же базу отклоняется; после аварии OS освобождает lock. Project shadow modules/.env не исполняются и не читаются. Synthetic SDK/StubSession не имеет HTTP fallback; реальные Telegram delivery/device proof отсутствуют.
+Output должен быть новым каталогом. Скрипт собирает и устанавливает приложение с wheel библиотеки в отдельный consumer вне репозитория. Проверяет origin, типы, девять тестов, живые SQLite-транзакции, отдельные процессы диалога, аварийный выход после commit, повтор того же подтверждения и напоминание после рестарта. Получатель напоминания сопоставляется с владельцем записи. Второй процесс на ту же базу отклоняется; после аварии OS освобождает lock. Project shadow modules/.env не исполняются и не читаются. Synthetic SDK/StubSession не имеет HTTP fallback; реальные Telegram delivery/device proof отсутствуют.
 
 ## Запуск с тестовым ботом
 
@@ -56,6 +56,32 @@ Parent каталога БД должен существовать. Один п�
 
 Live entrypoint явно заменяет command menu тестового бота и запускает polling. Автоматической смены webhook или удаления updates нет. Offline verifier не вызывает entrypoint и не читает BOT_TOKEN.
 
+## Docker (необязательно)
+
+Docker не нужен: установка, проверка и запуск выше работают без него. Если бот удобнее держать в контейнере, рядом лежат `Dockerfile` и `compose.yaml`. Контекст сборки — корень checkout библиотеки: образ устанавливает `packages/python` и этот пример, поэтому команды выполняются из корня. Нужен Docker Compose 2.24 или новее.
+
+```bash
+cp examples/service-bot/.env.example examples/service-bot/.env
+# впишите токен тестового бота в examples/service-bot/.env
+docker compose -f examples/service-bot/compose.yaml up --build
+```
+
+```powershell
+Copy-Item examples\service-bot\.env.example examples\service-bot\.env
+# впишите токен тестового бота в examples\service-bot\.env
+docker compose -f examples/service-bot/compose.yaml up --build
+```
+
+`.env` не попадает ни в образ (`.dockerignore`), ни в git; Compose передаёт BOT_TOKEN в окружение процесса. Без файла `.env` Compose откажется запускаться. С незаменённой заглушкой процесс завершится сообщением `Replace the BOT_TOKEN placeholder with the token issued by @BotFather`; неверный токен или недоступный Bot API дают такое же короткое сообщение после getMe. Процесс работает от пользователя без прав root (uid 10001).
+
+База SQLite и её `.lock` лежат в именованном томе `service-data` (`/data` в контейнере) и переживают пересборку образа. Одна база — один контейнер: не используйте `--scale`, не подключайте том ко второму контейнеру и не кладите базу на сетевой том — OS lock надёжен только на локальном диске. `docker compose -f examples/service-bot/compose.yaml down` сохраняет том; `down -v` удаляет базу с записями без возможности восстановления.
+
+`restart: unless-stopped` поднимает процесс после сбоя сети и перезапуска Docker; ошибка конфигурации тоже будет повторяться, поэтому смотрите `docker compose -f examples/service-bot/compose.yaml logs`. Контейнер работает через polling, не открывает портов и не меняет webhook: перед запуском убедитесь, что у бота нет webhook и другого getUpdates consumer. Webhook-режим требует HTTPS и reverse proxy, в этом примере его нет.
+
+Если Docker Hub недоступен, задайте зеркало базового образа: `PYTHON_IMAGE=mirror.gcr.io/library/python:3.13-slim docker compose -f examples/service-bot/compose.yaml up --build`. За прокси с собственным CA передайте сертификат секретом сборки: `docker build --secret id=ca,src=ca.pem -f examples/service-bot/Dockerfile .`. Секрет доступен только шагу `pip install` и не сохраняется в слоях образа.
+
+Проверка контейнера без Telegram: `python scripts/verify_docker_example.py` из корня собирает образ, ожидает понятную ошибку заглушки токена, проходит офлайн-фазы `start` и `review` в разных контейнерах на одном томе и удаляет проект, том и образ. Существующий `.env` скрипт не читает и не перезаписывает: при его наличии он останавливается. Для зеркала или прокси добавьте свой override: `--compose-file my-override.yaml`. CI выполняет эту проверку на Ubuntu.
+
 ## Напоминания и неизвестный результат
 
 `/reminders_on` даёт согласие; `/reminders_off` выключает и убирает не начатые задания. Повторное согласие активирует только ещё не попытанные будущие задания. До начала отправки проверяются согласие, статус записи и время; уже начатую отправку отозвать нельзя.
@@ -69,3 +95,5 @@ Forbidden прекращает отправки этому пользовате�
 Остановка дожидается SQLite-операции в потоке даже при повторной отмене worker; только затем освобождает process lock. Отмена `asyncio.to_thread` сама по себе не прекращает запись. Проверено отдельным тестом остановки на операции claim. Освобождение lock не означает, что неизвестная отправка стала успешной: после старта она остаётся `unknown`.
 
 Дополнительно проверено 2026-10-05: [asyncio shield и to_thread, Python 3.13](https://docs.python.org/3.13/library/asyncio-task.html#asyncio.shield).
+
+Docker-часть сверена 2026-10-07: [Compose services: env_file, restart](https://docs.docker.com/reference/compose-file/services/), [Compose build: args, secrets, network](https://docs.docker.com/reference/compose-file/build/), [optional env_file с Compose 2.24.0](https://docs.docker.com/compose/how-tos/environment-variables/set-environment-variables/).

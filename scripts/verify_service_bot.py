@@ -56,7 +56,7 @@ def main() -> int:
     run('typecheck',[python,'-m','mypy','--check-untyped-defs','--warn-unused-ignores',ROOT/'examples/service-bot/src'])
     run('tests',[python,'-I','-m','unittest','discover','-s',ROOT/'examples/service-bot/tests','-v'])
     test_log=(output/'tests.log').read_text(encoding='utf-8')
-    unit_tests=int(re.search(r'Ran (\d+) tests',test_log).group(1));assert unit_tests==8 and test_log.rstrip().endswith('OK')
+    unit_tests=int(re.search(r'Ran (\d+) tests',test_log).group(1));assert unit_tests==9 and test_log.rstrip().endswith('OK')
     caller=project/'caller project';caller.mkdir()
     (caller/'aiogram.py').write_text("raise RuntimeError('PRIVATE_CANARY')",encoding='utf-8')
     (caller/'.env').write_text('BOT_TOKEN=100:PRIVATE_CANARY',encoding='utf-8')

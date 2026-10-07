@@ -12,7 +12,7 @@ from aiogram import Bot, Dispatcher, F, Router
 from aiogram.filters import Command, CommandObject
 from aiogram.fsm.storage.memory import SimpleEventIsolation
 from aiogram.types import Message
-from telegram_patterns import BotSettings, PermissionDenied
+from telegram_patterns import BotSettings, PatternError, PermissionDenied
 from telegram_patterns.aiogram import CommandReply, TextField, command_menu, command_router, run_bot, text_form_router
 from .service import Actor, Service
 from .storage import ProcessLock, SQLiteFSM, io_call
@@ -131,7 +131,8 @@ def main() -> None:
     parser=argparse.ArgumentParser(description=__doc__)
     parser.add_argument('--database', type=Path, required=True)
     args=parser.parse_args()
-    asyncio.run(live(args.database.absolute()))
+    try: asyncio.run(live(args.database.absolute()))
+    except PatternError as exc: parser.exit(2, f'{parser.prog}: error: {exc}\n')
 
 
 if __name__ == '__main__': main()

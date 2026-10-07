@@ -307,9 +307,15 @@
     {
       "id": 26,
       "title": "Docker как опция",
-      "status": "pending",
-      "commit_subject": null,
-      "evidence": [],
+      "status": "done",
+      "commit_subject": "excellence(026): run the service bot in an optional container",
+      "evidence": [
+        "examples/service-bot/Dockerfile, compose.yaml, .env.example и корневой .dockerignore (.env не попадает в образ); база SQLite и .lock на именованном томе /data, процесс от uid 10001",
+        "docker compose build и run на Docker 29.8.2 / Compose 5.6.0: без .env Compose отказывается стартовать; с заглушкой — 'telegram-service-example: error: Replace the BOT_TOKEN placeholder…' и код 2; с фиктивным токеном — понятная ошибка getMe (Bot API недоступен из песочницы) и код 2, без traceback",
+        "scripts/verify_docker_example.py: офлайн-фазы start и review в разных контейнерах на одном томе с docker compose down между ними — passed; проект, том и образ удалены; существующий .env не читается и не перезаписывается",
+        "verify_service_bot.py с wheel 0.24.0: passed, unit_tests 9 (новый тест entrypoint), mypy примера чистый; job CI docker добавлен",
+        "README примера и две копии: раздел «Docker (необязательно)», сверено с docs.docker.com (env_file required с Compose 2.24.0, build args/secrets/network, restart) 2026-10-07; живой polling с настоящим токеном в песочнице не проверялся, webhook-режим в примере отсутствует"
+      ],
       "remaining": null
     },
     {
