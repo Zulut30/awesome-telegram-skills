@@ -4,7 +4,6 @@ from __future__ import annotations
 from contextlib import contextmanager
 from dataclasses import dataclass
 from datetime import datetime
-import hashlib
 import json
 import math
 from itertools import islice
@@ -15,7 +14,7 @@ from typing import Any, Callable, Iterator, Literal, Sequence
 
 from .calendar import TimeSlot, _instant, _micros
 from .errors import ConflictFailure, InvalidType, PermissionDenied, ValidationFailure
-from .sqlite_once import OnceResult, OperationConflict, _json, _owned_transaction
+from .sqlite_once import OnceResult, OperationConflict, _json, _owned_transaction, _payload_digest
 
 
 def _string(value: str, maximum: int = 128) -> str:
@@ -174,7 +173,7 @@ class SQLiteSlotStore:
     def _operation(self, resource: str, actor_id: int, operation_id: str, payload: Any,
                    apply: Callable[[sqlite3.Connection], Any]) -> OnceResult:
         _string(resource); _actor(actor_id); _string(operation_id, 256)
-        digest = hashlib.sha256(_json(payload).encode('utf-8')).hexdigest()
+        digest = _payload_digest(payload)
         with self._transaction() as c:
             self._guard(c, actor_id, resource)
             old = c.execute('SELECT payload_hash,result_json FROM telegram_slot_operations WHERE resource=? AND owner_id=? AND operation_id=?',

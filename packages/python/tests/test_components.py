@@ -166,6 +166,27 @@ class OnceTests(unittest.TestCase):
         with self.assertRaises(ValueError): self.store.run('a', 'key', {'bad': float('nan')}, self.effect)
         self.assertEqual(self.count(), 0)
 
+    def test_payloads_that_would_collide_or_fail_late_are_rejected_before_database(self):
+        from telegram_patterns.errors import ValidationFailure
+        self.store.run('a', 'one', {'1': 'a', 'items': [1, 2]}, self.effect)
+        for payload in ({1: 'a'}, {'items': (1, 2)}, {1: 'a', 'b': 2}, {'x': {2: 'nested'}}, {'x': float('inf')},
+                        {'x': {1, 2}}, {'x': b'bytes'}, {'x': object()}, ('a',)):
+            with self.subTest(payload=repr(payload)), self.assertRaises(ValidationFailure):
+                self.store.run('a', 'two', payload, self.effect)
+        deep = current = {}
+        for _ in range(70):
+            current['x'] = {}; current = current['x']
+        with self.assertRaises(ValidationFailure): self.store.run('a', 'two', deep, self.effect)
+        self.assertEqual(self.count(), 1)
+        from collections import OrderedDict
+        self.assertTrue(self.store.run('a', 'one', OrderedDict([('items', [1, 2]), ('1', 'a')]), self.effect).replayed)
+        with self.assertRaises(OperationConflict): self.store.run('a', 'one', {'1': 'b', 'items': [1, 2]}, self.effect)
+        fresh = Path(self.temp.name) / 'never-created.sqlite'
+        with self.assertRaises(ValidationFailure): SQLiteOnce(fresh).run('a', 'k', {1: 'a'}, self.effect)
+        self.assertFalse(fresh.exists())
+        for timeout in (float('nan'), float('inf'), True, 0, -1, '5'):
+            with self.subTest(timeout=timeout), self.assertRaises(ValidationFailure): SQLiteOnce(self.path, timeout=timeout)
+
 
 class FakeSession(BaseSession):
     def __init__(self): super().__init__(); self.calls = []

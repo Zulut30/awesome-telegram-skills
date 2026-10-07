@@ -182,7 +182,8 @@ class SlotStoreTests(unittest.TestCase):
         calls=[]
         def serialize(value):
             calls.append(value)
-            if len(calls)==2: raise RuntimeError('fixture receipt serialization failure')
+            # The payload digest uses sqlite_once; slots._json serializes only the receipt.
+            if len(calls)==1: raise RuntimeError('fixture receipt serialization failure')
             return _json(value)
         with patch('telegram_patterns.slots._json',side_effect=serialize):
             with self.assertRaises(RuntimeError): self.reserve()

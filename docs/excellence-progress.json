@@ -95,9 +95,14 @@
     {
       "id": 8,
       "title": "Строгая канонизация payload в `SQLiteOnce`",
-      "status": "pending",
-      "commit_subject": null,
-      "evidence": [],
+      "status": "done",
+      "commit_subject": "excellence(008): reject ambiguous SQLiteOnce payloads",
+      "evidence": [
+        "{1:'a'}, tuple, {1:'a','b':2}, вложенные int-ключи, inf, set, bytes, object, глубина 70 -> ValidationFailure до БД; файл БД не создается",
+        "OrderedDict с теми же данными -> replay; измененное значение -> OperationConflict; timeout nan/inf/True/0/-1/'5' отклонены",
+        "новый тест падает на прежних sqlite_once/slots (TypeError); 111 тестов затронутых модулей OK",
+        "core_storage и error_recovery примеры проходят; build_api_reference --check passed"
+      ],
       "remaining": null
     },
     {

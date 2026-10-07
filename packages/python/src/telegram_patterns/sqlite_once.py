@@ -6,6 +6,7 @@ from .errors import ValidationFailure
 from dataclasses import dataclass
 import hashlib
 import json
+import math
 from pathlib import Path
 import sqlite3
 from typing import Callable, Any
@@ -26,6 +27,37 @@ def _json(value: Any) -> str:
                       separators=(",", ":"), allow_nan=False)
 
 
+_MAX_PAYLOAD_DEPTH = 64
+
+
+def _check_payload(value: Any, depth: int = 0) -> None:
+    """Only JSON values hash unambiguously: {1: 'a'} vs {'1': 'a'} or tuple vs list would collide."""
+    if depth > _MAX_PAYLOAD_DEPTH:
+        raise ValidationFailure("Operation payload is nested too deeply")
+    if value is None or isinstance(value, (bool, str, int)):
+        return
+    if isinstance(value, float):
+        if not math.isfinite(value):
+            raise ValidationFailure("Operation payload numbers must be finite")
+        return
+    if isinstance(value, list):
+        for item in value:
+            _check_payload(item, depth + 1)
+        return
+    if isinstance(value, dict):
+        for key, item in value.items():
+            if not isinstance(key, str):
+                raise ValidationFailure("Operation payload keys must be strings")
+            _check_payload(item, depth + 1)
+        return
+    raise ValidationFailure("Operation payload must contain only dict with str keys, list, str, int, float, bool or None")
+
+
+def _payload_digest(payload: Any) -> str:
+    _check_payload(payload)
+    return hashlib.sha256(_json(payload).encode("utf-8")).hexdigest()
+
+
 def _owned_transaction(action: int, *_arguments: Any) -> int:
     # Includes Python commit/rollback, SQL transaction commands and the
     # implicit COMMIT performed by executescript. Savepoints remain local.
@@ -40,8 +72,9 @@ class SQLiteOnce:
     Call through an appropriate thread boundary from an async application.
     """
     def __init__(self, database: str | Path, *, timeout: float = 5.0):
-        if not str(database) or str(database) == ":memory:" or timeout <= 0:
-            raise ValidationFailure("Use a file database and a positive timeout")
+        if (not str(database) or str(database) == ":memory:" or type(timeout) not in (int, float)
+                or not math.isfinite(timeout) or timeout <= 0):
+            raise ValidationFailure("Use a file database and a positive finite timeout")
         self.database = str(database)
         self.timeout = timeout
 
@@ -65,7 +98,7 @@ class SQLiteOnce:
         for value in (scope, operation_key):
             if not isinstance(value, str) or not value or len(value.encode("utf-8")) > 256:
                 raise ValidationFailure("Scope and operation key must be nonempty bounded strings")
-        digest = hashlib.sha256(_json(payload).encode("utf-8")).hexdigest()
+        digest = _payload_digest(payload)
         connection = self._connect()
         try:
             connection.execute("BEGIN IMMEDIATE")
