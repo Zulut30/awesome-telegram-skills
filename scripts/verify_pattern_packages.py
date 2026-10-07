@@ -46,7 +46,8 @@ def main() -> int:
     output = ROOT / 'output' / f'pattern-library-{version}'
     artifacts = output / 'dist'
     artifacts.mkdir(parents=True, exist_ok=True)
-    consumers = Path(tempfile.mkdtemp(prefix=f'telegram-patterns-{version}-'))
+    # resolve(): macOS temp dirs live under /var, a symlink to /private/var; compare canonical paths.
+    consumers = Path(tempfile.mkdtemp(prefix=f'telegram-patterns-{version}-')).resolve()
     environment = dict(os.environ)
     environment.pop('PYTHONPATH', None)
     environment.pop('PYTHONHOME', None)
@@ -96,7 +97,7 @@ from pathlib import Path
 import telegram_patterns
 from telegram_patterns import BotSettings, validate_init_data, RecipeCatalog, create_starter, starter_components, StarterComponent
 assert importlib.util.find_spec('aiogram') is None
-assert Path(telegram_patterns.__file__).is_relative_to(Path(sys.argv[1]))
+assert Path(telegram_patterns.__file__).resolve().is_relative_to(Path(sys.argv[1]).resolve())
 assert BotSettings.from_env(environ={'BOT_TOKEN':'100:CORE_FIXTURE'}).token=='100:CORE_FIXTURE'
 assert len(RecipeCatalog().recipes)==310
 assert RecipeCatalog().search('две кнопки')[0].id=='two-columns'
@@ -152,7 +153,7 @@ print(json.dumps({'core_without_sdk':True,'python':sys.version.split()[0]}))
         if args.skip_browser:
             reference_command.append('--skip-browser')
         report['api_reference'] = json.loads(run('api-reference-consumer', reference_command, consumers))
-        run('sdk-origin', [str(python_in(sdk)), '-c', 'import sys,telegram_patterns;from pathlib import Path;assert Path(telegram_patterns.__file__).is_relative_to(Path(sys.argv[1]));print(telegram_patterns.__file__)', str(sdk)], consumers)
+        run('sdk-origin', [str(python_in(sdk)), '-c', 'import sys,telegram_patterns;from pathlib import Path;assert Path(telegram_patterns.__file__).resolve().is_relative_to(Path(sys.argv[1]).resolve());print(telegram_patterns.__file__)', str(sdk)], consumers)
         # Includes bounded real subprocess restart/CLI consumers; keep the suite
         # deadline distinct from each individual operation's timeout.
         python_log = run('python-tests', [str(python_in(sdk)), '-m', 'unittest', 'discover', '-s', str(ROOT / 'packages/python/tests'), '-v'], consumers, timeout=450)
@@ -242,7 +243,7 @@ print(json.dumps({'core_without_sdk':True,'python':sys.version.split()[0]}))
         selected_sdk = consumers / 'selected-sdk'
         run('selected-starter-environment', [uv, 'venv', '--python', sys.executable, str(selected_sdk)])
         run('selected-starter-python-install', [uv, 'pip', 'install', '--python', str(python_in(selected_sdk)), str(selected_project), 'aiogram==3.31.0'], consumers)
-        run('selected-starter-python-origin', [str(python_in(selected_sdk)), '-c', 'import app,sys,asyncio;from pathlib import Path;assert Path(app.__file__).is_relative_to(Path(sys.prefix));dp,commands=app.create_app();assert len(commands)==7;asyncio.run(dp.fsm.close());print("Installed generated app and all selected modules compose outside the project tree")'], consumers)
+        run('selected-starter-python-origin', [str(python_in(selected_sdk)), '-c', 'import app,sys,asyncio;from pathlib import Path;assert Path(app.__file__).resolve().is_relative_to(Path(sys.prefix).resolve());dp,commands=app.create_app();assert len(commands)==7;asyncio.run(dp.fsm.close());print("Installed generated app and all selected modules compose outside the project tree")'], consumers)
         selected_mini = selected_project / 'mini-app'
         run('selected-starter-typescript-install', [npm, 'install', '--ignore-scripts', '--no-audit', '--no-fund'], selected_mini)
         run('selected-starter-typecheck', [npm, 'run', 'typecheck'], selected_mini)
