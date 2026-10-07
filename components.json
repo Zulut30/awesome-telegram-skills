@@ -631,6 +631,21 @@
       "maturity_scope": "All public API symbols in this component; local verification is not a stable 1.0 promise"
     },
     {
+      "id": "stars-subscription-access",
+      "language": "python",
+      "import": "telegram_patterns.StarsSubscription, StarsCharge, RenewalState, SubscriptionEventRejected, STARS_SUBSCRIPTION_PERIOD",
+      "intent": "Выдать и снять платный доступ по подписке Telegram Stars: списания, продление, отмена, сбой и возврат",
+      "source": "packages/python/src/telegram_patterns/stars_subscription.py",
+      "example": "examples/python/stars_subscription_bot.py",
+      "boundaries": [
+        "one user and one invoice payload per subscription; XTR recurring charges only",
+        "BotSubscriptionUpdated changes renewal, never paid time; a refund withdraws its own charge",
+        "the host stores the state, orders events and reconciles with getStarTransactions; no checkout or invoice validation"
+      ],
+      "maturity": "experimental",
+      "maturity_scope": "All public API symbols in this component; local verification is not a stable 1.0 promise"
+    },
+    {
       "id": "media",
       "language": "python",
       "import": "telegram_patterns.aiogram.MediaKind, MediaSendRequest, MediaFile, MediaItem, DownloadedMedia, media_request, media_album, media_edit, download_media",

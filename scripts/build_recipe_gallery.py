@@ -144,6 +144,7 @@ def build(root: Path = ROOT) -> dict:
         ('rich_message_bot.py', 'offline_rich_message.py', 'demo-rich-message', 'Rich-сообщение: карточка заказа и запасной текст'),
         ('ephemeral_bot.py', 'offline_ephemeral.py', 'demo-ephemeral', 'Эфемерный ответ на кнопку в группе'),
         ('community_bot.py', 'offline_community.py', 'demo-community', 'События сообщества в группе и канале'),
+        ('stars_subscription_bot.py', 'offline_stars_subscription.py', 'demo-stars-subscription', 'Подписка Stars: продление, отмена и возврат'),
     ):
         result = subprocess.run([sys.executable, str(root / 'examples/python' / offline)], capture_output=True,
                                 text=True, encoding='utf-8', env=environment, timeout=60)
@@ -240,6 +241,14 @@ def build(root: Path = ROOT) -> dict:
             records[-1]['contexts'] = ['group', 'supergroup', 'channel']
             records[-1]['keywords'] += ['сообщество', 'сообщества', 'community', 'communities', 'сервисное сообщение', 'группа', 'канал', 'вступление', 'getChat']
             records[-1]['scope'] = 'Actual synthetic Dispatcher/StubSession and SDK models of community service messages and ChatFullInfo.community; real delivery, hidden chats and join behaviour unconfirmed.'
+        if key == 'demo-stars-subscription':
+            records[-1]['summary'] = 'Ежемесячная подписка Stars: списание дает период, BotSubscriptionUpdated меняет продление, возврат снимает свой месяц'
+            records[-1]['tasks'] = ['payments', 'bot']
+            records[-1]['contexts'] = ['private']
+            records[-1]['keywords'] += ['подписка', 'подписки', 'stars', 'звезды', 'продление', 'отмена', 'возврат', 'refund', 'платный доступ', 'BotSubscriptionUpdated', 'XTR']
+            records[-1]['source_files'] += ['packages/python/src/telegram_patterns/stars_subscription.py']
+            records[-1]['check_files'] += ['packages/python/tests/test_stars_subscription.py']
+            records[-1]['scope'] = 'Actual synthetic Dispatcher/StubSession and SDK models of Stars subscription charges, BotSubscriptionUpdated and RefundedPayment; real payments, renewal timing and event order unconfirmed.'
         if key == 'demo-platform':
             records[-1]['summary'] = 'Семь семейств: native rights, host ACL/budget/intent, scoped events и explicit unknown reconciliation'
             records[-1]['tasks'] = ['platform']

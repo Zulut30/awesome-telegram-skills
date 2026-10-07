@@ -33,6 +33,7 @@ _FIXTURES = {
     'demo-rich-message': ('rich_message_bot.py', 'offline_rich_message.py'),
     'demo-ephemeral': ('ephemeral_bot.py', 'offline_ephemeral.py'),
     'demo-community': ('community_bot.py', 'offline_community.py'),
+    'demo-stars-subscription': ('stars_subscription_bot.py', 'offline_stars_subscription.py'),
     'demo-recovery': ('error_recovery.py',),
 }
 _ATTEMPTS = [0]
@@ -180,6 +181,9 @@ def _execute(recipe_id: str) -> dict:
             if recipe_id == 'demo-community':
                 assert evidence['joined_counted'] == 1 and evidence['community_id_bits'] > 32 and all(evidence[key] for key in ('added_group', 'added_channel', 'bot_arrival_ignored', 'removed_without_fields', 'reconciled_from_get_chat', 'existing_dispatcher_preserved'))
                 checks.extend(('community-service-messages', 'channel-post-events', 'get-chat-reconciliation'))
+            if recipe_id == 'demo-stars-subscription':
+                assert all(evidence[key] for key in ('monthly_invoice', 'checkout_grants_nothing', 'charge_grants_period', 'renewal_extends', 'duplicate_ignored', 'canceled_keeps_paid_month', 'failed_notifies_and_expires', 'refund_withdraws_its_month', 'state_round_trips_json', 'existing_dispatcher_preserved'))
+                checks.extend(('stars-subscription-charges', 'bot-subscription-updated', 'refund-withdraws-charge'))
             if recipe_id == 'demo-platform':
                 assert evidence['families'] == 7 and evidence['contracts'] == 51 and evidence['confirmed_operations'] == 7
                 assert all(evidence[key] for key in ('durable_intents', 'unknown_send_no_retry', 'current_actor_acl', 'fresh_native_rights', 'financial_quote_budget', 'scoped_event_dedup', 'existing_dispatcher_preserved', 'user_confirmed_managed_link'))

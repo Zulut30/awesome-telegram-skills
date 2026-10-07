@@ -304,6 +304,66 @@
     },
     {
       "module": "telegram_patterns",
+      "name": "StarsSubscription",
+      "import": "from telegram_patterns import StarsSubscription",
+      "recipe": "ref.core_stars_subscription",
+      "example": "examples/api-reference/python/core_stars_subscription.py",
+      "limits": "Модель без SDK для подписки Telegram Stars: одна подписка — пользователь и invoice_payload. Каждое рекуррентное SuccessfulPayment дает полуоткрытый период [дата сообщения, subscription_expiration_date); повтор того же charge ничего не продлевает, тот же ID с другими данными отклоняется. BotSubscriptionUpdated (Bot API 10.2+: canceled, active, failed) меняет только ожидание следующего списания, а не оплаченное время. RefundedPayment снимает период своего charge, в том числе если пришел раньше платежа. Хранение (as_dict/from_dict), порядок событий и сверка через getStarTransactions — задача проекта.",
+      "intent": "Состояние подписки: record_payment, record_update, record_refund, has_access, access_until, renews, as_dict/from_dict",
+      "example_sha256": "5f76a5f7eec705bec194073f115a5b49f51abb77e7fa50dbf6dd376013007718",
+      "example_source_sha256": "5f76a5f7eec705bec194073f115a5b49f51abb77e7fa50dbf6dd376013007718",
+      "kind": "value"
+    },
+    {
+      "module": "telegram_patterns",
+      "name": "StarsCharge",
+      "import": "from telegram_patterns import StarsCharge",
+      "recipe": "ref.core_stars_subscription",
+      "example": "examples/api-reference/python/core_stars_subscription.py",
+      "limits": "Модель без SDK для подписки Telegram Stars: одна подписка — пользователь и invoice_payload. Каждое рекуррентное SuccessfulPayment дает полуоткрытый период [дата сообщения, subscription_expiration_date); повтор того же charge ничего не продлевает, тот же ID с другими данными отклоняется. BotSubscriptionUpdated (Bot API 10.2+: canceled, active, failed) меняет только ожидание следующего списания, а не оплаченное время. RefundedPayment снимает период своего charge, в том числе если пришел раньше платежа. Хранение (as_dict/from_dict), порядок событий и сверка через getStarTransactions — задача проекта.",
+      "intent": "Одно списание и оплаченный им период",
+      "example_sha256": "5f76a5f7eec705bec194073f115a5b49f51abb77e7fa50dbf6dd376013007718",
+      "example_source_sha256": "5f76a5f7eec705bec194073f115a5b49f51abb77e7fa50dbf6dd376013007718",
+      "kind": "value"
+    },
+    {
+      "module": "telegram_patterns",
+      "name": "RenewalState",
+      "import": "from telegram_patterns import RenewalState",
+      "recipe": "ref.core_stars_subscription",
+      "example": "examples/api-reference/python/core_stars_subscription.py",
+      "limits": "Модель без SDK для подписки Telegram Stars: одна подписка — пользователь и invoice_payload. Каждое рекуррентное SuccessfulPayment дает полуоткрытый период [дата сообщения, subscription_expiration_date); повтор того же charge ничего не продлевает, тот же ID с другими данными отклоняется. BotSubscriptionUpdated (Bot API 10.2+: canceled, active, failed) меняет только ожидание следующего списания, а не оплаченное время. RefundedPayment снимает период своего charge, в том числе если пришел раньше платежа. Хранение (as_dict/from_dict), порядок событий и сверка через getStarTransactions — задача проекта.",
+      "intent": "pending, active, canceled или failed",
+      "example_sha256": "5f76a5f7eec705bec194073f115a5b49f51abb77e7fa50dbf6dd376013007718",
+      "example_source_sha256": "5f76a5f7eec705bec194073f115a5b49f51abb77e7fa50dbf6dd376013007718",
+      "kind": "value"
+    },
+    {
+      "module": "telegram_patterns",
+      "name": "SubscriptionEventRejected",
+      "import": "from telegram_patterns import SubscriptionEventRejected",
+      "recipe": "ref.core_stars_subscription",
+      "example": "examples/api-reference/python/core_stars_subscription.py",
+      "limits": "Модель без SDK для подписки Telegram Stars: одна подписка — пользователь и invoice_payload. Каждое рекуррентное SuccessfulPayment дает полуоткрытый период [дата сообщения, subscription_expiration_date); повтор того же charge ничего не продлевает, тот же ID с другими данными отклоняется. BotSubscriptionUpdated (Bot API 10.2+: canceled, active, failed) меняет только ожидание следующего списания, а не оплаченное время. RefundedPayment снимает период своего charge, в том числе если пришел раньше платежа. Хранение (as_dict/from_dict), порядок событий и сверка через getStarTransactions — задача проекта.",
+      "intent": "Событие чужого пользователя или payload, не XTR, разовая оплата, неизвестное состояние или конфликт charge",
+      "example_sha256": "5f76a5f7eec705bec194073f115a5b49f51abb77e7fa50dbf6dd376013007718",
+      "example_source_sha256": "5f76a5f7eec705bec194073f115a5b49f51abb77e7fa50dbf6dd376013007718",
+      "kind": "value"
+    },
+    {
+      "module": "telegram_patterns",
+      "name": "STARS_SUBSCRIPTION_PERIOD",
+      "import": "from telegram_patterns import STARS_SUBSCRIPTION_PERIOD",
+      "recipe": "ref.core_stars_subscription",
+      "example": "examples/api-reference/python/core_stars_subscription.py",
+      "limits": "Модель без SDK для подписки Telegram Stars: одна подписка — пользователь и invoice_payload. Каждое рекуррентное SuccessfulPayment дает полуоткрытый период [дата сообщения, subscription_expiration_date); повтор того же charge ничего не продлевает, тот же ID с другими данными отклоняется. BotSubscriptionUpdated (Bot API 10.2+: canceled, active, failed) меняет только ожидание следующего списания, а не оплаченное время. RefundedPayment снимает период своего charge, в том числе если пришел раньше платежа. Хранение (as_dict/from_dict), порядок событий и сверка через getStarTransactions — задача проекта.",
+      "intent": "2592000 секунд — единственный период подписки, который сейчас принимает Telegram",
+      "example_sha256": "5f76a5f7eec705bec194073f115a5b49f51abb77e7fa50dbf6dd376013007718",
+      "example_source_sha256": "5f76a5f7eec705bec194073f115a5b49f51abb77e7fa50dbf6dd376013007718",
+      "kind": "value"
+    },
+    {
+      "module": "telegram_patterns",
       "name": "OnceResult",
       "import": "from telegram_patterns import OnceResult",
       "recipe": "ref.core_storage",
@@ -610,8 +670,8 @@
       "example": "examples/api-reference/python/core_recipes.py",
       "limits": "Чтение не исполняет recipe code. Maturity отдельно от verification; SDK/mock не доказывают live/device. Preview — независимая копия. Этот пример ищет существующий cookbook recipe two-columns; ref.* — имена справочника API.",
       "intent": "Literal-зрелость: stable, experimental или reference",
-      "example_sha256": "8f250d55301af5387a11c2bae8033cd98e1ec0f18a82103e044d4ba128265fee",
-      "example_source_sha256": "8f250d55301af5387a11c2bae8033cd98e1ec0f18a82103e044d4ba128265fee",
+      "example_sha256": "00c9bf564cd889ee9d73a03acabd01511e77f1c5a0f7baed2509bc67c128ca2f",
+      "example_source_sha256": "00c9bf564cd889ee9d73a03acabd01511e77f1c5a0f7baed2509bc67c128ca2f",
       "kind": "value"
     },
     {
@@ -622,8 +682,8 @@
       "example": "examples/api-reference/python/core_recipes.py",
       "limits": "Чтение не исполняет recipe code. Maturity отдельно от verification; SDK/mock не доказывают live/device. Preview — независимая копия. Этот пример ищет существующий cookbook recipe two-columns; ref.* — имена справочника API.",
       "intent": "Literal-уровень проверки: sdk, mock, browser, live или not_run",
-      "example_sha256": "8f250d55301af5387a11c2bae8033cd98e1ec0f18a82103e044d4ba128265fee",
-      "example_source_sha256": "8f250d55301af5387a11c2bae8033cd98e1ec0f18a82103e044d4ba128265fee",
+      "example_sha256": "00c9bf564cd889ee9d73a03acabd01511e77f1c5a0f7baed2509bc67c128ca2f",
+      "example_source_sha256": "00c9bf564cd889ee9d73a03acabd01511e77f1c5a0f7baed2509bc67c128ca2f",
       "kind": "value"
     },
     {
@@ -634,8 +694,8 @@
       "example": "examples/api-reference/python/core_recipes.py",
       "limits": "Чтение не исполняет recipe code. Maturity отдельно от verification; SDK/mock не доказывают live/device. Preview — независимая копия. Этот пример ищет существующий cookbook recipe two-columns; ref.* — имена справочника API.",
       "intent": "Неизменяемая запись и копия preview",
-      "example_sha256": "8f250d55301af5387a11c2bae8033cd98e1ec0f18a82103e044d4ba128265fee",
-      "example_source_sha256": "8f250d55301af5387a11c2bae8033cd98e1ec0f18a82103e044d4ba128265fee",
+      "example_sha256": "00c9bf564cd889ee9d73a03acabd01511e77f1c5a0f7baed2509bc67c128ca2f",
+      "example_source_sha256": "00c9bf564cd889ee9d73a03acabd01511e77f1c5a0f7baed2509bc67c128ca2f",
       "kind": "value"
     },
     {
@@ -646,8 +706,8 @@
       "example": "examples/api-reference/python/core_recipes.py",
       "limits": "Чтение не исполняет recipe code. Maturity отдельно от verification; SDK/mock не доказывают live/device. Preview — независимая копия. Этот пример ищет существующий cookbook recipe two-columns; ref.* — имена справочника API.",
       "intent": "Версия, recipes, get/search с фильтрами",
-      "example_sha256": "8f250d55301af5387a11c2bae8033cd98e1ec0f18a82103e044d4ba128265fee",
-      "example_source_sha256": "8f250d55301af5387a11c2bae8033cd98e1ec0f18a82103e044d4ba128265fee",
+      "example_sha256": "00c9bf564cd889ee9d73a03acabd01511e77f1c5a0f7baed2509bc67c128ca2f",
+      "example_source_sha256": "00c9bf564cd889ee9d73a03acabd01511e77f1c5a0f7baed2509bc67c128ca2f",
       "kind": "value"
     },
     {
@@ -3099,9 +3159,9 @@
       "kind": "value"
     }
   ],
-  "python_symbols": 211,
+  "python_symbols": 216,
   "typescript_symbols": 47,
-  "recipes": 35,
+  "recipes": 36,
   "additional_entries": [
     "CLI recipes",
     "CLI init",

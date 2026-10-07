@@ -22153,6 +22153,89 @@
       }
     },
     {
+      "id": "demo-stars-subscription",
+      "title": "Подписка Stars: продление, отмена и возврат",
+      "summary": "Ежемесячная подписка Stars: списание дает период, BotSubscriptionUpdated меняет продление, возврат снимает свой месяц",
+      "category": "scenarios",
+      "language": "python",
+      "maturity": "experimental",
+      "keywords": [
+        "бот",
+        "пример",
+        "callback",
+        "меню",
+        "события",
+        "композиция",
+        "бота",
+        "личный",
+        "чат",
+        "подписка",
+        "подписки",
+        "stars",
+        "звезды",
+        "продление",
+        "отмена",
+        "возврат",
+        "refund",
+        "платный доступ",
+        "BotSubscriptionUpdated",
+        "XTR"
+      ],
+      "code": "\"\"\"Monthly Stars subscription: invoice link, charges, BotSubscriptionUpdated and refunds decide access; no polling on import.\"\"\"\nfrom datetime import datetime, timezone\nimport time\nfrom typing import Awaitable, Callable\n\nfrom aiogram import Bot, Dispatcher, F, Router\nfrom aiogram.filters import Command\nfrom aiogram.methods import AnswerPreCheckoutQuery, SendMessage\nfrom aiogram.types import BotSubscriptionUpdated, InlineKeyboardButton, InlineKeyboardMarkup, Message, PreCheckoutQuery\nfrom telegram_patterns import StarsSubscription, SubscriptionEventRejected\nfrom telegram_patterns.aiogram import stars_invoice\n\nLoad = Callable[[int, str], Awaitable[StarsSubscription | None]]\nSave = Callable[[StarsSubscription], Awaitable[None]]\n\n\ndef plan_payload(user_id: int) -> str:\n    # One payload per user and plan: BotSubscriptionUpdated names the subscription by user and payload only.\n    return f'pro:{user_id}'\n\n\ndef attach_stars_subscription(dispatcher: Dispatcher, *, load: Load, save: Save, price: int = 250,\n                              clock: Callable[[], float] = time.time) -> Router:\n    \"\"\"load/save keep StarsSubscription.as_dict() in the host storage; every event is applied there first.\"\"\"\n    router = Router(name='stars-subscription')\n\n    async def state(user_id: int) -> StarsSubscription:\n        return await load(user_id, plan_payload(user_id)) or StarsSubscription(user_id, plan_payload(user_id))\n\n    def until(moment: int | None) -> str:\n        return datetime.fromtimestamp(moment or 0, timezone.utc).strftime('%d.%m.%Y %H:%M UTC')\n\n    @router.message(Command('subscribe'), F.chat.type == 'private')\n    async def subscribe(message: Message, bot: Bot) -> None:\n        if message.from_user is None:\n            return\n        link = await bot(stars_invoice('Pro на месяц', 'Доступ к разделу Pro, продление каждые 30 дней',\n                                       plan_payload(message.from_user.id), price, monthly_subscription=True))\n        button = InlineKeyboardButton(text=f'Оплатить {price} ⭐', url=link)\n        await bot(SendMessage(chat_id=message.chat.id, text='Подписка продлевается каждые 30 дней, отменить можно в Telegram.',\n                              reply_markup=InlineKeyboardMarkup(inline_keyboard=[[button]])))\n\n    @router.pre_checkout_query()\n    async def checkout(query: PreCheckoutQuery, bot: Bot) -> None:\n        # Telegram waits about 10 seconds: only check that the payload belongs to this payer and plan.\n        ok = query.currency == 'XTR' and query.invoice_payload == plan_payload(query.from_user.id) and query.total_amount == price\n        await bot(AnswerPreCheckoutQuery(pre_checkout_query_id=query.id, ok=ok,\n                                         error_message=None if ok else 'Счет устарел, запросите новый: /subscribe'))\n\n    @router.message(F.successful_payment)\n    async def paid(message: Message, bot: Bot) -> None:\n        payment = message.successful_payment\n        if payment is None or message.from_user is None:\n            return\n        try:\n            sub = (await state(message.from_user.id)).record_payment(\n                payment.model_dump(), user_id=message.from_user.id, paid_at=int(message.date.timestamp()))\n        except SubscriptionEventRejected:\n            return  # another product's payment or a conflicting duplicate: log and reconcile, grant nothing\n        await save(sub)\n        await bot(SendMessage(chat_id=message.chat.id, text=f'Pro доступен до {until(sub.access_until(clock()))}.'))\n\n    @router.subscription()\n    async def renewal(event: BotSubscriptionUpdated, bot: Bot) -> None:\n        try:\n            sub = (await state(event.user.id)).record_update(event.model_dump())\n        except SubscriptionEventRejected:\n            return\n        await save(sub)\n        if event.state == 'failed' and sub.has_access(clock()):\n            await bot(SendMessage(chat_id=event.user.id, text=f'Продление не прошло. Pro работает до {until(sub.access_until(clock()))}.'))\n\n    @router.message(F.refunded_payment, F.chat.type == 'private')\n    async def refunded(message: Message) -> None:\n        # In a private chat the chat id is the payer's user id.\n        refund = message.refunded_payment\n        if refund is None:\n            return\n        try:\n            await save((await state(message.chat.id)).record_refund(refund.model_dump(), user_id=message.chat.id))\n        except SubscriptionEventRejected:\n            return\n\n    @router.message(Command('pro'))\n    async def pro(message: Message, bot: Bot) -> None:\n        # Every protected action asks the stored charges with the current time; no cached flag.\n        if message.from_user is None:\n            return\n        sub = await state(message.from_user.id)\n        text = 'Раздел Pro открыт.' if sub.has_access(clock()) else 'Нужна подписка: /subscribe'\n        await bot(SendMessage(chat_id=message.chat.id, text=text))\n\n    dispatcher.include_router(router)\n    return router\n",
+      "verification": "mock",
+      "scope": "Actual synthetic Dispatcher/StubSession and SDK models of Stars subscription charges, BotSubscriptionUpdated and RefundedPayment; real payments, renewal timing and event order unconfirmed.",
+      "sources": [
+        "https://core.telegram.org/bots/api"
+      ],
+      "preview": null,
+      "code_sha256": "22ffcc1dd9355836fb13999db15fb39261ee67a096e60fcc806d995d07df2bcd",
+      "tasks": [
+        "payments",
+        "bot"
+      ],
+      "contexts": [
+        "private"
+      ],
+      "sdk": "aiogram",
+      "sdk_version": "3.31.0",
+      "api_version": "bot:10.3",
+      "source_files": [
+        "examples/python/stars_subscription_bot.py",
+        "packages/python/src/telegram_patterns/stars_subscription.py",
+        "packages/python/src/telegram_patterns/execution.py",
+        "packages/python/src/telegram_patterns/_offline_recipe.py"
+      ],
+      "check_files": [
+        "examples/python/offline_stars_subscription.py",
+        "packages/python/tests/test_stars_subscription.py"
+      ],
+      "execution": {
+        "kind": "dispatcher",
+        "dependencies": [
+          "aiogram==3.31.0"
+        ],
+        "offline_environment": [],
+        "offline_permissions": [],
+        "offline_data": [
+          "Только поставляемые синтетические данные; реальные IDs и secrets не принимаются."
+        ],
+        "live_environment": [
+          "BOT_TOKEN"
+        ],
+        "live_permissions": [
+          "Прикладная авторизация сервиса; fixture actor не доказывает server ACL."
+        ],
+        "live_data": [
+          "Текущий Dispatcher, реальные actor/chat и сервис приложения",
+          "Проверка объекта, автора и состояния до effect/replay"
+        ],
+        "live_review": "Live executor отсутствует. Перед интеграцией проверить источники, ограничения конкретного метода/контекста, auth и ACL; metadata не подтверждает права.",
+        "effects": [
+          "Synthetic Dispatcher + StubSession; временная fixture, без polling"
+        ]
+      }
+    },
+    {
       "id": "demo-recovery",
       "title": "Потерянный ответ: сверка той же операции",
       "summary": "SQLite effect уже сохранен; unknown outcome сверяется тем же scoped ID без второго заказа.",

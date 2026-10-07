@@ -73,6 +73,22 @@
       }
     },
     {
+      "id": "core_stars_subscription",
+      "section": "core",
+      "title": "Подписка Stars и платный доступ",
+      "example": "examples/api-reference/python/core_stars_subscription.py",
+      "limits": "Модель без SDK для подписки Telegram Stars: одна подписка — пользователь и invoice_payload. Каждое рекуррентное SuccessfulPayment дает полуоткрытый период [дата сообщения, subscription_expiration_date); повтор того же charge ничего не продлевает, тот же ID с другими данными отклоняется. BotSubscriptionUpdated (Bot API 10.2+: canceled, active, failed) меняет только ожидание следующего списания, а не оплаченное время. RefundedPayment снимает период своего charge, в том числе если пришел раньше платежа. Хранение (as_dict/from_dict), порядок событий и сверка через getStarTransactions — задача проекта.",
+      "api": {
+        "telegram_patterns": {
+          "StarsSubscription": "Состояние подписки: record_payment, record_update, record_refund, has_access, access_until, renews, as_dict/from_dict",
+          "StarsCharge": "Одно списание и оплаченный им период",
+          "RenewalState": "pending, active, canceled или failed",
+          "SubscriptionEventRejected": "Событие чужого пользователя или payload, не XTR, разовая оплата, неизвестное состояние или конфликт charge",
+          "STARS_SUBSCRIPTION_PERIOD": "2592000 секунд — единственный период подписки, который сейчас принимает Telegram"
+        }
+      }
+    },
+    {
       "id": "core_storage",
       "section": "core",
       "title": "SQLite effect и повтор",

@@ -14,7 +14,7 @@
 
 Используйте полуоткрытую границу `[start, end)` и проверяйте `start <= now < end` для выбранного ресурса. Это локальная конвенция модели; другое существующее правило сохраняйте, если оно согласованно.
 
-Для Stars `SuccessfulPayment.subscription_expiration_date` дает expiry recurring оплаты, если поле присутствует. Не путайте optional отсутствие с бессрочностью. Для другого провайдера период определяется его проверенными данными либо стабильным локальным billing cycle, а не часом получения callback.
+Для Stars `SuccessfulPayment.subscription_expiration_date` дает expiry recurring оплаты, если поле присутствует. Не путайте optional отсутствие с бессрочностью. `BotSubscriptionUpdated` (Bot API 10.2+) не содержит даты и charge: canceled/active/failed — состояние продления, а не период; подробнее — [подписки Stars](stars-subscriptions.md). Для другого провайдера период определяется его проверенными данными либо стабильным локальным billing cycle, а не часом получения callback.
 
 Если grants перекрываются/имеют пропуски, доступ определяется фактическими интервалами и scope тарифа; один max(end) может дать доступ раньше start или в разрыве. Calendar month и фиксированное число суток — разные продукты; DST не меняет Unix-time границу, но влияет на календарные расчеты.
 
@@ -28,4 +28,4 @@ Cancel renewal оставляет уже оплаченные grants до их �
 
 Права берутся из backend по текущему времени и grants. Grace имеет явные пределы; ошибку платежного API нельзя превращать в бесконечный доступ. Manual grant/revoke фиксируется отдельно от финансового ledger.
 
-Источники сверены 3 октября 2026 года: [SuccessfulPayment](https://core.telegram.org/bots/api#successfulpayment), [RefundedPayment](https://core.telegram.org/bots/api#refundedpayment), [Stars](https://core.telegram.org/bots/payments-stars). Схема ledger и календарная политика являются решениями продукта.
+Источники сверены 7 октября 2026 года: [SuccessfulPayment](https://core.telegram.org/bots/api#successfulpayment), [RefundedPayment](https://core.telegram.org/bots/api#refundedpayment), [BotSubscriptionUpdated](https://core.telegram.org/bots/api#botsubscriptionupdated), [Stars](https://core.telegram.org/bots/payments-stars). Схема ledger и календарная политика являются решениями продукта.

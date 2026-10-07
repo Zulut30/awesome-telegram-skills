@@ -154,6 +154,42 @@ assert sent.target() == {'chat_id': -1001, 'receiver_user_id': 7, 'ephemeral_mes
 print(json.dumps({'case': 'core_ephemeral', 'passed': True, 'network': False}))
 ```
 
+<a id="ref-core_stars_subscription"></a>
+
+## Подписка Stars и платный доступ — ref.core_stars_subscription
+
+Файл: `core_stars_subscription.py`. Символы: `StarsSubscription`, `StarsCharge`, `RenewalState`, `SubscriptionEventRejected`, `STARS_SUBSCRIPTION_PERIOD`
+
+Границы: Модель без SDK для подписки Telegram Stars: одна подписка — пользователь и invoice_payload. Каждое рекуррентное SuccessfulPayment дает полуоткрытый период [дата сообщения, subscription_expiration_date); повтор того же charge ничего не продлевает, тот же ID с другими данными отклоняется. BotSubscriptionUpdated (Bot API 10.2+: canceled, active, failed) меняет только ожидание следующего списания, а не оплаченное время. RefundedPayment снимает период своего charge, в том числе если пришел раньше платежа. Хранение (as_dict/from_dict), порядок событий и сверка через getStarTransactions — задача проекта.
+
+```python
+"""SDK-free paid access from a Stars subscription: charges, renewal states and refunds; no network."""
+import json
+from telegram_patterns import STARS_SUBSCRIPTION_PERIOD, RenewalState, StarsCharge, StarsSubscription, SubscriptionEventRejected
+
+paid_at = 1_790_000_000  # Message.date of the successful_payment service message
+charge = {'currency': 'XTR', 'total_amount': 250, 'invoice_payload': 'pro:7', 'telegram_payment_charge_id': 'fixture-charge',
+          'subscription_expiration_date': paid_at + STARS_SUBSCRIPTION_PERIOD, 'is_recurring': True, 'is_first_recurring': True}
+sub = StarsSubscription(user_id=7, invoice_payload='pro:7').record_payment(charge, user_id=7, paid_at=paid_at)
+assert sub.has_access(paid_at) and sub.access_until(paid_at) == paid_at + STARS_SUBSCRIPTION_PERIOD
+assert sub.record_payment(charge, user_id=7, paid_at=paid_at) is sub  # a repeated charge extends nothing
+canceled = sub.record_update({'user': {'id': 7}, 'invoice_payload': 'pro:7', 'state': 'canceled'})  # BotSubscriptionUpdated
+assert canceled.has_access(paid_at + 1) and not canceled.renews(paid_at + 1)  # the paid month stays
+renewal: RenewalState = canceled.renewal
+first: StarsCharge = canceled.charges[0]
+assert renewal == 'canceled' and first.first and first.amount == 250
+refunded = sub.record_refund({'currency': 'XTR', 'invoice_payload': 'pro:7', 'telegram_payment_charge_id': 'fixture-charge'}, user_id=7)
+assert not refunded.has_access(paid_at + 1)
+try:
+    sub.record_update({'user': {'id': 8}, 'invoice_payload': 'pro:7', 'state': 'failed'})
+except SubscriptionEventRejected:
+    pass  # another user's event changes nothing
+else:
+    raise AssertionError('Foreign subscription event accepted')
+assert StarsSubscription.from_dict(json.loads(json.dumps(sub.as_dict()))) == sub  # the host stores this JSON
+print(json.dumps({'case': 'core_stars_subscription', 'passed': True, 'network': False}))
+```
+
 <a id="ref-core_storage"></a>
 
 ## SQLite effect и повтор — ref.core_storage
@@ -299,7 +335,7 @@ catalog = RecipeCatalog()
 recipe: Recipe = catalog.search('две кнопки', maturity=maturity, verification=verification,
                                task='keyboards', context='private', sdk='aiogram', sdk_version='3.31.0', api_version='bot:10.3')[0]
 assert recipe.id == 'two-columns' and catalog.get(recipe.id) == recipe
-assert len(catalog.recipes) == 314 and catalog.library_version
+assert len(catalog.recipes) == 315 and catalog.library_version
 assert recipe.source_files and recipe.check_files and 'keyboards' in recipe.tasks
 lost = catalog.search('потерянный ответ', task='recovery', context='backend')[0]
 assert lost.id == 'demo-recovery' and lost.sdk == 'python-core' and lost.api_version == 'none'

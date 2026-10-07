@@ -32,7 +32,7 @@ Checkout, счета и pre-checkout — telegram-payments. Протокол к�
 
 Backend проверяет текущий доступ при каждом защищенном действии; frontend badge и кеш не дают прав. Планировщик может обновить отображаемое состояние, но задержка expiry job не должна сохранять доступ по истекшему сроку.
 
-Отмена будущего продления, завершение оплаченного периода и возврат конкретного charge — разные переходы. Refund/reversal меняет связанные выдачи по явной модели, не просто отнимает произвольное число дней от общего остатка.
+Отмена будущего продления, завершение оплаченного периода и возврат конкретного charge — разные переходы. Для подписки Telegram Stars обновление `BotSubscriptionUpdated` (canceled, active, failed) меняет только ожидание следующего списания: оплаченное время задают `SuccessfulPayment` и `RefundedPayment` ([подписки Stars](references/stars-subscriptions.md)). Refund/reversal меняет связанные выдачи по явной модели, не просто отнимает произвольное число дней от общего остатка.
 
 Ручная корректировка требует права, причины, operation ID и журнала. Она не создает фиктивную оплату и не переносит identity между аккаунтами. Удаление пользователя/смена аккаунта учитывает сохраненные финансовые связи по правилам продукта.
 
@@ -49,9 +49,10 @@ Backend проверяет текущий доступ при каждом за�
 - Начало периода берется из времени прихода уведомления.
 - Отмена автопродления обрабатывается как возврат, а возврат отнимает произвольное число дней.
 - Доступ проверяется по значку во frontend или кешу, а задержка планировщика оставляет доступ после истечения.
+- `BotSubscriptionUpdated` со `state="canceled"` или `"failed"` сразу отнимает оплаченный месяц, а `"active"` продлевает доступ без списания.
 
 ## Источники
 
-[SuccessfulPayment](https://core.telegram.org/bots/api#successfulpayment), [Stars payments](https://core.telegram.org/bots/payments-stars).
+[SuccessfulPayment](https://core.telegram.org/bots/api#successfulpayment), [BotSubscriptionUpdated](https://core.telegram.org/bots/api#botsubscriptionupdated), [editUserStarSubscription](https://core.telegram.org/bots/api#edituserstarsubscription), [Stars payments](https://core.telegram.org/bots/payments-stars).
 
 Проверено: 2026-10-07, Bot API 10.3, Telegram Stars.

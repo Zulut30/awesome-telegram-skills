@@ -718,9 +718,14 @@
     {
       "id": 57,
       "title": "Подписки на бота",
-      "status": "pending",
-      "commit_subject": null,
-      "evidence": [],
+      "status": "done",
+      "commit_subject": "excellence(057): grant Stars subscription access from charges and renewal updates",
+      "evidence": [
+        "packages/python/src/telegram_patterns/stars_subscription.py: StarsSubscription, StarsCharge, SubscriptionEventRejected; packages/python/tests/test_stars_subscription.py (6 tests)",
+        "examples/python/stars_subscription_bot.py, offline_stars_subscription.py: run-recipe demo-stars-subscription --offline passed — a renewal charge extends access, canceled/failed keep the paid month and access ends at its end, a refund withdraws its month",
+        "docs/stars-subscriptions.md in telegram-subscription-access and telegram-code-patterns; skill and entitlements.md cite BotSubscriptionUpdated",
+        "verify_pattern_packages PASS: 529 Python and 35 TypeScript tests, browser passed"
+      ],
       "remaining": null
     },
     {

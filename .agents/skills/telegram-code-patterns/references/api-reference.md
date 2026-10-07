@@ -39,6 +39,11 @@
 | `EphemeralTrigger` | `from telegram_patterns import EphemeralTrigger` | [ref.core_ephemeral](api-reference-core.md#ref-core_ephemeral) | Повод ответа: нажатие кнопки или эфемерная команда и время получения |
 | `EphemeralMessageRef` | `from telegram_patterns import EphemeralMessageRef` | [ref.core_ephemeral](api-reference-core.md#ref-core_ephemeral) | Адрес отправленного эфемерного сообщения для editEphemeralMessage* и deleteEphemeralMessage |
 | `EphemeralNotAllowed` | `from telegram_patterns import EphemeralNotAllowed` | [ref.core_ephemeral](api-reference-core.md#ref-core_ephemeral) | Отказ: не группа, получатель-бот, окно 15 секунд прошло или замена недоступна |
+| `StarsSubscription` | `from telegram_patterns import StarsSubscription` | [ref.core_stars_subscription](api-reference-core.md#ref-core_stars_subscription) | Состояние подписки: record_payment, record_update, record_refund, has_access, access_until, renews, as_dict/from_dict |
+| `StarsCharge` | `from telegram_patterns import StarsCharge` | [ref.core_stars_subscription](api-reference-core.md#ref-core_stars_subscription) | Одно списание и оплаченный им период |
+| `RenewalState` | `from telegram_patterns import RenewalState` | [ref.core_stars_subscription](api-reference-core.md#ref-core_stars_subscription) | pending, active, canceled или failed |
+| `SubscriptionEventRejected` | `from telegram_patterns import SubscriptionEventRejected` | [ref.core_stars_subscription](api-reference-core.md#ref-core_stars_subscription) | Событие чужого пользователя или payload, не XTR, разовая оплата, неизвестное состояние или конфликт charge |
+| `STARS_SUBSCRIPTION_PERIOD` | `from telegram_patterns import STARS_SUBSCRIPTION_PERIOD` | [ref.core_stars_subscription](api-reference-core.md#ref-core_stars_subscription) | 2592000 секунд — единственный период подписки, который сейчас принимает Telegram |
 | `OnceResult` | `from telegram_patterns import OnceResult` | [ref.core_storage](api-reference-core.md#ref-core_storage) | Результат эффекта с replay flag |
 | `OperationConflict` | `from telegram_patterns import OperationConflict` | [ref.core_storage](api-reference-core.md#ref-core_storage) | Тот же scoped key с другим payload |
 | `SQLiteOnce` | `from telegram_patterns import SQLiteOnce` | [ref.core_storage](api-reference-core.md#ref-core_storage) | Инициализация и атомарный run в файле SQLite |
