@@ -32,9 +32,14 @@
     {
       "id": 3,
       "title": "Закрыть утечку токена в `download_media`",
-      "status": "pending",
-      "commit_subject": null,
-      "evidence": [],
+      "status": "done",
+      "commit_subject": "excellence(003): hide bot token in download_media transport errors",
+      "evidence": [
+        "локальный aiohttp-сервер с 404: TransportFailure без __context__/__cause__, токена нет в str/repr/traceback/логе aiogram.event",
+        "таймаут с URL и ошибки со status заменяются; поток закрыт",
+        "оба новых теста падают на прежней реализации",
+        "tests.test_media: 27 OK; build_api_reference/build_recipe_gallery --check passed"
+      ],
       "remaining": null
     },
     {

@@ -16,7 +16,7 @@ from aiogram import Bot
 from aiogram.methods import EditMessageMedia, SendAudio, SendDocument, SendMediaGroup, SendPhoto, SendVideo
 from aiogram.types import BufferedInputFile, InputMediaAudio, InputMediaDocument, InputMediaPhoto, InputMediaVideo
 
-from .errors import InvalidType, UnsupportedCapability, ValidationFailure
+from .errors import InvalidType, PatternError, TransportFailure, UnsupportedCapability, ValidationFailure
 from .message_text import FormattedText, utf16_length
 
 MediaKind: TypeAlias = Literal['photo', 'video', 'audio', 'document']
@@ -219,7 +219,9 @@ async def download_media(bot: Bot, file_id: str, *, max_bytes: int = 5*_MB,
     """Explicit read: GetFile plus bounded hosted stream, no disk or retry.
 
     max_bytes <=20 MB, timeout covers metadata and content together. Stream closes
-    on overflow, cancellation and errors. Host decodes content in its own pipeline.
+    on overflow, cancellation and errors. Stream HTTP/transport errors become
+    TransportFailure or TimeoutError without the token-bearing URL or chained cause.
+    Host decodes content in its own pipeline.
     Local Bot API paths require a separate explicit host adapter, never local read.
     """
     if not isinstance(bot,Bot):
@@ -243,6 +245,9 @@ async def download_media(bot: Bot, file_id: str, *, max_bytes: int = 5*_MB,
         stream = bot.session.stream_content(bot.session.api.file_url(bot.token,path),
             timeout=max(1,math.ceil(timeout)),chunk_size=min(65536,max_bytes),raise_for_status=True)
         data = bytearray()
+        # Transport errors (HTTP status, connection timeout) carry the token URL in str()
+        # and in chained tracebacks; replace them and raise outside the handler.
+        failure: Exception | None = None
         try:
             async for chunk in stream:
                 if not isinstance(chunk,bytes):
@@ -250,8 +255,18 @@ async def download_media(bot: Bot, file_id: str, *, max_bytes: int = 5*_MB,
                 if len(data)+len(chunk)>max_bytes:
                     raise ValidationFailure('Actual downloaded content exceeds the byte bound')
                 data.extend(chunk)
+        except PatternError:
+            raise
+        except TimeoutError:
+            failure = TimeoutError('Telegram file download timed out')
+        except Exception as error:
+            status = getattr(error,'status',None)
+            failure = TransportFailure(f'Telegram file endpoint returned HTTP {status}' if type(status) is int
+                                       else 'Telegram file download failed')
         finally:
             await stream.aclose()
+        if failure is not None:
+            raise failure
         if info.file_size is not None and len(data)!=info.file_size:
             raise ValidationFailure('Downloaded content does not match the declared byte count')
         return DownloadedMedia(bytes(data),info.file_id,info.file_unique_id,bot.id)

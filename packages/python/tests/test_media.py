@@ -2,11 +2,13 @@ import asyncio
 from dataclasses import FrozenInstanceError
 import json
 import importlib.util
+import logging
 from pathlib import Path
 import base64
 import ast
 import struct
 import zlib
+import traceback
 import unittest
 
 from aiogram import Bot
@@ -16,7 +18,7 @@ from aiogram.exceptions import TelegramBadRequest, TelegramForbiddenError, Teleg
 from aiogram.methods import EditMessageMedia, GetFile, SendAudio, SendDocument, SendPhoto, SendVideo
 from telegram_patterns import FormattedText, MessageBuilder, safe_error_report
 from telegram_patterns.aiogram import MediaFile, MediaItem, media_request, media_album, media_edit, download_media
-from telegram_patterns.errors import UnsupportedCapability, ValidationFailure
+from telegram_patterns.errors import TransportFailure, UnsupportedCapability, ValidationFailure
 from telegram_patterns.testing import StubSession
 
 
@@ -273,6 +275,46 @@ class MediaDownloadTests(unittest.IsolatedAsyncioTestCase):
             with self.assertRaises((TimeoutError,ValueError)) as raised: await download_media(bot,'opaque')
             self.assertEqual(session.stream_closed,1);self.assertEqual(len(session.calls),1)
             self.assertNotIn('token-private-url',safe_error_report(raised.exception,operation='read').message)
+
+    def assert_token_hidden(self,error,token):
+        rendered=''.join(traceback.format_exception(error))  # what logging.exception prints
+        for text in (str(error),repr(error),rendered):
+            self.assertNotIn(token,text)
+
+    async def test_real_http_error_never_exposes_token_in_error_or_log(self):
+        from aiohttp import web
+        from aiogram.client.session.aiohttp import AiohttpSession
+        token='123456:SECRET-DOWNLOAD-TOKEN'
+        async def get_file(request):
+            return web.json_response({'ok':True,'result':{'file_id':'opaque','file_unique_id':'unique','file_size':3,'file_path':'photos/a.jpg'}})
+        async def content(request): return web.Response(status=404,text='missing')
+        app=web.Application();app.router.add_post(f'/bot{token}/getFile',get_file);app.router.add_get(f'/file/bot{token}/photos/a.jpg',content)
+        runner=web.AppRunner(app);await runner.setup();site=web.TCPSite(runner,'127.0.0.1',0);await site.start()
+        port=runner.addresses[0][1]
+        bot=Bot(token,session=AiohttpSession(api=TelegramAPIServer.from_base(f'http://127.0.0.1:{port}')))
+        try:
+            with self.assertRaises(TransportFailure) as raised: await download_media(bot,'opaque')
+            self.assertEqual(str(raised.exception),'Telegram file endpoint returned HTTP 404')
+            self.assertIsNone(raised.exception.__context__);self.assertIsNone(raised.exception.__cause__)
+            self.assert_token_hidden(raised.exception,token)
+            with self.assertLogs('aiogram.event',level='ERROR') as logs:
+                logging.getLogger('aiogram.event').exception('Cause exception while process update\n%s: %s',
+                    type(raised.exception).__name__,raised.exception,exc_info=raised.exception)
+            self.assertNotIn(token,'\n'.join(logs.output))
+        finally:
+            await bot.session.close();await runner.cleanup()
+
+    async def test_stream_timeout_and_transport_errors_with_token_url_are_replaced(self):
+        url='https://api.telegram.org/file/bot100:DOWNLOAD_TEST/photos/a.jpg'
+        class StatusError(Exception):
+            status=503
+        for chunk,expected in ((TimeoutError(f'Connection timeout to host {url}'),TimeoutError),
+                               (StatusError(f'503, url={url}'),TransportFailure),(OSError(url),TransportFailure)):
+            bot,session=self.bot(chunks=(b'abc',chunk),size=None)
+            with self.subTest(error=type(chunk).__name__),self.assertRaises(expected) as raised:
+                await download_media(bot,'opaque')
+            self.assertEqual(session.stream_closed,1)
+            self.assert_token_hidden(raised.exception,'DOWNLOAD_TEST')
 
     async def test_invalid_download_parameters_never_getfile(self):
         for options in ({'max_bytes':True},{'max_bytes':0},{'max_bytes':20_000_001},{'timeout':float('nan')},{'timeout':True},{'timeout':0}):
