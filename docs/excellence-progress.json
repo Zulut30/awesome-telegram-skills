@@ -250,9 +250,13 @@
     {
       "id": 21,
       "title": "Команды для всех ОС",
-      "status": "pending",
-      "commit_subject": null,
-      "evidence": [],
+      "status": "done",
+      "commit_subject": "excellence(021): document and verify commands for every OS",
+      "evidence": [
+        "GitHub Actions run 37558741084 (workflow_dispatch на ветке, 479f90a): Documented quickstart прошел на ubuntu-latest, macos-latest и windows-latest",
+        "локально на Linux: bash-quickstart — установка, init, offline/doctor, отказ при существующем каталоге, 60 браузерных проверок",
+        "docs-browser.mjs с новыми проверками вкладок PowerShell/bash: 8 контекстов passed; команды README в bash выполнены как написаны"
+      ],
       "remaining": null
     },
     {
