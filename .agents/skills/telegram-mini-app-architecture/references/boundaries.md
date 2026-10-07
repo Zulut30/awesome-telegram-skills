@@ -38,7 +38,7 @@ Browser history использует стабильные routes/state; пере
 
 Для поиска отменяйте stale requests либо проверяйте request generation перед применением. Для записи cancellation HTTP-запроса не доказывает отмену серверной операции. Retries согласуйте с семантикой метода.
 
-Background/frozen document и окончательный unmount — разные lifecycle. Если pagehide используется для teardown, поддержи восстановление pageshow при persisted=true: геометрия и подписки не должны оставаться выключенными после возврата без нового bootstrap.
+Background/frozen document и окончательный unmount — разные lifecycle. Если pagehide используется для teardown, поддержите восстановление pageshow при persisted=true: геометрия и подписки не должны оставаться выключенными после возврата без нового bootstrap.
 
 Покажите один путь экран → действие → API → результат и отказную ветку. Проверьте back к заполненной форме, прямую загрузку route, повтор отправки, stale response и cleanup. Python-операция тестируется вне Telegram handler; framework выбирается по проекту.
 

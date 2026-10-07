@@ -1,6 +1,6 @@
 # OIDC, сессия и account linking
 
-Текущий протокол сверен 3 октября 2026 года по [Telegram Login](https://core.telegram.org/bots/telegram-login). Старый iframe widget с hash и Mini App initData не проверяются этим JWT алгоритмом. При миграции поддержи только явно нужный старый путь с его собственной проверкой.
+Текущий протокол сверен 3 октября 2026 года по [Telegram Login](https://core.telegram.org/bots/telegram-login). Старый iframe widget с hash и Mini App initData не проверяются этим JWT алгоритмом. При миграции поддержите только явно нужный старый путь с его собственной проверкой.
 
 ## Конфигурация
 

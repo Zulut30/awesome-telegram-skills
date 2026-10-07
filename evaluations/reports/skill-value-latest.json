@@ -13,7 +13,7 @@
     "telegram-bot-api": "b619a6b493ec50988d285928f13bb8eff0fbe7ed7c1ae4f1910ba1bd18dd44c1",
     "telegram-bot-python": "c2e7ee43928a6763bf58798b9bf637365e9fc21acc955e4a2466af8c15a8cb0b",
     "telegram-business-bots": "d62fca023c12a4f191570659eaf65763470d00516f312f9feab30e70098af468",
-    "telegram-buttons": "84248ae4cf13e7f3ed73eab6281d468f2acce24838e901b3edb10d882c247ddb",
+    "telegram-buttons": "67dcf9afde4a5caf70f99dd1d752fda82c245e0a7c069d0c9f7b2bb0192b978e",
     "telegram-code-patterns": "b7ee96ee00314cff73841479228837ceff74664467291de905bc9182efb019ff",
     "telegram-cryptopay": "fe6c8db12ea4f61b6383d72d12018efc3ab9c2f23ca0890bd3c0910e69cdb90b",
     "telegram-debugging": "dd408d9a0950b0700979f7d4a4ade5424abfce61abdf72fadbdc9e9739a42530",
@@ -21,7 +21,7 @@
     "telegram-dialogs": "cd60101c87315805498eadd8ac429eb231c5c2d8ae019b301354670b0299f9b1",
     "telegram-groups": "1f0f4ac397ed81da8eec48c5f9701041dbf97704779e24e0f44edf22f1ff2e58",
     "telegram-inline-mode": "8afd6358c9c52fbe7b29e3f4f90c70c46cbcb7f3915d9e61f95b5910beec8fa0",
-    "telegram-library-selection": "58a9e7a666d78665afa8457a743d50105447f7257f1f495d24df169b59e819de",
+    "telegram-library-selection": "816a8048162d03f2846060e6ac49b37c6133613a2806e792863ffd9bbc154930",
     "telegram-localization": "b434eb0d1e52b99008afe84281f1de80450c2fe450e095ba6c85d39baa9b191c",
     "telegram-media-processing": "d1ad90f36e4801aba1794bf9aaf5176dceed769d01c1b088567c81969f0555b3",
     "telegram-mini-app-architecture": "99b32abdcb9a88b1a898217f2173148df766edd8fd1013a742c4f6ad53551122",
@@ -38,7 +38,7 @@
     "telegram-mini-app-visual-regression": "a958df00001b52372391e5e7cce733e7f0c71c115c68887784bfeed554f52f30",
     "telegram-notifications": "e952eb548f2666b9c6774fe63c982416907e36896380a5705efd0796046422be",
     "telegram-observability": "5bea4755833a63c6035bdcc32ae0b53c82b385456b07b245e16187867c630fe6",
-    "telegram-payment-provider": "b3117527a90467e96abefb15d3144cf41ec5b9f3ddafe4d8ec407a526b87af4f",
+    "telegram-payment-provider": "3d3211674010db758559cab21d825e6a79a7785cab4c7f2798e1e64632e3996d",
     "telegram-payments": "783e22940a01c422dcd70e97eab7de96271b3869f8370ec8f639d286e3115525",
     "telegram-platega": "accdde7cf570753ff1a936acfb8a13722074128886dd3110814655b14c0f59f9",
     "telegram-profiles": "48b51d71011e56f77814f958c54081008363d17fdb34f60bcb3e883571e75d2d",
@@ -47,7 +47,7 @@
     "telegram-security-review": "49b2caced6b9756f8ff145c61e059bbb4cc6e6cafe94d3a0ae7468b81c8f6cde",
     "telegram-subscription-access": "58b43de0ef559aa977a8e9e69fb2822b46486ad1406e6f7287a863f58f62ac0b",
     "telegram-testing": "e06abe17cd8f5462c1ce1c1140bca718f072c76d71e5d47eddb39fd9f338d37d",
-    "telegram-user-client": "e13a36902409c53c385fa9322e849f632cf47ee006cb43ce0c0cbedbea69ce69",
+    "telegram-user-client": "5a088ddc45fb46ae8c03a958891016ed50e425212eae3fb098dedb919a41c35c",
     "telegram-web-login": "8699d552c842ed4832ce5054ae146931d9a773e7b29ff320c48981bd44e3a726",
     "telegram-yookassa": "0a98b331e68439c1337d8c9319435d8334a646a45c1b45012b6ef30e69a0ff06",
     "telegram-ai-bot": "ae4b6f8735fd2f8cdafbbe2685da6afe1a8f164b8a57e8e2e2ac3f5fa17bab01"
@@ -102,10 +102,10 @@
      "tasks": 3,
      "criteria": 12,
      "without": 1,
-     "with": 7,
+     "with": 11,
      "passed_without": 0,
-     "passed_with": 1,
-     "uplift": 0.5
+     "passed_with": 3,
+     "uplift": 0.833
     },
     "telegram-code-patterns": {
      "tasks": 3,
@@ -173,11 +173,11 @@
     "telegram-library-selection": {
      "tasks": 3,
      "criteria": 9,
-     "without": 1,
-     "with": 5,
+     "without": 0,
+     "with": 9,
      "passed_without": 0,
-     "passed_with": 1,
-     "uplift": 0.444
+     "passed_with": 3,
+     "uplift": 1.0
     },
     "telegram-localization": {
      "tasks": 3,
@@ -326,11 +326,11 @@
     "telegram-payment-provider": {
      "tasks": 3,
      "criteria": 10,
-     "without": 3,
-     "with": 6,
-     "passed_without": 1,
-     "passed_with": 1,
-     "uplift": 0.3
+     "without": 2,
+     "with": 8,
+     "passed_without": 0,
+     "passed_with": 2,
+     "uplift": 0.6
     },
     "telegram-payments": {
      "tasks": 3,
@@ -407,11 +407,11 @@
     "telegram-user-client": {
      "tasks": 3,
      "criteria": 10,
-     "without": 4,
-     "with": 5,
+     "without": 5,
+     "with": 10,
      "passed_without": 1,
-     "passed_with": 1,
-     "uplift": 0.1
+     "passed_with": 3,
+     "uplift": 0.5
     },
     "telegram-web-login": {
      "tasks": 3,
@@ -435,11 +435,11 @@
    "totals": {
     "tasks": 126,
     "criteria": 447,
-    "without": 91,
-    "with": 263,
-    "passed_without": 2,
-    "passed_with": 48,
-    "uplift": 0.385
+    "without": 90,
+    "with": 278,
+    "passed_without": 1,
+    "passed_with": 55,
+    "uplift": 0.421
    },
    "results": [
     {
@@ -1227,11 +1227,11 @@
       "verdicts": [
        {
         "met": false,
-        "why": "Использует выдуманный параметр color с ButtonColor, а не style со значением danger."
+        "why": "Утверждает, что цвета нет; использует emoji, поле style=danger не упомянуто."
        },
        {
         "met": false,
-        "why": "Не проверяет версию aiogram или payload, не предлагает обновление или низкоуровневый вызов."
+        "why": "Проверки версии aiogram и payload нет, обновление или низкоуровневый вызов не предложены."
        },
        {
         "met": true,
@@ -1239,20 +1239,20 @@
        },
        {
         "met": false,
-        "why": "Обработчики не проверяют пользователя и доступ к объекту; только callback.answer."
+        "why": "Пользователь и доступ к объекту не проверяются; answer есть, но этого недостаточно."
        }
       ]
      },
      "with": {
-      "turns": 3,
+      "turns": 2,
       "verdicts": [
        {
         "met": true,
-        "why": "Использует style=\"danger\" для кнопки «Удалить» как поле Bot API, без эмодзи."
+        "why": "Использует style=\"danger\" в InlineKeyboardButton, без эмодзи или произвольного цвета."
        },
        {
-        "met": false,
-        "why": "Упоминает требуемую версию, но не проверяет установленную версию и payload, нет низкоуровневого вызова."
+        "met": true,
+        "why": "Проверка версии aiogram ≥3.31.0 и вывод model_dump payload с style; обновление подразумевается."
        },
        {
         "met": true,
@@ -1260,7 +1260,7 @@
        },
        {
         "met": false,
-        "why": "Только общая фраза о проверке прав, кода проверки нет; callback.answer() есть."
+        "why": "Обработчики вызывают callback.answer, но не проверяют пользователя и доступ к объекту."
        }
       ]
      }
@@ -1279,15 +1279,15 @@
       "verdicts": [
        {
         "met": false,
-        "why": "Поле icon_custom_emoji_id кнопки не используется; упомянут только custom_emoji_id в общем виде."
+        "why": "Поле icon_custom_emoji_id нигде не упоминается; предложены Unicode в тексте и выдуманные способы."
        },
        {
         "met": false,
-        "why": "Условие Premium владельца бота или username с Fragment не названо."
+        "why": "Условие Premium владельца или Fragment-username не названо."
        },
        {
         "met": false,
-        "why": "Fallback без иконки не предусмотрен; предложен лишь Unicode как альтернатива."
+        "why": "Fallback без иконки не предусмотрен; Unicode предложен как основной способ."
        },
        {
         "met": false,
@@ -1296,23 +1296,23 @@
       ]
      },
      "with": {
-      "turns": 4,
+      "turns": 3,
       "verdicts": [
        {
         "met": true,
-        "why": "Использует icon_custom_emoji_id в InlineKeyboardButton в коде и объяснении."
-       },
-       {
-        "met": false,
-        "why": "Упоминает Premium бота и Fragment расплывчато, но не называет точное условие: Premium владельца или купленный username."
+        "why": "Явно использует icon_custom_emoji_id в InlineKeyboardButton."
        },
        {
         "met": true,
-        "why": "Описан fallback: при невалидном ID icon_id=None, кнопка остаётся с текстом без иконки."
+        "why": "Упоминает дополнительный username с Fragment и Premium владельца бота как условия."
        },
        {
-        "met": false,
-        "why": "Не различает иконку кнопки и custom_emoji entity внутри текста сообщения."
+        "met": true,
+        "why": "Функция создаёт кнопку без иконки, если ID нет; fallback обязателен."
+       },
+       {
+        "met": true,
+        "why": "Прямо сказано, что иконка отличается от custom_emoji entity в тексте сообщения."
        }
       ]
      }
@@ -1335,11 +1335,11 @@
        },
        {
         "met": false,
-        "why": "Имитирует неактивность через фейковый callback, эмодзи и текст кнопки."
+        "why": "Кнопка «✓ Оплачено» с callback имитирует неактивность текстом; реальной блокировки нет."
        },
        {
         "met": false,
-        "why": "Не проверяет поддержку в SDK и клиентах."
+        "why": "Не проверяет поддержку в установленном SDK или целевых клиентах."
        },
        {
         "met": false,
@@ -1348,23 +1348,23 @@
       ]
      },
      "with": {
-      "turns": 4,
+      "turns": 3,
       "verdicts": [
        {
         "met": true,
-        "why": "Использует поле disabled/DisabledButton, но актуальность в документации явно не проверяет; механизм назван."
+        "why": "Предлагает поле disabled / DisabledButton как встроенный механизм Bot API."
        },
        {
         "met": true,
-        "why": "Явно советует не имитировать неактивность цветом, использовать встроенный disabled."
+        "why": "Использует реальное поле disabled, а не имитацию цветом или текстом."
        },
        {
         "met": true,
-        "why": "Проверяет версию API, версию aiogram, поддержку клиентов (Desktop, iOS, Android)."
+        "why": "Проверка версии aiogram и тест в iOS, Android, Desktop, Web."
        },
        {
-        "met": false,
-        "why": "Показывает кнопку с callback_data и url одновременно, что нарушает единственное действие."
+        "met": true,
+        "why": "Указывает, что disabled — единственное действие кнопки, как callback_data или url."
        }
       ]
      }
@@ -2393,15 +2393,15 @@
       "verdicts": [
        {
         "met": false,
-        "why": "Кандидаты не сравниваются; только общие слова про aiogram, без анализа версий Python и релизов."
+        "why": "Кандидаты не сравниваются по async-модели, версиям Python и активности релизов; нет сравнения."
        },
        {
         "met": false,
-        "why": "Рекомендует aiogram, но указано лишь «v3.x», конкретная совместимая версия не названа."
+        "why": "Рекомендует aiogram 3.x, но конкретную совместимую версию не называет; pip без пина."
        },
        {
         "met": false,
-        "why": "Нет сверки методов Bot API с установленной версией SDK."
+        "why": "Нет упоминания сверки методов Bot API с установленной версией SDK."
        }
       ]
      },
@@ -2409,16 +2409,16 @@
       "turns": 3,
       "verdicts": [
        {
-        "met": false,
-        "why": "Упоминает async и активность лишь общими словами, сравнения по критериям нет, python-telegram-bot описан неверно."
+        "met": true,
+        "why": "Сравнивает async-only, версии Python 3.10–3.14, отставание по Bot API; звезды не упомянуты."
        },
        {
-        "met": false,
-        "why": "Рекомендует aiogram, но только «≥3.0»; конкретной совместимой версии нет."
+        "met": true,
+        "why": "Рекомендует aiogram и фиксирует версию aiogram>=3.31,<3.32 (3.31.0)."
        },
        {
-        "met": false,
-        "why": "Про сверку методов с установленной версией SDK ничего не сказано."
+        "met": true,
+        "why": "Предлагает проверять методы импортом и model_fields в установленной версии, плюс pip show."
        }
       ]
      }
@@ -2436,58 +2436,15 @@
       "verdicts": [
        {
         "met": false,
-        "why": "Не проверяет происхождение пакета; утверждает, что он безопасен и стабилен без источников."
+        "why": "Не проверяет происхождение; прямо называет пакет официальным без обоснования."
        },
        {
         "met": false,
-        "why": "Упоминает оригинальный yookassa, но не различает официальный SDK и wrapper сообщества; yookassa-async подан как норма."
+        "why": "Не различает официальный SDK и community wrapper; называет пакет официальным."
        },
        {
         "met": false,
-        "why": "Предлагает прямой API лишь вскользь как альтернативу; executor/to_thread для синхронного SDK не упомянут."
-       }
-      ]
-     },
-     "with": {
-      "turns": 4,
-      "verdicts": [
-       {
-        "met": true,
-        "why": "Говорит проверить репозиторий/автора на PyPI и что похожее имя ≠ официальный пакет."
-       },
-       {
-        "met": true,
-        "why": "Называет yookassa-async community wrapper, официальный SDK — yookassa-sdk-python."
-       },
-       {
-        "met": true,
-        "why": "Предлагает asyncio.to_thread()/run_in_executor для синхронного официального SDK, с кодом."
-       }
-      ]
-     }
-    },
-    {
-     "id": "library-selection-3",
-     "skill": "telegram-library-selection",
-     "criteria": [
-      "Сохраняет существующую библиотеку без конкретной функциональной причины миграции",
-      "Если миграция нужна, учитывает handlers, persistence/сохраненные состояния и breaking changes, а не только imports",
-      "Предлагает проверить нужную функцию в установленной версии текущей библиотеки"
-     ],
-     "without": {
-      "turns": 1,
-      "verdicts": [
-       {
-        "met": false,
-        "why": "Рекомендует мигрировать из-за популярности; не предлагает сохранить библиотеку без функциональной причины."
-       },
-       {
-        "met": true,
-        "why": "Упоминает FSMContext вместо user_data, middleware, callback queries, фильтры, структуру handlers, поэтапную миграцию."
-       },
-       {
-        "met": false,
-        "why": "Не предлагает проверить нужную функцию в установленной версии python-telegram-bot."
+        "why": "Лишь упоминает синхронность под капотом; executor/to_thread или HTTP-клиент не предлагает."
        }
       ]
      },
@@ -2496,15 +2453,58 @@
       "verdicts": [
        {
         "met": true,
-        "why": "Рекомендует не мигрировать ради популярности, только при реальном функциональном пробеле."
+        "why": "Советует проверить владельца на PyPI и связь репозитория с официальной документацией ЮKassa; не ставить при отсутствии связи."
        },
        {
         "met": true,
-        "why": "Упоминает handlers, FSM/сохранённое состояние и миграцию данных, breaking changes, middleware."
+        "why": "Называет yookassa-sdk-python официальным синхронным SDK, а yookassa-async — оберткой сообщества."
+       },
+       {
+        "met": true,
+        "why": "Предлагает официальный SDK через asyncio.to_thread с кодом."
+       }
+      ]
+     }
+    },
+    {
+     "id": "library-selection-3",
+     "skill": "telegram-library-selection",
+     "criteria": [
+      "Не советует мигрировать ради популярности: оставляет python-telegram-bot, пока не названа конкретная функция, которой в нем нет",
+      "Если миграция нужна, учитывает handlers, persistence/сохраненные состояния и breaking changes, а не только imports",
+      "Предлагает проверить нужную функцию в установленной версии текущей библиотеки"
+     ],
+     "without": {
+      "turns": 1,
+      "verdicts": [
+       {
+        "met": false,
+        "why": "Рекомендует миграцию («да, но постепенно»), ставя на архитектуру и сообщество, а не на конкретную недостающую функцию."
        },
        {
         "met": false,
-        "why": "Предлагает проверить поддержку Bot API, но не нужную функцию в установленной версии."
+        "why": "Не упоминает persistence/сохранённые состояния и breaking changes; MemoryStorage теряет состояния, это не обсуждается."
+       },
+       {
+        "met": false,
+        "why": "Не предлагает проверить нужную функцию в установленной версии python-telegram-bot."
+       }
+      ]
+     },
+     "with": {
+      "turns": 4,
+      "verdicts": [
+       {
+        "met": true,
+        "why": "Говорит, что популярность не причина; оставить, пока не названа конкретная функция."
+       },
+       {
+        "met": true,
+        "why": "Упоминает переписывание обработчиков, middleware, состояния/persistence и тестов, а не только импорты."
+       },
+       {
+        "met": true,
+        "why": "Предлагает проверить версию и наличие функции в установленной python-telegram-bot."
        }
       ]
      }
@@ -4812,40 +4812,40 @@
       "verdicts": [
        {
         "met": false,
-        "why": "Только упоминает, что существующие провайдеры — заглушки None; сохранность заказов и обработчиков не гарантирована."
+        "why": "Директория пуста, существующий код не сохраняется и не рассматривается; лишь общий подход."
        },
        {
         "met": false,
-        "why": "Интерфейс содержит только create_payment и verify_signature; нет статуса, отмены, возврата."
+        "why": "Контракт содержит создание и проверку; статус лишь в тексте, отмены и возврата нет."
        },
        {
         "met": false,
-        "why": "Проверка подписи неполна: нет Shp_-параметров, callback читается как JSON вместо form-данных, ответ OK{InvId} отсутствует."
+        "why": "Подпись создания неверна, вебхук читает JSON вместо form, формат подписи Result недокументирован корректно."
        },
        {
         "met": false,
-        "why": "Ссылок на документацию нет, неподтвержденные детали не помечены."
+        "why": "Нет ссылок на документацию Robokassa и пометок о неподтвержденных деталях; утверждения поданы как факты."
        }
       ]
      },
      "with": {
-      "turns": 5,
+      "turns": 3,
       "verdicts": [
        {
         "met": true,
-        "why": "Говорит расширять модель Order полем provider, держать Robokassa изолированно, разделять обработчики по провайдеру."
+        "why": "Добавляется третий адаптер, существующие ЮKassa и Stars сохраняются с общим контрактом PaymentProvider."
        },
        {
         "met": false,
-        "why": "Контракт назван, но нет отмены; статус и возврат лишь упомянуты, без определения интерфейса."
+        "why": "Есть create, fetch_status, parse_notification, refund; но отмена отсутствует, fetch_status не реализован."
+       },
+       {
+        "met": true,
+        "why": "Проверка MD5 по OutSum:InvId:Password2 с Shp_, SignatureValue, ответ OK{InvId}, без чужих полей."
        },
        {
         "met": false,
-        "why": "Подпись Result URL неверна: не учтены Shp-параметры, MerchantLogin в подписи не нужен, ответ без OK."
-       },
-       {
-        "met": false,
-        "why": "Ссылок на документацию нет; лишь «уточни» про возврат, остальные детали поданы как факты."
+        "why": "Ссылок на первичную документацию нет, неподтвержденные детали не помечены; утверждения поданы как факты."
        }
       ]
      }
@@ -4863,15 +4863,15 @@
       "verdicts": [
        {
         "met": false,
-        "why": "Дедуп только по event_id; провайдер и transaction ID как составной ключ не указаны."
+        "why": "Дедупликация только по ID события, без учета провайдера и transaction ID."
        },
        {
         "met": false,
-        "why": "Сравнение по timestamp отбрасывает старые события, но не защищает подтвержденный статус от отката явно."
+        "why": "Опирается на запрос актуального статуса, но явного запрета отката подтвержденного статуса нет."
        },
        {
         "met": false,
-        "why": "ACK после надежного приема и outbox не упомянуты; действия вызываются внутри транзакции."
+        "why": "Нет outbox/транзакции для однократной выдачи; лог пишется после обработки, не атомарно."
        }
       ]
      },
@@ -4879,16 +4879,16 @@
       "turns": 4,
       "verdicts": [
        {
-        "met": false,
-        "why": "Дедупликация только по notification_id, без связки с провайдером и transaction ID."
+        "met": true,
+        "why": "Уникальный ключ (провайдер, ID события) через insert_once в processed_events."
        },
        {
         "met": true,
-        "why": "Игнорирует событие со старым timestamp и проверяет допустимость переходов, completed не откатывается в pending."
+        "why": "VALID_TRANSITIONS запрещает откат; невалидный переход игнорируется без изменения статуса."
        },
        {
         "met": true,
-        "why": "Лог, статус и outbox в одной транзакции, ACK после; выдача через outbox."
+        "why": "2xx после фиксации транзакции; выдача ставится в очередь queue_event внутри транзакции (outbox)."
        }
       ]
      }
@@ -4906,15 +4906,15 @@
       "verdicts": [
        {
         "met": true,
-        "why": "Говорит «нет», return URL недостоверен, не обновлять БД по параметрам URL; скриншот не упомянут."
+        "why": "Говорит «НЕТ», return URL не должен менять статус заказа; скриншот не упомянут."
        },
        {
         "met": true,
-        "why": "Webhook с проверкой подписи как основной метод и запрос статуса у провайдера как fallback."
+        "why": "Статус «оплачен» ставится по webhook провайдера; также упомянут fallback через polling API провайдера."
        },
        {
-        "met": true,
-        "why": "Проверяет сумму и ID заказа с локальным заказом; валюта явно не упомянута."
+        "met": false,
+        "why": "Проверяются подпись, статус, идемпотентность, но сумма и валюта не сверяются."
        }
       ]
      },
@@ -4923,15 +4923,15 @@
       "verdicts": [
        {
         "met": true,
-        "why": "Ответ «Нет»: return URL — только клиентский редирект, не подтверждает оплату; скриншот не упомянут."
+        "why": "Говорит «Нет», return URL — не подтверждение, код его не использует для смены статуса."
        },
        {
         "met": true,
-        "why": "Подтверждение оплаты через webhook провайдера с проверкой подписи, статус только после него."
+        "why": "Явно требует webhook провайдера или запрос статуса на backend."
        },
        {
         "met": true,
-        "why": "Проверяет сумму, валюту и связь с заказом по order_id/ID платежа."
+        "why": "Проверяет сумму, валюту и принадлежность заказу, код сверяет с локальным заказом."
        }
       ]
      }
@@ -6080,41 +6080,41 @@
       "turns": 1,
       "verdicts": [
        {
-        "met": false,
-        "why": "Использует Pyrogram с пользовательской сессией, а не Telethon."
+        "met": true,
+        "why": "Использует Telethon TelegramClient с API_ID/API_HASH и входом по телефону, не bot token."
        },
        {
         "met": false,
-        "why": "Есть список из трех групп, но нет пагинации и checkpoint по ID; только дедупликация."
+        "why": "Список групп есть, но checkpoint по message ID не реализован; лишь упомянут инкрементальный по дате."
        },
        {
         "met": false,
-        "why": "FloodWait/FloodWaitError нигде не обрабатывается; есть лишь общий except Exception."
+        "why": "FloodWaitError не обрабатывается; только sleep и общий except Exception."
        },
        {
         "met": false,
-        "why": "Session-файл лежит рядом со скриптом, api_hash в коде; защита секретов не упомянута."
+        "why": "Session-файл не защищен как секрет; API_HASH захардкожен, лишь общий совет про переменные окружения."
        }
       ]
      },
      "with": {
-      "turns": 3,
+      "turns": 4,
       "verdicts": [
        {
         "met": true,
-        "why": "Используется TelegramClient с API_ID/API_HASH и пользовательской авторизацией, не bot token."
+        "why": "Telethon TelegramClient с StringSession, api_id и api_hash, без bot token."
        },
        {
-        "met": false,
-        "why": "Есть список групп и итерация, но нет checkpoint по message ID; пагинация лишь неявная."
+        "met": true,
+        "why": "ALLOWED список, iter_messages с min_id, checkpoint по last_id в таблице checkpoints."
        },
        {
-        "met": false,
-        "why": "FloodWaitError ловится и ждёт e.seconds, но вне цикла: группа пропускается, чтение не продолжается."
+        "met": true,
+        "why": "except FloodWaitError: await asyncio.sleep(e.seconds + 1), затем продолжение от checkpoint."
        },
        {
-        "met": false,
-        "why": "Лишь совет про .gitignore для session file; StringSession и защита от логов не описаны."
+        "met": true,
+        "why": "StringSession берется из переменной окружения TG_SESSION, не из исходников; логи не содержат."
        }
       ]
      }
@@ -6132,32 +6132,32 @@
       "verdicts": [
        {
         "met": true,
-        "why": "Говорит, что бот-токен — credential бот-аккаунта, не ключ к личному аккаунту, нет доступа к User API."
+        "why": "Говорит, что у bot token ограниченные права и нет доступа к личным чатам."
        },
        {
         "met": true,
-        "why": "Предлагает User API авторизацию по номеру телефона через Telethon для своих чатов."
+        "why": "Явно рекомендует User Session с api_id, api_hash и номером телефона."
        },
        {
         "met": true,
-        "why": "Не предлагает обходы со сменой аккаунтов или повторными входами."
+        "why": "Не предлагает смену аккаунтов или повторные входы; только один user session."
        }
       ]
      },
      "with": {
-      "turns": 3,
+      "turns": 4,
       "verdicts": [
        {
         "met": true,
-        "why": "Говорит, что bot token даёт только идентичность бота, не доступ к личным чатам."
+        "why": "Говорит, что токен бота даёт только идентичность бота и нет доступа к личным чатам."
        },
        {
         "met": true,
-        "why": "Явно рекомендует user session с api_id, api_hash и номером телефона."
+        "why": "Явно рекомендует пользовательскую сессию основного аккаунта через Telethon."
        },
        {
         "met": true,
-        "why": "Не предлагает обходов через смену аккаунтов или повторные входы."
+        "why": "Прямо указывает, что flood wait нельзя обойти сменой аккаунтов; обходов не предлагает."
        }
       ]
      }
@@ -6175,32 +6175,32 @@
       "verdicts": [
        {
         "met": true,
-        "why": "Чекпоинт max_message_id, min_id при выгрузке и фильтр по ID в обработчике убирают дубли и пропуски."
+        "why": "Listener started before history, buffer plus dedup by message_id; no peer key or checkpoint, but gap and duplicates handled."
        },
        {
         "met": false,
-        "why": "Reconnect, правки и удаления (MessageEdited/MessageDeleted, catch_up) не рассматриваются; есть только перезапуск."
+        "why": "Reconnect mentioned only vaguely; edits and deletions are not handled at all."
        },
        {
         "met": false,
-        "why": "Нет явного утверждения, что чтение не помечает сообщения прочитанными и ничего не отправляется."
+        "why": "Answer never states that reading history avoids marking messages read or sending anything."
        }
       ]
      },
      "with": {
-      "turns": 3,
+      "turns": 5,
       "verdicts": [
        {
         "met": true,
-        "why": "Checkpoint по max_id, set processed, регистрация listener до проверки разрыва и фильтр по ID."
+        "why": "Handlers before history, PRIMARY KEY (peer_id, id) upsert, checkpoint from last processed ID."
        },
        {
-        "met": false,
-        "why": "Reconnect упомянут лишь вскользь через флаг; правки и удаления вообще не рассмотрены."
+        "met": true,
+        "why": "Covers reconnect with catch_up and re-read from checkpoint, MessageEdited, MessageDeleted marking deleted."
        },
        {
-        "met": false,
-        "why": "Про непрочтение сообщений и отсутствие отправки ничего не сказано."
+        "met": true,
+        "why": "Explicitly states send_read_acknowledge is not called and nothing is sent."
        }
       ]
      }
@@ -6494,7 +6494,7 @@
     "telegram-bot-api": "b619a6b493ec50988d285928f13bb8eff0fbe7ed7c1ae4f1910ba1bd18dd44c1",
     "telegram-bot-python": "c2e7ee43928a6763bf58798b9bf637365e9fc21acc955e4a2466af8c15a8cb0b",
     "telegram-business-bots": "d62fca023c12a4f191570659eaf65763470d00516f312f9feab30e70098af468",
-    "telegram-buttons": "84248ae4cf13e7f3ed73eab6281d468f2acce24838e901b3edb10d882c247ddb",
+    "telegram-buttons": "67dcf9afde4a5caf70f99dd1d752fda82c245e0a7c069d0c9f7b2bb0192b978e",
     "telegram-code-patterns": "b7ee96ee00314cff73841479228837ceff74664467291de905bc9182efb019ff",
     "telegram-cryptopay": "fe6c8db12ea4f61b6383d72d12018efc3ab9c2f23ca0890bd3c0910e69cdb90b",
     "telegram-debugging": "dd408d9a0950b0700979f7d4a4ade5424abfce61abdf72fadbdc9e9739a42530",
@@ -6502,7 +6502,7 @@
     "telegram-dialogs": "cd60101c87315805498eadd8ac429eb231c5c2d8ae019b301354670b0299f9b1",
     "telegram-groups": "1f0f4ac397ed81da8eec48c5f9701041dbf97704779e24e0f44edf22f1ff2e58",
     "telegram-inline-mode": "8afd6358c9c52fbe7b29e3f4f90c70c46cbcb7f3915d9e61f95b5910beec8fa0",
-    "telegram-library-selection": "58a9e7a666d78665afa8457a743d50105447f7257f1f495d24df169b59e819de",
+    "telegram-library-selection": "816a8048162d03f2846060e6ac49b37c6133613a2806e792863ffd9bbc154930",
     "telegram-localization": "b434eb0d1e52b99008afe84281f1de80450c2fe450e095ba6c85d39baa9b191c",
     "telegram-media-processing": "d1ad90f36e4801aba1794bf9aaf5176dceed769d01c1b088567c81969f0555b3",
     "telegram-mini-app-architecture": "99b32abdcb9a88b1a898217f2173148df766edd8fd1013a742c4f6ad53551122",
@@ -6519,7 +6519,7 @@
     "telegram-mini-app-visual-regression": "a958df00001b52372391e5e7cce733e7f0c71c115c68887784bfeed554f52f30",
     "telegram-notifications": "e952eb548f2666b9c6774fe63c982416907e36896380a5705efd0796046422be",
     "telegram-observability": "5bea4755833a63c6035bdcc32ae0b53c82b385456b07b245e16187867c630fe6",
-    "telegram-payment-provider": "b3117527a90467e96abefb15d3144cf41ec5b9f3ddafe4d8ec407a526b87af4f",
+    "telegram-payment-provider": "3d3211674010db758559cab21d825e6a79a7785cab4c7f2798e1e64632e3996d",
     "telegram-payments": "783e22940a01c422dcd70e97eab7de96271b3869f8370ec8f639d286e3115525",
     "telegram-platega": "accdde7cf570753ff1a936acfb8a13722074128886dd3110814655b14c0f59f9",
     "telegram-profiles": "48b51d71011e56f77814f958c54081008363d17fdb34f60bcb3e883571e75d2d",
@@ -6528,7 +6528,7 @@
     "telegram-security-review": "49b2caced6b9756f8ff145c61e059bbb4cc6e6cafe94d3a0ae7468b81c8f6cde",
     "telegram-subscription-access": "58b43de0ef559aa977a8e9e69fb2822b46486ad1406e6f7287a863f58f62ac0b",
     "telegram-testing": "e06abe17cd8f5462c1ce1c1140bca718f072c76d71e5d47eddb39fd9f338d37d",
-    "telegram-user-client": "e13a36902409c53c385fa9322e849f632cf47ee006cb43ce0c0cbedbea69ce69",
+    "telegram-user-client": "5a088ddc45fb46ae8c03a958891016ed50e425212eae3fb098dedb919a41c35c",
     "telegram-web-login": "8699d552c842ed4832ce5054ae146931d9a773e7b29ff320c48981bd44e3a726",
     "telegram-yookassa": "0a98b331e68439c1337d8c9319435d8334a646a45c1b45012b6ef30e69a0ff06",
     "telegram-ai-bot": "ae4b6f8735fd2f8cdafbbe2685da6afe1a8f164b8a57e8e2e2ac3f5fa17bab01"
@@ -6583,10 +6583,10 @@
      "tasks": 3,
      "criteria": 12,
      "without": 6,
-     "with": 10,
-     "passed_without": 1,
+     "with": 12,
+     "passed_without": 2,
      "passed_with": 3,
-     "uplift": 0.333
+     "uplift": 0.5
     },
     "telegram-code-patterns": {
      "tasks": 3,
@@ -6654,11 +6654,11 @@
     "telegram-library-selection": {
      "tasks": 3,
      "criteria": 9,
-     "without": 2,
-     "with": 7,
-     "passed_without": 0,
-     "passed_with": 2,
-     "uplift": 0.556
+     "without": 5,
+     "with": 9,
+     "passed_without": 1,
+     "passed_with": 3,
+     "uplift": 0.444
     },
     "telegram-localization": {
      "tasks": 3,
@@ -6807,11 +6807,11 @@
     "telegram-payment-provider": {
      "tasks": 3,
      "criteria": 10,
-     "without": 6,
-     "with": 10,
+     "without": 7,
+     "with": 9,
      "passed_without": 1,
      "passed_with": 3,
-     "uplift": 0.4
+     "uplift": 0.2
     },
     "telegram-payments": {
      "tasks": 3,
@@ -6888,11 +6888,11 @@
     "telegram-user-client": {
      "tasks": 3,
      "criteria": 10,
-     "without": 6,
-     "with": 9,
-     "passed_without": 1,
-     "passed_with": 2,
-     "uplift": 0.3
+     "without": 8,
+     "with": 10,
+     "passed_without": 2,
+     "passed_with": 3,
+     "uplift": 0.2
     },
     "telegram-web-login": {
      "tasks": 3,
@@ -6916,11 +6916,11 @@
    "totals": {
     "tasks": 126,
     "criteria": 447,
-    "without": 240,
-    "with": 402,
-    "passed_without": 41,
-    "passed_with": 113,
-    "uplift": 0.362
+    "without": 246,
+    "with": 406,
+    "passed_without": 44,
+    "passed_with": 115,
+    "uplift": 0.358
    },
    "results": [
     {
@@ -7708,40 +7708,40 @@
       "verdicts": [
        {
         "met": true,
-        "why": "Использует style=\"danger\" из Bot API, явно объясняет поле, без эмодзи-имитации в основном коде."
+        "why": "Использует style=\"danger\" из Bot API 9.4, эмодзи лишь как запасной вариант."
        },
        {
         "met": true,
-        "why": "Проверка model_fields на наличие style, при False — обновление aiogram; payload не проверяется, но обновление предложено."
+        "why": "Предлагает проверить версию и model_fields, тесты на style; при старой версии — обновление."
        },
        {
         "met": true,
-        "why": "Тексты «Удалить» и «Отмена» понятны без цвета."
+        "why": "Текст «Удалить» и «Отмена» понятен без цвета."
        },
        {
         "met": false,
-        "why": "Обработчик не проверяет пользователя в коде, только совет в проверках; answer() есть."
+        "why": "Обработчики не проверяют пользователя и доступ к объекту; лишь замечание, но cb.answer() есть."
        }
       ]
      },
      "with": {
-      "turns": 4,
+      "turns": 3,
       "verdicts": [
        {
         "met": true,
-        "why": "Использует style=\"danger\" в InlineKeyboardButton и явно говорит, что произвольный цвет задать нельзя."
+        "why": "Использует style=\"danger\" и явно говорит, что эмодзи для цвета не подходит."
        },
        {
         "met": true,
-        "why": "Проверка payload через model_dump_json; при отсутствии поля — обновление aiogram или низкоуровневый sendMessage."
+        "why": "Проверяет версию и model_fields, сверяет JSON; предлагает обновление или отправку готового JSON."
        },
        {
         "met": true,
-        "why": "Текст «Удалить» сохраняет смысл без цвета; прямо сказано не полагаться только на цвет."
+        "why": "Рекомендует подпись «Удалить заказ», чтобы текст был понятен без цвета."
        },
        {
-        "met": false,
-        "why": "answer() есть, но проверка пользователя и объекта лишь TODO-комментарий, не реализована в коде."
+        "met": true,
+        "why": "Проверяет владельца и существование заказа, вызывает callback.answer во всех ветках."
        }
       ]
      }
@@ -7760,19 +7760,19 @@
       "verdicts": [
        {
         "met": true,
-        "why": "Явно использует icon_custom_emoji_id в InlineKeyboardButton с примерами кода."
-       },
-       {
-        "met": false,
-        "why": "Говорит про владение эмодзи-паком и не называет Premium владельца или Fragment username."
+        "why": "Явно использует поле icon_custom_emoji_id в InlineKeyboardButton и в сыром запросе."
        },
        {
         "met": true,
-        "why": "Описан фолбэк: ловить TelegramBadRequest и отправлять клавиатуру без icon_custom_emoji_id."
+        "why": "Указывает, что нужен купленный на Fragment username владельца бота; Premium владельца не назван, но условие дано."
+       },
+       {
+        "met": true,
+        "why": "Есть try/except с отправкой клавиатуры без иконки и читаемая подпись кнопки."
        },
        {
         "met": false,
-        "why": "Явного различия иконки кнопки и custom_emoji entity в тексте нет; entities лишь источник ID."
+        "why": "Упоминает custom_emoji entity только как источник ID, не противопоставляя её иконке кнопки."
        }
       ]
      },
@@ -7781,19 +7781,19 @@
       "verdicts": [
        {
         "met": true,
-        "why": "Явно добавляет поле icon_custom_emoji_id в InlineKeyboardButton в коде и JSON."
+        "why": "Явно указывает поле icon_custom_emoji_id в InlineKeyboardButton и использует его в коде."
        },
        {
         "met": true,
-        "why": "Указано: Premium владельца бота или username, купленные на Fragment."
+        "why": "Называет дополнительный username с Fragment или Premium владельца бота как условие."
        },
        {
         "met": true,
-        "why": "Код отправляет кнопку без иконки при невалидном ID или TelegramBadRequest."
+        "why": "Описан fallback: кнопка без иконки, есть код с повтором без иконки."
        },
        {
         "met": true,
-        "why": "Явно сказано, что это не custom_emoji entity: там entity в тексте, здесь поле кнопки."
+        "why": "Прямо сказано, что это не entity custom_emoji в тексте сообщения."
        }
       ]
      }
@@ -7812,40 +7812,40 @@
       "verdicts": [
        {
         "met": false,
-        "why": "Утверждает, что disabled-кнопки в Telegram нет; документацию не проверяет и поле не упоминает."
+        "why": "Утверждает, что атрибута disabled в Bot API нет; документацию не проверяет."
        },
        {
         "met": false,
-        "why": "Предлагает именно имитацию: обычная кнопка с текстом «Оплачено ✓» и пустым callback noop."
+        "why": "Предлагает имитацию: кнопка с текстом и пустым callback, физически нажимаемая."
        },
        {
         "met": false,
-        "why": "Проверку версии SDK не предлагает; только общая проверка в мобильном и десктопном клиентах."
+        "why": "Проверяет разные клиенты, но не поддержку в установленном SDK; про disabled не проверяет."
        },
        {
-        "met": true,
-        "why": "Явно указывает, что у кнопки одно действие: callback_data noop, url и pay не подходят."
+        "met": false,
+        "why": "Говорит про замену клавиатуры и callback_data, но не формулирует правило одного действия кнопки."
        }
       ]
      },
      "with": {
-      "turns": 4,
+      "turns": 3,
       "verdicts": [
        {
         "met": true,
-        "why": "Использует disabled=DisabledButton() и советует сверить поле с документацией текущего Bot API."
-       },
-       {
-        "met": false,
-        "why": "Предлагает запасной вариант с noop-кнопкой и текстом, но честно называет его заглушкой; основное решение — disabled."
+        "why": "Предлагает поле disabled / DisabledButton и использует его в коде."
        },
        {
         "met": true,
-        "why": "Рекомендует проверить версию SDK, сериализацию и отображение на iOS, Android, Desktop, Web."
+        "why": "Прямо говорит, что серый текст и заглушки не подходят; использует настоящее disabled."
        },
        {
         "met": true,
-        "why": "Требует не сочетать callback_data или url с disabled: только один тип действия."
+        "why": "Просит проверить версию SDK (aiogram 3.31.0) и тестировать на Android, iOS, Desktop, Web."
+       },
+       {
+        "met": true,
+        "why": "Указывает, что в кнопке ровно одно действие; disabled нельзя сочетать с callback_data, url, pay."
        }
       ]
      }
@@ -8874,15 +8874,15 @@
       "verdicts": [
        {
         "met": false,
-        "why": "Сравнение идёт по модели и удобству, но не по версиям Python, релизам и активности поддержки."
+        "why": "Сравнение поверхностное; поддерживаемые версии Python и активность релизов не сопоставлены."
        },
        {
         "met": false,
-        "why": "Рекомендует aiogram 3 + FastAPI, но конкретную совместимую версию (например, 3.x.y) не называет."
+        "why": "Рекомендует aiogram 3.x, но конкретную совместимую версию не называет."
        },
        {
         "met": false,
-        "why": "Про сверку методов с установленной версией SDK против версии Bot API на сайте ничего не сказано."
+        "why": "Нет сверки методов с установленной версией SDK; лишь общее утверждение об актуальном Bot API."
        }
       ]
      },
@@ -8890,16 +8890,16 @@
       "turns": 4,
       "verdicts": [
        {
-        "met": false,
-        "why": "Сравнения по async-модели, версиям Python и активности релизов нет; только краткие доводы за aiogram."
-       },
-       {
-        "met": false,
-        "why": "Рекомендует aiogram 3.x, но конкретную версию не называет; номер явно условный/не проверен."
+        "met": true,
+        "why": "Таблица сравнивает async-модель, версии Python, даты релизов и число релизов за год; звезды не используются."
        },
        {
         "met": true,
-        "why": "Явно требует сверять поля с моделями установленной версии, а не с версией Bot API на сайте."
+        "why": "Рекомендует aiogram и фиксирует версию aiogram>=3.31,<3.32."
+       },
+       {
+        "met": true,
+        "why": "Проверяет pip show, __api_version__, импорт методов и поля модели в установленной версии, а не по сайту."
        }
       ]
      }
@@ -8916,16 +8916,16 @@
       "turns": 1,
       "verdicts": [
        {
-        "met": false,
-        "why": "Советует проверить автора, репозиторий, исходники, но не сверку с документацией и upstream ЮKassa."
+        "met": true,
+        "why": "Советует проверить автора, репозиторий, соответствие кода sdist, тайпсквоттинг; но upstream/документацию поставщика явно не упоминает как источник сверки."
        },
        {
-        "met": false,
-        "why": "Упоминает официальный SDK yookassa, но явно не противопоставляет его community-wrapper; не различает."
+        "met": true,
+        "why": "Противопоставляет официальный yookassa (от ЮMoney) и сторонние обёртки вроде yookassa-async."
        },
        {
-        "met": false,
-        "why": "Предлагает httpx.AsyncClient, но не говорит, что официальный SDK синхронный, и не упоминает to_thread/executor."
+        "met": true,
+        "why": "Официальный SDK синхронный, предлагает asyncio.to_thread и httpx.AsyncClient."
        }
       ]
      },
@@ -8934,15 +8934,15 @@
       "verdicts": [
        {
         "met": true,
-        "why": "Говорит, что похожее имя не доказывает принадлежность; сверять с документацией ЮKassa и репозиторием."
+        "why": "Предлагает сверить страницу PyPI со ссылкой на репозиторий из документации ЮKassa; говорит, что сходство имени ничего не доказывает."
        },
        {
         "met": true,
-        "why": "Официальный SDK `yookassa` от yoomoney отличается от «yookassa-async» как проекта сообщества."
+        "why": "Называет официальный SDK `yookassa` и отдельно описывает `yookassa-async` как возможную обертку сообщества."
        },
        {
         "met": true,
-        "why": "Официальный SDK синхронный; предлагает asyncio.to_thread или httpx.AsyncClient."
+        "why": "Официальный SDK синхронный; предлагает asyncio.to_thread и альтернативу на httpx.AsyncClient."
        }
       ]
      }
@@ -8951,7 +8951,7 @@
      "id": "library-selection-3",
      "skill": "telegram-library-selection",
      "criteria": [
-      "Сохраняет существующую библиотеку без конкретной функциональной причины миграции",
+      "Не советует мигрировать ради популярности: оставляет python-telegram-bot, пока не названа конкретная функция, которой в нем нет",
       "Если миграция нужна, учитывает handlers, persistence/сохраненные состояния и breaking changes, а не только imports",
       "Предлагает проверить нужную функцию в установленной версии текущей библиотеки"
      ],
@@ -8960,32 +8960,32 @@
       "verdicts": [
        {
         "met": true,
-        "why": "Говорит, что «популярнее» слабая причина; без конкретной боли не мигрировать, оставить как есть."
+        "why": "Говорит, что популярность слабая причина; рекомендует оставаться на PTB, пока нет измеримой причины."
        },
        {
         "met": true,
-        "why": "Учитывает FSM/persistence (RedisStorage, PicklePersistence), JobQueue, ConversationHandler, откат, тесты, а не только импорты."
+        "why": "Учитывает хендлеры, FSM/persistence (RedisStorage), JobQueue, таблицу соответствий, тесты и откат, не только imports."
        },
        {
         "met": false,
-        "why": "Не предлагает проверить нужную функцию в установленной версии PTB; лишь допущения о версии."
+        "why": "Нет предложения проверить нужную функцию в установленной версии текущей библиотеки PTB."
        }
       ]
      },
      "with": {
-      "turns": 4,
+      "turns": 3,
       "verdicts": [
        {
         "met": true,
-        "why": "Прямо рекомендует не мигрировать ради популярности, оставаться на PTB без функциональной причины."
+        "why": "Прямо говорит «нет, не ради популярности», оставить PTB, пока не названа конкретная функция."
        },
        {
         "met": true,
-        "why": "Описывает перенос persistence, user_data, callback_data, ConversationHandler→FSM, handlers, а не только imports."
+        "why": "Рассматривает handlers, FSM/persistence, JobQueue, потерю состояний и поэтапный переход с откатом, не только импорты."
        },
        {
         "met": true,
-        "why": "Предлагает проверить версию и наличие метода/поля через telegram.__version__, hasattr и release notes."
+        "why": "Шаг 2: проверить функцию в установленной версии PTB командами pip show и импорта."
        }
       ]
      }
@@ -11292,20 +11292,20 @@
       "turns": 1,
       "verdicts": [
        {
-        "met": false,
-        "why": "Говорит про регрессию ЮKassa и Stars, но явного сохранения заказов и обработчиков нет."
+        "met": true,
+        "why": "ЮKassa и Stars подключаются к интерфейсу, Robokassa добавляется третьей; регрессия проверяется."
        },
        {
         "met": false,
-        "why": "Интерфейс только create и verify; статуса, отмены и возврата нет."
+        "why": "Интерфейс содержит только create_payment и handle_callback; статуса, отмены и возврата нет."
        },
        {
         "met": true,
-        "why": "Проверяет подпись ResultURL с Password2, формат OutSum:InvId:Password2, ответ OK{InvId}, без чужих полей."
+        "why": "Проверка по Password2: OutSum:InvId:Pass2 и отсортированные Shp_, ответ OK{InvId}, без чужих полей."
        },
        {
         "met": false,
-        "why": "Ссылок на документацию и пометок о неподтверждённых деталях нет; только допущения и риски."
+        "why": "Ссылок на документацию нет, неподтвержденные детали не помечены; лишь совет сверить с примером."
        }
       ]
      },
@@ -11314,19 +11314,19 @@
       "verdicts": [
        {
         "met": true,
-        "why": "Явно заявлено, что код ЮKassa и Stars не трогается, общий слой заказов сохраняется."
+        "why": "Явно: ЮKassa, Stars, существующие заказы и обработчики не менять; тесты проходят без изменений."
+       },
+       {
+        "met": false,
+        "why": "Контракт адаптера не определён явно; упомянуты методы разрознено, статус и уведомление есть, но нет единого контракта."
        },
        {
         "met": true,
-        "why": "Контракт: create_checkout, verify_notification, fetch_status; refund бросает NotSupported, то есть возврат по поддержке."
+        "why": "Подпись Result с паролем #2, без MerchantLogin, Shp_* по алфавиту, OK{InvId}, сумма строкой."
        },
        {
         "met": true,
-        "why": "Result URL проверяется подписью OutSum:InvId:Password2, ответ OK<InvId>; Return URL статус не меняет."
-       },
-       {
-        "met": true,
-        "why": "Схема помечена как неподтверждённая по памяти, есть раздел «Не подтверждено» со ссылкой на документацию."
+        "why": "Раздел «Не подтверждено» помечает непроверенное и отсылает к docs.robokassa.ru."
        }
       ]
      }
@@ -11344,32 +11344,32 @@
       "verdicts": [
        {
         "met": false,
-        "why": "Дедуп только по event_id, без указания провайдера и transaction ID."
+        "why": "Дедупликация только по event_id, без провайдера и transaction ID."
        },
        {
         "met": true,
-        "why": "Статус двигается только вперёд по рангу; запоздавшее событие помечается stale, откат игнорируется."
+        "why": "Статус двигается только вперёд по рангу; устаревшие события игнорируются."
        },
        {
         "met": true,
-        "why": "Запись в транзакции, затем 200; эффекты через outbox с ключом идемпотентности, воркер отдельно."
+        "why": "2xx после записи события в транзакции; побочные эффекты через outbox в той же транзакции."
        }
       ]
      },
      "with": {
-      "turns": 3,
+      "turns": 4,
       "verdicts": [
        {
         "met": true,
-        "why": "Уникальный индекс по (provider, env, event_id), повтор получает 200 без обработки."
+        "why": "Уникальный ключ «провайдер + ID события/транзакции», вставка в одной транзакции с уникальным индексом."
        },
        {
         "met": true,
-        "why": "Машина состояний ALLOWED игнорирует откат pending после paid."
+        "why": "Конечный автомат разрешает только переходы вперёд; устаревшее событие статус не откатывает."
        },
        {
         "met": true,
-        "why": "ACK после записи, 5xx при ошибке; выдача через outbox с уникальным ключом в транзакции."
+        "why": "Успех после коммита; grant_access через outbox в транзакции, идемпотентно по order_id."
        }
       ]
      }
@@ -11387,32 +11387,32 @@
       "verdicts": [
        {
         "met": true,
-        "why": "Начинает с «Нет»; return URL — лишь редирект, статус из query брать нельзя, меняет только серверное подтверждение."
+        "why": "Ответ говорит «Нет», return URL не меняет БД, статус только по подтверждению провайдера."
        },
        {
         "met": true,
-        "why": "Подтверждение через подписанный webhook и запрос статуса провайдера по API из backend."
+        "why": "Webhook с подписью как источник истины и перезапрос статуса через API провайдера."
        },
        {
         "met": true,
-        "why": "Код сверяет amount и currency, находит заказ по provider_payment_id, при расхождении — алерт."
+        "why": "Код сверяет amount и currency с заказом, находит заказ по provider_payment_id."
        }
       ]
      },
      "with": {
-      "turns": 3,
+      "turns": 4,
       "verdicts": [
        {
         "met": true,
-        "why": "Говорит «Нет»: return URL можно подделать, он не доказывает оплату и статус заказа не меняет."
+        "why": "Return URL только показывает «Проверяем», заказ не меняет; подделанные параметры статус не меняют."
        },
        {
         "met": true,
-        "why": "Источник истины — webhook провайдера с проверкой, плюс fetch_status через API и reconciliation."
+        "why": "Основной путь — подписанное уведомление провайдера, запасной — fetch_status у провайдера из backend."
        },
        {
         "met": true,
-        "why": "В apply_payment_event сверяются сумма, валюта и связь с локальным платежом по txn_id."
+        "why": "apply_event сверяет сумму, валюту и принадлежность платежа заказу по ID."
        }
       ]
      }
@@ -12562,19 +12562,19 @@
       "verdicts": [
        {
         "met": true,
-        "why": "Telethon TelegramClient с api_id/api_hash, пользовательский аккаунт, не bot token."
-       },
-       {
-        "met": false,
-        "why": "Список групп есть, но checkpoint — MAX(msg_id) из БД; пагинация неявная, allowlist слабый."
+        "why": "Telethon TelegramClient с api_id/api_hash, пользовательский аккаунт, явно не бот."
        },
        {
         "met": true,
-        "why": "except FloodWaitError с asyncio.sleep(e.seconds + 1) и продолжением с last."
+        "why": "Список GROUPS, iter_messages с батчами, курсор MAX(msg_id) как checkpoint по ID."
+       },
+       {
+        "met": true,
+        "why": "except FloodWaitError: sleep(e.seconds + 1) и повтор с сохранением курсора."
        },
        {
         "met": false,
-        "why": "Только совет не коммитить .session; нет хранения вне исходников и логов, файл в cwd."
+        "why": "api-ключи в env, но session-файл лежит локально; только совет не коммитить, без явного хранения вне исходников."
        }
       ]
      },
@@ -12583,19 +12583,19 @@
       "verdicts": [
        {
         "met": true,
-        "why": "TelegramClient с api_id/api_hash и user-сессией, is_user_authorized; не bot token."
+        "why": "Telethon с TelegramClient, StringSession, api_id/api_hash из окружения; bot token не используется."
        },
        {
         "met": true,
-        "why": "CHATS из трёх ID, iter_messages с min_id/батчами, checkpoint по max message_id."
+        "why": "Список ALLOWED, iter_messages с min_id и reverse, checkpoint по last_id в таблице."
        },
        {
         "met": true,
-        "why": "Ловит FloodWaitError и ждёт e.seconds + 1 секунду."
+        "why": "Ловит FloodWaitError и ждёт e.seconds + 1, затем продолжает от checkpoint."
        },
        {
         "met": true,
-        "why": "Сессия, api_id/hash из env, файл вне репозитория с правами 600, не в логах."
+        "why": "StringSession берётся из переменной окружения TG_SESSION; сказано хранить вне исходников и не логировать."
        }
       ]
      }
@@ -12613,15 +12613,15 @@
       "verdicts": [
        {
         "met": true,
-        "why": "Говорит, что бот — отдельный аккаунт, тот же бот с теми же ограничениями, чужие диалоги недоступны."
+        "why": "Говорит, что бот — отдельный аккаунт и не имеет доступа к личным диалогам пользователя."
        },
        {
         "met": true,
-        "why": "Явно требует войти в пользовательский аккаунт по номеру телефона, сессия me.session."
+        "why": "Явно требует войти как пользователь по номеру телефона через MTProto, с кодом примера."
        },
        {
         "met": true,
-        "why": "Не предлагает менять аккаунты или перелогиниваться для обхода; предупреждает о нарушении правил и лимитах."
+        "why": "Не предлагает смену аккаунтов или повторные входы; советует лишь легитимные способы."
        }
       ]
      },
@@ -12630,15 +12630,15 @@
       "verdicts": [
        {
         "met": true,
-        "why": "Говорит, что токен бота даёт вход только как бот, видит лишь адресованное ему."
+        "why": "Говорит, что токеном бота получаешь только сессию бота, личные чаты недоступны."
        },
        {
         "met": true,
-        "why": "Вариант 1: войти своим пользовательским аккаунтом, интерактивная авторизация, файл session."
+        "why": "Прямо указывает, что нужна пользовательская сессия, вход от имени аккаунта (StringSession)."
        },
        {
         "met": true,
-        "why": "Не предлагает смену аккаунтов; прямо советует не входить повторно в цикле."
+        "why": "Явно написано не обходить лимиты сменой аккаунтов или повторными входами."
        }
       ]
      }
@@ -12656,15 +12656,15 @@
       "verdicts": [
        {
         "met": true,
-        "why": "Подписка до выгрузки, буфер, min_id/last_id чекпоинт и INSERT OR IGNORE по (chat_id, msg_id)."
+        "why": "Подписка до выгрузки, буфер, last_id/min_id и PK (chat_id,msg_id) с INSERT OR IGNORE."
+       },
+       {
+        "met": true,
+        "why": "Упомянуты catch_up=True при реконнекте, события MessageEdited/MessageDeleted, upsert для правок."
        },
        {
         "met": false,
-        "why": "Реконнект (catch_up) и правки упомянуты, но удаления не обработаны, только правки."
-       },
-       {
-        "met": false,
-        "why": "Про непрочтение сообщений и отсутствие отправки в ответе ничего не сказано."
+        "why": "Нет явного утверждения, что чтение не отмечает прочитанным и ничего не отправляется."
        }
       ]
      },
@@ -12673,15 +12673,15 @@
       "verdicts": [
        {
         "met": true,
-        "why": "Подписка до истории, буфер, checkpoint max_id, PRIMARY KEY (peer,id) с INSERT OR IGNORE и добор."
+        "why": "Handlers registered before history, upsert by (peer_id,id), checkpoint updated only by history reading."
        },
        {
         "met": true,
-        "why": "Упоминает reconnect (catch_up, повтор добора) и отдельную обработку MessageEdited/MessageDeleted через UPDATE."
+        "why": "Покрыты catch_up, повторное чтение после reconnect, обработка правок и пометка удалений."
        },
        {
-        "met": false,
-        "why": "Нет явного утверждения, что чтение не отмечает прочитанным и не отправляет сообщения."
+        "met": true,
+        "why": "Заявлено, что клиент только читает, не отмечает прочитанным и не отправляет; код это подтверждает."
        }
       ]
      }

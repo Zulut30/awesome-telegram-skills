@@ -18,6 +18,6 @@ Platform adapter предоставляет снимок геометрии/те
 
 BackButton/MainButton callbacks используют те же ссылки при cleanup. При remount или смене экрана один click дает одно действие. Проверяйте capability и предусмотренный fallback, включая клиента без native-кнопки.
 
-Если cleanup выполняется на pagehide, учитывайте event.persisted: документ может быть заморожен в back/forward cache, затем восстановлен без нового bootstrap. Безусловный destroy с одноразовым pagehide listener оставит восстановленный UI без resize/bridge callbacks. Сохраните необходимые подписки либо восстанови их и текущий snapshot на pageshow; фактическое закрытие/unmount очищает ресурсы. Проверьте resize и back после такого восстановления, не только первый mount.
+Если cleanup выполняется на pagehide, учитывайте event.persisted: документ может быть заморожен в back/forward cache, затем восстановлен без нового bootstrap. Безусловный destroy с одноразовым pagehide listener оставит восстановленный UI без resize/bridge callbacks. Сохраните необходимые подписки либо восстановите их и текущий snapshot на pageshow; фактическое закрытие/unmount очищает ресурсы. Проверьте resize и back после такого восстановления, не только первый mount.
 
 Источники lifecycle: [pagehide и persisted](https://developer.mozilla.org/en-US/docs/Web/API/Window/pagehide_event), [back/forward cache](https://web.dev/articles/bfcache).

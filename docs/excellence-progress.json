@@ -599,9 +599,15 @@
     {
       "id": 48,
       "title": "Усилить тонкие скиллы",
-      "status": "pending",
-      "commit_subject": null,
-      "evidence": [],
+      "status": "done",
+      "commit_subject": "excellence(048): strengthen buttons, library selection, payment provider and user client skills",
+      "evidence": [
+        "4 SKILL.md: Когда использовать / Когда не использовать / Алгоритм / Пример / Типичные ошибки / Проверка; references/libraries.md, providers.md, telethon.md дополнены",
+        "Факты сверены 2026-10-07: Bot API 10.3 (style, DisabledButton, answerCallbackQuery), aiogram 3.31.0, PyPI (aiogram, python-telegram-bot, pyTelegramBotAPI, Telethon, yookassa, aiocryptopay), docs.robokassa.ru (подписи, OpStateExt, возвраты, холдирование), docs.stripe.com (webhooks, idempotency), Telethon 1.45.0 (сигнатуры)",
+        "Примеры выполнены: кнопки на aiogram 3.31.0 с подставными callback, подпись Robokassa на примере из документации, выгрузка Telethon с FloodWaitError на подставном клиенте",
+        "evaluations/reports/skill-value-latest.json: со скиллом haiku 4→11/12, sonnet 9→12/12 задач этих скиллов; колебания haiku описаны в evaluations/README.md",
+        "16 форм на «ты» в 15 скиллах заменены, список SINGULAR в tests/test_skill_language.py расширен"
+      ],
       "remaining": null
     },
     {
