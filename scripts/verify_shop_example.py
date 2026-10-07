@@ -15,6 +15,9 @@ import sys
 import tempfile
 import zipfile
 
+sys.path.insert(0, str(Path(__file__).resolve().parent))  # shared helpers live next to this script
+from _environment import minimal_environment  # noqa: E402
+
 ROOT=Path(__file__).resolve().parents[1]
 
 
@@ -30,7 +33,7 @@ def main() -> int:
     if any(not p.is_file() for p in sources) or sources[0].suffix!='.whl' or sources[1].suffix!='.tgz':raise ValueError('Provide trusted local wheel/tarball')
     output=args.output.resolve();output.mkdir()
     consumer=Path(tempfile.mkdtemp(prefix='telegram shop consumer '));venv=consumer/'environment'
-    env={k:v for k,v in os.environ.items() if k.upper() in {'PATH','PATHEXT','SYSTEMROOT','WINDIR','TEMP','TMP','COMSPEC','USERPROFILE','LOCALAPPDATA','CHROME_PATH'}};env['PYTHONUTF8']='1'
+    env=minimal_environment();env['PYTHONUTF8']='1'
     if 'CHROME_PATH' not in env:
         chrome=Path(os.environ.get('PROGRAMFILES','C:/Program Files'))/'Google/Chrome/Application/chrome.exe'
         if chrome.is_file():env['CHROME_PATH']=str(chrome)

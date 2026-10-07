@@ -12,6 +12,9 @@ import sys
 import tempfile
 import zipfile
 
+sys.path.insert(0, str(Path(__file__).resolve().parent))  # shared helpers live next to this script
+from _environment import minimal_environment  # noqa: E402
+
 ROOT=Path(__file__).resolve().parents[1]
 
 
@@ -26,7 +29,7 @@ def main() -> int:
     if not wheel.is_file() or wheel.suffix!='.whl':raise ValueError('Provide the trusted local pattern wheel')
     output=args.output.resolve();output.mkdir()
     project=Path(tempfile.mkdtemp(prefix='telegram service consumer '))
-    env={k:v for k,v in os.environ.items() if k.upper() in {'PATH','PATHEXT','SYSTEMROOT','WINDIR','TEMP','TMP','COMSPEC','USERPROFILE','LOCALAPPDATA'}}
+    env=minimal_environment()
     env['PYTHONUTF8']='1'
     stages=[]
     def run(label,argv,*,expected=0,cwd=project,environment=env):
@@ -77,6 +80,7 @@ def main() -> int:
     locktest="""import json,subprocess,sys
 from pathlib import Path
 from telegram_service_example.storage import ProcessLock
+
 p=Path(sys.argv[1]);lock=ProcessLock(p)
 code="from telegram_service_example.storage import ProcessLock;from pathlib import Path;import sys;ProcessLock(Path(sys.argv[1]))"
 child=subprocess.run([sys.executable,'-I','-c',code,str(p)],capture_output=True,text=True)

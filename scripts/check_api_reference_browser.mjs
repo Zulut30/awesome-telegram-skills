@@ -15,11 +15,12 @@ const server = http.createServer((request, response) => {
 });
 await new Promise(resolve => server.listen(0, '127.0.0.1', resolve));
 const url = `http://127.0.0.1:${server.address().port}/index.html`;
-const executablePath = process.env.CHROME_PATH ?? 'C:/Program Files/Google/Chrome/Application/chrome.exe';
+// CHROME_PATH overrides; otherwise Playwright finds installed Google Chrome on any OS.
+const launch = process.env.CHROME_PATH ? {executablePath: process.env.CHROME_PATH, headless: true} : {channel: 'chrome', headless: true};
 let browser;
 const results = []; let checks = 0;
 try {
-  browser = await chromium.launch({executablePath, headless: true});
+  browser = await chromium.launch(launch);
   for (const [name, width, height] of [['phone', 320, 568], ['tablet', 768, 1024], ['desktop', 1440, 900]]) {
     for (const theme of ['light', 'dark']) {
       const page = await browser.newPage({viewport: {width, height}, colorScheme: theme});

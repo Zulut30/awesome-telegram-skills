@@ -14,6 +14,6 @@
 - Не добавляйте обязательные сервисы, инфраструктуру, сторонние приложения или смену стека без потребности конкретного сценария.
 - Готовые компоненты находятся в `packages/python` и `packages/typescript`, каталог — `components.json`. При явной задаче переиспользования подключайте подходящий публичный API, сохраняя стек проекта. Пакеты пока поставляются локально; не предполагайте публикацию в PyPI/npm.
 - Изменения общей библиотеки проверяйте ее тестами, сборкой и установкой wheel/tarball в отдельный consumer; синхронизируйте exports, каталог и changelog.
-- Полная проверка поставки библиотеки: после `npm.cmd ci` выполните `python scripts/verify_pattern_packages.py`. Нужен Chrome или CHROME_PATH; `--skip-browser` явно оставляет UI непроверенным. Логи и артефакты сохраняются в output/pattern-library-<version>.
+- Полная проверка поставки библиотеки: после `npm ci` (в PowerShell — `npm.cmd ci`) выполните `python scripts/verify_pattern_packages.py` на Windows, Linux или macOS. Нужен Chrome или CHROME_PATH; `--skip-browser` явно оставляет UI непроверенным. Логи и артефакты сохраняются в output/pattern-library-<version>.
 - При изменении исполняемых помощников проверяйте их реальные операции в временных каталогах. При изменении инструкций используйте релевантные сценарии из docs/evaluation.md; статическая проверка не доказывает качество решений агента.
 - Команды проверки: `uv run --with "PyYAML>=6,<7" python scripts/validate_skills.py` и `python -m unittest discover -s tests -v`.
