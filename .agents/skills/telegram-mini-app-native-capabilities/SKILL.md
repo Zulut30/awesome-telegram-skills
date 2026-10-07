@@ -2,6 +2,8 @@
 name: telegram-mini-app-native-capabilities
 description: "Подключает конкретные native-возможности Telegram Mini App: геолокацию, биометрию, QR, хранилища, sharing и скачивание. Используй для client API с разрешениями, version gates и fallback, отдельно от общего подключения bridge."
 license: MIT
+metadata:
+  version: "0.24.0"
 ---
 
 # Native-возможности Mini App

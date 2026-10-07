@@ -2,6 +2,8 @@
 name: telegram-mini-app-device-qa
 description: "Проверяет Telegram Mini App на реальных Android/iOS, планшетах, Desktop и Web: клавиатуру, viewport, native-кнопки и возврат в приложение. Используй для приемки на устройствах и различий клиентов; браузерную симуляцию отмечай отдельно."
 license: MIT
+metadata:
+  version: "0.24.0"
 ---
 
 # Приемка на устройствах

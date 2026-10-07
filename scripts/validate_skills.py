@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import argparse
 import ast
+import json
 from pathlib import Path
 import re
 import sys
@@ -21,7 +22,8 @@ REPO_ROOT = Path(__file__).resolve().parents[1]
 FRONTMATTER = re.compile(r"\A---\n(.*?)\n---(?:\n|\Z)", re.DOTALL)
 NAME_PATTERN = re.compile(r"[a-z0-9]+(?:-[a-z0-9]+)*\Z")
 LINK_PATTERN = re.compile(r"!?\[[^\]\n]+\]\(([^)\n]+)\)")
-ALLOWED_FIELDS = {"name", "description", "license", "metadata", "allowed-tools"}
+# Agent Skills specification (agentskills.io/specification), checked 2026-10-07.
+ALLOWED_FIELDS = {"name", "description", "license", "compatibility", "metadata", "allowed-tools"}
 
 
 def load_mapping(text: str, label: Path, errors: list[str]) -> dict:
@@ -45,6 +47,11 @@ def validate(root: Path) -> tuple[int, list[str]]:
     if not folders:
         return 0, ["No skill folders found"]
     seen: set[str] = set()
+    try:
+        expected_version = json.loads((root / "components.json").read_text(encoding="utf-8"))["library_version"]
+    except (OSError, ValueError, KeyError):
+        expected_version = None
+        errors.append(f"{root / 'components.json'}: library_version is needed for metadata.version")
     for folder in folders:
         entry = folder / "SKILL.md"
         if not entry.is_file():
@@ -73,6 +80,21 @@ def validate(root: Path) -> tuple[int, list[str]]:
             errors.append(f"{entry}: description must be a nonempty string of at most 1024 chars")
         elif "<" in description or ">" in description:
             errors.append(f"{entry}: description contains angle brackets")
+        license_value = data.get("license")
+        if not isinstance(license_value, str) or not license_value.strip():
+            errors.append(f"{entry}: license must name the skill license")
+        compatibility = data.get("compatibility")
+        if compatibility is not None and (not isinstance(compatibility, str) or not 1 <= len(compatibility) <= 500):
+            errors.append(f"{entry}: compatibility must be a string of 1-500 chars")
+        tools = data.get("allowed-tools")
+        if tools is not None and (not isinstance(tools, str) or not tools.strip()):
+            errors.append(f"{entry}: allowed-tools must be a space-separated string")
+        metadata = data.get("metadata")
+        if not isinstance(metadata, dict) or not all(
+                isinstance(key, str) and isinstance(value, str) for key, value in metadata.items()):
+            errors.append(f"{entry}: metadata must map string keys to string values")
+        elif expected_version is not None and metadata.get("version") != expected_version:
+            errors.append(f"{entry}: metadata.version must be \"{expected_version}\" (components.json library_version)")
         if not text[match.end():].strip():
             errors.append(f"{entry}: empty skill instructions")
         if "[TODO:" in text:

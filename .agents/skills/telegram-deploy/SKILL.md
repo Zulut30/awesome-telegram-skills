@@ -2,6 +2,8 @@
 name: telegram-deploy
 description: "Разворачивает Telegram-бот и Mini App: polling или webhook, HTTPS, конфигурацию, readiness и восстановление. Используй при подготовке и выполнении запуска на выбранном хостинге."
 license: MIT
+metadata:
+  version: "0.24.0"
 ---
 
 # Запуск и эксплуатация

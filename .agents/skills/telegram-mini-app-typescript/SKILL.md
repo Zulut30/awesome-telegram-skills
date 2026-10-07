@@ -2,6 +2,8 @@
 name: telegram-mini-app-typescript
 description: "Разрабатывает TypeScript-код Telegram Mini App: bridge или SDK, типизированный API-клиент, конфигурацию и сборку. Используй для подключения Telegram и инфраструктуры frontend, отдельно от визуального дизайна."
 license: MIT
+metadata:
+  version: "0.24.0"
 ---
 
 # Mini App на TypeScript

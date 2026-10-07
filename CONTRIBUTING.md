@@ -29,6 +29,8 @@ python -m unittest discover -s tests -v
 
 Первый прогон проверяет упаковку, метаданные, локальные ссылки и Python-синтаксис. Качество решений агента проверяйте отдельно по сценариям [docs/evaluation.md](docs/evaluation.md).
 
+Frontmatter каждого `SKILL.md` следует [спецификации Agent Skills](https://agentskills.io/specification): `name` совпадает с каталогом, `description` до 1024 символов, `license: MIT`, `metadata.version` — строка, равная `library_version` из `components.json`. `compatibility` (до 500 символов) указывайте только при особых требованиях к среде, например для скрипта, которому нужна сеть. `agents/openai.yaml` остается для интерфейса Codex. Тот же формат проверяет официальный валидатор: `uvx --from skills-ref==0.1.1 agentskills validate .agents/skills/<имя>`; CI прогоняет его для всех скиллов.
+
 ## Проверить библиотеку
 
 ```powershell

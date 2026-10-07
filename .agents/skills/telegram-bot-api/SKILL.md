@@ -2,6 +2,9 @@
 name: telegram-bot-api
 description: "Реализует сообщения, медиа, клавиатуры и методы Telegram Bot API независимо от языка. Используй для конкретной API-возможности или проверки ее ограничений и поддержки в SDK."
 license: MIT
+compatibility: "scripts/update_api_index.py: Python 3.11+ и доступ к core.telegram.org; остальное работает без сети"
+metadata:
+  version: "0.24.0"
 ---
 
 # Работа с Bot API

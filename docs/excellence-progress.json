@@ -412,9 +412,14 @@
     {
       "id": 34,
       "title": "Метаданные по стандарту Agent Skills",
-      "status": "pending",
-      "commit_subject": null,
-      "evidence": [],
+      "status": "done",
+      "commit_subject": "excellence(034): follow the Agent Skills metadata standard",
+      "evidence": [
+        "Все 41 SKILL.md: license MIT (был), metadata.version \"0.24.0\" (= library_version), compatibility только у telegram-bot-api (скрипт update_api_index.py требует Python 3.11+ и сеть) — как советует спецификация; agents/openai.yaml остается для Codex",
+        "scripts/validate_skills.py по agentskills.io/specification (сверено 2026-10-07): поля name/description/license/compatibility/metadata/allowed-tools, длины 64/1024/500, metadata строка→строка, allowed-tools строка, metadata.version = components.json; tests/test_validate_skills.py: 11 нарушений ловятся, корректный скилл и все 41 скилл репозитория проходят",
+        "Официальный валидатор skills-ref 0.1.1 (agentskills validate): 41 из 41 Valid skill, на заведомо неверном скилле код выхода 1; шаг добавлен в CI-задачу skills",
+        "claude plugin validate ./.agents --strict и сборка/проверка сайта (39766 ссылок) проходят с новым frontmatter"
+      ],
       "remaining": null
     },
     {

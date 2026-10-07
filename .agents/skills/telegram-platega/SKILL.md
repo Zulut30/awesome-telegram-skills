@@ -2,6 +2,8 @@
 name: telegram-platega
 description: "Интегрирует Platega.io в Python backend Telegram-проекта: платежные ссылки, callbacks, статус, возвраты и СБП-подписки. Используй для выбранного Platega merchant."
 license: MIT
+metadata:
+  version: "0.24.0"
 ---
 
 # Platega.io

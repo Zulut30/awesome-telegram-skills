@@ -2,6 +2,8 @@
 name: telegram-observability
 description: "Добавляет наблюдаемость Telegram-бота и Mini App: связанные frontend/backend/worker события, метрики и безопасные логи. Используй для внедрения instrumentation и мониторинга; конкретный текущий сбой относится к debugging."
 license: MIT
+metadata:
+  version: "0.24.0"
 ---
 
 # Наблюдаемость

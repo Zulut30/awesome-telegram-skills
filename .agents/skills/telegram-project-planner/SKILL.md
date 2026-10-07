@@ -2,6 +2,8 @@
 name: telegram-project-planner
 description: "Проектирует новый Telegram-бот или Mini App: сценарии, стек, архитектуру и проверяемый MVP. Используй при старте проекта или существенном изменении его архитектуры."
 license: MIT
+metadata:
+  version: "0.24.0"
 ---
 
 # Планирование Telegram-проекта

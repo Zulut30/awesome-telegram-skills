@@ -2,6 +2,8 @@
 name: telegram-business-bots
 description: "Интегрирует Telegram Business/Secretary Bot с разрешенными чатами аккаунта: business_connection, сообщения, rights и ответы от имени владельца. Используй для официального подключения бота к аккаунту."
 license: MIT
+metadata:
+  version: "0.24.0"
 ---
 
 # Business и Secretary Bots

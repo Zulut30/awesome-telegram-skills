@@ -2,6 +2,8 @@
 name: telegram-buttons
 description: "Реализует Telegram-кнопки: цветные styles, custom emoji icons, inline/reply keyboards и ограничения действий. Используй для оформления кнопок и их поддержки в Python SDK."
 license: MIT
+metadata:
+  version: "0.24.0"
 ---
 
 # Кнопки Telegram

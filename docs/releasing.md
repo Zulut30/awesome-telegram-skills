@@ -18,7 +18,7 @@ python scripts/build_release.py --ref v0.24.0 --notes
 
 ## Выпустить новую версию
 
-1. Обновите версию в `packages/python/pyproject.toml`, `packages/typescript/package.json`, `components.json`, `resources/recipes.json` и раздел CHANGELOG.
+1. Обновите версию в `packages/python/pyproject.toml`, `packages/typescript/package.json`, `components.json`, `resources/recipes.json`, `metadata.version` во frontmatter всех скиллов и раздел CHANGELOG. `validate_skills.py` не пропустит скилл с другой версией.
 2. После слияния в `main` поставьте тег на этот коммит и отправьте его:
 
    ```bash
