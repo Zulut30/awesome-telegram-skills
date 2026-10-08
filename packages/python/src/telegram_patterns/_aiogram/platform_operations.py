@@ -29,7 +29,15 @@ from aiogram.types import (
 )
 from pydantic import BaseModel
 
-from ..errors import ConflictFailure, InvalidType, PermissionDenied, UnknownOutcome, ValidationFailure
+from ..errors import (
+    ConflictFailure,
+    ErrorCode,
+    InvalidType,
+    PatternError,
+    PermissionDenied,
+    UnknownOutcome,
+    ValidationFailure,
+)
 
 __all__ = [
     'PlatformContract',
@@ -51,6 +59,17 @@ __all__ = [
     'StoryPhotoUpload',
     'StoryVideoUpload',
 ]
+
+
+class RateLimited(PatternError):
+    """Telegram refused the call for now (HTTP 429): nothing happened; retry after retry_after seconds."""
+
+    code: ErrorCode = 'rate-limited'
+    _known_outcome = 'rejected'
+
+    def __init__(self, retry_after: int) -> None:
+        super().__init__('Telegram rate limit; retry after the given delay')
+        self.retry_after = retry_after
 
 
 class StoryPhotoUpload(InputStoryContentPhoto):
@@ -747,7 +766,7 @@ async def execute_platform_action(
             result_id = getattr(value, 'message_thread_id', None) or getattr(value, 'id', None)
             if type(result_id) is not int:
                 result_id = None
-        except (TelegramBadRequest, TelegramForbiddenError, TelegramRetryAfter):
+        except (TelegramBadRequest, TelegramForbiddenError, TelegramRetryAfter) as error:
             if action.contract.write:
                 try:
                     await hooks.record(action, receipt('rejected'))
@@ -757,6 +776,9 @@ async def execute_platform_action(
                     raise UnknownOutcome(
                         'Native rejection receipt is unconfirmed; reconcile the existing intent'
                     ) from None
+            if isinstance(error, TelegramRetryAfter):
+                # A temporary 429 is not a permission problem: keep the delay so the caller can retry later.
+                raise RateLimited(error.retry_after) from None
             raise PermissionDenied('Telegram explicitly rejected the native operation') from None
         except BaseException as error:
             if action.contract.write:

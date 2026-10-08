@@ -10,7 +10,7 @@ from pathlib import Path
 
 from aiogram import Bot, Dispatcher, F, Router
 from aiogram import methods as m
-from aiogram.exceptions import TelegramForbiddenError
+from aiogram.exceptions import TelegramForbiddenError, TelegramRetryAfter
 from aiogram.types import (
     BufferedInputFile,
     InputStoryContentPhoto,
@@ -20,7 +20,7 @@ from aiogram.types import (
     Update,
 )
 
-from telegram_patterns import ConflictFailure, PermissionDenied, UnknownOutcome, ValidationFailure
+from telegram_patterns import ConflictFailure, PatternError, PermissionDenied, UnknownOutcome, ValidationFailure
 from telegram_patterns.aiogram import (
     PlatformAction,
     PlatformPermit,
@@ -212,6 +212,20 @@ class PlatformTests(unittest.IsolatedAsyncioTestCase):
             await self.run_action(self.action(m.CreateForumTopic(chat_id=-100, name='Topic'), chat_id=-100))
         self.assertNotIn('PRIVATE', str(caught.exception))
         self.assertEqual(self.status(), ('rejected',))
+
+    async def test_rate_limit_is_a_retry_later_rejection_not_a_permission_problem(self):
+        def flood(r):
+            raise TelegramRetryAfter(r, 'Too Many Requests', retry_after=12)
+
+        self.session.respond(m.CreateForumTopic, flood)
+        with self.assertRaises(PatternError) as caught:
+            await self.run_action(self.action(m.CreateForumTopic(chat_id=-100, name='Topic'), chat_id=-100))
+        self.assertNotIsInstance(caught.exception, PermissionDenied)
+        self.assertEqual(caught.exception.retry_after, 12)
+        report = caught.exception.report(operation='write')
+        self.assertEqual((report.code, report.outcome, report.recovery), ('rate-limited', 'rejected', 'retry-later'))
+        self.assertEqual(self.status(), ('rejected',))
+        self.assertEqual(len(self.effects(m.CreateForumTopic)), 1)  # no automatic retry
 
     async def test_timeout_before_claim_has_no_intent_or_native_write(self):
         async def slow_rights(r):
