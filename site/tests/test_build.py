@@ -56,7 +56,9 @@ class DocumentationOperations(unittest.TestCase):
         page = (self.site / 'docs/quality-board/index.html').read_text(encoding='utf-8')
         self.assertIn('<h2 id="numbers">Числа</h2>', page)
         self.assertIn('нет данных: сайт собран без CI', page)
-        self.assertIn('Выбор скиллов', page)
+        # The gate row names exact models: an alias such as haiku moves to a new model with a CLI update.
+        self.assertRegex(page, r'Выбор скиллов, после сопоставления с описаниями</td><td>claude-[a-z]+-\d+-\d+: \d')
+        self.assertIn('Выбор скиллов сразу, только имя (без порога)', page)
         self.assertRegex(page, r'Методы Bot API [0-9.]+ с рецептом</td><td>\d+ из \d+')
 
     def test_check_rebuild_keeps_existing_output(self):

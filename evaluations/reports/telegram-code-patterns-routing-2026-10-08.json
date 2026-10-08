@@ -1,0 +1,234 @@
+{
+  "date": "2026-10-08",
+  "agent": "Claude Code CLI, claude -p with tools disabled, empty working directory",
+  "skill": "telegram-code-patterns",
+  "skill_file": ".agents/skills/telegram-code-patterns/SKILL.md",
+  "threshold": 0.9,
+  "cases": {
+    "main": "evaluations/telegram-code-patterns-routing.json",
+    "holdout": "evaluations/telegram-code-patterns-routing-holdout.json"
+  },
+  "runs": [
+    {
+      "set": "main",
+      "model": "claude-haiku-4-5",
+      "served_model": "claude-haiku-4-5",
+      "cli": "2.1.294 (Claude Code)",
+      "cases": 40,
+      "correct": 37,
+      "accuracy": 0.925,
+      "misses": [
+        {
+          "query": "Какие гарантии дает SQLiteOnce и что остается на моем сервисе?",
+          "expected": [
+            "components.md",
+            "errors.md"
+          ],
+          "chosen": "extensions.md"
+        },
+        {
+          "query": "Создай новый проект бота с мини-приложением из wheel и tarball, которые лежат у меня в Загрузках",
+          "expected": [
+            "quickstart.md",
+            "starter-selection.md"
+          ],
+          "chosen": "agent-onboarding.md"
+        },
+        {
+          "query": "Есть ли в Bot API 10.3 метод для гостевого режима и можно ли его вызвать из группы?",
+          "expected": [
+            "api-boundaries.md"
+          ],
+          "chosen": "bot-api-10-features.md"
+        }
+      ]
+    },
+    {
+      "set": "holdout",
+      "model": "claude-haiku-4-5",
+      "served_model": "claude-haiku-4-5",
+      "cli": "2.1.294 (Claude Code)",
+      "cases": 12,
+      "correct": 12,
+      "accuracy": 1.0,
+      "misses": []
+    },
+    {
+      "set": "main",
+      "model": "claude-haiku-5-5",
+      "served_model": "claude-haiku-5-5",
+      "cli": "2.1.294 (Claude Code)",
+      "cases": 40,
+      "correct": 24,
+      "accuracy": 0.6,
+      "misses": [
+        {
+          "query": "Какие гарантии дает SQLiteOnce и что остается на моем сервисе?",
+          "expected": [
+            "components.md",
+            "errors.md"
+          ],
+          "chosen": "api-reference.md"
+        },
+        {
+          "query": "Создай новый проект бота с мини-приложением из wheel и tarball, которые лежат у меня в Загрузках",
+          "expected": [
+            "quickstart.md",
+            "starter-selection.md"
+          ],
+          "chosen": "agent-onboarding.md"
+        },
+        {
+          "query": "Как найти рецепт через командную строку и посмотреть его код?",
+          "expected": [
+            "developer-tools.md",
+            "gallery-navigation.md"
+          ],
+          "chosen": "recipe-execution.md"
+        },
+        {
+          "query": "Сделай анкету из трех вопросов, чтобы двойная отправка не создавала две заявки",
+          "expected": [
+            "form-recipes.md"
+          ],
+          "chosen": "forms.md"
+        },
+        {
+          "query": "В форме надо спросить дату рождения и номер телефона и проверить ввод",
+          "expected": [
+            "dialog-fields.md"
+          ],
+          "chosen": "form-recipes.md"
+        },
+        {
+          "query": "Меню с подразделами в одном сообщении, чтобы кнопка Назад возвращала на предыдущий экран",
+          "expected": [
+            "message-navigation.md"
+          ],
+          "chosen": "keyboard-recipes.md"
+        },
+        {
+          "query": "Пользователь выбирает несколько тегов галочками, а потом подтверждает удаление",
+          "expected": [
+            "selection-controls.md"
+          ],
+          "chosen": "keyboard-recipes.md"
+        },
+        {
+          "query": "Текст с жирным шрифтом ломается, когда в имени пользователя есть символ <",
+          "expected": [
+            "message-text.md"
+          ],
+          "chosen": "rich-messages.md"
+        },
+        {
+          "query": "Сообщение длиннее 4096 символов, как разбить, не сломав ссылки?",
+          "expected": [
+            "message-text.md"
+          ],
+          "chosen": "rich-messages.md"
+        },
+        {
+          "query": "Сделай викторину с одним правильным ответом и учитывай голоса",
+          "expected": [
+            "polls.md"
+          ],
+          "chosen": "components.md"
+        },
+        {
+          "query": "Бот должен одобрять заявки на вступление в группу и ставить реакции",
+          "expected": [
+            "platform-operations.md",
+            "group-bot.md"
+          ],
+          "chosen": null
+        },
+        {
+          "query": "Как отличить ошибку валидации от ситуации, когда непонятно, выполнилась ли запись?",
+          "expected": [
+            "errors.md"
+          ],
+          "chosen": "dialog-restart.md"
+        },
+        {
+          "query": "Есть ли в Bot API 10.3 метод для гостевого режима и можно ли его вызвать из группы?",
+          "expected": [
+            "api-boundaries.md"
+          ],
+          "chosen": "bot-api-10-features.md"
+        },
+        {
+          "query": "Покажи готовое приложение записи на услугу с напоминаниями",
+          "expected": [
+            "service-bot.md"
+          ],
+          "chosen": "gallery-navigation.md"
+        },
+        {
+          "query": "Какие ограничения у validate_init_data и проверяет ли она права?",
+          "expected": [
+            "components.md",
+            "api-reference.md"
+          ],
+          "chosen": "data.md"
+        },
+        {
+          "query": "Бот должен отправлять истории и подарки от имени бизнес-аккаунта",
+          "expected": [
+            "platform-operations.md"
+          ],
+          "chosen": "business-connection.md"
+        }
+      ]
+    },
+    {
+      "set": "holdout",
+      "model": "claude-haiku-5-5",
+      "served_model": "claude-haiku-5-5",
+      "cli": "2.1.294 (Claude Code)",
+      "cases": 12,
+      "correct": 7,
+      "accuracy": 0.583,
+      "misses": [
+        {
+          "query": "Как вывести список заказов по 10 штук с кнопками вперед и назад под сообщением бота?",
+          "expected": [
+            "bot-recipes.md",
+            "message-navigation.md"
+          ],
+          "chosen": "components.md"
+        },
+        {
+          "query": "У меня Django-бэкенд, хочу свой storage для идемпотентности вместо встроенного",
+          "expected": [
+            "extensions.md"
+          ],
+          "chosen": "api-reference.md"
+        },
+        {
+          "query": "Как безопасно вставить имя пользователя в сообщение с HTML-разметкой?",
+          "expected": [
+            "message-text.md"
+          ],
+          "chosen": "formatting.md"
+        },
+        {
+          "query": "Какие права нужны боту, чтобы закреплять темы в форуме, и есть ли готовый компонент?",
+          "expected": [
+            "platform-operations.md",
+            "group-bot.md",
+            "api-boundaries.md"
+          ],
+          "chosen": "components.md"
+        },
+        {
+          "query": "Нужно спросить у пользователя геолокацию и подтвердить ее кнопкой",
+          "expected": [
+            "dialog-fields.md"
+          ],
+          "chosen": "keyboard-recipes.md"
+        }
+      ]
+    }
+  ]
+}

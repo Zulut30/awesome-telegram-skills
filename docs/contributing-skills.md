@@ -35,12 +35,13 @@ python scripts/new_skill.py telegram-example --title "Пример" --short "К�
 Нужен Claude Code CLI (`claude`) с вашим входом; запросы расходуют лимит аккаунта. Порядок и пороги — в [evaluations/README.md](../evaluations/README.md).
 
 ```bash
-python scripts/eval_skill_selection.py --cases evaluations/skill-selection.json --model haiku --output evaluations/reports/skill-selection-latest.json
+python scripts/eval_skill_selection.py --cases evaluations/skill-selection.json --model claude-haiku-5-5 --mode reasoned --report evaluations/reports/skill-selection-latest.json
+python scripts/eval_skill_selection.py --cases evaluations/skill-selection.json --model claude-sonnet-5-5 --mode reasoned --report evaluations/reports/skill-selection-latest.json
 python scripts/eval_skill_value.py --skill telegram-example --report evaluations/reports/skill-value-latest.json
 python scripts/eval_skill_value.py --table evaluations/reports/skill-value-latest.json
 ```
 
-Последняя команда печатает таблицу для `evaluations/README.md`. Выбор скилла должен оставаться не ниже 95%, а скилл — давать заметный прирост на своих задачах.
+Последняя команда печатает таблицу для `evaluations/README.md`. Модель указывайте точным ID, а не алиасом `haiku`: алиас переходит на новую модель с обновлением CLI. Выбор скилла в режиме `reasoned` должен оставаться не ниже 95% у каждой модели отчета (прогоны `--mode instant` повторите тоже, они записываются без порога), а скилл — давать заметный прирост на своих задачах.
 
 ### 5. Проверка
 

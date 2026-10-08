@@ -1,12 +1,149 @@
 {
-  "date": "2026-10-07",
-  "agent": "Claude Code CLI 2.1.292, claude -p with tools disabled; models haiku and sonnet",
+  "date": "2026-10-08",
+  "agent": "Claude Code CLI, claude -p with tools disabled",
   "cases": "evaluations/skill-selection.json",
   "threshold": 0.95,
+  "gate_mode": "reasoned",
   "descriptions_sha256": "5ebb344ad4564f9ab29bdb7cac6ec63e6c7e64616bb1217277fedb597cb397b2",
   "runs": [
     {
-      "model": "haiku",
+      "model": "claude-haiku-4-5",
+      "mode": "reasoned",
+      "served_model": "claude-haiku-4-5",
+      "served_models": [
+        "claude-haiku-4-5"
+      ],
+      "cli": "2.1.294 (Claude Code)",
+      "cases": 251,
+      "correct": 244,
+      "accuracy": 0.972,
+      "by_kind": {
+        "positive": {
+          "cases": 210,
+          "correct": 203
+        },
+        "negative": {
+          "cases": 41,
+          "correct": 41
+        }
+      },
+      "misses": [
+        {
+          "query": "initData проходит локально, но на продакшене сервер возвращает 401",
+          "expected": [
+            "telegram-debugging"
+          ],
+          "chosen": "telegram-mini-app-auth"
+        },
+        {
+          "query": "Публикуй пост в канал от имени бота с кнопкой под ним",
+          "expected": [
+            "telegram-groups",
+            "telegram-buttons"
+          ],
+          "chosen": "telegram-bot-api"
+        },
+        {
+          "query": "Где хранить серверное состояние и кеш в Mini App, чтобы не было рассинхрона?",
+          "expected": [
+            "telegram-mini-app-architecture"
+          ],
+          "chosen": "telegram-mini-app-network-recovery"
+        },
+        {
+          "query": "Поделиться результатом в историю из Mini App",
+          "expected": [
+            "telegram-mini-app-native-capabilities"
+          ],
+          "chosen": "telegram-mini-app-integration"
+        },
+        {
+          "query": "Запрос оплаты оборвался по таймауту, как понять, прошел ли он?",
+          "expected": [
+            "telegram-mini-app-network-recovery",
+            "telegram-payments"
+          ],
+          "chosen": "telegram-payment-provider"
+        },
+        {
+          "query": "Ленивая загрузка картинок и разделение кода по экранам Mini App",
+          "expected": [
+            "telegram-mini-app-performance"
+          ],
+          "chosen": "telegram-mini-app-architecture"
+        },
+        {
+          "query": "Выставить счет через createInvoiceLink для оплаты в Mini App",
+          "expected": [
+            "telegram-payments"
+          ],
+          "chosen": "telegram-bot-api"
+        }
+      ]
+    },
+    {
+      "model": "claude-haiku-5-5",
+      "mode": "reasoned",
+      "served_model": "claude-haiku-5-5",
+      "served_models": [
+        "claude-haiku-5-5"
+      ],
+      "cli": "2.1.294 (Claude Code)",
+      "cases": 251,
+      "correct": 247,
+      "accuracy": 0.984,
+      "by_kind": {
+        "positive": {
+          "cases": 210,
+          "correct": 207
+        },
+        "negative": {
+          "cases": 41,
+          "correct": 40
+        }
+      },
+      "misses": [
+        {
+          "query": "Длинные немецкие подписи не помещаются на кнопках Mini App",
+          "expected": [
+            "telegram-localization",
+            "telegram-mini-app-ui"
+          ],
+          "chosen": "telegram-buttons"
+        },
+        {
+          "query": "Запрос оплаты оборвался по таймауту, как понять, прошел ли он?",
+          "expected": [
+            "telegram-mini-app-network-recovery",
+            "telegram-payments"
+          ],
+          "chosen": "telegram-debugging"
+        },
+        {
+          "query": "Выставить счет через createInvoiceLink для оплаты в Mini App",
+          "expected": [
+            "telegram-payments"
+          ],
+          "chosen": "telegram-bot-api"
+        },
+        {
+          "query": "Сделай красивые кнопки на главном экране Mini App",
+          "expected": [
+            "telegram-mini-app-ui",
+            "telegram-mini-app-design-system"
+          ],
+          "chosen": "telegram-buttons"
+        }
+      ]
+    },
+    {
+      "model": "claude-sonnet-5-5",
+      "mode": "reasoned",
+      "served_model": "claude-sonnet-5-5",
+      "served_models": [
+        "claude-sonnet-5-5"
+      ],
+      "cli": "2.1.294 (Claude Code)",
       "cases": 251,
       "correct": 247,
       "accuracy": 0.984,
@@ -14,6 +151,61 @@
         "positive": {
           "cases": 210,
           "correct": 206
+        },
+        "negative": {
+          "cases": 41,
+          "correct": 41
+        }
+      },
+      "misses": [
+        {
+          "query": "В python-telegram-bot нужен ConversationHandler заменить на роутеры, помоги",
+          "expected": [
+            "telegram-bot-python"
+          ],
+          "chosen": "telegram-dialogs"
+        },
+        {
+          "query": "Публикуй пост в канал от имени бота с кнопкой под ним",
+          "expected": [
+            "telegram-groups",
+            "telegram-buttons"
+          ],
+          "chosen": "telegram-bot-api"
+        },
+        {
+          "query": "Описание и команды бота на русском и английском",
+          "expected": [
+            "telegram-localization",
+            "telegram-profiles"
+          ],
+          "chosen": "telegram-bot-api"
+        },
+        {
+          "query": "Запрос оплаты оборвался по таймауту, как понять, прошел ли он?",
+          "expected": [
+            "telegram-mini-app-network-recovery",
+            "telegram-payments"
+          ],
+          "chosen": "telegram-debugging"
+        }
+      ]
+    },
+    {
+      "model": "claude-haiku-4-5",
+      "mode": "instant",
+      "served_model": "claude-haiku-4-5",
+      "served_models": [
+        "claude-haiku-4-5"
+      ],
+      "cli": "2.1.294 (Claude Code)",
+      "cases": 251,
+      "correct": 246,
+      "accuracy": 0.98,
+      "by_kind": {
+        "positive": {
+          "cases": 210,
+          "correct": 205
         },
         "negative": {
           "cases": 41,
@@ -50,18 +242,667 @@
             "telegram-mini-app-performance"
           ],
           "chosen": "telegram-mini-app-architecture"
+        },
+        {
+          "query": "Как показывать ошибки формы, чтобы пользователь сразу понял, что исправить?",
+          "expected": [
+            "telegram-mini-app-ux"
+          ],
+          "chosen": "telegram-mini-app-ui"
         }
       ]
     },
     {
-      "model": "sonnet",
+      "model": "claude-haiku-5-5",
+      "mode": "instant",
+      "served_model": "claude-haiku-5-5",
+      "served_models": [
+        "claude-haiku-5-5"
+      ],
+      "cli": "2.1.294 (Claude Code)",
       "cases": 251,
-      "correct": 246,
-      "accuracy": 0.98,
+      "correct": 165,
+      "accuracy": 0.657,
       "by_kind": {
         "positive": {
           "cases": 210,
-          "correct": 205
+          "correct": 135
+        },
+        "negative": {
+          "cases": 41,
+          "correct": 30
+        }
+      },
+      "misses": [
+        {
+          "query": "Прими оплату в USDT через Crypto Pay и выдай доступ после оплаты",
+          "expected": [
+            "telegram-cryptopay"
+          ],
+          "chosen": "telegram-payments"
+        },
+        {
+          "query": "Как проверить подпись webhook от CryptoBot?",
+          "expected": [
+            "telegram-cryptopay"
+          ],
+          "chosen": "telegram-payments"
+        },
+        {
+          "query": "Платеж в CryptoBot прошел, но webhook не пришел, как сверить статус?",
+          "expected": [
+            "telegram-cryptopay",
+            "telegram-debugging"
+          ],
+          "chosen": "telegram-payments"
+        },
+        {
+          "query": "Возврат и повторная выдача при оплате через Crypto Pay API",
+          "expected": [
+            "telegram-cryptopay"
+          ],
+          "chosen": "telegram-payments"
+        },
+        {
+          "query": "Бот не получает сообщения в группе после переноса на новый сервер",
+          "expected": [
+            "telegram-debugging"
+          ],
+          "chosen": "telegram-bot-api"
+        },
+        {
+          "query": "После обновления aiogram бот падает с TelegramBadRequest на редактировании",
+          "expected": [
+            "telegram-debugging"
+          ],
+          "chosen": "telegram-bot-python"
+        },
+        {
+          "query": "initData проходит локально, но на продакшене сервер возвращает 401",
+          "expected": [
+            "telegram-debugging"
+          ],
+          "chosen": "telegram-security-review"
+        },
+        {
+          "query": "Вебхук перестал получать update, в getWebhookInfo ошибка SSL",
+          "expected": [
+            "telegram-debugging",
+            "telegram-deploy"
+          ],
+          "chosen": "telegram-security-review"
+        },
+        {
+          "query": "Сделай регистрацию в боте из четырех шагов с возможностью вернуться назад",
+          "expected": [
+            "telegram-dialogs"
+          ],
+          "chosen": "telegram-bot-python"
+        },
+        {
+          "query": "Меню бота с вложенными разделами и сохранением текущего шага",
+          "expected": [
+            "telegram-dialogs"
+          ],
+          "chosen": "telegram-buttons"
+        },
+        {
+          "query": "Бот должен приветствовать новых участников группы",
+          "expected": [
+            "telegram-groups"
+          ],
+          "chosen": "telegram-bot-python"
+        },
+        {
+          "query": "Как работать с темами форума в супергруппе: создавать и закрывать?",
+          "expected": [
+            "telegram-groups"
+          ],
+          "chosen": "telegram-bot-api"
+        },
+        {
+          "query": "Сделай так, чтобы через @mybot можно было искать фильмы в любом чате",
+          "expected": [
+            "telegram-inline-mode"
+          ],
+          "chosen": "telegram-bot-api"
+        },
+        {
+          "query": "Как кешировать результаты inline-запроса отдельно для каждого пользователя?",
+          "expected": [
+            "telegram-inline-mode"
+          ],
+          "chosen": "telegram-bot-api"
+        },
+        {
+          "query": "Пагинация результатов inline-поиска через next_offset",
+          "expected": [
+            "telegram-inline-mode"
+          ],
+          "chosen": "telegram-bot-api"
+        },
+        {
+          "query": "Inline-режим должен отправлять карточку товара с фото",
+          "expected": [
+            "telegram-inline-mode"
+          ],
+          "chosen": "telegram-buttons"
+        },
+        {
+          "query": "Что приходит в chosen_inline_result и как его включить?",
+          "expected": [
+            "telegram-inline-mode"
+          ],
+          "chosen": "telegram-bot-api"
+        },
+        {
+          "query": "Что выбрать для Python-бота: aiogram или python-telegram-bot?",
+          "expected": [
+            "telegram-library-selection"
+          ],
+          "chosen": "telegram-bot-python"
+        },
+        {
+          "query": "Поддерживает ли aiogram последнюю версию Bot API или ждать обновления?",
+          "expected": [
+            "telegram-library-selection"
+          ],
+          "chosen": "telegram-bot-api"
+        },
+        {
+          "query": "Какую библиотеку взять для Mini App на React: официальный SDK или свою обертку?",
+          "expected": [
+            "telegram-library-selection"
+          ],
+          "chosen": "telegram-mini-app-typescript"
+        },
+        {
+          "query": "Сравни платежные обертки для Telegram на Python и выбери одну",
+          "expected": [
+            "telegram-library-selection"
+          ],
+          "chosen": "telegram-payments"
+        },
+        {
+          "query": "Показывай даты и цены в формате страны пользователя",
+          "expected": [
+            "telegram-localization"
+          ],
+          "chosen": "telegram-mini-app-ui"
+        },
+        {
+          "query": "Как выбрать язык интерфейса по language_code и дать пользователю сменить его?",
+          "expected": [
+            "telegram-localization"
+          ],
+          "chosen": "telegram-buttons"
+        },
+        {
+          "query": "Описание и команды бота на русском и английском",
+          "expected": [
+            "telegram-localization",
+            "telegram-profiles"
+          ],
+          "chosen": "telegram-bot-python"
+        },
+        {
+          "query": "Проверяй тип и размер загруженных документов перед обработкой",
+          "expected": [
+            "telegram-media-processing"
+          ],
+          "chosen": "telegram-security-review"
+        },
+        {
+          "query": "Конвертируй голосовые сообщения в текст через очередь задач",
+          "expected": [
+            "telegram-media-processing"
+          ],
+          "chosen": "telegram-bot-python"
+        },
+        {
+          "query": "Сколько живет initData и как отклонять устаревшие запуски?",
+          "expected": [
+            "telegram-mini-app-auth"
+          ],
+          "chosen": "telegram-security-review"
+        },
+        {
+          "query": "Сервер должен узнать пользователя Mini App без пароля",
+          "expected": [
+            "telegram-mini-app-auth"
+          ],
+          "chosen": "telegram-security-review"
+        },
+        {
+          "query": "Как передавать initData с фронта на сервер и не доверять initDataUnsafe?",
+          "expected": [
+            "telegram-mini-app-auth"
+          ],
+          "chosen": "telegram-security-review"
+        },
+        {
+          "query": "Сделай переиспользуемые компоненты кнопок, полей и карточек с состояниями",
+          "expected": [
+            "telegram-mini-app-design-system"
+          ],
+          "chosen": "telegram-buttons"
+        },
+        {
+          "query": "Опиши варианты компонента Button: primary, secondary, disabled, loading",
+          "expected": [
+            "telegram-mini-app-design-system"
+          ],
+          "chosen": "telegram-buttons"
+        },
+        {
+          "query": "На старом Android не работает MainButton, как проверить и задокументировать?",
+          "expected": [
+            "telegram-mini-app-device-qa",
+            "telegram-debugging",
+            "telegram-mini-app-native-capabilities"
+          ],
+          "chosen": "telegram-buttons"
+        },
+        {
+          "query": "Возврат в Mini App после оплаты на iOS ведет на пустой экран, проверь на устройстве",
+          "expected": [
+            "telegram-mini-app-device-qa",
+            "telegram-debugging"
+          ],
+          "chosen": "telegram-mini-app-integration"
+        },
+        {
+          "query": "Как открыть Mini App из inline-кнопки бота и передать параметр?",
+          "expected": [
+            "telegram-mini-app-integration"
+          ],
+          "chosen": "telegram-buttons"
+        },
+        {
+          "query": "Настрой кнопку меню бота, которая открывает наше приложение",
+          "expected": [
+            "telegram-mini-app-integration"
+          ],
+          "chosen": "telegram-bot-api"
+        },
+        {
+          "query": "Deep link t.me/bot?startapp=promo должен открывать нужный экран Mini App",
+          "expected": [
+            "telegram-mini-app-integration"
+          ],
+          "chosen": "telegram-deploy"
+        },
+        {
+          "query": "Сканируй QR-код из Mini App через Telegram",
+          "expected": [
+            "telegram-mini-app-native-capabilities"
+          ],
+          "chosen": "telegram-mini-app-device-qa"
+        },
+        {
+          "query": "Подключи биометрию для подтверждения платежа в Mini App",
+          "expected": [
+            "telegram-mini-app-native-capabilities"
+          ],
+          "chosen": "telegram-payments"
+        },
+        {
+          "query": "Сохрани настройки пользователя в CloudStorage Telegram",
+          "expected": [
+            "telegram-mini-app-native-capabilities"
+          ],
+          "chosen": "telegram-mini-app-ux"
+        },
+        {
+          "query": "Поделиться результатом в историю из Mini App",
+          "expected": [
+            "telegram-mini-app-native-capabilities"
+          ],
+          "chosen": "telegram-mini-app-integration"
+        },
+        {
+          "query": "Скачать файл отчета из Mini App на устройство пользователя",
+          "expected": [
+            "telegram-mini-app-native-capabilities"
+          ],
+          "chosen": "telegram-deploy"
+        },
+        {
+          "query": "Повторяй запросы Mini App с backoff, но без двойных заказов",
+          "expected": [
+            "telegram-mini-app-network-recovery"
+          ],
+          "chosen": "telegram-python-backend"
+        },
+        {
+          "query": "Конфликт: тот же черновик отредактирован на двух устройствах",
+          "expected": [
+            "telegram-mini-app-network-recovery"
+          ],
+          "chosen": "telegram-mini-app-integration"
+        },
+        {
+          "query": "Как показывать ошибки формы, чтобы пользователь сразу понял, что исправить?",
+          "expected": [
+            "telegram-mini-app-ux"
+          ],
+          "chosen": "telegram-bot-python"
+        },
+        {
+          "query": "Ложные срабатывания скриншотных тестов из-за шрифтов, как стабилизировать?",
+          "expected": [
+            "telegram-mini-app-visual-regression"
+          ],
+          "chosen": "telegram-buttons"
+        },
+        {
+          "query": "Добавь визуальные тесты для английской и русской версий экранов",
+          "expected": [
+            "telegram-mini-app-visual-regression"
+          ],
+          "chosen": "telegram-mini-app-ui"
+        },
+        {
+          "query": "Напоминай клиенту о записи за день до визита",
+          "expected": [
+            "telegram-notifications"
+          ],
+          "chosen": "telegram-business-bots"
+        },
+        {
+          "query": "Рассылка новости всем подписчикам бота с соблюдением лимитов",
+          "expected": [
+            "telegram-notifications"
+          ],
+          "chosen": "telegram-groups"
+        },
+        {
+          "query": "Очередь отправки сообщений с повтором при ошибке сети",
+          "expected": [
+            "telegram-notifications"
+          ],
+          "chosen": "telegram-bot-api"
+        },
+        {
+          "query": "Добавь trace id, который проходит от Mini App до воркера",
+          "expected": [
+            "telegram-observability"
+          ],
+          "chosen": "telegram-debugging"
+        },
+        {
+          "query": "Какие метрики собирать для бота: задержка ответа, ошибки, очередь?",
+          "expected": [
+            "telegram-observability"
+          ],
+          "chosen": "telegram-bot-api"
+        },
+        {
+          "query": "Настрой алерт, если бот перестал обрабатывать сообщения",
+          "expected": [
+            "telegram-observability"
+          ],
+          "chosen": "telegram-debugging"
+        },
+        {
+          "query": "Дашборд с ошибками Mini App и backend в одном месте",
+          "expected": [
+            "telegram-observability"
+          ],
+          "chosen": "telegram-debugging"
+        },
+        {
+          "query": "Подключи Robokassa к Telegram-магазину и проверяй уведомления",
+          "expected": [
+            "telegram-payment-provider"
+          ],
+          "chosen": "telegram-payments"
+        },
+        {
+          "query": "Stripe webhook: проверка подписи и сверка платежа с заказом",
+          "expected": [
+            "telegram-payment-provider"
+          ],
+          "chosen": "telegram-payments"
+        },
+        {
+          "query": "Как сделать checkout у внешнего провайдера и вернуть пользователя в бота?",
+          "expected": [
+            "telegram-payment-provider"
+          ],
+          "chosen": "telegram-payments"
+        },
+        {
+          "query": "Сверка платежей провайдера с заказами раз в сутки",
+          "expected": [
+            "telegram-payment-provider"
+          ],
+          "chosen": "telegram-payments"
+        },
+        {
+          "query": "Подключи Platega для оплаты по СБП в нашем боте",
+          "expected": [
+            "telegram-platega"
+          ],
+          "chosen": "telegram-payment-provider"
+        },
+        {
+          "query": "Обработай callback от Platega и обнови статус заказа",
+          "expected": [
+            "telegram-platega"
+          ],
+          "chosen": "telegram-payment-provider"
+        },
+        {
+          "query": "Сделай подписку с автосписанием через Platega",
+          "expected": [
+            "telegram-platega"
+          ],
+          "chosen": "telegram-payments"
+        },
+        {
+          "query": "Возврат платежа через Platega API",
+          "expected": [
+            "telegram-platega"
+          ],
+          "chosen": "telegram-payments"
+        },
+        {
+          "query": "Создай платежную ссылку Platega на сумму заказа",
+          "expected": [
+            "telegram-platega"
+          ],
+          "chosen": "telegram-payments"
+        },
+        {
+          "query": "Получи фото профиля пользователя и покажи в Mini App",
+          "expected": [
+            "telegram-profiles"
+          ],
+          "chosen": "telegram-bot-api"
+        },
+        {
+          "query": "Проверь, есть ли у пользователя Premium",
+          "expected": [
+            "telegram-profiles"
+          ],
+          "chosen": "telegram-bot-api"
+        },
+        {
+          "query": "Измени имя и описание бота на разных языках",
+          "expected": [
+            "telegram-profiles",
+            "telegram-localization"
+          ],
+          "chosen": "telegram-buttons"
+        },
+        {
+          "query": "Что можно узнать о пользователе по его id через Bot API?",
+          "expected": [
+            "telegram-profiles"
+          ],
+          "chosen": "telegram-bot-api"
+        },
+        {
+          "query": "Добавь миграцию БД для таблицы подписок",
+          "expected": [
+            "telegram-python-backend"
+          ],
+          "chosen": "telegram-subscription-access"
+        },
+        {
+          "query": "Транзакция: списать баланс и создать заказ атомарно",
+          "expected": [
+            "telegram-python-backend"
+          ],
+          "chosen": "telegram-payments"
+        },
+        {
+          "query": "HTTP API для Mini App: список товаров и пагинация",
+          "expected": [
+            "telegram-python-backend"
+          ],
+          "chosen": "telegram-project-planner"
+        },
+        {
+          "query": "Напиши тесты aiogram-обработчиков без реального Telegram",
+          "expected": [
+            "telegram-testing"
+          ],
+          "chosen": "telegram-bot-python"
+        },
+        {
+          "query": "Проверь, что повторная доставка update не создает второй заказ",
+          "expected": [
+            "telegram-testing"
+          ],
+          "chosen": "telegram-payments"
+        },
+        {
+          "query": "Тесты проверки initData на backend: подделка и истекший срок",
+          "expected": [
+            "telegram-testing",
+            "telegram-mini-app-auth"
+          ],
+          "chosen": "telegram-security-review"
+        },
+        {
+          "query": "Добавь вход через Telegram на наш сайт",
+          "expected": [
+            "telegram-web-login"
+          ],
+          "chosen": "telegram-security-review"
+        },
+        {
+          "query": "Проверь ID token от Telegram Login на Python backend",
+          "expected": [
+            "telegram-web-login"
+          ],
+          "chosen": "telegram-security-review"
+        },
+        {
+          "query": "Чем OIDC-вход Telegram отличается от старого виджета?",
+          "expected": [
+            "telegram-web-login"
+          ],
+          "chosen": "telegram-bot-api"
+        },
+        {
+          "query": "Пользователи бросают оформление заказа на втором шаге, разберись, где они путаются",
+          "expected": [
+            "telegram-mini-app-ux"
+          ],
+          "chosen": "telegram-buttons"
+        },
+        {
+          "query": "Проверь initData на сервере и выдай сессию пользователю Mini App",
+          "expected": [
+            "telegram-mini-app-auth"
+          ],
+          "chosen": "telegram-security-review"
+        },
+        {
+          "query": "Сделай поиск товаров по запросу @shop_bot iphone в любом чате",
+          "expected": [
+            "telegram-inline-mode"
+          ],
+          "chosen": "telegram-bot-api"
+        },
+        {
+          "query": "Сделай сервер для заказов: таблицы, миграции и HTTP API",
+          "expected": [
+            "telegram-python-backend"
+          ],
+          "chosen": "telegram-bot-api"
+        },
+        {
+          "query": "Сделай красивые кнопки на главном экране Mini App",
+          "expected": [
+            "telegram-mini-app-ui",
+            "telegram-mini-app-design-system"
+          ],
+          "chosen": "telegram-buttons"
+        },
+        {
+          "query": "Добавь кнопку оплаты звездами за подписку на канал",
+          "expected": [
+            "telegram-payments",
+            "telegram-subscription-access"
+          ],
+          "chosen": "telegram-buttons"
+        },
+        {
+          "query": "Подключи оплату через Stripe Checkout",
+          "expected": [
+            "telegram-payment-provider"
+          ],
+          "chosen": "telegram-payments"
+        },
+        {
+          "query": "Поменяй аватар и описание нашего бота программно",
+          "expected": [
+            "telegram-profiles"
+          ],
+          "chosen": "telegram-bot-api"
+        },
+        {
+          "query": "Какую библиотеку взять для нового бота на Python: aiogram или python-telegram-bot?",
+          "expected": [
+            "telegram-library-selection"
+          ],
+          "chosen": "telegram-bot-python"
+        },
+        {
+          "query": "Сделай анкету из пяти вопросов с кнопкой Назад и сохранением ответов",
+          "expected": [
+            "telegram-dialogs"
+          ],
+          "chosen": "telegram-mini-app-ui"
+        },
+        {
+          "query": "Открой Mini App из кнопки меню бота и передай туда номер заказа",
+          "expected": [
+            "telegram-mini-app-integration"
+          ],
+          "chosen": "telegram-bot-api"
+        }
+      ]
+    },
+    {
+      "model": "claude-sonnet-5-5",
+      "mode": "instant",
+      "served_model": "claude-sonnet-5-5",
+      "served_models": [
+        "claude-sonnet-5-5"
+      ],
+      "cli": "2.1.294 (Claude Code)",
+      "cases": 251,
+      "correct": 248,
+      "accuracy": 0.988,
+      "by_kind": {
+        "positive": {
+          "cases": 210,
+          "correct": 207
         },
         "negative": {
           "cases": 41,
@@ -85,26 +926,12 @@
           "chosen": "telegram-bot-api"
         },
         {
-          "query": "Описание и команды бота на русском и английском",
+          "query": "Запрос оплаты оборвался по таймауту, как понять, прошел ли он?",
           "expected": [
-            "telegram-localization",
-            "telegram-profiles"
+            "telegram-mini-app-network-recovery",
+            "telegram-payments"
           ],
-          "chosen": "telegram-bot-api"
-        },
-        {
-          "query": "Как сделать checkout у внешнего провайдера и вернуть пользователя в бота?",
-          "expected": [
-            "telegram-payment-provider"
-          ],
-          "chosen": "telegram-payments"
-        },
-        {
-          "query": "Сверка платежей провайдера с заказами раз в сутки",
-          "expected": [
-            "telegram-payment-provider"
-          ],
-          "chosen": "telegram-python-backend"
+          "chosen": "telegram-payment-provider"
         }
       ]
     }
