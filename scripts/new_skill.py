@@ -74,7 +74,8 @@ NEXT_STEPS = '''Дальше (подробно — docs/contributing-skills.md):
    добавьте запись в журнал под таблицей.
 5. Термины: python scripts/add_terms_lines.py, если текст использует термины из глоссария.
 6. Оценки (нужен Claude Code CLI): три задачи с критериями в evaluations/skill-value.json и запросы в evaluations/skill-selection.json, затем
-   python scripts/eval_skill_selection.py --cases evaluations/skill-selection.json --model haiku --output evaluations/reports/skill-selection-latest.json
+   python scripts/eval_skill_selection.py --cases evaluations/skill-selection.json --model claude-haiku-5-5 --mode reasoned --report evaluations/reports/skill-selection-latest.json
+   (и так для каждой модели и режима в отчете; модель — точный ID, не алиас)
    python scripts/eval_skill_value.py --skill {name} --report evaluations/reports/skill-value-latest.json
 7. Проверка: uv run --with "PyYAML>=6,<7" python scripts/validate_skills.py и python -m unittest discover -s tests.
 '''

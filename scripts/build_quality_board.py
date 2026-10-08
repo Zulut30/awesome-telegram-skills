@@ -55,9 +55,9 @@ def collect(root: Path) -> dict:
     acceptance = [entry for entry in load(root, 'docs/acceptance-history.json')['reports'] if entry['passed'] and entry['stages']]
     latest = max(acceptance, key=lambda entry: (tuple(map(int, entry['version'].split('.'))), entry['checked_date'] is not None))
     return {
-        'skill_selection': {'date': selection['date'], 'threshold': selection['threshold'],
-                            'runs': [{'model': run['model'], 'accuracy': run['accuracy'], 'correct': run['correct'], 'cases': run['cases']}
-                                     for run in selection['runs']]},
+        'skill_selection': {'date': selection['date'], 'threshold': selection['threshold'], 'gate_mode': selection['gate_mode'],
+                            'runs': [{'model': run['served_model'], 'mode': run['mode'], 'accuracy': run['accuracy'],
+                                      'correct': run['correct'], 'cases': run['cases']} for run in selection['runs']]},
         'skill_value': {'tasks': value['tasks'], 'passed_with': value['passed_with'], 'passed_without': value['passed_without'],
                         'criteria': value['criteria'], 'criteria_with': value['with'], 'criteria_without': value['without']},
         'bot_api': {'version': index_version, 'methods': len(methods), 'with_recipe': len(with_recipe),

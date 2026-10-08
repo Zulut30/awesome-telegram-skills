@@ -277,13 +277,24 @@ class Builder:
         def share(part: int, whole: int) -> str:
             return f'{part} из {whole} ({part / whole:.0%})' if whole else 'нет данных'
 
+        def selection_rows(selection: dict) -> list[tuple[str, str]]:
+            # The gate mode lets the agent match the request against the descriptions first; "instant" asks for the name only.
+            labels = {'reasoned': 'Выбор скиллов, после сопоставления с описаниями', 'instant': 'Выбор скиллов сразу, только имя (без порога)'}
+            modes = [selection['gate_mode'], *sorted({run['mode'] for run in selection['runs']} - {selection['gate_mode']})]
+            rows = []
+            for mode in modes:
+                runs = '; '.join(f"{run['model']}: {run['accuracy']:.1%} ({run['correct']} из {run['cases']})" for run in selection['runs'] if run['mode'] == mode)
+                tail = f" — порог {selection['threshold']:.0%}, замер {selection['date']}" if mode == selection['gate_mode'] else ''
+                rows.append((labels.get(mode, f'Выбор скиллов, {mode}'), runs + tail))
+            return rows
+
         ci = board.get('ci') or {}
         checks, acceptance = ci.get('repository_checks_main'), ci.get('full_acceptance')
         selection, value, api, sources, live, accepted = (board[key] for key in ('skill_selection', 'skill_value', 'bot_api', 'sources', 'live', 'acceptance'))
         rows = [
             ('Зеленые запуски Repository checks на main', share(checks['green'], checks['runs']) + (f", последний {checks['last']['date']}: {checks['last']['conclusion']}" if checks and checks['last'] else '') if checks else 'нет данных: сайт собран без CI'),
             ('Последний Full acceptance', f"{acceptance['last']['conclusion']}, {acceptance['last']['date']}" if acceptance and acceptance['last'] else 'нет данных'),
-            ('Выбор скиллов', '; '.join(f"{run['model']}: {run['accuracy']:.1%} ({run['correct']} из {run['cases']})" for run in selection['runs']) + f" — порог {selection['threshold']:.0%}, замер {selection['date']}"),
+            *selection_rows(selection),
             ('Задачи решены полностью', f"со скиллом {share(value['passed_with'], value['tasks'])}, без скилла {share(value['passed_without'], value['tasks'])}"),
             ('Критерии выполнены', f"со скиллом {share(value['criteria_with'], value['criteria'])}, без скилла {share(value['criteria_without'], value['criteria'])}"),
             (f"Методы Bot API {api['version']} с рецептом", share(api['with_recipe'], api['methods']) + f"; запрос собирает SDK — {api['recipe_executed']}"),
