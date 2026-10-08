@@ -1,6 +1,10 @@
-# Композиции клавиатур 0.14.0
+# Композиции клавиатур
 
-Optional aiogram extra, Python >=3.11 и предоставленный wheel `awesome-telegram-patterns` 0.14.0; native модели берите из установленного aiogram. Пакет не предполагается доступным в PyPI. Существующие `action_menu`, `inline_keyboard` и `reply_keyboard` сохраняют свои defaults и контракты. Новый API нужен, когда удобнее передать flat список и шаблон ширин, а не нарезать его вручную.
+Доступно с 0.14.0, проверено на 0.24.0.
+
+Термины: **ACK** — ответ на нажатие кнопки через `answerCallbackQuery`: клиент убирает индикатор ожидания; это не сообщение об успехе операции; **entitlement** — право на возможность (custom emoji, оплаченный доступ), которое проверяется отдельно от самого запроса; **fallback** — запасной вариант, если основная возможность недоступна.
+
+Optional aiogram extra, Python >=3.11 и предоставленный wheel `awesome-telegram-patterns`; native модели берите из установленного aiogram. Пакет не предполагается доступным в PyPI. Существующие `action_menu`, `inline_keyboard` и `reply_keyboard` сохраняют свои defaults и контракты. Новый API нужен, когда удобнее передать flat список и шаблон ширин, а не нарезать его вручную.
 
 ## Две, три и смешанные строки
 
@@ -47,12 +51,12 @@ shown = action_layout([item], capabilities=verified).inline_keyboard[0][0]
 assert shown.style == 'success' and shown.icon_custom_emoji_id == '12345'
 ```
 
-Неверные RGB styles/emoji ID/unknown SDK fields отклоняются **до** fallback: он не скрывает ошибочный input. Native models копируются глубоко, descriptor/layout inputs не изменяются. Существующие builders по-прежнему сохраняют style по своему контракту и убирают неподтверждённую emoji; новый default text fallback не меняет старые вызовы.
+Неверный цвет RGB, ID emoji или неизвестное поле SDK отклоняются **до** запасного варианта: он не скрывает ошибочные входные данные. Native models копируются глубоко, descriptor/layout inputs не изменяются. Существующие builders по-прежнему сохраняют style по своему контракту и убирают неподтверждённую emoji; новый default text fallback не меняет старые вызовы.
 
 Context guards сохраняются: pay/game в первом месте, pay только invoice; Web App в ordinary private; reply request только private; reply недоступен channels/Business; request IDs уникальны. Все runtime flags должны быть bool. Кнопка не выдаёт права, callback ACK не означает успех; host проверяет actor/object/version/idempotency. Copy/url/disabled не являются callback-событием. Лейблы должны сохранять смысл без цвета/иконки.
 
 ## Проверка и источники
 
-`examples/python/keyboard_layouts.py` — закрытый SDK/StubSession пример, запускаемый full distribution verifier через installed wheel. Тесты сравнивают pattern с установленным InlineKeyboardBuilder.adjust, проверяют wire через SDK serializer, context refusals, immutable source и совместимость прежних calls. Это не live appearance/entitlement acceptance. Публичные symbols находятся в aiogram.__all__, imports без extra отклоняются ожидаемо; core остаётся SDK-free.
+`examples/python/keyboard_layouts.py` — закрытый SDK/StubSession пример, запускаемый full distribution verifier через installed wheel. Тесты сравнивают pattern с установленным InlineKeyboardBuilder.adjust, проверяют итоговый JSON через сериализатор SDK, отказы в неподходящем контексте, неизменность исходных данных и совместимость прежних вызовов. Это не live appearance/entitlement acceptance. Публичные symbols находятся в aiogram.__all__, imports без extra отклоняются ожидаемо; core остаётся SDK-free.
 
 Частично сверено 2026-10-05: [InlineKeyboardButton](https://core.telegram.org/bots/api#inlinekeyboardbutton), [KeyboardButton](https://core.telegram.org/bots/api#keyboardbutton), [aiogram 3.31 KeyboardBuilder](https://docs.aiogram.dev/en/dev-3.x/utils/keyboard.html). Scope — styles/emoji/exact-one-action/context и adjust pattern semantics; установленный SDK дополнительно проверяет payload. Конкретную поддержку клиента и server entitlement проверяйте для своего проекта; дату других API источников это не меняет.

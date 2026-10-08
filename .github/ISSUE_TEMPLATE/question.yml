@@ -1,0 +1,30 @@
+name: Вопрос
+description: Как подключить компонент, выбрать скилл или понять ошибку. Ответ — в течение 3 рабочих дней.
+title: "[Question]: "
+labels: [question]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Сначала проверьте [частые проблемы](https://zulut30.github.io/awesome-telegram-skills/docs/troubleshooting/) и `telegram-patterns doctor`. Не публикуйте токены, `initData` и личные данные. Срок ответа и правила — в [SUPPORT.md](https://github.com/Zulut30/awesome-telegram-skills/blob/main/SUPPORT.md).
+  - type: textarea
+    id: question
+    attributes:
+      label: Вопрос
+      description: Что хотите сделать и что мешает?
+    validations:
+      required: true
+  - type: textarea
+    id: tried
+    attributes:
+      label: Что уже попробовали
+      description: Команды, код с синтетическими данными, ссылки на страницы документации.
+    validations:
+      required: true
+  - type: textarea
+    id: environment
+    attributes:
+      label: Версии и среда
+      description: telegram-patterns --version, ОС, Python или Node.js, версия aiogram; при вопросе о проекте — вывод telegram-patterns doctor --json.
+    validations:
+      required: true

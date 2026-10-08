@@ -27,12 +27,12 @@ let browser,checks=0;const results=[];
 function verify(value,message){assert.ok(value,message);checks++;}
 try{
   browser=await chromium.launch(process.env.CHROME_PATH?{executablePath:process.env.CHROME_PATH,headless:true}:{channel:'chrome',headless:true});
-  for(const [name,width,height] of [['phone',320,568],['phone-large',390,844],['landscape',844,390],['tablet',768,1024],['wide-tablet',1024,768],['desktop',1440,900],['large-desktop',1920,1080]]){
+  for(const [name,width,height] of [['phone',320,568],['phone-360',360,740],['phone-large',390,844],['landscape',844,390],['tablet',768,1024],['wide-tablet',1024,768],['desktop',1440,900],['large-desktop',1920,1080]]){
     for(const theme of ['light','dark']){
       const context=await browser.newContext({viewport:{width,height},colorScheme:theme});const page=await context.newPage();const errors=[],outside=[];
       page.on('pageerror',error=>errors.push(error.message));page.on('request',request=>{if(!request.url().startsWith(base))outside.push(request.url());});
       await page.goto(base);await page.getByRole('heading',{name:'Найти рецепт. Собрать бота.'}).waitFor();
-      verify(await page.locator('#recipes .recipe-card').count()===310,`${name}/${theme}: catalog count`);
+      verify(await page.locator('#recipes .recipe-card').count()===340,`${name}/${theme}: catalog count`);
       await page.getByLabel('Что хотите сделать?').fill('восстановление диалога после рестарта');
       verify(await page.getByRole('button',{name:'Восстановление диалога после рестарта',exact:true}).isVisible(),`${name}/${theme}: persistent dialog discoverable`);
       await page.getByRole('button',{name:'Восстановление диалога после рестарта',exact:true}).click();
@@ -41,19 +41,29 @@ try{
       if(width===320)await page.screenshot({path:path.join(output,`phone-initial-${theme}.png`),fullPage:true});
       if(!await page.locator('#advanced-filters').evaluate(details=>details.open))await page.locator('#advanced-filters summary').click();
       await page.getByLabel('Зрелость',{exact:true}).selectOption('experimental');
-      verify(await page.locator('#recipes .recipe-card').count()===26,`${name}/${theme}: experimental count`);
+      verify(await page.locator('#recipes .recipe-card').count()===56,`${name}/${theme}: experimental count`);
       await page.getByLabel('Проверка',{exact:true}).selectOption('mock');
-      verify(await page.locator('#recipes .recipe-card').count()===15,`${name}/${theme}: independent evidence filter`);
+      verify(await page.locator('#recipes .recipe-card').count()===34,`${name}/${theme}: independent evidence filter`);
       await page.getByLabel('Зрелость',{exact:true}).selectOption('reference');
       verify(await page.locator('#recipes .recipe-card').count()===0,`${name}/${theme}: mock does not imply reference or stable`);
       await page.getByRole('button',{name:'Сбросить',exact:true}).click();
       await page.getByLabel('Зрелость',{exact:true}).selectOption('stable');
       verify(await page.locator('#recipes .recipe-card').count()===0,`${name}/${theme}: no fabricated stable claim`);
       await page.getByRole('button',{name:'Сбросить',exact:true}).click();
-      verify(await page.locator('#recipes .recipe-card').count()===310,`${name}/${theme}: reset clears maturity`);
+      verify(await page.locator('#recipes .recipe-card').count()===340,`${name}/${theme}: reset clears maturity`);
       await page.getByLabel('Что хотите сделать?').fill('две кнопки');
       await page.getByRole('button',{name:'Две кнопки в ряд',exact:true}).click();
       verify((await page.locator('#preview .keyboard-row').evaluateAll(rows=>rows.map(row=>row.children.length))).join(',')==='2,2',`${name}/${theme}: two rows`);
+      if(width===360){
+        // A common Android width: copy must really reach the clipboard, not only show a message.
+        await context.grantPermissions(['clipboard-read','clipboard-write'],{origin:base});
+        const copy=page.getByRole('button',{name:'Копировать',exact:true});await copy.scrollIntoViewIfNeeded();
+        const box=await copy.boundingBox();verify(box.width>=44&&box.height>=44&&box.x>=0&&box.x+box.width<=width,`${name}/${theme}: copy target fits`);
+        await copy.click();await page.waitForFunction(()=>document.querySelector('#copy-status').textContent!=='',null,{timeout:5000});
+        verify((await page.locator('#copy-status').textContent())==='Код скопирован.',`${name}/${theme}: copy confirmed`);
+        verify((await page.evaluate(()=>navigator.clipboard.readText()))===(await page.locator('#code').textContent()),`${name}/${theme}: clipboard holds the shown code`);
+        await page.screenshot({path:path.join(output,`phone-360-${theme}-copied.png`),fullPage:false});
+      }
       await page.getByLabel('Что хотите сделать?').fill('три кнопки');
       await page.getByRole('button',{name:'Три кнопки в ряд',exact:true}).click();
       verify((await page.locator('#preview .keyboard-row').evaluateAll(rows=>rows.map(row=>row.children.length))).join(',')==='3,3',`${name}/${theme}: three rows`);
@@ -70,7 +80,9 @@ try{
       await page.getByRole('button',{name:'Сбросить',exact:true}).click();await page.getByLabel('Проверка',{exact:true}).selectOption('live');
       verify(await page.locator('#recipes .recipe-card').count()===0,`${name}/${theme}: no fabricated live verification`);
       await page.getByRole('button',{name:'Сбросить',exact:true}).click();await page.getByLabel('Раздел',{exact:true}).selectOption('keyboards');
-      verify(await page.locator('#recipes .recipe-card').count()===11,`${name}/${theme}: category filter`);
+      verify(await page.locator('#recipes .recipe-card').count()===22,`${name}/${theme}: category filter`);
+      await page.getByLabel('SDK',{exact:true}).selectOption('python-telegram-bot');
+      verify(await page.locator('#recipes .recipe-card').count()===11&&await page.getByRole('button',{name:'Две кнопки в ряд · python-telegram-bot',exact:true}).isVisible(),`${name}/${theme}: python-telegram-bot keyboard variants`);
       await page.getByRole('button',{name:'Сбросить',exact:true}).click();await page.getByLabel('Что хотите сделать?').fill('назад');
       verify(await page.getByRole('button',{name:'Две кнопки в ряд',exact:true}).isVisible(),`${name}/${theme}: back layout searchable`);
       await page.getByLabel('SDK',{exact:true}).selectOption('telegram-webapp');
@@ -90,7 +102,8 @@ try{
         const href=await page.locator('#'+id+' a').first().getAttribute('href');const response=await context.request.get(new URL(href,base+'/').href);
         verify(response.status()===200&&(await response.text()).includes('SQLiteOnce'),`${name}/${theme}: ${id} resolves to source code`);
       }
-      await page.getByLabel('Контекст',{exact:true}).selectOption('private');
+      // No recovery recipe targets a group (the python-telegram-bot variant is a private-chat bot).
+      await page.getByLabel('Контекст',{exact:true}).selectOption('group');
       verify(await page.locator('#detail').isHidden()&&await page.locator('#recipes .recipe-card').count()===0,`${name}/${theme}: context mismatch has no stale details`);
       await page.getByRole('button',{name:'Сбросить',exact:true}).click();await page.getByLabel('Что хотите сделать?').fill('история');
       await page.getByLabel('Задача',{exact:true}).selectOption('navigation');await page.getByLabel('Контекст',{exact:true}).selectOption('private');
@@ -133,13 +146,13 @@ try{
         verify(response.status()===200&&(await response.text()).includes('attach_dialog'),`${name}/${theme}: dialog ${id} resolves`);
       }
       await page.getByRole('button',{name:'Сбросить',exact:true}).click();
-      for(const [task,title,recipe,marker,checkMarker] of [
-        ['inline','Inline-поиск с персональной пагинацией','demo-inline-search','inline_search_router','scoped_pagination'],
-        ['polls','Опросы, quiz и события голосования','demo-polls','polls_router','durable_host_dedup'],
-        ['platform','Темы, реакции, заявки и специальные операции','demo-platform','platform_router','durable_intents'],
+      for(const [task,title,recipe,marker,checkMarker,count] of [
+        ['inline','Inline-поиск с персональной пагинацией','demo-inline-search','inline_search_router','scoped_pagination',1],
+        ['polls','Опросы, quiz и события голосования','demo-polls','polls_router','durable_host_dedup',2],
+        ['platform','Темы, реакции, заявки и специальные операции','demo-platform','platform_router','durable_intents',1],
       ]){
         await page.getByLabel('Задача',{exact:true}).selectOption(task);await page.getByLabel('Контекст',{exact:true}).selectOption('private');
-        verify(await page.locator('#recipes .recipe-card').count()===1&&await page.getByRole('button',{name:title,exact:true}).isVisible(),`${name}/${theme}: ${task} discoverable`);
+        verify(await page.locator('#recipes .recipe-card').count()===count&&await page.getByRole('button',{name:title,exact:true}).isVisible(),`${name}/${theme}: ${task} discoverable`);
         await page.getByRole('button',{name:title,exact:true}).click();
         verify((await page.locator('#code').textContent()).includes(marker)&&(await page.locator('#execution-command').textContent())===`telegram-patterns run-recipe ${recipe} --offline`,`${name}/${theme}: ${task} public composition and fixture`);
         for(const id of ['source-files','check-files']){
@@ -169,7 +182,8 @@ try{
       }
       await page.getByRole('button',{name:'Сбросить',exact:true}).click();await page.getByLabel('Что хотите сделать?').fill('форматирование');
       await page.getByLabel('Задача',{exact:true}).selectOption('bot');await page.getByLabel('Контекст',{exact:true}).selectOption('private');
-      verify(await page.locator('#recipes .recipe-card').count()===1&&await page.getByRole('button',{name:'Безопасные сообщения и разбиение текста',exact:true}).isVisible(),`${name}/${theme}: message formatting discoverable`);
+      verify(await page.locator('#recipes .recipe-card').count()===2&&await page.getByRole('button',{name:'Безопасные сообщения и разбиение текста',exact:true}).isVisible()
+        &&await page.getByRole('button',{name:'Rich-сообщение: карточка заказа и запасной текст',exact:true}).isVisible(),`${name}/${theme}: message formatting discoverable`);
       await page.getByRole('button',{name:'Безопасные сообщения и разбиение текста',exact:true}).click();
       await page.locator('#execution-details').evaluate(details=>details.open=true);
       verify((await page.locator('#code').textContent()).includes('MessageBuilder')&&(await page.locator('#execution-command').textContent())==='telegram-patterns run-recipe demo-message-text --offline',`${name}/${theme}: message public composition and closed fixture`);
@@ -179,7 +193,7 @@ try{
       }
       await page.getByRole('button',{name:'Сбросить',exact:true}).click();await page.getByLabel('SDK',{exact:true}).selectOption('aiogram');
       await page.getByLabel('Версия SDK / снимок',{exact:true}).selectOption('3.31.0');await page.getByLabel('Версия API',{exact:true}).selectOption('bot:10.3');
-      verify(await page.locator('#recipes .recipe-card').count()===210,`${name}/${theme}: SDK/version/API exact intersection`);
+      verify(await page.locator('#recipes .recipe-card').count()===220,`${name}/${theme}: SDK/version/API exact intersection`);
       await page.getByLabel('SDK',{exact:true}).selectOption('python-core');
       verify(await page.getByLabel('Версия SDK / снимок',{exact:true}).inputValue()==='',`${name}/${theme}: changing SDK clears incompatible version`);
       await page.getByRole('button',{name:'Сбросить',exact:true}).click();await page.getByLabel('Контекст',{exact:true}).selectOption('supergroup');
@@ -188,7 +202,7 @@ try{
       await page.getByRole('button',{name:'Сбросить',exact:true}).click();await page.getByLabel('Контекст',{exact:true}).selectOption('group');
       verify(await page.locator('[data-id="api.getUpdates"]').count()===0,`${name}/${theme}: unspecified context is not all chats`);
       await page.getByRole('button',{name:'Сбросить',exact:true}).click();
-      verify(await page.locator('#recipes .recipe-card').count()===310&&await page.getByLabel('Что хотите сделать?').evaluate(input=>input===document.activeElement),`${name}/${theme}: full filter reset and focus`);
+      verify(await page.locator('#recipes .recipe-card').count()===340&&await page.getByLabel('Что хотите сделать?').evaluate(input=>input===document.activeElement),`${name}/${theme}: full filter reset and focus`);
       verify(errors.length===0&&outside.length===0,`${name}/${theme}: page errors/external requests`);
       await page.getByLabel('Что хотите сделать?').fill('цветные');
       await page.screenshot({path:path.join(output,`${name}-${theme}.png`),fullPage:true});results.push({name,width,height,theme,geometry});await context.close();

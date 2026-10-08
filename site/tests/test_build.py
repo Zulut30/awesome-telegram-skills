@@ -34,6 +34,31 @@ class DocumentationOperations(unittest.TestCase):
         self.assertTrue(result['passed'], result['errors'])
         self.assertEqual(result['skills'], len(list((self.source / '.agents/skills').glob('*/SKILL.md'))))
 
+    def test_sidebar_follows_the_navigation_manifest_and_internal_pages_stay_out(self):
+        import re
+        navigation = json.loads((self.source / 'docs/navigation.json').read_text(encoding='utf-8'))
+        expected = [entry['title'] for section in navigation['sections'] for entry in section['pages'] if entry.get('nav')]
+        for route in ('index.html', 'docs/index.html', 'docs/quickstart/index.html', 'skills/telegram-bot-api/index.html'):
+            with self.subTest(route):
+                page = (self.site / route).read_text(encoding='utf-8')
+                sidebar = re.search(r'<nav id="site-navigation".*?</nav>', page, re.S).group(0)
+                self.assertEqual(re.findall(r'<a href="[^"]+"[^>]*>([^<]+)</a>', sidebar), expected)
+                self.assertEqual(re.findall(r'nav-label">([^<]+)<', sidebar), ['Обучение', 'Как сделать', 'Справочник', 'Объяснения'])
+        self.assertLessEqual(len(expected), navigation['max_sidebar_pages'])
+        self.assertTrue((self.site / 'docs/internal/README/index.html').is_file())
+        search = json.loads((self.site / 'search-index.json').read_text(encoding='utf-8'))
+        self.assertFalse([entry['path'] for entry in search if entry['path'].startswith('docs/internal/')])
+        self.assertNotIn('Source: docs/internal/', (self.site / 'llms-full.txt').read_text(encoding='utf-8'))
+        quickstart = (self.site / 'docs/quickstart/index.html').read_text(encoding='utf-8')
+        self.assertRegex(quickstart, r'class="breadcrumbs">.*?/ Обучение</p>')
+
+    def test_quality_board_shows_repository_numbers_and_says_when_ci_is_missing(self):
+        page = (self.site / 'docs/quality-board/index.html').read_text(encoding='utf-8')
+        self.assertIn('<h2 id="numbers">Числа</h2>', page)
+        self.assertIn('нет данных: сайт собран без CI', page)
+        self.assertIn('Выбор скиллов', page)
+        self.assertRegex(page, r'Методы Bot API [0-9.]+ с рецептом</td><td>\d+ из \d+')
+
     def test_check_rebuild_keeps_existing_output(self):
         before = (self.site / 'index.html').read_bytes()
         result = subprocess.run([sys.executable, str(ROOT / 'scripts/build_docs_site.py'), '--source', str(self.source), '--output', str(self.site), '--check'], capture_output=True, text=True, timeout=90)
@@ -78,7 +103,8 @@ class DocumentationOperations(unittest.TestCase):
         typescript = source / 'packages/typescript/package.json'
         typescript.parent.mkdir(parents=True)
         typescript.write_text('{"version":"0.0.0-unaccepted"}', encoding='utf-8')
-        (source / 'docs/v1-checks').mkdir(parents=True)
+        (source / 'docs').mkdir()
+        (source / 'docs/acceptance-history.json').write_text(json.dumps({'reports': [{'version': '0.24.0', 'passed': True}]}), encoding='utf-8')
         destination = self.base / 'refused-site'
         with self.assertRaisesRegex(ValueError, 'accepted version'):
             Builder(source, destination, 'https://example.test/', 'preview')

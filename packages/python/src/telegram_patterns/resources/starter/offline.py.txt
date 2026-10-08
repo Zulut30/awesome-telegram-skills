@@ -26,7 +26,9 @@ async def main():
     assert methods == ['SendMessage', 'AnswerCallbackQuery', 'SendMessage']
     assert session.closed
     await dispatcher.fsm.close()
-    print(json.dumps({'passed': True, 'network': False, 'methods': methods, 'session_closed': session.closed}))
+    report = {'passed': True, 'network': False, 'methods': methods, 'session_closed': session.closed}
+__OFFLINE_MINI_APP__
+    print(json.dumps(report))  # ASCII escapes: safe on any console code page
 
 
 if __name__ == '__main__': asyncio.run(main())

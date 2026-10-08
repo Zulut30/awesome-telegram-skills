@@ -5,7 +5,12 @@ import ast
 import hashlib
 import json
 from pathlib import Path
+import sys
 import re
+
+sys.path.insert(0, str(Path(__file__).resolve().parent))  # shared helpers live next to this script
+from _environment import planted_link  # noqa: E402
+from _glossary import with_terms_line  # noqa: E402
 
 ROOT = Path(__file__).resolve().parents[1]
 SPEC = ROOT / 'catalog/api-reference.json'
@@ -16,7 +21,8 @@ SECTION = {'core': ('api-reference-core.md', 'Python core'),
 
 def public_inventory() -> dict[str, tuple[str, ...]]:
     result = {}
-    for file, module in [('__init__', 'telegram_patterns'), ('aiogram', 'telegram_patterns.aiogram'), ('testing', 'telegram_patterns.testing')]:
+    for file, module in [('__init__', 'telegram_patterns'), ('aiogram', 'telegram_patterns.aiogram'), ('testing', 'telegram_patterns.testing'),
+                         ('ptb', 'telegram_patterns.ptb')]:
         tree = ast.parse((ROOT / f'packages/python/src/telegram_patterns/{file}.py').read_text(encoding='utf-8'))
         value = next(n.value for n in tree.body if isinstance(n, ast.Assign) and
                      any(isinstance(t, ast.Name) and t.id == '__all__' for t in n.targets))
@@ -58,7 +64,8 @@ def build() -> tuple[dict[str, str], dict]:
                        'core_doctor намеренно проверяет SDK-free окружение.\n\n')
     bodies['bot'] += ('Нужны предоставленный wheel с aiogram extra и установленный совместимый SDK. '
                      'В той же папке создайте bot_fixture.py из блока ниже, затем запускайте `python <FILE.py>`. '
-                     'Фиктивный token применяется только с StubSession: HTTP fallback отсутствует.\n\n'
+                     'Фиктивный token применяется только с StubSession: HTTP fallback отсутствует. '
+                     'Группа ptb_adapter вместо aiogram требует ptb extra (python-telegram-bot) и не использует bot_fixture.py.\n\n'
                      '## Общая fixture — bot_fixture.py\n\n```python\n' +
                      (ROOT / 'examples/api-reference/python/bot_fixture.py').read_text(encoding='utf-8').rstrip() + '\n```\n\n')
     bodies['typescript'] += ('Установите предоставленный local tarball в отдельный consumer, сохраните файлы в src/, '
@@ -78,10 +85,10 @@ def build() -> tuple[dict[str, str], dict]:
             raise ValueError('Invalid/duplicate reference recipe')
         groups.add(identifier)
         supplied = ROOT / group['example']
-        if any(p.is_symlink() or bool(getattr(p, 'is_junction', lambda: False)()) for p in (supplied, *supplied.parents)):
+        if any(planted_link(p) for p in (supplied, *supplied.parents)):
             raise ValueError('Reference source links are not allowed')
         path = supplied.resolve(strict=True)
-        if not path.is_relative_to(ROOT / 'examples/api-reference'):
+        if not path.is_relative_to((ROOT / 'examples/api-reference').resolve()):
             raise ValueError('Reference example path escaped owned directory')
         code = path.read_text(encoding='utf-8')
         fenced_code = code.rstrip() + '\n'
@@ -133,8 +140,8 @@ def build() -> tuple[dict[str, str], dict]:
               'Type-only TypeScript exports существуют в declarations, без runtime JavaScript binding. '
               'Imports типов используют `type`. Python Literal/Protocol '
               'annotations проверяются Mypy; это не runtime validation внешнего JSON.\n')
-    products['api-reference.md'] = intro
-    for section, body in bodies.items(): products[SECTION[section][0]] = body.rstrip() + '\n'
+    products['api-reference.md'] = with_terms_line(intro)
+    for section, body in bodies.items(): products[SECTION[section][0]] = with_terms_line(body.rstrip() + '\n')
     index = {'schema_version': 1, 'library_version': version, 'symbols': entries,
              'python_symbols': sum(not item['module'].startswith('@') for item in entries),
              'typescript_symbols': sum(item['module'].startswith('@') for item in entries),
@@ -151,7 +158,7 @@ def main() -> int:
         outputs[ROOT / 'docs' / name] = content
         outputs[ROOT / '.agents/skills/telegram-code-patterns/references' / name] = content
     for path, value in outputs.items():
-        if any(p.is_symlink() or bool(getattr(p, 'is_junction', lambda: False)()) for p in (path, *path.parents)):
+        if any(planted_link(p) for p in (path, *path.parents)):
             raise ValueError('Reference output links are not allowed')
         if args.check:
             if not path.is_file() or path.read_text(encoding='utf-8') != value: raise ValueError('Reference output drift: ' + path.name)

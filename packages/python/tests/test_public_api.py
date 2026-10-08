@@ -4,6 +4,7 @@ import unittest
 from datetime import datetime, timezone
 
 from aiogram.types import Chat, Message
+
 import telegram_patterns
 import telegram_patterns.aiogram as adapters
 from telegram_patterns.aiogram import ActionButton, UpdateObserver, action_menu
@@ -24,11 +25,14 @@ class PublicImportsTests(unittest.TestCase):
         for module in (telegram_patterns, adapters):
             self.assertEqual(len(module.__all__), len(set(module.__all__)))
             for name in module.__all__:
-                with self.subTest(name=name): self.assertIsNotNone(getattr(module, name))
+                with self.subTest(name=name):
+                    self.assertIsNotNone(getattr(module, name))
         # An accidental old explicit SDK import is still accessible; new wildcard
         # consumers are instructed to import SDK symbols directly from aiogram.
-        from telegram_patterns.aiogram import Bot
         from aiogram import Bot as NativeBot
+
+        from telegram_patterns.aiogram import Bot
+
         self.assertIs(Bot, NativeBot)
         self.assertEqual(action_menu([ActionButton('Open', 'open')]).inline_keyboard[0][0].text, 'Open')
 
@@ -36,8 +40,13 @@ class PublicImportsTests(unittest.TestCase):
 class MiddlewareRegistrationTests(unittest.IsolatedAsyncioTestCase):
     async def test_message_level_registration_fails_before_recording_or_effect(self):
         records, effects = [], []
-        async def record(value): records.append(value)
-        async def handle(event, data): effects.append(event)
+
+        async def record(value):
+            records.append(value)
+
+        async def handle(event, data):
+            effects.append(event)
+
         message = Message(message_id=1, date=datetime.now(timezone.utc), chat=Chat(id=1, type='private'))
         with self.assertRaisesRegex(TypeError, 'dispatcher.update'):
             await UpdateObserver(record)(handle, message, {})
@@ -45,4 +54,5 @@ class MiddlewareRegistrationTests(unittest.IsolatedAsyncioTestCase):
         self.assertEqual(effects, [])
 
 
-if __name__ == '__main__': unittest.main()
+if __name__ == '__main__':
+    unittest.main()

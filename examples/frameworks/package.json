@@ -1,0 +1,23 @@
+{
+  "name": "@awesome-telegram/framework-examples",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "React, Vue and Svelte Mini App views over the framework-free TelegramBridge",
+  "scripts": {
+    "build": "tsc -p tsconfig.json && node scripts/build-svelte.mjs",
+    "test": "npm run build && node --test tests/*.test.mjs"
+  },
+  "dependencies": {
+    "@awesome-telegram/patterns": "*",
+    "react": "19.3.0",
+    "react-dom": "19.3.0",
+    "svelte": "5.57.2",
+    "vue": "3.5.43"
+  },
+  "devDependencies": {
+    "@types/react": "19.3.0",
+    "@types/react-dom": "19.3.0",
+    "typescript": "7.0.2"
+  }
+}

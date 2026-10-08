@@ -2,11 +2,45 @@
 
 Спасибо за конкретные примеры, исправления и предложения. Основной стек — Python для ботов/backend и TypeScript для Mini Apps. Правила работы с кодом и навыками находятся в [AGENTS.md](AGENTS.md).
 
+## Кодекс поведения
+
+Участники соблюдают [кодекс поведения](CODE_OF_CONDUCT.md); там же описаны правила модерации issues и обсуждений.
+
+## Лицензия вкладов
+
+Проект распространяется по лицензии [MIT](LICENSE). Отправляя pull request, вы соглашаетесь, что ваш вклад распространяется на тех же условиях. Не добавляйте код, тексты и изображения, которые нельзя распространять по MIT.
+
+## Сообщить об уязвимости
+
+Не публикуйте уязвимости в issues. Используйте приватное сообщение по правилам [SECURITY.md](SECURITY.md).
+
 ## Предложить изменение
 
 Создайте issue с пользовательской задачей, ожидаемым поведением и ссылкой на затронутый компонент или скилл. Для ошибки добавьте версию, среду, шаги воспроизведения и результат. Используйте синтетические данные; не публикуйте токены и пользовательские сессии.
 
 В pull request объясните, что изменилось и как это проверено. Сохраняйте существующий стек и API проекта. Узкое исправление не требует подключения всего набора навыков или новой инфраструктуры.
+
+Новый скилл начинается с команды `python scripts/new_skill.py telegram-<имя> --title … --short … --not-for …`; весь путь до pull request, чек-лист и примеры — в [руководстве для авторов скиллов и компонентов](docs/contributing-skills.md).
+
+## Сообщение коммита
+
+История должна объяснять себя без пулл-реквеста. Каждый коммит, кроме слияний и коммитов ботов, пишется по шаблону [.gitmessage](.gitmessage) (`git config commit.template .gitmessage`):
+
+```text
+dialog: keep the operation id after a restart
+
+После перезапуска бот выдавал новый ID операции, и повторное нажатие
+создавало вторую заявку. ID теперь хранится вместе с шагом диалога.
+
+Проверено: python -m unittest discover -s tests (163 OK), test_dialog_restart
+```
+
+- Первая строка: область и что делает изменение, до 72 символов, без точки в конце; вторая строка пустая.
+- Тело: что изменено и зачем — хотя бы одно предложение; строки до 100 символов.
+- Строка `Проверено:` (или `Verified:`): какие проверки запускались и с каким результатом.
+- Трейлеры вроде `Co-Authored-By:` идут последними; `fixup!`, `squash!` и WIP-коммиты сожмите до ревью.
+
+Задача CI `history` проверяет сообщения коммитов pull request (`python scripts/check_commit_messages.py --range BASE..HEAD`; локально без аргументов — `origin/main..HEAD`) и сверку CHANGELOG с тегами (`python scripts/check_changelog.py`): у каждого тега `vX.Y.Z` есть раздел `## X.Y.Z`, разделы идут от новых к старым, первым стоит «Не выпущено». Workflow Release не выпустит тег без своего раздела. Коммиты до введения правила (до `ce1508b`) не проверяются.
 
 ## Проверить скиллы и документацию
 
@@ -17,6 +51,20 @@ python -m unittest discover -s tests -v
 
 Первый прогон проверяет упаковку, метаданные, локальные ссылки и Python-синтаксис. Качество решений агента проверяйте отдельно по сценариям [docs/evaluation.md](docs/evaluation.md).
 
+Frontmatter каждого `SKILL.md` следует [спецификации Agent Skills](https://agentskills.io/specification): `name` совпадает с каталогом, `description` до 1024 символов, `license: MIT`, `metadata.version` — строка, равная `library_version` из `components.json`. `compatibility` (до 500 символов) указывайте только при особых требованиях к среде, например для скрипта, которому нужна сеть. `agents/openai.yaml` остается для интерфейса Codex. Тот же формат проверяет официальный валидатор: `uvx --from skills-ref==0.1.1 agentskills validate .agents/skills/<имя>`; CI прогоняет его для всех скиллов.
+
+Каждый `SKILL.md` построен по одному шаблону: `## Когда использовать`, `## Когда не использовать` (соседние скиллы для других намерений), `## Алгоритм` (шаги и предметные подразделы `###`, ссылки на references), `## Проверка`, `## Типичные ошибки` (не меньше трех пунктов) и `## Источники`. Дополнительный раздел, например `## Пример`, допустим только между «Алгоритмом» и «Проверкой»; после «Источников» ничего нет. Порядок и наличие разделов проверяет `scripts/validate_skills.py`.
+
+Последний раздел `SKILL.md` — `## Источники`: ссылки на первичную документацию и одна строка `Проверено: ГГГГ-ММ-ДД, <что сверено>`, например `Проверено: 2026-10-07, Bot API 10.3, aiogram 3.31.0.` или `не зависит от версии Bot API`. Меняйте дату, только когда действительно сверили содержимое скилла с источниками. `python scripts/check_skill_sources.py --online` проверяет, что имена методов и полей Telegram есть в текущих индексах, а ссылки и якоря открываются; `tests/test_skill_sources.py` падает, когда индекс Bot API, aiogram или версия библиотеки ушли вперед от строки «Проверено». Таблица скиллов в `docs/sources.md` собирается из этих разделов: после правки выполните `python scripts/check_skill_sources.py --table docs/sources.md`; новую сверку внешних источников добавьте записью с датой в начало «Журнала проверок» той же страницы.
+
+Страницы, которые нужны и в `docs/`, и в нескольких скиллах, правятся только в `docs/`. Копии перечислены в `catalog/skill-references.json`; три страницы `docs/` — зеркала README примеров (раздел `mirrors`), их правят в `examples/*/README.md`. После правки выполните `python scripts/sync_skill_references.py`, а CI проверяет то же с `--check`.
+
+Термины ACK, CAS, квитанция (receipt), outbox, неизвестный результат, сверка, entitlement и fallback объясняются в каждом файле скилла: в `SKILL.md` — сразу при первом упоминании (в скобках или через тире), в references — строкой «Термины:» под заголовком. Строку собирает `python scripts/add_terms_lines.py` из `scripts/_glossary.py`; CI проверяет ее с `--check`. `tests/test_skill_terms.py` также не пропускает в прозе скиллов непереведенные английские фразы из четырех слов подряд и склеенные перечисления из шести слов: идентификаторы оформляйте как код, надписи интерфейса — в «кавычках».
+
+Скиллы пишутся по-русски и обращаются к агенту на «вы» («Проверьте», «Используйте»); английские слова остаются в коде, идентификаторах и названиях. `tests/test_skill_language.py` ограничивает долю английских слов в прозе каждого `SKILL.md` 15% и не пропускает формы на «ты»; `tests/test_current_numbers.py` сверяет числа рецептов, символов и скиллов в README и документации с каталогами.
+
+Все текстовые файлы репозитория хранятся с LF: это задает `.gitattributes` (`* text=auto eol=lf`), а `tests/test_line_endings.py` проверяет `git ls-files --eol`. `validate_skills.py` также требует LF во всех файлах скилла, проверяет пути в inline-коде и блоках кода (`scripts/`, `docs/`, `output/`, `components.json` и т. п.: в `SKILL.md` — только внутри каталога скилла, в references — внутри скилла или в репозитории; `output/` и артефакты — только текущей версии) и отклоняет имена `telegram-…`, которых нет среди скиллов, кроме перечисленных идентификаторов CLI и пакетов.
+
 ## Проверить библиотеку
 
 ```powershell
@@ -24,10 +72,37 @@ npm.cmd ci
 python scripts/verify_pattern_packages.py
 ```
 
-Полная проверка строит wheel/tarball, устанавливает их в отдельные проекты и запускает проверки Python, TypeScript и браузера. Нужен Chrome либо `CHROME_PATH`; `--skip-browser` оставляет UI непроверенным. Отчеты сохраняются в `output/pattern-library-<version>`.
+```bash
+npm ci
+python3 scripts/verify_pattern_packages.py
+```
 
-При изменении публичного API синхронизируйте exports, [components.json](components.json), документацию и [CHANGELOG.md](CHANGELOG.md). Различайте SDK/mock/browser/live evidence и статусы experimental/reference/stable. Проверка в браузере не заменяет испытания в Telegram и на реальных устройствах.
+Полная проверка строит wheel/tarball, устанавливает их в отдельные проекты и запускает проверки Python, TypeScript и браузера. Проверка работает на Windows, Linux и macOS, в том числе за прокси: дочерние процессы получают только системные переменные, прокси и CA-сертификаты из `scripts/_environment.py`, но не `BOT_TOKEN` и другие секреты. Нужен Chrome либо `CHROME_PATH` (путь к Chrome или Chromium); `--skip-browser` оставляет UI непроверенным. Отчеты сохраняются в `output/pattern-library-<version>`.
+
+Тесты Python-библиотеки делятся на unit и integration. Unit-тесты работают в одном процессе; `python scripts/run_python_tests.py --unit` запускает их параллельными шардами меньше чем за 30 секунд (библиотека берется из окружения: установленный пакет или `PYTHONPATH=packages/python/src`, нужны aiogram, python-telegram-bot, cryptography и tzdata). Тест, который запускает дочерний процесс (Python, multiprocessing, генератор каталога или сборку) или идет секунды, помечается декоратором `integration` из `packages/python/tests/_support.py`: в режиме `--unit` он пропускается, а дочерний процесс непомеченного теста валит прогон с указанием строки. Без `--unit` раннер выполняет весь набор (около двух минут на четырех ядрах); `--jobs` задает число шардов, `--budget` — предел времени. CI запускает unit-набор с бюджетом 30 секунд на трех версиях aiogram, а задача `python-package` на каждом push ставит `packages/python[aiogram,calendar,ptb,signature]` обычной (не editable) установкой, проверяет, что библиотека берется из site-packages, и выполняет весь набор: так ловятся ошибки упаковки, которые запуск из исходников не видит.
+
+Покрытие unit-набора измеряет coverage с настройками из `packages/python/pyproject.toml` (ветвления включены). Порог задан в `scripts/check_coverage.py`: не меньше 90% строк всего пакета и все строки и ветвления в `initdata`, `sqlite_once`, `slots`, `message_text` и `_aiogram/media` (подписанные данные запуска, однократные операции, бронирование, разбиение сообщений, медиа). Локально:
+
+```bash
+PYTHONPATH=packages/python/src TELEGRAM_PATTERNS_TESTS=unit python -m coverage run --rcfile=packages/python/pyproject.toml -m unittest discover -s packages/python/tests
+python -m coverage json --rcfile=packages/python/pyproject.toml -o coverage.json
+python scripts/check_coverage.py coverage.json
+```
+
+CI задача `python-coverage` выполняет те же команды, сохраняет `coverage.json` и HTML-отчет как артефакт и падает ниже порога. Новая ветка в защищенном модуле приходит вместе с тестом, который ее проходит.
+
+Парсеры недоверенного ввода (initData, экранирование и разбиение текста, данные кнопок страниц и выбора, payload счетов и операций) проверяются свойствами Hypothesis в `packages/python/tests/test_properties.py`. Профиль по умолчанию детерминирован (`derandomize`, без базы примеров), поэтому CI не мигает; `HYPOTHESIS_PROFILE=explore` ищет дольше (5000 примеров) с локальной базой `.hypothesis/`. Найденный контрпример исправляют и оставляют в тесте как `@example` — регрессионный случай, который выполняется в любом профиле. Без установленного hypothesis эти тесты пропускаются с причиной; CI и проверка поставки устанавливают `hypothesis==6.168.5`.
+
+Стиль кода Python-библиотеки проверяет ruff (настройки — в `packages/python/pyproject.toml`: строки до 120 символов, кавычки сохраняются, правила E, F, W и I): `ruff check packages/python` и `ruff format --check packages/python`; исправляет `ruff format packages/python`. CI запускает обе команды, а также `mypy --strict --follow-imports=silent packages/python/src/telegram_patterns` с установленными aiogram, python-telegram-bot, cryptography и tzdata: ошибок типов быть не должно.
+
+При изменении публичного API синхронизируйте exports, [components.json](components.json), документацию и [CHANGELOG.md](CHANGELOG.md). `python scripts/check_api_compatibility.py --base auto` сравнивает публичные символы Python и TypeScript с предыдущим тегом (в pull request — с базовой веткой): каждый удаленный или измененный символ нужно назвать в обратных кавычках в верхнем разделе CHANGELOG, иначе CI падает. Различайте SDK/mock/browser/live evidence и статусы experimental/reference/stable. Проверка в браузере не заменяет испытания в Telegram и на реальных устройствах.
+
+Браузерные проверки (демо, галерея рецептов, оба стартера и их цикл разработки на Vite) выполняет задача CI `browser` в Chromium из Playwright, сайт документации — задача `docs-site` через общий с публикацией workflow `docs-site.yml`; в CI `verify_pattern_packages.py` отказывается пропускать браузер, а `tests/test_ci_workflow.py` не пропустит флаг пропуска в workflow. Задача `required` («Required checks passed») зависит от всех остальных задач и падает, если хоть одна не прошла, была отменена или пропущена. В настройках ветки `main` (Settings → Branches или Rules → Rulesets) обязательной делают только ее; новая задача становится обязательной, когда ее добавляют в `needs`, и тест это проверяет. Версии инструментов и SDK для CI закреплены в `requirements/*.txt` (SDK, hypothesis, coverage, ruff, mypy, build и uv, валидатор скиллов) и `requirements-docs.txt`, а не в командах workflow; actions закреплены полным SHA с комментарием версии. Dependabot (`.github/dependabot.yml`) раз в неделю предлагает обновления этих файлов, обоих npm-lockfile и actions группами; каждый такой pull request проходит весь `Repository checks`. Диапазоны зависимостей самой библиотеки в `packages/python/pyproject.toml` — обещание совместимости, их меняют вручную. Полную приемку (`verify_pattern_packages.py` на Ubuntu и macOS) workflow `Full acceptance` выполняет каждую ночь, на каждом теге `vX.Y.Z` и по кнопке Run workflow; отчеты и логи прикладываются к запуску как артефакты, а провал ночного или релизного запуска открывает issue «Full acceptance failed» или дописывает комментарий в уже открытое.
+
+## Выпуск версии
+
+Теги, сборка артефактов и публикация GitHub Release описаны в [docs/releasing.md](docs/releasing.md).
 
 ## Область GitHub Actions
 
-Workflow `Repository checks` проверяет упаковку навыков, корневые тесты, TypeScript-тесты и сборку Mini App. Он не выполняет полную приемку поставки, не обращается к Telegram и не публикует пакеты.
+Workflow `Repository checks` проверяет упаковку навыков, корневые тесты, TypeScript-тесты, сборку Mini App и совместимость публичного API с записью в CHANGELOG. Он не выполняет полную приемку поставки, не обращается к Telegram и не публикует пакеты.

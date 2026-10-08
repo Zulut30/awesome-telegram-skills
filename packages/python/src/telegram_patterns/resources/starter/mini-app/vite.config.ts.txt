@@ -1,0 +1,17 @@
+// npm run dev — Vite с горячей перезагрузкой; npm run build — статический dist/, его раздает mini_app_server.py.
+// MINI_APP_* читаются из ../.env рядом с app.py (переменные окружения важнее); токен бота сюда не попадает.
+import {defineConfig, loadEnv} from 'vite';
+
+export default defineConfig(({mode}) => {
+  const env = loadEnv(mode, '..', 'MINI_APP_');
+  // Запросы /api уходят в backend: initData проверяет сервер, а не браузер.
+  const proxy = {'/api': `http://127.0.0.1:${env.MINI_APP_API_PORT || '8080'}`};
+  // Vite отвечает только localhost и IP-адресам; домен туннеля из MINI_APP_URL разрешается явно.
+  const allowedHosts = env.MINI_APP_URL ? [new URL(env.MINI_APP_URL).hostname] : [];
+  return {
+    base: './',
+    server: {port: 5173, strictPort: true, allowedHosts, proxy},
+    preview: {port: 4173, strictPort: true, allowedHosts, proxy},
+    build: {target: 'es2022'},
+  };
+});

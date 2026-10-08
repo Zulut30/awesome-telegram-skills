@@ -1,6 +1,8 @@
 # Групповой бот: темы, права, заявки и модерация
 
-Самостоятельное приложение `examples/group-bot`, distribution `awesome-telegram-group-example` 0.1.0, использует предоставленный Python wheel библиотеки 0.13.0 и aiogram. Это пример композиции `BotSettings`, `build_request`, `event_router`, `ActionButton` и `action_menu`. Его `Application`, `Store`, `ProcessLock` и `Context` принадлежат приложению, не являются новыми публичными exports библиотеки и не требуют сервисного/магазинного примера.
+Термины: **ACK** — ответ на нажатие кнопки через `answerCallbackQuery`: клиент убирает индикатор ожидания; это не сообщение об успехе операции; квитанция (receipt) — сохраненная запись о выполненной операции; повтор возвращает ее вместо второго эффекта; **неизвестный результат** — запрос мог выполниться, но ответа нет (таймаут, обрыв связи); повторять вслепую нельзя, сначала сверка; **сверка** — запрос фактического состояния у провайдера или в хранилище перед повтором или выдачей.
+
+Самостоятельное приложение `examples/group-bot`, distribution `awesome-telegram-group-example` 0.1.0, использует предоставленный Python wheel библиотеки 0.24.0 и aiogram; CI проверяет пример на текущей версии библиотеки. Это пример композиции `BotSettings`, `build_request`, `event_router`, `ActionButton` и `action_menu`. Его `Application`, `Store`, `ProcessLock` и `Context` принадлежат приложению, не являются новыми публичными exports библиотеки и не требуют сервисного/магазинного примера.
 
 ## Что попробовать
 
@@ -9,6 +11,7 @@
 | `/group_help` | Меню и правила подтверждения |
 | `/rights` | Проверка bot/actor admin; нужное право проверяется для каждого действия отдельно |
 | `/topic_info` | ID текущей группы и темы без изменения состояния |
+| `/community` | Сообщество группы из `getChat` без записи и без новых прав |
 | `/topic_create Название` | Предпросмотр создания темы; название 1–128 символов |
 | `/topic_close`, `/topic_reopen` | Предпросмотр изменения конкретной текущей темы; General не поддержан |
 | `/joins` | До 30 последних наблюдаемых заявок этой группы, не полный Telegram backlog |
@@ -23,11 +26,15 @@
 
 Из предоставленного checkout:
 
-```powershell
-python scripts/verify_group_bot.py --wheel output/pattern-library-0.13.0/dist/awesome_telegram_patterns-0.13.0-py3-none-any.whl --output output/group-019-new
+```bash
+python scripts/build_release.py --ref HEAD --output output/release
 ```
 
-Output должен быть новым каталогом, существующие каталоги и известные links отклоняются до build/install. Helper собирает отдельный app wheel и проверяет его source bytes, RECORD и entrypoint. В новом consumer вне репозитория устанавливает предоставленную библиотеку и приложение, проверяет installed origins, console `--help`, Mypy, 19 тестов с SDK Dispatcher и настоящей file SQLite, четыре отдельные процессные фазы и OS lock. Фазы: сохранение предпросмотра → подтверждение после рестарта → реальный `os._exit(77)` после synthetic createForumTopic до сохранения результата → восстановление unknown без повторной отправки. Shadow modules/.env текущего проекта не читаются и не исполняются.
+```bash
+python scripts/verify_group_bot.py --wheel output/release/awesome_telegram_patterns-0.24.0-py3-none-any.whl --output output/group-bot-check
+```
+
+Output должен быть новым каталогом, существующие каталоги и известные links отклоняются до build/install. Helper собирает отдельный app wheel и проверяет его source bytes, RECORD и entrypoint. В новом consumer вне репозитория устанавливает предоставленную библиотеку и приложение, проверяет installed origins, console `--help`, Mypy, 20 тестов с SDK Dispatcher и настоящей file SQLite, четыре отдельные процессные фазы и OS lock. Фазы: сохранение предпросмотра → подтверждение после рестарта → реальный `os._exit(77)` после synthetic createForumTopic до сохранения результата → восстановление unknown без повторной отправки. Shadow modules/.env текущего проекта не читаются и не исполняются.
 
 Используется `StubSession` с обязательными зарегистрированными ответами; fixture не может переключиться на HTTP. В процессных фазах реальный SDK HTTP и Python DNS/connect запрещены. Fixtures искусственные: нет live модерации, Telegram permission/delivery acceptance или проверки privacy mode. Это не OS sandbox для чужого кода.
 
@@ -41,6 +48,12 @@ uv pip install --python .venv\Scripts\python.exe '<PATTERN_WHEEL>[aiogram]' '<GR
 & .\.venv\Scripts\telegram-group-example.exe --help
 ```
 
+```bash
+uv venv .venv
+uv pip install --python .venv/bin/python '<PATTERN_WHEEL>[aiogram]' '<GROUP_EXAMPLE_WHEEL>'
+.venv/bin/telegram-group-example --help
+```
+
 Для существующего проекта сохраняйте его SDK/Dispatcher/storage: переносите нужную композицию, не создавайте второй polling consumer ради helper. Диапазон Python — >=3.11 по metadata; реально проверенная версия и SDK указаны в отчёте, не весь диапазон.
 
 Live запуск выполняется отдельно владельцем в тестовой группе после настройки `BOT_TOKEN` в окружении, проверки действующего webhook/getUpdates consumer, минимальных прав и постоянной локальной БД. Parent каталога БД должен существовать. Например, для выбранного владельцем ID:
@@ -49,9 +62,17 @@ Live запуск выполняется отдельно владельцем �
 & .\.venv\Scripts\telegram-group-example.exe --database 'C:\group-data\group.sqlite' --chat -1001234567890
 ```
 
+```bash
+.venv/bin/telegram-group-example --database ~/group-data/group.sqlite --chat -1001234567890
+```
+
 Повторяйте `--chat` для каждой разрешённой группы. Пример запускает polling; webhook и pending updates автоматически не удаляются. `resolve_used_update_types()` включает message, callback_query, chat_join_request, chat_member и my_chat_member. Доставка membership/join updates требует настроек и прав Telegram; отсутствие события не считается отсутствием пользователя/заявки. При миграции group → supergroup приложение сохраняет старый/новый 64-bit ID и блокирует старые предпросмотры. Новый ID нужно явно добавить в `--chat`; сохранённое подтверждение на него не переносится. Mapping остаётся в БД для сверки старых ссылок.
 
 Один процесс на одну SQLite-базу и локальный диск; второй владелец отклоняется OS lock. Дополнительные workers/сетевой storage не приняты. Отмена coroutine дожидается owned SQLite work. Shutdown запрещает новые updates, отменяет и дожидается уже запущенных обработчиков перед закрытием SDK session и освобождением OS lock. Другой bot ID/schema не может переиспользовать базу. БД содержит IDs, названия созданных тем и результаты операций; защищайте её как прикладные данные. Invite links, bio, временный user_chat_id и query_id в таблицы не записываются. Срок подтверждения 5 минут и окно `/joins` 2 часа не удаляют journal и неизвестные результаты; retention/backup/restore настраивает владелец приложения.
+
+## Сообщества
+
+`/community` читает `ChatFullInfo.community` через `getChat` и ничего не сохраняет. Принадлежность группы к сообществу не дает прав: бот и инициатор по-прежнему проверяются `getChatMember` в каждой группе отдельно, и участник без прав в другой группе того же сообщества получает отказ. Сервисные сообщения `community_chat_added`, `community_chat_removed` и `community_chat_joined` пример не обрабатывает; учет связей и приходов — в рецепте `demo-community` и документе о сообществах (`docs/communities.md`). Bot API не управляет составом сообщества и не перечисляет его чаты.
 
 ## Права и повтор
 
@@ -67,10 +88,10 @@ Journal проходит `draft → ready → sending → done/rejected/unknown`
 
 Обычный chat_join_request сохраняется с version `(date, update_id)`. Дубликат или более старое событие не переоткрывает его. Новая заявка, наблюдаемая до claim, делает старое подтверждение stale; действие другой группы её не меняет. Membership update завершает старую наблюдаемую заявку; изменение membership инициатора также инвалидирует его готовые предпросмотры.
 
-Assigned join request query (`query_id`) отдельно проходит durable `queueing → pending/unknown`: приложение отвечает `queue`, оставляя решение администраторам. Timeout/cancellation/crash не превращают неизвестный ответ в доступную для approve заявку и не пересылают query автоматически. Это минимальная очередь, не автоматическая проверка пользователя и не Mini App verification. Urgent query queue не ждёт mutex команд/модерации этой группы; SQLite receipts сравнивают version, не затирая новую заявку. Если возраст события уже >=7 секунд или часы не согласованы, запрос не отправляется, состояние unknown. SDK queue ограничен тремя секундами. Реальную доставку в пределах срока Telegram и поведение под нагрузкой нужно отдельно проверить live. `user_chat_id` для личной переписки здесь не используется. Approve/decline API адресует user_id, без request version: если новая серверная заявка возникает после локальной проверки/claim или update задержан, локальное versioning не устраняет эту гонку. Неизвестные результаты требуют сверки, не автоматического retry.
+Запрос на вступление, назначенный боту (`query_id`), отдельно проходит durable `queueing → pending/unknown`: приложение отвечает `queue`, оставляя решение администраторам. Timeout/cancellation/crash не превращают неизвестный ответ в доступную для approve заявку и не пересылают query автоматически. Это минимальная очередь, не автоматическая проверка пользователя и не Mini App verification. Urgent query queue не ждёт mutex команд/модерации этой группы; SQLite receipts сравнивают version, не затирая новую заявку. Если возраст события уже >=7 секунд или часы не согласованы, запрос не отправляется, состояние unknown. SDK queue ограничен тремя секундами. Реальную доставку в пределах срока Telegram и поведение под нагрузкой нужно отдельно проверить live. `user_chat_id` для личной переписки здесь не используется. Approve/decline API адресует user_id, без request version: если новая серверная заявка возникает после локальной проверки/claim или update задержан, локальное versioning не устраняет эту гонку. Неизвестные результаты требуют сверки, не автоматического retry.
 
 ## Источники и границы
 
-Частично проверено 2026-10-05: [Bot API getChatMember](https://core.telegram.org/bots/api#getchatmember), [forum topics](https://core.telegram.org/bots/api#createforumtopic), [close/reopen](https://core.telegram.org/bots/api#closeforumtopic), [restrictChatMember](https://core.telegram.org/bots/api#restrictchatmember), [join requests](https://core.telegram.org/bots/api#chatjoinrequest), [query queue](https://core.telegram.org/bots/api#answerchatjoinrequestquery), [Update delivery](https://core.telegram.org/bots/api#update), [migrations](https://core.telegram.org/bots/api#message), [privacy mode](https://core.telegram.org/bots/faq#what-messages-will-my-bot-get). Установленный aiogram 3.31.0 подтверждён настоящим импортом методов/types и Dispatcher event_update. Дата относится к перечисленным правилам этого примера; остальные источники проекта не обновлены.
+Частично проверено 2026-10-05: [Bot API getChatMember](https://core.telegram.org/bots/api#getchatmember), [forum topics](https://core.telegram.org/bots/api#createforumtopic), [close/reopen](https://core.telegram.org/bots/api#closeforumtopic), [restrictChatMember](https://core.telegram.org/bots/api#restrictchatmember), [join requests](https://core.telegram.org/bots/api#chatjoinrequest), [query queue](https://core.telegram.org/bots/api#answerchatjoinrequestquery), [Update delivery](https://core.telegram.org/bots/api#update), [migrations](https://core.telegram.org/bots/api#message), [privacy mode](https://core.telegram.org/bots/faq#what-messages-will-my-bot-get). Установленный aiogram 3.31.0 подтверждён настоящим импортом методов/types и Dispatcher event_update. Дата относится к перечисленным правилам этого примера; остальные источники проекта не обновлены. Команда `/community` сверена 2026-10-07 с [Community](https://core.telegram.org/bots/api#community) и [ChatFullInfo](https://core.telegram.org/bots/api#chatfullinfo) Bot API 10.3.
 
 Реальные права, delivery, бот/actor revoke, две группы/темы и migration проверяются отдельно в выбранных владельцем тестовых группах. Offline результат не делает библиотеку stable 1.0 и не подтверждает эксплуатационные лимиты.

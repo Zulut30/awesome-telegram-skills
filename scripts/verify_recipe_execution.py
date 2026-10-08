@@ -25,7 +25,7 @@ def main() -> int:
         assert 'PRIVATE_CANARY' not in done.stdout+done.stderr
         (args.output/(label+'.log')).write_text(done.stdout+done.stderr,encoding='utf-8')
         stages.append({'stage':label,'exit_code':done.returncode,'expected_exit':expected})
-        if done.returncode!=expected:raise RuntimeError(label+' failed')
+        if done.returncode!=expected:raise RuntimeError(label+' failed:\n'+'\n'.join((done.stdout+done.stderr).splitlines()[-40:]))
         return done
     origin_code="import json,sys,telegram_patterns,importlib.metadata as m;print(json.dumps({'module':telegram_patterns.__file__,'prefix':sys.prefix,'version':m.version('awesome-telegram-patterns')}))"
     origins=[]
@@ -39,15 +39,16 @@ def main() -> int:
     records=[json.loads(x) for x in core.stdout.splitlines()]
     assert [r['stage'] for r in records]==['plan','result'] and records[-1]['checks']==['sqlite-one-effect','same-key-replay']
     for label,recipe in [('missing-sdk','two-columns'),('native-reference','native.requestContact')]:
-        result=run(label,args.core_python,['-m','telegram_patterns','run-recipe',recipe,'--offline'],expected=2)
+        result=run(label,args.core_python,['-m','telegram_patterns','run-recipe',recipe,'--offline','--json'],expected=2)
         assert not json.loads(result.stdout)['offline_ready'] and json.loads(result.stderr)['error']=='UnsupportedCapability'
     run('unknown-id',args.core_python,['-m','telegram_patterns','run-recipe','../../PRIVATE_CANARY.py','--offline'],expected=2)
     worker=args.output/'all fixtures';worker.mkdir();(worker/'owned.txt').write_bytes(b'preserve caller notes')
     batch=json.loads(run('all-python-fixtures',args.sdk_python,['-m','telegram_patterns._offline_recipe','--all-python'],cwd=worker).stdout)
-    assert batch['passed'] and batch['recipes']==211 and not batch['telegram_requests']
-    assert len({r['recipe_id'] for r in batch['reports']})==211
+    failed=[{k:r.get(k) for k in ('recipe_id','passed','error','checks')} for r in batch['reports'] if not r['passed']]
+    assert batch['passed'] and batch['recipes']==241 and not batch['telegram_requests'],(batch['recipes'],failed[:5])
+    assert len({r['recipe_id'] for r in batch['reports']})==241
     assert all(r['passed'] and not r['telegram_requests'] and r['external_network_attempts']==0 and r['checks'] for r in batch['reports'])
-    assert [p.name for p in worker.iterdir()]==['owned.txt'] and (worker/'owned.txt').read_bytes()==b'preserve caller notes'
+    assert [p.name for p in worker.iterdir()]==['owned.txt'] and (worker/'owned.txt').read_bytes()==b'preserve caller notes',sorted(p.name for p in worker.iterdir())
     guards='''import asyncio,json,sys
 from telegram_patterns._offline_recipe import _install_guards
 from aiogram.client.session.aiohttp import AiohttpSession
@@ -73,7 +74,7 @@ print(json.dumps({'passed':True,'denied':counter[0],'network':False}))
             'recipes':batch['reports'],'native_reference_refused':True,'missing_sdk_refused':True,'plan_before_result':True,
             'caller_files_preserved':True,'owned_worker_notes_preserved':True,'no_secret_payload_reflected':True,
             'guard_checks':guard,'telegram_requests':False,'stages':stages,
-            'scope':'Installed core/SDK wheel; all 211 Python fixtures. Native fragments remain reference. No live permissions, server auth, physical client or OS sandbox claim.'}
+            'scope':'Installed core/SDK wheel; all 241 Python fixtures. Native fragments remain reference. No live permissions, server auth, physical client or OS sandbox claim.'}
     (args.output/'report.json').write_text(json.dumps(report,ensure_ascii=False,indent=2)+'\n',encoding='utf-8',newline='\n')
     print(json.dumps(report,ensure_ascii=False));return 0
 

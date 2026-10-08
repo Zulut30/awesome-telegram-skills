@@ -1,9 +1,13 @@
 import asyncio
+import contextlib
+import io
+import os
 from concurrent.futures import ThreadPoolExecutor
 from pathlib import Path
 import tempfile
 import threading
 import unittest
+from unittest import mock
 
 from aiogram import Bot
 from aiogram.exceptions import TelegramForbiddenError, TelegramRetryAfter
@@ -12,7 +16,7 @@ from aiogram.methods import SendMessage
 from aiogram.types import Message, Chat
 from telegram_patterns import PermissionDenied
 from telegram_patterns.testing import StubSession
-from telegram_service_example.bot import Application
+from telegram_service_example.bot import Application, main
 from telegram_service_example.offline import BASE, guards
 from telegram_service_example.service import Actor, Service, SlotUnavailable
 from telegram_service_example.storage import SQLiteFSM, connection
@@ -168,5 +172,19 @@ class ServiceTests(unittest.IsolatedAsyncioTestCase):
         self.assertFalse(session.calls)
         newer=Application(self.database,100,now=lambda:self.clock[0]);await newer.close()
 
+
+
+class EntrypointTests(unittest.TestCase):
+    def test_placeholder_token_exits_with_readable_error(self):
+        with tempfile.TemporaryDirectory(prefix='service-entry-') as temp:
+            stderr=io.StringIO()
+            argv=['telegram-service-example','--database',str(Path(temp)/'service.sqlite')]
+            with mock.patch.dict(os.environ,{'BOT_TOKEN':'123456789:REPLACE_WITH_YOUR_TEST_BOT_TOKEN'}),mock.patch('sys.argv',argv),\
+                    contextlib.redirect_stderr(stderr),self.assertRaises(SystemExit) as exit_info:
+                main()
+            self.assertEqual(exit_info.exception.code,2)
+            self.assertIn('error: Replace the BOT_TOKEN placeholder',stderr.getvalue())
+            self.assertNotIn('Traceback',stderr.getvalue())
+            self.assertFalse((Path(temp)/'service.sqlite').exists())
 
 if __name__=='__main__':unittest.main()

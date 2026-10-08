@@ -1,6 +1,8 @@
 /** Native calls keep their documented callbacks/return values; no implicit auth or retry. */
 import { TELEGRAM_NATIVE_EVENTS, TELEGRAM_NATIVE_EVENT_DETAILS, TELEGRAM_NATIVE_METHODS, type TelegramNativeEvent, type TelegramNativeMethod } from './native-catalog.js';
 import {UnsupportedCapability, InvalidType} from './errors.js';
+import {isInsideTelegram} from './launch.js';
+import type {TelegramNativeArguments, TelegramNativeResult} from './native-signatures.js';
 
 type ObjectLike = Record<string, unknown>;
 type Listener = (...args: unknown[]) => void;
@@ -25,7 +27,7 @@ export class TelegramNativeAPI {
 
   private resolve(path: TelegramNativeMethod): { owner: ObjectLike; fn: (...args: unknown[]) => unknown } | undefined {
     if (this.disposed || !Object.hasOwn(TELEGRAM_NATIVE_METHODS, path) || !object(this.app)) return;
-    if (typeof this.app.platform !== 'string' || !this.app.platform || this.app.platform === 'unknown') return;
+    if (!isInsideTelegram(this.app)) return;
     if (!this.atLeast(TELEGRAM_NATIVE_METHODS[path].minVersion)) return;
     const parts = path.split('.');
     let owner: ObjectLike = this.app;
@@ -46,10 +48,11 @@ export class TelegramNativeAPI {
     try { return this.resolve(path) !== undefined; } catch { return false; }
   }
 
-  call(path: TelegramNativeMethod, ...args: unknown[]): unknown {
+  /** Arguments and result follow the documented signature of path (TelegramNativeSignatures). */
+  call<P extends TelegramNativeMethod>(path: P, ...args: TelegramNativeArguments<P>): TelegramNativeResult<P> {
     const method = this.resolve(path);
     if (!method) throw new UnsupportedTelegramCapability();
-    return method.fn.apply(method.owner, args);
+    return method.fn.apply(method.owner, args) as TelegramNativeResult<P>;
   }
 
   /** Each registration gets its own callback, even when consumers reuse a function. */

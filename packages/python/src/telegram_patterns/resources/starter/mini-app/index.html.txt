@@ -1,6 +1,7 @@
 <!doctype html>
 <html lang="ru"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Мой Mini App</title><link rel="icon" href="data:,"><link rel="stylesheet" href="./node_modules/@awesome-telegram/patterns/src/styles.css">
+<title>Мой Mini App</title><link rel="icon" href="data:,">
+<!-- Официальный SDK до остальных скриптов: window.Telegram.WebApp и initData (core.telegram.org/bots/webapps). -->
+<script src="https://telegram.org/js/telegram-web-app.js?64"></script>
 <style>html{color-scheme:light dark}body{margin:0;background:Canvas}</style>
-<script type="importmap">{"imports":{"@awesome-telegram/patterns":"./node_modules/@awesome-telegram/patterns/dist/index.js"}}</script>
-</head><body><div id="app"></div><script type="module" src="./dist/main.js"></script></body></html>
+</head><body><div id="app"></div><script type="module" src="/src/main.ts"></script></body></html>

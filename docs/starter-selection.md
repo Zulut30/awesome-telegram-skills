@@ -1,4 +1,8 @@
-# Выбрать компоненты нового проекта — 0.11.0
+# Выбрать компоненты нового проекта
+
+Доступно с 0.11.0, проверено на 0.24.0.
+
+Термины: **ACK** — ответ на нажатие кнопки через `answerCallbackQuery`: клиент убирает индикатор ожидания; это не сообщение об успехе операции; **fallback** — запасной вариант, если основная возможность недоступна.
 
 CLI устанавливается из предоставленного локального wheel. Он создает новый проект и подключает выбранные публичные API, сохраняя Python/aiogram и TypeScript starter. Он не устанавливает зависимости, не запускает polling и не настраивает серверную авторизацию. Для существующего проекта используйте точечные импорты: `init` принимает только новый target с существующим обычным родителем, без symlink/junction ancestors.
 
@@ -14,8 +18,8 @@ python -m telegram_patterns init --list-components
 
 | Выбор | Подключение и проверяемое поведение |
 | --- | --- |
-| База Python: bot-settings, command-replies, action-menu, callback-router, bot-polling, bot-test-transport | /start, /help, кнопка с ACK, explicit live lifecycle и offline.py. Эти группы всегда нужны текущему шаблону |
-| База bot-mini-app: mini-app-bridge, responsive-shell | Форма, тема/lifecycle, compiled ESM; backend еще не подключен |
+| База Python: `bot-settings`, `command-replies`, `action-menu`, `callback-router`, `bot-polling`, `bot-test-transport` | /start, /help, кнопка с ACK, explicit live lifecycle и offline.py. Эти группы всегда нужны текущему шаблону |
+| База bot-mini-app: mini-app-bridge, responsive-shell | Форма, тема/lifecycle, Vite (`npm run dev` с горячей перезагрузкой), `mini_app_server.py` с проверкой initData и кнопкой меню из `MINI_APP_URL`; сессия и права на объекты не создаются |
 | native-keyboards | /keyboard, две/три кнопки в рядах, стили primary/success, разрешенный публичный выбор и stale fallback |
 | paginated-menu | /catalog, страницы 1–3, редактирование сообщения и отдельные namespaces выбора/страницы |
 | text-form | /apply, проверка Python/TypeScript, review, /back, /cancel, явное подтверждение. SimpleEventIsolation включается; MemoryStorage временный. Service проверяет собственный private scope и только валидирует ввод |
@@ -28,20 +32,20 @@ python -m telegram_patterns init --list-components
 
 ## Создать бот с формой и событиями
 
-Установите wheel 0.11.0 в отдельное tools окружение или используйте уже установленный CLI этой версии. Пути ниже заменяются на предоставленные артефакты; пакетов с нашим именем в registry не предполагается.
+Установите предоставленный wheel в отдельное tools окружение или используйте уже установленный CLI той же версии. Пути ниже заменяются на предоставленные артефакты; пакетов с нашим именем в registry не предполагается.
 
 ```powershell
-$tgWheel = 'C:\path\awesome_telegram_patterns-0.11.0-py3-none-any.whl'
+$tgWheel = '<WHEEL>'
 python -m telegram_patterns init .\new-bot --library $tgWheel --component text-form --component update-events --dry-run
 python -m telegram_patterns init .\new-bot --library $tgWheel --component text-form --component update-events
 ```
 
-Dry-run возвращает `created: false`, все относительные `files`, `components`, `requested_components`, версию и target; никакие файлы/каталоги не записываются. Та же команда без dry-run создает ровно перечисленные файлы. После явной установки generated project выполните `offline.py` и `offline_components.py` из его каталога. Последний прогон проверяет выбранные Python routes, foreign/stale input, ACK и закрытие FSM/session. Ни один из них не обращается к Telegram. Установщики зависимостей могут использовать интернет.
+Dry-run возвращает `created: false`, все относительные `files`, `components`, `requested_components`, версию и target; никакие файлы/каталоги не записываются. Та же команда без dry-run создает ровно перечисленные файлы. После явной установки generated project выполните `offline.py` и `offline_components.py` из его каталога. Последний прогон проверяет выбранные маршруты Python, чужой и устаревший ввод, ACK и закрытие FSM и сессии. Ни один из них не обращается к Telegram. Установщики зависимостей могут использовать интернет.
 
 ## Добавить Mini App
 
 ```powershell
-$tgTS = 'C:\path\awesome-telegram-patterns-0.11.0.tgz'
+$tgTS = '<TARBALL>'
 python -m telegram_patterns init .\new-mini --library $tgWheel --template bot-mini-app --typescript $tgTS --component native-keyboards --component paginated-menu --component api-client --component selection-draft --component mini-app-native-api --dry-run
 ```
 
@@ -55,4 +59,4 @@ Existing target отклоняется даже если это пустой к�
 
 `create_starter(..., components=None)` сохраняет прежний набор по умолчанию. Новый keyword принимает Sequence[str]; строка целиком/нестроковые IDs не подходят. Пять прежних positional fields StarterPlan сохранены; новые components/requested_components имеют пустые tuple defaults. Никакой обязательной новой инфраструктуры нет.
 
-Сверено 2026-10-04: [официальный HapticFeedback](https://core.telegram.org/bots/webapps#hapticfeedback), impactOccurred('light') и gate 6.1. Метод не удостоверяет пользователя и не гарантирует физическую вибрацию. Новая композиция проверяется installed CLI/wheel/tarball, настоящим synthetic Dispatcher и Chrome viewport/theme cases; native SDK для haptics — fixture. Live Telegram, backend auth, durable FSM и реальные устройства требуют собственных сценариев.
+Сверено 2026-10-04: [официальный HapticFeedback](https://core.telegram.org/bots/webapps#hapticfeedback), impactOccurred('light') и gate 6.1. Метод не удостоверяет пользователя и не гарантирует физическую вибрацию. Новая композиция проверяется installed CLI/wheel/tarball, настоящим synthetic Dispatcher и Chrome viewport/theme cases; native SDK для haptics — fixture. Живой Telegram, авторизация на backend, надежное хранение FSM и реальные устройства требуют собственных сценариев.

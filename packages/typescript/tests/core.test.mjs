@@ -5,6 +5,7 @@ import { ApiClient, ApiError, TelegramBridge, SelectionDraftStore, TelegramNativ
          TELEGRAM_NATIVE_METHODS, TELEGRAM_NATIVE_EVENTS, PatternError, ValidationFailure,
          InvalidType, PermissionDenied, AuthenticationRequired, UnsupportedCapability,
          UnknownOutcome, safeErrorReport } from '../dist/index.js';
+import { telegramBridgeStore } from '../dist/frameworks/svelte.js';
 
 test('safe error reports preserve recovery decisions without exception or payload secrets', () => {
   const secret = 'BOT_TOKEN=100:PRIVATE initData=SIGNED_BODY';
@@ -60,6 +61,72 @@ test('HTTP denial and invalid response after write keep unknown result and a sin
   assert.equal(calls,1);
 });
 
+test('each HTTP status maps to a precise code for reads and writes, with an explicit backend contract', async () => {
+  const expected={400:['validation-failed','fix-input'],401:['authentication-required','authenticate'],403:['permission-denied','check-permissions'],
+    404:['invalid-api-request','fix-input'],405:['invalid-api-request','fix-input'],408:['timeout','retry-read'],409:['operation-conflict','reconcile'],
+    413:['invalid-api-request','fix-input'],422:['validation-failed','fix-input'],429:['rate-limited','retry-later'],
+    500:['server-error','retry-read'],502:['server-error','retry-read'],503:['server-error','retry-read']};
+  const contract=Object.keys(expected).map(Number);
+  for (const [text,[code,recovery]] of Object.entries(expected)) {
+    const status=Number(text);
+    const fetch=async()=>new Response('private body',{status,headers:{'Retry-After':'7'}});
+    const plain=new ApiClient({baseUrl:'https://x.test',fetch});
+    const declared=new ApiClient({baseUrl:'https://x.test',fetch,rejectedBeforeEffect:contract});
+    const check=async(promise,outcome,expectedRecovery)=>assert.rejects(promise,error=>{
+      assert.equal(error instanceof ApiError,true);assert.equal(error.status,status);
+      const report=error.report();
+      assert.deepEqual([report.code,report.outcome,report.recovery],[code,outcome,expectedRecovery],`${status} ${outcome}`);
+      assert.equal(JSON.stringify(report).includes('private'),false);
+      assert.equal(error.retryAfterMs,status===429||status===503?7000:undefined);
+      return true;
+    });
+    await check(plain.request('/r',x=>x),'read-failed',recovery);
+    await check(declared.request('/r',x=>x),'read-failed',recovery);
+    await check(plain.request('/w',x=>x,{method:'POST',body:{}}),'unknown','reconcile');
+    await check(declared.request('/w',x=>x,{method:'POST',body:{}}),'rejected',recovery);
+    await check(declared.request('/w',x=>x,{method:'POST',body:{},rejectedBeforeEffect:[]}),'unknown','reconcile');
+    await check(plain.request('/w',x=>x,{method:'POST',body:{},rejectedBeforeEffect:[status]}),'rejected',recovery);
+  }
+  for (const invalid of [[200],[399],[600],[400.5],['400'],'400']) {
+    assert.throws(()=>new ApiClient({baseUrl:'https://x.test',rejectedBeforeEffect:invalid}),ValidationFailure);
+  }
+});
+
+test('Retry-After accepts seconds and HTTP dates, is bounded and ignores garbage', async () => {
+  const at=Date.now()+90_000;
+  for (const [header,check] of [['0',v=>v===0],['120',v=>v===120000],[new Date(at).toUTCString(),v=>v>80_000&&v<=90_000],
+      ['999999999',v=>v===86_400_000],['soon',v=>v===undefined],['-5',v=>v===undefined],['Thu, 01 Jan 1970 00:00:00 GMT',v=>v===0]]) {
+    const api=new ApiClient({baseUrl:'https://x.test',fetch:async()=>new Response('',{status:429,headers:{'Retry-After':header}})});
+    await assert.rejects(api.request('/r',x=>x),error=>{assert.equal(check(error.retryAfterMs),true,`${header} -> ${error.retryAfterMs}`);return true;});
+  }
+});
+
+test('oversized timeout, failing headers and non-JSON bodies are typed rejections before transport', async () => {
+  let calls=0;
+  const transport=async()=>{calls++;return Response.json({});};
+  const api=new ApiClient({baseUrl:'https://x.test',fetch:transport});
+  for (const timeoutMs of [3e9,2_147_483_648,Infinity,0,-1,NaN]) {
+    await assert.rejects(api.request('/r',x=>x,{timeoutMs}),ValidationFailure,String(timeoutMs));
+  }
+  await api.request('/r',x=>x,{timeoutMs:2_147_483_647});assert.equal(calls,1);calls=0;
+  for (const headers of [()=>{throw Error('PRIVATE header secret');},()=>({'bad header':'x'})]) {
+    const failing=new ApiClient({baseUrl:'https://x.test',fetch:transport,headers});
+    await assert.rejects(failing.request('/w',x=>x,{method:'POST',body:{}}),error=>{
+      assert.equal(error instanceof PatternError,true);
+      assert.deepEqual([error.code,error.outcome],['internal','rejected']);
+      assert.equal(String(error).includes('PRIVATE'),false);assert.equal(error.cause,undefined);
+      return true;
+    });
+  }
+  const cyclic={};cyclic.self=cyclic;
+  for (const body of [10n,cyclic,()=>1,Symbol('x'),{toJSON(){throw Error('PRIVATE');}}]) {
+    await assert.rejects(api.request('/w',x=>x,{method:'POST',body}),error=>{
+      assert.equal(error instanceof ValidationFailure,true);assert.equal(String(error).includes('PRIVATE'),false);return true;
+    });
+  }
+  assert.equal(calls,0);
+});
+
 test('API preflight rejection is actionable and happens before transport', async () => {
   let calls=0;
   const api=new ApiClient({baseUrl:'https://example.test',fetch:async()=>{calls++;return Response.json({});}});
@@ -68,6 +135,24 @@ test('API preflight rejection is actionable and happens before transport', async
     assert.equal(safeErrorReport(error,'write').outcome,'rejected');return true;
   });
   assert.equal(calls,0);
+});
+
+test('API paths resolve inside the base path and cannot escape it', async () => {
+  const calls=[];
+  const transport=async(input)=>{calls.push(input.href);return Response.json({});};
+  for (const base of ['https://x.test/api/v1','https://x.test/api/v1/','https://x.test/api/v1?ignored=1']) {
+    const api=new ApiClient({baseUrl:base,fetch:transport});
+    for (const path of ['/orders','orders','orders?id=1','/orders/7','']) await api.request(path,x=>x);
+    for (const path of ['../admin','/../admin','%2e%2e/admin','https://x.test/admin','https://x.test/api/v10/x','//other.test/x','https://other.test/api/v1/x']) {
+      await assert.rejects(api.request(path,x=>x),ValidationFailure,`${base} ${path}`);
+    }
+    await api.request('https://x.test/api/v1/same-origin',x=>x);
+  }
+  assert.deepEqual(calls.slice(0,6),['https://x.test/api/v1/orders','https://x.test/api/v1/orders','https://x.test/api/v1/orders?id=1',
+    'https://x.test/api/v1/orders/7','https://x.test/api/v1/','https://x.test/api/v1/same-origin']);
+  const root=new ApiClient({baseUrl:'https://x.test',fetch:transport});calls.length=0;
+  await root.request('/orders',x=>x);await root.request('orders',x=>x);
+  assert.deepEqual(calls,['https://x.test/orders','https://x.test/orders']);
 });
 
 test('consumer adapters preserve existing storage and transport ownership and account isolation', async () => {
@@ -310,4 +395,57 @@ test('actual HTTP redirect cannot forward CSRF headers to another origin', async
     destination.closeAllConnections();redirect.closeAllConnections();
     await Promise.all([new Promise(resolve=>destination.close(resolve)),new Promise(resolve=>redirect.close(resolve))]);
   }
+});
+
+test('a failing bridge listener does not stop the others; failures surface after everyone is notified', () => {
+  const app=new FakeApp();app.platform='ios';
+  const bridge=new TelegramBridge(app,new EventTarget()),seen=[];
+  bridge.subscribe(()=>{});bridge.start();
+  let fail=false;
+  bridge.subscribe(()=>{if(fail)throw new Error('first listener');});
+  bridge.subscribe(snapshot=>seen.push(snapshot.colorScheme));
+  fail=true;app.colorScheme='dark';
+  assert.throws(()=>app.emit('themeChanged'),/first listener/);
+  assert.deepEqual(seen,['light','dark'],'the later listener still received the update');
+  bridge.subscribe(snapshot=>{if(fail&&snapshot.colorScheme==='light')throw new TypeError('third listener');});
+  app.colorScheme='light';
+  assert.throws(()=>app.emit('themeChanged'),error=>error instanceof AggregateError&&error.errors.length===2);
+  assert.deepEqual(seen,['light','dark','light']);
+  fail=false;app.colorScheme='dark';app.emit('themeChanged');assert.equal(seen.at(-1),'dark');
+  bridge.dispose();
+});
+
+test('bridge and native API agree on running inside Telegram', () => {
+  for (const platform of [undefined,'','unknown',42,null,'ios','android','tdesktop','weba']) {
+    const app={platform,version:'10.3',ready(){},onEvent(){},offEvent(){},isVersionAtLeast:()=>true};
+    const inside=new TelegramBridge(app,undefined).snapshot().insideTelegram;
+    assert.equal(new TelegramNativeAPI(app).supports('ready'),inside,`platform ${String(platform)}`);
+    assert.equal(inside,typeof platform==='string'&&platform!==''&&platform!=='unknown');
+  }
+  for (const app of [undefined,null,'telegram',7]) {
+    assert.equal(new TelegramBridge(app,undefined).snapshot().insideTelegram,false);
+    assert.equal(new TelegramNativeAPI(app).supports('ready'),false);
+  }
+});
+
+test('framework store keeps one stable snapshot per change and releases the bridge', () => {
+  const app=new FakeApp();app.platform='ios';
+  const bridge=new TelegramBridge(app,undefined);bridge.start();
+  let active=0;const subscribe=bridge.subscribe.bind(bridge);
+  bridge.subscribe=listener=>{active++;const stop=subscribe(listener);return ()=>{active--;stop();};};
+  const first=[],second=[];
+  const a=telegramBridgeStore(bridge).subscribe(value=>first.push(value));
+  const b=telegramBridgeStore(bridge).subscribe(value=>second.push(value));
+  assert.equal(active,1,'one bridge subscription for every store of the bridge');
+  assert.equal(app.count(),4,'the bridge listens once to the client');
+  assert.equal(first[0],second[0],'stores share the snapshot object');
+  app.emit('viewportChanged');assert.equal(first.length,1,'no visible change, no notification');
+  app.colorScheme='dark';app.emit('themeChanged');
+  assert.equal(first.length,2);assert.equal(first[1],second[1]);assert.equal(first[1].colorScheme,'dark');
+  a();b();assert.equal(active,0,'released after the last unsubscribe');
+  app.colorScheme='light';app.emit('themeChanged');assert.equal(first.length,2);
+  const seen=[];const stop=telegramBridgeStore(bridge).subscribe(value=>seen.push(value.colorScheme));
+  app.colorScheme='dark';app.emit('themeChanged');stop();
+  assert.deepEqual(seen,['light','dark'],'a new subscriber reads the bridge, not a stale value');
+  bridge.dispose();
 });

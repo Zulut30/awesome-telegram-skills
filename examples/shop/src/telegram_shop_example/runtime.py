@@ -4,8 +4,9 @@ import argparse
 import asyncio
 from pathlib import Path
 from aiohttp import web
-from aiogram import Bot, Dispatcher
+from aiogram import Dispatcher
 from telegram_patterns import BotSettings
+from telegram_patterns.aiogram import create_bot
 from .api import create_app
 from .payments import payment_router
 from .storage import ProcessLock
@@ -16,7 +17,7 @@ async def live(args) -> None:
     settings=BotSettings.from_env()
     terms=args.terms.read_text(encoding='utf-8')
     lock=ProcessLock(args.database.absolute())
-    bot=Bot(settings.token);dispatcher=Dispatcher();runner=None
+    bot=create_bot(settings);dispatcher=Dispatcher();runner=None  # honours TELEGRAM_TEST_ENVIRONMENT
     try:
         store=Store(args.database,settings.token,terms_version=args.terms_version);store.recover()
         dispatcher.include_router(payment_router(store,shop_url=args.origin+'/',terms=terms,support=args.support))

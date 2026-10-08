@@ -15,9 +15,9 @@ from typing import Any
 from aiogram import BaseMiddleware, Bot, Dispatcher, Router
 from aiogram.exceptions import TelegramAPIError, TelegramBadRequest, TelegramForbiddenError, TelegramRetryAfter
 from aiogram.filters import Command, CommandObject
-from aiogram.types import CallbackQuery, ChatJoinRequest, ChatMemberUpdated, ForumTopic, Message, TelegramObject, Update
+from aiogram.types import CallbackQuery, ChatFullInfo, ChatJoinRequest, ChatMemberUpdated, ForumTopic, Message, TelegramObject, Update
 from telegram_patterns import BotSettings
-from telegram_patterns.aiogram import ActionButton, action_menu, build_request, event_router
+from telegram_patterns.aiogram import ActionButton, action_menu, build_request, create_bot, event_router
 
 from .storage import ProcessLock, io_call
 from .store import Context, Refused, Store
@@ -29,7 +29,7 @@ STATUS = {'done':'Действие выполнено; повтор не отп�
           'cancelled':'Действие отменено.', 'rejected':'Telegram отклонил действие. Автоматического повтора нет.',
           'draft':'Предпросмотр не был подтверждён доставленным сообщением.'}
 HELP = ('Пример администратора группы.\n/rights — проверить права\n/topic_info — текущая тема\n'
-        '/topic_create Название — создать тему\n/topic_close — закрыть текущую тему\n/topic_reopen — открыть текущую тему\n'
+        '/community — сообщество группы\n/topic_create Название — создать тему\n/topic_close — закрыть текущую тему\n/topic_reopen — открыть текущую тему\n'
         '/joins — последние заявки\n/approve ID или /decline ID — рассмотреть заявку\n'
         '/mute в ответ на участника — ограничить его права на 10 минут.\n'
         'Изменения требуют личного подтверждения автора команды; оно действует 5 минут.')
@@ -62,7 +62,7 @@ class Application:
             self.chat_locks: dict[int, asyncio.Lock] = {}
             router = Router(name='reviewed-group-commands')
 
-            @router.message(Command('group_help','rights','topic_info','topic_create','topic_close','topic_reopen','joins','approve','decline','mute'))
+            @router.message(Command('group_help','rights','topic_info','community','topic_create','topic_close','topic_reopen','joins','approve','decline','mute'))
             async def command(message: Message, command: CommandObject, bot: Bot, event_update: Update) -> None:
                 await self.message(message,command,bot,event_update.update_id)
 
@@ -146,6 +146,15 @@ class Application:
                 if name == 'group_help': await self.notify(bot,context,HELP); return
                 if name == 'topic_info':
                     await self.notify(bot,context,f'Группа {context.chat_id}; тема {context.thread_id or "General"}; forum={context.forum}. Состояние другой темы не используется.'); return
+                if name == 'community':
+                    # Read-only and stored nowhere: membership in a community grants no rights here or in its other chats.
+                    try:
+                        async with asyncio.timeout(3): chat = await bot(build_request('getChat',{'chat_id':context.chat_id}))
+                    except (TelegramAPIError,TimeoutError):
+                        raise Refused('Не удалось прочитать сообщество группы. Состояние не изменено.') from None
+                    if not isinstance(chat,ChatFullInfo) or chat.id != context.chat_id: raise Refused('Ответ getChat не совпадает с группой.')
+                    await self.notify(bot,context,f'Группа входит в сообщество «{chat.community.name}» ({chat.community.id}). Права в других чатах сообщества проверяются отдельно.'
+                                      if chat.community else 'Группа не входит в сообщество.'); return
                 await self.authorize(bot,context,name)
                 if name == 'rights':
                     await self.notify(bot,context,'Бот и инициатор — администраторы. Для конкретного действия нужное право перепроверяется отдельно.'); return
@@ -313,7 +322,7 @@ async def live(database: Path, chats: set[int]) -> None:
     settings = BotSettings.from_env()
     app = Application(database,int(settings.token.split(':',1)[0]),chats)
     try:
-        async with Bot(settings.token) as bot:
+        async with create_bot(settings) as bot:  # TELEGRAM_TEST_ENVIRONMENT=1 selects the test environment
             # Do not delete webhook or pending updates. Existing consumers need owner coordination.
             try:
                 await app.dispatcher.start_polling(bot,allowed_updates=app.dispatcher.resolve_used_update_types(),close_bot_session=False)

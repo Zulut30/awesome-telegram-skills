@@ -1,14 +1,16 @@
 """Atomic SQLite-local effect and replay result, across process restarts."""
-from __future__ import annotations
-from .errors import ConflictFailure
-from .errors import ValidationFailure
 
-from dataclasses import dataclass
-import hashlib
+from __future__ import annotations
+
 import json
-from pathlib import Path
+import math
 import sqlite3
-from typing import Callable, Any
+from dataclasses import dataclass
+from pathlib import Path
+from typing import Any, Callable
+
+from ._shared import canonical_json, owned_transaction, payload_digest
+from .errors import ConflictFailure, ValidationFailure
 
 
 class OperationConflict(ConflictFailure):
@@ -21,17 +23,6 @@ class OnceResult:
     replayed: bool
 
 
-def _json(value: Any) -> str:
-    return json.dumps(value, ensure_ascii=False, sort_keys=True,
-                      separators=(",", ":"), allow_nan=False)
-
-
-def _owned_transaction(action: int, *_arguments: Any) -> int:
-    # Includes Python commit/rollback, SQL transaction commands and the
-    # implicit COMMIT performed by executescript. Savepoints remain local.
-    return sqlite3.SQLITE_DENY if action == sqlite3.SQLITE_TRANSACTION else sqlite3.SQLITE_OK
-
-
 class SQLiteOnce:
     """Use only with synchronous effects on the supplied SQLite connection.
 
@@ -39,9 +30,16 @@ class SQLiteOnce:
     External network calls, COMMIT/ROLLBACK and other databases are not covered.
     Call through an appropriate thread boundary from an async application.
     """
+
     def __init__(self, database: str | Path, *, timeout: float = 5.0):
-        if not str(database) or str(database) == ":memory:" or timeout <= 0:
-            raise ValidationFailure("Use a file database and a positive timeout")
+        if (
+            not str(database)
+            or str(database) == ":memory:"
+            or type(timeout) not in (int, float)
+            or not math.isfinite(timeout)
+            or timeout <= 0
+        ):
+            raise ValidationFailure("Use a file database and a positive finite timeout")
         self.database = str(database)
         self.timeout = timeout
 
@@ -60,12 +58,13 @@ class SQLiteOnce:
         finally:
             connection.close()
 
-    def run(self, scope: str, operation_key: str, payload: Any,
-            apply: Callable[[sqlite3.Connection], Any]) -> OnceResult:
+    def run(
+        self, scope: str, operation_key: str, payload: Any, apply: Callable[[sqlite3.Connection], Any]
+    ) -> OnceResult:
         for value in (scope, operation_key):
             if not isinstance(value, str) or not value or len(value.encode("utf-8")) > 256:
                 raise ValidationFailure("Scope and operation key must be nonempty bounded strings")
-        digest = hashlib.sha256(_json(payload).encode("utf-8")).hexdigest()
+        digest = payload_digest(payload)
         connection = self._connect()
         try:
             connection.execute("BEGIN IMMEDIATE")
@@ -81,14 +80,14 @@ class SQLiteOnce:
             else:
                 # Block accidental transaction control BEFORE an effect escapes.
                 # This is a trusted callback contract, not isolation of Python code.
-                connection.set_authorizer(_owned_transaction)
+                connection.set_authorizer(owned_transaction)
                 try:
                     value = apply(connection)
                 finally:
                     connection.set_authorizer(None)
                 if not connection.in_transaction:
                     raise RuntimeError("apply must not commit or roll back the transaction")
-                serialized = _json(value)
+                serialized = canonical_json(value)
                 connection.execute(
                     "INSERT INTO telegram_pattern_operations VALUES (?, ?, ?, ?)",
                     (scope, operation_key, digest, serialized),

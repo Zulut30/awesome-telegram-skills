@@ -4,6 +4,7 @@ __pycache__/
 .env
 .env.*
 !.env.example
+!.env.example.txt
 node_modules/
 .pytest_cache/
 .ruff_cache/
@@ -18,3 +19,12 @@ build/
 *.session-wal
 output/
 .playwright-cli/
+
+# Coverage reports (python-coverage CI job)
+.coverage
+.coverage.*
+coverage.json
+coverage-html/
+
+# Hypothesis example database (HYPOTHESIS_PROFILE=explore)
+.hypothesis/

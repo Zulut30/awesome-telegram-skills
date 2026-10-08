@@ -1,0 +1,1410 @@
+{
+  "schema_version": 1,
+  "objective": "Реализовать все 100 пунктов плана к 1.0; после каждого завершенного пункта отдельный коммит",
+  "roadmap": "docs/internal/library-roadmap-100.md",
+  "baseline_commit": "73963b2",
+  "completion_rule": "Только полный предусмотренный результат и соответствующие проверки; pending не означает исключение из scope",
+  "items": [
+    {
+      "id": 1,
+      "title": "Закрепить сценарии версии 1.0",
+      "requirement": "Описать поддерживаемые типы ботов, backend и Mini Apps, основные задачи разработчика и границы ответственности библиотеки; для каждого сценария указать пример и критерий готовности.",
+      "status": "done",
+      "commit_subject": "roadmap(001): define v1 scenarios and acceptance",
+      "artifacts": [
+        "docs/v1-scope.md"
+      ],
+      "evidence": [
+        "scope review: all target scenario groups mapped to examples/current limits and acceptance; local links checked; original 100 requirements preserved"
+      ]
+    },
+    {
+      "id": 2,
+      "title": "Разделить уровни зрелости компонентов",
+      "requirement": "Присвоить каждому API статус `stable`, `experimental` или `reference`; отдельно сохранить уровни `sdk`, `mock`, `browser`, `live`, поскольку зрелость и способ проверки — разные свойства.",
+      "status": "done",
+      "commit_subject": "roadmap(002): separate API maturity from execution evidence",
+      "artifacts": [
+        "components.json",
+        "docs/v1-maturity.md",
+        "packages/python/src/telegram_patterns/recipes.py",
+        "gallery/index.html",
+        ".agents/skills/telegram-code-patterns/references/maturity.md",
+        "https://github.com/Zulut30/awesome-telegram-skills/blob/fe16ba3ea3a2b4d5bbdc69ba09e7b2ed50c0c215/docs/v1-checks/002.json"
+      ],
+      "evidence": [
+        "https://github.com/Zulut30/awesome-telegram-skills/blob/fe16ba3ea3a2b4d5bbdc69ba09e7b2ed50c0c215/docs/v1-checks/002.json",
+        "36 distribution stages passed; 84 Python passed + 1 skip; 21 TypeScript passed; 452 Chrome checks",
+        "Installed core maturity CLI and portable skill recipes passed; generator write/check in temporary directory preserved owned file"
+      ]
+    },
+    {
+      "id": 3,
+      "title": "Описать публичные контракты",
+      "requirement": "Зафиксировать параметры, результаты, ошибки, побочные эффекты, владение ресурсами и ограничения всех экспортируемых Python/TypeScript API.",
+      "status": "done",
+      "commit_subject": "roadmap(003): document all public API contracts",
+      "artifacts": [
+        "docs/public-api.md"
+      ],
+      "evidence": [
+        "Source/declaration review: 44 owned Python symbols + 23 TypeScript exports covered; local links resolve; semantic inputs/results/errors/effects/resource ownership reviewed"
+      ]
+    },
+    {
+      "id": 4,
+      "title": "Ввести правила совместимости",
+      "requirement": "Определить SemVer, период предупреждения о deprecation, миграции и допустимые изменения; выпуск 1.0 должен иметь явный стабильный контракт.",
+      "status": "done",
+      "commit_subject": "roadmap(004): define versioning and deprecation policy",
+      "artifacts": [
+        "docs/versioning.md"
+      ],
+      "evidence": [
+        "Reviewed compatibility scope, all change classes, pre-1.0/stable distinction, two-minor AND 90-day deprecation window, migrations and release immutability",
+        "Official SemVer/PyPA versioning inspected 2026-10-04; RC implementation explicitly remains item 099; no deprecated API exists"
+      ]
+    },
+    {
+      "id": 5,
+      "title": "Опубликовать матрицу поддержки",
+      "requirement": "Указать реально проверяемые версии Python, aiogram, Node.js, TypeScript и Telegram-клиентов; отделить проверенный диапазон от предположительно совместимого.",
+      "status": "done",
+      "commit_subject": "roadmap(005): publish evidence-based support matrix",
+      "artifacts": [
+        "docs/support-matrix.md",
+        "catalog/support-matrix.json"
+      ],
+      "evidence": [
+        "Exact versions collected from installed consumer/workspace/report; manifests compared to declared constraints",
+        "Explicit separation of declared/tested/unverified ranges; real Telegram clients absent; Windows skip retained; Node EOL official source inspected"
+      ]
+    },
+    {
+      "id": 6,
+      "title": "Согласовать имена и структуру API",
+      "requirement": "Убрать случайные различия между похожими операциями, проверить типы и импорты; каждое переименование до 1.0 сопровождать миграционным примером.",
+      "status": "done",
+      "commit_subject": "roadmap(006): define explicit exports and checked public types",
+      "artifacts": [
+        "docs/api-structure.md",
+        "tests/public_types.py",
+        "tests/public-types.ts",
+        "packages/python/tests/test_public_api.py",
+        "https://github.com/Zulut30/awesome-telegram-skills/blob/fe16ba3ea3a2b4d5bbdc69ba09e7b2ed50c0c215/docs/v1-checks/006.json"
+      ],
+      "evidence": [
+        "https://github.com/Zulut30/awesome-telegram-skills/blob/fe16ba3ea3a2b4d5bbdc69ba09e7b2ed50c0c215/docs/v1-checks/006.json",
+        "19 original Mypy errors fixed without blanket ignores; all public symbols resolve; old explicit SDK import remains accessible",
+        "39 distribution stages, 87 Python passed + 1 skip, 21 TypeScript passed, 452 Chrome checks; source/wheel bytes match"
+      ]
+    },
+    {
+      "id": 7,
+      "title": "Стандартизировать ошибки",
+      "requirement": "Сделать различимыми validation, permission, unsupported capability, timeout и unknown outcome; потребитель должен понимать, можно ли исправить ввод, повторить чтение или сверить операцию.",
+      "status": "done",
+      "commit_subject": "roadmap(007): standardize safe errors and recovery outcomes",
+      "artifacts": [
+        "packages/python/src/telegram_patterns/errors.py",
+        "packages/typescript/src/errors.ts",
+        "docs/error-model.md",
+        "examples/python/error_recovery.py",
+        ".agents/skills/telegram-code-patterns/references/errors.md",
+        "https://github.com/Zulut30/awesome-telegram-skills/blob/fe16ba3ea3a2b4d5bbdc69ba09e7b2ed50c0c215/docs/v1-checks/007.json"
+      ],
+      "evidence": [
+        "https://github.com/Zulut30/awesome-telegram-skills/blob/fe16ba3ea3a2b4d5bbdc69ba09e7b2ed50c0c215/docs/v1-checks/007.json",
+        "41 distribution stages passed; 94 Python passed + 1 skip; 25 TypeScript passed; 452 Chrome checks",
+        "Installed wheel/tarball types and core lost-response reconciliation passed; same form operation identity preserved; portable skill example executed; wheel files match source bytes"
+      ]
+    },
+    {
+      "id": 8,
+      "title": "Описать модель расширения",
+      "requirement": "Дать протоколы для storage, transport и provider adapters, сохранив минимальное ядро и выбранный стек потребителя; проверять работу пользовательского адаптера.",
+      "status": "done",
+      "commit_subject": "roadmap(008): add structural extension contracts and consumers",
+      "artifacts": [
+        "packages/python/src/telegram_patterns/extensions.py",
+        "packages/typescript/src/adapters.ts",
+        "docs/extension-model.md",
+        "examples/python/custom_adapters.py",
+        ".agents/skills/telegram-code-patterns/references/extensions.md",
+        "https://github.com/Zulut30/awesome-telegram-skills/blob/fe16ba3ea3a2b4d5bbdc69ba09e7b2ed50c0c215/docs/v1-checks/008.json"
+      ],
+      "evidence": [
+        "https://github.com/Zulut30/awesome-telegram-skills/blob/fe16ba3ea3a2b4d5bbdc69ba09e7b2ed50c0c215/docs/v1-checks/008.json",
+        "43 distribution stages passed; 96 Python passed + 1 skip; 26 TypeScript passed; 452 Chrome checks",
+        "Installed core custom SQLite/transport/provider fixture passed outside source tree; Mypy structural assignment passed; tarball custom storage/fetch types/runtime passed; wheel source bytes exact"
+      ]
+    },
+    {
+      "id": 9,
+      "title": "Завершить контракты поставки",
+      "requirement": "Проверить exports, типы, CSS, ресурсы Python и состав wheel/tarball; установленные пакеты должны работать без дерева исходного репозитория.",
+      "status": "done",
+      "commit_subject": "roadmap(009): verify standalone distribution contracts",
+      "artifacts": [
+        "scripts/verify_distribution_contract.py",
+        "tests/test_distribution_contract.py",
+        "docs/distribution-contract.md",
+        "https://github.com/Zulut30/awesome-telegram-skills/blob/fe16ba3ea3a2b4d5bbdc69ba09e7b2ed50c0c215/docs/v1-checks/009.json"
+      ],
+      "evidence": [
+        "https://github.com/Zulut30/awesome-telegram-skills/blob/fe16ba3ea3a2b4d5bbdc69ba09e7b2ed50c0c215/docs/v1-checks/009.json",
+        "44 distribution stages passed; 96 Python passed + 1 skip; 26 TypeScript passed; 452 Chrome checks",
+        "7 negative archive cases + 23 root tests; source/resources/RECORD, all 9 JS/declaration pairs, CSS and export map verified; installed wheel/tarball consumers passed"
+      ]
+    },
+    {
+      "id": 10,
+      "title": "Зафиксировать границы Telegram API",
+      "requirement": "Показать различия Bot API, Mini Apps, Business и MTProto, требования к правам и невозможные события; доступ пользовательского аккаунта не включать автоматически в бот-сценарий.",
+      "status": "done",
+      "commit_subject": "roadmap(010): document Telegram identity and capability boundaries",
+      "artifacts": [
+        "docs/telegram-api-boundaries.md",
+        "catalog/api-boundaries.json",
+        ".agents/skills/telegram-code-patterns/references/api-boundaries.md",
+        "scripts/check_telegram_boundaries.py",
+        "scripts/check_native_boundaries.mjs",
+        "https://github.com/Zulut30/awesome-telegram-skills/blob/fe16ba3ea3a2b4d5bbdc69ba09e7b2ed50c0c215/docs/v1-checks/010.json"
+      ],
+      "evidence": [
+        "https://github.com/Zulut30/awesome-telegram-skills/blob/fe16ba3ea3a2b4d5bbdc69ba09e7b2ed50c0c215/docs/v1-checks/010.json",
+        "Four API/identity surfaces and 12 scenario boundaries reviewed against fresh primary docs; bot-to-bot/guest and business right naming discrepancies recorded",
+        "Installed wheel SDK probe and tarball native presence/host launch gate passed outside source tree; wrong history route and Python -O rejected; 23 root tests and 41 standalone skills passed"
+      ]
+    },
+    {
+      "id": 11,
+      "title": "Написать короткий первый запуск",
+      "requirement": "Провести разработчика от установки локального артефакта до работающего offline-бота и экрана Mini App; заранее обозначить шаги, которым требуется Telegram.",
+      "status": "done",
+      "commit_subject": "roadmap(011): verify the documented first run and fix local npm paths",
+      "artifacts": [
+        "docs/quickstart.md",
+        ".agents/skills/telegram-code-patterns/references/quickstart.md",
+        "scripts/verify_quickstart.py",
+        "scripts/check_quickstart_browser.mjs",
+        "packages/python/src/telegram_patterns/starter.py",
+        "https://github.com/Zulut30/awesome-telegram-skills/blob/fe16ba3ea3a2b4d5bbdc69ba09e7b2ed50c0c215/docs/v1-checks/011.json"
+      ],
+      "evidence": [
+        "https://github.com/Zulut30/awesome-telegram-skills/blob/fe16ba3ea3a2b4d5bbdc69ba09e7b2ed50c0c215/docs/v1-checks/011.json",
+        "https://github.com/Zulut30/awesome-telegram-skills/blob/fe16ba3ea3a2b4d5bbdc69ba09e7b2ed50c0c215/docs/v1-checks/011-first-run.json",
+        "0.9.1 npm encoded-path regression fixed in 0.9.2; all documented commands executed in a new external Windows consumer with spaces",
+        "44 distribution stages; 97 Python passed + 1 skip; 26 TypeScript; 452 distribution Chrome checks plus 60 documented-first-run checks; 23 root tests and 41 skills",
+        "Installed origins, offline Dispatcher, doctor, build, six screen/theme combinations and repeat-setup preservation passed; no live Telegram or usability study claimed"
+      ]
+    },
+    {
+      "id": 12,
+      "title": "Улучшить создание проектов",
+      "requirement": "Добавить выбор нужных компонентов и проверки конфликтов в существующий CLI; dry-run показывает все файлы, повторный запуск не портит пользовательский код.",
+      "status": "done",
+      "commit_subject": "roadmap(012): compose selected starter components and reject conflicts",
+      "artifacts": [
+        "packages/python/src/telegram_patterns/starter_components.py",
+        "packages/python/src/telegram_patterns/starter.py",
+        "packages/python/src/telegram_patterns/cli.py",
+        "packages/python/src/telegram_patterns/resources/starter/components",
+        "packages/python/tests/test_starter_components.py",
+        "scripts/verify_selected_starter.py",
+        "tests/selected-starter-browser.mjs",
+        "docs/starter-selection.md",
+        ".agents/skills/telegram-code-patterns/references/starter-selection.md",
+        "https://github.com/Zulut30/awesome-telegram-skills/blob/fe16ba3ea3a2b4d5bbdc69ba09e7b2ed50c0c215/docs/v1-checks/012.json"
+      ],
+      "evidence": [
+        "https://github.com/Zulut30/awesome-telegram-skills/blob/fe16ba3ea3a2b4d5bbdc69ba09e7b2ed50c0c215/docs/v1-checks/012.json",
+        "https://github.com/Zulut30/awesome-telegram-skills/blob/fe16ba3ea3a2b4d5bbdc69ba09e7b2ed50c0c215/docs/v1-checks/012-selection.json",
+        "https://github.com/Zulut30/awesome-telegram-skills/blob/fe16ba3ea3a2b4d5bbdc69ba09e7b2ed50c0c215/docs/v1-checks/012-first-run.json",
+        "52 distribution stages; 103 Python passed + 1 skip; 26 TypeScript; 528 distribution Chrome checks plus 60 first-run checks; 23 root tests and 41 skills",
+        "15 selectable starter groups compose real routes/modules; exact 19-file dry-run, version/path/command/callback preflight and repeat preservation",
+        "Installed selected app origin outside generated tree; seven commands, foreign form callback ACK before service, storage/native fallback and disposal checked; no live/device/payment acceptance claimed"
+      ]
+    },
+    {
+      "id": 13,
+      "title": "Сделать диагностику полезной для исправлений",
+      "requirement": "Расширить `doctor` понятными причинами и командами исправления; сетевые проверки, если появятся, выполняются только явно и не раскрывают токены.",
+      "status": "done",
+      "commit_subject": "roadmap(013): provide actionable doctor checks and isolate SDK imports",
+      "artifacts": [
+        "packages/python/src/telegram_patterns/diagnostics.py",
+        "packages/python/src/telegram_patterns/cli.py",
+        "packages/python/tests/test_doctor.py",
+        "scripts/verify_doctor_consumer.py",
+        "docs/doctor.md",
+        ".agents/skills/telegram-code-patterns/references/doctor.md",
+        "https://github.com/Zulut30/awesome-telegram-skills/blob/fe16ba3ea3a2b4d5bbdc69ba09e7b2ed50c0c215/docs/v1-checks/013.json"
+      ],
+      "evidence": [
+        "https://github.com/Zulut30/awesome-telegram-skills/blob/fe16ba3ea3a2b4d5bbdc69ba09e7b2ed50c0c215/docs/v1-checks/013.json",
+        "https://github.com/Zulut30/awesome-telegram-skills/blob/fe16ba3ea3a2b4d5bbdc69ba09e7b2ed50c0c215/docs/v1-checks/013-doctor.json",
+        "https://github.com/Zulut30/awesome-telegram-skills/blob/fe16ba3ea3a2b4d5bbdc69ba09e7b2ed50c0c215/docs/v1-checks/013-first-run.json",
+        "https://github.com/Zulut30/awesome-telegram-skills/blob/fe16ba3ea3a2b4d5bbdc69ba09e7b2ed50c0c215/docs/v1-checks/013-regression.json",
+        "53 distribution stages; 112 Python passed + 1 skip; 26 TypeScript; 528 distribution Chrome checks plus 60 first-run checks; 23 root tests and 41 skills",
+        "12 installed doctor cases and 5 explicit repair commands; configuration preserved, token/config/process payloads not reflected",
+        "Real project SDK shadow regression reproduced and fixed; isolated installed adapter imports prevent aiogram/aiohttp fixture side effects; no network checks or live/device/usability claim"
+      ]
+    },
+    {
+      "id": 14,
+      "title": "Создать справочник API с примерами",
+      "requirement": "Для каждого публичного символа показать импорт, минимальную композицию, ограничения и соответствующий рецепт; проверять примеры через установленный пакет.",
+      "status": "done",
+      "commit_subject": "roadmap(014): document every public symbol with installed examples",
+      "artifacts": [
+        "docs/api-reference.md",
+        "docs/api-reference-core.md",
+        "docs/api-reference-bot.md",
+        "docs/api-reference-typescript.md",
+        "catalog/api-reference.json",
+        "catalog/api-reference-index.json",
+        "examples/api-reference",
+        "scripts/build_api_reference.py",
+        "scripts/verify_api_reference.py",
+        "https://github.com/Zulut30/awesome-telegram-skills/blob/fe16ba3ea3a2b4d5bbdc69ba09e7b2ed50c0c215/docs/v1-checks/014.json"
+      ],
+      "evidence": [
+        "https://github.com/Zulut30/awesome-telegram-skills/blob/fe16ba3ea3a2b4d5bbdc69ba09e7b2ed50c0c215/docs/v1-checks/014.json",
+        "55 distribution stages; 112 Python passed + 1 skip; 26 TypeScript passed; 564 Chrome checks plus 60 first-run checks",
+        "116 public symbols, 18 exact fenced doc examples in installed wheel/tarball consumers; Mypy/strict TS, 41 compiler bindings, CLI/CSS and 7 negative typing cases",
+        "26 root tests; 41 standalone skills; real temporary generator write/check/negative drift cases; actual installed unused-type rejection with byte-exact restoration"
+      ]
+    },
+    {
+      "id": 15,
+      "title": "Улучшить навигацию галереи",
+      "requirement": "Добавить фильтры по задаче, контексту чата, SDK/версии и зрелости, ссылки на исходники и проверку; поиск должен находить «две кнопки», «назад» и «потерянный ответ».",
+      "status": "done",
+      "commit_subject": "roadmap(015): filter gallery by task context and SDK with portable source links",
+      "artifacts": [
+        "docs/gallery-navigation.md",
+        "gallery/gallery.js",
+        "gallery/index.html",
+        "catalog/recipe-gallery.json",
+        "packages/python/src/telegram_patterns/recipes.py",
+        "packages/python/src/telegram_patterns/cli.py",
+        "scripts/build_recipe_gallery.py",
+        "scripts/verify_gallery_export.py",
+        "https://github.com/Zulut30/awesome-telegram-skills/blob/fe16ba3ea3a2b4d5bbdc69ba09e7b2ed50c0c215/docs/v1-checks/015.json"
+      ],
+      "evidence": [
+        "https://github.com/Zulut30/awesome-telegram-skills/blob/fe16ba3ea3a2b4d5bbdc69ba09e7b2ed50c0c215/docs/v1-checks/015.json",
+        "56 distribution stages; 114 Python passed + 1 skip; 26 TypeScript; 1147 full Chrome checks plus 60 first-run checks; 26 root tests and 41 skills",
+        "299 records with intersecting task/context/SDK/version/maturity/evidence filters; three requested searches, negative context/version, reset/focus and source link cases",
+        "201 byte-exact standalone source/check files; installed SDK-free CLI, read-only export check and owned-note preservation outside repository",
+        "Cold SDK import timeout reproduced at 10.035s; bounded 30s probe succeeds at 11.792s; timeouts/errors and secret isolation remain tested; final CLI helpers exercised in fresh targets"
+      ]
+    },
+    {
+      "id": 16,
+      "title": "Добавить проверяемые сценарии запуска рецептов",
+      "requirement": "Показывать необходимые права, зависимости и данные окружения до выполнения; локальный offline-режим работает без секретов и Telegram-запросов.",
+      "status": "done",
+      "commit_subject": "roadmap(016): add prerequisite plans and isolated offline recipe execution",
+      "artifacts": [
+        "packages/python/src/telegram_patterns/execution.py",
+        "packages/python/src/telegram_patterns/_offline_recipe.py",
+        "packages/python/tests/test_execution.py",
+        "scripts/verify_recipe_execution.py",
+        "docs/recipe-execution.md",
+        ".agents/skills/telegram-code-patterns/references/recipe-execution.md",
+        "gallery/index.html",
+        "https://github.com/Zulut30/awesome-telegram-skills/blob/fe16ba3ea3a2b4d5bbdc69ba09e7b2ed50c0c215/docs/v1-checks/016.json"
+      ],
+      "evidence": [
+        "https://github.com/Zulut30/awesome-telegram-skills/blob/fe16ba3ea3a2b4d5bbdc69ba09e7b2ed50c0c215/docs/v1-checks/016.json",
+        "https://github.com/Zulut30/awesome-telegram-skills/blob/fe16ba3ea3a2b4d5bbdc69ba09e7b2ed50c0c215/docs/v1-checks/016-execution.json",
+        "https://github.com/Zulut30/awesome-telegram-skills/blob/fe16ba3ea3a2b4d5bbdc69ba09e7b2ed50c0c215/docs/v1-checks/016-first-run.json",
+        "https://github.com/Zulut30/awesome-telegram-skills/blob/fe16ba3ea3a2b4d5bbdc69ba09e7b2ed50c0c215/docs/v1-checks/016-regression.json",
+        "57 distribution stages; 119 Python passed + 1 skip; 26 TypeScript; 1259 Chrome plus 60 documented first-run checks; 26 root tests; 41 skills",
+        "299 prerequisite plans; all 200 Python fixtures in installed SDK/core consumers; native/missing SDK pre-child refusal, no inherited credentials, caller files preserved, two guard refusals",
+        "Windows isolated JSON encoding and generic gallery locator failures reproduced and corrected; failed candidate preserved; maturity unchanged, no live/physical client/OS sandbox claim"
+      ]
+    },
+    {
+      "id": 17,
+      "title": "Подготовить пример сервисного бота",
+      "requirement": "Показать запись, меню, диалог и уведомление с реальным storage, авторизацией действий и восстановлением после рестарта.",
+      "status": "done",
+      "commit_subject": "roadmap(017): add persistent service bot with restart recovery",
+      "artifacts": [
+        "examples/service-bot",
+        "scripts/verify_service_bot.py",
+        "docs/service-bot.md",
+        "catalog/scenarios.json",
+        "https://github.com/Zulut30/awesome-telegram-skills/blob/fe16ba3ea3a2b4d5bbdc69ba09e7b2ed50c0c215/docs/v1-checks/017.json"
+      ],
+      "evidence": [
+        "Separate application wheel built and installed with accepted library 0.13.0 wheel outside repository; exact 6 application source files, installed module origins and 5-file Mypy pass.",
+        "8 domain/lifecycle tests; 7 actual phase processes with commit/send crash exits 73/74; real SQLite dialog restart, owner ACL/replay, consented reminder, unknown non-resend and OS process-lock ownership.",
+        "SQLite claim cancellation/repeated cancellation joins worker before unlock; concurrent slot reservation one effect; tampered notification owner blocked.",
+        "28 root tests, 41 skill packaging checks; portable guide byte-exact. No live Telegram or production/device acceptance."
+      ]
+    },
+    {
+      "id": 18,
+      "title": "Подготовить пример магазина с Mini App",
+      "requirement": "Соединить каталог, корзину, заказ, backend и разрешенный платежный маршрут; цена и доступ определяются сервером.",
+      "status": "done",
+      "commit_subject": "roadmap(018): connect Mini App shop to server-owned orders and Stars receipts",
+      "artifacts": [
+        "examples/shop",
+        "scripts/verify_shop_example.py",
+        "scripts/check_shop_browser.mjs",
+        "docs/shop-example.md",
+        "catalog/scenarios.json",
+        "https://github.com/Zulut30/awesome-telegram-skills/blob/fe16ba3ea3a2b4d5bbdc69ba09e7b2ed50c0c215/docs/v1-checks/018.json"
+      ],
+      "evidence": [
+        "Installed separate application wheel + accepted library 0.13.0 wheel/tarball in external consumer; exact 8 Python source files, RECORD and installed console help; 19 byte-exact vendor files; Mypy 7 source files and strict TypeScript build.",
+        "10 real domain/HTTP tests cover HMAC+independent aiogram validation, hashed session/CSRF, amount/owner ACL, concurrent operation replay, receipt/access rollback and duplicate/late charge handling.",
+        "143 actual Chrome checks across 6 viewport/theme combinations, plus lost POST response/reload and process exits 75/76; no new invoice after unknown, no duplicate grant after receipt crash/replay.",
+        "30 root tests and 41 skill packaging checks; source-exact portable guide; agent inspected phone/desktop screenshots. Synthetic native/launch/SDK transport, no live Telegram Stars/device acceptance."
+      ]
+    },
+    {
+      "id": 19,
+      "title": "Подготовить пример группового бота",
+      "requirement": "Показать темы, права, заявки и модерацию; отсутствие нужных прав возвращает объяснение и не запускает действие.",
+      "status": "done",
+      "commit_subject": "roadmap(019): add reviewed group bot with current permissions and crash recovery",
+      "artifacts": [
+        "examples/group-bot",
+        "docs/group-bot.md",
+        "scripts/verify_group_bot.py",
+        "tests/test_group_verifier.py",
+        "catalog/scenarios.json",
+        "catalog/support-matrix.json",
+        ".agents/skills/telegram-code-patterns/references/group-bot.md",
+        "https://github.com/Zulut30/awesome-telegram-skills/blob/fe16ba3ea3a2b4d5bbdc69ba09e7b2ed50c0c215/docs/v1-checks/019.json",
+        "https://github.com/Zulut30/awesome-telegram-skills/blob/fe16ba3ea3a2b4d5bbdc69ba09e7b2ed50c0c215/docs/v1-checks/019-group.json"
+      ],
+      "evidence": [
+        "https://github.com/Zulut30/awesome-telegram-skills/blob/fe16ba3ea3a2b4d5bbdc69ba09e7b2ed50c0c215/docs/v1-checks/019.json",
+        "Separate installed application wheel; exact six source files/RECORD/entrypoint; Mypy; 19 SDK/file-SQLite behavioral tests; four distinct process phases including actual exit 77 and unknown recovery without resend",
+        "Bot/actor rights refreshed before preview, effect and replay; context/prompt ACL; queue/new-version/membership/migration; temporary moderation; shutdown joins active handlers before OS unlock",
+        "32 root tests and 41 standalone skills; existing output and real junction refusal preserve caller files; library 0.13.0 artifacts/public exports unchanged",
+        "Synthetic transport only; no live group changes, permissions, privacy delivery or server query deadline acceptance; user-based join action race recorded"
+      ]
+    },
+    {
+      "id": 20,
+      "title": "Проверить удобство первого использования",
+      "requirement": "Измерить запуск и интеграцию на задачах людей и ИИ; целевое время и допустимое число затруднений задать после исходного замера.",
+      "status": "pending",
+      "commit_subject": null,
+      "artifacts": [],
+      "evidence": []
+    },
+    {
+      "id": 21,
+      "title": "Расширить конструктор клавиатур",
+      "requirement": "Добавить удобные композиции рядов 2/3/смешанной ширины, разрешенные стили и custom emoji с проверкой доступности; сохранить существующие builders и fallback.",
+      "status": "done",
+      "commit_subject": "roadmap(021): compose mixed keyboard rows with explicit presentation fallback",
+      "artifacts": [
+        "packages/python/src/telegram_patterns/keyboard_layouts.py",
+        "packages/python/tests/test_keyboard_layouts.py",
+        "examples/python/keyboard_layouts.py",
+        "docs/keyboard-layouts.md",
+        "https://github.com/Zulut30/awesome-telegram-skills/blob/fe16ba3ea3a2b4d5bbdc69ba09e7b2ed50c0c215/docs/v1-checks/021.json",
+        "https://github.com/Zulut30/awesome-telegram-skills/blob/fe16ba3ea3a2b4d5bbdc69ba09e7b2ed50c0c215/docs/v1-checks/021-distribution.json",
+        "https://github.com/Zulut30/awesome-telegram-skills/blob/fe16ba3ea3a2b4d5bbdc69ba09e7b2ed50c0c215/docs/v1-checks/021-first-run.json",
+        "https://github.com/Zulut30/awesome-telegram-skills/blob/fe16ba3ea3a2b4d5bbdc69ba09e7b2ed50c0c215/docs/v1-checks/021-portable.json"
+      ],
+      "evidence": [
+        "https://github.com/Zulut30/awesome-telegram-skills/blob/fe16ba3ea3a2b4d5bbdc69ba09e7b2ed50c0c215/docs/v1-checks/021.json",
+        "0.14.0 synchronized local wheel/tarball; 58 distribution stages, 126 Python passed + 1 skip, 26 TypeScript, 1259 browser checks + 60 quickstart checks",
+        "Seven layout tests; immutable widths and native model snapshots; 2/3/mixed last/cycle tail; invalid native fields/context rejected before style/emoji fallback; previous builders preserved",
+        "125 public symbols/19 documented examples; installed SDK composition and exact two portable guide blocks; source Mypy 22 files, 32 root tests and 41 standalone skills",
+        "No live Telegram rendering/emoji entitlement or human usability claim; item 020 remains pending its measured human/AI baseline and targets"
+      ]
+    },
+    {
+      "id": 22,
+      "title": "Сделать навигацию по сообщениям",
+      "requirement": "Реализовать экраны, возврат и историю с редактированием одного сообщения; чужая или устаревшая кнопка не изменяет состояние пользователя.",
+      "status": "done",
+      "commit_subject": "roadmap(022): navigate owned message screens with revisioned history and recovery",
+      "artifacts": [
+        "packages/python/src/telegram_patterns/navigation.py",
+        "packages/python/src/telegram_patterns/aiogram.py",
+        "packages/python/src/telegram_patterns/_offline_recipe.py",
+        "packages/python/tests/test_navigation.py",
+        "examples/python/navigation_bot.py",
+        "examples/python/offline_navigation.py",
+        "examples/api-reference/python/bot_navigation.py",
+        "docs/message-navigation.md",
+        ".agents/skills/telegram-code-patterns/references/message-navigation.md",
+        "https://github.com/Zulut30/awesome-telegram-skills/blob/fe16ba3ea3a2b4d5bbdc69ba09e7b2ed50c0c215/docs/v1-checks/022.json",
+        "https://github.com/Zulut30/awesome-telegram-skills/blob/fe16ba3ea3a2b4d5bbdc69ba09e7b2ed50c0c215/docs/v1-checks/022-distribution.json",
+        "https://github.com/Zulut30/awesome-telegram-skills/blob/fe16ba3ea3a2b4d5bbdc69ba09e7b2ed50c0c215/docs/v1-checks/022-first-run.json",
+        "https://github.com/Zulut30/awesome-telegram-skills/blob/fe16ba3ea3a2b4d5bbdc69ba09e7b2ed50c0c215/docs/v1-checks/022-portable.json"
+      ],
+      "evidence": [
+        "https://github.com/Zulut30/awesome-telegram-skills/blob/fe16ba3ea3a2b4d5bbdc69ba09e7b2ed50c0c215/docs/v1-checks/022.json",
+        "0.15.0 synchronized local wheel/tarball; 59 stages, 143 Python passed + 1 Windows skip, 26 TypeScript, 1371 browser checks + 60 first-run checks",
+        "17 navigation tests: same-message history/back/reopen, owner/bot/chat/thread/message/revision guards, ACK before lock, concurrent stale denial, rejection/timeout/cancellation and unknown recovery even after TTL",
+        "Installed one-message Dispatcher composition; 130 public symbols/20 example groups, 300 recipes/201 Python fixtures, 23 source typing files; exact copied guide integrates with existing /help router",
+        "Single-process memory only, no automatic resend of unknown initial send; no live/human/blind/device/payment/production acceptance claim"
+      ]
+    },
+    {
+      "id": 23,
+      "title": "Добавить составные элементы выбора",
+      "requirement": "Реализовать toggle, multiselect, количество, фильтры и подтверждение опасного действия; сервер проверяет разрешенные значения и актуальность выбора.",
+      "status": "done",
+      "commit_subject": "roadmap(023): compose server-owned selection controls and bound confirmation",
+      "artifacts": [
+        "packages/python/src/telegram_patterns/selection.py",
+        "packages/python/src/telegram_patterns/selection_aiogram.py",
+        "packages/python/tests/test_selection.py",
+        "examples/python/selection_bot.py",
+        "examples/python/offline_selection.py",
+        "examples/api-reference/python/core_selection.py",
+        "examples/api-reference/python/bot_selection.py",
+        "docs/selection-controls.md",
+        ".agents/skills/telegram-code-patterns/references/selection-controls.md",
+        "https://github.com/Zulut30/awesome-telegram-skills/blob/fe16ba3ea3a2b4d5bbdc69ba09e7b2ed50c0c215/docs/v1-checks/023.json",
+        "https://github.com/Zulut30/awesome-telegram-skills/blob/fe16ba3ea3a2b4d5bbdc69ba09e7b2ed50c0c215/docs/v1-checks/023-distribution.json",
+        "https://github.com/Zulut30/awesome-telegram-skills/blob/fe16ba3ea3a2b4d5bbdc69ba09e7b2ed50c0c215/docs/v1-checks/023-first-run.json",
+        "https://github.com/Zulut30/awesome-telegram-skills/blob/fe16ba3ea3a2b4d5bbdc69ba09e7b2ed50c0c215/docs/v1-checks/023-portable.json"
+      ],
+      "evidence": [
+        "https://github.com/Zulut30/awesome-telegram-skills/blob/fe16ba3ea3a2b4d5bbdc69ba09e7b2ed50c0c215/docs/v1-checks/023.json",
+        "0.16.0 local wheel/tarball: 60 stages, 170 Python passed + 1 Windows skip, 26 TypeScript, 1483 browser checks + 60 first-run checks",
+        "27 behavioral tests: all composite fields, server rules/values/context/revision, concurrent clicks, bounded exact confirmation, expiry/back/cancel and failure recovery",
+        "SDK-free core, installed Dispatcher and exact portable guide preserve current app; 138 symbols/22 API example groups, 301 recipes/202 Python fixtures, 25 source typing files",
+        "No automatic business effect; current ACL/version/idempotency and durable reconciliation belong to host. Live/human/blind/device/production remain unverified"
+      ]
+    },
+    {
+      "id": 24,
+      "title": "Добавить календарь и слоты времени",
+      "requirement": "Учесть часовые пояса, переходы времени и недоступные даты; конкурентная запись на один слот проверяется транзакционно на сервере.",
+      "status": "done",
+      "commit_subject": "roadmap(024): add timezone-aware calendar and transactional slot booking",
+      "artifacts": [
+        "packages/python/src/telegram_patterns/calendar.py",
+        "packages/python/src/telegram_patterns/slots.py",
+        "packages/python/src/telegram_patterns/calendar_aiogram.py",
+        "packages/python/src/telegram_patterns/selection_aiogram.py",
+        "packages/python/tests/test_calendar.py",
+        "packages/python/tests/test_calendar_aiogram.py",
+        "packages/python/tests/test_execution.py",
+        "examples/python/calendar_bot.py",
+        "examples/python/offline_calendar.py",
+        "examples/api-reference/python/core_calendar.py",
+        "examples/api-reference/python/bot_calendar.py",
+        "docs/calendar-slots.md",
+        ".agents/skills/telegram-code-patterns/references/calendar-slots.md",
+        "https://github.com/Zulut30/awesome-telegram-skills/blob/fe16ba3ea3a2b4d5bbdc69ba09e7b2ed50c0c215/docs/v1-checks/024.json",
+        "https://github.com/Zulut30/awesome-telegram-skills/blob/fe16ba3ea3a2b4d5bbdc69ba09e7b2ed50c0c215/docs/v1-checks/024-distribution.json",
+        "https://github.com/Zulut30/awesome-telegram-skills/blob/fe16ba3ea3a2b4d5bbdc69ba09e7b2ed50c0c215/docs/v1-checks/024-first-run.json",
+        "https://github.com/Zulut30/awesome-telegram-skills/blob/fe16ba3ea3a2b4d5bbdc69ba09e7b2ed50c0c215/docs/v1-checks/024-portable.json"
+      ],
+      "evidence": [
+        "https://github.com/Zulut30/awesome-telegram-skills/blob/fe16ba3ea3a2b4d5bbdc69ba09e7b2ed50c0c215/docs/v1-checks/024.json",
+        "0.17.0 local wheel/tarball: 61 stages, 199 Python passed + 1 Windows skip, 26 TypeScript, 1595 browser checks + 60 first-run checks",
+        "28 calendar behavioral tests plus offline prerequisites; actual spawned-process races for one slot, overlapping aliases and replay",
+        "Explicit IANA fold/gap, unavailable dates, current same-transaction ACL/CAS, atomic booking+receipt, rollback and restart/status",
+        "Installed one-message date/time/back/confirm and lost-edit recovery; exact copied guide and SDK-free/SDK API examples",
+        "146 symbols/24 API groups, 302 recipes/203 Python fixtures, 35 components, 28 source typing files; live/human/device/production remain unverified"
+      ]
+    },
+    {
+      "id": 25,
+      "title": "Расширить поля диалогов",
+      "requirement": "Поддержать числа, email, телефон, даты, файлы, контакты и геопозицию, возврат и отмену; ForceReply/reply keyboard не заменяют проверку автора и ожидаемого шага.",
+      "status": "done",
+      "commit_subject": "roadmap(025): add guarded mixed dialog fields and same-intent submission",
+      "artifacts": [
+        "packages/python/src/telegram_patterns/dialog_fields.py",
+        "packages/python/src/telegram_patterns/dialog_forms.py",
+        "examples/python/dialog_fields_bot.py",
+        "examples/python/offline_dialog_fields.py",
+        "examples/api-reference/python/bot_dialog_fields.py",
+        "docs/dialog-fields.md",
+        ".agents/skills/telegram-code-patterns/references/dialog-fields.md",
+        ".agents/skills/telegram-dialogs/references/dialog-fields.md",
+        "https://github.com/Zulut30/awesome-telegram-skills/blob/fe16ba3ea3a2b4d5bbdc69ba09e7b2ed50c0c215/docs/v1-checks/025.json",
+        "https://github.com/Zulut30/awesome-telegram-skills/blob/fe16ba3ea3a2b4d5bbdc69ba09e7b2ed50c0c215/docs/v1-checks/025-distribution.json",
+        "https://github.com/Zulut30/awesome-telegram-skills/blob/fe16ba3ea3a2b4d5bbdc69ba09e7b2ed50c0c215/docs/v1-checks/025-first-run.json",
+        "https://github.com/Zulut30/awesome-telegram-skills/blob/fe16ba3ea3a2b4d5bbdc69ba09e7b2ed50c0c215/docs/v1-checks/025-portable.json"
+      ],
+      "evidence": [
+        "https://github.com/Zulut30/awesome-telegram-skills/blob/fe16ba3ea3a2b4d5bbdc69ba09e7b2ed50c0c215/docs/v1-checks/025.json",
+        "0.18.0 local wheel/tarball: 63 stages, 222 Python passed + 1 Windows skip, 26 TypeScript, 1707 browser checks + 60 first-run",
+        "23 behavioral tests: seven input types, current owner/question/candidate, stale/foreign/reordered/concurrent guards and preserved host FSM/help",
+        "Actual file SQLite commit then lost receipt; same-intent reconciliation and one effect; lost prompts and success feedback, task cancellation and corruption",
+        "Exact API/portable guide through installed wheel, seven-field closed recipe, 303 recipes/204 Python fixtures and 226 linked files",
+        "Live/device/independent human and AI baseline/production acceptance remain outside this author-local proof"
+      ]
+    },
+    {
+      "id": 26,
+      "title": "Сделать безопасный конструктор сообщений",
+      "requirement": "Добавить экранирование HTML/MarkdownV2, entities, UTF-16 offsets, custom emoji и разбиение текста без повреждения форматирования.",
+      "status": "done",
+      "commit_subject": "roadmap(026): add literal message builder and lossless entity partition",
+      "artifacts": [
+        "packages/python/src/telegram_patterns/message_text.py",
+        "packages/python/src/telegram_patterns/__init__.py",
+        "packages/python/src/telegram_patterns/_offline_recipe.py",
+        "packages/python/tests/test_message_text.py",
+        "packages/python/tests/test_message_text_sdk.py",
+        "examples/python/message_text_bot.py",
+        "examples/python/offline_message_text.py",
+        "examples/api-reference/python/core_message_text.py",
+        "docs/message-text.md",
+        ".agents/skills/telegram-code-patterns/references/message-text.md",
+        ".agents/skills/telegram-bot-api/references/message-text.md",
+        "https://github.com/Zulut30/awesome-telegram-skills/blob/fe16ba3ea3a2b4d5bbdc69ba09e7b2ed50c0c215/docs/v1-checks/026.json",
+        "https://github.com/Zulut30/awesome-telegram-skills/blob/fe16ba3ea3a2b4d5bbdc69ba09e7b2ed50c0c215/docs/v1-checks/026-distribution.json",
+        "https://github.com/Zulut30/awesome-telegram-skills/blob/fe16ba3ea3a2b4d5bbdc69ba09e7b2ed50c0c215/docs/v1-checks/026-first-run.json",
+        "https://github.com/Zulut30/awesome-telegram-skills/blob/fe16ba3ea3a2b4d5bbdc69ba09e7b2ed50c0c215/docs/v1-checks/026-portable.json"
+      ],
+      "evidence": [
+        "https://github.com/Zulut30/awesome-telegram-skills/blob/fe16ba3ea3a2b4d5bbdc69ba09e7b2ed50c0c215/docs/v1-checks/026.json",
+        "0.19.0 local wheel/tarball: 65 stages, 249 Python passed + 1 Windows skip, 26 TypeScript, 1819 browser checks + 60 first-run",
+        "27 meaningful formatting/SDK tests, including 150 independent per-unit partition oracle cases and stopped partial unknown delivery",
+        "Nine public SDK-free symbols, 165 total exports/26 groups; exact installed API reference and copied full recipe pass",
+        "304 recipes/205 Python fixtures/231 linked files; new gallery intent/code/source/check links and isolated bundled executor verified",
+        "Live/device/independent baseline/production remain outside author-local proof; full Unicode UAX29 is not claimed"
+      ]
+    },
+    {
+      "id": 27,
+      "title": "Собрать компоненты работы с медиа",
+      "requirement": "Показать фото, документы, альбомы, подписи, замену и скачивание; лимиты, неподдерживаемые форматы и ошибки Telegram имеют проверенные сценарии.",
+      "status": "done",
+      "commit_subject": "roadmap(027): add typed media composition and bounded hosted download",
+      "artifacts": [
+        "packages/python/src/telegram_patterns/media_aiogram.py",
+        "packages/python/src/telegram_patterns/aiogram.py",
+        "packages/python/src/telegram_patterns/_offline_recipe.py",
+        "packages/python/tests/test_media.py",
+        "examples/python/media_bot.py",
+        "examples/python/offline_media.py",
+        "examples/api-reference/python/bot_media.py",
+        "examples/api-reference/python/core_recipes.py",
+        "docs/media.md",
+        ".agents/skills/telegram-code-patterns/references/media.md",
+        ".agents/skills/telegram-bot-api/references/media.md",
+        "https://github.com/Zulut30/awesome-telegram-skills/blob/fe16ba3ea3a2b4d5bbdc69ba09e7b2ed50c0c215/docs/v1-checks/027.json",
+        "https://github.com/Zulut30/awesome-telegram-skills/blob/fe16ba3ea3a2b4d5bbdc69ba09e7b2ed50c0c215/docs/v1-checks/027-distribution.json",
+        "https://github.com/Zulut30/awesome-telegram-skills/blob/fe16ba3ea3a2b4d5bbdc69ba09e7b2ed50c0c215/docs/v1-checks/027-first-run.json",
+        "https://github.com/Zulut30/awesome-telegram-skills/blob/fe16ba3ea3a2b4d5bbdc69ba09e7b2ed50c0c215/docs/v1-checks/027-portable.json"
+      ],
+      "evidence": [
+        "https://github.com/Zulut30/awesome-telegram-skills/blob/fe16ba3ea3a2b4d5bbdc69ba09e7b2ed50c0c215/docs/v1-checks/027.json",
+        "0.20.0 exact local wheel/tarball: 67 stages, 274 Python passed + 1 Windows skip, 26 TypeScript, 1931 browser checks + 60 first-run",
+        "25 meaningful media/SDK/stream/Dispatcher tests; valid small PNG, exact multipart bytes, safe partial unknown delivery and stream close",
+        "Nine optional aiogram public symbols, 174 total exports/27 API groups; exact installed API example and copied full media guide pass",
+        "305 recipes/206 Python fixtures/235 linked source/check files, closed installed media executor and intent links verified",
+        "Actual content/codec/ACL and declared file_id kind/scope stay host-owned; synthetic unsupported-format errors do not prove live codec acceptance"
+      ]
+    },
+    {
+      "id": 28,
+      "title": "Оформить работу с профилями",
+      "requirement": "Реализовать доступные данные пользователя/бота, фото, описание и локализацию; неизвестное поле не превращается в `false`, права на изменение проверяются.",
+      "status": "done",
+      "commit_subject": "roadmap(028): add scoped profile observations and authorized localized edits",
+      "artifacts": [
+        "packages/python/src/telegram_patterns/profiles_aiogram.py",
+        "packages/python/src/telegram_patterns/aiogram.py",
+        "packages/python/src/telegram_patterns/_offline_recipe.py",
+        "packages/python/tests/test_profiles.py",
+        "examples/python/profiles_bot.py",
+        "examples/python/offline_profiles.py",
+        "examples/api-reference/python/bot_profiles.py",
+        "examples/api-reference/python/core_recipes.py",
+        "docs/profiles.md",
+        ".agents/skills/telegram-code-patterns/references/profiles.md",
+        ".agents/skills/telegram-profiles/references/profiles.md",
+        ".agents/skills/telegram-code-patterns/SKILL.md",
+        ".agents/skills/telegram-profiles/SKILL.md",
+        ".agents/skills/telegram-profiles/references/profile-access.md",
+        "scripts/verify_profile_recipe.py",
+        "https://github.com/Zulut30/awesome-telegram-skills/blob/fe16ba3ea3a2b4d5bbdc69ba09e7b2ed50c0c215/docs/v1-checks/028.json",
+        "https://github.com/Zulut30/awesome-telegram-skills/blob/fe16ba3ea3a2b4d5bbdc69ba09e7b2ed50c0c215/docs/v1-checks/028-distribution.json",
+        "https://github.com/Zulut30/awesome-telegram-skills/blob/fe16ba3ea3a2b4d5bbdc69ba09e7b2ed50c0c215/docs/v1-checks/028-first-run.json",
+        "https://github.com/Zulut30/awesome-telegram-skills/blob/fe16ba3ea3a2b4d5bbdc69ba09e7b2ed50c0c215/docs/v1-checks/028-portable.json"
+      ],
+      "evidence": [
+        "https://github.com/Zulut30/awesome-telegram-skills/blob/fe16ba3ea3a2b4d5bbdc69ba09e7b2ed50c0c215/docs/v1-checks/028.json",
+        "0.21.0 exact local wheel/tarball: 69 stages, 311 Python passed + 1 Windows skip, 26 TypeScript, 2043 browser checks + 60 first-run",
+        "37 meaningful profile/SDK/rights/Dispatcher tests; nullable immutable observations, localization omission/clear, exact new-avatar multipart and fresh readback",
+        "Fresh host ACL before each native action; lost receipt/partial edit and denied readback stop safely without retry or rollback",
+        "14 optional aiogram exports; 188 total symbols/28 API groups; exact installed example and copied standalone composition pass",
+        "306 recipes/207 Python fixtures/239 linked files; closed installed fixture and profile intent links verified",
+        "Content/codec/ACL/serialization/CAS remain host-owned; no real Telegram, device, settlement or independent-usability acceptance"
+      ]
+    },
+    {
+      "id": 29,
+      "title": "Добавить inline mode и опросы",
+      "requirement": "Реализовать поиск, пагинацию, кеширование, quiz и доступные события голосования; учитывать ограничения приватных результатов и анонимных опросов.",
+      "status": "done",
+      "commit_subject": "roadmap(029): add scoped inline search and modern poll event composition",
+      "artifacts": [
+        "packages/python/src/telegram_patterns/inline_mode_aiogram.py",
+        "packages/python/src/telegram_patterns/polls_aiogram.py",
+        "packages/python/src/telegram_patterns/aiogram.py",
+        "packages/python/src/telegram_patterns/_offline_recipe.py",
+        "packages/python/tests/test_inline_mode.py",
+        "packages/python/tests/test_polls.py",
+        "packages/python/tests/test_catalog_cli.py",
+        "tests/public_types.py",
+        "examples/python/inline_search_bot.py",
+        "examples/python/offline_inline_search.py",
+        "examples/python/polls_bot.py",
+        "examples/python/offline_polls.py",
+        "examples/api-reference/python/bot_inline_search.py",
+        "examples/api-reference/python/bot_polls.py",
+        "examples/api-reference/python/core_recipes.py",
+        "docs/inline-search.md",
+        "docs/polls.md",
+        ".agents/skills/telegram-code-patterns/references/inline-search.md",
+        ".agents/skills/telegram-inline-mode/references/inline-search.md",
+        ".agents/skills/telegram-code-patterns/references/polls.md",
+        ".agents/skills/telegram-bot-api/references/polls.md",
+        ".agents/skills/telegram-code-patterns/SKILL.md",
+        ".agents/skills/telegram-inline-mode/SKILL.md",
+        ".agents/skills/telegram-bot-api/SKILL.md",
+        "scripts/verify_inline_search_recipe.py",
+        "scripts/verify_poll_recipe.py",
+        "https://github.com/Zulut30/awesome-telegram-skills/blob/fe16ba3ea3a2b4d5bbdc69ba09e7b2ed50c0c215/docs/v1-checks/029.json",
+        "https://github.com/Zulut30/awesome-telegram-skills/blob/fe16ba3ea3a2b4d5bbdc69ba09e7b2ed50c0c215/docs/v1-checks/029-distribution.json",
+        "https://github.com/Zulut30/awesome-telegram-skills/blob/fe16ba3ea3a2b4d5bbdc69ba09e7b2ed50c0c215/docs/v1-checks/029-first-run.json",
+        "https://github.com/Zulut30/awesome-telegram-skills/blob/fe16ba3ea3a2b4d5bbdc69ba09e7b2ed50c0c215/docs/v1-checks/029-portable.json"
+      ],
+      "evidence": [
+        "https://github.com/Zulut30/awesome-telegram-skills/blob/fe16ba3ea3a2b4d5bbdc69ba09e7b2ed50c0c215/docs/v1-checks/029.json",
+        "0.22.0 exact local wheel/tarball: 73 stages, 377 Python passed + 1 Windows skip, 26 TypeScript, 2267 browser checks + 60 first-run",
+        "66 meaningful inline/poll tests; per-user search, public shared-cache pagination, stale/forged cursors, modern quiz, persistent IDs and scoped events",
+        "Host current ACL/durable pending+unknown creation/receipt dedup; lost response and repeated command after SQLite reopen do not create another poll",
+        "27 new optional exports; 215 total symbols/30 API groups; installed references and copied standalone full compositions pass",
+        "308 recipes/209 Python fixtures/247 linked files; closed installed workers and gallery discovery verified",
+        "No live Telegram, device, settlement, independent-usability or complete-voter-ledger acceptance"
+      ]
+    },
+    {
+      "id": 30,
+      "title": "Расширить групповые и специальные сценарии",
+      "requirement": "Добавлять темы, реакции, заявки, Business, stories, gifts и managed bots по приоритетам; каждый рецепт указывает подтвержденный API-контракт, права и уровень проверки.",
+      "status": "done",
+      "commit_subject": "roadmap(030): compose scoped platform operations across seven native families",
+      "artifacts": [
+        "packages/python/src/telegram_patterns/platform_aiogram.py",
+        "packages/python/src/telegram_patterns/aiogram.py",
+        "packages/python/src/telegram_patterns/_offline_recipe.py",
+        "packages/python/tests/test_platform.py",
+        "tests/public_types.py",
+        "examples/python/platform_bot.py",
+        "examples/python/offline_platform.py",
+        "examples/api-reference/python/bot_platform.py",
+        "catalog/platform-contracts.json",
+        "scripts/verify_platform_recipe.py",
+        "scripts/verify_pattern_packages.py",
+        "scripts/build_recipe_gallery.py",
+        "tests/gallery-browser.mjs",
+        "docs/internal/platform-skill-check.md",
+        "docs/quickstart.md",
+        ".agents/skills/telegram-code-patterns/references/quickstart.md",
+        ".agents/skills/telegram-code-patterns/SKILL.md",
+        ".agents/skills/telegram-groups/SKILL.md",
+        ".agents/skills/telegram-business-bots/SKILL.md",
+        "docs/platform-operations.md",
+        ".agents/skills/telegram-code-patterns/references/platform-operations.md",
+        ".agents/skills/telegram-groups/references/platform-operations.md",
+        ".agents/skills/telegram-business-bots/references/platform-operations.md",
+        "components.json",
+        "catalog/api-reference.json",
+        "https://github.com/Zulut30/awesome-telegram-skills/blob/fe16ba3ea3a2b4d5bbdc69ba09e7b2ed50c0c215/docs/v1-checks/030-distribution.json",
+        "https://github.com/Zulut30/awesome-telegram-skills/blob/fe16ba3ea3a2b4d5bbdc69ba09e7b2ed50c0c215/docs/v1-checks/030-first-run.json",
+        "https://github.com/Zulut30/awesome-telegram-skills/blob/fe16ba3ea3a2b4d5bbdc69ba09e7b2ed50c0c215/docs/v1-checks/030-portable.json",
+        "https://github.com/Zulut30/awesome-telegram-skills/blob/fe16ba3ea3a2b4d5bbdc69ba09e7b2ed50c0c215/docs/v1-checks/030.json"
+      ],
+      "evidence": [
+        "Full original seven-family requirement: 51 exact native contracts executed, current method rights/host scopes and SDK upload wire proof",
+        "56 behavioral tests plus installed Dispatcher/file SQLite composition: restart, atomic actor/budget/intent, deadlines/cancel, unknown outcome/no retry, scoped event dedup and current help",
+        "75 complete distribution stages; 433 Python passed/1 Windows skip, 26 TypeScript, 2379 browser checks plus 60 matching first-run; 233 symbols/31 examples, 309 recipes/210 fixtures/253 linked files",
+        "Exact standalone copied guide and five real temporary helper operations, 41 skills and 34 root tests; independent/live/device/settlement acceptance remains separate"
+      ]
+    },
+    {
+      "id": 31,
+      "title": "Сделать восстановление диалога после рестарта",
+      "requirement": "Дать storage-контракт и пример с хранилищем проекта; состояние шага, срок жизни и версия формы сохраняются согласованно, MemoryStorage остается демонстрационным вариантом.",
+      "status": "done",
+      "commit_subject": "roadmap(031): persist atomic dialog snapshots and recover across restarts",
+      "artifacts": [
+        "packages/python/src/telegram_patterns/fsm_storage.py",
+        "packages/python/src/telegram_patterns/_dialog_storage.py",
+        "packages/python/src/telegram_patterns/_offline_recipe.py",
+        "packages/python/tests/test_execution.py",
+        "packages/python/src/telegram_patterns/forms.py",
+        "packages/python/src/telegram_patterns/dialog_forms.py",
+        "packages/python/src/telegram_patterns/aiogram.py",
+        "packages/python/tests/test_fsm_storage.py",
+        "examples/python/dialog_restart_bot.py",
+        "examples/python/offline_dialog_restart.py",
+        "examples/api-reference/python/bot_fsm_storage.py",
+        "scripts/verify_dialog_restart_recipe.py",
+        "scripts/verify_pattern_packages.py",
+        "scripts/verify_gallery_export.py",
+        "scripts/build_recipe_gallery.py",
+        "tests/gallery-browser.mjs",
+        "docs/internal/dialog-restart-skill-check.md",
+        "docs/quickstart.md",
+        ".agents/skills/telegram-code-patterns/SKILL.md",
+        ".agents/skills/telegram-dialogs/SKILL.md",
+        "docs/dialog-restart.md",
+        ".agents/skills/telegram-code-patterns/references/dialog-restart.md",
+        ".agents/skills/telegram-dialogs/references/dialog-restart.md",
+        "components.json",
+        "catalog/api-reference-index.json",
+        "https://github.com/Zulut30/awesome-telegram-skills/blob/fe16ba3ea3a2b4d5bbdc69ba09e7b2ed50c0c215/docs/v1-checks/031-distribution.json",
+        "https://github.com/Zulut30/awesome-telegram-skills/blob/fe16ba3ea3a2b4d5bbdc69ba09e7b2ed50c0c215/docs/v1-checks/031-first-run.json",
+        "https://github.com/Zulut30/awesome-telegram-skills/blob/fe16ba3ea3a2b4d5bbdc69ba09e7b2ed50c0c215/docs/v1-checks/031-portable.json",
+        "https://github.com/Zulut30/awesome-telegram-skills/blob/fe16ba3ea3a2b4d5bbdc69ba09e7b2ed50c0c215/docs/v1-checks/031.json"
+      ],
+      "evidence": [
+        "Full matching wheel/tarball consumers: 77 stages; 460 Python passed and 1 Windows symlink skip; 26 TypeScript; browser and 60 first-run checks",
+        "26 behavior tests cover restart, absolute expiry, unknown/pending ID, schema/native candidate, failed CAS, owned cancellation and six-key isolation; extra installed worker argv regression",
+        "Three separate processes preserve accepted answers and original deadline; unknown committed effect reconciles the same operation with one business row",
+        "Exact copied guide plus five actual temporary helper operations; old text/mixed API, existing Dispatcher and host data retained",
+        "No live/distributed/device/independent acceptance claim; all original 100 requirements preserved"
+      ]
+    },
+    {
+      "id": 32,
+      "title": "Защитить действия от конкуренции",
+      "requirement": "Проверять автора, scope, revision и operation ID; два worker или повторное нажатие не создают двойную запись бизнес-операции.",
+      "status": "pending",
+      "commit_subject": null,
+      "artifacts": [],
+      "evidence": []
+    },
+    {
+      "id": 33,
+      "title": "Добавить корректный webhook-приемник",
+      "requirement": "Проверять секрет, размер тела и входной Update, быстро отвечать после надежного приема; пример не меняет webhook/polling настройки незаметно.",
+      "status": "pending",
+      "commit_subject": null,
+      "artifacts": [],
+      "evidence": []
+    },
+    {
+      "id": 34,
+      "title": "Реализовать durable inbox",
+      "requirement": "Сохранять входящее событие до подтверждения приема, обрабатывать повторы и версии payload; рестарт между приемом и обработкой не теряет принятое событие.",
+      "status": "pending",
+      "commit_subject": null,
+      "artifacts": [],
+      "evidence": []
+    },
+    {
+      "id": 35,
+      "title": "Реализовать transactional outbox",
+      "requirement": "Связать запись бизнес-состояния и намерение отправки одной транзакцией; явно описать возможность дубля внешней отправки при потерянном ответе.",
+      "status": "pending",
+      "commit_subject": null,
+      "artifacts": [],
+      "evidence": []
+    },
+    {
+      "id": 36,
+      "title": "Описать безопасные повторные попытки",
+      "requirement": "Разделить чтение, идемпотентную запись и запись с неизвестным исходом; денежные и другие опасные операции сначала сверяются по устойчивому ID.",
+      "status": "pending",
+      "commit_subject": null,
+      "artifacts": [],
+      "evidence": []
+    },
+    {
+      "id": 37,
+      "title": "Сделать управляемые уведомления",
+      "requirement": "Добавить rate limits, обработку flood control, отписку и прекращение отправок недоступному пользователю; очередь не бесконечно повторяет постоянные ошибки.",
+      "status": "pending",
+      "commit_subject": null,
+      "artifacts": [],
+      "evidence": []
+    },
+    {
+      "id": 38,
+      "title": "Добавить фоновые задания и расписание",
+      "requirement": "Поддержать сохраненный статус, дедлайны, отмену и восстановление jobs средствами проекта; перезапуск не создает повторное напоминание без проверки.",
+      "status": "pending",
+      "commit_subject": null,
+      "artifacts": [],
+      "evidence": []
+    },
+    {
+      "id": 39,
+      "title": "Проверить жизненный цикл процессов",
+      "requirement": "Обработать graceful shutdown, закрытие сессий, незавершенные операции и ошибки декодирования Updates; восстановление не должно молча пропускать неизвестные входящие события.",
+      "status": "pending",
+      "commit_subject": null,
+      "artifacts": [],
+      "evidence": []
+    },
+    {
+      "id": 40,
+      "title": "Добавить полезную наблюдаемость",
+      "requirement": "Связать Update, действие, операцию и job безопасными идентификаторами; метрики задержек, повторов и отказов доступны без токенов, initData и полного текста сообщений.",
+      "status": "pending",
+      "commit_subject": null,
+      "artifacts": [],
+      "evidence": []
+    },
+    {
+      "id": 41,
+      "title": "Создать пример с настоящим Python backend",
+      "requirement": "Соединить Mini App, бот и API через общие сервисы и storage; оставить loopback mock пример для обучения и тестов.",
+      "status": "pending",
+      "commit_subject": null,
+      "artifacts": [],
+      "evidence": []
+    },
+    {
+      "id": 42,
+      "title": "Расширить контракт проверки initData",
+      "requirement": "Покрыть поврежденную подпись, срок действия, неверный bot context и разбор полей; пользователь определяется только после серверной проверки, `initDataUnsafe` не авторизует запросы.",
+      "status": "pending",
+      "commit_subject": null,
+      "artifacts": [],
+      "evidence": []
+    },
+    {
+      "id": 43,
+      "title": "Реализовать серверную сессию",
+      "requirement": "Показать выдачу, истечение, ротацию и отзыв, а также подходящие защите транспорта CSRF/CORS/cookie правила; клиент не хранит bot token.",
+      "status": "pending",
+      "commit_subject": null,
+      "artifacts": [],
+      "evidence": []
+    },
+    {
+      "id": 44,
+      "title": "Добавить объектные права",
+      "requirement": "Проверять владельца заказа/черновика и роли на каждом действии; подмена ID или Telegram user ID во frontend не дает доступа к чужим данным.",
+      "status": "pending",
+      "commit_subject": null,
+      "artifacts": [],
+      "evidence": []
+    },
+    {
+      "id": 45,
+      "title": "Согласовать запуск и deep links",
+      "requirement": "Проверить Menu Button, Main Mini App, inline/reply launches и `start_param`; входные параметры валидируются и не дают обходить права.",
+      "status": "pending",
+      "commit_subject": null,
+      "artifacts": [],
+      "evidence": []
+    },
+    {
+      "id": 46,
+      "title": "Оформить архитектуру frontend",
+      "requirement": "Разделить доменные модели, состояние, API, Telegram adapters и UI; подключение к React или другому текущему стеку не требует переписывать доменную логику.",
+      "status": "pending",
+      "commit_subject": null,
+      "artifacts": [],
+      "evidence": []
+    },
+    {
+      "id": 47,
+      "title": "Предотвратить гонки запросов",
+      "requirement": "Поддержать отмену чтений, защиту от устаревших ответов и согласованное обновление кеша; смена пользователя очищает принадлежащие ему данные.",
+      "status": "pending",
+      "commit_subject": null,
+      "artifacts": [],
+      "evidence": []
+    },
+    {
+      "id": 48,
+      "title": "Завершить контракт черновиков",
+      "requirement": "Добавить версии, миграции, TTL, scope пользователя и очищение; обычный draft хранит только разрешенные поля, а не секреты и подтверждение оплаты.",
+      "status": "pending",
+      "commit_subject": null,
+      "artifacts": [],
+      "evidence": []
+    },
+    {
+      "id": 49,
+      "title": "Восстанавливать незавершенные операции",
+      "requirement": "Сохранять operation ID отдельно от draft, показывать pending/unknown и сверять серверный статус после reload; новый заказ не создается автоматически.",
+      "status": "pending",
+      "commit_subject": null,
+      "artifacts": [],
+      "evidence": []
+    },
+    {
+      "id": 50,
+      "title": "Согласовать навигацию и жизненный цикл",
+      "requirement": "Обработать BackButton, браузерную историю, подтверждение закрытия, resume и dispose; повторный mount не удваивает listeners и действия.",
+      "status": "pending",
+      "commit_subject": null,
+      "artifacts": [],
+      "evidence": []
+    },
+    {
+      "id": 51,
+      "title": "Создать систему визуальных токенов",
+      "requirement": "Описать типографику, отступы, цвета, радиусы, плотность и движение; светлая/темная темы имеют согласованные состояния без жестко зашитых цветов.",
+      "status": "pending",
+      "commit_subject": null,
+      "artifacts": [],
+      "evidence": []
+    },
+    {
+      "id": 52,
+      "title": "Расширить базовые UI-компоненты",
+      "requirement": "Добавить кнопки, поля, карточки, списки, бейджи, skeleton, empty/error/success; проверить композицию и взаимодействие состояний.",
+      "status": "pending",
+      "commit_subject": null,
+      "artifacts": [],
+      "evidence": []
+    },
+    {
+      "id": 53,
+      "title": "Добавить навигационные и модальные компоненты",
+      "requirement": "Реализовать tabs, dialogs и bottom sheets с возвратом фокуса, Escape на ПК и понятным закрытием на touch-устройствах.",
+      "status": "pending",
+      "commit_subject": null,
+      "artifacts": [],
+      "evidence": []
+    },
+    {
+      "id": 54,
+      "title": "Сделать формы удобными для исправления",
+      "requirement": "Поддержать labels, input modes, inline validation, сохранение ввода и фокус на ошибке; отказ сервера не стирает заполненную форму.",
+      "status": "pending",
+      "commit_subject": null,
+      "artifacts": [],
+      "evidence": []
+    },
+    {
+      "id": 55,
+      "title": "Подготовить шаблоны основных экранов",
+      "requirement": "Каталог, карточка товара, корзина, профиль, настройки и запись используют общие компоненты и содержат нормальные loading/empty/error состояния.",
+      "status": "pending",
+      "commit_subject": null,
+      "artifacts": [],
+      "evidence": []
+    },
+    {
+      "id": 56,
+      "title": "Проверить адаптивные композиции",
+      "requirement": "Протестировать телефон в обеих ориентациях, планшет, узкое окно и ПК; длинные названия, большие шрифты и масштабирование не ломают действия.",
+      "status": "pending",
+      "commit_subject": null,
+      "artifacts": [],
+      "evidence": []
+    },
+    {
+      "id": 57,
+      "title": "Согласовать safe areas и viewport",
+      "requirement": "Использовать одну документированную систему координат для native insets и CSS; не складывать перекрывающиеся inset значения автоматически.",
+      "status": "pending",
+      "commit_subject": null,
+      "artifacts": [],
+      "evidence": []
+    },
+    {
+      "id": 58,
+      "title": "Обработать экранную клавиатуру",
+      "requirement": "Проверить первый focus, холодный старт, resume, стороннюю клавиатуру и нижние действия; доступ к полю/подтверждению сохраняется, клиентские ограничения отмечены явно.",
+      "status": "pending",
+      "commit_subject": null,
+      "artifacts": [],
+      "evidence": []
+    },
+    {
+      "id": 59,
+      "title": "Довести темы и визуальные состояния",
+      "requirement": "Сохранить приоритет Telegram theme, fallback системной темы вне Telegram, disabled/focus/error и reduced motion; смена темы не теряет ввод.",
+      "status": "pending",
+      "commit_subject": null,
+      "artifacts": [],
+      "evidence": []
+    },
+    {
+      "id": 60,
+      "title": "Пройти проверку доступности",
+      "requirement": "Проверить применимые WCAG 2.2 AA: labels, contrast, focus, keyboard navigation, reflow и screen readers; собственные критерии touch targets указать отдельно от стандарта.",
+      "status": "pending",
+      "commit_subject": null,
+      "artifacts": [],
+      "evidence": []
+    },
+    {
+      "id": 61,
+      "title": "Создать capability matrix Mini Apps",
+      "requirement": "Для каждого native-сценария указать версию, платформу, launch context, разрешения и fallback; наличие имени метода в индексе не означает доступность функции.",
+      "status": "pending",
+      "commit_subject": null,
+      "artifacts": [],
+      "evidence": []
+    },
+    {
+      "id": 62,
+      "title": "Сделать типизированные native-кнопки",
+      "requirement": "Добавить адаптеры MainButton, SecondaryButton и BackButton с проверкой возможностей, состоянием загрузки и уборкой обработчиков.",
+      "status": "pending",
+      "commit_subject": null,
+      "artifacts": [],
+      "evidence": []
+    },
+    {
+      "id": 63,
+      "title": "Оформить popup, QR и открытие invoice",
+      "requirement": "Проверять параметры, отмену, ошибки и жизненный цикл callback; закрытие платежного окна само по себе не подтверждает оплату.",
+      "status": "pending",
+      "commit_subject": null,
+      "artifacts": [],
+      "evidence": []
+    },
+    {
+      "id": 64,
+      "title": "Сделать запросы контакта и геолокации понятными",
+      "requirement": "Запрашивать разрешения в контексте пользовательского действия, поддержать отказ и недоступность; полученные данные не использовать как самостоятельную авторизацию.",
+      "status": "pending",
+      "commit_subject": null,
+      "artifacts": [],
+      "evidence": []
+    },
+    {
+      "id": 65,
+      "title": "Оформить biometrics и native storage",
+      "requirement": "Проверить поддерживаемые операции, отказы и смену аккаунта; клиентская биометрия и значения storage не заменяют серверные права.",
+      "status": "pending",
+      "commit_subject": null,
+      "artifacts": [],
+      "evidence": []
+    },
+    {
+      "id": 66,
+      "title": "Добавить адаптеры sharing, файлов и загрузок",
+      "requirement": "Проверять официальную поддержку и реальные клиентские ограничения, включая camera/file picker; при недоступности давать работоспособный альтернативный путь.",
+      "status": "pending",
+      "commit_subject": null,
+      "artifacts": [],
+      "evidence": []
+    },
+    {
+      "id": 67,
+      "title": "Провести реальную device-приемку",
+      "requirement": "Зафиксировать модели и версии Android/iOS/Desktop, хотя бы один планшет и touch/keyboard сценарии; browser emulation хранить как отдельное доказательство.",
+      "status": "pending",
+      "commit_subject": null,
+      "artifacts": [],
+      "evidence": []
+    },
+    {
+      "id": 68,
+      "title": "Ввести visual regression",
+      "requirement": "Сравнивать основные экраны и состояния в темах и размерах; эталоны и изменения просматривает человек, а нестабильные области объяснены.",
+      "status": "pending",
+      "commit_subject": null,
+      "artifacts": [],
+      "evidence": []
+    },
+    {
+      "id": 69,
+      "title": "Измерять пользовательскую скорость",
+      "requirement": "Снять baseline загрузки, взаимодействий, крупных списков и сетевых путей; бюджеты установить по данным и проверять на целевых устройствах.",
+      "status": "pending",
+      "commit_subject": null,
+      "artifacts": [],
+      "evidence": []
+    },
+    {
+      "id": 70,
+      "title": "Проверить слабые устройства и плохую сеть",
+      "requirement": "Измерить память, утечки listeners, повторные входы, background/resume и потерянные ответы; отказ сети не превращается в бесконечный spinner.",
+      "status": "pending",
+      "commit_subject": null,
+      "artifacts": [],
+      "evidence": []
+    },
+    {
+      "id": 71,
+      "title": "Зафиксировать допустимые платежные маршруты",
+      "requirement": "Для цифровых товаров внутри Telegram использовать Stars; внешние провайдеры подключать только для подходящих разрешенных сценариев по актуальным правилам.",
+      "status": "pending",
+      "commit_subject": null,
+      "artifacts": [],
+      "evidence": []
+    },
+    {
+      "id": 72,
+      "title": "Создать общую модель заказа и оплаты",
+      "requirement": "Определить суммы без float, валюты, состояния и журнал переходов; provider-specific состояния сохраняются и не теряются при нормализации.",
+      "status": "pending",
+      "commit_subject": null,
+      "artifacts": [],
+      "evidence": []
+    },
+    {
+      "id": 73,
+      "title": "Обработать платежные события надежно",
+      "requirement": "Проверять подлинность выбранным способом провайдера, получателя, заказ, сумму и повторы; неизвестный ответ создания счета сверять перед новым запросом.",
+      "status": "pending",
+      "commit_subject": null,
+      "artifacts": [],
+      "evidence": []
+    },
+    {
+      "id": 74,
+      "title": "Реализовать полный Stars-сценарий",
+      "requirement": "Invoice, pre-checkout ответ в установленный срок, `successful_payment`, сохраненный charge ID и возврат; доступ выдается после подтвержденной оплаты.",
+      "status": "pending",
+      "commit_subject": null,
+      "artifacts": [],
+      "evidence": []
+    },
+    {
+      "id": 75,
+      "title": "Сделать адаптер Crypto Pay",
+      "requirement": "Проверить действующий первичный контракт, создание счета, webhook, сверку статуса и дубли; документировать sandbox evidence и ограничения отдельно.",
+      "status": "pending",
+      "commit_subject": null,
+      "artifacts": [],
+      "evidence": []
+    },
+    {
+      "id": 76,
+      "title": "Сделать адаптер Platega",
+      "requirement": "Проверить актуальные callbacks, статусы и доступные операции конкретного контракта; обработать неверную сумму, повтор и потерянный ответ без выдуманной подписи.",
+      "status": "pending",
+      "commit_subject": null,
+      "artifacts": [],
+      "evidence": []
+    },
+    {
+      "id": 77,
+      "title": "Сделать адаптер ЮКассы",
+      "requirement": "Реализовать поддерживаемые магазином создание, capture, уведомления, идемпотентность и возвраты; подтвердить поведение в доступном тестовом контуре.",
+      "status": "pending",
+      "commit_subject": null,
+      "artifacts": [],
+      "evidence": []
+    },
+    {
+      "id": 78,
+      "title": "Добавить сверку и возвраты",
+      "requirement": "Обработать полные/частичные возвраты, pending и разрешенные переходы конкретного провайдера; операторские действия защищены правами и записываются в аудит.",
+      "status": "pending",
+      "commit_subject": null,
+      "artifacts": [],
+      "evidence": []
+    },
+    {
+      "id": 79,
+      "title": "Реализовать оплачиваемый доступ",
+      "requirement": "Проверить выдачу, продление, истечение, отмену и последствия возврата; поддерживаемые типы подписок определяются выбранным платежным маршрутом.",
+      "status": "pending",
+      "commit_subject": null,
+      "artifacts": [],
+      "evidence": []
+    },
+    {
+      "id": 80,
+      "title": "Описать подключение других платежек",
+      "requirement": "Дать контракт адаптера и набор проверок на одном дополнительном востребованном провайдере; новый сервис не становится обязательной зависимостью ядра.",
+      "status": "pending",
+      "commit_subject": null,
+      "artifacts": [],
+      "evidence": []
+    },
+    {
+      "id": 81,
+      "title": "Запускать матрицу совместимости",
+      "requirement": "Проверять заявленные версии Python/SDK/Node/TypeScript и целевые Windows/Linux среды; неподдерживаемая комбинация имеет понятное сообщение.",
+      "status": "pending",
+      "commit_subject": null,
+      "artifacts": [],
+      "evidence": []
+    },
+    {
+      "id": 82,
+      "title": "Проверять важные инварианты тестами",
+      "requirement": "Покрыть права, суммы, переходы, UTF-16, время, concurrency и чистоту cleanup; property/fuzz проверки применять к местам, где они находят реальные ошибки.",
+      "status": "pending",
+      "commit_subject": null,
+      "artifacts": [],
+      "evidence": []
+    },
+    {
+      "id": 83,
+      "title": "Ввести интеграционные проверки отказов",
+      "requirement": "Проверить повторы, таймауты, потерянные ответы, падение процесса и восстановление storage; доказать сохранение бизнес-инвариантов.",
+      "status": "pending",
+      "commit_subject": null,
+      "artifacts": [],
+      "evidence": []
+    },
+    {
+      "id": 84,
+      "title": "Проверять публичный API потребителем",
+      "requirement": "Контролировать imports, typing, exports и обратную совместимость; пример потребителя использует публичные символы, без доступа к приватным исходникам.",
+      "status": "pending",
+      "commit_subject": null,
+      "artifacts": [],
+      "evidence": []
+    },
+    {
+      "id": 85,
+      "title": "Проверять точные артефакты выпуска",
+      "requirement": "Установить wheel/tarball в чистые consumer-проекты и выполнить сценарии; привязать результаты к версиям и SHA-256 этих файлов.",
+      "status": "pending",
+      "commit_subject": null,
+      "artifacts": [],
+      "evidence": []
+    },
+    {
+      "id": 86,
+      "title": "Сделать evidence рецептов проверяемым",
+      "requirement": "Для каждого stable рецепта хранить версию, команду, результат и ограничения; устаревшая проверка не маскируется свежей датой источника.",
+      "status": "pending",
+      "commit_subject": null,
+      "artifacts": [],
+      "evidence": []
+    },
+    {
+      "id": 87,
+      "title": "Провести негативные security-сценарии",
+      "requirement": "Проверить чужие IDs, forged initData/callbacks, повторные webhooks, опасные файлы и утечки секретов; внешние сообщения и docs не становятся инструкциями ИИ.",
+      "status": "pending",
+      "commit_subject": null,
+      "artifacts": [],
+      "evidence": []
+    },
+    {
+      "id": 88,
+      "title": "Проверить решения всех 41 навыка",
+      "requirement": "Выполнить слепые задачи выбора и интеграции через публичный API, перенос одного навыка и его references; измерять правильность решения, а не только YAML/ссылки.",
+      "status": "pending",
+      "commit_subject": null,
+      "artifacts": [],
+      "evidence": []
+    },
+    {
+      "id": 89,
+      "title": "Провести usability-проверки",
+      "requirement": "Набрать 5–8 разработчиков разных уровней для первого запуска, поиска рецепта и подключения; проблемы фиксировать по наблюдениям, отдельно от пожеланий и гипотез.",
+      "status": "pending",
+      "commit_subject": null,
+      "artifacts": [],
+      "evidence": []
+    },
+    {
+      "id": 90,
+      "title": "Провести ограниченные production-пилоты",
+      "requirement": "Проверить хотя бы бот и Mini App в реальных проектах с согласованными правами/данными; заранее задать период наблюдения и критерии отказов, восстановления и поддержки.",
+      "status": "pending",
+      "commit_subject": null,
+      "artifacts": [],
+      "evidence": []
+    },
+    {
+      "id": 91,
+      "title": "Организовать репозиторий и CI",
+      "requirement": "Добавить историю изменений и pipeline: навыки, unit/integration, сборка, consumer и browser checks; обязательные проверки нельзя обходить молчаливым `--skip-browser`.",
+      "status": "pending",
+      "commit_subject": null,
+      "artifacts": [],
+      "evidence": []
+    },
+    {
+      "id": 92,
+      "title": "Наладить обновление зависимостей и API",
+      "requirement": "Отслеживать официальные изменения Telegram/SDK, воспроизводить несовместимости и обновлять fixtures; дата проверки относится только к проверенным частям.",
+      "status": "pending",
+      "commit_subject": null,
+      "artifacts": [],
+      "evidence": []
+    },
+    {
+      "id": 93,
+      "title": "Подготовить лицензирование",
+      "requirement": "Собрать авторство, лицензии зависимостей/примеров, правила использования и распространения; выбор лицензии и публикации оставить явным решением владельца проекта.",
+      "status": "pending",
+      "commit_subject": null,
+      "artifacts": [],
+      "evidence": []
+    },
+    {
+      "id": 94,
+      "title": "Создать правила сообщения об уязвимостях",
+      "requirement": "Добавить SECURITY.md, поддерживаемые версии, приватный канал и порядок исправления; проверить, что опубликованный контакт доступен.",
+      "status": "pending",
+      "commit_subject": null,
+      "artifacts": [],
+      "evidence": []
+    },
+    {
+      "id": 95,
+      "title": "Защитить выпуск артефактов",
+      "requirement": "Подготовить dependency inventory/SBOM, checksums и provenance, ограничить права CI; при публикации использовать поддерживаемый registry trusted publishing вместо долгоживущих токенов.",
+      "status": "pending",
+      "commit_subject": null,
+      "artifacts": [],
+      "evidence": []
+    },
+    {
+      "id": 96,
+      "title": "Подготовить эксплуатационные инструкции",
+      "requirement": "Дать варианты запуска на целевой инфраструктуре, секреты, backups, restore, monitoring и rollback; команды проверить в тестовой среде без обязательного нового сервиса.",
+      "status": "pending",
+      "commit_subject": null,
+      "artifacts": [],
+      "evidence": []
+    },
+    {
+      "id": 97,
+      "title": "Определить поддержку после релиза",
+      "requirement": "Указать каналы ошибок, требования к воспроизводимому отчету, поддерживаемые ветки и сроки исправлений по серьезности; не обещать SLA без ресурсов.",
+      "status": "pending",
+      "commit_subject": null,
+      "artifacts": [],
+      "evidence": []
+    },
+    {
+      "id": 98,
+      "title": "Подготовить миграцию с 0.5.0",
+      "requirement": "Синхронизировать changelog, каталог, exports, инструкции ИИ и примеры; каждое несовместимое изменение имеет работающий before/after путь.",
+      "status": "pending",
+      "commit_subject": null,
+      "artifacts": [],
+      "evidence": []
+    },
+    {
+      "id": 99,
+      "title": "Выпустить и проверить 1.0 release candidate",
+      "requirement": "Заморозить стабильный API, пройти обязательную матрицу и пилоты; закрыть известные критические/высокие дефекты в stable scope, остальные явно классифицировать.",
+      "status": "pending",
+      "commit_subject": null,
+      "artifacts": [],
+      "evidence": []
+    },
+    {
+      "id": 100,
+      "title": "Принять и выпустить 1.0",
+      "requirement": "Сопоставить критерии с доказательствами, зафиксировать версии/артефакты и план поддержки; публикация в PyPI/npm или внешнем репозитории выполняется после отдельного решения владельца.",
+      "status": "pending",
+      "commit_subject": null,
+      "artifacts": [],
+      "evidence": []
+    }
+  ]
+}

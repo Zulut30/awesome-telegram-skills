@@ -1,0 +1,45 @@
+{
+  "date": "2026-10-07",
+  "agent": "Claude Code CLI 2.1.292 (claude -p, tools disabled; the prompt lists all 41 name: description pairs)",
+  "cases": "evaluations/skill-boundaries.json",
+  "versions": {
+    "new": "descriptions with \"Не для ... → telegram-...\" boundaries (item 37)",
+    "old": "descriptions before item 37"
+  },
+  "summary": {
+    "new": {
+      "haiku": {
+        "cases": 40,
+        "correct": 40,
+        "accuracy": 1.0
+      },
+      "sonnet": {
+        "cases": 40,
+        "correct": 40,
+        "accuracy": 1.0
+      }
+    },
+    "old": {
+      "haiku": {
+        "cases": 40,
+        "correct": 40,
+        "accuracy": 1.0
+      },
+      "sonnet": {
+        "cases": 40,
+        "correct": 40,
+        "accuracy": 1.0
+      }
+    }
+  },
+  "misses": {
+    "new": {
+      "haiku": [],
+      "sonnet": []
+    },
+    "old": {
+      "haiku": [],
+      "sonnet": []
+    }
+  }
+}

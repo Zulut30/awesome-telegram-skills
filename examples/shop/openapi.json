@@ -1,0 +1,191 @@
+{
+  "openapi": "3.1.0",
+  "info": {
+    "title": "Telegram shop example API",
+    "version": "0.1.0",
+    "description": "Same-origin API of examples/shop. The frontend types and runtime decoders in frontend/src/api-types.ts are generated from this file by scripts/build_openapi_types.py; tests compare the aiohttp routes and real responses with it."
+  },
+  "servers": [{"url": "/"}],
+  "security": [{"session": []}],
+  "paths": {
+    "/api/session": {
+      "post": {
+        "operationId": "createSession",
+        "summary": "Exchange signed initData for a 10-minute bearer session",
+        "security": [],
+        "requestBody": {"required": true, "content": {"application/json": {"schema": {"$ref": "#/components/schemas/SessionRequest"}}}},
+        "responses": {
+          "200": {"description": "Session", "content": {"application/json": {"schema": {"$ref": "#/components/schemas/Session"}}}},
+          "401": {"$ref": "#/components/responses/Error"},
+          "403": {"$ref": "#/components/responses/Error"},
+          "422": {"$ref": "#/components/responses/Error"}
+        }
+      }
+    },
+    "/api/catalog": {
+      "get": {
+        "operationId": "getCatalog",
+        "summary": "Public catalog with server-owned prices",
+        "security": [],
+        "responses": {"200": {"description": "Catalog", "content": {"application/json": {"schema": {"$ref": "#/components/schemas/Catalog"}}}}}
+      }
+    },
+    "/api/policy": {
+      "get": {
+        "operationId": "getPolicy",
+        "summary": "Purchase terms and operator support",
+        "security": [],
+        "responses": {"200": {"description": "Policy", "content": {"application/json": {"schema": {"$ref": "#/components/schemas/Policy"}}}}}
+      }
+    },
+    "/api/orders": {
+      "get": {
+        "operationId": "listOrders",
+        "summary": "Orders of the session owner",
+        "responses": {
+          "200": {"description": "Orders", "content": {"application/json": {"schema": {"$ref": "#/components/schemas/Orders"}}}},
+          "401": {"$ref": "#/components/responses/Error"}
+        }
+      },
+      "post": {
+        "operationId": "createOrder",
+        "summary": "Create an order once per operation UUID; a repeat returns the same order",
+        "requestBody": {"required": true, "content": {"application/json": {"schema": {"$ref": "#/components/schemas/OrderRequest"}}}},
+        "responses": {
+          "200": {"description": "Order", "content": {"application/json": {"schema": {"$ref": "#/components/schemas/Order"}}}},
+          "401": {"$ref": "#/components/responses/Error"},
+          "403": {"$ref": "#/components/responses/Error"},
+          "409": {"$ref": "#/components/responses/Error"},
+          "422": {"$ref": "#/components/responses/Error"}
+        }
+      }
+    },
+    "/api/operations/{operation}": {
+      "get": {
+        "operationId": "getOperation",
+        "summary": "Order created by an operation UUID, for recovery after an unknown result",
+        "parameters": [{"name": "operation", "in": "path", "required": true, "schema": {"type": "string"}}],
+        "responses": {
+          "200": {"description": "Order", "content": {"application/json": {"schema": {"$ref": "#/components/schemas/Order"}}}},
+          "401": {"$ref": "#/components/responses/Error"},
+          "404": {"$ref": "#/components/responses/Error"}
+        }
+      }
+    },
+    "/api/orders/{id}": {
+      "get": {
+        "operationId": "getOrder",
+        "summary": "One order of the session owner",
+        "parameters": [{"name": "id", "in": "path", "required": true, "schema": {"type": "string"}}],
+        "responses": {
+          "200": {"description": "Order", "content": {"application/json": {"schema": {"$ref": "#/components/schemas/Order"}}}},
+          "401": {"$ref": "#/components/responses/Error"},
+          "403": {"$ref": "#/components/responses/Error"}
+        }
+      }
+    },
+    "/api/orders/{id}/invoice": {
+      "post": {
+        "operationId": "createInvoice",
+        "summary": "Stars invoice link for an awaiting order; never reissued after an unknown result",
+        "parameters": [{"name": "id", "in": "path", "required": true, "schema": {"type": "string"}}],
+        "requestBody": {"required": true, "content": {"application/json": {"schema": {"$ref": "#/components/schemas/EmptyBody"}}}},
+        "responses": {
+          "200": {"description": "Invoice link", "content": {"application/json": {"schema": {"$ref": "#/components/schemas/InvoiceLink"}}}},
+          "401": {"$ref": "#/components/responses/Error"},
+          "403": {"$ref": "#/components/responses/Error"},
+          "422": {"$ref": "#/components/responses/Error"},
+          "503": {"$ref": "#/components/responses/Error"}
+        }
+      }
+    },
+    "/api/content/{sku}": {
+      "get": {
+        "operationId": "getContent",
+        "summary": "Purchased material; only after a confirmed payment",
+        "parameters": [{"name": "sku", "in": "path", "required": true, "schema": {"type": "string"}}],
+        "responses": {
+          "200": {"description": "Content", "content": {"application/json": {"schema": {"$ref": "#/components/schemas/Content"}}}},
+          "401": {"$ref": "#/components/responses/Error"},
+          "403": {"$ref": "#/components/responses/Error"}
+        }
+      }
+    }
+  },
+  "components": {
+    "securitySchemes": {
+      "session": {"type": "http", "scheme": "bearer", "description": "Token from createSession, kept in memory by the client"}
+    },
+    "responses": {
+      "Error": {"description": "Refused request; the body never echoes input or server details", "content": {"application/json": {"schema": {"$ref": "#/components/schemas/Error"}}}}
+    },
+    "schemas": {
+      "SessionRequest": {
+        "type": "object", "additionalProperties": false, "required": ["initData"],
+        "properties": {"initData": {"type": "string", "description": "Raw Telegram.WebApp.initData"}}
+      },
+      "Session": {
+        "type": "object", "additionalProperties": false, "required": ["token", "scope", "expires_in"],
+        "properties": {
+          "token": {"type": "string"},
+          "scope": {"type": "string", "description": "bot_id:user_id; keys local drafts, grants nothing"},
+          "expires_in": {"type": "integer", "description": "Seconds"}
+        }
+      },
+      "Product": {
+        "type": "object", "additionalProperties": false, "required": ["id", "title", "description", "stars", "category"],
+        "properties": {
+          "id": {"type": "string"}, "title": {"type": "string"}, "description": {"type": "string"},
+          "stars": {"type": "integer", "description": "Price in Telegram Stars"}, "category": {"type": "string"}
+        }
+      },
+      "Catalog": {
+        "type": "object", "additionalProperties": false, "required": ["items", "currency"],
+        "properties": {"items": {"type": "array", "items": {"$ref": "#/components/schemas/Product"}}, "currency": {"$ref": "#/components/schemas/Currency"}}
+      },
+      "Currency": {"type": "string", "enum": ["XTR"]},
+      "Policy": {
+        "type": "object", "additionalProperties": false, "required": ["version", "terms", "support"],
+        "properties": {"version": {"type": "string"}, "terms": {"type": "string"}, "support": {"type": "string"}}
+      },
+      "OrderRequest": {
+        "type": "object", "additionalProperties": false, "required": ["operation", "items", "terms"],
+        "properties": {
+          "operation": {"type": "string", "description": "Client-generated UUID v4; the idempotency key"},
+          "items": {"type": "array", "items": {"type": "string"}},
+          "terms": {"type": "string", "description": "Accepted terms version"}
+        }
+      },
+      "Order": {
+        "type": "object", "additionalProperties": false, "required": ["id", "operation", "items", "total", "currency", "status", "invoice_state"],
+        "properties": {
+          "id": {"type": "string"}, "operation": {"type": "string"},
+          "items": {"type": "array", "items": {"type": "string"}},
+          "total": {"type": "integer"}, "currency": {"$ref": "#/components/schemas/Currency"},
+          "status": {"type": "string", "enum": ["awaiting", "paid", "review"]},
+          "invoice_state": {"type": "string", "enum": ["none", "creating", "ready", "unknown"]}
+        }
+      },
+      "Orders": {
+        "type": "object", "additionalProperties": false, "required": ["orders"],
+        "properties": {"orders": {"type": "array", "items": {"$ref": "#/components/schemas/Order"}}}
+      },
+      "EmptyBody": {"type": "object", "additionalProperties": false, "properties": {}},
+      "InvoiceLink": {
+        "type": "object", "additionalProperties": false, "required": ["url"],
+        "properties": {"url": {"type": "string", "description": "https://t.me/$… invoice link"}}
+      },
+      "Content": {
+        "type": "object", "additionalProperties": false, "required": ["id", "title", "text"],
+        "properties": {"id": {"type": "string"}, "title": {"type": "string"}, "text": {"type": "string"}}
+      },
+      "Error": {
+        "type": "object", "additionalProperties": false, "required": ["error"],
+        "properties": {
+          "error": {"type": "string", "enum": ["authentication-required", "permission-denied", "validation-failed", "operation-conflict",
+                                                "invoice-outcome-unknown", "request-rejected", "service-unavailable"]}
+        }
+      }
+    }
+  }
+}

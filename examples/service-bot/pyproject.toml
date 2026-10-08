@@ -1,5 +1,5 @@
 [build-system]
-requires = ["setuptools>=75,<83"]
+requires = ["setuptools>=77,<83"]
 build-backend = "setuptools.build_meta"
 
 [project]
@@ -8,7 +8,8 @@ version = "0.1.0"
 description = "Persistent single-process service bot example"
 readme = "README.md"
 requires-python = ">=3.11"
-dependencies = ["awesome-telegram-patterns[aiogram]>=0.13,<0.14"]
+license = "MIT"
+dependencies = ["awesome-telegram-patterns[aiogram]>=0.24,<0.25"]
 
 [project.scripts]
 telegram-service-example = "telegram_service_example.bot:main"

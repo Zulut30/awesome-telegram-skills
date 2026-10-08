@@ -1,9 +1,9 @@
 /** Safe public metadata. Never serializes exception text, stack or payload. */
-export type ErrorCategory = 'validation' | 'permission' | 'unsupported' | 'timeout' | 'network' | 'conflict' | 'cancelled' | 'internal' | 'unknown-outcome';
+export type ErrorCategory = 'validation' | 'permission' | 'unsupported' | 'timeout' | 'network' | 'conflict' | 'cancelled' | 'internal' | 'unknown-outcome' | 'rate-limit' | 'server';
 export type ErrorOutcome = 'rejected' | 'read-failed' | 'unknown';
-export type RecoveryAction = 'fix-input' | 'authenticate' | 'check-permissions' | 'use-fallback' | 'retry-read' | 'reconcile' | 'none';
+export type RecoveryAction = 'fix-input' | 'authenticate' | 'check-permissions' | 'use-fallback' | 'retry-read' | 'retry-later' | 'reconcile' | 'none';
 export type OperationKind = 'read' | 'write';
-export type ErrorCode = 'validation-failed' | 'invalid-init-data' | 'invalid-api-request' | 'invalid-field' | 'authentication-required' | 'permission-denied' | 'unsupported-capability' | 'timeout' | 'network' | 'operation-conflict' | 'cancelled' | 'internal' | 'unknown-outcome' | 'invalid-response';
+export type ErrorCode = 'validation-failed' | 'invalid-init-data' | 'invalid-api-request' | 'invalid-field' | 'authentication-required' | 'permission-denied' | 'unsupported-capability' | 'timeout' | 'network' | 'operation-conflict' | 'cancelled' | 'internal' | 'unknown-outcome' | 'invalid-response' | 'rate-limited' | 'server-error';
 export interface ErrorReport {
   readonly code: ErrorCode;
   readonly category: ErrorCategory;
@@ -27,6 +27,8 @@ const descriptions: Record<ErrorCode, readonly [ErrorCategory, RecoveryAction, s
   internal: ['internal', 'none', 'Не удалось обработать действие.'],
   'unknown-outcome': ['unknown-outcome', 'reconcile', 'Результат операции пока не подтвержден.'],
   'invalid-response': ['validation', 'none', 'Получен неподдерживаемый ответ сервера.'],
+  'rate-limited': ['rate-limit', 'retry-later', 'Слишком много запросов. Повторите позже.'],
+  'server-error': ['server', 'retry-read', 'Сервер временно не смог обработать запрос.'],
 };
 
 function report(code: ErrorCode, outcome: ErrorOutcome): ErrorReport {

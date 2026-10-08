@@ -25,6 +25,9 @@ def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument('--skip-browser', action='store_true', help='Verify distributions without installed Chrome; report the skipped browser check')
     args = parser.parse_args()
+    # CI must prove the browser stages; a skipped browser check is only for a local machine without Chrome.
+    if args.skip_browser and os.environ.get('CI', '').lower() in {'1', 'true'}:
+        parser.error('--skip-browser is not allowed in CI: install Chromium (npx playwright install chromium) and set CHROME_PATH')
     python_meta = tomllib.loads((ROOT / 'packages/python/pyproject.toml').read_text(encoding='utf-8'))['project']
     ts_meta = json.loads((ROOT / 'packages/typescript/package.json').read_text(encoding='utf-8'))
     catalog = json.loads((ROOT / 'components.json').read_text(encoding='utf-8'))
@@ -46,7 +49,8 @@ def main() -> int:
     output = ROOT / 'output' / f'pattern-library-{version}'
     artifacts = output / 'dist'
     artifacts.mkdir(parents=True, exist_ok=True)
-    consumers = Path(tempfile.mkdtemp(prefix=f'telegram-patterns-{version}-'))
+    # resolve(): macOS temp dirs live under /var, a symlink to /private/var; compare canonical paths.
+    consumers = Path(tempfile.mkdtemp(prefix=f'telegram-patterns-{version}-')).resolve()
     environment = dict(os.environ)
     environment.pop('PYTHONPATH', None)
     environment.pop('PYTHONHOME', None)
@@ -70,6 +74,8 @@ def main() -> int:
         (output / f'{label}.log').write_text(log, encoding='utf-8')
         stages.append({'stage': label, 'exit_code': result.returncode})
         if result.returncode:
+            # The tail goes to the CI log: the consumers directory is temporary and not uploaded.
+            sys.stderr.write(f'--- last lines of {label}.log ---\n' + '\n'.join(log.splitlines()[-60:]) + '\n')
             raise RuntimeError(f'{label} failed; inspect {output / (label + ".log")}')
         return log
 
@@ -96,9 +102,9 @@ from pathlib import Path
 import telegram_patterns
 from telegram_patterns import BotSettings, validate_init_data, RecipeCatalog, create_starter, starter_components, StarterComponent
 assert importlib.util.find_spec('aiogram') is None
-assert Path(telegram_patterns.__file__).is_relative_to(Path(sys.argv[1]))
+assert Path(telegram_patterns.__file__).resolve().is_relative_to(Path(sys.argv[1]).resolve())
 assert BotSettings.from_env(environ={'BOT_TOKEN':'100:CORE_FIXTURE'}).token=='100:CORE_FIXTURE'
-assert len(RecipeCatalog().recipes)==310
+assert len(RecipeCatalog().recipes)==340
 assert RecipeCatalog().search('две кнопки')[0].id=='two-columns'
 assert RecipeCatalog().get('two-columns').maturity=='experimental'
 assert RecipeCatalog().get('api.sendPhoto').maturity=='reference'
@@ -126,6 +132,12 @@ print(json.dumps({'core_without_sdk':True,'python':sys.version.split()[0]}))
         report['core_cli'] = json.loads(run('core-cli', [str(core_console), 'recipes', 'две кнопки'], consumers))
         if report['core_cli']['recipes'][0]['id'] != 'two-columns':
             raise RuntimeError('Core console recipe search failed')
+        cli_version = run('version-cli', [str(core_console), '--version'], consumers).strip()
+        installed = run('version-metadata', [str(python_in(core)), '-c', "import importlib.metadata as m, telegram_patterns as t; "
+                                             "print(m.version('awesome-telegram-patterns'), t.__version__)"], consumers).split()
+        if cli_version != f'telegram-patterns {version}' or installed != [version, version]:
+            raise RuntimeError('Installed metadata, telegram_patterns.__version__ and --version differ')
+        report['version'] = {'cli': cli_version, 'metadata': installed[0], 'module': installed[1]}
         report['maturity_cli'] = json.loads(run('maturity-cli', [str(core_console), 'recipes', '--maturity', 'experimental'], consumers))
         if len(report['maturity_cli']['recipes']) != 20 or any(item['maturity'] != 'experimental' for item in report['maturity_cli']['recipes']):
             raise RuntimeError('Installed maturity CLI filter failed')
@@ -137,9 +149,10 @@ print(json.dumps({'core_without_sdk':True,'python':sys.version.split()[0]}))
 
         sdk = consumers / 'sdk'
         run('sdk-environment', [uv, 'venv', '--python', sys.executable, str(sdk)])
-        run('sdk-install', [uv, 'pip', 'install', '--python', str(python_in(sdk)), str(wheel), 'aiogram==3.31.0', 'tzdata==2026.5'])
+        run('sdk-install', [uv, 'pip', 'install', '--python', str(python_in(sdk)), str(wheel), 'aiogram==3.31.0', 'tzdata==2026.5', 'cryptography==50.0.2', 'python-telegram-bot==22.8',
+            'hypothesis==6.168.5'])  # test-only: property tests of the parsers
         run('typing-install', [uv, 'pip', 'install', '--python', str(python_in(sdk)), 'mypy==2.4.0'])
-        run('python-typecheck', [str(python_in(sdk)), '-m', 'mypy', '--follow-imports=silent', '--no-incremental', str(ROOT / 'packages/python/src/telegram_patterns')], consumers)
+        run('python-typecheck', [str(python_in(sdk)), '-m', 'mypy', '--strict', '--follow-imports=silent', '--no-incremental', str(ROOT / 'packages/python/src/telegram_patterns')], consumers)
         public_python_types = consumers / 'public_types.py'
         public_python_types.write_text((ROOT / 'tests/public_types.py').read_text(encoding='utf-8'), encoding='utf-8')
         run('python-consumer-typecheck', [str(python_in(sdk)), '-m', 'mypy', '--follow-imports=silent', '--warn-unused-ignores', '--no-incremental', str(public_python_types)], consumers)
@@ -152,10 +165,11 @@ print(json.dumps({'core_without_sdk':True,'python':sys.version.split()[0]}))
         if args.skip_browser:
             reference_command.append('--skip-browser')
         report['api_reference'] = json.loads(run('api-reference-consumer', reference_command, consumers))
-        run('sdk-origin', [str(python_in(sdk)), '-c', 'import sys,telegram_patterns;from pathlib import Path;assert Path(telegram_patterns.__file__).is_relative_to(Path(sys.argv[1]));print(telegram_patterns.__file__)', str(sdk)], consumers)
+        run('sdk-origin', [str(python_in(sdk)), '-c', 'import sys,telegram_patterns;from pathlib import Path;assert Path(telegram_patterns.__file__).resolve().is_relative_to(Path(sys.argv[1]).resolve());print(telegram_patterns.__file__)', str(sdk)], consumers)
         # Includes bounded real subprocess restart/CLI consumers; keep the suite
         # deadline distinct from each individual operation's timeout.
-        python_log = run('python-tests', [str(python_in(sdk)), '-m', 'unittest', 'discover', '-s', str(ROOT / 'packages/python/tests'), '-v'], consumers, timeout=450)
+        # Parallel shards of the installed library's whole suite (unit and integration), unittest -v per shard.
+        python_log = run('python-tests', [str(python_in(sdk)), str(ROOT / 'scripts/run_python_tests.py'), '--json', '--verbose', '--timeout', '400'], consumers, timeout=450)
         run('sdk-dependencies', [uv, 'pip', 'check', '--python', str(python_in(sdk))])
         offline = json.loads(run('offline-bot', [str(python_in(sdk)), str(ROOT / 'examples/python/offline_bot.py')], consumers))
         if not offline['passed'] or offline['network'] or not offline['session_closed']:
@@ -227,7 +241,7 @@ print(json.dumps({'core_without_sdk':True,'python':sys.version.split()[0]}))
         gallery_command = [str(python_in(sdk)), str(ROOT / 'scripts/verify_gallery_export.py'), '--output', str(consumers / 'gallery-export')]
         if args.skip_browser: gallery_command.append('--skip-browser')
         # Two complete SDK fixture generations plus CLI and browser acceptance.
-        report['gallery_export'] = json.loads(run('gallery-export-consumer', gallery_command, consumers, timeout=360))
+        report['gallery_export'] = json.loads(run('gallery-export-consumer', gallery_command, consumers, timeout=720))
         starter_root = consumers / 'starters'
         report['starter_cli'] = json.loads(run('starter-cli', [str(python_in(sdk)), str(ROOT / 'scripts/verify_starter_consumer.py'), '--wheel', str(wheel), '--tarball', str(tarball), '--output', str(starter_root)], consumers))
         # Resolve the generated PEP dependency against the supplied local wheel.
@@ -242,29 +256,29 @@ print(json.dumps({'core_without_sdk':True,'python':sys.version.split()[0]}))
         selected_sdk = consumers / 'selected-sdk'
         run('selected-starter-environment', [uv, 'venv', '--python', sys.executable, str(selected_sdk)])
         run('selected-starter-python-install', [uv, 'pip', 'install', '--python', str(python_in(selected_sdk)), str(selected_project), 'aiogram==3.31.0'], consumers)
-        run('selected-starter-python-origin', [str(python_in(selected_sdk)), '-c', 'import app,sys,asyncio;from pathlib import Path;assert Path(app.__file__).is_relative_to(Path(sys.prefix));dp,commands=app.create_app();assert len(commands)==7;asyncio.run(dp.fsm.close());print("Installed generated app and all selected modules compose outside the project tree")'], consumers)
+        run('selected-starter-python-origin', [str(python_in(selected_sdk)), '-c', 'import app,sys,asyncio;from pathlib import Path;assert Path(app.__file__).resolve().is_relative_to(Path(sys.prefix).resolve());dp,commands=app.create_app();assert len(commands)==7;asyncio.run(dp.fsm.close());print("Installed generated app and all selected modules compose outside the project tree")'], consumers)
         selected_mini = selected_project / 'mini-app'
         run('selected-starter-typescript-install', [npm, 'install', '--ignore-scripts', '--no-audit', '--no-fund'], selected_mini)
         run('selected-starter-typecheck', [npm, 'run', 'typecheck'], selected_mini)
         run('selected-starter-build', [npm, 'run', 'build'], selected_mini)
         copied_skill = consumers / 'portable-skill/telegram-code-patterns'
         shutil.copytree(ROOT / '.agents/skills/telegram-code-patterns', copied_skill)
-        report['portable_dialog_restart_recipe'] = json.loads(run('portable-dialog-restart-recipe', [str(python_in(sdk)), str(ROOT / 'scripts/verify_dialog_restart_recipe.py'), str(copied_skill)], consumers))
-        report['portable_platform_recipe'] = json.loads(run('portable-platform-recipe', [str(python_in(sdk)), str(ROOT / 'scripts/verify_platform_recipe.py'), str(copied_skill)], consumers))
-        report['portable_inline_search_recipe'] = json.loads(run('portable-inline-search-recipe', [str(python_in(sdk)), str(ROOT / 'scripts/verify_inline_search_recipe.py'), str(copied_skill)], consumers))
-        report['portable_poll_recipe'] = json.loads(run('portable-poll-recipe', [str(python_in(sdk)), str(ROOT / 'scripts/verify_poll_recipe.py'), str(copied_skill)], consumers))
+        # One parameterized verifier runs each recipe of the copied skill; the developer recipe needs only the core.
+        def portable_recipe(name: str, environment: Path) -> None:
+            report[f"portable_{name.replace('-', '_')}_recipe"] = json.loads(run(
+                f'portable-{name}-recipe', [str(python_in(environment)), str(ROOT / 'scripts/verify_copied_recipe.py'), name, str(copied_skill)], consumers))
+
+        for name in ('dialog-restart', 'platform', 'inline-search', 'poll'):
+            portable_recipe(name, sdk)
         blocks = re.findall(r'```python\r?\n(.*?)```', (copied_skill / 'references/errors.md').read_text(encoding='utf-8'), re.S)
         if len(blocks) != 1:
             raise RuntimeError('Expected one standalone error handling example')
         error_example = consumers / 'portable_error_example.py'
         error_example.write_text(blocks[0], encoding='utf-8')
         run('portable-error-recipe', [str(python_in(core)), str(error_example)], consumers)
-        report['portable_keyboard_recipe'] = json.loads(run('portable-keyboard-recipe', [str(python_in(sdk)), str(ROOT / 'scripts/verify_keyboard_recipe.py'), str(copied_skill)], consumers))
-        report['portable_dialog_recipe'] = json.loads(run('portable-dialog-recipe', [str(python_in(sdk)), str(ROOT / 'scripts/verify_dialog_recipe.py'), str(copied_skill)], consumers))
-        report['portable_profile_recipe'] = json.loads(run('portable-profile-recipe', [str(python_in(sdk)), str(ROOT / 'scripts/verify_profile_recipe.py'), str(copied_skill)], consumers))
-        report['portable_media_recipe'] = json.loads(run('portable-media-recipe', [str(python_in(sdk)), str(ROOT / 'scripts/verify_media_recipe.py'), str(copied_skill)], consumers))
-        report['portable_message_recipe'] = json.loads(run('portable-message-recipe', [str(python_in(sdk)), str(ROOT / 'scripts/verify_message_recipe.py'), str(copied_skill)], consumers))
-        report['portable_developer_recipe'] = json.loads(run('portable-developer-recipe', [str(python_in(core)), str(ROOT / 'scripts/verify_developer_recipe.py'), str(copied_skill)], consumers))
+        for name in ('keyboard', 'dialog', 'profile', 'media', 'message'):
+            portable_recipe(name, sdk)
+        portable_recipe('developer', core)
 
         client = consumers / 'typescript'
         client.mkdir()
@@ -272,12 +286,18 @@ print(json.dumps({'core_without_sdk':True,'python':sys.version.split()[0]}))
         run('typescript-install', [npm, 'install', str(tarball), f"typescript@{ts_meta['devDependencies']['typescript']}", '--ignore-scripts', '--no-audit', '--no-fund'], client)
         # Same behavior suite, exercising the PUBLIC installed package rather than
         # ../dist from a source checkout. No component implementation is copied.
-        suite = (ROOT / 'packages/typescript/tests/core.test.mjs').read_text(encoding='utf-8')
         needle = "from '../dist/index.js'"
-        if suite.count(needle) != 1:
-            raise RuntimeError('Update the public-package test entrypoint')
-        (client / 'core.test.mjs').write_text(suite.replace(needle, "from '@awesome-telegram/patterns'"), encoding='utf-8')
-        ts_log = run('typescript-tests', [node, '--test', '--test-reporter=tap', 'core.test.mjs'], client)
+        suites = sorted((ROOT / 'packages/typescript/tests').glob('*.test.mjs'))
+        for source in suites:
+            suite = source.read_text(encoding='utf-8')
+            if suite.count(needle) != 1:
+                raise RuntimeError('Update the public-package test entrypoint: ' + source.name)
+            suite = re.sub(r"from '\.\./dist/frameworks/(react|vue|svelte)\.js'", r"from '@awesome-telegram/patterns/\1'",
+                           suite.replace(needle, "from '@awesome-telegram/patterns'"))
+            if '../dist/' in suite:
+                raise RuntimeError('Public-package tests may import only public entry points: ' + source.name)
+            (client / source.name).write_text(suite, encoding='utf-8')
+        ts_log = run('typescript-tests', [node, '--test', '--test-reporter=tap', *(source.name for source in suites)], client)
         # Compile the real composition example against the INSTALLED declarations.
         (client / 'index.ts').write_text((ROOT / 'examples/mini-app/src/index.ts').read_text(encoding='utf-8'), encoding='utf-8')
         (client / 'native-recipes.ts').write_text((ROOT / 'examples/mini-app/src/native-recipes.ts').read_text(encoding='utf-8'), encoding='utf-8')
@@ -288,16 +308,49 @@ print(json.dumps({'core_without_sdk':True,'python':sys.version.split()[0]}))
         (client / 'native-recipes-consumer.mjs').write_text((ROOT / 'tests/native-recipes-consumer.mjs').read_text(encoding='utf-8'), encoding='utf-8')
         report['native_recipes'] = json.loads(run('native-example-test', [node, 'native-recipes-consumer.mjs'], client))
         run('packaged-style', [node, '--input-type=module', '-e', "import {readFile} from 'node:fs/promises';const css=await readFile(new URL(import.meta.resolve('@awesome-telegram/patterns/styles.css')),'utf8');if(!css.trim())throw Error('empty style');console.log('public CSS export works')"], client)
+        # Export map consumers: require(esm), the package.json subpath and TypeScript bundler/node16 resolution.
+        node_version = tuple(int(part) for part in run('node-version', [node, '-p', 'process.versions.node'], client).strip().split('.')[:2])
+        if node_version >= (22, 12) or (20, 19) <= node_version < (21, 0):
+            report['require_esm'] = json.loads(run('require-esm', [node, '-e', (
+                "const esm=require('@awesome-telegram/patterns');const meta=require('@awesome-telegram/patterns/package.json');"
+                "if(typeof esm.ApiClient!=='function'||typeof esm.TelegramBridge!=='function')throw Error('require(esm) lost exports');"
+                f"if(meta.version!=='{version}')throw Error('package.json export');"
+                "console.log(JSON.stringify({passed:true,exports:Object.keys(esm).length,node:process.versions.node}))")], client))
+        else:
+            report['require_esm'] = {'passed': None, 'skipped': 'require(esm) needs Node 20.19+ or 22.12+'}
+        for resolution, module_kind in (('bundler', 'ESNext'), ('node16', 'Node16')):
+            folder = client / f'resolution-{resolution}'
+            folder.mkdir()
+            (folder / 'consumer.ts').write_text(
+                "import {ApiClient, TelegramBridge} from '@awesome-telegram/patterns';\n"
+                "import '@awesome-telegram/patterns/styles.css';\n"
+                "export const exported: [typeof ApiClient, typeof TelegramBridge] = [ApiClient, TelegramBridge];\n", encoding='utf-8')
+            (folder / 'tsconfig.json').write_text(json.dumps({'compilerOptions': {
+                'target': 'ES2022', 'module': module_kind, 'moduleResolution': resolution, 'lib': ['ES2022', 'DOM'], 'strict': True,
+                'noUncheckedSideEffectImports': True, 'noEmit': True, 'skipLibCheck': False, 'types': []},
+                'include': ['consumer.ts']}), encoding='utf-8')
+            if resolution == 'node16':
+                (folder / 'package.json').write_text(json.dumps({'type': 'module', 'private': True}), encoding='utf-8')
+            run(f'typescript-{resolution}', [node, str(client / 'node_modules/typescript/bin/tsc'), '-p', str(folder / 'tsconfig.json')], client)
+        report['typescript_resolutions'] = ['nodenext', 'bundler', 'node16']
         if not args.skip_browser:
             run('browser-tests', [npm, 'run', 'test:browser'])
             report['browser'] = json.loads((output / 'browser/report.json').read_text(encoding='utf-8'))
-            run('gallery-browser', [node, str(ROOT / 'tests/gallery-browser.mjs')])
+            run('gallery-browser', [node, str(ROOT / 'tests/gallery-browser.mjs')], timeout=420)
             report['gallery_browser'] = json.loads((output / 'gallery-browser/report.json').read_text(encoding='utf-8'))
             run('starter-browser', [node, str(ROOT / 'tests/starter-browser.mjs'), str(mini_starter)])
             report['starter_browser'] = json.loads((output / 'starter-browser/report.json').read_text(encoding='utf-8'))
             run('selected-starter-browser', [node, str(ROOT / 'tests/selected-starter-browser.mjs'), str(selected_mini)])
             report['selected_starter_browser'] = json.loads((output / 'selected-starter-browser/report.json').read_text(encoding='utf-8'))
-        report['python_tests'] = int(re.search(r'Ran (\d+) tests?', python_log).group(1))
+            # Development loop: real Vite dev server with HMR, the generated backend verifying signed initData
+            # through the proxy, and the backend serving the built dist; Python is each starter's own environment.
+            run('starter-dev-loop', [node, str(ROOT / 'tests/starter-dev-loop.mjs'), str(starter_root / 'bot-mini-app'), str(python_in(sdk)), 'bot-mini-app'])
+            run('selected-starter-dev-loop', [node, str(ROOT / 'tests/starter-dev-loop.mjs'), str(selected_project), str(python_in(selected_sdk)), 'selected'])
+            report['starter_dev_loop'] = [json.loads((output / 'starter-dev-loop' / label / 'report.json').read_text(encoding='utf-8'))
+                                          for label in ('bot-mini-app', 'selected')]
+        python_report = json.loads(next(line for line in python_log.splitlines() if line.startswith('{"passed"')))
+        report['python_tests'] = python_report['tests']
+        report['python_test_seconds'] = python_report['seconds']
         report['typescript_tests'] = int(re.search(r'# tests (\d+)', ts_log).group(1))
         report['artifacts'] = [{'name': file.name, 'bytes': file.stat().st_size, 'sha256': hashlib.sha256(file.read_bytes()).hexdigest()} for file in (wheel, tarball)]
         report['passed'] = True

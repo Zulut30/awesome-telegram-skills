@@ -15,7 +15,15 @@ import sys
 import tempfile
 import zipfile
 
+sys.path.insert(0, str(Path(__file__).resolve().parent))  # shared helpers live next to this script
+from _environment import minimal_environment, planted_link  # noqa: E402
+
 ROOT=Path(__file__).resolve().parents[1]
+
+
+def library_version() -> str:
+    """Version of the pattern library in this checkout; examples must use the current one."""
+    return re.search(r'^version\s*=\s*"([^"]+)"', (ROOT/'packages/python/pyproject.toml').read_text(encoding='utf-8'), re.M).group(1)
 
 
 def main() -> int:
@@ -25,12 +33,12 @@ def main() -> int:
     parser.add_argument('--output',type=Path,required=True)
     args=parser.parse_args()
     for p in (args.output,*args.output.parents):
-        if p.is_symlink() or bool(getattr(p,'is_junction',lambda:False)()):raise ValueError('Output links are not supported')
+        if planted_link(p):raise ValueError('Output links are not supported')
     sources=[p.resolve(strict=True) for p in (args.wheel,args.tarball)]
     if any(not p.is_file() for p in sources) or sources[0].suffix!='.whl' or sources[1].suffix!='.tgz':raise ValueError('Provide trusted local wheel/tarball')
-    output=args.output.resolve();output.mkdir()
+    output=args.output.resolve();output.mkdir(parents=True)  # parent links were refused above; the leaf must be new
     consumer=Path(tempfile.mkdtemp(prefix='telegram shop consumer '));venv=consumer/'environment'
-    env={k:v for k,v in os.environ.items() if k.upper() in {'PATH','PATHEXT','SYSTEMROOT','WINDIR','TEMP','TMP','COMSPEC','USERPROFILE','LOCALAPPDATA','CHROME_PATH'}};env['PYTHONUTF8']='1'
+    env=minimal_environment();env['PYTHONUTF8']='1'
     if 'CHROME_PATH' not in env:
         chrome=Path(os.environ.get('PROGRAMFILES','C:/Program Files'))/'Google/Chrome/Application/chrome.exe'
         if chrome.is_file():env['CHROME_PATH']=str(chrome)
@@ -60,28 +68,28 @@ def main() -> int:
     run('environment',[uv,'venv','--python',sys.executable,venv]);python=venv/('Scripts/python.exe' if os.name=='nt' else 'bin/python')
     run('install',[uv,'pip','install','--python',python,str(sources[0])+'[aiogram]',example,'aiogram==3.31.0','mypy==2.4.0'])
     origin=json.loads(run('origin',[python,'-I','-c',"import sys,json,telegram_patterns,telegram_shop_example,importlib.metadata as m;print(json.dumps({'prefix':sys.prefix,'library':telegram_patterns.__file__,'example':telegram_shop_example.__file__,'library_version':m.version('awesome-telegram-patterns'),'aiogram':m.version('aiogram'),'python':sys.version.split()[0],'aiohttp':m.version('aiohttp')}))"]))
-    assert all(Path(origin[k]).is_relative_to(Path(origin['prefix'])) for k in ('library','example')) and origin['library_version']=='0.13.0'
+    assert all(Path(origin[k]).is_relative_to(Path(origin['prefix'])) for k in ('library','example')) and origin['library_version']==library_version()
     console=python.parent/('telegram-shop-example.exe' if os.name=='nt' else 'telegram-shop-example')
     help_text=run('entrypoint-help',[console,'--help']);assert all(option in help_text for option in ('--origin','--terms-version','--database','--support'))
     run('typecheck',[python,'-m','mypy','--check-untyped-defs','--warn-unused-ignores',ROOT/'examples/shop/src'])
     run('tests',[python,'-I','-m','unittest','discover','-s',ROOT/'examples/shop/tests','-v'])
-    test_log=(output/'tests.log').read_text(encoding='utf-8');unit_tests=int(re.search(r'Ran (\d+) tests',test_log).group(1));assert unit_tests==10 and test_log.rstrip().endswith('OK')
+    test_log=(output/'tests.log').read_text(encoding='utf-8');unit_tests=int(re.search(r'Ran (\d+) tests',test_log).group(1));assert unit_tests==11 and test_log.rstrip().endswith('OK')
     frontend=consumer/'frontend';shutil.copytree(ROOT/'examples/shop/frontend',frontend,ignore=shutil.ignore_patterns('node_modules','dist'))
     supplied=consumer/'provided artifacts';supplied.mkdir();tarball=supplied/sources[1].name;shutil.copyfile(sources[1],tarball)
     package_json=frontend/'package.json';data=json.loads(package_json.read_text());data['dependencies']['@awesome-telegram/patterns']='file:'+tarball.as_posix();package_json.write_text(json.dumps(data,indent=2)+'\n')
     run('frontend-install',[npm,'install','--ignore-scripts'],cwd=frontend)
     run('frontend-build',[npm,'run','build'],cwd=frontend)
-    installed=frontend/'node_modules/@awesome-telegram/patterns';metadata=json.loads((installed/'package.json').read_text());assert metadata['version']=='0.13.0'
+    installed=frontend/'node_modules/@awesome-telegram/patterns';metadata=json.loads((installed/'package.json').read_text());assert metadata['version']==library_version()
     copied_files=0
     for p in (installed/'dist').rglob('*'):
         if p.is_file():assert p.read_bytes()==(frontend/'dist/assets/vendor'/p.relative_to(installed/'dist')).read_bytes();copied_files+=1
-    assert (installed/'src/styles.css').read_bytes()==(frontend/'dist/assets/vendor/styles.css').read_bytes();copied_files+=1
+    assert (frontend/'dist/assets/vendor/styles.css').is_file()  # the stylesheet ships in the library's dist
     caller=consumer/'caller project';caller.mkdir();(caller/'aiogram.py').write_text("raise RuntimeError('PRIVATE_CANARY')");(caller/'.env').write_text('BOT_TOKEN=100:PRIVATE_CANARY');(caller/'owned.txt').write_text('preserve caller')
     before={p.name:hashlib.sha256(p.read_bytes()).hexdigest() for p in caller.iterdir()}
     run('browser',[node,ROOT/'scripts/check_shop_browser.mjs',python,frontend/'dist',output/'browser',caller],timeout=480)
-    browser=json.loads((output/'browser/report.json').read_text(encoding='utf-8'));assert browser['passed'] and len(browser['cases'])==6 and browser['external_requests']==0 and browser['telegram_requests'] is False
+    browser=json.loads((output/'browser/report.json').read_text(encoding='utf-8'));assert browser['passed'] and len(browser['cases'])==7 and browser['telegram_web_iframe'] is True and browser['external_requests']==0 and browser['telegram_requests'] is False
     assert before=={p.name:hashlib.sha256(p.read_bytes()).hexdigest() for p in caller.iterdir()}
-    report={'passed':True,'roadmap_item':18,'library_version':'0.13.0','application_version':'0.1.0','installed_origins':origin,'typescript_consumer':str(installed),'typescript_version':metadata['version'],'vendor_byte_exact_files':copied_files,'archive_source_exact_files':len(expected),'wheel_record_verified':True,'installed_entrypoint_help':True,'unit_tests':unit_tests,'stages':stages,'browser':browser,'caller_files_preserved':True,'artifacts':[{'name':p.name,'bytes':p.stat().st_size,'sha256':hashlib.sha256(p.read_bytes()).hexdigest()} for p in (*sources,example)],'scope':'Installed Python application and pattern wheel/tarball; real SQLite, HTTP, process restart and Chrome. Synthetic launch/native/SDK transport. No live Telegram/Stars test environment or physical devices.'}
+    report={'passed':True,'roadmap_item':18,'library_version':library_version(),'application_version':'0.1.0','installed_origins':origin,'typescript_consumer':str(installed),'typescript_version':metadata['version'],'vendor_byte_exact_files':copied_files,'archive_source_exact_files':len(expected),'wheel_record_verified':True,'installed_entrypoint_help':True,'unit_tests':unit_tests,'stages':stages,'browser':browser,'caller_files_preserved':True,'artifacts':[{'name':p.name,'bytes':p.stat().st_size,'sha256':hashlib.sha256(p.read_bytes()).hexdigest()} for p in (*sources,example)],'scope':'Installed Python application and pattern wheel/tarball; real SQLite, HTTP, process restart and Chrome, including a cross-site iframe as in Telegram Web. Synthetic launch/native/SDK transport. No live Telegram/Stars test environment or physical devices.'}
     (output/'report.json').write_text(json.dumps(report,ensure_ascii=False,indent=2)+'\n',encoding='utf-8');print(json.dumps(report));return 0
 
 

@@ -1,4 +1,5 @@
 """Optional aiogram test transport; strictly local, never falls back to HTTP."""
+
 from __future__ import annotations
 
 import inspect
@@ -6,6 +7,7 @@ from typing import Any, AsyncGenerator, Awaitable, Callable
 
 from aiogram import Bot
 from aiogram.client.session.base import BaseSession
+from aiogram.client.telegram import PRODUCTION, TelegramAPIServer
 from aiogram.methods.base import TelegramMethod
 from pydantic import TypeAdapter
 
@@ -19,8 +21,9 @@ class StubSession(BaseSession):
 
     Fixtures are artificial API responses, not evidence of live Telegram behavior.
     """
-    def __init__(self) -> None:
-        super().__init__()
+
+    def __init__(self, *, api: TelegramAPIServer = PRODUCTION) -> None:
+        super().__init__(api=api)  # api=TEST mirrors a test-environment session offline
         self.calls: list[TelegramMethod[Any]] = []
         self.closed = False
         self._responders: dict[type[TelegramMethod[Any]], Responder] = {}
@@ -47,9 +50,14 @@ class StubSession(BaseSession):
     async def close(self) -> None:
         self.closed = True
 
-    async def stream_content(self, url: str, headers: dict[str, Any] | None = None,
-                             timeout: int = 30, chunk_size: int = 65536,
-                             raise_for_status: bool = True) -> AsyncGenerator[bytes, None]:
+    async def stream_content(
+        self,
+        url: str,
+        headers: dict[str, Any] | None = None,
+        timeout: int = 30,
+        chunk_size: int = 65536,
+        raise_for_status: bool = True,
+    ) -> AsyncGenerator[bytes, None]:
         # Keep an async-generator signature while rejecting unsupported file I/O.
         if False:
             yield b''

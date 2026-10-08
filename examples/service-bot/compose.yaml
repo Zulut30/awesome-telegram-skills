@@ -1,0 +1,19 @@
+# Optional: `docker compose -f examples/service-bot/compose.yaml up --build` from the repository root.
+# BOT_TOKEN comes from examples/service-bot/.env (copy .env.example); it is never baked into the image.
+services:
+  service-bot:
+    build:
+      context: ../..
+      dockerfile: examples/service-bot/Dockerfile
+      args:
+        # Registry mirror when Docker Hub is unavailable: PYTHON_IMAGE=mirror.gcr.io/library/python:3.13-slim
+        PYTHON_IMAGE: ${PYTHON_IMAGE:-python:3.13-slim}
+    env_file:
+      - path: .env
+        required: true
+    volumes:
+      - service-data:/data
+    restart: unless-stopped
+
+volumes:
+  service-data:

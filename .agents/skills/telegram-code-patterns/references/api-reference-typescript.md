@@ -1,5 +1,7 @@
 # TypeScript Mini App — 0.24.0
 
+Термины: **сверка** — запрос фактического состояния у провайдера или в хранилище перед повтором или выдачей; **fallback** — запасной вариант, если основная возможность недоступна.
+
 [Индекс всех символов](api-reference.md). Образцы ниже воспроизводятся через установленный wheel/tarball вне исходного дерева. Assert — проверка fixture, не бизнес-правило production приложения.
 
 Установите предоставленный local tarball в отдельный consumer, сохраните файлы в src/, добавьте ESM package.json и compile с strict, ES2022, NodeNext и DOM libs. Bridge требует настоящий Document; выполняйте exports в браузере, остальные fixtures также могут исполняться в Node с Response. Общий check.ts:
@@ -21,10 +23,12 @@ import {referenceClient} from './client.js';
 import {referenceDraft} from './draft.js';
 import {referenceNative} from './native.js';
 import {referenceErrors} from './errors.js';
+import {referenceInitData} from './init-data.js';
 
 export async function runReference(document: Document): Promise<string[]> {
   referenceBridge(document); await referenceClient(); referenceDraft(); referenceNative(); referenceErrors();
-  return ['bridge', 'client', 'draft', 'native', 'errors'];
+  await referenceInitData();
+  return ['bridge', 'client', 'draft', 'native', 'errors', 'init_data'];
 }
 ```
 
@@ -159,14 +163,15 @@ export function referenceDraft(): void {
 
 ## Native availability и listener cleanup — ref.native
 
-Файл: `native.ts`. Символы: `TelegramNativeAPI`, `UnsupportedTelegramCapability`, `TELEGRAM_NATIVE_METHODS`, `TELEGRAM_NATIVE_EVENTS`, `TELEGRAM_NATIVE_EVENT_DETAILS`, `TelegramNativeMethod`, `TelegramNativeEvent`
+Файл: `native.ts`. Символы: `TelegramNativeAPI`, `UnsupportedTelegramCapability`, `TELEGRAM_NATIVE_METHODS`, `TELEGRAM_NATIVE_EVENTS`, `TELEGRAM_NATIVE_EVENT_DETAILS`, `TelegramNativeMethod`, `TelegramNativeEvent`, `TelegramNativeSignatures`, `TelegramNativeArguments`, `TelegramNativeResult`
 
-Границы: Каталоги и facade не являются полной parameter schema. Presence/platform/version не consent, launch, auth или успешный платеж. Callback и receiver сохраняются; host выбирает arguments/permissions. Listener/dispose подавляют late callbacks, native cleanup failure может требовать повторного dispose.
+Границы: Типы аргументов и результатов каждого пути сгенерированы из официальных сигнатур и документации (scripts/build_native_signatures.py): неверный аргумент ловит tsc, runtime значения не проверяет. Presence/platform/version не consent, launch, auth или успешный платеж. Callback и receiver сохраняются; host выбирает arguments/permissions. Listener/dispose подавляют late callbacks, native cleanup failure может требовать повторного dispose.
 
 ```typescript
 import {TelegramNativeAPI, UnsupportedTelegramCapability, TELEGRAM_NATIVE_METHODS,
   TELEGRAM_NATIVE_EVENTS, TELEGRAM_NATIVE_EVENT_DETAILS,
-  type TelegramNativeMethod, type TelegramNativeEvent} from '@awesome-telegram/patterns';
+  type TelegramNativeMethod, type TelegramNativeEvent, type TelegramNativeSignatures,
+  type TelegramNativeArguments, type TelegramNativeResult} from '@awesome-telegram/patterns';
 import {check} from './check.js';
 
 /** Synchronous synthetic native SDK; physical permissions/haptic не проверяются. */
@@ -177,11 +182,15 @@ export function referenceNative(): void {
   check(TELEGRAM_NATIVE_METHODS[path].minVersion && TELEGRAM_NATIVE_EVENT_DETAILS[event].url.startsWith('https://'));
   let impacts = 0, received = 0;
   const handlers = new Map<string, (...args: unknown[]) => void>();
-  const feedback = {impactOccurred(this: unknown, style: unknown) { check(this === feedback && style === 'light'); impacts++; }};
+  const feedback = {impactOccurred(this: unknown, style: unknown) { check(this === feedback && style === 'light'); impacts++; return feedback; }};
   const app = {platform: 'tdesktop', version: '10.3', HapticFeedback: feedback,
     onEvent: (name: string, listener: (...args: unknown[]) => void) => { handlers.set(name, listener); },
     offEvent: (name: string, listener: (...args: unknown[]) => void) => { if (handlers.get(name) === listener) handlers.delete(name); }};
-  const native = new TelegramNativeAPI(app); check(native.supports(path)); native.call(path, 'light');
+  const native = new TelegramNativeAPI(app); check(native.supports(path));
+  // Arguments and results are typed per path: 'loud' or a missing style fail at tsc, not in the client.
+  const style: TelegramNativeArguments<'HapticFeedback.impactOccurred'>[0] = 'light';
+  const chained: TelegramNativeResult<'HapticFeedback.impactOccurred'> = native.call('HapticFeedback.impactOccurred', style);
+  const documented: keyof TelegramNativeSignatures = path; check(chained === feedback && documented === path);
   const unsubscribe = native.listen(event, () => { received++; });
   const late = handlers.get(event); check(late); late(); check(received === 1);
   unsubscribe(); late(); check(received === 1 && handlers.size === 0);
@@ -226,5 +235,36 @@ export function referenceErrors(): void {
   }
   check(safeErrorReport(new Error('PRIVATE_FIXTURE'), operation).outcome === 'unknown');
   // Классификация не подтверждает отмену операции и не запускает retry.
+}
+```
+
+<a id="ref-init_data"></a>
+
+## Проверка initData без токена бота — ref.init_data
+
+Файл: `init-data.ts`. Символы: `verifyInitDataSignature`, `InvalidInitData`, `TELEGRAM_PUBLIC_KEYS`, `SignedLaunch`, `SignedObject`, `InitDataSignatureOptions`
+
+Границы: Для сервера или третьей стороны, которой известен только bot_id: подпись Ed25519 проверяется через WebCrypto (браузеры, Node 20+), без зависимостей. Нет WebCrypto или Ed25519 — UnsupportedCapability, а не успех. Результат подтверждает данные запуска, но не сессию, права на объект и однократность операции. Проверка HMAC с токеном бота остается в Python.
+
+```typescript
+import {InvalidInitData, TELEGRAM_PUBLIC_KEYS, verifyInitDataSignature,
+  type InitDataSignatureOptions, type SignedLaunch, type SignedObject} from '@awesome-telegram/patterns';
+import {check} from './check.js';
+
+// Независимый вектор из тестов aiogram: их собственная пара ключей и бот 42, не ключ Telegram.
+const SIGNED = 'auth_date=1650385342&user=%7B%22id%22%3A42%2C%22first_name%22%3A%22Test%22%7D&query_id=test'
+  + '&signature=JQ0JR2tjC65yq_jNZV0wuJVX6J-SWPMV0mprUXG34g-NvxL4RcF1Rz5n4VVo00VRghEUBf5t___uoeb1-jU_Cw';
+const FIXTURE_KEY = '4112765021341e5415e772cd65903f6b94e3ea1c2ab669e6d3e18ee2db00da61';
+
+export async function referenceInitData(): Promise<void> {
+  const publicKey = Uint8Array.from(FIXTURE_KEY.match(/../g) ?? [], (pair) => Number.parseInt(pair, 16));
+  const options: InitDataSignatureOptions = {publicKey, now: 1650385342};
+  const launch: SignedLaunch = await verifyInitDataSignature(SIGNED, 42, options);
+  const user: SignedObject = launch.user;
+  check(launch.userId === 42 && user['first_name'] === 'Test' && launch.queryId === 'test');
+  const otherBot = await verifyInitDataSignature(SIGNED, 43, options).then(() => null, (error: unknown) => error);
+  check(otherBot instanceof InvalidInitData);
+  check(TELEGRAM_PUBLIC_KEYS.production.length === 64); // настоящая initData: {environment: 'production'} без publicKey
+  // Сессию, права на объект и защиту от повтора проверяет backend; токен бота здесь не нужен.
 }
 ```

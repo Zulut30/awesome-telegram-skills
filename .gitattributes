@@ -1,0 +1,15 @@
+# One line ending everywhere: files are stored and checked out with LF on every OS.
+* text=auto eol=lf
+*.png binary
+*.jpg binary
+*.jpeg binary
+*.gif binary
+*.ico binary
+*.webp binary
+*.woff binary
+*.woff2 binary
+*.whl binary
+*.tgz binary
+*.gz binary
+*.zip binary
+*.pdf binary

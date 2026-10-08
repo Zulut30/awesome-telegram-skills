@@ -1,0 +1,116 @@
+"""Backend Mini App: проверка initData, GET /api/me и раздача собранного mini-app/dist.
+
+aiohttp уже установлен вместе с aiogram; отдельный сервис не нужен. `python app.py` запускает этот backend
+вместе с ботом, `python mini_app_server.py` — только backend для работы над frontend.
+"""
+import asyncio
+import os
+from pathlib import Path
+from urllib.parse import urlsplit
+
+from aiogram import Bot, Dispatcher
+from aiogram.types import BotCommand, MenuButtonWebApp, WebAppInfo
+from aiohttp import web
+from telegram_patterns import BotSettings, ValidationFailure, validate_init_data
+from telegram_patterns.aiogram import run_bot
+
+ROOT = Path(__file__).resolve().parent
+SETTINGS = web.AppKey('settings', BotSettings)
+
+
+def env_value(name, default=''):
+    """Значение из окружения или строки KEY=VALUE в .env рядом с app.py (окружение важнее, как у BOT_TOKEN)."""
+    if os.environ.get(name):
+        return os.environ[name]
+    env_file = ROOT / '.env'
+    if env_file.is_file():
+        for line in env_file.read_text(encoding='utf-8-sig').splitlines():
+            key, separator, value = line.strip().removeprefix('export ').partition('=')
+            if separator and key.strip() == name:
+                return value.strip().strip('"\'') or default
+    return default
+
+
+def mini_app_url(settings):
+    """MINI_APP_URL для кнопки меню: основной Telegram принимает только HTTPS, тестовое окружение — и HTTP."""
+    url = env_value('MINI_APP_URL')
+    if not url:
+        return None
+    parts = urlsplit(url)
+    schemes = ('https', 'http') if settings.test_environment else ('https',)
+    if parts.scheme not in schemes or not parts.hostname:
+        raise ValidationFailure('MINI_APP_URL: укажите HTTPS-адрес; HTTP допустим только с TELEGRAM_TEST_ENVIRONMENT=1')
+    return url
+
+
+def error(status, code, message):
+    return web.json_response({'code': code, 'message': message}, status=status, headers={'Cache-Control': 'no-store'})
+
+
+async def me(request):
+    """Пользователь из сырой initData (заголовок X-Init-Data), подпись которой проверена токеном бота."""
+    raw = request.headers.get('X-Init-Data', '')
+    if not raw:
+        return error(401, 'authentication-required', 'Нет initData: откройте Mini App из Telegram.')
+    try:
+        launch = validate_init_data(raw, request.app[SETTINGS].token)
+    except ValidationFailure:
+        return error(401, 'init-data-invalid', 'initData не прошла проверку: откройте Mini App заново.')
+    user = {'user_id': launch.user_id, 'first_name': str(launch.user.get('first_name', '')), 'auth_date': launch.auth_date}
+    return web.json_response(user, headers={'Cache-Control': 'no-store'})
+
+
+def create_web_app(settings, static_dir=ROOT / 'mini-app' / 'dist'):
+    """API и, если frontend собран (npm run build), его статика с того же origin."""
+    app = web.Application()
+    app[SETTINGS] = settings
+    app.router.add_get('/api/me', me)
+    if (static_dir / 'index.html').is_file():
+        async def index(request):
+            return web.FileResponse(static_dir / 'index.html')
+        app.router.add_get('/', index)
+        app.router.add_static('/', static_dir)
+    return app
+
+
+async def start_web_app(settings):
+    port = int(env_value('MINI_APP_API_PORT', '8080'))
+    runner = web.AppRunner(create_web_app(settings))
+    await runner.setup()
+    await web.TCPSite(runner, '127.0.0.1', port).start()
+    print(f'Backend Mini App: http://127.0.0.1:{port}/api/me (Vite проксирует /api сюда)')
+    return runner
+
+
+async def run_with_mini_app(dispatcher: Dispatcher, settings, *, commands: list[BotCommand]):
+    """Бот и backend в одном процессе; при MINI_APP_URL бот ставит кнопку меню, открывающую Mini App."""
+    url = mini_app_url(settings)
+    if url:
+        async def set_menu_button(bot: Bot):
+            await bot.set_chat_menu_button(menu_button=MenuButtonWebApp(text='Открыть', web_app=WebAppInfo(url=url)))
+            print(f'Кнопка меню открывает {url}')
+        dispatcher.startup.register(set_menu_button)
+    runner = await start_web_app(settings)
+    try:
+        await run_bot(dispatcher, settings, commands=commands)
+    finally:
+        await runner.cleanup()
+
+
+async def main():
+    try:
+        settings = BotSettings.from_env(env_file=ROOT / '.env')
+    except ValueError as failure:
+        raise SystemExit(f'{failure}\nСкопируйте .env.example в .env и вставьте токен от @BotFather.') from None
+    runner = await start_web_app(settings)
+    try:
+        await asyncio.Event().wait()
+    finally:
+        await runner.cleanup()
+
+
+if __name__ == '__main__':
+    try:
+        asyncio.run(main())
+    except KeyboardInterrupt:
+        pass

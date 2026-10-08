@@ -4,6 +4,7 @@ from __future__ import annotations
 import asyncio
 from contextlib import closing
 import json
+import os
 from pathlib import Path
 import sqlite3
 from typing import Any, Awaitable, Callable, Mapping
@@ -12,6 +13,17 @@ from aiogram import Dispatcher, Router
 from aiogram.fsm.storage.base import StorageKey
 from telegram_patterns.aiogram import (AtomicFSMStorage, DialogLifetime, DialogSubmission,
     EmailField, FSMConflict, FSMSnapshot, NumberField, dialog_form_router)
+
+
+def _linked(path: Path) -> bool:
+    """Known links are refused, except root-owned aliases under / (macOS /var, /tmp -> /private/...)."""
+    if not (path.is_symlink() or bool(getattr(path, 'is_junction', lambda: False)())):
+        return False
+    try:
+        return not (os.name != 'nt' and path.is_absolute() and path.parent == Path(path.anchor)
+                    and path.lstat().st_uid == 0)
+    except OSError:
+        return True
 
 
 class ProjectSnapshotStore:
@@ -23,8 +35,7 @@ class ProjectSnapshotStore:
     """
     def __init__(self, database: Path) -> None:
         supplied = database.absolute()
-        if (not supplied.parent.is_dir() or any(p.is_symlink() or bool(getattr(p, 'is_junction', lambda: False)())
-                for p in (supplied, *supplied.parents))):
+        if not supplied.parent.is_dir() or any(_linked(p) for p in (supplied, *supplied.parents)):
             raise ValueError('Use an explicit project database under an existing non-linked directory')
         self.database = supplied
 

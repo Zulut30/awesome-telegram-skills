@@ -1,5 +1,7 @@
 # Python core — 0.24.0
 
+Термины: **CAS** — сравнение с заменой: запись сохраняется, только если версия не изменилась с момента чтения; квитанция (receipt) — сохраненная запись о выполненной операции; повтор возвращает ее вместо второго эффекта; **неизвестный результат** — запрос мог выполниться, но ответа нет (таймаут, обрыв связи); повторять вслепую нельзя, сначала сверка; **сверка** — запрос фактического состояния у провайдера или в хранилище перед повтором или выдачей; **entitlement** — право на возможность (custom emoji, оплаченный доступ), которое проверяется отдельно от самого запроса; **fallback** — запасной вариант, если основная возможность недоступна.
+
 [Индекс всех символов](api-reference.md). Образцы ниже воспроизводятся через установленный wheel/tarball вне исходного дерева. Assert — проверка fixture, не бизнес-правило production приложения.
 
 Установите предоставленный локальный wheel без aiogram. Для core_starter.py передайте путь к нему как первый аргумент: `python core_starter.py "<PROVIDED_WHEEL>"`. Остальные файлы запускаются `python <FILE.py>`. Для core_calendar нужна IANA-база Europe/Warsaw: при ее отсутствии установите calendar extra того же wheel; aiogram не требуется. core_doctor намеренно проверяет SDK-free окружение.
@@ -8,16 +10,17 @@
 
 ## Конфигурация и проверенный запуск — ref.core_identity
 
-Файл: `core_identity.py`. Символы: `BotSettings`, `InvalidInitData`, `VerifiedLaunch`, `validate_init_data`
+Файл: `core_identity.py`. Символы: `BotSettings`, `InvalidInitData`, `VerifiedLaunch`, `validate_init_data`, `validate_init_data_signature`, `TELEGRAM_PUBLIC_KEYS`
 
-Границы: HMAC fixture без Telegram; token только на backend, raw initData проверяется до session/ACL. BotSettings repr скрывает token, сериализация не становится безопасной. VerifiedLaunch — результат проверки, ручной DTO не подтверждает identity.
+Границы: HMAC fixture без Telegram; token только на backend, raw initData проверяется до session/ACL. BotSettings repr скрывает token, сериализация не становится безопасной. VerifiedLaunch — результат проверки, ручной DTO не подтверждает identity. Сторонняя проверка Ed25519 знает только bot_id и опубликованный ключ Telegram; она требует extra signature (cryptography), без него сообщает UnsupportedCapability. Пример подписан ключом из тестов aiogram, а не ключом Telegram.
 
 ```python
-"""Искусственная HMAC-подпись для локального примера, без Telegram и login."""
+"""Искусственная HMAC-подпись и независимый вектор Ed25519 для локального примера, без Telegram и login."""
 import hmac
 import json
 from urllib.parse import urlencode
-from telegram_patterns import BotSettings, InvalidInitData, VerifiedLaunch, validate_init_data
+from telegram_patterns import (BotSettings, InvalidInitData, TELEGRAM_PUBLIC_KEYS, UnsupportedCapability, VerifiedLaunch,
+                               validate_init_data, validate_init_data_signature)
 
 settings = BotSettings.from_env(environ={'BOT_TOKEN': '100:REFERENCE_FIXTURE'})
 fields = {'auth_date': '1000', 'user': json.dumps({'id': 42})}
@@ -33,6 +36,18 @@ except InvalidInitData:
 else:
     raise AssertionError('Ambiguous launch accepted')
 assert 'REFERENCE_FIXTURE' not in repr(settings)
+# Сторонняя проверка без токена бота: подпись Ed25519 и bot_id. Вектор и ключ из тестов aiogram, не ключ Telegram.
+signed = ('auth_date=1650385342&user=%7B%22id%22%3A42%2C%22first_name%22%3A%22Test%22%7D&query_id=test'
+          '&signature=JQ0JR2tjC65yq_jNZV0wuJVX6J-SWPMV0mprUXG34g-NvxL4RcF1Rz5n4VVo00VRghEUBf5t___uoeb1-jU_Cw')
+fixture_key = bytes.fromhex('4112765021341e5415e772cd65903f6b94e3ea1c2ab669e6d3e18ee2db00da61')
+assert len(TELEGRAM_PUBLIC_KEYS['production']) == 32  # настоящая initData проверяется этим ключом
+third_party: VerifiedLaunch | None
+try:
+    third_party = validate_init_data_signature(signed, 42, public_key=fixture_key, now=1650385342)
+except UnsupportedCapability:
+    third_party = None  # без extra signature (cryptography) функция сообщает, что Ed25519 недоступна
+else:
+    assert (third_party.user_id, third_party.query_id) == (42, 'test')
 # Настоящие initData приходят от Telegram; ACL/session/replay проверяет backend.
 print(json.dumps({'passed': True, 'case': 'core_identity', 'network': False}))
 ```
@@ -43,7 +58,7 @@ print(json.dumps({'passed': True, 'case': 'core_identity', 'network': False}))
 
 Файл: `core_message_text.py`. Символы: `EntityKind`, `TextEntity`, `TextPayload`, `FormattedText`, `MessageBuilder`, `utf16_length`, `escape_html`, `escape_markdown_v2`, `split_formatted`
 
-Границы: SDK-free/entities payload с parse_mode=None. Консервативный UTF-16 limit; atomic oversized entity/Unicode sequence вызывает error. Общие emoji/combining sequences сохранены, полная UAX29 segmentation не обещана. Host проверяет link trust, sticker/fallback metadata и custom emoji entitlement/context; default — regular emoji. Никаких network/retry/delivery/ACL promises.
+Границы: Готовит текст с entities и parse_mode=None без зависимости от SDK. Лимит в единицах UTF-16 консервативный; неделимая entity или последовательность Unicode больше лимита вызывает ошибку. Распространенные emoji и комбинируемые последовательности не разрезаются, полная сегментация UAX29 не обещана. Проект сам проверяет доверие к ссылкам, метаданные стикера и запасного варианта, entitlement и контекст для custom emoji; по умолчанию используется обычный emoji. Сеть, повторы, доставку и права доступа компонент не обещает.
 
 ```python
 """All SDK-free message exports; no network, parser, Unicode asset or rights proof."""
@@ -69,6 +84,181 @@ emoji=MessageBuilder().custom_emoji('👍','123456789').build()
 assert emoji.as_kwargs()['entities']==[]
 assert emoji.as_kwargs(custom_emoji_entitlement_verified=True)['entities'][0]['type']=='custom_emoji'
 print(json.dumps({'case':'core_message_text','passed':True,'network':False,'chunks':len(parts)}))
+```
+
+<a id="ref-core_rich_message"></a>
+
+## Rich-сообщения и запасной текст — ref.core_rich_message
+
+Файл: `core_rich_message.py`. Символы: `RichMessageBuilder`, `RichMessage`, `RichButton`, `RichButtonStyle`, `RichSpan`, `RichText`
+
+Границы: Строит InputRichMessage для sendRichMessage (Bot API 10.1+) без зависимости от SDK: заголовки, абзацы, списки и чек-листы, таблицы, ряды кнопок, обычные и сворачиваемые цитаты, details, документы по file_id или URL, код, разделитель и подвал. build() проверяет опубликованные лимиты: 500 блоков с вложенными, 16 уровней, 50 медиа, 20 столбцов, 32768 символов, 1–8 кнопок в ряду. Ссылки только HTTP(S). Запасной вариант — FormattedText и inline-клавиатура для sendMessage. Отображение в клиентах, право отправлять rich-сообщения от имени Business и загрузку новых файлов проверяет проект.
+
+```python
+"""SDK-free rich message blocks and their text fallback; no network and no Telegram rendering proof."""
+import json
+from telegram_patterns import (FormattedText, RichButton, RichButtonStyle, RichMessage, RichMessageBuilder, RichSpan,
+                               RichText)
+
+style: RichButtonStyle = 'success'
+status: RichText = ['Статус: ', RichSpan('bold', 'оплачен')]
+details = RichMessageBuilder().paragraph('Возврат в течение 14 дней.')
+message: RichMessage = (RichMessageBuilder().heading('Заказ №42', size=1).paragraph(status)
+                        .table([['Товар', 'Цена'], ['Книга', '500 ₽']], compact=True)
+                        .checklist([('Оплата', True), ('Доставка', False)])
+                        .quote('Длинный комментарий', expandable=True).details('Подробнее', details)
+                        .document('FIXTURE_FILE_ID', caption='Чек')
+                        .buttons([RichButton('Подтвердить', callback_data='order:confirm:42', style=style)]).build())
+payload = message.as_input()  # rich_message для sendRichMessage; SDK модели проверяют ее перед отправкой
+assert [block['type'] for block in payload['blocks']][:3] == ['heading', 'paragraph', 'table']
+assert payload['blocks'][2]['is_compact'] is True and message.media_count == 1
+fallback: FormattedText = message.fallback()  # тот же текст для sendMessage, где rich-сообщение недоступно
+assert 'Товар | Цена' in fallback.text and fallback.split()[0].as_kwargs()['parse_mode'] is None
+assert message.fallback_keyboard()[0][0]['callback_data'] == 'order:confirm:42'
+try:
+    RichMessageBuilder().table([['x'] * 21])
+except ValueError:
+    pass
+else:
+    raise AssertionError('Telegram allows at most 20 table columns')
+print(json.dumps({'case': 'core_rich_message', 'passed': True, 'network': False, 'blocks': message.block_count}))
+```
+
+<a id="ref-core_ephemeral"></a>
+
+## Эфемерные сообщения в группах — ref.core_ephemeral
+
+Файл: `core_ephemeral.py`. Символы: `ephemeral_parameters`, `EphemeralTrigger`, `EphemeralMessageRef`, `EphemeralNotAllowed`
+
+Границы: Правила Bot API 10.2+ без SDK: эфемерное сообщение видит один участник группы или супергруппы и бот. Бот без прав администратора отвечает в течение 15 секунд и называет повод: callback_query_id нажатия или ephemeral_message_id эфемерной команды; администратор пишет любому участнику-человеку в любое время. Замена исходного сообщения — только для свежего нажатия на обычном сообщении. Доставка не гарантирована, ID может повториться после удаления или истечения; права администратора и время события проект передает сам.
+
+```python
+"""SDK-free ephemeral message rules: who may receive one and how to address edits; no network."""
+import json
+from telegram_patterns import EphemeralMessageRef, EphemeralNotAllowed, EphemeralTrigger, ephemeral_parameters
+
+press = EphemeralTrigger.callback('fixture-query', received_at=100.0)
+extra = ephemeral_parameters(chat_type='supergroup', receiver_user_id=7, trigger=press, now=101.0)
+# sendMessage(chat_id=..., text=..., **extra): only user 7 sees the answer.
+assert extra == {'ephemeral_message_parameters': {'receiver_user_id': 7, 'callback_query_id': 'fixture-query'}}
+command = EphemeralTrigger.reply_to(55, received_at=100.0)
+assert ephemeral_parameters(chat_type='group', receiver_user_id=7, trigger=command, now=110.0)['reply_parameters'] == {'ephemeral_message_id': 55}
+try:
+    ephemeral_parameters(chat_type='supergroup', receiver_user_id=7, trigger=press, now=116.0)
+except EphemeralNotAllowed:
+    pass  # a non-administrator bot has 15 seconds; then answer with an alert or an ordinary message
+else:
+    raise AssertionError('Late ephemeral answer accepted')
+sent = EphemeralMessageRef(chat_id=-1001, receiver_user_id=7, ephemeral_message_id=5)  # Message.ephemeral_message_id
+assert sent.target() == {'chat_id': -1001, 'receiver_user_id': 7, 'ephemeral_message_id': 5}  # editEphemeralMessage*/delete
+print(json.dumps({'case': 'core_ephemeral', 'passed': True, 'network': False}))
+```
+
+<a id="ref-core_stars_subscription"></a>
+
+## Подписка Stars и платный доступ — ref.core_stars_subscription
+
+Файл: `core_stars_subscription.py`. Символы: `StarsSubscription`, `StarsCharge`, `RenewalState`, `SubscriptionEventRejected`, `STARS_SUBSCRIPTION_PERIOD`
+
+Границы: Модель без SDK для подписки Telegram Stars: одна подписка — пользователь и invoice_payload. Каждое рекуррентное SuccessfulPayment дает полуоткрытый период [дата сообщения, subscription_expiration_date); повтор того же charge ничего не продлевает, тот же ID с другими данными отклоняется. BotSubscriptionUpdated (Bot API 10.2+: canceled, active, failed) меняет только ожидание следующего списания, а не оплаченное время. RefundedPayment снимает период своего charge, в том числе если пришел раньше платежа. Хранение (as_dict/from_dict), порядок событий и сверка через getStarTransactions — задача проекта.
+
+```python
+"""SDK-free paid access from a Stars subscription: charges, renewal states and refunds; no network."""
+import json
+from telegram_patterns import STARS_SUBSCRIPTION_PERIOD, RenewalState, StarsCharge, StarsSubscription, SubscriptionEventRejected
+
+paid_at = 1_790_000_000  # Message.date of the successful_payment service message
+charge = {'currency': 'XTR', 'total_amount': 250, 'invoice_payload': 'pro:7', 'telegram_payment_charge_id': 'fixture-charge',
+          'subscription_expiration_date': paid_at + STARS_SUBSCRIPTION_PERIOD, 'is_recurring': True, 'is_first_recurring': True}
+sub = StarsSubscription(user_id=7, invoice_payload='pro:7').record_payment(charge, user_id=7, paid_at=paid_at)
+assert sub.has_access(paid_at) and sub.access_until(paid_at) == paid_at + STARS_SUBSCRIPTION_PERIOD
+assert sub.record_payment(charge, user_id=7, paid_at=paid_at) is sub  # a repeated charge extends nothing
+canceled = sub.record_update({'user': {'id': 7}, 'invoice_payload': 'pro:7', 'state': 'canceled'})  # BotSubscriptionUpdated
+assert canceled.has_access(paid_at + 1) and not canceled.renews(paid_at + 1)  # the paid month stays
+renewal: RenewalState = canceled.renewal
+first: StarsCharge = canceled.charges[0]
+assert renewal == 'canceled' and first.first and first.amount == 250
+refunded = sub.record_refund({'currency': 'XTR', 'invoice_payload': 'pro:7', 'telegram_payment_charge_id': 'fixture-charge'}, user_id=7)
+assert not refunded.has_access(paid_at + 1)
+try:
+    sub.record_update({'user': {'id': 8}, 'invoice_payload': 'pro:7', 'state': 'failed'})
+except SubscriptionEventRejected:
+    pass  # another user's event changes nothing
+else:
+    raise AssertionError('Foreign subscription event accepted')
+assert StarsSubscription.from_dict(json.loads(json.dumps(sub.as_dict()))) == sub  # the host stores this JSON
+print(json.dumps({'case': 'core_stars_subscription', 'passed': True, 'network': False}))
+```
+
+<a id="ref-core_texts"></a>
+
+## Тексты компонентов: русский, английский и замена строк — ref.core_texts
+
+Файл: `core_texts.py`. Символы: `Texts`, `TextLocale`, `default_texts`
+
+Границы: Каталог содержит фразы, которые видит пользователь бота: шаги и ошибки форм, навигация, составной выбор, календарь, пагинация, публичные сообщения об ошибках, подпись документа в rich-fallback. Сообщения CLI, doctor и шаблонов starter адресованы разработчику и остаются русскими. Замена обязана сохранить плейсхолдеры исходной фразы, значения вставляются как обычный текст. Язык выбирает проект: один Texts на язык, переданный компоненту; автоматического определения по language_code нет.
+
+```python
+"""SDK-free component texts: English catalog, one replaced phrase, a localized selection and error report; no network."""
+import json
+from telegram_patterns import (SelectionContext, SelectionMenu, SelectionOption, SelectionSpec, TextLocale, Texts,
+                               ValidationFailure, default_texts, safe_error_report, selection_markup)
+
+locale: TextLocale = 'en'  # the project picks the language; nothing is guessed from language_code
+texts = Texts(locale, {'selection.cancel': 'Never mind'})  # one Texts per user language, built once at startup
+assert texts('form.step', number=1, total=3, prompt='Your name?') == 'Step 1/3. Your name?\n/back — go back · /cancel — cancel'
+assert set(default_texts('ru')) == set(default_texts('en'))  # every key exists in both locales
+try:
+    Texts('en', {'form.step': 'Next question'})  # drops {number}, {total} and {prompt}
+except ValidationFailure:
+    pass  # a broken translation fails at startup, not in a user's chat
+else:
+    raise AssertionError('Override without placeholders accepted')
+menu = SelectionMenu(SelectionSpec([SelectionOption('tea', 'Tea')], texts=texts), SelectionContext(100, 7, 7, 1))
+assert menu.state.text() == 'Choose options.\nSelected: nothing\nQuantity: 1\nFilter: All'
+assert selection_markup(menu.state)['inline_keyboard'][-1][-1]['text'] == 'Never mind'
+assert safe_error_report(ValidationFailure('detail'), texts=texts).message == 'Check the input data.'
+# aiogram routers take the same object: text_form_router(..., texts=texts), dialog_form_router(..., texts=texts).
+print(json.dumps({'case': 'core_texts', 'passed': True, 'network': False}))
+```
+
+<a id="ref-core_markup"></a>
+
+## Клавиатуры как JSON для любого SDK — ref.core_markup
+
+Файл: `core_markup.py`. Символы: `inline_button`, `reply_button`, `layout_rows`, `inline_markup`, `reply_markup`, `force_reply_markup`, `remove_markup`, `paginated_markup`, `MarkupPage`, `markup_page_number`, `selection_markup`
+
+Границы: Ядро без SDK строит reply_markup в формате Bot API JSON с теми же проверками, что и aiogram-адаптер: одно действие на inline-кнопку, callback_data 1–64 байта UTF-8, HTTPS Mini App только в обычном личном чате, 1–8 кнопок в ряду и до 100 кнопок, иконка custom emoji только с подтвержденным entitlement. JSON совпадает с выводом telegram_patterns.aiogram; aiogram превращает его в модели через model_validate, python-telegram-bot — через telegram_patterns.ptb.ptb_markup. Права, авторизацию callback и разбор нажатий делает приложение.
+
+```python
+"""SDK-free keyboards as Bot API JSON: the same reply_markup for aiogram, python-telegram-bot or raw HTTP; no network."""
+import json
+from telegram_patterns import (MarkupPage, SelectionContext, SelectionMenu, SelectionOption, SelectionSpec, ValidationFailure,
+                               force_reply_markup, inline_button, inline_markup, layout_rows, markup_page_number, paginated_markup,
+                               remove_markup, reply_button, reply_markup, selection_markup)
+
+buttons = [inline_button(name, callback_data=f'menu:{key}') for name, key in [('Каталог', 'catalog'), ('Помощь', 'help'), ('Назад', 'back')]]
+menu = inline_markup(layout_rows(buttons, (2,)))
+assert menu == {'inline_keyboard': [[{'text': 'Каталог', 'callback_data': 'menu:catalog'}, {'text': 'Помощь', 'callback_data': 'menu:help'}],
+                                    [{'text': 'Назад', 'callback_data': 'menu:back'}]]}
+icon = inline_button('Готово', callback_data='ok', icon_custom_emoji_id='5368324170671202286')
+assert 'icon_custom_emoji_id' not in inline_markup([[icon]])['inline_keyboard'][0][0]  # no verified entitlement: text only
+ask = reply_markup([[reply_button('Отправить контакт', request_contact=True)], ['Отмена']], one_time=True)
+assert ask['keyboard'][0][0] == {'text': 'Отправить контакт', 'request_contact': True}
+assert force_reply_markup('Ваше имя')['force_reply'] is True and remove_markup() == {'remove_keyboard': True, 'selective': False}
+try:
+    inline_markup([[inline_button('Приложение', web_app='https://example.com/app')]], chat_type='group')
+except ValidationFailure:
+    pass  # Mini App buttons need an ordinary private chat
+else:
+    raise AssertionError('Web App button accepted in a group')
+page: MarkupPage = paginated_markup([(f'Товар {n}', f'item-{n}') for n in range(1, 8)], page=1, page_size=3)
+assert (page.page, page.page_count) == (1, 3) and page.markup['inline_keyboard'][-1][1] == {'text': 'Далее →', 'callback_data': 'page:2'}
+assert markup_page_number('page:2') == 2 and markup_page_number('page:../2') is None
+draft = SelectionMenu(SelectionSpec([SelectionOption('a', 'Alpha'), SelectionOption('b', 'Beta')], max_selected=1),
+                      SelectionContext(100, 7, 7, 50))
+assert selection_markup(draft.state)['inline_keyboard'][0][0]['text'] == '□ Alpha'  # the same rows as selection_keyboard
+print(json.dumps({'case': 'core_markup', 'passed': True, 'network': False}))
 ```
 
 <a id="ref-core_storage"></a>
@@ -216,7 +406,7 @@ catalog = RecipeCatalog()
 recipe: Recipe = catalog.search('две кнопки', maturity=maturity, verification=verification,
                                task='keyboards', context='private', sdk='aiogram', sdk_version='3.31.0', api_version='bot:10.3')[0]
 assert recipe.id == 'two-columns' and catalog.get(recipe.id) == recipe
-assert len(catalog.recipes) == 310 and catalog.library_version
+assert len(catalog.recipes) == 340 and catalog.library_version
 assert recipe.source_files and recipe.check_files and 'keyboards' in recipe.tasks
 lost = catalog.search('потерянный ответ', task='recovery', context='backend')[0]
 assert lost.id == 'demo-recovery' and lost.sdk == 'python-core' and lost.api_version == 'none'
@@ -295,7 +485,7 @@ print(json.dumps({'passed': True, 'case': 'core_starter', 'network': False}))
 
 Файл: `core_doctor.py`. Символы: `doctor`
 
-Границы: Пример намеренно запускается без aiogram: readiness fail содержит команды следующего явного действия. Doctor не читает .env/не отправляет token, не выполняет предлагаемые repairs и не подтверждает live identity. SDK probe установленного extra изолирован от проекта.
+Границы: Пример намеренно запускается без aiogram: readiness fail содержит команды следующего явного действия. Без webhook=True doctor не читает .env, не обращается к сети и не подтверждает live identity; webhook=True делает один read-only getWebhookInfo с BOT_TOKEN из окружения или .env проекта. Предлагаемые repairs не выполняются, token не попадает в отчет. SDK probe установленного extra изолирован от проекта.
 
 ```python
 """Doctor запускается SDK-free: диагностика readiness, не автоматический install."""
@@ -324,7 +514,7 @@ print(json.dumps({'passed': True, 'case': 'core_doctor', 'network': False}))
 
 Файл: `core_selection.py`. Символы: `SelectionOption`, `SelectionSpec`, `SelectionContext`, `SelectionState`, `SelectionResult`, `SelectionMenu`
 
-Границы: Single-process server draft; exact owner/context/revision and confirmation token guards. No automatic business operation, persistence or multiworker guarantee. Current ACL/resource_version/idempotency transaction belongs to host; synthetic transport does not prove live delivery or rendering.
+Границы: Черновик на сервере в одном процессе; точные проверки владельца, контекста, ревизии и токена подтверждения. Бизнес-операция, долговременное хранение и работа нескольких процессов не гарантируются. Текущие права, `resource_version` и идемпотентная транзакция принадлежат приложению; синтетический транспорт не доказывает доставку и отображение в Telegram.
 
 ```python
 """SDK-free server draft: configured values, revisions and bound confirmation."""
@@ -367,7 +557,7 @@ print(json.dumps({'passed':True,'case':'core_selection','network':False,'busines
 
 Файл: `core_calendar.py`. Символы: `CalendarMonth`, `TimeSlot`, `resolve_local_time`, `SlotSchedule`, `SlotBooking`, `SQLiteSlotStore`
 
-Границы: SDK-free; Europe/Warsaw needs host IANA database or optional calendar extra (tested tzdata 2026.5). Current synchronous host ACL inside file SQLite transaction before effect/replay. Publish is trusted host CAS; immutable receipt differs from current booking; no external side effects. Host owns file/migrations/retention and async shutdown work.
+Границы: Без SDK; для Europe/Warsaw нужна база IANA приложения или необязательный extra calendar (проверено с tzdata 2026.5). Текущие права приложения проверяются синхронно внутри транзакции файловой SQLite до эффекта или повтора. Публикация расписания — доверенное приложению сравнение с заменой (CAS); неизменяемая квитанция отличается от текущей записи; внешних побочных эффектов нет. Файл, миграции, срок хранения и асинхронное завершение работы принадлежат приложению.
 
 ```python
 """SDK-free calendar, explicit DST choice, transaction and current booking."""

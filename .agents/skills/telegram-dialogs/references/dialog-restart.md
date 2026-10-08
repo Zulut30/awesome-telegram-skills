@@ -1,10 +1,12 @@
 # Восстановление диалога после рестарта
 
+Термины: **CAS** — сравнение с заменой: запись сохраняется, только если версия не изменилась с момента чтения; квитанция (receipt) — сохраненная запись о выполненной операции; повтор возвращает ее вместо второго эффекта; **outbox** — события, сохраненные в той же транзакции, что и изменение данных; отдельный обработчик выполняет их позже; **сверка** — запрос фактического состояния у провайдера или в хранилище перед повтором или выдачей.
+
 Локальная библиотека 0.24.0, optional aiogram 3.31.0. `SnapshotStore` — контракт транзакции проекта; `SnapshotFSMStorage` связывает его с BaseStorage. Если текущий storage уже работает, добавьте ему `AtomicFSMStorage.read_snapshot`/`commit_snapshot`; не меняйте Dispatcher, SDK, backend или инфраструктуру ради примера.
 
 Каждая запись хранит **state и весь JSON data в одной revision**. Missing key = `(None, {}, 0)`; compare-and-set проверяет прежнюю revision и записывает revision+1 атомарно. Mismatch = `FSMConflict`, без записи и без автоматического retry. Используйте все поля `StorageKey`: bot_id, chat_id, user_id, thread_id, business_connection_id, destiny. Снимок отдает detached JSON data, ограниченное 64 KiB и глубиной 16; не храните credentials или бинарные файлы. Legacy host objects требуют явного project codec/migration, не молчаливой сериализации.
 
-`DialogLifetime(seconds=3600, clock=time.time)` задает абсолютный срок черновика. Text/mixed routers с lifetime требуют atomic storage; шаг, form/schema version, created_at, expires_at, answers, native candidate/UI references и operation_id попадают в одну запись. `/apply` или команда смешанной формы возобновляет принятые ответы; возврат, resume и рестарт не сдвигают expires_at. `schema_version` повышается при изменении правил/валидатора; mismatched version или поврежденная запись требуют миграции либо сверки, никогда implicit reset. Формы без lifetime сохраняют прежний демонстрационный API.
+`DialogLifetime(seconds=3600, clock=time.time)` задает абсолютный срок черновика. Text/mixed routers с lifetime требуют atomic storage; шаг, версия формы и схемы, `created_at`, `expires_at`, ответы, выбранные кандидаты и ссылки на сообщения интерфейса и `operation_id` попадают в одну запись. `/apply` или команда смешанной формы возобновляет принятые ответы; возврат, resume и рестарт не сдвигают expires_at. `schema_version` повышается при изменении правил/валидатора; mismatched version или поврежденная запись требуют миграции либо сверки, никогда implicit reset. Формы без lifetime сохраняют прежний демонстрационный API.
 
 Просроченный неотправленный черновик удаляется из своего FSM key при следующем update; чужие host data остаются. Это lazy application cleanup, не доказательство физического удаления из backup и не глобальная retention policy. **submission_started переживает TTL**: отмена, возврат и перезапуск команды не сбрасывают его; повторная текущая кнопка сверяет тот же operation_id через project service с ACL и durable effect dedup. После подтвержденного успеха clear идет до feedback. Исчезнувшую review-кнопку/unknown external effect восстанавливает отдельная host reconciliation, не новая заявка. Физическое удаление snapshot/revision без generation создает ABA: сохраняйте tombstone revision, миграцию и retention контролирует проект.
 
@@ -19,6 +21,7 @@ from __future__ import annotations
 import asyncio
 from contextlib import closing
 import json
+import os
 from pathlib import Path
 import sqlite3
 from typing import Any, Awaitable, Callable, Mapping
@@ -27,6 +30,17 @@ from aiogram import Dispatcher, Router
 from aiogram.fsm.storage.base import StorageKey
 from telegram_patterns.aiogram import (AtomicFSMStorage, DialogLifetime, DialogSubmission,
     EmailField, FSMConflict, FSMSnapshot, NumberField, dialog_form_router)
+
+
+def _linked(path: Path) -> bool:
+    """Known links are refused, except root-owned aliases under / (macOS /var, /tmp -> /private/...)."""
+    if not (path.is_symlink() or bool(getattr(path, 'is_junction', lambda: False)())):
+        return False
+    try:
+        return not (os.name != 'nt' and path.is_absolute() and path.parent == Path(path.anchor)
+                    and path.lstat().st_uid == 0)
+    except OSError:
+        return True
 
 
 class ProjectSnapshotStore:
@@ -38,8 +52,7 @@ class ProjectSnapshotStore:
     """
     def __init__(self, database: Path) -> None:
         supplied = database.absolute()
-        if (not supplied.parent.is_dir() or any(p.is_symlink() or bool(getattr(p, 'is_junction', lambda: False)())
-                for p in (supplied, *supplied.parents))):
+        if not supplied.parent.is_dir() or any(_linked(p) for p in (supplied, *supplied.parents)):
             raise ValueError('Use an explicit project database under an existing non-linked directory')
         self.database = supplied
 

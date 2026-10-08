@@ -12,6 +12,9 @@ import sys
 import tempfile
 import zipfile
 
+sys.path.insert(0, str(Path(__file__).resolve().parent))  # shared helpers live next to this script
+from _environment import minimal_environment, planted_link  # noqa: E402
+
 ROOT=Path(__file__).resolve().parents[1]
 
 
@@ -21,12 +24,12 @@ def main() -> int:
     parser.add_argument('--output',type=Path,required=True,help='New evidence directory')
     args=parser.parse_args()
     for p in (args.output,*args.output.parents):
-        if p.is_symlink() or bool(getattr(p,'is_junction',lambda:False)()):raise ValueError('Output links are not supported')
+        if planted_link(p):raise ValueError('Output links are not supported')
     wheel=args.wheel.resolve(strict=True)
     if not wheel.is_file() or wheel.suffix!='.whl':raise ValueError('Provide the trusted local pattern wheel')
-    output=args.output.resolve();output.mkdir()
+    output=args.output.resolve();output.mkdir(parents=True)  # parent links were refused above; the leaf must be new
     project=Path(tempfile.mkdtemp(prefix='telegram service consumer '))
-    env={k:v for k,v in os.environ.items() if k.upper() in {'PATH','PATHEXT','SYSTEMROOT','WINDIR','TEMP','TMP','COMSPEC','USERPROFILE','LOCALAPPDATA'}}
+    env=minimal_environment()
     env['PYTHONUTF8']='1'
     stages=[]
     def run(label,argv,*,expected=0,cwd=project,environment=env):
@@ -53,7 +56,7 @@ def main() -> int:
     run('typecheck',[python,'-m','mypy','--check-untyped-defs','--warn-unused-ignores',ROOT/'examples/service-bot/src'])
     run('tests',[python,'-I','-m','unittest','discover','-s',ROOT/'examples/service-bot/tests','-v'])
     test_log=(output/'tests.log').read_text(encoding='utf-8')
-    unit_tests=int(re.search(r'Ran (\d+) tests',test_log).group(1));assert unit_tests==8 and test_log.rstrip().endswith('OK')
+    unit_tests=int(re.search(r'Ran (\d+) tests',test_log).group(1));assert unit_tests==9 and test_log.rstrip().endswith('OK')
     caller=project/'caller project';caller.mkdir()
     (caller/'aiogram.py').write_text("raise RuntimeError('PRIVATE_CANARY')",encoding='utf-8')
     (caller/'.env').write_text('BOT_TOKEN=100:PRIVATE_CANARY',encoding='utf-8')
@@ -77,6 +80,7 @@ def main() -> int:
     locktest="""import json,subprocess,sys
 from pathlib import Path
 from telegram_service_example.storage import ProcessLock
+
 p=Path(sys.argv[1]);lock=ProcessLock(p)
 code="from telegram_service_example.storage import ProcessLock;from pathlib import Path;import sys;ProcessLock(Path(sys.argv[1]))"
 child=subprocess.run([sys.executable,'-I','-c',code,str(p)],capture_output=True,text=True)

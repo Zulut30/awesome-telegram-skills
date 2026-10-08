@@ -1,0 +1,112 @@
+{
+  "date": "2026-10-07",
+  "agent": "Claude Code CLI 2.1.292, claude -p with tools disabled; models haiku and sonnet",
+  "cases": "evaluations/skill-selection.json",
+  "threshold": 0.95,
+  "descriptions_sha256": "5ebb344ad4564f9ab29bdb7cac6ec63e6c7e64616bb1217277fedb597cb397b2",
+  "runs": [
+    {
+      "model": "haiku",
+      "cases": 251,
+      "correct": 247,
+      "accuracy": 0.984,
+      "by_kind": {
+        "positive": {
+          "cases": 210,
+          "correct": 206
+        },
+        "negative": {
+          "cases": 41,
+          "correct": 41
+        }
+      },
+      "misses": [
+        {
+          "query": "Публикуй пост в канал от имени бота с кнопкой под ним",
+          "expected": [
+            "telegram-groups",
+            "telegram-buttons"
+          ],
+          "chosen": "telegram-bot-api"
+        },
+        {
+          "query": "Где хранить серверное состояние и кеш в Mini App, чтобы не было рассинхрона?",
+          "expected": [
+            "telegram-mini-app-architecture"
+          ],
+          "chosen": "telegram-mini-app-network-recovery"
+        },
+        {
+          "query": "Запрос оплаты оборвался по таймауту, как понять, прошел ли он?",
+          "expected": [
+            "telegram-mini-app-network-recovery",
+            "telegram-payments"
+          ],
+          "chosen": "telegram-payment-provider"
+        },
+        {
+          "query": "Ленивая загрузка картинок и разделение кода по экранам Mini App",
+          "expected": [
+            "telegram-mini-app-performance"
+          ],
+          "chosen": "telegram-mini-app-architecture"
+        }
+      ]
+    },
+    {
+      "model": "sonnet",
+      "cases": 251,
+      "correct": 246,
+      "accuracy": 0.98,
+      "by_kind": {
+        "positive": {
+          "cases": 210,
+          "correct": 205
+        },
+        "negative": {
+          "cases": 41,
+          "correct": 41
+        }
+      },
+      "misses": [
+        {
+          "query": "В python-telegram-bot нужен ConversationHandler заменить на роутеры, помоги",
+          "expected": [
+            "telegram-bot-python"
+          ],
+          "chosen": "telegram-dialogs"
+        },
+        {
+          "query": "Публикуй пост в канал от имени бота с кнопкой под ним",
+          "expected": [
+            "telegram-groups",
+            "telegram-buttons"
+          ],
+          "chosen": "telegram-bot-api"
+        },
+        {
+          "query": "Описание и команды бота на русском и английском",
+          "expected": [
+            "telegram-localization",
+            "telegram-profiles"
+          ],
+          "chosen": "telegram-bot-api"
+        },
+        {
+          "query": "Как сделать checkout у внешнего провайдера и вернуть пользователя в бота?",
+          "expected": [
+            "telegram-payment-provider"
+          ],
+          "chosen": "telegram-payments"
+        },
+        {
+          "query": "Сверка платежей провайдера с заказами раз в сутки",
+          "expected": [
+            "telegram-payment-provider"
+          ],
+          "chosen": "telegram-python-backend"
+        }
+      ]
+    }
+  ]
+}

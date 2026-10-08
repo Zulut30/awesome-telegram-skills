@@ -19,7 +19,7 @@ class ApiReferenceTests(unittest.TestCase):
         source = generator.ROOT
         for relative in ['components.json', 'catalog/api-reference.json', 'packages/typescript/src/index.ts',
                          *['packages/python/src/telegram_patterns/' + name + '.py'
-                           for name in ['__init__', 'aiogram', 'testing']]]:
+                           for name in ['__init__', 'aiogram', 'testing', 'ptb']]]:
             target = self.root / relative
             target.parent.mkdir(parents=True, exist_ok=True)
             shutil.copyfile(source / relative, target)

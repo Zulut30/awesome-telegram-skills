@@ -12,9 +12,9 @@ Root имеет явные value/type exports; `TextFieldControl` именует
 
 Все текущие публичные API experimental. [Зрелость и evidence](../../docs/v1-maturity.md) задаются отдельно: browser/mock проверка не дает обещание стабильности 1.0.
 
-ESM-пакет 0.24.0 с declarations, без runtime dependencies и привязки к React/Vue. Каталог и facade native Mini App API: 99 функций, 44 события официального снимка. Пока поставляется локально из этого репозитория/npm tarball; публикации в npm нет. Node >=20 нужен для tooling/tests. Runtime предназначен для браузера Mini App.
+ESM-пакет 0.24.0 с declarations, без runtime dependencies и привязки к React/Vue. Карта `exports`: `.` (условия `types` и `default`), `./styles.css` (CSS из `dist` со своими declarations, поэтому `import '@awesome-telegram/patterns/styles.css'` проходит при `noUncheckedSideEffectImports`) и `./package.json`. Подпути `./react` (`useTelegramBridge`), `./vue` (`useTelegramBridge`) и `./svelte` (`telegramBridgeStore`) подключают снимок `TelegramBridge` к компонентам; React и Vue — необязательные peer-зависимости, основной импорт фреймворков не тянет ([адаптеры фреймворков](../../docs/framework-adapters.md)). Пакет только ESM: CommonJS-код загружает его через `require()` в Node.js 20.19+ и 22.12+ (require(esm)), в более старых версиях используйте `import()`. TypeScript проверен с `moduleResolution` `bundler`, `node16` и `nodenext`. `TelegramNativeAPI.call(path, ...args)` типизирован по пути: аргументы и результат каждого из 99 методов (`TelegramNativeSignatures`, `TelegramNativeArguments<P>`, `TelegramNativeResult<P>`) сгенерированы из официальных сигнатур и документации, поэтому `call('HapticFeedback.impactOccurred', 'loud')` не компилируется. Каталог и facade native Mini App API: 99 функций, 44 события официального снимка. Пока поставляется локально из этого репозитория/npm tarball; публикации в npm нет. Node >=20 нужен для tooling/tests. Runtime предназначен для браузера Mini App.
 
-Runtime API сохранен относительно 0.4.0; версия согласована с Python CLI. Новый `bot-mini-app` starter подключает этот tarball, bridge, shell/поле и CSS; backend auth отсутствует. [Галерея и подготовка проекта](../../docs/developer-tools-review.md).
+Runtime API сохранен относительно 0.4.0; версия согласована с Python CLI. Шаблон `bot-mini-app` подключает этот tarball, bridge, shell/поле и CSS через Vite (горячая перезагрузка, `npm run build` в `dist`), а `mini_app_server.py` проверяет initData на backend; сессия и права на объекты остаются задачей проекта. [Галерея и подготовка проекта](../../docs/internal/developer-tools-review.md).
 
 После сборки и npm pack в исходном репозитории, из каталога consumer-проекта:
 
@@ -51,7 +51,37 @@ unsubscribe(); bridge.dispose(); shell.dispose();
 
 Тип `window.Telegram` подключает выбранный SDK/приложение; пакет не добавляет глобальный fake объект. Bridge snapshot не является аутентификацией. `platform: 'unknown'` означает `insideTelegram: false`, даже при наличии объекта WebApp. Для прежних адаптеров без platform сохранено определение по наличию объекта; этот флаг подходит для UI, личность устанавливает backend. Ошибка первого уведомления удаляет неуспешную подписку, а ошибка регистрации SDK снимает частичные подписки и позволяет повторный start. Версионные native APIs и серверный вход подключаются отдельно. `systemInsets` и `contentInsets` не складываются библиотекой: shell получает уже разрешенную геометрию через setInsets. Без нее используется CSS env fallback. После проверки на целевом клиенте продукт задает собственного единственного владельца inset policy.
 
-ApiClient требует runtime decoder вместо `as Order`. Base URL задается доверенной конфигурацией приложения; запрос к иному origin отклоняется. Authentication/CSRF headers передаются по контракту backend, секреты в storage не сохраняются. Успешные HEAD/204/205 передают decoder значение null; decoder должен разрешать его для такого endpoint. Обрыв чтения тела дает `network`, некорректный JSON или отказ decoder — `invalid-response`; timeout/abort сохраняют свои категории. HTTP body/исключение сервера не добавляются в ApiError. Ошибка любой записи помечается `outcome: unknown` консервативно; endpoint может доказать отказ своим контрактом. Library не повторяет запись, не считает AbortController отменой серверного effect и не реализует payments outbox.
+ApiClient требует runtime decoder вместо `as Order`. Base URL задается доверенной конфигурацией приложения; запрос к иному origin отклоняется. Путь всегда относителен base URL как каталога: при `baseUrl: "https://x/api/v1"` и `/orders`, и `orders` дают `https://x/api/v1/orders`. Выход за префикс (`../admin`, `%2e%2e/`, абсолютный URL вне `/api/v1/`) и `//host` отклоняются до запроса; query и fragment из base URL не наследуются. `timeoutMs` принимает от 1 до 2147483647 мс (больший `setTimeout` сработал бы сразу). Ошибки до отправки типизированы: исключение в `headers()` дает `PatternError` `internal`/`rejected` без текста исходной ошибки, тело, которое нельзя сериализовать в JSON (BigInt, цикл, функция, Symbol), — `ValidationFailure`; транспорт при этом не вызывается. Authentication/CSRF headers передаются по контракту backend, секреты в storage не сохраняются. Успешные HEAD/204/205 передают decoder значение null; decoder должен разрешать его для такого endpoint. Обрыв чтения тела дает `network`, некорректный JSON или отказ decoder — `invalid-response`; timeout/abort сохраняют свои категории. HTTP body/исключение сервера не добавляются в ApiError. Ошибка любой записи помечается `outcome: unknown` консервативно; endpoint может доказать отказ своим контрактом. Library не повторяет запись, не считает AbortController отменой серверного effect и не реализует payments outbox.
+
+### Проверка initData без токена бота
+
+`verifyInitDataSignature(raw, botId, {environment: 'production'})` проверяет поле `signature` подписью Ed25519 по опубликованному ключу Telegram (`TELEGRAM_PUBLIC_KEYS`) через WebCrypto — в браузере или на Node 20+, без зависимостей. Это для сервера или третьей стороны, которой известен только `bot_id`: токен бота не нужен. Результат — замороженный `SignedLaunch` (`userId`, `authDate`, `user` и необязательные поля запуска); испорченные, чужие или просроченные данные дают `InvalidInitData`, а WebCrypto без Ed25519 — `UnsupportedCapability`. Сессия, права на объект и защита от повтора остаются у сервиса.
+
+```typescript
+import {verifyInitDataSignature} from '@awesome-telegram/patterns';
+
+const launch = await verifyInitDataSignature(rawInitData, botId, {environment: 'production', maxAgeSeconds: 300});
+```
+
+### HTTP-статусы и восстановление
+
+Тело ответа не разбирается: решение принимается только по статусу. По умолчанию ошибка любой записи остается `outcome: unknown` с `recovery: reconcile`, потому что 4xx после POST сам по себе не доказывает отсутствие эффекта. Если контракт backend гарантирует, что статус возвращается только **до** эффекта, перечислите его в `rejectedBeforeEffect` клиента или конкретного запроса — тогда запись получает `outcome: rejected` и действие из таблицы.
+
+| Статус | `code` | `recovery` для чтения и для записи из `rejectedBeforeEffect` |
+| --- | --- | --- |
+| 400, 422 | `validation-failed` | `fix-input` |
+| 401 | `authentication-required` | `authenticate` |
+| 403 | `permission-denied` | `check-permissions` |
+| 404, 405, 413 и прочие 4xx | `invalid-api-request` | `fix-input` |
+| 408 | `timeout` | `retry-read` |
+| 409 | `operation-conflict` | `reconcile` |
+| 429 | `rate-limited` | `retry-later`; `retryAfterMs` из `Retry-After` (секунды или HTTP-date, не больше суток) |
+| 5xx | `server-error` | `retry-read`; для 503 также `retryAfterMs` |
+
+```typescript
+const api = new ApiClient({baseUrl: location.origin, rejectedBeforeEffect: [400, 401, 403, 409, 422, 429]});
+```
+
 
 Draft scope берется из подтвержденной сессии/tenant, не initDataUnsafe. Namespace, scope и TTL фиксируются при создании store; изменение переданного options-объекта не переключает аккаунт. При смене подтвержденной сессии создайте новый store и восстановите выбор из его scope. В нем сохраняются только идентификаторы выбора; дополнительные поля отбрасываются. Личные контакты, цены, auth и неизвестные operation IDs этим компонентом не хранятся. Recovery неизвестной записи и ее retention должны оставаться отдельными от TTL выбора. `write=false`/`unavailable` дают UI возможность предупредить о несохраненном черновике.
 

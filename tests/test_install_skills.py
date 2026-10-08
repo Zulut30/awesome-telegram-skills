@@ -6,6 +6,7 @@ import importlib.util
 import os
 from pathlib import Path
 import subprocess
+import sys
 import tempfile
 import unittest
 
@@ -100,6 +101,78 @@ class InstallSkillsTests(unittest.TestCase):
         destinations = installer.install_skills(self.sources, self.project, ["telegram-alpha"])
         self.assertFalse((destinations[0] / "__pycache__").exists())
 
+    def test_claude_agent_installs_into_claude_skills_only(self) -> None:
+        destinations = installer.install_skills(self.sources, self.project, ["telegram-alpha"], agent="claude")
+        self.assertEqual(destinations, [self.project.resolve() / ".claude" / "skills" / "telegram-alpha"])
+        self.assertEqual((destinations[0] / "SKILL.md").read_bytes(),
+                         (self.sources / "telegram-alpha" / "SKILL.md").read_bytes())
+        self.assertFalse((self.project / ".agents").exists())
+        # Codex and Claude Code directories are independent: both can hold the same skill.
+        installer.install_skills(self.sources, self.project, ["telegram-alpha"])
+        self.assertTrue((self.project / ".agents" / "skills" / "telegram-alpha" / "SKILL.md").is_file())
+
+    def test_unknown_agent_is_rejected_before_any_write(self) -> None:
+        with self.assertRaises(installer.InstallError):
+            installer.install_skills(self.sources, self.project, agent="unknown")
+        self.assertEqual(list(self.project.iterdir()), [])
+
+    def test_cli_agent_option(self) -> None:
+        result = subprocess.run(
+            [sys.executable, str(SCRIPT), "--project", str(self.project), "--agent", "claude",
+             "--skill", "telegram-bot-python", "--dry-run"],
+            capture_output=True, text=True, encoding="utf-8", timeout=30,
+        )
+        self.assertEqual(result.returncode, 0, result.stderr)
+        self.assertIn(str(Path(".claude") / "skills" / "telegram-bot-python"), result.stdout)
+        self.assertFalse((self.project / ".claude").exists())
+
+    EXPECTED_ROOTS = {
+        ("codex", False): [".agents/skills"], ("codex", True): [".agents/skills"],
+        ("claude", False): [".claude/skills"], ("claude", True): [".claude/skills"],
+        ("copilot", False): [".github/skills"], ("copilot", True): [".copilot/skills"],
+        ("cursor", False): [".cursor/skills"], ("cursor", True): [".cursor/skills"],
+        ("gemini", False): [".gemini/skills"], ("gemini", True): [".gemini/skills"],
+        ("all", False): [".agents/skills", ".claude/skills"], ("all", True): [".agents/skills", ".claude/skills"],
+    }
+
+    def test_every_agent_and_mode_uses_its_documented_directory(self) -> None:
+        for (agent, user), roots in self.EXPECTED_ROOTS.items():
+            with self.subTest(agent=agent, user=user), tempfile.TemporaryDirectory(prefix="agent-") as folder:
+                target = Path(folder).resolve()
+                destinations = installer.install_skills(self.sources, target, ["telegram-alpha"], agent=agent, user=user)
+                self.assertEqual(destinations, [target / root / "telegram-alpha" for root in roots])
+                for destination in destinations:
+                    self.assertEqual((destination / "references" / "details.md").read_bytes(), b"standalone reference\n")
+                created = sorted(path.relative_to(target).as_posix() for path in target.glob("*/*"))
+                self.assertEqual(created, sorted(roots), "nothing outside the agent directories")
+
+    def test_conflict_in_any_agent_directory_blocks_all_writes(self) -> None:
+        existing = self.project / ".claude" / "skills" / "telegram-alpha"
+        existing.mkdir(parents=True)
+        with self.assertRaises(installer.InstallError):
+            installer.install_skills(self.sources, self.project, agent="all")
+        self.assertFalse((self.project / ".agents").exists(), "no partial install in .agents/skills")
+        self.assertEqual(list(existing.iterdir()), [])
+
+    def test_cli_user_mode_writes_into_home_only(self) -> None:
+        home = self.root / "home"
+        home.mkdir()
+        environment = dict(os.environ, HOME=str(home), USERPROFILE=str(home))
+        for agent, root in (("copilot", ".copilot/skills"), ("all", ".claude/skills")):
+            result = subprocess.run(
+                [sys.executable, str(SCRIPT), "--user", "--agent", agent, "--skill", "telegram-bot-python"],
+                capture_output=True, text=True, encoding="utf-8", timeout=30, env=environment,
+            )
+            self.assertEqual(result.returncode, 0, result.stderr)
+            self.assertTrue((home / root / "telegram-bot-python" / "SKILL.md").is_file())
+        self.assertTrue((home / ".agents" / "skills" / "telegram-bot-python" / "SKILL.md").is_file())
+        refused = subprocess.run(
+            [sys.executable, str(SCRIPT), "--user", "--project", str(self.project)],
+            capture_output=True, text=True, encoding="utf-8", timeout=30, env=environment,
+        )
+        self.assertEqual(refused.returncode, 2, "--user and --project are exclusive")
+        self.assertEqual(list(self.project.iterdir()), [])
+
     def make_symlink(self, link: Path, target: Path, *, directory: bool = True) -> None:
         try:
             link.symlink_to(target, target_is_directory=directory)
@@ -123,6 +196,14 @@ class InstallSkillsTests(unittest.TestCase):
         self.make_symlink(self.project / ".agents", outside)
         with self.assertRaises(installer.InstallError):
             installer.install_skills(self.sources, self.project)
+        self.assertEqual(list(outside.iterdir()), [])
+
+    def test_claude_destination_link_cannot_redirect_installation(self) -> None:
+        outside = self.root / "outside claude"
+        outside.mkdir()
+        self.make_symlink(self.project / ".claude", outside)
+        with self.assertRaises(installer.InstallError):
+            installer.install_skills(self.sources, self.project, agent="claude")
         self.assertEqual(list(outside.iterdir()), [])
 
     def test_link_in_source_is_rejected_before_copy(self) -> None:

@@ -33,7 +33,7 @@ def main() -> int:
         return result.stdout
     builder = ROOT / 'scripts/build_recipe_gallery.py'
     result = json.loads(run('export', [sys.executable, builder, '--output-dir', gallery], timeout=120))
-    assert result['recipes'] == 310 and not result['telegram_network']
+    assert result['recipes'] == 340 and not result['telegram_network']
     marker = gallery / 'owned.txt'; marker.write_bytes(b'preserve consumer notes\n')
     before = {p.relative_to(gallery): hashlib.sha256(p.read_bytes()).hexdigest() for p in gallery.rglob('*') if p.is_file()}
     run('check', [sys.executable, builder, '--output-dir', gallery, '--check'], timeout=120)
@@ -59,7 +59,8 @@ def main() -> int:
         else: assert all(r['id'].startswith('native.BackButton.') for r in response['recipes'])
     browser = {'passed': False, 'skipped': True, 'checks': 0}
     if not args.skip_browser:
-        browser = json.loads(run('browser', [shutil.which('node'), ROOT / 'tests/gallery-browser.mjs', gallery, output / 'browser']))
+        # 16 viewport/theme cases with real clipboard checks; hosted macOS runners need minutes.
+        browser = json.loads(run('browser', [shutil.which('node'), ROOT / 'tests/gallery-browser.mjs', gallery, output / 'browser'], timeout=420))
         assert browser['passed']
     report = {'passed': True, 'version': data['library_version'], 'recipes': len(data['recipes']), 'source_check_files': len(links),
               'byte_exact_copies': True, 'check_read_only': True, 'owned_file_preserved': marker.read_bytes() == b'preserve consumer notes\n',

@@ -4,6 +4,8 @@ from __future__ import annotations
 
 import argparse
 import ast
+from datetime import date, timedelta
+import json
 from pathlib import Path
 import re
 import sys
@@ -20,8 +22,107 @@ except ImportError:
 REPO_ROOT = Path(__file__).resolve().parents[1]
 FRONTMATTER = re.compile(r"\A---\n(.*?)\n---(?:\n|\Z)", re.DOTALL)
 NAME_PATTERN = re.compile(r"[a-z0-9]+(?:-[a-z0-9]+)*\Z")
+BOUNDARY = re.compile(r"(?:^|[.;] )Не для ")
 LINK_PATTERN = re.compile(r"!?\[[^\]\n]+\]\(([^)\n]+)\)")
-ALLOWED_FIELDS = {"name", "description", "license", "metadata", "allowed-tools"}
+# Agent Skills specification (agentskills.io/specification), checked 2026-10-07.
+ALLOWED_FIELDS = {"name", "description", "license", "compatibility", "metadata", "allowed-tools"}
+SOURCES_HEADING = "## Источники"
+TEXT_SUFFIXES = {".md", ".yaml", ".yml", ".json", ".py", ".txt"}
+# Repository-style paths named in inline code or code blocks. A skill is copied on its own, so
+# SKILL.md may only name files inside its folder; references may also name repository files.
+REPO_PATH = re.compile(r"(?<![\w./-])((?:scripts|docs|output|catalog|packages|examples|tests|recipes|gallery|site)"
+                       r"/[\w./-]*[\w-]|components\.json)")
+VERSIONED_OUTPUT = re.compile(r"(?:pattern-library-|awesome[_-]telegram[_-]patterns-)(\d+\.\d+\.\d+)")
+SKILL_NAME = re.compile(r"(?<![\w@/.-])(telegram-[a-z0-9]+(?:-[a-z0-9]+)*)")
+# Identifiers that look like skill names but are a CLI, SDK id, script or distribution.
+NOT_SKILLS = {"telegram-patterns", "telegram-environment", "telegram-first-run", "telegram-group-example",
+              "telegram-service-example", "telegram-shop-example", "telegram-web-app", "telegram-webapp"}
+
+
+def code_spans(text: str) -> list[str]:
+    blocks = re.findall(r"^```[^\n]*\n(.*?)^```", text, re.MULTILINE | re.DOTALL)
+    inline = re.findall(r"`([^`\n]+)`", re.sub(r"^```[^\n]*\n.*?^```", "", text, flags=re.MULTILINE | re.DOTALL))
+    return blocks + inline
+
+
+def check_skill_files(root: Path, folder: Path, skills: set[str], library_version: str | None) -> list[str]:
+    """LF endings, paths that exist where a reader will look, and neighbour names that are real skills."""
+    errors = []
+    for path in sorted(folder.rglob("*")):
+        if not path.is_file() or path.suffix not in TEXT_SUFFIXES or "__pycache__" in path.parts:
+            continue
+        raw = path.read_bytes()
+        if b"\r\n" in raw:
+            errors.append(f"{path}: CRLF line endings; skill files use LF")
+        text = raw.decode("utf-8", errors="replace")
+        for name in sorted(set(SKILL_NAME.findall(text)) - skills - NOT_SKILLS):
+            errors.append(f"{path}: names unknown skill {name}")
+        if path.suffix != ".md":
+            continue
+        for span in code_spans(text):
+            for target in REPO_PATH.findall(span):
+                version = VERSIONED_OUTPUT.search(target)
+                if version and library_version and version.group(1) != library_version:
+                    errors.append(f"{path}: {target} points at version {version.group(1)}, not {library_version}")
+                if (folder / target).exists():
+                    continue
+                if path.name == "SKILL.md":
+                    errors.append(f"{path}: SKILL.md names {target}, which is not inside the skill folder")
+                elif not (target.startswith("output/") or target.endswith("/.env") or (root / target).exists()):
+                    errors.append(f"{path}: {target} exists neither in the skill nor in the repository")
+    return errors
+CHECKED = re.compile(r"^Проверено: (\d{4}-\d{2}-\d{2}), \S.*$", re.MULTILINE)
+
+
+def check_sources(body: str, today: date | None = None) -> str | None:
+    """The last section names its sources and the ISO date they were checked against the skill."""
+    headings = [line.strip() for line in re.findall(r"^## .*$", body, re.MULTILINE)]
+    if SOURCES_HEADING not in headings:
+        return f"missing '{SOURCES_HEADING}' section"
+    if headings[-1] != SOURCES_HEADING:
+        return f"'{SOURCES_HEADING}' must be the last section"
+    section = body[body.rindex(SOURCES_HEADING):]
+    if not re.search(r"\]\(https?://", section):
+        return f"'{SOURCES_HEADING}' needs at least one source link"
+    checked = CHECKED.findall(section)
+    if len(checked) != 1:
+        return f"'{SOURCES_HEADING}' needs exactly one line 'Проверено: YYYY-MM-DD, <что проверено>'"
+    try:
+        value = date.fromisoformat(checked[0])
+    except ValueError:
+        return f"invalid check date: {checked[0]}"
+    if value > (today or date.today()) + timedelta(days=1):  # one day of slack for time zones
+        return f"check date is in the future: {checked[0]}"
+    return None
+
+
+TEMPLATE = ("Когда использовать", "Когда не использовать", "Алгоритм", "Проверка", "Типичные ошибки", "Источники")
+# Extra sections (an example, a sample result) may sit between these two, as part of the algorithm.
+EXTRAS_AFTER, EXTRAS_BEFORE = "Алгоритм", "Проверка"
+
+
+def check_template(body: str) -> str | None:
+    """SKILL.md follows one outline: the six sections in order, nothing after the sources."""
+    # Headings inside code blocks are code, not sections; the code itself still counts as content.
+    prose = re.sub(r"^```.*?^```", lambda block: re.sub(r"^#", " #", block.group(0), flags=re.MULTILINE), body,
+                   flags=re.MULTILINE | re.DOTALL)
+    headings = re.findall(r"^## (.+?)\s*$", prose, re.MULTILINE)
+    required = [heading for heading in headings if heading in TEMPLATE]
+    if required != list(TEMPLATE):
+        return "sections must be: " + " / ".join(TEMPLATE) + f" in this order, each once (found: {' / '.join(headings)})"
+    start, end = headings.index(EXTRAS_AFTER), headings.index(EXTRAS_BEFORE)
+    extras = [heading for index, heading in enumerate(headings) if heading not in TEMPLATE and not start < index < end]
+    if extras:
+        return f"extra section {extras[0]!r} is allowed only between '{EXTRAS_AFTER}' and '{EXTRAS_BEFORE}'"
+    sections = dict(zip(headings, re.split(r"^## .+$", prose, flags=re.MULTILINE)[1:]))
+    for heading in TEMPLATE:
+        if not sections[heading].strip():
+            return f"section '{heading}' is empty"
+    if len(re.findall(r"^- \S", sections["Типичные ошибки"], re.MULTILINE)) < 3:
+        return "section 'Типичные ошибки' needs at least three list items"
+    if re.search(r"^#{1,6} ", sections["Источники"], re.MULTILINE):
+        return "nothing may follow the sources section"
+    return None
 
 
 def load_mapping(text: str, label: Path, errors: list[str]) -> dict:
@@ -45,6 +146,11 @@ def validate(root: Path) -> tuple[int, list[str]]:
     if not folders:
         return 0, ["No skill folders found"]
     seen: set[str] = set()
+    try:
+        expected_version = json.loads((root / "components.json").read_text(encoding="utf-8"))["library_version"]
+    except (OSError, ValueError, KeyError):
+        expected_version = None
+        errors.append(f"{root / 'components.json'}: library_version is needed for metadata.version")
     for folder in folders:
         entry = folder / "SKILL.md"
         if not entry.is_file():
@@ -73,10 +179,40 @@ def validate(root: Path) -> tuple[int, list[str]]:
             errors.append(f"{entry}: description must be a nonempty string of at most 1024 chars")
         elif "<" in description or ">" in description:
             errors.append(f"{entry}: description contains angle brackets")
+        if isinstance(description, str):
+            boundary = BOUNDARY.search(description)
+            targets = re.findall(r"→ (telegram-[a-z0-9-]+)", description[boundary.start():]) if boundary else []
+            if not targets:
+                errors.append(f"{entry}: description must say when not to use the skill: 'Не для ... → telegram-<skill>'")
+            for target in targets:
+                if target == folder.name or not (skills_root / target / "SKILL.md").is_file():
+                    errors.append(f"{entry}: boundary points to unknown or same skill: {target}")
+        license_value = data.get("license")
+        if not isinstance(license_value, str) or not license_value.strip():
+            errors.append(f"{entry}: license must name the skill license")
+        compatibility = data.get("compatibility")
+        if compatibility is not None and (not isinstance(compatibility, str) or not 1 <= len(compatibility) <= 500):
+            errors.append(f"{entry}: compatibility must be a string of 1-500 chars")
+        tools = data.get("allowed-tools")
+        if tools is not None and (not isinstance(tools, str) or not tools.strip()):
+            errors.append(f"{entry}: allowed-tools must be a space-separated string")
+        metadata = data.get("metadata")
+        if not isinstance(metadata, dict) or not all(
+                isinstance(key, str) and isinstance(value, str) for key, value in metadata.items()):
+            errors.append(f"{entry}: metadata must map string keys to string values")
+        elif expected_version is not None and metadata.get("version") != expected_version:
+            errors.append(f"{entry}: metadata.version must be \"{expected_version}\" (components.json library_version)")
         if not text[match.end():].strip():
             errors.append(f"{entry}: empty skill instructions")
         if "[TODO:" in text:
             errors.append(f"{entry}: unfinished scaffold")
+        sources_error = check_sources(text[match.end():])
+        if sources_error:
+            errors.append(f"{entry}: {sources_error}")
+        template_error = check_template(text[match.end():])
+        if template_error:
+            errors.append(f"{entry}: {template_error}")
+        errors.extend(check_skill_files(root, folder, {path.name for path in folders}, expected_version))
 
         metadata_path = folder / "agents" / "openai.yaml"
         if not metadata_path.is_file():

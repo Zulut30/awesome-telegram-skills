@@ -104,6 +104,9 @@ def verify_distributions(root: Path, wheel: Path, tarball: Path) -> dict:
     ts = json.loads((ts_path / 'package.json').read_text(encoding='utf-8'))
     version = python['version']
     _require(ts['version'] == version, 'Package versions differ')
+    init = (root / 'packages/python/src/telegram_patterns/__init__.py').read_text(encoding='utf-8')
+    declared = re.search(r"^__version__ = '([^']+)'$", init, re.M)
+    _require(declared is not None and declared.group(1) == version, 'telegram_patterns.__version__ differs from pyproject.toml')
     normalized = re.sub(r'[-_.]+', '_', python['name']).lower()
     prefix = f'{normalized}-{version}.dist-info/'
     py_files = _read_archive(wheel, wheel=True)
@@ -121,18 +124,22 @@ def verify_distributions(root: Path, wheel: Path, tarball: Path) -> dict:
     for name, value in expected.items():
         _require(py_files.get(name) == value, 'Wheel source/resource bytes mismatch')
     metadata_names = {'METADATA', 'WHEEL', 'RECORD', 'entry_points.txt', 'top_level.txt'}
-    allowed = set(expected) | {prefix + name for name in metadata_names}
+    allowed = set(expected) | {prefix + name for name in metadata_names} | {prefix + 'licenses/LICENSE'}
     _require(set(py_files) == allowed, 'Wheel includes missing or undeclared files')
     metadata = BytesParser().parsebytes(py_files[prefix + 'METADATA'])
     _require(metadata.get('Name') == python['name'] and metadata.get('Version') == version,
              'Wheel identity mismatch')
     _require(metadata.get('Requires-Python') == python['requires-python'], 'Wheel Python constraint mismatch')
+    _require(metadata.get('License-Expression') == python['license'] == 'MIT'
+             and py_files.get(prefix + 'licenses/LICENSE') == (root / 'packages/python/LICENSE').read_bytes(),
+             'Wheel license metadata or file mismatch')
     # Our current core has no runtime dependencies; every requirement belongs
-    # to the explicitly enabled SDK or IANA-data extras. No mandatory core deps.
+    # to the explicitly enabled SDK (aiogram or python-telegram-bot), IANA-data or Ed25519 extras. No mandatory core deps.
     _require(not python.get('dependencies'), 'Update the contract for a new core dependency')
     requirements = metadata.get_all('Requires-Dist', [])
-    expected_requirements = {r'aiogram<4,>=3\.31;\s*extra == "aiogram"', r'tzdata<2027,>=2026\.5;\s*extra == "calendar"'}
-    _require(len(requirements) == 2 and all(sum(re.fullmatch(pattern, value) is not None for value in requirements) == 1 for pattern in expected_requirements),
+    expected_requirements = {r'aiogram<4,>=3\.29;\s*extra == "aiogram"', r'tzdata>=2026\.5;\s*extra == "calendar"',
+                             r'cryptography<52,>=46;\s*extra == "signature"', r'python-telegram-bot<23,>=22\.8;\s*extra == "ptb"'}
+    _require(len(requirements) == 4 and all(sum(re.fullmatch(pattern, value) is not None for value in requirements) == 1 for pattern in expected_requirements),
              'Wheel extra dependency boundary changed')
     wheel_metadata = BytesParser().parsebytes(py_files[prefix + 'WHEEL'])
     _require(wheel_metadata.get('Root-Is-Purelib') == 'true' and wheel_metadata.get_all('Tag') == ['py3-none-any'],
@@ -147,7 +154,9 @@ def verify_distributions(root: Path, wheel: Path, tarball: Path) -> dict:
     ts_files = _read_archive(tarball, wheel=False)
     ts_expected = {'package/package.json': (ts_path / 'package.json').read_bytes(),
                    'package/README.md': (ts_path / 'README.md').read_bytes(),
-                   'package/src/styles.css': (ts_path / 'src/styles.css').read_bytes()}
+                   'package/LICENSE': (ts_path / 'LICENSE').read_bytes(),
+                   'package/dist/styles.css': (ts_path / 'src/styles.css').read_bytes(),
+                   'package/dist/styles.css.d.ts': (ts_path / 'dist/styles.css.d.ts').read_bytes()}
     sources = list((ts_path / 'src').rglob('*.ts'))
     for source in sources:
         module = source.relative_to(ts_path / 'src').with_suffix('').as_posix()
@@ -159,9 +168,18 @@ def verify_distributions(root: Path, wheel: Path, tarball: Path) -> dict:
     _require(all(ts_files[name] == value for name, value in ts_expected.items()), 'Tarball bytes differ from built package')
     manifest = json.loads(ts_files['package/package.json'])
     _require(manifest['type'] == 'module' and not manifest.get('dependencies'), 'TypeScript runtime dependency/ESM contract changed')
-    _require(manifest['exports'] == {'.': {'types': './dist/index.d.ts', 'import': './dist/index.js'}, './styles.css': './src/styles.css'},
+    frameworks = {f'./{name}': {'types': f'./dist/frameworks/{name}.d.ts', 'default': f'./dist/frameworks/{name}.js'}
+                  for name in ('react', 'vue', 'svelte')}
+    _require(manifest['exports'] == {'.': {'types': './dist/index.d.ts', 'default': './dist/index.js'}, **frameworks,
+                                     './styles.css': {'types': './dist/styles.css.d.ts', 'default': './dist/styles.css'},
+                                     './package.json': './package.json'} and manifest.get('types') == './dist/index.d.ts',
              'TypeScript public export map changed')
+    peers = manifest.get('peerDependencies', {})
+    _require(set(peers) <= {'react', 'vue'} and all(manifest.get('peerDependenciesMeta', {}).get(name, {}).get('optional')
+                                                    for name in peers),
+             'Framework peers must stay optional; the core entry point has no dependencies')
     _require('**/*.css' in manifest.get('sideEffects', []), 'CSS must remain a declared side effect')
+    _require(manifest.get('license') == 'MIT', 'TypeScript package license changed')
     return {'passed': True, 'version': version, 'network': False, 'extracts_files': False,
             'wheel': {'files': len(py_files), 'source_files_exact': len(expected), 'record_verified': True},
             'tarball': {'files': len(ts_files), 'modules_with_types': len(sources), 'css_exact': True},

@@ -1,6 +1,8 @@
 # Календарь и запись на время
 
-Локальная поставка **0.17.0**: SDK-free `CalendarMonth`, `TimeSlot`, `resolve_local_time`, `SlotSchedule`, `SlotBooking`, `SQLiteSlotStore` и optional aiogram `calendar_keyboard`, `time_slot_keyboard`. Full bot «дата → время → подтверждение» — рецепт `demo-calendar`: сначала `telegram-patterns run-recipe demo-calendar`, затем явный `--offline`. Пакеты предоставляются wheel/tarball; публикация в реестрах не предполагается.
+Доступно с 0.17.0, проверено на 0.24.0. SDK-free `CalendarMonth`, `TimeSlot`, `resolve_local_time`, `SlotSchedule`, `SlotBooking`, `SQLiteSlotStore` и optional aiogram `calendar_keyboard`, `time_slot_keyboard`. Full bot «дата → время → подтверждение» — рецепт `demo-calendar`: сначала `telegram-patterns run-recipe demo-calendar`, затем явный `--offline`. Пакеты предоставляются wheel/tarball; публикация в реестрах не предполагается.
+
+Термины: **ACK** — ответ на нажатие кнопки через `answerCallbackQuery`: клиент убирает индикатор ожидания; это не сообщение об успехе операции; **CAS** — сравнение с заменой: запись сохраняется, только если версия не изменилась с момента чтения; квитанция (receipt) — сохраненная запись о выполненной операции; повтор возвращает ее вместо второго эффекта.
 
 ## Время и доступность
 
@@ -52,7 +54,7 @@ with TemporaryDirectory(prefix='calendar guide ') as temporary:
     assert booking is not None and booking.status == 'active'
 ```
 
-Короткие callback strings выше — fixture labels. В проекте связывайте действие с owner/bot/chat/thread/message/session/revision; дата не является полномочием. Full пример использует `SelectionMenu`/`selection_router(render=...)`, свежий server spec после ACK и отдельную бизнес-транзакцию. Чужой callback не загружает расписание; старое подтверждение не резервирует слот.
+Короткие callback strings выше — fixture labels. В проекте связывайте действие с владельцем, ботом, чатом, темой, сообщением, сессией и ревизией; дата не является полномочием. Full пример использует `SelectionMenu`/`selection_router(render=...)`, свежий server spec после ACK и отдельную бизнес-транзакцию. Чужой callback не загружает расписание; старое подтверждение не резервирует слот.
 
 ## UI и жизненный цикл
 
@@ -60,12 +62,12 @@ Default `calendar_keyboard` показывает доступные даты с 
 
 Optional synchronous `selection_router(render=...)` возвращает `(plain_text, InlineKeyboardMarkup)` после host hook. ACK/guards/revision сохраняются; invalid output не откатывает принятый intent. Renderer не заменяет business authorization. Hook/edit ошибка не разрешает новый operation ID или автоматический повтор записи.
 
-В примере `/book` сохраняет текущий выбор при explicit recovery и сверяет незавершенный intent тем же ID. После успеха `/book` показывает текущий booking status, `/book new` явно начинает новый выбор. Начальная отправка не повторяется автоматически; известное сообщение редактируется. Selection/session ephemeral, booking/receipt durable. Для восстановления интерфейса после process restart host сохраняет связь пользователя с booking/operation отдельно.
+В примере `/book` сохраняет текущий выбор при explicit recovery и сверяет незавершенный intent тем же ID. После успеха `/book` показывает текущий booking status, `/book new` явно начинает новый выбор. Начальная отправка не повторяется автоматически; известное сообщение редактируется. Выбор и сессия временные, бронирование и квитанция хранятся надежно. Для восстановления интерфейса после process restart host сохраняет связь пользователя с booking/operation отдельно.
 
 Из async handler используйте owned thread work и дождитесь завершения при cancellation/shutdown до освобождения lock/ресурсов. Отмена ожидания не доказывает отсутствие commit. Примерный `database_call` join-ит работу перед возвратом cancellation; explicit запрос сверяет тот же intent. SQLite схема не является универсальным storage-контрактом для других БД и не требует миграции существующего проекта.
 
 ## Проверка и источники
 
-Core tests: Warsaw gap/fold, Lord Howe half-hour transition, skipped Apia date, leap month, UTC precision, current ACL перед replay, CAS и гонки отдельных spawned процессов за один slot, overlapping aliases и тот же intent. SDK fixture: date/time/back, unavailable date, foreign/stale, schedule change, restart receipt и lost edit после business commit. Native disabled serializer и fallback проверяются отдельно. Installed artifacts доказывают public imports/composition; live Telegram rendering, физические устройства и durable меню остаются неподтвержденными.
+Тесты ядра: пропущенный и повторенный час при переводе часов в Варшаве, переход на полчаса на острове Лорд-Хау, пропущенная дата в Апиа, високосный месяц, точность UTC, проверка текущих прав перед повтором, CAS и гонки отдельных процессов за один слот, пересекающиеся псевдонимы и одно и то же намерение. Тесты с SDK: выбор даты, времени и возврат, недоступная дата, чужой и устаревший callback, изменение расписания, квитанция после рестарта и потерянное редактирование после фиксации бронирования. Отключенные кнопки клиента и запасной вариант проверяются отдельно. Установленные артефакты доказывают публичные импорты и сборку компонентов; отображение в живом Telegram, физические устройства и надежное хранение меню остаются неподтвержденными.
 
 Проверено 5 октября 2026 года: [Python 3.13 zoneinfo](https://docs.python.org/3.13/library/zoneinfo.html), [datetime](https://docs.python.org/3/library/datetime.html), [SQLite transactions](https://www.sqlite.org/lang_transaction.html), [tzdata](https://pypi.org/project/tzdata/), [InlineKeyboardButton](https://core.telegram.org/bots/api#inlinekeyboardbutton), [aiogram 3.31.0 DisabledButton](https://docs.aiogram.dev/en/v3.31.0/api/types/disabled_button.html). Scope — указанные time/transaction/markup контракты; остальные даты каталога Telegram не обновлялись.

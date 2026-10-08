@@ -1,5 +1,5 @@
 [build-system]
-requires = ["setuptools>=75,<83"]
+requires = ["setuptools>=77,<83"]
 build-backend = "setuptools.build_meta"
 
 [project]
@@ -8,17 +8,50 @@ version = "0.24.0"
 description = "Reusable Telegram bot and backend components"
 readme = "README.md"
 requires-python = ">=3.11"
+license = "MIT"
+license-files = ["LICENSE"]
 dependencies = []
 
 [project.scripts]
 telegram-patterns = "telegram_patterns.cli:main"
 
 [project.optional-dependencies]
-aiogram = ["aiogram>=3.31,<4"]
-calendar = ["tzdata>=2026.5,<2027"]
+aiogram = ["aiogram>=3.29,<4"]
+calendar = ["tzdata>=2026.5"]
+signature = ["cryptography>=46,<52"]
+ptb = ["python-telegram-bot>=22.8,<23"]
 
 [tool.setuptools.packages.find]
 where = ["src"]
 
 [tool.setuptools.package-data]
 telegram_patterns = ["py.typed", "resources/*.json", "resources/offline/*.txt", "resources/starter/*.txt", "resources/starter/mini-app/*.txt", "resources/starter/mini-app/src/*.txt", "resources/starter/.*.txt", "resources/starter/components/*.txt", "resources/starter/components/mini-app/src/*.txt"]
+
+[tool.mypy]
+# The library is checked with --strict; CI and verify_pattern_packages.py pass the same flag.
+strict = true
+follow_imports = "silent"
+
+[tool.ruff]
+line-length = 120
+target-version = "py311"
+# README examples are documentation, formatted for reading; ruff checks the package and its tests.
+extend-exclude = ["*.md"]
+
+[tool.ruff.format]
+# The library mixes single and double quotes; the formatter keeps each literal as written.
+quote-style = "preserve"
+
+[tool.ruff.lint]
+select = ["E", "F", "W", "I"]
+
+[tool.coverage.run]
+# CI measures the unit scope (TELEGRAM_PATTERNS_TESTS=unit); scripts/check_coverage.py enforces the thresholds.
+branch = true
+source = ["telegram_patterns"]
+
+[tool.coverage.report]
+exclude_also = [
+    "if TYPE_CHECKING:",
+    "if __name__ == .__main__.:",
+]

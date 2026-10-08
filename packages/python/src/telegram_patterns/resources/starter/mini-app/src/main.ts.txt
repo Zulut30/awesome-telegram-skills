@@ -1,23 +1,49 @@
-import {createAppShell,createTextField,TelegramBridge,type TelegramWebApp,type BridgeSnapshot} from '@awesome-telegram/patterns';
+import '@awesome-telegram/patterns/styles.css';
+import {ApiClient,ApiError,createAppShell,createTextField,TelegramBridge,type TelegramWebApp,type BridgeSnapshot} from '@awesome-telegram/patterns';
 __COMPONENT_IMPORTS__
-declare global {interface Window {Telegram?: {WebApp?: TelegramWebApp}}}
+// initData — подписанная строка запуска; ее проверяет только backend (mini_app_server.py).
+declare global {interface Window {Telegram?: {WebApp?: TelegramWebApp & {readonly initData?: string}}}}
 const host = document.querySelector<HTMLElement>('#app');
 if (!host) throw new Error('App host missing');
 const shell = createAppShell(host, 'Мой Mini App');
 const note = document.createElement('p');
-note.textContent = 'Пример интерфейса. Данные не отправляются; серверная авторизация ещё не подключена.';
+note.textContent = 'Пример интерфейса. Форма проверяется локально и ничего не отправляет.';
 shell.content.append(note);
+const identity = document.createElement('p');identity.dataset.identity='';identity.setAttribute('aria-live','polite');
+shell.content.append(identity);
 const field = createTextField(document, 'Ваше имя', 'Введите имя для примера');
 shell.content.append(field.root);
 const button = document.createElement('button');button.type='button';button.textContent='Проверить форму';
 shell.actions.append(button);
 const result = document.createElement('p');result.setAttribute('role','status');shell.summary.append(result);
-button.addEventListener('click',()=>{
+const checkForm=()=>{
   const valid = field.input.value.trim().length > 0;
   field.setError(valid ? null : 'Введите имя.');
   if (!valid) field.input.focus();
   result.textContent=valid ? 'Поле заполнено. Отправка на сервер не подключена.' : '';
-});
+};
+button.addEventListener('click',checkForm);
+// Личность пользователя подтверждает сервер: GET /api/me с сырой initData в заголовке X-Init-Data.
+const identityRequest=new AbortController();
+const initData=window.Telegram?.WebApp?.initData ?? '';
+function decodeIdentity(value: unknown): {user_id: number; first_name: string} {
+  const user=value as {user_id?: unknown; first_name?: unknown} | null;
+  if (typeof user?.user_id!=='number' || typeof user.first_name!=='string') throw new Error('Unexpected /api/me response');
+  return {user_id:user.user_id,first_name:user.first_name};
+}
+if (!initData) identity.textContent='Откройте Mini App из Telegram: без initData backend не подтверждает пользователя.';
+else {
+  identity.textContent='Backend проверяет initData…';
+  const api=new ApiClient({baseUrl:location.origin,headers:()=>({'X-Init-Data':initData})});
+  api.request('/api/me',decodeIdentity,{signal:identityRequest.signal}).then(user=>{
+    identity.textContent=`Backend проверил initData: ${user.first_name} (id ${user.user_id}).`;
+  },(error: unknown)=>{
+    if (identityRequest.signal.aborted) return;
+    identity.textContent=error instanceof ApiError && error.status===401
+      ? 'Backend отклонил initData: откройте Mini App заново из Telegram.'
+      : 'Backend недоступен: запустите python app.py и проверьте MINI_APP_API_PORT.';
+  });
+}
 const bridge=new TelegramBridge(window.Telegram?.WebApp,window);
 const systemTheme=window.matchMedia('(prefers-color-scheme: dark)');
 function applyTheme(snapshot: BridgeSnapshot) {
@@ -31,5 +57,11 @@ const componentDisposers: Array<()=>void> = [__COMPONENT_MOUNTS__];
 // pagehide/pageshow handled by bridge; SPA hosts call this before unmount.
 export function disposeApp() {
   for(const dispose of componentDisposers) dispose();
+  identityRequest.abort();button.removeEventListener('click',checkForm);
   unsubscribe();systemTheme.removeEventListener('change',systemChanged);bridge.dispose();shell.dispose();
+}
+// Горячая перезагрузка: старая копия модуля снимает свой UI и подписки, новая монтируется заново.
+if (import.meta.hot) {
+  import.meta.hot.accept();
+  import.meta.hot.dispose(disposeApp);
 }

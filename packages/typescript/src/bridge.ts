@@ -1,4 +1,5 @@
 import {ValidationFailure} from './errors.js';
+import {isInsideTelegram} from './launch.js';
 export interface Insets { readonly top: number; readonly right: number; readonly bottom: number; readonly left: number }
 export interface TelegramWebApp {
   readonly platform?: string;
@@ -47,7 +48,7 @@ export class TelegramBridge {
     }
     const height = this.app?.viewportStableHeight;
     return Object.freeze({
-      insideTelegram: this.app !== undefined && this.app.platform !== 'unknown',
+      insideTelegram: isInsideTelegram(this.app),
       colorScheme: this.app?.colorScheme === 'dark' ? 'dark' : 'light',
       theme: Object.freeze(theme),
       stableHeight: height !== undefined && Number.isFinite(height) && height > 0 ? height : undefined,
@@ -98,8 +99,14 @@ export class TelegramBridge {
     for (const event of EVENTS) this.app.offEvent(event, this.changed);
     this.attached = false;
   }
+  /** Every listener sees the snapshot even if an earlier one throws; the failures are rethrown afterwards. */
   private emit(): void {
     const value = this.snapshot();
-    for (const listener of this.listeners) listener(value);
+    const failures: unknown[] = [];
+    for (const listener of this.listeners) {
+      try { listener(value); } catch (error) { failures.push(error); }
+    }
+    if (failures.length === 1) throw failures[0];
+    if (failures.length > 1) throw new AggregateError(failures, `${failures.length} bridge listeners failed`);
   }
 }

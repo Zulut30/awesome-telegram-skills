@@ -1,0 +1,64 @@
+name: Проект для витрины
+description: Добавить работающий бот или Mini App, который использует скиллы или библиотеку, на страницу «Витрина проектов».
+title: "[Showcase]: "
+labels: [showcase]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Мейнтейнер откроет ссылку в Telegram и проверит, что проект работает для любого пользователя. После проверки проект попадет в `catalog/showcase.json` и на страницу [Витрина проектов](https://zulut30.github.io/awesome-telegram-skills/docs/showcase/). Не указывайте токены, телефоны и личные данные.
+  - type: input
+    id: name
+    attributes:
+      label: Название проекта
+      placeholder: Бот записи в барбершоп
+    validations:
+      required: true
+  - type: dropdown
+    id: kind
+    attributes:
+      label: Тип
+      options:
+        - bot
+        - mini-app
+        - bot+mini-app
+    validations:
+      required: true
+  - type: input
+    id: url
+    attributes:
+      label: Ссылка на бота или Mini App
+      description: https://t.me/<имя_бота>, ссылка на Mini App через t.me или другой https-адрес.
+      placeholder: https://t.me/example_bot
+    validations:
+      required: true
+  - type: input
+    id: source
+    attributes:
+      label: Исходный код (необязательно)
+      placeholder: https://github.com/you/project
+  - type: textarea
+    id: uses
+    attributes:
+      label: Какие скиллы и компоненты используются
+      description: Имена скиллов из .agents/skills (например, telegram-bot-builder) и id компонентов из components.json.
+    validations:
+      required: true
+  - type: textarea
+    id: description
+    attributes:
+      label: Что делает проект
+      description: Одно-два предложения, до 200 символов.
+    validations:
+      required: true
+  - type: checkboxes
+    id: consent
+    attributes:
+      label: Подтверждения
+      options:
+        - label: Проект работает в основном окружении Telegram без приглашения.
+          required: true
+        - label: Проект использует скиллы или библиотеку этого репозитория.
+          required: true
+        - label: Я автор или владелец проекта и согласен на публикацию названия, ссылки и описания.
+          required: true

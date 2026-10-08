@@ -5,7 +5,7 @@
 Календарь и UTC/DST: `CalendarMonth`, `TimeSlot`, `resolve_local_time`; current ACL и atomic booking/replay: `SlotSchedule`, `SlotBooking`, `SQLiteSlotStore`; optional aiogram: `calendar_keyboard`, `time_slot_keyboard`. IANA data на Windows — extra `calendar` (проверено tzdata 2026.5). [Контракт и пример](../../docs/calendar-slots.md). UI snapshot не резервирует ресурс; receipt отличается от current booking status.
 
 
-`plan_recipe` / `run_recipe_offline` и CLI `run-recipe` показывают требования всех 310 cookbook recipes и запускают 210 известных Python fixtures без токена. Core SQLite работает без SDK; 99 native references отклоняются без host/аргументов. [План, effects и ограничения](../../docs/recipe-execution.md). Требуется установленный пакет; runner не выполняет найденный recipe.code.
+`plan_recipe` / `run_recipe_offline` и CLI `run-recipe` показывают требования всех 340 cookbook recipes и запускают 210 известных Python fixtures без токена. Core SQLite работает без SDK; 99 native references отклоняются без host/аргументов. [План, effects и ограничения](../../docs/recipe-execution.md). Требуется установленный пакет; runner не выполняет найденный recipe.code.
 
 RecipeCatalog.search добавляет optional task/context/sdk/sdk_version/api_version. Recipe хранит immutable metadata и repository source/check links; legacy schema 1 defaults сохранены. Поиск SDK-free, без исполнения: [навигация рецептов](../../docs/gallery-navigation.md).
 
@@ -25,7 +25,7 @@ Root экспортирует `Maturity`, `VerificationLevel`; aiogram — `Butt
 
 [Медиа](../../docs/media.md): `MediaFile`/`MediaItem`, `media_request`, `media_album`, `media_edit`, `download_media` и typed результаты. Byte upload, same-bot file_id, literal caption/entities, совместимый альбом и bounded explicit download через текущий Bot. Host проверяет codec/content, ACL и delivery; downloader не записывает файлы и не закрывает host session.
 
-[Галерея 310 рецептов](../../gallery/index.html) работает без токенов и сети. В wheel входят `RecipeCatalog`, шаблоны новых проектов и CLI `telegram-patterns recipes/init/doctor`. [Использование и границы](../../docs/developer-tools-review.md).
+[Галерея 340 рецептов](../../gallery/index.html) работает без токенов и сети. В wheel входят `RecipeCatalog`, шаблоны новых проектов и CLI `telegram-patterns recipes/init/doctor`. Версию установленного пакета показывают `telegram-patterns --version` и `telegram_patterns.__version__`; обе совпадают с метаданными wheel. [Использование и границы](../../docs/internal/developer-tools-review.md).
 
 Новое: [клавиатуры и ввод](../../recipes/bot-api/keyboards.md), [отслеживание Update](../../recipes/bot-api/events.md), [185 Bot API request-рецептов](../../recipes/bot-api/README.md). [Бот-пример](../../examples/python/keyboards_bot.py) показывает строки/цвета, обработку/редактирование и input UI; [offline-сценарий](../../examples/python/offline_keyboards.py) проверяет ту же композицию. Native SDK выполняет транспорт; request-only рецепты содержат искусственные данные, не отправляйте их без замены.
 
@@ -36,6 +36,12 @@ python -m pip install ./packages/python
 python -m pip install "./packages/python[aiogram]"
 ```
 
+Модули ядра (`telegram_patterns`, `markup`, `selection`, `calendar_core`, `slots`, `message_text` и другие) не импортируют ни одного SDK — это проверяет `tests/test_module_layout.py`. Код, зависящий от aiogram, лежит в подпакете `telegram_patterns._aiogram`; импортируйте его через публичный `telegram_patterns.aiogram`. Прежние пути (`telegram_patterns.keyboards`, `telegram_patterns.calendar` и т. п.) остаются псевдонимами тех же модулей.
+
+Если бот уже написан на python-telegram-bot, вместо aiogram установите extra `ptb` (`python -m pip install "./packages/python[ptb]"`, python-telegram-bot 22.8+): ядро и `telegram_patterns.ptb` — клавиатуры из JSON ядра (`inline_button`, `inline_markup`, `paginated_markup`, `selection_markup` → `ptb_markup`), литеральный текст (`ptb_text`) и офлайн-`Application` со `StubRequest`. 20 рецептов имеют вариант `ptb-*`; новые поля и методы Bot API идут через `api_kwargs` и `do_api_request`. Подробности — [python-telegram-bot](../../docs/ptb-adapter.md).
+
+Для проверки подписи Ed25519 без токена бота (`validate_init_data_signature`) добавьте extra `signature`: `python -m pip install "./packages/python[signature]"` — он ставит `cryptography`.
+
 Первый вариант достаточен для `BotSettings`, `validate_init_data`, `SQLiteOnce`, `RecipeCatalog` и `create_starter`. Второй нужен для импорта `telegram_patterns.aiogram` и `telegram_patterns.testing`, запуска бота и успешной SDK-проверки doctor. Сохраняйте существующий SDK, если бот уже построен на другой библиотеке.
 
 Doctor 0.11.0 проверяет установленный adapter в фиксированном Python `-I -B` probe вне каталога проекта. Он отклоняет подмену aiogram import, сохраняет конфигурацию и показывает reason/remediation с отдельными argv рекомендациями. HTTP-проверки и автоматического исполнения исправлений нет.
@@ -44,22 +50,23 @@ Doctor 0.11.0 проверяет установленный adapter в фикс�
 | --- | --- | --- |
 | Поиск рецепта | `RecipeCatalog().search(query,category=None,language=None,verification=None,limit=20)`; `.get(id)`; `.recipes` | Bundled snapshot, все слова запроса, SDK/mock/reference/live scope; без исполнения кода и SDK dependency |
 | Новый проект | `create_starter(target,library=local_path,template='bot',typescript=None,dry_run=False)` | Новый каталог, локальные артефакты; StarterPlan и список файлов; без install/network/overwrite |
-| Диагностика | `telegram-patterns doctor [project] [--require-token]`; `telegram_patterns.cli.doctor(path)` | Read-only проверки с reason/remediation и argv рекомендациями; target/manifest failures контролируются, .env/token contents не читаются/не отражаются; предлагаемые команды не исполняются |
+| Диагностика | `telegram-patterns doctor [project] [--require-token] [--webhook [--expect polling\|webhook]]`; `telegram_patterns.cli.doctor(path, webhook=False)` | Read-only проверки с reason/remediation и argv рекомендациями; target/manifest failures контролируются; без `--webhook` .env и сеть не используются, с ним — один getWebhookInfo; token не отражается; предлагаемые команды не исполняются |
 | Native клавиатуры | `inline_keyboard(rows,chat_type='private',business=False,invoice=False,force_reply=False,emoji_entitlement_verified=False)`; `reply_keyboard(rows,...,placeholder=None)` | SDK button models / reply strings, копии строк; caller сообщает фактический context и entitlement. Не все права/контекстные ограничения Telegram проверяются локально |
 | Ввод | `input_prompt(placeholder=None,selective=False)`; `remove_keyboard(selective=False)` | ForceReply / ReplyKeyboardRemove без HTTP; host связывает actor/chat/prompt и проверяет ответ |
 | Все SDK методы | `method_catalog()`; `build_request(name,parameters=None)` | MethodSpec / native TelegramMethod; неизвестные top-level fields отклоняются, nested rules — SDK. HTTP только при `await existing_bot(request)` |
 | События | `event_router(handlers)`; `UpdateObserver(record,include_ids=False)`; `update_kinds(update)` | Native Router и best-effort metadata received/handled/unhandled/failed/cancelled. Middleware не создает подписок или durable audit |
-| Проверка запуска | `validate_init_data(raw, bot_token, *, max_age_seconds, now)` | Сырой initData, HMAC и freshness; возвращает подписанный user_id. Не OIDC/Ed25519 и не объектные права |
-| Однократная операция | `SQLiteOnce(path).initialize(); run(scope, key, payload, apply)` | Effect и replay result в одной SQLite transaction. Scope/права проверяет сервис |
+| Проверка запуска | `validate_init_data(raw, bot_token, *, max_age_seconds, now)` | Сырой initData, HMAC и freshness; возвращает подписанные user_id, `start_param`, `chat_type`, `chat_instance`, `query_id`, `chat`, `receiver` (глубоко read-only, копия — `.as_dict()`). Не OIDC и не объектные права |
+| Проверка без токена бота | `validate_init_data_signature(raw, bot_id, *, environment='production', public_key=None, now)`; `TELEGRAM_PUBLIC_KEYS` | Подпись Ed25519 поля `signature` ключом Telegram для третьей стороны, которой известен только bot_id; тот же результат и та же проверка свежести. Нужен extra `signature`, иначе `UnsupportedCapability` |
+| Однократная операция | `SQLiteOnce(path).initialize(); run(scope, key, payload, apply)` | Effect и replay result в одной SQLite transaction. Payload — только JSON-значения со строковыми ключами (tuple и `{1: ...}` отклоняются). Scope/права проверяет сервис |
 | Команда старта | `start_router(text, keyboard=None)` | Небольшой /start с plain text; добавить Router в текущий Dispatcher |
 | Кнопка | `action_keyboard(text, key, style=..., ...)` | Opaque callback key, style, проверенный entitlement либо emoji fallback |
 | Callback | `callback_router(execute, notify)` | ACK до прикладной работы. `execute` проверяет owner/version/replay; `notify` выбирает безопасный канал |
 | Stars invoice | `stars_invoice(title, description, payload, stars, monthly_subscription=False)` | Готовый `CreateInvoiceLink`, без сетевого запроса и выдачи доступа |
-| Настройки | `BotSettings.from_env(token_var='BOT_TOKEN')` из core | Формат token/непустое окружение проверяются; token исключен из repr, остается доступным явно |
+| Настройки | `BotSettings.from_env(token_var='BOT_TOKEN', env_file='.env')` из core | Формат token/непустое окружение проверяются; token исключен из repr, остается доступным явно |
 | Меню кнопок | `ActionButton(text,key,style=None,custom_emoji_id=None)` + `action_menu(buttons,columns=2,prefix='act:')` | Уникальные keys, rows и emoji fallback; до 100 кнопок, 1..8 колонок — ограничения компонента |
 | Пагинация | `paginated_menu(buttons,page=0,page_size=6,...)`; `page_number(data,prefix='page:')` | MenuPage с markup/page/page_count/total_items; разные префиксы действий и навигации |
 | Статические команды | `CommandReply(command,description,text,keyboard=None)` + `command_router(specs)` / `command_menu(specs)` | Один список для Router и BotCommand DTO; plain text, SDK фильтрует чужой mention |
-| Polling | `await run_bot(dispatcher,settings,...)` | Текущий Dispatcher, workflow data, закрытие Bot session; команды устанавливаются только явно |
+| Polling | `await run_bot(dispatcher,settings,...)` | Сначала getMe с понятной ошибкой для неверного токена или недоступного API; текущий Dispatcher, workflow data, закрытие Bot session; команды устанавливаются только явно |
 | Локальные тесты | `StubSession().respond(Method,response)` из `telegram_patterns.testing` | Реальный SDK/Dispatcher, список calls, проверка возвращаемого типа; нет HTTP fallback |
 | Текстовая форма | `TextField`, `InvalidField`, `FormSubmission`, `text_form_router(fields,on_submit,name='application',command='apply')` | Личный чат, проверка/возврат/отмена/подтверждение; host FSM isolation, стабильный ID для сервиса |
 
@@ -152,7 +159,7 @@ FSM и event isolation обязательны; обычный Dispatcher с Disa
 uv run --with-editable "./packages/python[aiogram]" python examples/python/offline_form.py
 ```
 
-Для тестового бота с BOT_TOKEN: `uv run --with-editable "./packages/python[aiogram]" python examples/python/form_bot.py ./applications.sqlite`. Пример явно устанавливает default command menu тестового бота. Полный [контракт и проверка](../../docs/form-tools-review.md).
+Для тестового бота с BOT_TOKEN: `uv run --with-editable "./packages/python[aiogram]" python examples/python/form_bot.py ./applications.sqlite`. Пример явно устанавливает default command menu тестового бота. Полный [контракт и проверка](../../docs/internal/form-tools-review.md).
 
 Для нового form API 3 октября 2026 сверены [aiogram FSM](https://docs.aiogram.dev/en/latest/dispatcher/finite_state_machine/index.html), [storage](https://docs.aiogram.dev/en/latest/dispatcher/finite_state_machine/storages.html) и [Dispatcher/FSM isolation](https://docs.aiogram.dev/en/latest/_modules/aiogram/dispatcher/dispatcher.html), а также установленный код aiogram 3.31.0. Эта сверка относится к форме и не обновляет остальные исторические источники.
 
@@ -163,6 +170,13 @@ from telegram_patterns import validate_init_data
 
 launch = validate_init_data(raw_init_data, server_bot_token, max_age_seconds=300)
 actor_id = launch.user_id  # Затем создать/проверить сессию и права конкретного объекта.
+```
+
+```python
+from telegram_patterns import validate_init_data_signature
+
+# Третья сторона без токена бота: нужен extra signature и bot_id владельца Mini App.
+launch = validate_init_data_signature(raw_init_data, bot_id, environment="production", max_age_seconds=300)
 ```
 
 ```python
@@ -206,6 +220,12 @@ Aiogram протестирован на 3.31.0. Кнопочный entitlement �
 ## Безопасные сообщения
 
 `MessageBuilder/FormattedText/TextEntity` и `EntityKind/TextPayload` доступны из SDK-free `telegram_patterns`; там же `utf16_length`, `escape_html`, `escape_markdown_v2`, `split_formatted`. [Контракты и пример](../../docs/message-text.md): literal insertions, explicit parse_mode=None, validated ranges/nesting, lossless split и default regular emoji fallback. Delivery, link trust, sticker metadata и eligibility проверяет проект; full Unicode UAX29 и live rendering не заявлены.
+
+Rich-сообщения (Bot API 10.1+): `RichMessageBuilder` из того же SDK-free ядра собирает блоки для `sendRichMessage` — заголовки, абзацы, списки и чек-листы, таблицы (`compact=True` дает `is_compact`), ряды кнопок `RichButton`, обычные и сворачиваемые цитаты, `details`, документы по `file_id` или URL, код, разделитель и подвал; `RichSpan` — жирный, курсив, код и HTTP(S)-ссылка. `build()` проверяет лимиты Telegram (500 блоков, 16 уровней, 50 медиа, 20 столбцов, 32768 символов, 1–8 кнопок в ряду) и возвращает `RichMessage`: `as_input()` для поля `rich_message`, `fallback()` и `fallback_keyboard()` для обычного `sendMessage`. Рецепт: `telegram-patterns run-recipe demo-rich-message --offline`; подробности — [rich-сообщения](../../docs/rich-messages.md).
+
+Эфемерные сообщения (Bot API 10.2+): `ephemeral_parameters` решает, можно ли ответить в группе сообщением, которое видят только нажавший и бот, и возвращает `ephemeral_message_parameters` (с `callback_query_id` или `reply_parameters.ephemeral_message_id` свежего действия) либо `EphemeralNotAllowed` с причиной: не группа, получатель — бот, прошло больше 15 секунд у бота без прав администратора, замена сообщения без свежего нажатия. `EphemeralTrigger.callback()` / `.reply_to()` описывают действие пользователя по часам хоста, `EphemeralMessageRef.target()` — адрес для `editEphemeralMessage…` и `deleteEphemeralMessage`. Рецепт: `telegram-patterns run-recipe demo-ephemeral --offline`; подробности — [эфемерные сообщения](../../docs/ephemeral-messages.md).
+
+Подписки Telegram Stars: `StarsSubscription` из SDK-free ядра хранит списания одной подписки (пользователь + `invoice_payload`). `record_payment` принимает поля `SuccessfulPayment` и дает период до `subscription_expiration_date`, повтор charge ничего не продлевает; `record_update` применяет `BotSubscriptionUpdated` (canceled, active, failed) и меняет только ожидание продления; `record_refund` снимает период своего charge. `has_access(now)`, `access_until(now)` и `renews(now)` отвечают на защищенном действии, `as_dict()`/`from_dict()` — JSON для хранилища проекта; чужое или противоречивое событие — `SubscriptionEventRejected`. Рецепт: `telegram-patterns run-recipe demo-stars-subscription --offline`; подробности — [подписки Stars](../../docs/stars-subscriptions.md).
 
 [Профили](../../docs/profiles.md): nullable факты, фотографии и локализованные own-bot изменения с текущими правами; без MTProto/Business login.
 

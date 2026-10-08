@@ -25,7 +25,7 @@ def main() -> int:
     for name in ('BOT_TOKEN','PYTHONPATH','PYTHONHOME'): environment.pop(name,None)
     environment['PYTHONUTF8']='1'
     def cli(*arguments,expected=0):
-        done=subprocess.run([sys.executable,'-m','telegram_patterns',*map(str,arguments)],cwd=args.output,env=environment,
+        done=subprocess.run([sys.executable,'-m','telegram_patterns',*map(str,arguments),'--json'],cwd=args.output,env=environment,
                             capture_output=True,text=True,encoding='utf-8',timeout=60)
         if done.returncode!=expected: raise RuntimeError('Installed selection CLI returned an unexpected status')
         return json.loads(done.stderr if expected else done.stdout)

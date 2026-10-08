@@ -9762,6 +9762,7 @@
     "status": "skills; provider implementations require own API/testing",
     "skills": [
       "telegram-cryptopay",
+      "telegram-payment-provider",
       "telegram-platega",
       "telegram-yookassa"
     ]

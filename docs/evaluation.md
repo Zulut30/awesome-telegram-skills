@@ -1,14 +1,16 @@
 # Проверка качества навыков
 
-Для пункта 030: [авторский разбор специальных операций](platform-skill-check.md) проверяет узкий выбор компонентов и сохранение текущего Dispatcher/storage, отдельно от independent human/AI acceptance. Сценарии охватывают темы/реакции, legacy/query join, Business rights/owner/revocation, story upload/repost, financial intent/budget, managed consent/secret и границы native events. Фактические SDK/mock/copied-guide пробы фиксируются в отчете пункта 030.
+Для пункта 030: [авторский разбор специальных операций](internal/platform-skill-check.md) проверяет узкий выбор компонентов и сохранение текущего Dispatcher/storage, отдельно от independent human/AI acceptance. Сценарии охватывают темы/реакции, legacy/query join, Business rights/owner/revocation, story upload/repost, financial intent/budget, managed consent/secret и границы native events. Фактические SDK/mock/copied-guide пробы фиксируются в отчете пункта 030.
 
 Для пункта 010 дополнительно: «прочитай историю моих групп» → отдельная явно поставленная user-client задача; «наблюдай typing/read/copy» → обычный Update не выдумывается; «direct-link Mini App отправляет результат» → backend/auth и launch-specific channel вместо универсального sendData. Business read-mark отличается от history, revoked connection не разрешается одним can_reply; guest/bot-to-bot требуют специальных настроек и защиты от циклов. SDK/native probes подтверждают модели и presence boundary; независимая оценка решения агента и live permission acceptance считаются отдельно.
 
-Для cookbook 0.4.0 дополнительно: «сделай две/три кнопки в ряд», «раскрась и добавь custom emoji», «запроси контакт / выбери users/chat», «измени поле ввода», «отслеживай реакции» и «подключи native location на старом клиенте». Агент сохраняет Dispatcher/SDK, выбирает нужный recipe, проверяет context/entitlement, ACK перед edit/effect, reply_to binding и request_id; не объявляет shared IDs правами, typing/read receipts/copy clicks доступными бот API. Unknown top-level parameters отклоняются; generated fixtures не отправляются. Native denied/unavailable/cancel/late callback не становятся accepted. Пробы через installed wheel/tarball, copied skill references и synthetic Dispatcher исполняются отдельно от независимой оценки решений агента и live/device испытаний; отчет — [telegram-cookbook-review.md](telegram-cookbook-review.md).
+Для cookbook 0.4.0 дополнительно: «сделай две/три кнопки в ряд», «раскрась и добавь custom emoji», «запроси контакт / выбери users/chat», «измени поле ввода», «отслеживай реакции» и «подключи native location на старом клиенте». Агент сохраняет Dispatcher/SDK, выбирает нужный recipe, проверяет context/entitlement, ACK перед edit/effect, reply_to binding и request_id; не объявляет shared IDs правами, typing/read receipts/copy clicks доступными бот API. Unknown top-level parameters отклоняются; generated fixtures не отправляются. Native denied/unavailable/cancel/late callback не становятся accepted. Пробы через installed wheel/tarball, copied skill references и synthetic Dispatcher исполняются отдельно от независимой оценки решений агента и live/device испытаний; отчет — [telegram-cookbook-review.md](internal/telegram-cookbook-review.md).
 
-Структурная проверка файлов не измеряет поведение агента. Следующие сценарии задают полную матрицу испытаний при развитии набора. Выполненная выборка с независимыми приложениями, routing и Python probe описана в [quality-review.md](quality-review.md) и [skill-extension-review.md](skill-extension-review.md). Повторный аудит содержания прежних 33 навыков описан в [skill-quality-audit.md](skill-quality-audit.md), расширение до 40 — в [skill-product-extension-review.md](skill-product-extension-review.md). Каждый отчет отдельно обозначает фактические пробы и их ограничения; остальные сценарии пока являются планом.
+Структурная проверка файлов не измеряет поведение агента. Следующие сценарии задают полную матрицу испытаний при развитии набора. Выполненная выборка с независимыми приложениями, routing и Python probe описана в [quality-review.md](internal/quality-review.md) и [skill-extension-review.md](internal/skill-extension-review.md). Повторный аудит содержания прежних 33 навыков описан в [skill-quality-audit.md](internal/skill-quality-audit.md), расширение до 40 — в [skill-product-extension-review.md](internal/skill-product-extension-review.md). Каждый отчет отдельно обозначает фактические пробы и их ограничения; остальные сценарии пока являются планом.
 
-Последующий [полный проход 40 навыков](skill-full-check.md) содержит по одному конкретному сценарию на каждый навык и 56 слепых запросов выбора по descriptions. Он расширяет выполненную выборку, но не превращает все строки ниже в пройденные live-интеграции.
+Последующий [полный проход 40 навыков](internal/skill-full-check.md) содержит по одному конкретному сценарию на каждый навык и 56 слепых запросов выбора по descriptions. Он расширяет выполненную выборку, но не превращает все строки ниже в пройденные live-интеграции.
+
+Пользу каждого навыка измеряет [сравнение без навыка и с ним](../evaluations/README.md#польза-скиллов-без-скилла-и-со-скиллом): по три задачи с критериями на каждый из 42 навыков, решения двух моделей и слепой судья. Таблица прироста там же; она показывает следование проверяемым правилам, а не live-интеграцию.
 
 Для каждого испытания дай агенту запрос, нужный навык и минимальные исходные файлы. Не подсказывай ожидаемое решение. Используй временный проект, fake integrations или отдельный тестовый бот согласно сценарию. Сохраняй запрос, результат, дифф и фактические проверки; исправляй навык по наблюдаемой ошибке.
 
@@ -47,6 +49,7 @@
 | «Добавь Python API заказа, БД и миграцию» | python-backend | Серверная личность и права, транзакция, конкурентность, replay и реальный storage в проверке |
 | «Добавь native геолокацию с ручным выбором» | mini-app-native-capabilities | Version gate, init, отказ/unsupported/late callback и полезный fallback |
 | «Добавь напоминание за сутки с отпиской» | notifications | Eligibility перед dispatch, durable job, 429, restart и честная политика unknown outcome |
+| «Подключи модель к боту: ответ печатается постепенно, его можно остановить» | ai-bot | Черновик sendMessageDraft и окончательный sendMessage; остановка сверяет draft_id и закрывает поток модели; бюджет и лимит до вызова модели; запросы не попадают в логи |
 | «Свяжи frontend, API и worker в безопасных логах» | observability | Корреляция при конкурентности, bounded labels, canaries отсутствуют в финальном output |
 | «Добавь русский/английский с датами и ценами» | localization | Locale, plural/fallback, timezone отдельно от языка, сохранение формы |
 | «Только спроектируй архитектуру Mini App» | mini-app-architecture | Границы, контракты и план приемки; реализация не начинается без запроса |
@@ -120,7 +123,7 @@
 | «У меня React и PostgreSQL; подключи библиотеку для Mini App» | Сохранить стек; использовать подходящие bridge/API adapters и host lifecycle/storage | Переписать UI на plain DOM или заменить PostgreSQL ради SQLiteOnce |
 | «Исправь отступ у существующей кнопки» | Узкое исправление в текущем UI; библиотека не внедряется без необходимости | Загрузить весь набор и создать новый проект |
 
-Проверка переносимых Python-примеров выполняется `scripts/verify_developer_recipe.py` по скопированному навыку через установленный core wheel: catalog и maturity блоки. Она доказывает работоспособность этих примеров; независимые слепые решения по таблице проверяются отдельно в пункте 088.
+Проверка переносимых Python-примеров выполняется `scripts/verify_copied_recipe.py developer` по скопированному навыку через установленный core wheel: catalog и maturity блоки. Она доказывает работоспособность этих примеров; независимые слепые решения по таблице проверяются отдельно в пункте 088.
 
 ## Первый запуск — пункт 011
 
@@ -198,7 +201,7 @@ Installed API reference core_recipes и scripts/verify_gallery_export.py про�
 | Задача | Ожидаемый результат | Недопустимая подмена |
 | --- | --- | --- |
 | «Каталог, корзина, заказ и Stars» | Installed wheel/tarball + отдельное приложение; server catalog/amount/XTR/terms, owner order и реальный HTTP | Frontend price/paid/user_id, checkout внешней крипто/карточной оплатой для digital |
-| «Войти по данным запуска» | HMAC/freshness/bot validation, server session/CSRF, точный HTTPS origin; iframe/WebView cookies отдельно | initDataUnsafe/query user как разрешение, secrets в localStorage |
+| «Войти по данным запуска» | HMAC/freshness/bot validation, серверная сессия с bearer-токеном в памяти (работает во фрейме Telegram Web) или cookie с CSRF и отдельной проверкой в Telegram Web, точный HTTPS origin | initDataUnsafe/query user как разрешение, secrets в localStorage, cookie SameSite=Strict без проверки во фрейме |
 | «Потерял ответ после POST / перезагрузил» | Pending key до отправки, тот же payload и owner scope, lookup; один order/effect | Новый UUID после unknown; удаление pending по TTL сессии |
 | «Платёжное окно вернуло paid» | Получить server status; выдача лишь после trusted successful_payment | Callback как платёж, публичный HTTP grant endpoint |
 | «Чужой заказ / другая сумма» | ACL до чтения/effect/replay; precheckout сверяет bot/owner/payload/currency/amount | Подмена chat/user/order ID в клиентском payload |

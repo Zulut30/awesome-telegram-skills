@@ -2,7 +2,6 @@
 from __future__ import annotations
 from collections.abc import Callable
 import hashlib
-import hmac
 import json
 from pathlib import Path
 import re
@@ -53,6 +52,7 @@ class Store:
             if versions and [r[0] for r in versions]!=[1]:raise ValueError('Shop schema requires migration')
             if not versions:db.execute('INSERT INTO shop_schema VALUES(1)')
             for sql in (
+                # csrf_hash stays NULL since bearer sessions (no cookie, no CSRF); kept so schema version 1 is unchanged.
                 'CREATE TABLE IF NOT EXISTS shop_sessions(token_hash TEXT PRIMARY KEY,bot_id INTEGER,actor_id INTEGER,csrf_hash TEXT,expires INTEGER)',
                 'CREATE TABLE IF NOT EXISTS shop_orders(id TEXT PRIMARY KEY,bot_id INTEGER,actor_id INTEGER,operation TEXT,items TEXT,total INTEGER,currency TEXT,status TEXT,terms TEXT,invoice_state TEXT,invoice_url TEXT,precheckout TEXT,UNIQUE(bot_id,actor_id,operation))',
                 'CREATE TABLE IF NOT EXISTS shop_receipts(bot_id INTEGER,charge TEXT,order_id TEXT,actor_id INTEGER,amount INTEGER,currency TEXT,review INTEGER,PRIMARY KEY(bot_id,charge))',
@@ -65,18 +65,23 @@ class Store:
         return value
 
     def session(self, raw: str) -> dict:
+        """Bearer session for the Authorization header: the client keeps the token in memory only.
+
+        No cookie: inside Telegram Web the Mini App is a cross-site iframe, where SameSite cookies are not sent.
+        A header the browser never attaches on its own also needs no CSRF token.
+        """
         launch=validate_init_data(raw,self.token,max_age_seconds=3600,now=int(self.now()))
-        token,csrf=secrets.token_urlsafe(32),secrets.token_urlsafe(32)
+        token=secrets.token_urlsafe(32)
         with connection(self.database,write=True) as db:
             db.execute('DELETE FROM shop_sessions WHERE expires<=?',(int(self.now()),))
-            db.execute('INSERT INTO shop_sessions VALUES(?,?,?,?,?)',(digest(token),self.bot_id,launch.user_id,digest(csrf),int(self.now())+600))
-        return {'token':token,'csrf':csrf,'scope':f'{self.bot_id}:{launch.user_id}'}
+            db.execute('INSERT INTO shop_sessions(token_hash,bot_id,actor_id,expires) VALUES(?,?,?,?)',(digest(token),self.bot_id,launch.user_id,int(self.now())+600))
+        return {'token':token,'scope':f'{self.bot_id}:{launch.user_id}'}
 
-    def authenticate(self, token: str, csrf: str | None = None) -> int:
+    def authenticate(self, token: str) -> int:
         if not isinstance(token,str) or not token or len(token)>128:raise PermissionDenied()
         with connection(self.database) as db:
-            row=db.execute('SELECT * FROM shop_sessions WHERE token_hash=? AND bot_id=? AND expires>?',(digest(token),self.bot_id,int(self.now()))).fetchone()
-            if not row or (csrf is not None and not hmac.compare_digest(row['csrf_hash'],digest(csrf))):raise PermissionDenied()
+            row=db.execute('SELECT actor_id FROM shop_sessions WHERE token_hash=? AND bot_id=? AND expires>?',(digest(token),self.bot_id,int(self.now()))).fetchone()
+            if not row:raise PermissionDenied()
             return self.actor(row['actor_id'])
 
     def create(self, actor: int, operation: str, skus: list[str], terms: str) -> dict:

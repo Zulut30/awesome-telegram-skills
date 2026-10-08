@@ -1,0 +1,432 @@
+{
+  "description": "Navigation of the documentation site and of docs/README.md: every user page belongs to one section and states its goal. path is the repository source; route is set for pages the site generates from it; nav marks the sidebar entries. Internal plans, reviews and research live in docs/internal and are not listed.",
+  "max_sidebar_pages": 25,
+  "internal_index": "docs/internal/README.md",
+  "sections": [
+    {
+      "id": "learn",
+      "title": "Обучение",
+      "pages": [
+        {
+          "title": "Обзор",
+          "goal": "Понять, что дают скиллы и библиотека, и выбрать первый шаг.",
+          "path": "README.md",
+          "route": "index.html",
+          "nav": true
+        },
+        {
+          "title": "Карта документации",
+          "goal": "Найти нужную страницу по разделу и цели, включая страницы вне меню.",
+          "path": "docs/README.md",
+          "route": "docs/index.html",
+          "nav": true
+        },
+        {
+          "title": "С чего начать",
+          "goal": "Выбрать один из четырех путей на 10 минут по своей ситуации.",
+          "path": "docs/start.md",
+          "nav": true
+        },
+        {
+          "title": "Первый запуск",
+          "goal": "Пройти от установки до бота и экрана Mini App, проверенных без сети.",
+          "path": "docs/quickstart.md",
+          "nav": true
+        },
+        {
+          "title": "Мой первый бот",
+          "goal": "Запустить первого бота с меню и увидеть ответ в Telegram.",
+          "path": "docs/start/first-bot.md"
+        },
+        {
+          "title": "Уже есть бот на aiogram",
+          "goal": "Добавить меню и обработчик библиотеки в существующий Dispatcher и проверить их без сети.",
+          "path": "docs/start/existing-aiogram-bot.md"
+        },
+        {
+          "title": "Я делаю Mini App",
+          "goal": "Открыть демо Mini App, подключить мост к Telegram и проверить initData на сервере.",
+          "path": "docs/start/mini-app.md"
+        },
+        {
+          "title": "Я работаю с ИИ-агентом",
+          "goal": "Подключить скиллы к агенту и проверить его решение по правилам Telegram.",
+          "path": "docs/start/ai-agent.md"
+        },
+        {
+          "title": "Сервисный бот",
+          "goal": "Собрать бота записи на услугу с напоминанием и проверить его без сети.",
+          "path": "docs/service-bot.md",
+          "nav": true
+        },
+        {
+          "title": "Групповой бот",
+          "goal": "Собрать бота для групп с темами, правами, заявками и модерацией.",
+          "path": "docs/group-bot.md",
+          "nav": true
+        },
+        {
+          "title": "Магазин и Mini App",
+          "goal": "Собрать магазин с Mini App, заказом и оплатой в Telegram Stars.",
+          "path": "docs/shop-example.md",
+          "nav": true
+        },
+        {
+          "title": "Витрина проектов",
+          "goal": "Посмотреть работающих ботов и Mini Apps на этих скиллах и добавить свой проект.",
+          "path": "docs/showcase.md"
+        },
+        {
+          "title": "Quickstart (English)",
+          "goal": "Run the first bot and Mini App screen step by step, in English.",
+          "path": "docs/en/quickstart.md"
+        }
+      ]
+    },
+    {
+      "id": "how-to",
+      "title": "Как сделать",
+      "pages": [
+        {
+          "title": "Галерея рецептов",
+          "goal": "Найти готовый пример кода по задаче и скопировать его.",
+          "path": "gallery/index.html",
+          "route": "recipes/index.html",
+          "nav": true
+        },
+        {
+          "title": "Поиск в галерее",
+          "goal": "Отфильтровать рецепты по задаче, контексту и версии.",
+          "path": "docs/gallery-navigation.md"
+        },
+        {
+          "title": "Выбор компонентов",
+          "goal": "Собрать новый проект только из нужных компонентов.",
+          "path": "docs/starter-selection.md",
+          "nav": true
+        },
+        {
+          "title": "Для ИИ-агента",
+          "goal": "Подключить библиотеку к проекту через ИИ-агента, не загружая всю документацию.",
+          "path": "docs/for-agents.md",
+          "nav": true
+        },
+        {
+          "title": "For AI agents (English)",
+          "goal": "Connect the library to a project as an AI agent, in English.",
+          "path": "docs/en/for-agents.md"
+        },
+        {
+          "title": "Частые проблемы",
+          "goal": "Найти причину и исправление по симптому: бот молчит, 409 Conflict, Mini App не открывается.",
+          "path": "docs/troubleshooting.md",
+          "nav": true
+        },
+        {
+          "title": "Диагностика",
+          "goal": "Проверить проект командой doctor и применить предложенные исправления.",
+          "path": "docs/doctor.md",
+          "nav": true
+        },
+        {
+          "title": "Тестовое окружение",
+          "goal": "Проверить бота, Mini App и оплату Stars в тестовом окружении Telegram.",
+          "path": "docs/test-environment.md",
+          "nav": true
+        },
+        {
+          "title": "Клавиатуры и кнопки",
+          "goal": "Собрать клавиатуру: ряды по 2–3 кнопки, смешанные ряды, стили и reply-кнопки.",
+          "path": "docs/keyboard-layouts.md"
+        },
+        {
+          "title": "Экраны и возврат",
+          "goal": "Сделать экраны в одном сообщении с историей, кнопкой «Назад» и защитой от устаревших нажатий.",
+          "path": "docs/message-navigation.md"
+        },
+        {
+          "title": "Выбор и подтверждение",
+          "goal": "Сделать множественный выбор, переключатели, количество и подтверждение в одном сообщении.",
+          "path": "docs/selection-controls.md"
+        },
+        {
+          "title": "Формы и поля",
+          "goal": "Собрать форму из семи типов полей с проверкой и подтверждением.",
+          "path": "docs/dialog-fields.md"
+        },
+        {
+          "title": "Состояние после рестарта",
+          "goal": "Сохранить шаг диалога и срок ответа при перезапуске бота.",
+          "path": "docs/dialog-restart.md"
+        },
+        {
+          "title": "Календарь и время",
+          "goal": "Дать выбрать дату и время записи с учетом часового пояса.",
+          "path": "docs/calendar-slots.md"
+        },
+        {
+          "title": "Медиа",
+          "goal": "Отправлять и редактировать фото, документы и альбомы и безопасно скачивать файлы.",
+          "path": "docs/media.md"
+        },
+        {
+          "title": "Профили",
+          "goal": "Читать и менять профили бота и пользователя, аватары и локализованные описания.",
+          "path": "docs/profiles.md"
+        },
+        {
+          "title": "Inline-поиск",
+          "goal": "Сделать inline-поиск с персональным кэшем и пагинацией.",
+          "path": "docs/inline-search.md"
+        },
+        {
+          "title": "Опросы",
+          "goal": "Создавать опросы и quiz и обрабатывать голоса без потерь.",
+          "path": "docs/polls.md"
+        },
+        {
+          "title": "Специальные операции",
+          "goal": "Работать с темами, реакциями, заявками на вступление и другими операциями платформы.",
+          "path": "docs/platform-operations.md"
+        },
+        {
+          "title": "Текст сообщений",
+          "goal": "Собрать текст с entities без инъекции разметки и разбить длинное сообщение.",
+          "path": "docs/message-text.md"
+        },
+        {
+          "title": "Rich-сообщения",
+          "goal": "Отправлять структурированные rich-сообщения с проверкой поддержки клиентом.",
+          "path": "docs/rich-messages.md"
+        },
+        {
+          "title": "Эфемерные сообщения",
+          "goal": "Показывать в группе сообщения, которые видит только один участник.",
+          "path": "docs/ephemeral-messages.md"
+        },
+        {
+          "title": "Подписки Stars",
+          "goal": "Продавать ежемесячные подписки за Telegram Stars и управлять доступом по их событиям.",
+          "path": "docs/stars-subscriptions.md"
+        },
+        {
+          "title": "Сообщества",
+          "goal": "Обрабатывать события сообществ из супергрупп, каналов и ботов.",
+          "path": "docs/communities.md"
+        },
+        {
+          "title": "Bot API 10.0–10.3",
+          "goal": "Применить новые функции Bot API 10.0–10.3 по готовым рецептам с ограничениями.",
+          "path": "docs/bot-api-10-features.md"
+        },
+        {
+          "title": "Тексты компонентов",
+          "goal": "Перевести или заменить фразы компонентов на русском, английском или своем языке.",
+          "path": "docs/component-texts.md"
+        },
+        {
+          "title": "React, Vue и Svelte",
+          "goal": "Подключить мост Telegram к React, Vue или Svelte.",
+          "path": "docs/framework-adapters.md"
+        },
+        {
+          "title": "python-telegram-bot",
+          "goal": "Использовать компоненты в проекте на python-telegram-bot.",
+          "path": "docs/ptb-adapter.md"
+        },
+        {
+          "title": "Запуск рецептов",
+          "goal": "Запустить рецепт галереи без сети и узнать, что нужно для живого запуска.",
+          "path": "docs/recipe-execution.md"
+        },
+        {
+          "title": "Проверка на устройствах",
+          "goal": "Проверить демо Mini App на устройствах перед релизом и оформить отчет.",
+          "path": "docs/device-qa-checklist.md"
+        },
+        {
+          "title": "Живая приемка",
+          "goal": "Проверить примеры в тестовом окружении Telegram перед релизом и оформить отчет с датой.",
+          "path": "docs/live-acceptance.md"
+        },
+        {
+          "title": "Исследование удобства",
+          "goal": "Провести раунд с 5–8 разработчиками, записать время и ошибки и сравнить с прошлым раундом.",
+          "path": "docs/usability-study.md"
+        },
+        {
+          "title": "Свой скилл или компонент",
+          "goal": "Добавить скилл или компонент библиотеки от каркаса до pull request без помощи мейнтейнера.",
+          "path": "docs/contributing-skills.md"
+        },
+        {
+          "title": "Выпуск версии",
+          "goal": "Выпустить новую версию библиотеки с проверками и файлами релиза.",
+          "path": "docs/releasing.md"
+        },
+        {
+          "title": "Сайт документации",
+          "goal": "Собрать сайт документации локально и понять, как он публикуется.",
+          "path": "docs/pages-site.md"
+        }
+      ]
+    },
+    {
+      "id": "reference",
+      "title": "Справочник",
+      "pages": [
+        {
+          "title": "Группы компонентов",
+          "goal": "Найти компонент по задаче и его точный import.",
+          "path": "components.json",
+          "route": "library/index.html",
+          "nav": true
+        },
+        {
+          "title": "Python / aiogram",
+          "goal": "Установить Python-пакет и подключить компоненты к боту на aiogram.",
+          "path": "packages/python/README.md",
+          "nav": true
+        },
+        {
+          "title": "TypeScript / Mini Apps",
+          "goal": "Установить TypeScript-пакет и подключить мост и интерфейс Mini App.",
+          "path": "packages/typescript/README.md",
+          "nav": true
+        },
+        {
+          "title": "Справочник API",
+          "goal": "Найти сигнатуру, назначение и пример каждого публичного символа.",
+          "path": "catalog/api-reference-index.json",
+          "route": "api/index.html",
+          "nav": true
+        },
+        {
+          "title": "API одной страницей",
+          "goal": "Просмотреть индекс всех публичных символов одной страницей.",
+          "path": "docs/api-reference.md"
+        },
+        {
+          "title": "API: Python core",
+          "goal": "Найти воспроизводимые примеры символов Python core без SDK.",
+          "path": "docs/api-reference-core.md"
+        },
+        {
+          "title": "API: Python bot",
+          "goal": "Найти воспроизводимые примеры символов для aiogram и тестового транспорта.",
+          "path": "docs/api-reference-bot.md"
+        },
+        {
+          "title": "API: TypeScript",
+          "goal": "Найти воспроизводимые примеры символов TypeScript Mini App.",
+          "path": "docs/api-reference-typescript.md"
+        },
+        {
+          "title": "Структура API",
+          "goal": "Узнать, какие модули и типы входят в публичный API и как они разделены.",
+          "path": "docs/api-structure.md"
+        },
+        {
+          "title": "Контракты API",
+          "goal": "Узнать гарантии каждого публичного символа: ошибки, побочные эффекты и совместимость.",
+          "path": "docs/public-api.md"
+        },
+        {
+          "title": "Что умеет бот",
+          "goal": "Найти возможность Telegram вместе с навыком, компонентом и способом проверки.",
+          "path": "docs/capability-map.md",
+          "nav": true
+        },
+        {
+          "title": "Матрица поддержки",
+          "goal": "Проверить, какие версии Python, Node.js и SDK проверены.",
+          "path": "docs/support-matrix.md",
+          "nav": true
+        },
+        {
+          "title": "Версии и совместимость",
+          "goal": "Узнать правила версий и deprecation и что проверяет CI.",
+          "path": "docs/versioning.md",
+          "nav": true
+        },
+        {
+          "title": "Табло качества",
+          "goal": "Увидеть долю зеленых проверок, точность выбора скиллов, покрытие Bot API и живые проверки на сегодня.",
+          "path": "docs/quality-board.md",
+          "nav": true
+        },
+        {
+          "title": "Каталог скиллов",
+          "goal": "Выбрать скилл по задаче и открыть его инструкции.",
+          "path": ".agents/skills",
+          "route": "skills/index.html",
+          "nav": true
+        },
+        {
+          "title": "Состав библиотеки",
+          "goal": "Увидеть состав обоих пакетов и готовые примеры по версиям.",
+          "path": "docs/component-library.md"
+        },
+        {
+          "title": "Контракт поставки",
+          "goal": "Узнать, что входит в локальную поставку wheel и tarball и как ее проверить.",
+          "path": "docs/distribution-contract.md"
+        },
+        {
+          "title": "История приемки",
+          "goal": "Найти отчет приемки любой версии и сверить скачанный файл по SHA-256.",
+          "path": "docs/acceptance-history.md"
+        },
+        {
+          "title": "Источники",
+          "goal": "Найти официальные источники и дату их сверки.",
+          "path": "docs/sources.md"
+        }
+      ]
+    },
+    {
+      "id": "explanation",
+      "title": "Объяснения",
+      "pages": [
+        {
+          "title": "Границы Telegram API",
+          "goal": "Понять, когда подходит Bot API, Mini App или другой путь и почему здесь нет MTProto.",
+          "path": "docs/telegram-api-boundaries.md",
+          "nav": true
+        },
+        {
+          "title": "Ошибки и восстановление",
+          "goal": "Понять модель ошибок и как восстанавливаться после неизвестного результата.",
+          "path": "docs/error-model.md",
+          "nav": true
+        },
+        {
+          "title": "Адаптеры проекта",
+          "goal": "Понять, как подключить свое хранилище, транспорт или платежного провайдера через протоколы.",
+          "path": "docs/extension-model.md"
+        },
+        {
+          "title": "Границы версии 1",
+          "goal": "Понять, какие сценарии поддерживает версия 1 и что остается за ее пределами.",
+          "path": "docs/v1-scope.md"
+        },
+        {
+          "title": "Зрелость API",
+          "goal": "Понять уровни зрелости компонентов и какие доказательства нужны каждому.",
+          "path": "docs/v1-maturity.md"
+        },
+        {
+          "title": "Проверка навыков",
+          "goal": "Понять, как проверяются качество навыков и решения агента.",
+          "path": "docs/evaluation.md"
+        },
+        {
+          "title": "Участие в проекте",
+          "goal": "Внести изменение: проверки, правила и порядок pull request.",
+          "path": "CONTRIBUTING.md",
+          "nav": true
+        }
+      ]
+    }
+  ]
+}
