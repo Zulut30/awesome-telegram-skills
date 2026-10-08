@@ -98,9 +98,11 @@ def main() -> int:
     started = time.perf_counter()
     with ThreadPoolExecutor(len(groups)) as pool:
         results = list(pool.map(lambda names: run(names, args.python, args.unit, args.timeout, tests, args.verbose), groups))
-    wall = round(time.perf_counter() - started, 1)
+    elapsed = time.perf_counter() - started
+    wall = round(elapsed, 1)
     failed = [item for item in results if item['exit_code'] != 0]
-    over_budget = args.budget is not None and wall > args.budget
+    # Compare the exact time: rounding first let a 30.04 s run pass a 30 s budget (and a fast run pass budget 0).
+    over_budget = args.budget is not None and elapsed > args.budget
     report = {'passed': not failed and not over_budget, 'scope': 'unit' if args.unit else 'all', 'jobs': len(groups),
               'modules': len(modules), 'tests': sum(item['tests'] for item in results),
               'skipped': sum(item['skipped'] for item in results), 'seconds': wall, 'budget': args.budget,
