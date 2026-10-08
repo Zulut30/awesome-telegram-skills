@@ -30,8 +30,8 @@ python3 scripts/eval_reference_routing.py --skill .agents/skills/telegram-code-p
 `skill-boundaries.json` — 40 запросов на границах пар, которые легко спутать: bot-api и buttons, mini-app-ui, design-system и ux, testing, device-qa и visual-regression, payments, subscription-access и yookassa, project-planner и mini-app-architecture, mini-app-auth и web-login, debugging и observability, а также кнопки Mini App и клавиатуры бота, review и реализация initData, Business и пользовательский аккаунт. Поле `not` называет скилл, который выбирать нельзя. Агент видит только список `name: description`, как при старте сессии:
 
 ```bash
-python3 scripts/eval_skill_selection.py --cases evaluations/skill-boundaries.json --model haiku
-python3 scripts/eval_skill_selection.py --cases evaluations/skill-boundaries.json --ref <commit> --model haiku
+python3 scripts/eval_skill_selection.py --cases evaluations/skill-boundaries.json --model claude-haiku-5-5 --mode reasoned
+python3 scripts/eval_skill_selection.py --cases evaluations/skill-boundaries.json --ref <commit> --model claude-haiku-5-5 --mode reasoned
 ```
 
 Отчет 2026-10-07 (`reports/skill-boundaries-2026-10-07.json`): 40/40 у haiku и sonnet и с границами «Не для … → telegram-…», и с прежними описаниями. На этих запросах явные границы не изменили точность; они нужны, чтобы агент и человек видели, куда уходит соседняя задача, и проверяются `validate_skills.py`.
@@ -40,16 +40,33 @@ python3 scripts/eval_skill_selection.py --cases evaluations/skill-boundaries.jso
 
 `skill-selection.json` — 251 запрос: 210 позитивных (по 5 на каждый из 42 скиллов; у 37 двусмысленных заранее записаны допустимые альтернативы) и 41 негативный — 40 из `skill-boundaries.json` и один для `telegram-ai-bot`. Порог — 95%.
 
+Скрипт задает вопрос в двух режимах. В режиме `reasoned` агент одним-двумя предложениями сопоставляет запрос с описаниями и последней строкой называет скилл — так агент выбирает скилл в настоящей сессии; порог относится к этому режиму. В режиме `instant` агент называет только имя, без рассуждения: это строгая проверка того, различимы ли описания с первого взгляда, она записывается без порога.
+
+Модель указывайте точным ID. Алиас `haiku` в Claude Code CLI 2.1.294 указывает на `claude-haiku-5-5`, а прогоны 7 октября с тем же алиасом повторяются на `claude-haiku-4-5`. Скрипт записывает модель, которая ответила (по `modelUsage` ответа CLI, без вспомогательной модели самого CLI), и версию CLI.
+
 ```bash
-python3 scripts/eval_skill_selection.py --cases evaluations/skill-selection.json --model haiku --workers 6 --output output/selection-haiku.json
-python3 scripts/eval_skill_selection.py --cases evaluations/skill-selection.json --model sonnet --workers 6 --output output/selection-sonnet.json
+for model in claude-haiku-4-5 claude-haiku-5-5 claude-sonnet-5-5; do
+  for mode in reasoned instant; do
+    python3 scripts/eval_skill_selection.py --cases evaluations/skill-selection.json --model $model --mode $mode --workers 4 --output output/selection-$model-$mode.json --report evaluations/reports/skill-selection-latest.json
+  done
+done
 ```
 
-Отчет `reports/skill-selection-latest.json` хранит отпечаток списка описаний (`descriptions_sha256`). Тест `tests/test_skill_selection_report.py` падает, как только меняется любое description: прогон нужно повторить и обновить отчет.
+`--output` сохраняет ответы целиком, `--report` объединяет прогон с общим отчетом `reports/skill-selection-latest.json` без текстов ответов: остаются числа по видам запросов и промахи. Прогон заменяет прогон той же модели и режима; прогоны на других описаниях и прогоны без записанной модели отбрасываются. Отчет хранит отпечаток списка описаний (`descriptions_sha256`). Тест `tests/test_skill_selection_report.py` падает, как только меняется любое description, у прогона нет точной модели или прогон режима `reasoned` ниже 95%: прогоны нужно повторить и обновить отчет.
 
-2026-10-07, Claude Code CLI 2.1.292, после добавления `telegram-ai-bot`: haiku 246/251 (98%), sonnet 248/251 (99%); негативные 41/41 у обеих моделей, все шесть запросов про ИИ-бота выбраны верно. Промахи — пограничные запросы вроде «пост в канал с кнопкой под ним» или «имя и описание бота на разных языках». Второй агент (Codex, Gemini CLI, Copilot) в этой среде без входа недоступен, поэтому прогон выполнен на двух моделях одного агента.
+2026-10-08, Claude Code CLI 2.1.294, описания те же, что 7 октября:
 
-После пункта 46 (описания и инструкции обращаются к агенту на «вы»): haiku 247/251 (98%), sonnet 246/251 (98%); негативные 41/41 у обеих моделей.
+| Модель | С рассуждением (порог 95%) | Сразу, только имя | Негативные: с рассуждением / сразу |
+| --- | --- | --- | --- |
+| claude-haiku-4-5 | 244/251 (97,2%) | 246/251 (98,0%) | 41/41 / 41/41 |
+| claude-haiku-5-5 | 247/251 (98,4%) | 165/251 (65,7%) | 40/41 / 30/41 |
+| claude-sonnet-5-5 | 247/251 (98,4%) | 248/251 (98,8%) | 41/41 / 41/41 |
+
+Без рассуждения `claude-haiku-5-5` выбирает общий скилл вместо специального: `telegram-bot-api` вместо `telegram-inline-mode` и `telegram-profiles`, `telegram-payments` вместо `telegram-payment-provider`, `telegram-cryptopay` и `telegram-platega`, `telegram-security-review` вместо `telegram-mini-app-auth`. Одного-двух предложений сопоставления хватает, чтобы выбрать верно. Описания не переписывались под мгновенный ответ одной модели: `claude-haiku-4-5` и `claude-sonnet-5-5` различают их и без рассуждения.
+
+Прежние прогоны режима `instant` с алиасами `haiku` и `sonnet`, модель в отчетах тогда не записывалась. 2026-10-07, Claude Code CLI 2.1.292, после добавления `telegram-ai-bot`: haiku 246/251 (98%), sonnet 248/251 (99%); негативные 41/41 у обеих моделей, все шесть запросов про ИИ-бота выбраны верно. Промахи — пограничные запросы вроде «пост в канал с кнопкой под ним» или «имя и описание бота на разных языках». Второй агент (Codex, Gemini CLI, Copilot) в этой среде без входа недоступен, поэтому прогон выполнен на двух моделях одного агента.
+
+После пункта 46 (описания и инструкции обращаются к агенту на «вы»): haiku 247/251 (98%), sonnet 246/251 (98%); негативные 41/41 у обеих моделей. 8 октября тот же прогон на `claude-haiku-4-5` дал 247/251 и 246/251 в двух повторах, а на `claude-haiku-5-5` — от 160 до 165 из 251 (64–66%) в трех повторах: алиас `haiku` 7 октября указывал на `claude-haiku-4-5`.
 
 ## Польза скиллов: без скилла и со скиллом
 
@@ -64,7 +81,7 @@ python3 scripts/eval_skill_value.py --skill telegram-buttons --report evaluation
 python3 scripts/eval_skill_value.py --table evaluations/reports/skill-value-latest.json
 ```
 
-`--output` сохраняет ответы целиком, а `--report` объединяет прогон с общим отчетом без текстов ответов: остаются вердикты и короткие обоснования судьи. С `--skill` заменяются результаты только указанных скиллов. Отчет хранит отпечаток каталога каждого скилла (`skills_sha256`), на котором получен результат. Тест `tests/test_skill_value.py` проверяет, что задачи покрывают все скиллы, отчет соответствует задачам и критериям, итоги пересчитываются из вердиктов, а таблица ниже совпадает с отчетом.
+`--output` сохраняет ответы целиком, а `--report` объединяет прогон с общим отчетом без текстов ответов: остаются вердикты и короткие обоснования судьи. Прогоны в отчете названы ключом `--model` (`haiku`, `sonnet`). С 8 октября каждый результат хранит модель, которая ответила, у решающей модели и у судьи, а `--report` отказывает, если под тем же ключом записаны ответы другой модели: алиас `haiku` в CLI 2.1.294 указывает на `claude-haiku-5-5`, поэтому повторять отдельные задачи текущего отчета им нельзя — либо новый ключ с точным ID модели и все задачи, либо полный повтор. Отчет 7 октября модели не записывал; по воспроизведению выбора скиллов алиас `haiku` тогда указывал на `claude-haiku-4-5`. С `--skill` заменяются результаты только указанных скиллов. Отчет хранит отпечаток каталога каждого скилла (`skills_sha256`), на котором получен результат. Тест `tests/test_skill_value.py` проверяет, что задачи покрывают все скиллы, отчет соответствует задачам и критериям, итоги пересчитываются из вердиктов, а таблица ниже совпадает с отчетом.
 
 Отчет `reports/skill-value-latest.json`, 7 октября 2026 года, Claude Code CLI 2.1.292, судья sonnet:
 

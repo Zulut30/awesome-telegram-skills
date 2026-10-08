@@ -90,6 +90,31 @@ class SkillValueMergeTests(unittest.TestCase):
             with self.assertRaises(ValueError):
                 module.merge(report, {**again, 'judge': 'opus', **module.summarize(again['results'])}, cases_file=cases)
 
+    def test_one_solver_key_keeps_one_answering_model(self):
+        # An alias such as haiku moves to a new model with a CLI update; its results must not mix in one column.
+        module = evaluator()
+        with tempfile.TemporaryDirectory() as folder:
+            cases = Path(folder) / 'cases.json'
+            cases.write_text(json.dumps({'tasks': [{'id': 'a-1'}, {'id': 'b-1'}]}), encoding='utf-8')
+            module.ROOT = Path(folder).resolve()
+
+            def run(task_id: str, skill: str, model: str | None) -> dict:
+                item = result(task_id, skill, [False] * 3, [True] * 3)
+                if model:
+                    for condition in ('without', 'with'):
+                        item[condition].update({'served_model': model, 'judge_model': 'claude-sonnet-5-5'})
+                results = [item]
+                return {'solver': 'haiku', 'judge': 'sonnet', 'cli': ['1'], 'skills_sha256': {skill: 'x'},
+                        'served_models': module.served_models(results), **module.summarize(results), 'results': results}
+
+            report = module.merge(None, run('a-1', 'a', None), cases_file=cases)
+            self.assertEqual(report['runs'][0]['served_models'], {'solver': [], 'judge': []}, 'nothing recorded, nothing claimed')
+            report = module.merge(report, run('b-1', 'b', 'claude-haiku-5-5'), cases_file=cases)
+            self.assertEqual(report['runs'][0]['served_models'], {'solver': ['claude-haiku-5-5'], 'judge': ['claude-sonnet-5-5']})
+            report = module.merge(report, run('a-1', 'a', 'claude-haiku-5-5'), cases_file=cases)
+            with self.assertRaisesRegex(ValueError, 'answered as'):
+                module.merge(report, run('a-1', 'a', 'claude-haiku-4-5'), cases_file=cases)
+
     def test_pass_needs_three_quarters_of_criteria(self):
         module = evaluator()
         self.assertEqual([module.needed(size) for size in (3, 4, 5)], [3, 3, 4])

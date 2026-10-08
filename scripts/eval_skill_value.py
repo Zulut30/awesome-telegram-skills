@@ -131,6 +131,12 @@ def merge(report: dict | None, run: dict, *, cases_file: Path) -> dict:
     if previous is not None:
         if previous['judge'] != run['judge']:
             raise ValueError(f'judge differs from the stored {run["solver"]} run: {previous["judge"]}')
+        # One solver key, one model: an alias that moved to a new model must not mix two models in one column.
+        for role in ('solver', 'judge'):
+            stored, fresh = previous.get('served_models', {}).get(role), run.get('served_models', {}).get(role)
+            if stored and fresh and stored != fresh:
+                raise ValueError(f'{role} of the {run["solver"]} run answered as {fresh}, stored results as {stored}; '
+                                 'use another --model key or rerun every task')
         fresh = {item['id'] for item in run['results']}
         results = [item for item in previous['results'] if item['id'] not in fresh] + run['results']
         results.sort(key=lambda item: order.index(item['id']) if item['id'] in order else len(order))
