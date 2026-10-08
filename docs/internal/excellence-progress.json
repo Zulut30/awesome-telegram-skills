@@ -134,14 +134,15 @@
     {
       "id": 11,
       "title": "Добавить лицензию",
-      "status": "partial",
+      "status": "done",
       "commit_subject": "excellence(011): license the project under MIT",
       "evidence": [
         "wheel: dist-info/licenses/LICENSE + License-Expression: MIT; tarball: package/LICENSE + license MIT; verify_distribution_contract на реальных артефактах passed",
         "tests/test_license.py: копии LICENSE идентичны, manifests пакетов и примеров MIT, все 41 SKILL.md содержат license: MIT",
-        "negative: отсутствующая/измененная лицензия в wheel или tarball отклоняется"
+        "negative: отсутствующая/измененная лицензия в wheel или tarball отклоняется",
+        "After merging pull request #2 into main (5fd4b91) the GitHub API reports the repository license as MIT"
       ],
-      "remaining": "Выбор MIT сделан по поручению выполнить все пункты; владелец может заменить лицензию. GitHub показывает лицензию в шапке репозитория только для ветки по умолчанию — после слияния claude/excellence-plan-100 в main."
+      "remaining": null
     },
     {
       "id": 12,
@@ -192,13 +193,14 @@
     {
       "id": 16,
       "title": "Добавить `CODE_OF_CONDUCT.md`",
-      "status": "partial",
+      "status": "done",
       "commit_subject": "excellence(016): add a code of conduct with moderation rules",
       "evidence": [
         "CODE_OF_CONDUCT.md: обещание, недопустимое поведение, таблица модерации, каналы сообщения, шкала последствий, атрибуция Contributor Covenant 2.1 (ссылки 200)",
-        "API community/profile для main на 2026-10-07: health 57, code_of_conduct и license отсутствуют — их добавляют пункты 11 и 16 в этой ветке"
+        "API community/profile для main на 2026-10-07: health 57, code_of_conduct и license отсутствуют — их добавляют пункты 11 и 16 в этой ветке",
+        "After the merge the GitHub community profile reports 100% health: code of conduct, contributing, license, readme and pull request template"
       ],
-      "remaining": "Community Standards считается по ветке по умолчанию: после слияния проверить /community и включить Settings → Moderation → Accept content reports."
+      "remaining": null
     },
     {
       "id": 17,
@@ -404,15 +406,16 @@
     {
       "id": 33,
       "title": "Установка одной командой",
-      "status": "partial",
+      "status": "done",
       "commit_subject": "excellence(033): install all skills in Claude Code with one command",
       "evidence": [
         "Репозиторий — marketplace Claude Code (.claude-plugin/marketplace.json), плагин telegram-skills с корнем ./.agents: стандартный skills/ — те же 41 скилл без копий; claude plugin validate . и --strict — Validation passed",
         "Claude Code 2.1.292, изолированный CLAUDE_CONFIG_DIR: marketplace add из локального каталога и с GitHub ('Zulut30/awesome-telegram-skills#claude/excellence-plan-100' --sparse .claude-plugin .agents), install telegram-skills@awesome-telegram-skills, plugin details — Skills (41), headless-сессия — 41 команда telegram-skills:*",
         "Gemini CLI 0.63.0 из npm в отдельном HOME: gemini skills install https://github.com/Zulut30/awesome-telegram-skills.git --path .agents/skills --consent ставит 41 скилл в ~/.gemini/skills, gemini skills list показывает их Enabled",
-        "tests/test_claude_marketplace.py сверяет manifest, дерево скиллов и документированные команды в README, README.en.md и docs/start/ai-agent.md"
+        "tests/test_claude_marketplace.py сверяет manifest, дерево скиллов и документированные команды в README, README.en.md и docs/start/ai-agent.md",
+        "After the merge the documented command (claude plugin marketplace add Zulut30/awesome-telegram-skills && claude plugin install telegram-skills@awesome-telegram-skills) installed all 42 skills from main at 5fd4b91 in a clean Claude Code home; other catalogs (Codex, Copilot, Cursor) still use their own installers"
       ],
-      "remaining": "Документированная команда Claude Code без #ref берет ветку main: заработает после слияния этой ветки владельцем (проверена на ветке). Для Codex, Copilot и Cursor однокомандного каталога не сделано: Codex $skill-installer и аналоги не проверены в этой среде; для них остается install_skills.py --agent из клона"
+      "remaining": null
     },
     {
       "id": 34,
@@ -1282,7 +1285,8 @@
       "evidence": [
         "scripts/build_quality_board.py: skill selection accuracy, skill value, Bot API 10.3 methods with recipes (185/185) and components (104/185), source check dates, live-checked cases (0 so far), latest acceptance; --ci adds green share of Repository checks on main and the latest Full acceptance from the GitHub API",
         "docs-site.yml builds the board before every site build and passes it to build_docs_site.py --quality; docs/quality-board.md page (sidebar, README) shows the table and the CI timestamp; Documentation Pages also runs daily",
-        "Missing CI data shows as no data instead of failing; tests/test_quality_board.py, site page test, verify_docs_site and docs-browser (232 checks) pass"
+        "Missing CI data shows as no data instead of failing; tests/test_quality_board.py, site page test, verify_docs_site and docs-browser (232 checks) pass",
+        "Live site after the merge: https://zulut30.github.io/awesome-telegram-skills/docs/quality-board/ shows the numbers with CI data stamped 2026-10-08T08:14Z from the Documentation Pages run on main"
       ],
       "remaining": null
     }
