@@ -158,14 +158,15 @@
     {
       "id": 13,
       "title": "Ставить git-теги и выпускать GitHub Releases",
-      "status": "partial",
+      "status": "done",
       "commit_subject": "excellence(013): build releases reproducibly from version tags",
       "evidence": [
         "scripts/build_release.py: две независимые сборки каждой из 23 версий (0.5.0-0.24.0) дали одинаковые SHA256 wheel и tarball (git archive + SOURCE_DATE_EPOCH)",
         ".github/release-tags.json сверен с историей тестом; скрипт создания тегов из workflow проверен на свежем клоне без тегов: 23 аннотированных тега, повторный запуск идемпотентен",
-        "workflow Release: пуш тега или ручной запуск -> wheel/tarball/SHA256SUMS в GitHub Release (prerelease для 0.x); теги проверяются по шаблону и существованию"
+        "workflow Release: пуш тега или ручной запуск -> wheel/tarball/SHA256SUMS в GitHub Release (prerelease для 0.x); теги проверяются по шаблону и существованию",
+        "Release workflow run 37764161412 (manual, main d9a2cd5) created the 23 tags of .github/release-tags.json and published 23 prereleases v0.5.0-v0.24.0; a local run of the same loop built every tag first"
       ],
-      "remaining": "Пуш тегов из этой сессии отклоняется git-прокси (разрешена только ветка сессии). После слияния в main владелец запускает Actions → Release → Run workflow: он создаст 23 тега из .github/release-tags.json и опубликует релизы."
+      "remaining": null
     },
     {
       "id": 14,
@@ -177,7 +178,7 @@
         "форма команд README проверена на локально собранных артефактах: pip 'awesome-telegram-patterns[aiogram] @ file://...whl' ставит 0.24.0 с aiogram 3.31.0; npm install tarball импортирует ApiClient",
         "требования trusted publishing сверены с docs.npmjs.com/trusted-publishers и docs.pypi.org (pending publisher)"
       ],
-      "remaining": "Нужны действия владельца: занять имена (пункт 15), создать environments pypi/npm, настроить pending publisher PyPI и trusted publisher npm, задать PUBLISH_TO_REGISTRIES=true; ссылки README заработают после публикации релизов (пункт 13)."
+      "remaining": "Releases are published (item 13); registry installs still need the owner: claim the names (item 15), create the pypi/npm environments, configure the PyPI pending publisher and npm trusted publisher and set PUBLISH_TO_REGISTRIES=true"
     },
     {
       "id": 15,
@@ -217,14 +218,15 @@
     {
       "id": 18,
       "title": "Выпускать SBOM, контрольные суммы и attestations",
-      "status": "partial",
+      "status": "done",
       "commit_subject": "excellence(018): add SBOM and build provenance to releases",
       "evidence": [
         "SBOM CycloneDX 1.6 для HEAD и 0.5.0 проходит JsonStrictValidator (cyclonedx-python-lib 11.12.0) без ошибок; для версии без поля license лицензия не заявляется",
         "две сборки HEAD с SBOM дают одинаковый SHA256SUMS (SBOM включен)",
-        "workflow Release: actions/attest v4.2.2 (SHA-pin) для wheel/tgz/cdx.json; права id-token/attestations/artifact-metadata сверены с документацией actions/attest"
+        "workflow Release: actions/attest v4.2.2 (SHA-pin) для wheel/tgz/cdx.json; права id-token/attestations/artifact-metadata сверены с документацией actions/attest",
+        "Every release carries the wheel, npm tarball, CycloneDX SBOM and SHA256SUMS; gh attestation verify confirms SLSA provenance from release.yml on main for all 69 files, and the downloaded v0.24.0 files match their checksums, the attested digests and a local build byte for byte"
       ],
-      "remaining": "Attestation создается только при запуске Release на GitHub; проверить gh attestation verify после первого релиза (пункт 13)."
+      "remaining": null
     },
     {
       "id": 19,
