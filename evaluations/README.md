@@ -7,10 +7,10 @@
 `telegram-code-patterns-routing.json` — 40 запросов с ожидаемыми references, `telegram-code-patterns-routing-holdout.json` — 12 запросов, написанных уже после настройки таблицы, чтобы проверить, что результат не подогнан под первый набор. Скрипт показывает агенту `SKILL.md` и запрос, отключает инструменты и сравнивает первый названный файл с ожидаемыми:
 
 ```bash
-python3 scripts/eval_reference_routing.py --skill .agents/skills/telegram-code-patterns/SKILL.md --cases evaluations/telegram-code-patterns-routing.json --model haiku --output output/routing-haiku.json
+python3 scripts/eval_reference_routing.py --skill .agents/skills/telegram-code-patterns/SKILL.md --cases evaluations/telegram-code-patterns-routing.json --model claude-haiku-4-5 --output output/routing-claude-haiku-4-5.json
 ```
 
-Нужен Claude Code CLI (`claude`) с вашим входом; запросы расходуют лимит аккаунта. Порог — 90% правильных выборов. Повторяйте оценку при каждом изменении таблицы «намерение → reference».
+Нужен Claude Code CLI (`claude`) с вашим входом; запросы расходуют лимит аккаунта. Порог — 90% правильных выборов. Повторяйте оценку при каждом изменении таблицы «намерение → reference». Модель указывайте точным ID: отчет записывает модель, которая ответила, и версию CLI, а алиас `haiku` в CLI 2.1.294 указывает уже на `claude-haiku-5-5`.
 
 Отчет 2026-10-07 (`reports/telegram-code-patterns-routing-2026-10-07.json`), Claude Code CLI 2.1.292:
 
@@ -22,6 +22,8 @@ python3 scripts/eval_reference_routing.py --skill .agents/skills/telegram-code-p
 Слова считаются как в `wc -w` с UTF-8: все токены между пробелами, включая ссылки.
 
 После пункта 41 вступление убрано (его повторяет шаг 4), а в конец добавлен раздел «Источники»: 397 слов, haiku 40/40 и 12/12.
+
+Отчет 2026-10-08 (`reports/telegram-code-patterns-routing-2026-10-08.json`), Claude Code CLI 2.1.294, тот же `SKILL.md`: `claude-haiku-4-5` — 37/40 и 12/12, `claude-haiku-5-5` — 24/40 и 7/12. Судя по этим числам, прогоны 7 октября с алиасом `haiku` получены на `claude-haiku-4-5`. Здесь агент называет файл сразу, как в режиме `instant` выбора скилла, и `claude-haiku-5-5` так же тянется к общему ответу: `api-reference.md` вместо `components.md` и `errors.md`, `forms.md` вместо `form-recipes.md`, `keyboard-recipes.md` вместо `message-navigation.md`. Режима с рассуждением у этой оценки пока нет, поэтому порог 90% сейчас подтвержден только для `claude-haiku-4-5`.
 
 Промежуточная версия таблицы давала у sonnet 50%: он понимал «видишь скилл впервые» как условие открыть onboarding для любой задачи. Условие сужено до «неясно, что за пакет передан и какая версия установлена».
 
