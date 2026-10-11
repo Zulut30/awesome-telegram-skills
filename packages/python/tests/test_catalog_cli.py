@@ -117,7 +117,7 @@ class StarterTests(unittest.TestCase):
 
     def test_mini_app_local_path_preserves_spaces_unicode_and_literal_percent(self):
         with tempfile.TemporaryDirectory(prefix='telegram-starter-') as folder:
-            root = Path(folder); source = self.source(root)
+            root = Path(folder).resolve(); source = self.source(root)
             supplied = root / 'local artifacts %20 Пример'; supplied.mkdir()
             tarball = supplied / 'patterns.tgz'
             metadata = json.dumps({'name': '@awesome-telegram/patterns', 'version': '0.5.0'}).encode()
@@ -138,7 +138,7 @@ class StarterTests(unittest.TestCase):
 
     def test_dry_run_new_project_and_exclusive_creation(self):
         with tempfile.TemporaryDirectory(prefix='telegram-starter-') as folder:
-            root=Path(folder); source=self.source(root); target=root/'my bot'
+            root=Path(folder).resolve(); source=self.source(root); target=root/'my bot'
             plan=create_starter(target,library=source,dry_run=True)
             self.assertFalse(plan.created);self.assertFalse(target.exists())
             plan=create_starter(target,library=source)
@@ -155,7 +155,7 @@ class StarterTests(unittest.TestCase):
 
     def test_missing_parent_bad_source_and_missing_typescript_do_not_create(self):
         with tempfile.TemporaryDirectory(prefix='telegram-starter-') as folder:
-            root=Path(folder);source=self.source(root);target=root/'bot'
+            root=Path(folder).resolve();source=self.source(root);target=root/'bot'
             self.assertRaises(ValueError,create_starter,root/'missing/child',library=source)
             self.assertRaises(ValueError,create_starter,target,library=source,template='bot-mini-app')
             (source/'pyproject.toml').write_text('[project]\nname="other-package"\nversion="0.5.0"\n')
@@ -164,7 +164,7 @@ class StarterTests(unittest.TestCase):
 
     def test_target_link_is_rejected_and_content_preserved(self):
         with tempfile.TemporaryDirectory(prefix='telegram-starter-') as folder:
-            root=Path(folder);source=self.source(root);real=root/'real';real.mkdir();target=root/'linked'
+            root=Path(folder).resolve();source=self.source(root);real=root/'real';real.mkdir();target=root/'linked'
             (real/'keep.txt').write_text('owned')
             try: target.symlink_to(real,target_is_directory=True)
             except OSError as error:self.skipTest('Directory links unavailable: '+type(error).__name__)
@@ -173,7 +173,7 @@ class StarterTests(unittest.TestCase):
 
     def test_generated_bot_same_dispatcher_runs_without_network(self):
         with tempfile.TemporaryDirectory(prefix='telegram-generated-') as folder:
-            root=Path(folder);target=root/'bot'
+            root=Path(folder).resolve();target=root/'bot'
             create_starter(target,library=ROOT/'packages/python')
             env=dict(os.environ);env.pop('BOT_TOKEN',None);env['PYTHONUTF8']='1'
             result=subprocess.run([sys.executable,str(target/'offline.py')],cwd=target,env=env,capture_output=True,text=True,encoding='utf-8',timeout=30)
@@ -200,13 +200,13 @@ class CLITests(unittest.TestCase):
         with redirect_stdout(io.StringIO()) as output:self.assertEqual(main(['recipes','--show','two-columns']),0)
         self.assertIn('inline_keyboard',output.getvalue())
         with tempfile.TemporaryDirectory(prefix='telegram-cli-') as folder:
-            root=Path(folder);artifact=root/'bad.whl';artifact.write_bytes(b'INVALID_FIXTURE')
+            root=Path(folder).resolve();artifact=root/'bad.whl';artifact.write_bytes(b'INVALID_FIXTURE')
             with redirect_stderr(io.StringIO()) as output:self.assertEqual(main(['init',str(root/'target'),'--library',str(artifact)]),2)
             self.assertNotIn('INVALID_FIXTURE',output.getvalue());self.assertFalse((root/'target').exists())
 
     def test_doctor_local_read_only_and_token_never_printed(self):
         with tempfile.TemporaryDirectory(prefix='telegram-doctor-') as folder:
-            root=Path(folder);(root/'pyproject.toml').write_text('[project]\nname="fixture"\n')
+            root=Path(folder).resolve();(root/'pyproject.toml').write_text('[project]\nname="fixture"\n')
             (root/'.env').write_text('BOT_TOKEN=SECRET_FROM_FILE')
             before={p.name:p.read_bytes() for p in root.iterdir()}
             with patch.dict(os.environ,{'BOT_TOKEN':'100:SECRET_FROM_ENV'}): report=doctor(root,require_token=True)
@@ -217,7 +217,7 @@ class CLITests(unittest.TestCase):
 
     def test_doctor_invalid_project_data_is_controlled(self):
         with tempfile.TemporaryDirectory(prefix='telegram-doctor-') as folder:
-            root=Path(folder);(root/'pyproject.toml').write_text('SECRET_INVALID_TOML')
+            root=Path(folder).resolve();(root/'pyproject.toml').write_text('SECRET_INVALID_TOML')
             report=doctor(root)
             self.assertFalse(report['passed']);self.assertNotIn('SECRET',json.dumps(report))
 
@@ -235,7 +235,7 @@ class GalleryGeneratorTests(unittest.TestCase):
         # independent fresh generation remains in verify_gallery_export.py.
         snapshot = builder.build()
         with tempfile.TemporaryDirectory(prefix='telegram-gallery-') as folder, patch.object(builder, 'build', return_value=snapshot):
-            output=Path(folder)/'site'
+            output=Path(folder).resolve()/'site'
             with patch('sys.argv',['builder','--output-dir',str(output)]),redirect_stdout(io.StringIO()):builder.main()
             self.assertTrue((output/'index.html').is_file());self.assertTrue((output/'gallery.js').is_file())
             self.assertEqual(len(json.loads((output/'recipes.json').read_text(encoding='utf-8'))['recipes']),311)

@@ -50,7 +50,7 @@ class DoctorTests(unittest.TestCase):
 
     def test_valid_bot_stays_read_only_and_does_not_read_env_or_project_code(self):
         with tempfile.TemporaryDirectory() as folder:
-            root = Path(folder)
+            root = Path(folder).resolve()
             (root / 'pyproject.toml').write_text('[project]\nname="fixture"\n')
             (root / '.env').write_text('BOT_TOKEN=' + CANARY)
             (root / 'app.py').write_text('raise RuntimeError("' + CANARY + '")')
@@ -94,7 +94,7 @@ class DoctorTests(unittest.TestCase):
 
     def test_manifest_shapes_missing_oversized_and_malformed_are_reported_without_payload(self):
         with tempfile.TemporaryDirectory() as folder:
-            root = Path(folder); self.manifest(root)
+            root = Path(folder).resolve(); self.manifest(root)
             mini = root / 'mini-app/package.json'
             for payload, reason in ((CANARY, 'json-invalid'), ('[]', 'mini-app-dependency-missing'),
                     ('{"dependencies":null}', 'mini-app-dependency-missing'),
@@ -119,7 +119,7 @@ class DoctorTests(unittest.TestCase):
 
     def test_node_probe_uses_only_fixed_args_and_allowlisted_env_never_echoes_output(self):
         with tempfile.TemporaryDirectory() as folder:
-            root = Path(folder); self.manifest(root)
+            root = Path(folder).resolve(); self.manifest(root)
             for stdout, code, reason in (('v24.19.0\n', 0, 'node-supported'), ('v18.1.0', 0, 'node-too-old'),
                     (CANARY, 0, 'node-probe-failed'), ('v24.19.0', 1, 'node-probe-failed')):
                 with self.subTest(reason=reason), patch.dict(os.environ, {'BOT_TOKEN': '100:' + CANARY, 'NODE_OPTIONS': CANARY, 'PAYMENT_SECRET': CANARY}), \
@@ -140,7 +140,7 @@ class DoctorTests(unittest.TestCase):
 
     def test_unavailable_target_and_linked_or_unreadable_manifest_are_local_failures(self):
         with tempfile.TemporaryDirectory() as folder:
-            root = Path(folder); self.manifest(root)
+            root = Path(folder).resolve(); self.manifest(root)
             missing = doctor(root / CANARY)
             self.assertFalse(missing['passed']); self.assert_guidance(missing)
             file = root / 'file'; file.write_text(CANARY)
@@ -194,7 +194,7 @@ class DoctorTests(unittest.TestCase):
 
     def test_cli_returns_actionable_json_for_failed_target_and_successful_bot(self):
         with tempfile.TemporaryDirectory() as folder:
-            for target, expected in ((folder, 0), (str(Path(folder) / CANARY), 1)):
+            for target, expected in ((folder, 0), (str(Path(folder).resolve() / CANARY), 1)):
                 with self.subTest(expected=expected), patch.dict(os.environ, {'BOT_TOKEN': ''}), \
                         redirect_stdout(io.StringIO()) as output, redirect_stderr(io.StringIO()) as errors:
                     status = main(['doctor', target])

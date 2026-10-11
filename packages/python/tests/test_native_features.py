@@ -108,7 +108,7 @@ class CatalogTests(unittest.TestCase):
     def test_generator_real_operations_in_temporary_repository_and_drift(self):
         module = self.builder()
         with tempfile.TemporaryDirectory(prefix='telegram-catalog-fixture-') as directory:
-            root = Path(directory)
+            root = Path(directory).resolve()
             for relative in ('.agents/skills/telegram-bot-api/references/api-index.json', 'catalog/mini-app-index.json'):
                 target = root / relative; target.parent.mkdir(parents=True, exist_ok=True)
                 shutil.copyfile(ROOT / relative, target)
