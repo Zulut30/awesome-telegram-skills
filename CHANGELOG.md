@@ -1,5 +1,14 @@
 # Изменения библиотеки компонентов
 
+## 0.25.0
+
+- CI проверяет Python 3.11/3.13 на Windows/Linux, Node 20/24 и полную установленную wheel/tarball-поставку с Chrome; отчеты сохраняются при ошибках. Локальная приемка и фактический GitHub run учитываются отдельно.
+- Валидатор обходит только исходники, исключая generated/dependency trees. При timeout verification helpers останавливают собственные дочерние процессы; progress/timing отчеты сохраняются по этапам. Новый `--output` защищает прежние результаты от перезаписи.
+- Тест экспортной галереи разделяет одно полное исполнение recipes и export/check/drift; отдельная приемка сохраняет независимую повторную генерацию.
+- Пункт 32: `SQLiteOnce.run_guarded` и optional `GuardedOnceStore`; current checks входят в effect/receipt transaction и выполняются перед replay. Legacy run/OnceStore API сохранен.
+- Server-issued persistent intent с actor/bot/chat/message/topic binding, current ACL/domain revision, два независимых SDK workers и unknown feedback reconciliation; standalone guide/recipe. External HTTP и other storage не покрываются SQLite atomicity.
+- Исправлены ранее поврежденные русские form/callback feedback и labels; native behavior проверяет читаемый текст. Пакеты experimental, local-only; live/device/independent acceptance отдельно.
+
 ## 0.24.0
 
 - Пункт 31: atomic FSM snapshot contract и адаптер текущего project storage; state/data, версия, шаг и абсолютный срок формы согласованно сохраняются в одной CAS записи.

@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "library_version": "0.24.0",
+  "library_version": "0.25.0",
   "symbols": [
     {
       "module": "telegram_patterns",
@@ -164,10 +164,10 @@
       "import": "from telegram_patterns import OnceResult",
       "recipe": "ref.core_storage",
       "example": "examples/api-reference/python/core_storage.py",
-      "limits": "Scope/ACL определяет сервер до effect и replay. Atomicity касается только переданного SQLite connection: без HTTP, другого storage, commit/rollback. Файл/миграции/retention принадлежат host.",
+      "limits": "Server-derived actor/origin and current ACL are checked inside run_guarded transaction before effect and replay. New effects check original domain revision; saved receipt is not current state. Legacy run keeps prior external authorization contract. Only supplied owned SQLite connection; no HTTP/other backend/control commit. Host owns schema/retention; structural adapter alone does not prove isolation.",
       "intent": "Результат эффекта с replay flag",
-      "example_sha256": "32cf2ece4ab7489330f3ba85bda96d14b9e44b71c817dd01a964e2ae41335fe1",
-      "example_source_sha256": "32cf2ece4ab7489330f3ba85bda96d14b9e44b71c817dd01a964e2ae41335fe1",
+      "example_sha256": "4c2fb06f86081f027756ee95048b9cf94ec199f38dfad28d88c70a9f6a2d2804",
+      "example_source_sha256": "4c2fb06f86081f027756ee95048b9cf94ec199f38dfad28d88c70a9f6a2d2804",
       "kind": "value"
     },
     {
@@ -176,10 +176,10 @@
       "import": "from telegram_patterns import OperationConflict",
       "recipe": "ref.core_storage",
       "example": "examples/api-reference/python/core_storage.py",
-      "limits": "Scope/ACL определяет сервер до effect и replay. Atomicity касается только переданного SQLite connection: без HTTP, другого storage, commit/rollback. Файл/миграции/retention принадлежат host.",
+      "limits": "Server-derived actor/origin and current ACL are checked inside run_guarded transaction before effect and replay. New effects check original domain revision; saved receipt is not current state. Legacy run keeps prior external authorization contract. Only supplied owned SQLite connection; no HTTP/other backend/control commit. Host owns schema/retention; structural adapter alone does not prove isolation.",
       "intent": "Тот же scoped key с другим payload",
-      "example_sha256": "32cf2ece4ab7489330f3ba85bda96d14b9e44b71c817dd01a964e2ae41335fe1",
-      "example_source_sha256": "32cf2ece4ab7489330f3ba85bda96d14b9e44b71c817dd01a964e2ae41335fe1",
+      "example_sha256": "4c2fb06f86081f027756ee95048b9cf94ec199f38dfad28d88c70a9f6a2d2804",
+      "example_source_sha256": "4c2fb06f86081f027756ee95048b9cf94ec199f38dfad28d88c70a9f6a2d2804",
       "kind": "value"
     },
     {
@@ -188,10 +188,10 @@
       "import": "from telegram_patterns import SQLiteOnce",
       "recipe": "ref.core_storage",
       "example": "examples/api-reference/python/core_storage.py",
-      "limits": "Scope/ACL определяет сервер до effect и replay. Atomicity касается только переданного SQLite connection: без HTTP, другого storage, commit/rollback. Файл/миграции/retention принадлежат host.",
-      "intent": "Инициализация и атомарный run в файле SQLite",
-      "example_sha256": "32cf2ece4ab7489330f3ba85bda96d14b9e44b71c817dd01a964e2ae41335fe1",
-      "example_source_sha256": "32cf2ece4ab7489330f3ba85bda96d14b9e44b71c817dd01a964e2ae41335fe1",
+      "limits": "Server-derived actor/origin and current ACL are checked inside run_guarded transaction before effect and replay. New effects check original domain revision; saved receipt is not current state. Legacy run keeps prior external authorization contract. Only supplied owned SQLite connection; no HTTP/other backend/control commit. Host owns schema/retention; structural adapter alone does not prove isolation.",
+      "intent": "Инициализация, legacy run и current run_guarded в файле SQLite",
+      "example_sha256": "4c2fb06f86081f027756ee95048b9cf94ec199f38dfad28d88c70a9f6a2d2804",
+      "example_source_sha256": "4c2fb06f86081f027756ee95048b9cf94ec199f38dfad28d88c70a9f6a2d2804",
       "kind": "value"
     },
     {
@@ -200,10 +200,22 @@
       "import": "from telegram_patterns import OnceStore",
       "recipe": "ref.core_storage",
       "example": "examples/api-reference/python/core_storage.py",
-      "limits": "Scope/ACL определяет сервер до effect и replay. Atomicity касается только переданного SQLite connection: без HTTP, другого storage, commit/rollback. Файл/миграции/retention принадлежат host.",
+      "limits": "Server-derived actor/origin and current ACL are checked inside run_guarded transaction before effect and replay. New effects check original domain revision; saved receipt is not current state. Legacy run keeps prior external authorization contract. Only supplied owned SQLite connection; no HTTP/other backend/control commit. Host owns schema/retention; structural adapter alone does not prove isolation.",
       "intent": "Структурный контракт initialize/run storage проекта",
-      "example_sha256": "32cf2ece4ab7489330f3ba85bda96d14b9e44b71c817dd01a964e2ae41335fe1",
-      "example_source_sha256": "32cf2ece4ab7489330f3ba85bda96d14b9e44b71c817dd01a964e2ae41335fe1",
+      "example_sha256": "4c2fb06f86081f027756ee95048b9cf94ec199f38dfad28d88c70a9f6a2d2804",
+      "example_source_sha256": "4c2fb06f86081f027756ee95048b9cf94ec199f38dfad28d88c70a9f6a2d2804",
+      "kind": "value"
+    },
+    {
+      "module": "telegram_patterns",
+      "name": "GuardedOnceStore",
+      "import": "from telegram_patterns import GuardedOnceStore",
+      "recipe": "ref.core_storage",
+      "example": "examples/api-reference/python/core_storage.py",
+      "limits": "Server-derived actor/origin and current ACL are checked inside run_guarded transaction before effect and replay. New effects check original domain revision; saved receipt is not current state. Legacy run keeps prior external authorization contract. Only supplied owned SQLite connection; no HTTP/other backend/control commit. Host owns schema/retention; structural adapter alone does not prove isolation.",
+      "intent": "Optional current checks/effect/receipt transaction contract backend проекта",
+      "example_sha256": "4c2fb06f86081f027756ee95048b9cf94ec199f38dfad28d88c70a9f6a2d2804",
+      "example_source_sha256": "4c2fb06f86081f027756ee95048b9cf94ec199f38dfad28d88c70a9f6a2d2804",
       "kind": "value"
     },
     {
@@ -466,8 +478,8 @@
       "example": "examples/api-reference/python/core_recipes.py",
       "limits": "Чтение не исполняет recipe code. Maturity отдельно от verification; SDK/mock не доказывают live/device. Preview — независимая копия. Этот пример ищет существующий cookbook recipe two-columns; ref.* — имена справочника API.",
       "intent": "Literal stable/experimental/reference",
-      "example_sha256": "a1ec5757f974ffff51b64cb9da7ebdd254be6d67a62da1fff82b81343bb8026a",
-      "example_source_sha256": "58e9b8cb6b552d4e3266cc8e23f8ea49a0472911cd5f10780a3c30271ea3863e",
+      "example_sha256": "56fb799776fea231e058db0d81a23e3b0b10cfc92e6bf07114e36a1047ea4897",
+      "example_source_sha256": "0482cc06bae4eaf7e7e2bbdda9abcbed41c29656ce5c3350303cdb0c0c6a9832",
       "kind": "value"
     },
     {
@@ -478,8 +490,8 @@
       "example": "examples/api-reference/python/core_recipes.py",
       "limits": "Чтение не исполняет recipe code. Maturity отдельно от verification; SDK/mock не доказывают live/device. Preview — независимая копия. Этот пример ищет существующий cookbook recipe two-columns; ref.* — имена справочника API.",
       "intent": "Literal sdk/mock/browser/live/not_run",
-      "example_sha256": "a1ec5757f974ffff51b64cb9da7ebdd254be6d67a62da1fff82b81343bb8026a",
-      "example_source_sha256": "58e9b8cb6b552d4e3266cc8e23f8ea49a0472911cd5f10780a3c30271ea3863e",
+      "example_sha256": "56fb799776fea231e058db0d81a23e3b0b10cfc92e6bf07114e36a1047ea4897",
+      "example_source_sha256": "0482cc06bae4eaf7e7e2bbdda9abcbed41c29656ce5c3350303cdb0c0c6a9832",
       "kind": "value"
     },
     {
@@ -490,8 +502,8 @@
       "example": "examples/api-reference/python/core_recipes.py",
       "limits": "Чтение не исполняет recipe code. Maturity отдельно от verification; SDK/mock не доказывают live/device. Preview — независимая копия. Этот пример ищет существующий cookbook recipe two-columns; ref.* — имена справочника API.",
       "intent": "Неизменяемая запись и копия preview",
-      "example_sha256": "a1ec5757f974ffff51b64cb9da7ebdd254be6d67a62da1fff82b81343bb8026a",
-      "example_source_sha256": "58e9b8cb6b552d4e3266cc8e23f8ea49a0472911cd5f10780a3c30271ea3863e",
+      "example_sha256": "56fb799776fea231e058db0d81a23e3b0b10cfc92e6bf07114e36a1047ea4897",
+      "example_source_sha256": "0482cc06bae4eaf7e7e2bbdda9abcbed41c29656ce5c3350303cdb0c0c6a9832",
       "kind": "value"
     },
     {
@@ -502,8 +514,8 @@
       "example": "examples/api-reference/python/core_recipes.py",
       "limits": "Чтение не исполняет recipe code. Maturity отдельно от verification; SDK/mock не доказывают live/device. Preview — независимая копия. Этот пример ищет существующий cookbook recipe two-columns; ref.* — имена справочника API.",
       "intent": "Версия, recipes, get/search с фильтрами",
-      "example_sha256": "a1ec5757f974ffff51b64cb9da7ebdd254be6d67a62da1fff82b81343bb8026a",
-      "example_source_sha256": "58e9b8cb6b552d4e3266cc8e23f8ea49a0472911cd5f10780a3c30271ea3863e",
+      "example_sha256": "56fb799776fea231e058db0d81a23e3b0b10cfc92e6bf07114e36a1047ea4897",
+      "example_source_sha256": "0482cc06bae4eaf7e7e2bbdda9abcbed41c29656ce5c3350303cdb0c0c6a9832",
       "kind": "value"
     },
     {
@@ -2871,7 +2883,7 @@
       "kind": "value"
     }
   ],
-  "python_symbols": 198,
+  "python_symbols": 199,
   "typescript_symbols": 41,
   "recipes": 32,
   "additional_entries": [

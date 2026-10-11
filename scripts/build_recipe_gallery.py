@@ -130,6 +130,7 @@ def build(root: Path = ROOT) -> dict:
         ('selection_bot.py', 'offline_selection.py', 'demo-selection', 'Переключатели, выбор, количество и подтверждение'),
         ('calendar_bot.py', 'offline_calendar.py', 'demo-calendar', 'Календарь и запись на свободное время'),
         ('dialog_restart_bot.py', 'offline_dialog_restart.py', 'demo-dialog-restart', 'Восстановление диалога после рестарта'),
+        ('concurrent_actions_bot.py', 'offline_concurrent_actions.py', 'demo-concurrent-actions', 'Действия при нескольких workers'),
         ('dialog_fields_bot.py', 'offline_dialog_fields.py', 'demo-dialog-fields', 'Семь типов полей диалога'),
         ('inline_search_bot.py', 'offline_inline_search.py', 'demo-inline-search', 'Inline-поиск с персональной пагинацией'),
         ('polls_bot.py', 'offline_polls.py', 'demo-polls', 'Опросы, quiz и события голосования'),
@@ -168,6 +169,14 @@ def build(root: Path = ROOT) -> dict:
             records[-1]['source_files'] += ['packages/python/src/telegram_patterns/fsm_storage.py', 'packages/python/src/telegram_patterns/_dialog_storage.py', 'docs/dialog-restart.md']
             records[-1]['check_files'] += ['packages/python/tests/test_fsm_storage.py', 'scripts/verify_dialog_restart_recipe.py']
             records[-1]['scope'] = 'Three actual processes, file SQLite and synthetic Dispatcher/SDK; atomic local state only, no live delivery, physical device, independent acceptance or distributed business exactly-once claim.'
+        if key == 'demo-concurrent-actions':
+            records[-1]['summary'] = 'Current actor/origin/ACL/revision и один local effect/receipt при двойной кнопке и нескольких workers'
+            records[-1]['tasks'] = ['bot','recovery']
+            records[-1]['contexts'] = ['private','group','supergroup']
+            records[-1]['keywords'] += ['конкуренция','двойное','повтор','worker','workers','revision','operation','транзакция','права','scope','intent']
+            records[-1]['source_files'] += ['packages/python/src/telegram_patterns/sqlite_once.py','packages/python/src/telegram_patterns/extensions.py','docs/concurrent-actions.md']
+            records[-1]['check_files'] += ['packages/python/tests/test_guarded_once.py','scripts/verify_concurrent_actions_recipe.py']
+            records[-1]['scope'] = 'Four actual SDK workers in two local SQLite races, plus positive group/topic and current ACL replay probes. Mock Telegram, no live permission/device/provider/independent proof or remote exactly-once claim.'
         if key == 'demo-dialog-fields':
             records[-1]['keywords'] += ['поля', 'число', 'email', 'телефон', 'файл', 'контакт', 'геопозиция', 'ForceReply', 'candidate', 'шаг']
             records[-1]['source_files'] += ['packages/python/src/telegram_patterns/dialog_fields.py', 'packages/python/src/telegram_patterns/dialog_forms.py']

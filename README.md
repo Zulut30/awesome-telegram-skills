@@ -4,7 +4,7 @@
 
 # Awesome Telegram Skills
 
-[![Version](https://img.shields.io/badge/version-0.24.0-229ED9)](CHANGELOG.md)
+[![Version](https://img.shields.io/badge/version-0.25.0-229ED9)](CHANGELOG.md)
 [![Skills](https://img.shields.io/badge/skills-41-334155)](#skills)
 [![Status](https://img.shields.io/badge/status-experimental-f59e0b)](docs/v1-maturity.md)
 [![Repository checks](https://github.com/Zulut30/awesome-telegram-skills/actions/workflows/repository-checks.yml/badge.svg)](https://github.com/Zulut30/awesome-telegram-skills/actions/workflows/repository-checks.yml)
@@ -17,7 +17,7 @@
 
 **[Документация на GitHub Pages](https://zulut30.github.io/awesome-telegram-skills/)** · [Каждый скилл](https://zulut30.github.io/awesome-telegram-skills/skills/) · [Справочник API](https://zulut30.github.io/awesome-telegram-skills/api/) · [Инструкция для ИИ-агента](docs/for-agents.md).
 
-> **Версия 0.24.0 — экспериментальная локальная поставка.** Приняты 30 из 100 пунктов плана. Пакеты пока не опубликованы в PyPI/npm; проверка на реальных Telegram-клиентах и платежных провайдерах остается отдельным этапом.
+> **Версия 0.25.0 — экспериментальная локальная поставка.** Принят 31 из 100 пунктов плана. Пакеты пока не опубликованы в PyPI/npm; проверка на реальных Telegram-клиентах и платежных провайдерах остается отдельным этапом.
 
 ## Что внутри
 
@@ -27,7 +27,7 @@
 | **43 группы компонентов** | Клавиатуры, формы, навигация, календари, медиа, состояния и проверка `initData`; [каталог](components.json) |
 | **Python-пакет** | `telegram_patterns`: ядро и отдельные адаптеры aiogram; [API](packages/python/README.md) |
 | **TypeScript-пакет** | `@awesome-telegram/patterns`: bridge, темы, viewport, safe areas, API-клиент, черновики и UI-основа; [API](packages/typescript/README.md) |
-| **310 рецептов + CLI** | Поиск, фильтры, примеры кода, создание заготовок и `doctor`; [инструкция](docs/developer-tools-review.md) |
+| **311 рецептов + CLI** | Поиск, фильтры, примеры кода, создание заготовок и `doctor`; [инструкция](docs/developer-tools-review.md) |
 
 <a id="quickstart"></a>
 
@@ -172,7 +172,7 @@ keyboard = action_menu([
 
 ## Качество и границы
 
-Поставка 0.24.0 прошла 77 этапов приемки: **460 Python-тестов, один пропуск, 26 TypeScript-тестов, 2435 автоматических браузерных проверок и 60 проверок первого запуска**. Собранные wheel/tarball устанавливались в отдельные consumer-проекты. [Отчет приемки](docs/v1-checks/031.json) · [Матрица поддержки](docs/support-matrix.md).
+Поставка 0.25.0 прошла 79 этапов приемки: **478 Python-тестов, 1 пропуск, 26 TypeScript-тестов, 2491 автоматических браузерных проверок и 60 проверок первого запуска**. Wheel/tarball устанавливались в отдельные consumer-проекты. Полный набор также прошел на Python 3.11. [Отчет приемки](docs/v1-checks/032.json) · [Матрица поддержки](docs/support-matrix.md) · [CI и повтор проверки](docs/ci-verification.md).
 
 Каталог API содержит request-примеры; он не означает, что все возможности Telegram реализованы и испытаны в боевом приложении. Mini App UI — основа для вашего продукта; полная приемка на реальных телефонах, планшетах и ПК еще впереди. Платежные скиллы описывают интеграции Stars, Crypto Pay, Platega и ЮКассы; merchant-настройки и live-проверки относятся к конкретному проекту. Bot API, Mini Apps и пользовательские MTProto-сессии имеют отдельные границы доступа.
 

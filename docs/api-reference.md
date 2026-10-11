@@ -1,4 +1,4 @@
-# Справочник API 0.24.0
+# Справочник API 0.25.0
 
 Публичные imports, самостоятельные минимальные композиции и границы каждого символа. Все группы experimental. Рецепты ref.* принадлежат этому справочнику; cookbook RecipeCatalog отдельно содержит Telegram requests/layouts. Исполненные fixtures не доказывают live/device/provider acceptance.
 
@@ -27,8 +27,9 @@
 | `split_formatted` | `from telegram_patterns import split_formatted` | [ref.core_message_text](api-reference-core.md#ref-core_message_text) | Lossless partition, clipping styles/code и atomic links/quotes/emoji |
 | `OnceResult` | `from telegram_patterns import OnceResult` | [ref.core_storage](api-reference-core.md#ref-core_storage) | Результат эффекта с replay flag |
 | `OperationConflict` | `from telegram_patterns import OperationConflict` | [ref.core_storage](api-reference-core.md#ref-core_storage) | Тот же scoped key с другим payload |
-| `SQLiteOnce` | `from telegram_patterns import SQLiteOnce` | [ref.core_storage](api-reference-core.md#ref-core_storage) | Инициализация и атомарный run в файле SQLite |
+| `SQLiteOnce` | `from telegram_patterns import SQLiteOnce` | [ref.core_storage](api-reference-core.md#ref-core_storage) | Инициализация, legacy run и current run_guarded в файле SQLite |
 | `OnceStore` | `from telegram_patterns import OnceStore` | [ref.core_storage](api-reference-core.md#ref-core_storage) | Структурный контракт initialize/run storage проекта |
+| `GuardedOnceStore` | `from telegram_patterns import GuardedOnceStore` | [ref.core_storage](api-reference-core.md#ref-core_storage) | Optional current checks/effect/receipt transaction contract backend проекта |
 | `PatternError` | `from telegram_patterns import PatternError` | [ref.core_errors](api-reference-core.md#ref-core_errors) | Базовое исключение с безопасным report |
 | `ValidationFailure` | `from telegram_patterns import ValidationFailure` | [ref.core_errors](api-reference-core.md#ref-core_errors) | Известный локальный отказ validation |
 | `InvalidType` | `from telegram_patterns import InvalidType` | [ref.core_errors](api-reference-core.md#ref-core_errors) | Локальный type отказ, совместимый с TypeError |

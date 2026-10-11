@@ -23,6 +23,20 @@ class OnceStore(Protocol[_Transaction_co]):
             apply: Callable[[_Transaction_co], Any]) -> OnceResult: ...
 
 
+class GuardedOnceStore(OnceStore[_Transaction_co], Protocol[_Transaction_co]):
+    """Optional host capability: current checks + effect/receipt one transaction.
+
+    check(transaction, replayed) is synchronous and read-only; exactly True
+    permits access. Check actor/origin/ACL on replay too. Check domain revision
+    for new effects; an immutable receipt is not the current resource state.
+    A custom backend owns isolation, uniqueness, rollback and callback policy;
+    implementing this structural interface alone does not prove atomicity.
+    """
+    def run_guarded(self, scope: str, operation_key: str, payload: Any,
+                    apply: Callable[[_Transaction_co], Any], *,
+                    check: Callable[[_Transaction_co, bool], bool]) -> OnceResult: ...
+
+
 class AsyncTransport(Protocol[_Request_contra, _Response_co]):
     """Single application invocation; adapter documents actual wire retries.
 

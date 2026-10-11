@@ -22,6 +22,7 @@ _FIXTURES = {
     'demo-selection': ('selection_bot.py', 'offline_selection.py'),
     'demo-calendar': ('calendar_bot.py', 'offline_calendar.py'),
     'demo-dialog-restart': ('dialog_restart_bot.py', 'offline_dialog_restart.py'),
+    'demo-concurrent-actions': ('concurrent_actions_bot.py', 'offline_concurrent_actions.py'),
     'demo-dialog-fields': ('dialog_fields_bot.py', 'offline_dialog_fields.py'),
     'demo-message-text': ('message_text_bot.py', 'offline_message_text.py'),
     'demo-media': ('media_bot.py', 'offline_media.py'),
@@ -149,6 +150,14 @@ def _execute(recipe_id: str) -> dict:
                     'expired_pending_preserved', 'version_refused_without_reset', 'host_data_preserved',
                     'existing_dispatcher_preserved'))
                 checks.extend(('three-process-restart', 'original-step-version-deadline', 'expired-pending-same-operation-id'))
+            if recipe_id == 'demo-concurrent-actions':
+                assert evidence['workers'] == 2 and evidence['actual_worker_processes'] == 4
+                assert evidence['effects_per_case'] == [1,1,1,1] and evidence['business_effects'] == 4
+                assert all(evidence[k] for k in ('same_operation_replayed','different_operations_stale',
+                    'stable_operation_id','fresh_acl_replay','actor_origin_guards','unknown_feedback_reconciled',
+                    'existing_dispatcher_preserved','positive_group_topic','caller_files_preserved'))
+                checks.extend(('two-independent-sdk-workers','same-operation-one-effect-replay',
+                               'same-revision-one-winner','current-origin-acl-before-replay','group-topic-binding'))
             if recipe_id == 'demo-message-text':
                 assert evidence['chunks'] > 1 and all(evidence[k] for k in ('literal_injection', 'utf16_offsets', 'split_preserves_entities', 'explicit_parse_mode_none', 'emoji_capability_fallback', 'existing_dispatcher_preserved', 'private_context_guards'))
                 checks.extend(('literal-user-insertions', 'utf16-entities-lossless-partition', 'explicit-default-parse-mode-override', 'custom-emoji-fallback'))

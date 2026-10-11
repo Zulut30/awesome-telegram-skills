@@ -1,7 +1,7 @@
 {
   "schema_version": 1,
-  "library_version": "0.23.0",
-  "checked_date": "2026-10-05",
+  "library_version": "0.25.0",
+  "checked_date": "2026-10-11",
   "maturity": "experimental",
   "declared": {
     "python": ">=3.11",
@@ -20,31 +20,31 @@
     "playwright": "1.63.0",
     "os": "Windows 11",
     "arch": "AMD64",
-    "browser": "154.0.8037.98",
-    "browser_checks": 2379,
+    "browser": "155.0.8059.39",
+    "browser_checks": 2491,
     "mypy": "2.4.0",
     "quickstart_browser_checks": 60,
     "selected_starter_browser_checks": 76,
     "starter_selectable_groups": 15,
-    "python_passed": 433,
+    "python_passed": 478,
     "typescript_passed": 26,
     "doctor_consumer_cases": 12,
     "explicit_doctor_repair_commands": 5,
-    "python_source_typing_files": 36,
-    "api_reference_symbols": 233,
-    "api_reference_python_cases": 26,
+    "python_source_typing_files": 38,
+    "api_reference_symbols": 240,
+    "api_reference_python_cases": 27,
     "api_reference_typescript_case_groups": 5,
     "api_reference_browser_checks": 36,
     "api_reference_ts_type_exports": 22,
-    "gallery_browser_checks": 1030,
-    "gallery_export_browser_checks": 1030,
-    "gallery_source_check_files": 253,
-    "recipes": 309,
+    "gallery_browser_checks": 1086,
+    "gallery_export_browser_checks": 1086,
+    "gallery_source_check_files": 266,
+    "recipes": 311,
     "sdk_probe_timeout_seconds": 30,
-    "recipe_execution_plans": 309,
-    "recipe_execution_python_fixtures": 210,
+    "recipe_execution_plans": 311,
+    "recipe_execution_python_fixtures": 212,
     "recipe_execution_guard_denials": 2,
-    "public_api_symbols": 233,
+    "public_api_symbols": 240,
     "keyboard_layout_tests": 7,
     "keyboard_layout_methods": 6,
     "portable_layout_blocks": 2,
@@ -75,19 +75,24 @@
     "platform_tests": 56,
     "platform_contracts": 51,
     "platform_families": 7,
-    "portable_platform_blocks": 1
+    "portable_platform_blocks": 1,
+    "python_additional": [
+      "3.11.15"
+    ],
+    "python311_tests": 479,
+    "concurrent_action_tests": 18
   },
-  "evidence": "docs/v1-checks/030.json",
+  "evidence": "docs/v1-checks/032.json",
   "artifacts": [
     {
-      "name": "awesome_telegram_patterns-0.23.0-py3-none-any.whl",
-      "bytes": 280949,
-      "sha256": "4ccd4f7dd67f93e91fc38df86de2e702032cfe2b2fa13d02305ef0e5bb9053cc"
+      "name": "awesome_telegram_patterns-0.25.0-py3-none-any.whl",
+      "bytes": 305656,
+      "sha256": "72fd07e6b49df1bfb61a0ea144eb29e4252f5b7dd6a8d658c949c881cad15913"
     },
     {
-      "name": "awesome-telegram-patterns-0.23.0.tgz",
-      "bytes": 19531,
-      "sha256": "b01da2b4dd693de45100fe23546ddb3d22b3739305c78f73a3625d76424b91c7"
+      "name": "awesome-telegram-patterns-0.25.0.tgz",
+      "bytes": 19530,
+      "sha256": "ae96f6dd4bd3a7414b021e6e3262cdc62fc166572d3f5f7caa687922254e6e16"
     }
   ],
   "unverified": [
@@ -180,5 +185,11 @@
       "multiworker": false,
       "maturity": "experimental"
     }
+  },
+  "acceptance": {
+    "report": "docs/v1-checks/032.json",
+    "distribution_report": "output/pattern-library-0.25.0-ci-acceptance/distribution-report.json",
+    "github_run": "not_run",
+    "local_os": "Windows 11 AMD64"
   }
 }

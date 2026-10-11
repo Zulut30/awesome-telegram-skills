@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "library_version": "0.24.0",
+  "library_version": "0.25.0",
   "scope": "Public library exports; ref.* recipes belong to the API reference, not the Telegram method snapshot",
   "groups": [
     {
@@ -43,13 +43,14 @@
       "section": "core",
       "title": "SQLite effect и повтор",
       "example": "examples/api-reference/python/core_storage.py",
-      "limits": "Scope/ACL определяет сервер до effect и replay. Atomicity касается только переданного SQLite connection: без HTTP, другого storage, commit/rollback. Файл/миграции/retention принадлежат host.",
+      "limits": "Server-derived actor/origin and current ACL are checked inside run_guarded transaction before effect and replay. New effects check original domain revision; saved receipt is not current state. Legacy run keeps prior external authorization contract. Only supplied owned SQLite connection; no HTTP/other backend/control commit. Host owns schema/retention; structural adapter alone does not prove isolation.",
       "api": {
         "telegram_patterns": {
           "OnceResult": "Результат эффекта с replay flag",
           "OperationConflict": "Тот же scoped key с другим payload",
-          "SQLiteOnce": "Инициализация и атомарный run в файле SQLite",
-          "OnceStore": "Структурный контракт initialize/run storage проекта"
+          "SQLiteOnce": "Инициализация, legacy run и current run_guarded в файле SQLite",
+          "OnceStore": "Структурный контракт initialize/run storage проекта",
+          "GuardedOnceStore": "Optional current checks/effect/receipt transaction contract backend проекта"
         }
       }
     },

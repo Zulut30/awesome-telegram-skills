@@ -20,14 +20,14 @@ class PackageVerificationTests(unittest.TestCase):
             write('components.json',json.dumps({'library_version':'0.0.1','components':[]}))
             write('examples/mini-app/package.json',json.dumps({'dependencies':{'@awesome-telegram/patterns':'0.0.1'}}))
             consumer=root/'consumer';consumer.mkdir()
-            original_run=subprocess.run
+            original_run=verifier.run_command
             def real_timeout(command,**kwargs):
                 self.assertEqual(kwargs['timeout'],180)
                 self.assertEqual(kwargs['cwd'],root)
                 return original_run([sys.executable,'-u','-c',
                     "import sys,time;print('stdout preserved',flush=True);print('stderr preserved',file=sys.stderr,flush=True);time.sleep(10)"],
                     **(kwargs|{'timeout':0.5}))
-            with patch.object(verifier,'ROOT',root),patch.object(sys,'argv',['verify-pattern-packages']),                    patch.object(verifier.shutil,'which',return_value=sys.executable),                    patch.object(verifier.tempfile,'mkdtemp',return_value=str(consumer)),                    patch.object(verifier.subprocess,'run',side_effect=real_timeout):
+            with patch.object(verifier,'ROOT',root),patch.object(sys,'argv',['verify-pattern-packages']),                    patch.object(verifier.shutil,'which',return_value=sys.executable),                    patch.object(verifier.tempfile,'mkdtemp',return_value=str(consumer)),                    patch.object(verifier,'run_command',side_effect=real_timeout):
                 with self.assertRaisesRegex(RuntimeError,'partial output saved'):verifier.main()
             output=root/'output/pattern-library-0.0.1'
             log=(output/'workspace-build.log').read_text(encoding='utf-8')
@@ -35,6 +35,14 @@ class PackageVerificationTests(unittest.TestCase):
             report=json.loads((output/'distribution-report.json').read_text(encoding='utf-8'))
             self.assertFalse(report['passed']);self.assertEqual(report['stages'][0]['exit_code'],124)
             self.assertTrue(report['stages'][0]['timed_out']);self.assertEqual(report['stages'][0]['timeout_seconds'],0.5)
+
+    def test_named_existing_report_directory_is_not_overwritten(self):
+        with tempfile.TemporaryDirectory(prefix='package verifier existing ') as temporary:
+            output=Path(temporary)/'report';output.mkdir()
+            marker=output/'distribution-report.json';marker.write_bytes(b'original evidence')
+            with patch.object(sys,'argv',['verify-pattern-packages','--output',str(output)]):
+                with self.assertRaises(FileExistsError): verifier.main()
+            self.assertEqual(marker.read_bytes(),b'original evidence')
 
 
 if __name__=='__main__':unittest.main()

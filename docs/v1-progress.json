@@ -789,10 +789,18 @@
       "id": 32,
       "title": "Защитить действия от конкуренции",
       "requirement": "Проверять автора, scope, revision и operation ID; два worker или повторное нажатие не создают двойную запись бизнес-операции.",
-      "status": "pending",
-      "commit_subject": null,
-      "artifacts": [],
-      "evidence": []
+      "status": "done",
+      "commit_subject": "roadmap(032): accept guarded actions and verified 0.25.0 delivery",
+      "artifacts": [
+        "docs/v1-checks/032.json",
+        "docs/concurrent-actions.md",
+        "docs/ci-verification.md"
+      ],
+      "evidence": [
+        "0.25.0 installed wheel/tarball: 79 successful stages, 478 Python passed/1 skipped, 26 TypeScript, 2491 browser checks; matching first-run 60 checks",
+        "Two actual SDK workers: same operation replayed once, differing operations reject stale revision, fresh ACL before replay; copied guide and positive group/topic scenarios",
+        "Full Python 3.11 Windows suite and Mypy passed separately; GitHub/Linux matrix configured, hosted execution not claimed"
+      ]
     },
     {
       "id": 33,

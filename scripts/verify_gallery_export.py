@@ -8,6 +8,12 @@ from pathlib import Path
 import shutil
 import subprocess
 import sys
+import time
+
+if __package__:
+    from .verification_process import run_command
+else:
+    from verification_process import run_command
 
 ROOT = Path(__file__).resolve().parents[1]
 
@@ -25,15 +31,27 @@ def main() -> int:
     environment['PYTHONUTF8'] = '1'
     stages = []
     def run(label, command, expected=0, *, timeout=90):
-        result = subprocess.run(list(map(str, command)), cwd=output, env=environment, capture_output=True,
-                                text=True, encoding='utf-8', timeout=timeout)
+        started = time.monotonic()
+        try:
+            result = run_command(command, cwd=output, env=environment, timeout=timeout)
+        except subprocess.TimeoutExpired as error:
+            def partial(value):
+                return value.decode('utf-8', errors='replace') if isinstance(value, bytes) else value or ''
+            (output / (label + '.log')).write_text(partial(error.stdout) + partial(error.stderr)
+                + f'\nTIMEOUT after {error.timeout} seconds\n', encoding='utf-8', newline='\n')
+            stages.append({'stage': label, 'exit_code': 124, 'timed_out': True,
+                           'timeout_seconds': timeout, 'elapsed_seconds': round(time.monotonic()-started,3)})
+            (output / 'stage-report.json').write_text(json.dumps({'passed': False,'stages': stages},indent=2)+'\n',encoding='utf-8')
+            raise
         (output / (label + '.log')).write_text(result.stdout + result.stderr, encoding='utf-8', newline='\n')
-        stages.append({'stage': label, 'exit_code': result.returncode, 'expected_exit': expected})
+        stages.append({'stage': label, 'exit_code': result.returncode, 'expected_exit': expected,
+                       'timeout_seconds': timeout, 'elapsed_seconds': round(time.monotonic()-started,3)})
+        (output / 'stage-report.json').write_text(json.dumps({'passed': False, 'stages': stages}, indent=2)+'\n', encoding='utf-8')
         if result.returncode != expected: raise RuntimeError(label + ' failed')
         return result.stdout
     builder = ROOT / 'scripts/build_recipe_gallery.py'
     result = json.loads(run('export', [sys.executable, builder, '--output-dir', gallery], timeout=120))
-    assert result['recipes'] == 310 and not result['telegram_network']
+    assert result['recipes'] == 311 and not result['telegram_network']
     marker = gallery / 'owned.txt'; marker.write_bytes(b'preserve consumer notes\n')
     before = {p.relative_to(gallery): hashlib.sha256(p.read_bytes()).hexdigest() for p in gallery.rglob('*') if p.is_file()}
     run('check', [sys.executable, builder, '--output-dir', gallery, '--check'], timeout=120)
@@ -48,6 +66,7 @@ def main() -> int:
              ('navigation', ['история', '--task', 'navigation', '--context', 'private', '--sdk', 'aiogram'], 'demo-navigation'),
              ('selection', ['multiselect', '--task', 'input', '--context', 'private', '--sdk', 'aiogram'], 'demo-selection'),
              ('calendar', ['календарь', '--task', 'input', '--context', 'private', '--sdk', 'aiogram'], 'demo-calendar'),
+             ('concurrent-actions', ['workers', '--task', 'recovery', '--context', 'private', '--sdk', 'aiogram'], 'demo-concurrent-actions'),
              ('dialog-fields', ['поля', '--task', 'input', '--context', 'private', '--sdk', 'aiogram'], 'demo-dialog-fields'),
              ('profiles', ['локализация', '--task', 'profiles', '--context', 'private', '--sdk', 'aiogram'], 'demo-profiles'),
              ('media', ['скачивание', '--task', 'media', '--context', 'private', '--sdk', 'aiogram'], 'demo-media'),
@@ -59,13 +78,14 @@ def main() -> int:
         else: assert all(r['id'].startswith('native.BackButton.') for r in response['recipes'])
     browser = {'passed': False, 'skipped': True, 'checks': 0}
     if not args.skip_browser:
-        browser = json.loads(run('browser', [shutil.which('node'), ROOT / 'tests/gallery-browser.mjs', gallery, output / 'browser']))
+        browser = json.loads(run('browser', [shutil.which('node'), ROOT / 'tests/gallery-browser.mjs', gallery, output / 'browser'], timeout=180))
         assert browser['passed']
     report = {'passed': True, 'version': data['library_version'], 'recipes': len(data['recipes']), 'source_check_files': len(links),
               'byte_exact_copies': True, 'check_read_only': True, 'owned_file_preserved': marker.read_bytes() == b'preserve consumer notes\n',
               'cli_cases': len(cases), 'browser': browser, 'browser_skipped': args.skip_browser, 'stages': stages, 'consumer': str(output),
               'scope': 'Standalone static gallery and installed CLI; no live Telegram, permission or compatibility range proof'}
     (output / 'report.json').write_text(json.dumps(report, ensure_ascii=False, indent=2)+'\n', encoding='utf-8', newline='\n')
+    (output / 'stage-report.json').write_text(json.dumps({'passed': True, 'stages': stages}, indent=2)+'\n', encoding='utf-8')
     print(json.dumps(report, ensure_ascii=False)); return 0
 
 

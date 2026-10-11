@@ -161,4 +161,8 @@ Crypto Pay: старая официальная страница указыва�
 
 Проверены ровно 51 method-specific contract Bot API 10.3, Business/managed flow и installed aiogram 3.31.0 (native fields, nested multipart); [подробные условия и источники](platform-operations.md). Дата не обновляет остальной capability snapshot. Native SDK/mock не подтверждает live permissions, financial settlement или реальные устройства.
 
+## Пункт 32 — 6 октября 2026
+
+Сверены только [CallbackQuery/ACK и InaccessibleMessage date=0](https://core.telegram.org/bots/api#callbackquery), [SQLite BEGIN IMMEDIATE](https://www.sqlite.org/lang_transaction.html) и [Python sqlite3.set_authorizer](https://docs.python.org/3.13/library/sqlite3.html#sqlite3.Connection.set_authorizer); [композиция и границы](concurrent-actions.md). Installed aiogram 3.31.0, actual local file transactions/SDK workers; другие API/payment source dates не обновлены.
+
 Логи и снимки с путями `output/…` — локальные артефакты исторических проверок. Они не входят в Git и не доступны в свежем клоне. Для текущей принятой версии смотрите [сохраненную приемку 031](v1-checks/031.json); для нового прогона выполните `python scripts/verify_pattern_packages.py`.

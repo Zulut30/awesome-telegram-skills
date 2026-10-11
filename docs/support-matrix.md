@@ -1,23 +1,23 @@
-# Матрица поддержки 0.23.0
+# Матрица поддержки 0.25.0
 
 Пункт 005. Машиночитаемый снимок — [support-matrix.json](../catalog/support-matrix.json). «Заявлено» означает dependency/runtime constraint; «проверено» — конкретный прошедший сценарий. Весь declared range не считается проверенным одной комбинацией. API пока experimental.
 
-| Область | Заявлено / формат | Проверено 5 октября 2026 | Непроверенные границы |
+| Область | Заявлено / формат | Проверено 11 октября 2026 | Непроверенные границы |
 | --- | --- | --- | --- |
-| Python core | Python >=3.11, stdlib, без SDK | 3.13.12, Windows 11 AMD64, установленный wheel без aiogram; CLI/core/SQLite consumers | Остальные Python versions и Linux/macOS требуют отдельной матрицы |
+| Python core | Python >=3.11, stdlib, без SDK | 3.13.12, Windows 11 AMD64; отдельный полный прогон 3.11.15; установленный wheel без aiogram; CLI/core/SQLite consumers | Остальные Python versions и Linux/macOS требуют отдельной матрицы |
 | Calendar / IANA | Optional calendar extra: tzdata>=2026.5,<2027; UTC без него | tzdata 2026.5, DST gap/fold и отдельные процессы через установленный wheel | Другие tzdata versions и системные базы требуют проверки конкретного проекта |
 | Python bot adapters | Optional aiogram >=3.31,<4 | aiogram 3.31.0, тот же Python/OS, native SDK construction и synthetic Dispatcher | Другие SDK versions, PTB/TeleBot adapters и live Telegram не подтверждены |
 | TypeScript tooling | Node >=20, ESM; no runtime dependencies | Node 24.19.0, npm 12.0.2, TypeScript 7.0.2, tarball imports/types/build и 26 тест | Другие версии Node/TS и bundlers не объявлены проверенными; CommonJS export отсутствует |
-| Browser UI | DOM/fetch/ESM; Chrome или CHROME_PATH для verification | Chrome 154.0.8037.98, Playwright 1.63.0; 141 example + 1030 gallery + 1030 export + 66 starter + 76 selected starter + 36 API-reference checks | Другие engines, screen readers и физические устройства отдельно |
+| Browser UI | DOM/fetch/ESM; Chrome или CHROME_PATH для verification | Chrome 155.0.8059.39, Playwright 1.63.0; 141 example + 1086 gallery + 1086 export + 66 starter + 76 selected starter + 36 API-reference checks | Другие engines, screen readers и физические устройства отдельно |
 | Viewports/themes | Responsive composition | Browser cases: 320–1920 px по ширине, portrait/landscape/tablet/desktop; light/dark | Viewport emulation не настоящие iOS/Android/tablet Telegram clients |
 | Telegram Bot API | Runtime возможности установленного SDK | Snapshot Bot API 10.3: 185 request methods / 400 indexed types, construction | Server permissions, real delivery, payment workflows и все SDK versions не доказаны |
 | Mini App native API | 99 paths / 44 events snapshot, version/platform/presence gates | Types/build, mock native callbacks/listeners и browser compositions | Нет live matrix версий Telegram iOS/Android/Desktop; method availability не permission/auth |
 | Storage | SQLiteOnce/SQLiteSlotStore — file SQLite; host FSM | Local file SQLite/replay; actual spawned-process slot races; MemoryStorage form example | Single-process сервисный FSM/restart — отдельный пример 017 ниже; general FSM/multiworker и production adapters — последующие пункты |
-| Windows symlink case | Directory symlink проверяется при возможности | 433 Python passed; 1 из 434 skipped из-за недоступных directory symlinks | Пропуск не PASS этого filesystem случая |
+| Windows symlink case | Directory symlink проверяется при возможности | 478 Python passed; 1 из 479 skipped из-за недоступных directory symlinks | Пропуск не PASS этого filesystem случая |
 
 Node >=20 — текущий технический минимум manifests, а не рекомендация выбирать Node 20 для production. По [официальной таблице Node.js](https://nodejs.org/en/about/previous-releases) ветка 20 уже EOL; использовать поддерживаемую LTS и затем проверять точную версию приложения. Наш снимок проверен на 24.19.0, что не означает «самая свежая версия».
 
-Текущая приемка: [030.json](v1-checks/030.json), `output/pattern-library-0.23.0/distribution-report.json` и соответствующие logs, привязанные к hashes wheel/tarball. История предыдущих поставок описана ниже. Telegram/live/sandbox evidence сейчас отсутствует, версии клиентов поэтому не выдумываются. Расширение исполняемой OS/runtime matrix относится к 081, device acceptance — к 067; публикация таблицы не закрывает эти пункты.
+Текущая приемка: [032.json](v1-checks/032.json), `output/pattern-library-0.25.0-ci-acceptance/distribution-report.json` и соответствующие logs, привязанные к hashes wheel/tarball. История предыдущих поставок описана ниже. Telegram/live/sandbox evidence сейчас отсутствует, версии клиентов поэтому не выдумываются. Расширение исполняемой OS/runtime matrix относится к 081, device acceptance — к 067; публикация таблицы не закрывает эти пункты.
 
 Для другого SDK/runtime сохраняйте выбранный стек и выполните relevant consumer/tests перед обещанием совместимости. `doctor` предупреждает об aiogram, отличном от проверенного 3.31.0; проверка формата token не проверяет Telegram identity. Обновление support matrix следует за новым evidence, а не только за изменением диапазона зависимости.
 
@@ -98,3 +98,7 @@ Installed Dispatcher workflow проходит date/time/back/month navigation, 
 ### Восстановление диалога — пункт 031
 
 [031.json](v1-checks/031.json) фиксирует текущую 0.24.0: 77 этапов, 460 Python passed/1 Windows symlink skip, 26 TypeScript, 239 symbols/32 API groups, 38 source typing files и 310 recipes/211 fixtures. 26 behavior tests и три реальных процесса на file SQLite проверяют согласованное сохранение state/step/version/deadline, pending identity, чужие keys/data и отмену writer. MemoryStorage не persistent; distributed/live/device/independent acceptance отдельно.
+
+### Приемка 0.25.0 и CI — пункт 032
+
+[032.json](v1-checks/032.json): 79 этапов, 478/479 Python passed с одним Windows directory-symlink skip, 26 TypeScript, 2491 browser checks и matching first-run 60 checks. Python 3.11.15 отдельно прошел полный набор и Mypy. Проверены installed wheel/tarball, копируемый guide, две process races, отзыв ACL перед replay и группа/topic. [CI](ci-verification.md) задает Windows/Linux и Python 3.11/3.13, Node 20/24; фактический hosted run не выполнялся. Live Telegram/device/provider и независимая usability остаются отдельными этапами.

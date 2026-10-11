@@ -1,4 +1,4 @@
-# API библиотеки 0.24.0
+# API библиотеки 0.25.0
 
 Текущий каталог содержит 43 группы компонентов. Полный перечень публичных импортов и исполняемых примеров — в локальном [справочнике API](api-reference.md); исторические версии ниже показывают время добавления контрактов.
 
@@ -57,7 +57,7 @@ Storage/transport/provider interfaces 0.19.0: OnceStore/AsyncTransport/ProviderA
 
 Core starter 0.19.0: StarterComponent, StarterConflict, starter_components; create_starter components keyword и StarterPlan.components/requested_components. Закрытый набор и сценарии — [выбор компонентов](starter-selection.md).
 
-Планы и локальный runner добавлены в 0.19.0: `RecipeRunPlan`, `RecipeRunResult`, `plan_recipe`, `run_recipe_offline` из Python root; [requirements/fixtures/границы](recipe-execution.md). В текущей 0.24.0 есть 210 Python fixtures и 99 native references без executor; offline_ready не означает live разрешение.
+Планы и локальный runner добавлены в 0.19.0: `RecipeRunPlan`, `RecipeRunResult`, `plan_recipe`, `run_recipe_offline` из Python root; [requirements/fixtures/границы](recipe-execution.md). В текущей 0.25.0 есть 212 Python fixtures и 99 native references без executor; offline_ready не означает live разрешение.
 
 В 0.19.0 новые KeyboardLayout/KeyboardCapabilities и action_layout/inline_layout/reply_layout описаны в [композициях клавиатур](keyboard-layouts.md): flat inputs, width pattern, snapshot/context validation и host capability fallback.
 
@@ -75,9 +75,9 @@ Core starter 0.19.0: StarterComponent, StarterConflict, starter_components; crea
 
 [Профили 0.21.0](profiles.md): read observations и own-bot patch с host ACL; без hidden data/MTProto/Business и автоматического retry.
 
-[Inline-поиск 0.24.0](inline-search.md): `InlineSearch`, `InlineItem`, `InlinePage`, `InlineCachePolicy`, `inline_articles`, `inline_query_router` и типы host adapters импортируются из `telegram_patterns.aiogram`. Только явно shareable результаты, текущая host ACL, подписанный cursor и явная политика кеша. Персональный кеш не делает отправленное сообщение приватным; positive cache может пережить изменение прав без нового Update. Потерянный ответ не повторяется автоматически.
+[Inline-поиск 0.25.0](inline-search.md): `InlineSearch`, `InlineItem`, `InlinePage`, `InlineCachePolicy`, `inline_articles`, `inline_query_router` и типы host adapters импортируются из `telegram_patterns.aiogram`. Только явно shareable результаты, текущая host ACL, подписанный cursor и явная политика кеша. Персональный кеш не делает отправленное сообщение приватным; positive cache может пережить изменение прав без нового Update. Потерянный ответ не повторяется автоматически.
 
-[Опросы 0.24.0](polls.md): `PollSpec`, `PollChoice`, `poll_request`, `poll_state`, `poll_vote`, `poll_option_added`, `PollBinding`, `PollLocator`, `PollEvent`, `poll_events_router` и типы наблюдений/host adapters из `telegram_patterns.aiogram`. Современные multi-correct quiz и persistent option IDs; доступны только собственные зарегистрированные события. Host владеет правами, durable intent и receipts. Нет `getPoll`, полного списка скрытых голосующих или автоматического повторного создания опроса после unknown outcome.
+[Опросы 0.25.0](polls.md): `PollSpec`, `PollChoice`, `poll_request`, `poll_state`, `poll_vote`, `poll_option_added`, `PollBinding`, `PollLocator`, `PollEvent`, `poll_events_router` и типы наблюдений/host adapters из `telegram_patterns.aiogram`. Современные multi-correct quiz и persistent option IDs; доступны только собственные зарегистрированные события. Host владеет правами, durable intent и receipts. Нет `getPoll`, полного списка скрытых голосующих или автоматического повторного создания опроса после unknown outcome.
 
 ## platform-operations
 
@@ -97,3 +97,5 @@ Core starter 0.19.0: StarterComponent, StarterConflict, starter_components; crea
 - Experimental author SDK/mock/browser evidence is separate from live permissions, real devices, remote charge or independent human/AI acceptance
 
 | Рестарт диалога | `FSMSnapshot`, `FSMConflict`, `SnapshotStore`, `AtomicFSMStorage`, `SnapshotFSMStorage`, `DialogLifetime` из optional aiogram | Project-owned atomic state/data CAS, version/deadline; expired draft ≠ pending effect. [Самостоятельный пример](dialog-restart.md); MemoryStorage неpersistent, distributed/live acceptance отдельно. |
+
+Для нескольких workers и повторного подтверждения: `SQLiteOnce.run_guarded` и optional `GuardedOnceStore`, [полный host intent/Router](concurrent-actions.md). Current actor/origin/ACL проверяется в транзакции до эффекта и replay; исходная revision проверяется для нового эффекта. Receipt не равен текущему object state, внешний HTTP не atomic SQLite effect.

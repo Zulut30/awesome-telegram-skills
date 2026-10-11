@@ -1,4 +1,4 @@
-# Python bot и test transport — 0.24.0
+# Python bot и test transport — 0.25.0
 
 [Индекс всех символов](api-reference.md). Образцы ниже воспроизводятся через установленный wheel/tarball вне исходного дерева. Assert — проверка fixture, не бизнес-правило production приложения.
 

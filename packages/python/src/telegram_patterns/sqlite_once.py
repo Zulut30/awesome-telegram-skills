@@ -1,10 +1,11 @@
 """Atomic SQLite-local effect and replay result, across process restarts."""
 from __future__ import annotations
 from .errors import ConflictFailure
-from .errors import ValidationFailure
+from .errors import InvalidType, PermissionDenied, ValidationFailure
 
 from dataclasses import dataclass
 import hashlib
+import inspect
 import json
 from pathlib import Path
 import sqlite3
@@ -36,6 +37,8 @@ class SQLiteOnce:
     """Use only with synchronous effects on the supplied SQLite connection.
 
     Scope must be server-derived and authorization checked before run().
+    run_guarded additionally puts current host checks inside its transaction,
+    including before replay; host checks bind actor/origin and domain revision.
     External network calls, COMMIT/ROLLBACK and other databases are not covered.
     Call through an appropriate thread boundary from an async application.
     """
@@ -62,6 +65,28 @@ class SQLiteOnce:
 
     def run(self, scope: str, operation_key: str, payload: Any,
             apply: Callable[[sqlite3.Connection], Any]) -> OnceResult:
+        return self._run(scope, operation_key, payload, apply, check=None)
+
+    def run_guarded(self, scope: str, operation_key: str, payload: Any,
+                    apply: Callable[[sqlite3.Connection], Any], *,
+                    check: Callable[[sqlite3.Connection, bool], bool]) -> OnceResult:
+        """Current host checks and effect/receipt share one owned transaction.
+
+        check(connection, replayed) must be synchronous and return exactly True.
+        It runs before both new effects and returned receipts. Read-only SQL is
+        enforced for the check; trusted Python callbacks are not sandboxed.
+        Check current actor/scope/ACL on replay too; expected domain revision
+        usually applies only to a new effect. Payload binds the original intent.
+        A saved receipt is the original result, not the current object state.
+        """
+        if (not callable(check) or inspect.iscoroutinefunction(check)
+                or inspect.iscoroutinefunction(getattr(check, '__call__', None))):
+            raise InvalidType('Supply a synchronous transaction check')
+        return self._run(scope, operation_key, payload, apply, check=check)
+
+    def _run(self, scope: str, operation_key: str, payload: Any,
+             apply: Callable[[sqlite3.Connection], Any], *,
+             check: Callable[[sqlite3.Connection, bool], bool] | None) -> OnceResult:
         for value in (scope, operation_key):
             if not isinstance(value, str) or not value or len(value.encode("utf-8")) > 256:
                 raise ValidationFailure("Scope and operation key must be nonempty bounded strings")
@@ -73,6 +98,23 @@ class SQLiteOnce:
                 "SELECT payload_hash, result_json FROM telegram_pattern_operations WHERE scope=? AND operation_key=?",
                 (scope, operation_key),
             ).fetchone()
+            if check is not None:
+                allowed_reads = {sqlite3.SQLITE_SELECT, sqlite3.SQLITE_READ,
+                                 sqlite3.SQLITE_FUNCTION, sqlite3.SQLITE_RECURSIVE}
+                connection.set_authorizer(lambda action, *_: sqlite3.SQLITE_OK
+                                          if action in allowed_reads else sqlite3.SQLITE_DENY)
+                try:
+                    decision = check(connection, old is not None)
+                    if inspect.isawaitable(decision):
+                        if inspect.iscoroutine(decision):
+                            decision.close()
+                        raise InvalidType('Transaction check must return a synchronous boolean')
+                    if decision is not True:
+                        raise PermissionDenied('Current action access denied')
+                finally:
+                    connection.set_authorizer(None)
+                if not connection.in_transaction:
+                    raise RuntimeError('check must preserve the owned transaction')
             if old is not None:
                 if old[0] != digest:
                     raise OperationConflict("Operation payload changed")

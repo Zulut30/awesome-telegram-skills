@@ -6,7 +6,7 @@ import {readFile,mkdir,writeFile,realpath} from 'node:fs/promises';
 import path from 'node:path';
 const root=await realpath(process.argv[2]);
 const version=JSON.parse(await readFile('packages/typescript/package.json','utf8')).version;
-const output=path.resolve('output',`pattern-library-${version}`,'selected-starter-browser');
+const output=process.argv[3]?path.resolve(process.argv[3]):path.resolve('output',`pattern-library-${version}`,'selected-starter-browser');
 await mkdir(output,{recursive:true});
 const server=createServer(async(req,res)=>{
   try {

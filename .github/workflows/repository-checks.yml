@@ -31,12 +31,86 @@ jobs:
     name: TypeScript tests and Mini App build
     runs-on: ubuntu-latest
     timeout-minutes: 10
+    strategy:
+      fail-fast: false
+      matrix:
+        node: ['20', '24']
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
       - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
         with:
-          node-version: '24'
+          node-version: ${{ matrix.node }}
           cache: npm
       - run: npm ci
       - run: npm test
       - run: npm run build
+
+  python:
+    name: Python ${{ matrix.python }} on ${{ matrix.os }}
+    runs-on: ${{ matrix.os }}
+    timeout-minutes: 20
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, windows-latest]
+        python: ['3.11', '3.13']
+    env:
+      PYTHONUTF8: '1'
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97 # v7.0.0
+        with:
+          python-version: ${{ matrix.python }}
+      - uses: astral-sh/setup-uv@c771a70e6277c0a99b617c7a806ffedaca235ff9 # v9.0.0
+        with:
+          version: '0.12.3'
+      - name: Install package and verified test dependencies
+        run: uv pip install --system ./packages/python 'aiogram==3.31.0' 'tzdata==2026.5' -r requirements-dev.txt
+      - name: Check package types
+        run: python -m mypy --follow-imports=silent --no-incremental packages/python/src/telegram_patterns
+      - name: Run all Python component tests
+        run: python -m unittest discover -s packages/python/tests -v
+
+  distribution:
+    name: Installed distributions and Chrome on ${{ matrix.os }}
+    needs: [skills, typescript, python]
+    runs-on: ${{ matrix.os }}
+    timeout-minutes: 40
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, windows-latest]
+    env:
+      PYTHONUTF8: '1'
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97 # v7.0.0
+        with:
+          python-version: '3.13'
+      - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
+        with:
+          node-version: '24'
+          cache: npm
+      - uses: astral-sh/setup-uv@c771a70e6277c0a99b617c7a806ffedaca235ff9 # v9.0.0
+        with:
+          version: '0.12.3'
+      - run: npm ci
+      - run: npx playwright install --with-deps chrome
+      - name: Verify installed wheel, tarball, copied guides and Chrome UI
+        run: python scripts/verify_pattern_packages.py --output output/ci-distribution
+      - name: Verify documented Windows first run with matching artifacts
+        if: runner.os == 'Windows'
+        shell: pwsh
+        run: |
+          $tgWheel = (Get-ChildItem -LiteralPath output/ci-distribution/dist -Filter '*.whl').FullName
+          $tgTarball = (Get-ChildItem -LiteralPath output/ci-distribution/dist -Filter '*.tgz').FullName
+          python scripts/verify_quickstart.py --wheel $tgWheel --tarball $tgTarball --output output/ci-quickstart
+      - name: Save reports, logs and screenshots even on failure
+        if: ${{ !cancelled() }}
+        uses: actions/upload-artifact@330a01c490aca151604b8cf639adc76d48f6c5d4 # v5
+        with:
+          name: distribution-${{ matrix.os }}
+          path: |
+            output/ci-distribution
+            output/ci-quickstart
+          retention-days: 14

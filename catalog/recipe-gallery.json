@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "library_version": "0.24.0",
+  "library_version": "0.25.0",
   "source_snapshot": "2026-10-04",
   "source_hashes": {
     "bot_api": "29f5f25caa18d303f14ce83af5a4df784eb3094c3076cb040a1ad950c157ad44",
@@ -21235,6 +21235,94 @@
       }
     },
     {
+      "id": "demo-concurrent-actions",
+      "title": "Действия при нескольких workers",
+      "summary": "Current actor/origin/ACL/revision и один local effect/receipt при двойной кнопке и нескольких workers",
+      "category": "scenarios",
+      "language": "python",
+      "maturity": "experimental",
+      "keywords": [
+        "бот",
+        "пример",
+        "callback",
+        "меню",
+        "события",
+        "композиция",
+        "бота",
+        "личный",
+        "чат",
+        "конкуренция",
+        "двойное",
+        "повтор",
+        "worker",
+        "workers",
+        "revision",
+        "operation",
+        "транзакция",
+        "права",
+        "scope",
+        "intent"
+      ],
+      "code": "\"\"\"Bind an opaque button to a persistent host intent and a guarded transaction.\"\"\"\nfrom __future__ import annotations\n\nimport asyncio\nfrom contextlib import closing\nfrom dataclasses import dataclass\nfrom functools import partial\nimport json\nfrom pathlib import Path\nimport re\nimport secrets\nimport sqlite3\nfrom typing import Any, Awaitable, Callable\n\nfrom aiogram import Dispatcher, F, Router\nfrom aiogram.types import CallbackQuery, InlineKeyboardButton, Message\nfrom telegram_patterns import ConflictFailure, OnceResult, PermissionDenied, SQLiteOnce, ValidationFailure\nfrom telegram_patterns.aiogram import ActionResult\n\n_OPERATION = re.compile(r'[0-9a-f]{32}')\n\n\n@dataclass(frozen=True, slots=True)\nclass ActionOrigin:\n    \"\"\"Host binding, not identity proof; populate only from authenticated Update.\"\"\"\n    bot_id: int\n    chat_id: int\n    actor_id: int\n    message_id: int\n    thread_id: int | None = None\n\n    def __post_init__(self) -> None:\n        if any(type(v) is not int or not 0 < v < 2**63 for v in\n               (self.bot_id,self.actor_id,self.message_id)):\n            raise ValidationFailure('Use verified positive bot, actor and message IDs')\n        if type(self.chat_id) is not int or not -(2**63) < self.chat_id < 2**63 or self.chat_id == 0:\n            raise ValidationFailure('Use a verified nonzero chat ID')\n        if self.thread_id is not None and (type(self.thread_id) is not int or not 0 < self.thread_id < 2**63):\n            raise ValidationFailure('Use the actual positive topic ID or None')\n\n    def scope(self) -> str:\n        return json.dumps(['action-v1',self.bot_id,self.chat_id,self.actor_id,\n                           self.message_id,self.thread_id],separators=(',',':'))\n\n\ndef callback_origin(query: CallbackQuery) -> ActionOrigin:\n    message = query.message\n    if (not isinstance(message,Message) or message.date.timestamp() <= 0 or query.from_user.is_bot\n            or message.business_connection_id is not None or message.sender_chat is not None\n            or message.chat.type not in {'private','group','supergroup'}\n            or message.from_user is None or message.from_user.id != query.bot.id\n            or (message.message_thread_id is not None and message.is_topic_message is not True)\n            or (message.is_topic_message is True and message.message_thread_id is None)):\n        raise PermissionDenied('Use an accessible ordinary bot message in its actual topic')\n    return ActionOrigin(query.bot.id,message.chat.id,query.from_user.id,\n                        message.message_id,message.message_thread_id)\n\n\nasync def database_call(function: Callable[..., Any], *args: Any) -> Any:\n    \"\"\"Join owned work on cancellation; preserve the operation ID for recovery.\"\"\"\n    work = asyncio.create_task(asyncio.to_thread(partial(function,*args)))\n    try:\n        return await asyncio.shield(work)\n    except asyncio.CancelledError:\n        while not work.done():\n            try:\n                await asyncio.shield(work)\n            except asyncio.CancelledError:\n                continue\n            except Exception:\n                break\n        if not work.cancelled():\n            work.exception()\n        raise\n\n\nclass ProjectActions:\n    \"\"\"Example for the project's file SQLite; no borrowed host connections.\n\n    Explicit initialize/migrations and authenticated issue belong to the host.\n    Intents and receipts are retained; no automatic expiry, deletion or retry.\n    ACL, immutable intent, domain revision, effect and receipt share one writer\n    transaction. Only effects on its supplied connection are covered.\n    \"\"\"\n    def __init__(self,database: Path) -> None:\n        self.database = database\n        self.once = SQLiteOnce(database)\n\n    def initialize(self) -> None:\n        self.once.initialize()\n        with closing(sqlite3.connect(self.database,timeout=5)) as c,c:\n            c.execute(\"CREATE TABLE IF NOT EXISTS project_resources(resource TEXT PRIMARY KEY,value INTEGER NOT NULL CHECK(typeof(value)='integer' AND value BETWEEN 0 AND 1000),revision INTEGER NOT NULL CHECK(typeof(revision)='integer' AND revision BETWEEN 1 AND 9223372036854775807))\")\n            c.execute('CREATE TABLE IF NOT EXISTS project_action_acl(resource TEXT,bot INTEGER,chat INTEGER,actor INTEGER,allowed INTEGER NOT NULL,PRIMARY KEY(resource,bot,chat,actor))')\n            c.execute('CREATE TABLE IF NOT EXISTS project_action_intents(operation TEXT PRIMARY KEY,origin TEXT NOT NULL,resource TEXT NOT NULL,revision INTEGER NOT NULL,target INTEGER NOT NULL)')\n            c.execute('CREATE TABLE IF NOT EXISTS project_action_changes(id INTEGER PRIMARY KEY,operation TEXT UNIQUE NOT NULL,resource TEXT NOT NULL,actor INTEGER NOT NULL,value INTEGER NOT NULL,revision INTEGER NOT NULL)')\n\n    @staticmethod\n    def _allowed(c: sqlite3.Connection,origin: ActionOrigin,resource: str) -> bool:\n        row = c.execute('SELECT allowed FROM project_action_acl WHERE resource=? AND bot=? AND chat=? AND actor=?',\n                        (resource,origin.bot_id,origin.chat_id,origin.actor_id)).fetchone()\n        return row is not None and row[0] == 1\n\n    def issue(self,origin: ActionOrigin,resource: str,target: int) -> str:\n        \"\"\"Explicit host action for a KNOWN delivered message; not a public route.\n\n        An uncertain initial send is reconciled separately, never resent here.\n        This sample supports integer domain values; the project owns its rules.\n        \"\"\"\n        if not isinstance(resource,str) or not 1 <= len(resource.encode('utf-8')) <= 128:\n            raise ValidationFailure('Use a bounded project resource ID')\n        if type(target) is not int or not 0 <= target <= 1000:\n            raise ValidationFailure('Use an explicitly validated target in 0..1000')\n        with closing(sqlite3.connect(self.database,timeout=5)) as c,c:\n            c.execute('BEGIN IMMEDIATE')\n            if not self._allowed(c,origin,resource):\n                raise PermissionDenied('Current resource access denied')\n            row = c.execute('SELECT revision FROM project_resources WHERE resource=?',(resource,)).fetchone()\n            if row is None:\n                raise ConflictFailure('Resource is unavailable')\n            if type(row[0]) is not int or not 1 <= row[0] < 2**63-1:\n                raise ConflictFailure('Resource revision requires migration')\n            operation = secrets.token_hex(16)\n            c.execute('INSERT INTO project_action_intents VALUES(?,?,?,?,?)',\n                      (operation,origin.scope(),resource,row[0],target))\n        return operation\n\n    def execute(self,origin: ActionOrigin,operation: str) -> OnceResult:\n        if not isinstance(operation,str) or not _OPERATION.fullmatch(operation):\n            raise ValidationFailure('Use the original server-issued operation ID')\n        with closing(sqlite3.connect(self.database,timeout=5)) as c:\n            intent = c.execute('SELECT origin,resource,revision,target FROM project_action_intents WHERE operation=?',(operation,)).fetchone()\n        if intent is None or intent[0] != origin.scope():\n            raise PermissionDenied('Action is unavailable in this origin')\n        resource,revision,target = intent[1:]\n        if (not isinstance(resource,str) or type(revision) is not int or not 1 <= revision < 2**63-1\n                or type(target) is not int or not 0 <= target <= 1000):\n            raise ConflictFailure('Stored intent requires migration')\n        payload = {'resource':resource,'revision':revision,'target':target}\n        def check(c: sqlite3.Connection,replayed: bool) -> bool:\n            current = c.execute('SELECT origin,resource,revision,target FROM project_action_intents WHERE operation=?',(operation,)).fetchone()\n            if current != intent or not self._allowed(c,origin,resource):\n                return False\n            current_resource = c.execute('SELECT revision FROM project_resources WHERE resource=?',(resource,)).fetchone()\n            if current_resource is None:\n                return False\n            # Replay returns the original result; it is not current object state.\n            if not replayed and current_resource[0] != revision:\n                raise ConflictFailure('Resource revision changed')\n            return True\n        def apply(c: sqlite3.Connection) -> dict:\n            cursor = c.execute('UPDATE project_resources SET value=?,revision=revision+1 WHERE resource=? AND revision=?',\n                               (target,resource,revision))\n            if cursor.rowcount != 1:\n                raise ConflictFailure('Resource changed before write')\n            effect = c.execute('INSERT INTO project_action_changes(operation,resource,actor,value,revision) VALUES(?,?,?,?,?)',\n                               (operation,resource,origin.actor_id,target,revision+1))\n            return {'operation_id':operation,'change_id':effect.lastrowid,\n                    'resource':resource,'value':target,'revision':revision+1}\n        return self.once.run_guarded(origin.scope(),operation,payload,apply,check=check)\n\n\ndef action_button(operation: str,text: str = 'Подтвердить') -> InlineKeyboardButton:\n    if not isinstance(operation,str) or not _OPERATION.fullmatch(operation):\n        raise ValidationFailure('Use a server-issued operation ID')\n    return InlineKeyboardButton(text=text,callback_data='once:'+operation)\n\n\ndef attach_actions(dispatcher: Dispatcher,service: ProjectActions,\n                   notify: Callable[[CallbackQuery,ActionResult],Awaitable[None]]) -> Router:\n    \"\"\"Retain current Dispatcher/storage/isolation; host chooses safe feedback.\"\"\"\n    router = Router(name='project-concurrent-actions')\n    @router.callback_query(F.data.startswith('once:'))\n    async def handle(query: CallbackQuery) -> None:\n        await query.answer()  # ACK precedes checks/effect; it is not success.\n        try:\n            origin = callback_origin(query)\n            receipt = await database_call(service.execute,origin,(query.data or '')[5:])\n        except PermissionDenied:\n            result = ActionResult('denied','Действие недоступно.')\n        except (ConflictFailure,ValidationFailure):\n            result = ActionResult('stale','Действие изменилось. Откройте актуальный экран.')\n        else:\n            result = ActionResult('replayed' if receipt.replayed else 'accepted',\n                                  'Операция сохранена. Номер: '+str(receipt.value['change_id']))\n        # A lost feedback/cancel must not generate a new intent or repeat an effect.\n        await notify(query,result)\n    dispatcher.include_router(router)\n    return router\n",
+      "verification": "mock",
+      "scope": "Four actual SDK workers in two local SQLite races, plus positive group/topic and current ACL replay probes. Mock Telegram, no live permission/device/provider/independent proof or remote exactly-once claim.",
+      "sources": [
+        "https://core.telegram.org/bots/api"
+      ],
+      "preview": null,
+      "code_sha256": "f6279c24c122c18a033b5cb2512bd74a2976cbbcfc0bd90cb08427551ecde38f",
+      "tasks": [
+        "bot",
+        "recovery"
+      ],
+      "contexts": [
+        "private",
+        "group",
+        "supergroup"
+      ],
+      "sdk": "aiogram",
+      "sdk_version": "3.31.0",
+      "api_version": "bot:10.3",
+      "source_files": [
+        "examples/python/concurrent_actions_bot.py",
+        "packages/python/src/telegram_patterns/sqlite_once.py",
+        "packages/python/src/telegram_patterns/extensions.py",
+        "docs/concurrent-actions.md",
+        "packages/python/src/telegram_patterns/execution.py",
+        "packages/python/src/telegram_patterns/_offline_recipe.py"
+      ],
+      "check_files": [
+        "examples/python/offline_concurrent_actions.py",
+        "packages/python/tests/test_guarded_once.py",
+        "scripts/verify_concurrent_actions_recipe.py"
+      ],
+      "execution": {
+        "kind": "dispatcher",
+        "dependencies": [
+          "aiogram==3.31.0"
+        ],
+        "offline_environment": [],
+        "offline_permissions": [],
+        "offline_data": [
+          "Только поставляемые синтетические данные; реальные IDs и secrets не принимаются."
+        ],
+        "live_environment": [
+          "BOT_TOKEN"
+        ],
+        "live_permissions": [
+          "Прикладная авторизация сервиса; fixture actor не доказывает server ACL."
+        ],
+        "live_data": [
+          "Текущий Dispatcher, реальные actor/chat и сервис приложения",
+          "Проверка объекта, автора и состояния до effect/replay"
+        ],
+        "live_review": "Live executor отсутствует. Перед интеграцией проверить источники, ограничения конкретного метода/контекста, auth и ACL; metadata не подтверждает права.",
+        "effects": [
+          "Synthetic Dispatcher + StubSession; временная fixture, без polling"
+        ]
+      }
+    },
+    {
       "id": "demo-dialog-fields",
       "title": "Семь типов полей диалога",
       "summary": "Полная композиция с тем же Dispatcher для offline и polling.",
@@ -21846,7 +21934,7 @@
         "backend"
       ],
       "sdk": "python-core",
-      "sdk_version": "0.24.0",
+      "sdk_version": "0.25.0",
       "api_version": "none",
       "source_files": [
         "examples/python/error_recovery.py",

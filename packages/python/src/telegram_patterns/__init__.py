@@ -10,7 +10,7 @@ from .recipes import Maturity, Recipe, RecipeCatalog, VerificationLevel
 from .execution import RecipeRunPlan, RecipeRunResult, plan_recipe, run_recipe_offline
 from .starter import StarterPlan, create_starter
 from .starter_components import StarterComponent, StarterConflict, starter_components
-from .extensions import AsyncTransport, OnceStore, ProviderAdapter, RefundProvider
+from .extensions import AsyncTransport, GuardedOnceStore, OnceStore, ProviderAdapter, RefundProvider
 from .errors import (
     AuthenticationRequired, ConflictFailure, ErrorCategory, ErrorCode, ErrorOutcome, ErrorReport,
     InvalidCompletion, InvalidType, OperationKind, PatternError, PermissionDenied, RecoveryAction,
@@ -27,7 +27,7 @@ __all__ = [
     "RecipeRunPlan", "RecipeRunResult", "plan_recipe", "run_recipe_offline",
     "StarterPlan", "create_starter",
     "StarterComponent", "StarterConflict", "starter_components",
-    "AsyncTransport", "OnceStore", "ProviderAdapter", "RefundProvider",
+    "AsyncTransport", "GuardedOnceStore", "OnceStore", "ProviderAdapter", "RefundProvider",
     "AuthenticationRequired", "ConflictFailure", "ErrorCategory", "ErrorCode", "ErrorOutcome", "ErrorReport",
     "InvalidCompletion", "InvalidType", "OperationKind", "PatternError", "PermissionDenied", "RecoveryAction",
     "TimeoutFailure", "TransportFailure", "UnknownOutcome", "UnsupportedCapability", "ValidationFailure", "safe_error_report",

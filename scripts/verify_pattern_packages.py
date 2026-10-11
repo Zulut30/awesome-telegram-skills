@@ -15,7 +15,13 @@ import shutil
 import subprocess
 import sys
 import tempfile
+import time
 import tomllib
+
+if __package__:
+    from .verification_process import run_command, save_consumer_diagnostics
+else:
+    from verification_process import run_command, save_consumer_diagnostics
 
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -24,6 +30,7 @@ ROOT = Path(__file__).resolve().parents[1]
 def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument('--skip-browser', action='store_true', help='Verify distributions without installed Chrome; report the skipped browser check')
+    parser.add_argument('--output', type=Path, help='NEW report directory; preserves earlier acceptance runs')
     args = parser.parse_args()
     python_meta = tomllib.loads((ROOT / 'packages/python/pyproject.toml').read_text(encoding='utf-8'))['project']
     ts_meta = json.loads((ROOT / 'packages/typescript/package.json').read_text(encoding='utf-8'))
@@ -43,7 +50,13 @@ def main() -> int:
     node = shutil.which('node')
     if not all((uv, npm, node)):
         raise RuntimeError('uv and Node/npm must be available on PATH')
-    output = ROOT / 'output' / f'pattern-library-{version}'
+    requested = args.output or ROOT / 'output' / f'pattern-library-{version}'
+    if any(p.is_symlink() or bool(getattr(p, 'is_junction', lambda: False)())
+           for p in (requested, *requested.parents)):
+        raise ValueError('Report directory links are not allowed')
+    output = requested.resolve()
+    if args.output:
+        output.mkdir(parents=True, exist_ok=False)
     artifacts = output / 'dist'
     artifacts.mkdir(parents=True, exist_ok=True)
     consumers = Path(tempfile.mkdtemp(prefix=f'telegram-patterns-{version}-'))
@@ -52,23 +65,28 @@ def main() -> int:
     environment.pop('PYTHONHOME', None)
     environment.pop('BOT_TOKEN', None)
     environment['PYTHONUTF8'] = '1'
+    environment['PATTERNS_BROWSER_OUTPUT'] = str(output / 'browser')
     stages = []
 
     def run(label: str, command: list[str], cwd: Path = ROOT, *, timeout: float = 180) -> str:
         print(f'Checking: {label}', flush=True)
+        started = time.monotonic()
         try:
-            result = subprocess.run(command, cwd=cwd, env=environment, capture_output=True,
-                                    text=True, encoding='utf-8', errors='replace', timeout=timeout)
+            result = run_command(command, cwd=cwd, env=environment, timeout=timeout)
         except subprocess.TimeoutExpired as error:
             def partial(value: str | bytes | None) -> str:
                 return value.decode('utf-8', errors='replace') if isinstance(value, bytes) else value or ''
             log = partial(error.stdout) + partial(error.stderr) + f'\nTIMEOUT after {error.timeout} seconds\n'
             (output / f'{label}.log').write_text(log, encoding='utf-8')
-            stages.append({'stage': label, 'exit_code': 124, 'timed_out': True, 'timeout_seconds': error.timeout})
+            stages.append({'stage': label, 'exit_code': 124, 'timed_out': True, 'timeout_seconds': error.timeout,
+                           'elapsed_seconds': round(time.monotonic() - started, 3)})
+            (output / 'distribution-report.json').write_text(json.dumps(report, indent=2, ensure_ascii=False), encoding='utf-8')
             raise RuntimeError(f'{label} timed out; partial output saved to {output / (label + ".log")}') from error
         log = result.stdout + result.stderr
         (output / f'{label}.log').write_text(log, encoding='utf-8')
-        stages.append({'stage': label, 'exit_code': result.returncode})
+        stages.append({'stage': label, 'exit_code': result.returncode, 'timeout_seconds': timeout,
+                       'elapsed_seconds': round(time.monotonic() - started, 3)})
+        (output / 'distribution-report.json').write_text(json.dumps(report, indent=2, ensure_ascii=False), encoding='utf-8')
         if result.returncode:
             raise RuntimeError(f'{label} failed; inspect {output / (label + ".log")}')
         return log
@@ -77,6 +95,7 @@ def main() -> int:
         return folder / ('Scripts/python.exe' if os.name == 'nt' else 'bin/python')
 
     report = {'version': version, 'consumers': str(consumers), 'stages': stages, 'browser': 'skipped' if args.skip_browser else 'pending', 'passed': False}
+    (output / 'distribution-report.json').write_text(json.dumps(report, indent=2), encoding='utf-8')
     try:
         run('workspace-build', [npm, 'run', 'build'])
         run('wheel-build', [uv, 'build', '--wheel', '--out-dir', str(artifacts), str(ROOT / 'packages/python')])
@@ -98,7 +117,7 @@ from telegram_patterns import BotSettings, validate_init_data, RecipeCatalog, cr
 assert importlib.util.find_spec('aiogram') is None
 assert Path(telegram_patterns.__file__).is_relative_to(Path(sys.argv[1]))
 assert BotSettings.from_env(environ={'BOT_TOKEN':'100:CORE_FIXTURE'}).token=='100:CORE_FIXTURE'
-assert len(RecipeCatalog().recipes)==310
+assert len(RecipeCatalog().recipes)==311
 assert RecipeCatalog().search('две кнопки')[0].id=='two-columns'
 assert RecipeCatalog().get('two-columns').maturity=='experimental'
 assert RecipeCatalog().get('api.sendPhoto').maturity=='reference'
@@ -196,6 +215,15 @@ print(json.dumps({'core_without_sdk':True,'python':sys.version.split()[0]}))
                     'version_refused_without_reset', 'host_data_preserved', 'existing_dispatcher_preserved'))):
             raise RuntimeError('Installed restart-safe dialog composition failed')
         report['dialog_restart'] = restart
+        concurrent = json.loads(run('concurrent-actions', [str(python_in(sdk)), str(ROOT / 'examples/python/offline_concurrent_actions.py')], consumers))
+        if (not concurrent['passed'] or concurrent['network'] or not concurrent['session_closed']
+                or concurrent['workers'] != 2 or concurrent['actual_worker_processes'] != 4
+                or concurrent['effects_per_case'] != [1,1,1,1] or concurrent['business_effects'] != 4
+                or not all(concurrent[k] for k in ('same_operation_replayed','different_operations_stale','stable_operation_id',
+                    'fresh_acl_replay','actor_origin_guards','unknown_feedback_reconciled','existing_dispatcher_preserved',
+                    'positive_group_topic','caller_files_preserved'))):
+            raise RuntimeError('Installed concurrent action composition failed')
+        report['concurrent_actions'] = concurrent
         message_text = json.loads(run('message-text', [str(python_in(sdk)), str(ROOT / 'examples/python/offline_message_text.py')], consumers))
         if not message_text['passed'] or message_text['network'] or not message_text['session_closed'] or message_text['chunks'] < 2 or not all(message_text[k] for k in ('literal_injection','utf16_offsets','split_preserves_entities','explicit_parse_mode_none','emoji_capability_fallback','existing_dispatcher_preserved','private_context_guards')):
             raise RuntimeError('Installed literal messages and lossless partition failed')
@@ -227,7 +255,7 @@ print(json.dumps({'core_without_sdk':True,'python':sys.version.split()[0]}))
         gallery_command = [str(python_in(sdk)), str(ROOT / 'scripts/verify_gallery_export.py'), '--output', str(consumers / 'gallery-export')]
         if args.skip_browser: gallery_command.append('--skip-browser')
         # Two complete SDK fixture generations plus CLI and browser acceptance.
-        report['gallery_export'] = json.loads(run('gallery-export-consumer', gallery_command, consumers, timeout=360))
+        report['gallery_export'] = json.loads(run('gallery-export-consumer', gallery_command, consumers, timeout=480))
         starter_root = consumers / 'starters'
         report['starter_cli'] = json.loads(run('starter-cli', [str(python_in(sdk)), str(ROOT / 'scripts/verify_starter_consumer.py'), '--wheel', str(wheel), '--tarball', str(tarball), '--output', str(starter_root)], consumers))
         # Resolve the generated PEP dependency against the supplied local wheel.
@@ -249,6 +277,7 @@ print(json.dumps({'core_without_sdk':True,'python':sys.version.split()[0]}))
         run('selected-starter-build', [npm, 'run', 'build'], selected_mini)
         copied_skill = consumers / 'portable-skill/telegram-code-patterns'
         shutil.copytree(ROOT / '.agents/skills/telegram-code-patterns', copied_skill)
+        report['portable_concurrent_actions_recipe'] = json.loads(run('portable-concurrent-actions-recipe', [str(python_in(sdk)), str(ROOT / 'scripts/verify_concurrent_actions_recipe.py'), str(copied_skill)], consumers))
         report['portable_dialog_restart_recipe'] = json.loads(run('portable-dialog-restart-recipe', [str(python_in(sdk)), str(ROOT / 'scripts/verify_dialog_restart_recipe.py'), str(copied_skill)], consumers))
         report['portable_platform_recipe'] = json.loads(run('portable-platform-recipe', [str(python_in(sdk)), str(ROOT / 'scripts/verify_platform_recipe.py'), str(copied_skill)], consumers))
         report['portable_inline_search_recipe'] = json.loads(run('portable-inline-search-recipe', [str(python_in(sdk)), str(ROOT / 'scripts/verify_inline_search_recipe.py'), str(copied_skill)], consumers))
@@ -291,11 +320,11 @@ print(json.dumps({'core_without_sdk':True,'python':sys.version.split()[0]}))
         if not args.skip_browser:
             run('browser-tests', [npm, 'run', 'test:browser'])
             report['browser'] = json.loads((output / 'browser/report.json').read_text(encoding='utf-8'))
-            run('gallery-browser', [node, str(ROOT / 'tests/gallery-browser.mjs')])
+            run('gallery-browser', [node, str(ROOT / 'tests/gallery-browser.mjs'), str(ROOT / 'gallery'), str(output / 'gallery-browser')])
             report['gallery_browser'] = json.loads((output / 'gallery-browser/report.json').read_text(encoding='utf-8'))
-            run('starter-browser', [node, str(ROOT / 'tests/starter-browser.mjs'), str(mini_starter)])
+            run('starter-browser', [node, str(ROOT / 'tests/starter-browser.mjs'), str(mini_starter), str(output / 'starter-browser')])
             report['starter_browser'] = json.loads((output / 'starter-browser/report.json').read_text(encoding='utf-8'))
-            run('selected-starter-browser', [node, str(ROOT / 'tests/selected-starter-browser.mjs'), str(selected_mini)])
+            run('selected-starter-browser', [node, str(ROOT / 'tests/selected-starter-browser.mjs'), str(selected_mini), str(output / 'selected-starter-browser')])
             report['selected_starter_browser'] = json.loads((output / 'selected-starter-browser/report.json').read_text(encoding='utf-8'))
         report['python_tests'] = int(re.search(r'Ran (\d+) tests?', python_log).group(1))
         report['typescript_tests'] = int(re.search(r'# tests (\d+)', ts_log).group(1))
@@ -305,6 +334,7 @@ print(json.dumps({'core_without_sdk':True,'python':sys.version.split()[0]}))
     finally:
         (output / 'distribution-report.json').write_text(json.dumps(report, indent=2, ensure_ascii=False), encoding='utf-8')
         print(f'Report: {output / "distribution-report.json"}', flush=True)
+        save_consumer_diagnostics(consumers, output / 'consumer-diagnostics')
     return 0
 
 

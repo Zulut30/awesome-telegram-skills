@@ -1,0 +1,45 @@
+{
+  "schema_version": 1,
+  "roadmap_item": 20,
+  "status": "baseline_pending_human",
+  "tasks": [
+    {
+      "id": "bot-start",
+      "prompt": "Из предоставленного wheel запустите нового offline-бота и doctor, без настоящего токена.",
+      "success": [
+        "Новый каталог, старые файлы сохранены",
+        "Установленный public package",
+        "SDK Dispatcher /start+callback и session cleanup",
+        "Doctor readiness понятен без live token"
+      ]
+    },
+    {
+      "id": "keyboard-integration",
+      "prompt": "В существующий aiogram Router добавьте клавиатуру: 2/3/смешанные строки, допустимые styles и fallback без entitlement.",
+      "success": [
+        "Текущий SDK/Router сохранён",
+        "Serialized native payload соответствует выбранным строкам",
+        "Цвет только primary/success/danger",
+        "Непроверенная emoji отсутствует",
+        "Проверка выполнена, live UI не заявлен"
+      ]
+    }
+  ],
+  "metrics": [
+    "task wall seconds",
+    "installation/tool seconds separately",
+    "number of observed obstacles",
+    "help requests",
+    "failed attempts",
+    "outcome",
+    "familiarity",
+    "cache/network/OS/runtime conditions"
+  ],
+  "targets": null,
+  "participants": {
+    "human": 0,
+    "independent_ai": 0,
+    "author_assisted_ai": 1
+  },
+  "limits": "Author-assisted automation timing is not a human or blind first-use result. Targets are set only after human and AI baseline task observations; no fabricated participants."
+}

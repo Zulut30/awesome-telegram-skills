@@ -36,3 +36,5 @@ description: "Реализует многошаговые Telegram-диалог�
 Если проект уже использует локальную библиотеку awesome-telegram-patterns 0.18.0 и aiogram, [готовые mixed fields](references/dialog-fields.md) подключаются к текущему Dispatcher/FSM. Навык не требует установки библиотеки либо соседних навыков: при другом SDK сохраняй стек и реализуй те же author/step/reply и confirmation guards средствами проекта.
 
 Для локальной библиотеки 0.24.0 [восстановление формы](references/dialog-restart.md) дает optional atomic storage contract и project-owned SQLite composition. Сохраняй текущий Dispatcher/storage; pending submission не удаляется по draft TTL, version mismatch требует migration/reconciliation. Для другого SDK перенеси эти инварианты на механизм проекта; пакет и соседние навыки не обязательны.
+
+Если подтверждение формы обслуживают несколько workers, прочитай [проверки и эффект в одной транзакции](references/concurrent-actions.md). FSM/CAS не заменяет current service ACL и durable business receipt; серверный operation ID и исходные параметры сохраняются после неизвестного результата. Backend/Dispatcher проекта остаются текущими.

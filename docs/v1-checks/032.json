@@ -1,0 +1,269 @@
+{
+  "roadmap_item": 32,
+  "version": "0.25.0",
+  "checked_date": "2026-10-11",
+  "passed": true,
+  "report": "output/pattern-library-0.25.0-ci-acceptance/distribution-report.json",
+  "report_sha256": "c496816a8828351724ef65f0d45f5d7ac303041bb708a5d851f13d6985882a29",
+  "distribution_stages": 79,
+  "python_tests": {
+    "run": 479,
+    "passed": 478,
+    "skipped": 1
+  },
+  "python311_tests": {
+    "run": 479,
+    "passed": 478,
+    "skipped": 1,
+    "report": "output/acceptance-025-work/python311-3.log",
+    "report_sha256": "59f3ec5569ec4d0c09302cfa072efc1e0403ae9045319d70bc98c3f2f503db12",
+    "scope": "Fresh installed source package on Windows Python 3.11.15; distinct from final wheel acceptance on 3.13"
+  },
+  "typescript_tests": 26,
+  "root_tests": 40,
+  "skills_checked": 41,
+  "browser_scope": {
+    "example": 141,
+    "gallery": 1086,
+    "export": 1086,
+    "starter": 66,
+    "selected_starter": 76,
+    "api_reference": 36
+  },
+  "browser_total": 2491,
+  "first_run_browser_checks": 60,
+  "public_symbols": {
+    "total": 240,
+    "python": 199,
+    "typescript": 41
+  },
+  "component_groups": 43,
+  "recipes": 311,
+  "python_fixtures": 212,
+  "source_check_files": 266,
+  "source_typing_files": 38,
+  "installed_composition": {
+    "fresh_acl_replay": true,
+    "actor_origin_guards": true,
+    "existing_dispatcher_preserved": true,
+    "unknown_feedback_reconciled": true,
+    "session_closed": true,
+    "passed": true,
+    "network": false,
+    "workers": 2,
+    "actual_worker_processes": 4,
+    "business_effects": 4,
+    "effects_per_case": [
+      1,
+      1,
+      1,
+      1
+    ],
+    "same_operation_replayed": true,
+    "different_operations_stale": true,
+    "stable_operation_id": true,
+    "caller_files_preserved": true,
+    "positive_group_topic": true,
+    "races": [
+      [
+        {
+          "status": "replayed",
+          "operation_id": "d540b5d109af006f0a4063cbcea9947c",
+          "session_closed": true,
+          "network": false,
+          "external_network_attempts": 0,
+          "existing_dispatcher_preserved": true,
+          "pid": 34692
+        },
+        {
+          "status": "unknown-feedback",
+          "operation_id": "d540b5d109af006f0a4063cbcea9947c",
+          "session_closed": true,
+          "network": false,
+          "external_network_attempts": 0,
+          "existing_dispatcher_preserved": true,
+          "pid": 34556
+        }
+      ],
+      [
+        {
+          "status": "accepted",
+          "operation_id": "34a1d42b1cbe2170b34efd5de8b4817f",
+          "session_closed": true,
+          "network": false,
+          "external_network_attempts": 0,
+          "existing_dispatcher_preserved": true,
+          "pid": 6220
+        },
+        {
+          "status": "stale",
+          "operation_id": "692a924f8a52d2b6b00228ff18b8d311",
+          "session_closed": true,
+          "network": false,
+          "external_network_attempts": 0,
+          "existing_dispatcher_preserved": true,
+          "pid": 37788
+        }
+      ]
+    ]
+  },
+  "portable_guide": {
+    "fresh_acl_replay": true,
+    "actor_origin_guards": true,
+    "existing_dispatcher_preserved": true,
+    "unknown_feedback_reconciled": true,
+    "session_closed": true,
+    "passed": true,
+    "network": false,
+    "workers": 2,
+    "actual_worker_processes": 4,
+    "business_effects": 4,
+    "effects_per_case": [
+      1,
+      1,
+      1,
+      1
+    ],
+    "same_operation_replayed": true,
+    "different_operations_stale": true,
+    "stable_operation_id": true,
+    "caller_files_preserved": true,
+    "positive_group_topic": true,
+    "races": [
+      [
+        {
+          "status": "unknown-feedback",
+          "operation_id": "dc7146aa87c1ca1888cd5763abd3cc6a",
+          "session_closed": true,
+          "network": false,
+          "external_network_attempts": 0,
+          "existing_dispatcher_preserved": true,
+          "pid": 35048
+        },
+        {
+          "status": "replayed",
+          "operation_id": "dc7146aa87c1ca1888cd5763abd3cc6a",
+          "session_closed": true,
+          "network": false,
+          "external_network_attempts": 0,
+          "existing_dispatcher_preserved": true,
+          "pid": 34016
+        }
+      ],
+      [
+        {
+          "status": "stale",
+          "operation_id": "c188a3766bb538995971d4d42a9f1ccd",
+          "session_closed": true,
+          "network": false,
+          "external_network_attempts": 0,
+          "existing_dispatcher_preserved": true,
+          "pid": 38472
+        },
+        {
+          "status": "accepted",
+          "operation_id": "be8a12cd746fceea80f883249dab451b",
+          "session_closed": true,
+          "network": false,
+          "external_network_attempts": 0,
+          "existing_dispatcher_preserved": true,
+          "pid": 4880
+        }
+      ]
+    ],
+    "guide_blocks": 1,
+    "composition_sha256": "f6279c24c122c18a033b5cb2512bd74a2976cbbcfc0bd90cb08427551ecde38f",
+    "helper_operations": {
+      "passed": true,
+      "temporary_operations": [
+        "exact-copied-guide-executed-in-independent-workers",
+        "caller-files-byte-preserved",
+        "missing-block-rejected",
+        "tampered-block-rejected-before-execution",
+        "duplicate-block-rejected"
+      ],
+      "caller_files_preserved": true
+    },
+    "scope": "Exact standalone code, installed SDK, four actual workers/local SQLite plus group/topic; no live/device/independent/remote exactly-once proof"
+  },
+  "first_run_report": "output/v1-quickstart-032-ci-accepted/report.json",
+  "first_run_report_sha256": "e96a409e553d9eecf71254baf32cc7bc3c4fb681560eb3736a2778ba6f72ebdc",
+  "first_run_guide_sha256": "50992a039fea978d9704ed5bd7479e8f432c1c34b14e9b714973abd7ac3dd9a9",
+  "artifacts": [
+    {
+      "name": "awesome_telegram_patterns-0.25.0-py3-none-any.whl",
+      "bytes": 305656,
+      "sha256": "72fd07e6b49df1bfb61a0ea144eb29e4252f5b7dd6a8d658c949c881cad15913"
+    },
+    {
+      "name": "awesome-telegram-patterns-0.25.0.tgz",
+      "bytes": 19530,
+      "sha256": "ae96f6dd4bd3a7414b021e6e3262cdc62fc166572d3f5f7caa687922254e6e16"
+    }
+  ],
+  "source_and_guide_hashes": {
+    ".github/workflows/repository-checks.yml": "0eca8963c73a08c1dc414d36c1679518bf2f9a455ecf22f5ee7118206c4c36a4",
+    "scripts/validate_skills.py": "d984fe07e23f1d48d345d58d90f0b3dc7aa72c0c84dc8184c5f8369c0ea7373a",
+    "scripts/verification_process.py": "ed7d26ee1c8a502bc601c1c6bdd600d931c7dc228939c679aab95227accc4878",
+    "scripts/verify_pattern_packages.py": "c00474b79e36afbbf16d90b5f3b42dc436e4d6141f5f76b28e31c15f89fd0f51",
+    "scripts/verify_gallery_export.py": "4f8e12d0435f4c87450be58063e8653977d0e958dedac23626c76c891496e346",
+    "scripts/build_recipe_gallery.py": "ace00c03834cf944c061324ec13a3aab645aa296bf3f137de9d1ebc7da4d4df8",
+    "scripts/verify_concurrent_actions_recipe.py": "a0558196492bd36fa0efd1f829ed92754733c7be57e75d039cc4aed01bbab2ea",
+    "tests/test_package_verification.py": "71c82c3a7fe40d96befdd91656c97d1e57c6b6c41550354bdf6bb28ac3436bca",
+    "tests/test_verification_process.py": "720320c4083a91a190370adb6483eba34c37b1e217414658a98caf8839aef74f",
+    "tests/test_validate_skills.py": "718ca4cf43c5c11bb9e0f82bf1885480e5d6267337e1c873cd814b1281680760",
+    "tests/gallery-browser.mjs": "00efc11f0758e9339afe0e22b21c8f0ba743ac4e819cee26b751207e52246fb4",
+    "tests/starter-browser.mjs": "9f704a5f5edcc82d040f16bb100fa7f90c393cf1a2feec1a6bfc6f587c86997b",
+    "tests/selected-starter-browser.mjs": "287980ce37607aa7a1188bc218bfb85e6470ffcfc9bec7547ca1850ed83e1258",
+    "packages/python/tests/test_catalog_cli.py": "031c1c5882b34598944d19124ad16d600b986f5e315b0e65c734be92ab21b373",
+    "packages/python/tests/test_guarded_once.py": "ec6a35dc5a4e49adb40e652d9ded21a94e1bc0b21b50237ad21ee04d8034fb89",
+    "packages/python/src/telegram_patterns/sqlite_once.py": "427c01f1937b372b9014a9afc84cd0ba6b138a8c56a1153bcc7903e98349c92e",
+    "packages/python/src/telegram_patterns/extensions.py": "367c44f1988718b1936c8e7248c87d1b91a61a04ec77c989031bc00cb5303620",
+    "examples/python/concurrent_actions_bot.py": "f6279c24c122c18a033b5cb2512bd74a2976cbbcfc0bd90cb08427551ecde38f",
+    "examples/python/offline_concurrent_actions.py": "ce66b804d3ba28cb0e93e0195a0782d3170575273cae8990161b117ad36e929c",
+    "docs/concurrent-actions.md": "c596c9e0c79b75d420e092e017a0f74280d2bd8397366a439fa882795a7fc849",
+    "docs/concurrent-actions-skill-check.md": "f8007530bbbd4512e3ea92c6797425952e935900c60c65b2613b126e231ac779",
+    "docs/ci-verification.md": "630599c5150f93ba6f36f2e12336f0d940e377e5e103e722f1fbfc07c457da03",
+    ".agents/skills/telegram-code-patterns/references/concurrent-actions.md": "c596c9e0c79b75d420e092e017a0f74280d2bd8397366a439fa882795a7fc849",
+    ".agents/skills/telegram-dialogs/references/concurrent-actions.md": "c596c9e0c79b75d420e092e017a0f74280d2bd8397366a439fa882795a7fc849",
+    "docs/quickstart.md": "fd2456a75410fe45071caaf33e52100d506358f1ccef3fef4a2033e62d512f90"
+  },
+  "ci": {
+    "workflow": ".github/workflows/repository-checks.yml",
+    "python": [
+      "3.11",
+      "3.13"
+    ],
+    "os": [
+      "ubuntu-latest",
+      "windows-latest"
+    ],
+    "node": [
+      "20",
+      "24"
+    ],
+    "github_run": "not_run",
+    "local_evidence": "Windows Python 3.13 and 3.11; Node 24; Chrome"
+  },
+  "repair_history": [
+    {
+      "report": "output/pattern-library-0.25.0/distribution-report.json",
+      "passed": false,
+      "cause": "Python suite exceeded 450 seconds during triple offline generation",
+      "repair": "One real generation for export/check/drift unit test; independent generation retained in distribution acceptance"
+    },
+    {
+      "report": "output/pattern-library-0.25.0-attempt-01/distribution-report.json",
+      "passed": false,
+      "cause": "Standalone gallery Chrome exceeded inherited 90-second inner deadline",
+      "repair": "Separate bounded browser/aggregate budgets, per-stage timing, partial logs and owned process-tree cleanup"
+    }
+  ],
+  "limits": [
+    "Local experimental packages; no PyPI/npm publication or production-ready claim",
+    "One directory-symlink test skipped on Windows; other platforms require actual CI results",
+    "No live Telegram, physical device, payment-provider settlement, independent human or AI usability acceptance",
+    "GitHub workflow is configured and syntax checked; no hosted run was dispatched",
+    "SQLite transaction proof is local; external network effects and other databases are host-owned"
+  ]
+}

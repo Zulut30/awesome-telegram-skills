@@ -4,8 +4,10 @@ from __future__ import annotations
 
 import argparse
 import ast
+import os
 from pathlib import Path
 import re
+import stat
 import sys
 from urllib.parse import unquote, urlsplit
 
@@ -22,6 +24,25 @@ FRONTMATTER = re.compile(r"\A---\n(.*?)\n---(?:\n|\Z)", re.DOTALL)
 NAME_PATTERN = re.compile(r"[a-z0-9]+(?:-[a-z0-9]+)*\Z")
 LINK_PATTERN = re.compile(r"!?\[[^\]\n]+\]\(([^)\n]+)\)")
 ALLOWED_FIELDS = {"name", "description", "license", "metadata", "allowed-tools"}
+EXCLUDED_DIRECTORIES = {
+    ".git", ".venv", "node_modules", "output", "build", "dist",
+    "__pycache__", ".mypy_cache", ".pytest_cache", ".ruff_cache", ".playwright-cli",
+}
+
+
+def source_files(root: Path):
+    """Prune generated/dependency trees before walking; never follow directory links."""
+    for directory, names, files in os.walk(root, followlinks=False):
+        parent = Path(directory)
+        names[:] = sorted(name for name in names
+                          if name not in EXCLUDED_DIRECTORIES and not name.endswith('.egg-info')
+                          and not (parent / name).is_symlink()
+                          and not (getattr((parent / name).stat(follow_symlinks=False), 'st_file_attributes', 0)
+                                   & getattr(stat, 'FILE_ATTRIBUTE_REPARSE_POINT', 0)))
+        for name in sorted(files):
+            path = parent / name
+            if path.suffix in {'.md', '.py'}:
+                yield path
 
 
 def load_mapping(text: str, label: Path, errors: list[str]) -> dict:
@@ -98,9 +119,8 @@ def validate(root: Path) -> tuple[int, list[str]]:
                 errors.append(f"{metadata_path}: default_prompt must mention ${folder.name}")
 
     # Validate local links everywhere; skill-local links must stay standalone.
-    for document in root.rglob("*.md"):
-        if any(part in {".git", ".venv", "node_modules"} for part in document.parts):
-            continue
+    files = list(source_files(root))
+    for document in (path for path in files if path.suffix == '.md'):
         text = document.read_text(encoding="utf-8")
         skill_folder = next((folder for folder in folders if document.is_relative_to(folder)), None)
         for raw in LINK_PATTERN.findall(text):
@@ -119,9 +139,7 @@ def validate(root: Path) -> tuple[int, list[str]]:
                 errors.append(f"{document}: broken local link: {raw}")
             if skill_folder is not None and not destination.is_relative_to(skill_folder.resolve()):
                 errors.append(f"{document}: skill link escapes standalone folder: {raw}")
-    for script in root.rglob("*.py"):
-        if any(part in {".git", ".venv", "node_modules", "__pycache__"} for part in script.parts):
-            continue
+    for script in (path for path in files if path.suffix == '.py'):
         try:
             ast.parse(script.read_text(encoding="utf-8"), filename=str(script))
         except SyntaxError as exc:
