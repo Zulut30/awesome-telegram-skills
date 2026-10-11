@@ -61,7 +61,7 @@ def main() -> int:
         output.mkdir(parents=True, exist_ok=False)
     artifacts = output / 'dist'
     artifacts.mkdir(parents=True, exist_ok=True)
-    consumers = Path(tempfile.mkdtemp(prefix=f'telegram-patterns-{version}-'))
+    consumers = Path(tempfile.mkdtemp(prefix=f'telegram-patterns-{version}-')).resolve()
     environment = dict(os.environ)
     environment.pop('PYTHONPATH', None)
     environment.pop('PYTHONHOME', None)

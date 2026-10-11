@@ -25,7 +25,7 @@ def main() -> int:
     wheel=args.wheel.resolve(strict=True)
     if not wheel.is_file() or wheel.suffix!='.whl':raise ValueError('Provide the trusted local pattern wheel')
     output=args.output.resolve();output.mkdir()
-    project=Path(tempfile.mkdtemp(prefix='telegram service consumer '))
+    project=Path(tempfile.mkdtemp(prefix='telegram service consumer ')).resolve()
     env={k:v for k,v in os.environ.items() if k.upper() in {'PATH','PATHEXT','SYSTEMROOT','WINDIR','TEMP','TMP','COMSPEC','USERPROFILE','LOCALAPPDATA'}}
     env['PYTHONUTF8']='1'
     stages=[]

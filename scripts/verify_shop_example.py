@@ -29,7 +29,7 @@ def main() -> int:
     sources=[p.resolve(strict=True) for p in (args.wheel,args.tarball)]
     if any(not p.is_file() for p in sources) or sources[0].suffix!='.whl' or sources[1].suffix!='.tgz':raise ValueError('Provide trusted local wheel/tarball')
     output=args.output.resolve();output.mkdir()
-    consumer=Path(tempfile.mkdtemp(prefix='telegram shop consumer '));venv=consumer/'environment'
+    consumer=Path(tempfile.mkdtemp(prefix='telegram shop consumer ')).resolve();venv=consumer/'environment'
     env={k:v for k,v in os.environ.items() if k.upper() in {'PATH','PATHEXT','SYSTEMROOT','WINDIR','TEMP','TMP','COMSPEC','USERPROFILE','LOCALAPPDATA','CHROME_PATH'}};env['PYTHONUTF8']='1'
     if 'CHROME_PATH' not in env:
         chrome=Path(os.environ.get('PROGRAMFILES','C:/Program Files'))/'Google/Chrome/Application/chrome.exe'
