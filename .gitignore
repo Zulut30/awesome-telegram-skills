@@ -4,6 +4,7 @@ __pycache__/
 .env
 .env.*
 !.env.example
+!packages/python/src/telegram_patterns/resources/starter/.env.example.txt
 node_modules/
 .pytest_cache/
 .ruff_cache/
