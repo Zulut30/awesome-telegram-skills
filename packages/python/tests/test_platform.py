@@ -7,6 +7,7 @@ from pathlib import Path
 import sqlite3
 import tempfile
 import unittest
+from unittest.mock import patch
 
 from aiogram import Bot, Dispatcher, F, Router, methods as m
 from aiogram.exceptions import TelegramBadRequest, TelegramForbiddenError
@@ -113,10 +114,18 @@ class PlatformTests(unittest.IsolatedAsyncioTestCase):
         self.assertIsNone(self.status());self.assertEqual(self.effects(m.CreateForumTopic),[])
 
     async def test_timeout_after_claim_stays_unknown_and_cannot_send_again(self):
-        async def slow_send(r): await asyncio.Event().wait()
+        timer = asyncio.timeout(None)
+        async def slow_send(r):
+            # Expire a real timeout only after the native write starts, independent
+            # of runner load during authorization, SDK validation and SQLite claim.
+            timer.reschedule(asyncio.get_running_loop().time())
+            await asyncio.Event().wait()
         self.session.respond(m.CreateForumTopic,slow_send)
         action=self.action(m.CreateForumTopic(chat_id=-100,name='Topic'),chat_id=-100)
-        with self.assertRaises((TimeoutError,UnknownOutcome)): await execute_platform_action(self.bot,action,self.hooks,timeout=0.03)
+        with patch('telegram_patterns.platform_aiogram.asyncio.timeout_at', return_value=timer):
+            with self.assertRaises((TimeoutError,UnknownOutcome)):
+                await execute_platform_action(self.bot,action,self.hooks,timeout=3)
+        self.assertTrue(timer.expired())
         self.assertEqual(self.status(),('unknown',))
         with self.assertRaises(ConflictFailure):await self.run_action(action)
         self.assertEqual(len(self.effects(m.CreateForumTopic)),1)
