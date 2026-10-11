@@ -46,15 +46,17 @@ def main() -> int:
         if not source.is_relative_to(ROOT) or not source.is_file():
             raise ValueError(f"Invalid component source: {component['id']}")
 
-    uv, npm = shutil.which('uv'), shutil.which('npm.cmd' if os.name == 'nt' else 'npm')
-    node = shutil.which('node')
-    if not all((uv, npm, node)):
-        raise RuntimeError('uv and Node/npm must be available on PATH')
     requested = args.output or ROOT / 'output' / f'pattern-library-{version}'
     if any(p.is_symlink() or bool(getattr(p, 'is_junction', lambda: False)())
            for p in (requested, *requested.parents)):
         raise ValueError('Report directory links are not allowed')
     output = requested.resolve()
+    if args.output and output.exists():
+        raise FileExistsError(f'Report directory already exists: {output}')
+    uv, npm = shutil.which('uv'), shutil.which('npm.cmd' if os.name == 'nt' else 'npm')
+    node = shutil.which('node')
+    if not all((uv, npm, node)):
+        raise RuntimeError('uv and Node/npm must be available on PATH')
     if args.output:
         output.mkdir(parents=True, exist_ok=False)
     artifacts = output / 'dist'

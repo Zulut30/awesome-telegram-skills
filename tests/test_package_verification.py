@@ -40,7 +40,8 @@ class PackageVerificationTests(unittest.TestCase):
         with tempfile.TemporaryDirectory(prefix='package verifier existing ') as temporary:
             output=Path(temporary)/'report';output.mkdir()
             marker=output/'distribution-report.json';marker.write_bytes(b'original evidence')
-            with patch.object(sys,'argv',['verify-pattern-packages','--output',str(output)]):
+            with patch.object(sys,'argv',['verify-pattern-packages','--output',str(output)]), \
+                    patch.object(verifier.shutil,'which',return_value=None):
                 with self.assertRaises(FileExistsError): verifier.main()
             self.assertEqual(marker.read_bytes(),b'original evidence')
 
