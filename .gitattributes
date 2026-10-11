@@ -1,0 +1,3 @@
+# API reference metadata distinguishes source bytes (including CRLF) from LF fences.
+# Keep those recorded bytes identical on Windows and Linux checkouts.
+/examples/api-reference/** -text
