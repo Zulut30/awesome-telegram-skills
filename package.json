@@ -16,6 +16,6 @@
     "test:frameworks": "npm test -w @awesome-telegram/framework-examples"
   },
   "devDependencies": {
-    "playwright": "1.63.0"
+    "playwright": "1.64.0"
   }
 }
