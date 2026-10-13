@@ -3,7 +3,8 @@ name: Telegram docs watch
 # Weekly: rebuild the Bot API and Mini Apps indexes from core.telegram.org and compare their content
 # (Bot API: version, methods, types, field names; Mini Apps: methods and events with min_version,
 # properties) with the committed ones. The page hash changes on every rebuild, so it is not compared.
-# A real change opens one issue per distinct change (digest in the title).
+# A real change opens one issue per distinct change (digest in the title). A newer aiogram than
+# requirements/sdk.txt opens one issue per release with the upgrade checklist; Dependabot leaves aiogram alone.
 on:
   schedule:
     - cron: '17 6 * * 1'
@@ -77,4 +78,32 @@ jobs:
             gh issue create --repo "$GITHUB_REPOSITORY" --title "$TITLE" --body-file "$RUNNER_TEMP/mini-app-issue.md"
           else
             echo "An issue for change $DIGEST already exists."
+          fi
+
+  aiogram:
+    name: aiogram release
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    permissions:
+      contents: read
+      issues: write
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97 # v7.0.0
+        with:
+          python-version: '3.13'
+      - id: release
+        run: python scripts/aiogram_release.py --markdown "$RUNNER_TEMP/aiogram-issue.md" --github-output "$GITHUB_OUTPUT"
+      - name: Open an issue for a new release
+        if: steps.release.outputs.changed == 'true'
+        env:
+          GH_TOKEN: ${{ github.token }}
+          TITLE: ${{ steps.release.outputs.title }}
+          KEY: ${{ steps.release.outputs.key }}
+        run: |
+          existing=$(gh issue list --repo "$GITHUB_REPOSITORY" --state all --search "$KEY in:title" --json number --jq length)
+          if [ "$existing" = "0" ]; then
+            gh issue create --repo "$GITHUB_REPOSITORY" --title "$TITLE" --body-file "$RUNNER_TEMP/aiogram-issue.md"
+          else
+            echo "An issue for $KEY already exists."
           fi

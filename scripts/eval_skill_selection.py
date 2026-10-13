@@ -9,6 +9,10 @@ Two modes: `instant` asks for the name only (the strict case: no room to compare
 takes the name from the last line, as an agent does before it calls a skill. Every run records the
 model that actually answered: an alias such as `haiku` moves to a new model with a CLI update.
 `--report` merges the run, without answer texts, into the shared report.
+
+`--check-report` needs no CLI: it compares a report with the descriptions. A stale report is a warning in pull
+requests, so a contributor without a Claude account can still edit a description; `--strict` turns it into an
+error and the Release workflow uses it for tags from REQUIRED_FROM on.
 """
 from __future__ import annotations
 
@@ -25,11 +29,16 @@ import subprocess
 import sys
 import tempfile
 
+sys.path.insert(0, str(Path(__file__).resolve().parent))  # shared helpers live next to this script
+from device_report import ref_version, version_tuple  # noqa: E402
+
 ROOT = Path(__file__).resolve().parents[1]
 FRONTMATTER = re.compile(r'\A---\n(.*?)\n---', re.S)
 NAME = re.compile(r'telegram-[a-z0-9-]+')
 THRESHOLD = 0.95
 GATE_MODE = 'reasoned'
+# Releases from this version need a report on their own descriptions; older tags were cut without the check.
+REQUIRED_FROM = (0, 25, 0)
 QUESTIONS = {
     'instant': 'Какой один скилл ты загрузишь первым? Ответь только его именем.',
     'reasoned': ('Какой один скилл ты загрузишь первым? Коротко, в одном-двух предложениях, сопоставь запрос '
@@ -150,16 +159,46 @@ def merge(report: dict | None, run: dict, *, cases_file: Path, today: dt.date) -
             'descriptions_sha256': run['descriptions_sha256'], 'runs': runs}
 
 
+def check_report(report: dict, skills: dict[str, str], *, strict: bool, version: str | None = None) -> tuple[int, str]:
+    """Exit code and a GitHub annotation line for a report against these descriptions. Not strict, a stale
+    report only warns; strict, it fails, unless the release version predates REQUIRED_FROM."""
+    if report.get('descriptions_sha256') == digest(skills):
+        return 0, 'The skill selection report matches the descriptions'
+    problem = ('Descriptions changed after the skill selection report: a maintainer reruns '
+               'scripts/eval_skill_selection.py before the release (evaluations/README.md)')
+    if not strict:
+        return 0, f'::warning title=Skill selection report::{problem}'
+    if version is not None and version_tuple(version) < REQUIRED_FROM:
+        return 0, f'{version} predates the report check ({".".join(map(str, REQUIRED_FROM))}); skipped'
+    return 1, f'::error title=Skill selection report::{problem}'
+
+
 def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument('--cases', type=Path, required=True)
+    parser.add_argument('--cases', type=Path)
     parser.add_argument('--ref', help='git ref whose descriptions to use instead of the working tree')
+    parser.add_argument('--check-report', type=Path, metavar='REPORT',
+                        help='compare REPORT (repository path) with the descriptions; with --ref, both at that ref')
+    parser.add_argument('--strict', action='store_true', help='with --check-report: a stale report fails')
     parser.add_argument('--model', default='claude-haiku-5-5', help='claude --model value; prefer an exact model ID to an alias')
     parser.add_argument('--mode', choices=sorted(QUESTIONS), default=GATE_MODE)
     parser.add_argument('--workers', type=int, default=4)
     parser.add_argument('--output', type=Path, help='write the full JSON run, answers included')
     parser.add_argument('--report', type=Path, help='merge the run, without answer texts, into this shared report')
     args = parser.parse_args()
+    if args.check_report:
+        if args.ref is None:
+            report, version = json.loads((ROOT / args.check_report).read_text(encoding='utf-8')), None
+        else:
+            # A tag from before the report existed has no file: it counts as stale, and old tags are skipped.
+            shown = subprocess.run(['git', 'show', f'{args.ref}:{args.check_report.as_posix()}'], cwd=ROOT,
+                                   capture_output=True, text=True, encoding='utf-8')
+            report, version = json.loads(shown.stdout) if shown.returncode == 0 else {}, ref_version(args.ref)
+        code, message = check_report(report, descriptions(args.ref), strict=args.strict, version=version)
+        print(message)
+        return code
+    if args.cases is None:
+        parser.error('--cases is required to run an evaluation')
     if shutil.which('claude') is None:
         parser.error('Claude Code CLI (claude) is not on PATH')
     if args.report and args.ref:

@@ -1,5 +1,7 @@
-"""The skill selection report covers at least 200 requests, names the models that answered, meets 95% in the
-gate mode and matches today's descriptions; the evaluator's helpers pick the answering model and the skill name."""
+"""The skill selection report covers at least 200 requests, names the models that answered and meets 95% in the
+gate mode; the evaluator's helpers pick the answering model and the skill name. A report on older descriptions is
+a skipped test here and a CI warning, so a contributor without a Claude account can edit a description; Release
+refuses it (check_report, strict)."""
 import datetime as dt
 import importlib.util
 import json
@@ -22,10 +24,13 @@ MODEL_ID = re.compile(r'claude-[a-z]+-\d+-\d+')
 
 @unittest.skipIf(yaml is None, 'PyYAML is not installed')
 class SkillSelectionReportTests(unittest.TestCase):
-    def test_report_is_current_and_meets_threshold(self):
+    def test_report_matches_descriptions(self):
         report = json.loads(REPORT.read_text(encoding='utf-8'))
-        self.assertEqual(report['descriptions_sha256'], evaluator.digest(evaluator.descriptions(None)),
-                         'descriptions changed: rerun scripts/eval_skill_selection.py and refresh the report')
+        if report['descriptions_sha256'] != evaluator.digest(evaluator.descriptions(None)):
+            self.skipTest('descriptions changed: a maintainer reruns scripts/eval_skill_selection.py before the release')
+
+    def test_report_meets_threshold(self):
+        report = json.loads(REPORT.read_text(encoding='utf-8'))
         cases = json.loads((ROOT / report['cases']).read_text(encoding='utf-8'))['cases']
         self.assertGreaterEqual(len(cases), 200)
         self.assertTrue(any(case.get('not') for case in cases), 'negative requests are part of the set')
@@ -45,6 +50,21 @@ class SkillSelectionReportTests(unittest.TestCase):
 
 
 class EvaluatorHelperTests(unittest.TestCase):
+    def test_check_report_warns_in_pull_requests_and_fails_strict_releases(self):
+        skills = {'telegram-x': 'Делает x.'}
+        current = {'descriptions_sha256': evaluator.digest(skills)}
+        stale = {'descriptions_sha256': evaluator.digest({'telegram-x': 'Делает y.'})}
+        self.assertEqual(evaluator.check_report(current, skills, strict=True, version='0.25.0')[0], 0)
+        code, message = evaluator.check_report(stale, skills, strict=False)
+        self.assertEqual(code, 0)
+        self.assertTrue(message.startswith('::warning '), message)
+        code, message = evaluator.check_report(stale, skills, strict=True, version='0.25.0')
+        self.assertEqual(code, 1)
+        self.assertTrue(message.startswith('::error '), message)
+        self.assertEqual(evaluator.check_report(stale, skills, strict=True)[0], 1, 'strict without a tag fails too')
+        self.assertEqual(evaluator.check_report(stale, skills, strict=True, version='0.24.0')[0], 0,
+                         'tags released before the check stay buildable')
+
     def test_answering_model_skips_the_cli_helper_model(self):
         # The CLI bills a small helper model for its own side request next to the requested one.
         usage = {'claude-haiku-5-5': {'inputTokens': 6519}, 'claude-haiku-4-5': {'inputTokens': 10, 'cacheCreationInputTokens': 8691}}

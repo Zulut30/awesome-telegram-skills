@@ -14,6 +14,29 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
+  changes:
+    name: Changed areas (library jobs or skill content only)
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    outputs:
+      library: ${{ steps.scope.outputs.library }}
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          fetch-depth: 2
+      # A pull request is checked out as its merge commit, so HEAD^1 is the base branch. A pull request that changes
+      # only skill, evaluation or docs content no library job reads skips the library jobs (scripts/ci_scope.py);
+      # pushes to main, manual runs and the nightly Full acceptance run everything.
+      - id: scope
+        env:
+          EVENT: ${{ github.event_name }}
+        run: |
+          if [ "$EVENT" = pull_request ]; then
+            python3 scripts/ci_scope.py --base HEAD^1 --head HEAD >> "$GITHUB_OUTPUT"
+          else
+            echo 'library=true' >> "$GITHUB_OUTPUT"
+          fi
+
   skills:
     name: Skills and repository tests
     runs-on: ubuntu-latest
@@ -28,6 +51,9 @@ jobs:
       # Reference validator of the Agent Skills specification (agentskills.io).
       - run: for skill in .agents/skills/*/; do agentskills validate "$skill"; done
       - run: python -m unittest discover -s tests -v
+      # A report measured on older descriptions is a warning here: the paid rerun is the maintainer's release step,
+      # and Release refuses a stale report from 0.25.0 (evaluations/README.md).
+      - run: python scripts/eval_skill_selection.py --check-report evaluations/reports/skill-selection-latest.json
 
   generated-files:
     name: Generated files are current (every --check on the real tree)
@@ -90,6 +116,8 @@ jobs:
 
   python-style:
     name: Python library style (ruff)
+    needs: changes
+    if: needs.changes.outputs.library == 'true'
     runs-on: ubuntu-latest
     timeout-minutes: 5
     steps:
@@ -104,6 +132,8 @@ jobs:
 
   python-types:
     name: Python library types (mypy --strict)
+    needs: changes
+    if: needs.changes.outputs.library == 'true'
     runs-on: ubuntu-latest
     timeout-minutes: 10
     steps:
@@ -140,6 +170,8 @@ jobs:
 
   python-package:
     name: Installed Python package, every test (Python ${{ matrix.python }}, ${{ matrix.os }})
+    needs: changes
+    if: needs.changes.outputs.library == 'true'
     strategy:
       fail-fast: false
       matrix:
@@ -171,6 +203,8 @@ jobs:
 
   python-coverage:
     name: Python library coverage (90% statements, full branches of guarded modules)
+    needs: changes
+    if: needs.changes.outputs.library == 'true'
     runs-on: ubuntu-latest
     timeout-minutes: 15
     env:
@@ -200,6 +234,8 @@ jobs:
 
   typescript:
     name: TypeScript tests and Mini App build (Node.js ${{ matrix.node }}, ${{ matrix.os }})
+    needs: changes
+    if: needs.changes.outputs.library == 'true'
     strategy:
       fail-fast: false
       matrix:
@@ -225,6 +261,8 @@ jobs:
 
   mini-app-quality:
     name: Mini App performance, accessibility and bundle budgets
+    needs: changes
+    if: needs.changes.outputs.library == 'true'
     runs-on: ubuntu-latest
     timeout-minutes: 15
     steps:
@@ -253,6 +291,8 @@ jobs:
 
   browser:
     name: Browser tests (patterns, gallery, starters) in Playwright Chromium
+    needs: changes
+    if: needs.changes.outputs.library == 'true'
     runs-on: ubuntu-latest
     timeout-minutes: 60
     steps:
@@ -291,6 +331,8 @@ jobs:
 
   api-compatibility:
     name: Public API compatibility and CHANGELOG
+    needs: changes
+    if: needs.changes.outputs.library == 'true'
     runs-on: ubuntu-latest
     timeout-minutes: 15
     steps:
@@ -310,6 +352,8 @@ jobs:
 
   quickstart:
     name: Documented quickstart (${{ matrix.os }}, ${{ matrix.guide }})
+    needs: changes
+    if: needs.changes.outputs.library == 'true'
     strategy:
       fail-fast: false
       matrix:
@@ -337,6 +381,8 @@ jobs:
 
   fresh-install:
     name: Install from scratch, wheel to offline bot (${{ matrix.os }}, Python 3.11)
+    needs: changes
+    if: needs.changes.outputs.library == 'true'
     strategy:
       fail-fast: false
       matrix:
@@ -365,6 +411,8 @@ jobs:
 
   examples:
     name: Example applications on the current library
+    needs: changes
+    if: needs.changes.outputs.library == 'true'
     runs-on: ubuntu-latest
     timeout-minutes: 45
     steps:
@@ -386,6 +434,8 @@ jobs:
 
   docker:
     name: Optional service-bot container
+    needs: changes
+    if: needs.changes.outputs.library == 'true'
     runs-on: ubuntu-latest
     timeout-minutes: 20
     steps:
@@ -397,14 +447,19 @@ jobs:
   required:
     name: Required checks passed
     # The one check to mark as required in branch protection: it fails when any job below failed, was
-    # cancelled or skipped, so adding a job to `needs` is enough to make it block merging.
+    # cancelled or skipped, so adding a job to `needs` is enough to make it block merging. The library jobs may
+    # be skipped only when the changes job found content alone.
     if: always()
-    needs: [skills, generated-files, history, python-style, python-types, python-unit, python-package, python-coverage, typescript, mini-app-quality, browser, docs-site, api-compatibility, quickstart, fresh-install, examples, docker]
+    needs: [changes, skills, generated-files, history, python-style, python-types, python-unit, python-package, python-coverage, typescript, mini-app-quality, browser, docs-site, api-compatibility, quickstart, fresh-install, examples, docker]
     runs-on: ubuntu-latest
     timeout-minutes: 5
     steps:
-      - if: contains(needs.*.result, 'failure') || contains(needs.*.result, 'cancelled') || contains(needs.*.result, 'skipped')
+      - if: contains(needs.*.result, 'failure') || contains(needs.*.result, 'cancelled')
         run: |
           echo '::error::A required job did not succeed'
           exit 1
-      - run: echo 'Every required job succeeded'
+      - if: contains(needs.*.result, 'skipped') && needs.changes.outputs.library != 'false'
+        run: |
+          echo '::error::A required job was skipped although the change touches the library'
+          exit 1
+      - run: echo 'Every required job succeeded or was skipped for a content-only change'

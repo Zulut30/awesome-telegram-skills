@@ -32,7 +32,7 @@ python scripts/new_skill.py telegram-example --title "Пример" --short "К�
 
 ### 4. Оценки
 
-Нужен Claude Code CLI (`claude`) с вашим входом; запросы расходуют лимит аккаунта. Порядок и пороги — в [evaluations/README.md](../evaluations/README.md).
+Нужен Claude Code CLI (`claude`) с вашим входом; запросы расходуют лимит аккаунта. Порядок и пороги — в [evaluations/README.md](../evaluations/README.md). Без аккаунта добавьте задачи и запросы, а прогоны оставьте: устаревший отчет выбора скилла в pull request дает предупреждение, и мейнтейнер повторяет оценку до релиза.
 
 ```bash
 python scripts/eval_skill_selection.py --cases evaluations/skill-selection.json --model claude-haiku-5-5 --mode reasoned --report evaluations/reports/skill-selection-latest.json
@@ -56,7 +56,7 @@ python -m unittest discover -s tests
 - [ ] Описание говорит, когда скилл применять и когда нет (`Не для … → telegram-…`).
 - [ ] Источники со ссылками и датой; таблица `docs/sources.md` пересобрана, запись в журнале добавлена.
 - [ ] Строки каталога в README.md и README.en.md, числа скиллов обновлены.
-- [ ] Задачи и запросы оценки добавлены, отчеты пересчитаны.
+- [ ] Задачи и запросы оценки добавлены; отчеты пересчитаны или в pull request сказано, что их пересчитает мейнтейнер.
 - [ ] Корневые тесты проходят; сообщение коммита по шаблону `.gitmessage`.
 
 Пример: коммит [excellence(040)](https://github.com/Zulut30/awesome-telegram-skills/commit/8140c0b02c47476055eb4e88d3db45794ce0782b) добавил `telegram-ai-bot` — скилл, справку в `references/`, строки каталога, источники, задачи оценки и отчеты (рецепт и пример в том же коммите необязательны для нового скилла).

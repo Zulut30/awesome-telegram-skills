@@ -40,7 +40,8 @@ jobs:
       - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
         with:
           node-version: '24'
-      - run: python -m pip install -r requirements/build.txt
+      # requirements/skills.txt: PyYAML reads the skill descriptions of the tag for the selection report check.
+      - run: python -m pip install -r requirements/build.txt -r requirements/skills.txt
       - name: Create missing tags from .github/release-tags.json
         if: github.event_name == 'workflow_dispatch'
         run: |
@@ -84,6 +85,8 @@ jobs:
             fi
             # The release notes come from CHANGELOG: the tag must have its own section.
             python scripts/check_changelog.py --tag "$tag"
+            # The skill selection report must describe the descriptions of the tag (from 0.25.0; evaluations/README.md).
+            python scripts/eval_skill_selection.py --check-report evaluations/reports/skill-selection-latest.json --ref "$tag" --strict
             python scripts/build_release.py --ref "$tag" --output "dist/$tag"
             python scripts/build_release.py --ref "$tag" --notes > "dist/$tag.md"
             # Device check report from the tag (docs/device-qa-checklist.md): required from 0.25.0, attached as

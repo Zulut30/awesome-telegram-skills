@@ -21,9 +21,13 @@ updates:
     schedule:
       interval: weekly
       day: monday
+    # aiogram moves the CI matrix, offline fixtures and the «Проверено» lines of the skills together
+    # (docs/versioning.md); the weekly Telegram docs watch opens an issue with that checklist instead.
+    ignore:
+      - dependency-name: aiogram
     groups:
       sdks:
-        patterns: [aiogram, python-telegram-bot, cryptography, tzdata]
+        patterns: [python-telegram-bot, cryptography, tzdata]
       python-tools:
         patterns: ['*']
     commit-message:

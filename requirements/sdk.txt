@@ -1,4 +1,5 @@
-# SDKs the library adapts, at the versions CI tests by default; Dependabot proposes updates.
+# SDKs the library adapts, at the versions CI tests by default; Dependabot proposes updates. A new aiogram opens an
+# issue instead (scripts/aiogram_release.py): it moves the matrix, fixtures and skills together (docs/versioning.md).
 aiogram==3.31.0
 python-telegram-bot==22.8
 cryptography==50.0.2
