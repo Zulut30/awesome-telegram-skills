@@ -2,6 +2,8 @@
 
 Термины: **сверка** — запрос фактического состояния у провайдера или в хранилище перед повтором или выдачей; **fallback** — запасной вариант, если основная возможность недоступна.
 
+Разделы: Entry — run.ts; Theme bridge, shell и поле ввода — ref.bridge; HTTP client с decoder и unknown write — ref.client; Выбор с TTL и storage fallback — ref.draft; Native availability и listener cleanup — ref.native; Safe errors и typed recovery — ref.errors; Проверка initData без токена бота — ref.init_data.
+
 [Индекс всех символов](api-reference.md). Образцы ниже воспроизводятся через установленный wheel/tarball вне исходного дерева. Assert — проверка fixture, не бизнес-правило production приложения.
 
 Установите предоставленный local tarball в отдельный consumer, сохраните файлы в src/, добавьте ESM package.json и compile с strict, ES2022, NodeNext и DOM libs. Bridge требует настоящий Document; выполняйте exports в браузере, остальные fixtures также могут исполняться в Node с Response. Общий check.ts:

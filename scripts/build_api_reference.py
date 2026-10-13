@@ -9,6 +9,7 @@ import sys
 import re
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))  # shared helpers live next to this script
+from _contents import with_contents_line  # noqa: E402
 from _environment import planted_link  # noqa: E402
 from _glossary import with_terms_line  # noqa: E402
 
@@ -140,8 +141,8 @@ def build() -> tuple[dict[str, str], dict]:
               'Type-only TypeScript exports существуют в declarations, без runtime JavaScript binding. '
               'Imports типов используют `type`. Python Literal/Protocol '
               'annotations проверяются Mypy; это не runtime validation внешнего JSON.\n')
-    products['api-reference.md'] = with_terms_line(intro)
-    for section, body in bodies.items(): products[SECTION[section][0]] = with_terms_line(body.rstrip() + '\n')
+    products['api-reference.md'] = with_contents_line(with_terms_line(intro))
+    for section, body in bodies.items(): products[SECTION[section][0]] = with_contents_line(with_terms_line(body.rstrip() + '\n'))
     index = {'schema_version': 1, 'library_version': version, 'symbols': entries,
              'python_symbols': sum(not item['module'].startswith('@') for item in entries),
              'typescript_symbols': sum(item['module'].startswith('@') for item in entries),

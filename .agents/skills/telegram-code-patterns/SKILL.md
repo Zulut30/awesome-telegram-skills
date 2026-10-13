@@ -65,7 +65,7 @@ metadata:
 
 ## Проверка
 
-Основной и негативный сценарий — через установленный пакет; в ответе назовите компоненты, проверки и оставшуюся работу. Изменяя библиотеку, обновите changelog и проверьте wheel/tarball в отдельном consumer.
+Основной и негативный сценарий — через установленный пакет; в ответе назовите компоненты, проверки и оставшуюся работу. Импорт символа сверяйте без чтения справочника целиком: `grep -n "ИмяСимвола" references/api-reference*.md`; примеры — в разделах [core](references/api-reference-core.md), [bot](references/api-reference-bot.md) и [TypeScript](references/api-reference-typescript.md). Изменяя библиотеку, обновите changelog и проверьте wheel/tarball в отдельном consumer.
 
 ## Типичные ошибки
 

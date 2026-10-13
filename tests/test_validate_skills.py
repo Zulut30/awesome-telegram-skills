@@ -123,11 +123,25 @@ class ValidateSkillsTests(unittest.TestCase):
                 self.skill(self.BASE, body=body)
                 self.assertEqual(self.errors(), [], label)
 
-    def reference(self, text, name='notes.md', raw=None):
+    def reference(self, text, name='notes.md', raw=None, linked=True):
         path = self.root / '.agents/skills/telegram-sample/references' / name
         path.parent.mkdir(parents=True, exist_ok=True)
         path.write_bytes(raw if raw is not None else text.encode('utf-8'))
+        entry = path.parents[1] / 'SKILL.md'
+        skill = entry.read_text(encoding='utf-8')
+        if linked and f'(references/{name})' not in skill:
+            entry.write_text(skill.replace('\n## Проверка', f'\n[{name}](references/{name})\n\n## Проверка', 1), encoding='utf-8')
         return path
+
+    def test_every_reference_is_linked_from_skill_md(self):
+        self.skill(self.BASE)
+        self.reference('# Index\n\n[Details](details.md)\n', name='index.md')
+        self.reference('# Details\n\nText.\n', name='details.md', linked=False)
+        self.assertEqual([error.split(': ', 1)[1] for error in self.errors()],
+                         ['link each reference from SKILL.md, one level deep: references/details.md'],
+                         'a reference reached only through another reference is two levels deep')
+        self.reference('# Details\n\nText.\n', name='details.md')
+        self.assertEqual(self.errors(), [])
 
     def test_skill_files_use_lf(self):
         self.skill(self.BASE)

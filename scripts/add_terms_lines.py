@@ -1,10 +1,11 @@
-"""Add or refresh the «Термины:» line in skill references and the pages copied into skills.
+"""Add or refresh the «Термины:» and «Разделы:» lines in skill references and the pages copied into skills.
 
 A docs/ page mirrored from an example README is edited at the README; sync_skill_references.py
 then copies it on.
 
-SKILL.md files are excluded: they explain a term where it first appears. Generated API
-reference pages get the line from build_api_reference.py.
+SKILL.md files are excluded: they explain a term where it first appears. «Разделы:» lists the
+sections of a reference longer than 100 lines (scripts/_contents.py). Generated API reference
+pages get both lines from build_api_reference.py.
 """
 from __future__ import annotations
 
@@ -14,6 +15,7 @@ from pathlib import Path
 import sys
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
+from _contents import with_contents_line  # noqa: E402
 from _glossary import with_terms_line  # noqa: E402
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -36,7 +38,7 @@ def main() -> int:
     stale = []
     for path in targets():
         text = path.read_text(encoding='utf-8')
-        updated = with_terms_line(text)
+        updated = with_contents_line(with_terms_line(text))
         if updated != text:
             stale.append(path.relative_to(ROOT).as_posix())
             if not args.check:

@@ -12,7 +12,7 @@
     {"query": "Нужно спросить у пользователя геолокацию и подтвердить ее кнопкой", "expected": ["dialog-fields.md"]},
     {"query": "Сохрани прогресс опросника в базе, чтобы после деплоя пользователь продолжил с того же вопроса", "expected": ["dialog-restart.md"]},
     {"query": "Сделай выбор времени визита только на свободные слоты", "expected": ["calendar-slots.md"]},
-    {"query": "Как подключить ApiClient к своему backend и обработать 429?", "expected": ["api-reference.md", "errors.md"]},
+    {"query": "Как подключить ApiClient к своему backend и обработать 429?", "expected": ["api-reference.md", "errors.md", "api-reference-typescript.md"]},
     {"query": "Пакет установлен, но import telegram_patterns.aiogram падает, как понять причину?", "expected": ["doctor.md"]},
     {"query": "Нужен готовый пример цифрового магазина с корзиной и оплатой", "expected": ["shop-example.md"]}
   ]

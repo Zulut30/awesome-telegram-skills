@@ -1,5 +1,7 @@
 # Потоковый ответ и остановка генерации
 
+Разделы: Методы и поля; Пример на aiogram; Частые ошибки.
+
 Проверено 7 октября 2026 года по [Bot API 10.3](https://core.telegram.org/bots/api) и [changelog](https://core.telegram.org/bots/api-changelog); aiogram 3.31.0 поддерживает эти методы и update.
 
 ## Методы и поля

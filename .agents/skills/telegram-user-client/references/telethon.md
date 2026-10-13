@@ -1,5 +1,7 @@
 # Telethon и сессии
 
+Разделы: Вход и сессии; Чтение истории с checkpoint; История и новые сообщения без разрыва и дублей; Что чтение не делает; Типичные ошибки; Другие библиотеки.
+
 Первичные источники: [Telethon](https://docs.telethon.dev/en/stable/), [client reference](https://docs.telethon.dev/en/stable/modules/client.html), [signing in](https://docs.telethon.dev/en/stable/basic/signing-in.html), [session storage](https://docs.telethon.dev/en/stable/concepts/sessions.html), [events](https://docs.telethon.dev/en/stable/modules/events.html). Сигнатуры ниже сверены с установленным Telethon 1.45.0 7 октября 2026 года; перед использованием сверьте их со своей версией.
 
 ## Вход и сессии

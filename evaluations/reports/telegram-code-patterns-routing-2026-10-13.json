@@ -1,0 +1,468 @@
+{
+  "date": "2026-10-13",
+  "agent": "Claude Code CLI, claude -p with tools disabled, empty working directory",
+  "skill": "telegram-code-patterns",
+  "skill_file": ".agents/skills/telegram-code-patterns/SKILL.md",
+  "threshold": 0.9,
+  "cases": {
+    "main": "evaluations/telegram-code-patterns-routing.json",
+    "holdout": "evaluations/telegram-code-patterns-routing-holdout.json"
+  },
+  "change": "«Проверка» links api-reference-core, -bot and -typescript directly from SKILL.md and finds a known symbol with grep; the intent table and the algorithm are unchanged. The five cases that expected api-reference.md also accept the section that holds the example; correct_with_previous_answers scores the same answers on the answer key before that change.",
+  "runs": [
+    {
+      "set": "main",
+      "repeat": 1,
+      "model": "claude-haiku-4-5",
+      "served_model": "claude-haiku-4-5",
+      "cli": "2.1.296 (Claude Code)",
+      "cases": 40,
+      "correct": 37,
+      "accuracy": 0.925,
+      "correct_with_previous_answers": 36,
+      "misses": [
+        {
+          "query": "Создай новый проект бота с мини-приложением из wheel и tarball, которые лежат у меня в Загрузках",
+          "expected": [
+            "quickstart.md",
+            "starter-selection.md"
+          ],
+          "chosen": "agent-onboarding.md"
+        },
+        {
+          "query": "В режиме @бот запрос нужно искать по каталогу и листать результаты",
+          "expected": [
+            "inline-search.md"
+          ],
+          "chosen": "bot-recipes.md"
+        },
+        {
+          "query": "Есть ли в Bot API 10.3 метод для гостевого режима и можно ли его вызвать из группы?",
+          "expected": [
+            "api-boundaries.md"
+          ],
+          "chosen": "bot-api-10-features.md"
+        }
+      ]
+    },
+    {
+      "set": "main",
+      "repeat": 2,
+      "model": "claude-haiku-4-5",
+      "served_model": "claude-haiku-4-5",
+      "cli": "2.1.296 (Claude Code)",
+      "cases": 40,
+      "correct": 39,
+      "accuracy": 0.975,
+      "correct_with_previous_answers": 38,
+      "misses": [
+        {
+          "query": "Есть ли в Bot API 10.3 метод для гостевого режима и можно ли его вызвать из группы?",
+          "expected": [
+            "api-boundaries.md"
+          ],
+          "chosen": "bot-api-10-features.md"
+        }
+      ]
+    },
+    {
+      "set": "holdout",
+      "repeat": 1,
+      "model": "claude-haiku-4-5",
+      "served_model": "claude-haiku-4-5",
+      "cli": "2.1.296 (Claude Code)",
+      "cases": 12,
+      "correct": 12,
+      "accuracy": 1.0,
+      "correct_with_previous_answers": 12,
+      "misses": []
+    },
+    {
+      "set": "main",
+      "repeat": 1,
+      "model": "claude-haiku-5-5",
+      "served_model": "claude-haiku-5-5",
+      "cli": "2.1.296 (Claude Code)",
+      "cases": 40,
+      "correct": 38,
+      "accuracy": 0.95,
+      "correct_with_previous_answers": 38,
+      "misses": [
+        {
+          "query": "Создай новый проект бота с мини-приложением из wheel и tarball, которые лежат у меня в Загрузках",
+          "expected": [
+            "quickstart.md",
+            "starter-selection.md"
+          ],
+          "chosen": "agent-onboarding.md"
+        },
+        {
+          "query": "Как найти рецепт через командную строку и посмотреть его код?",
+          "expected": [
+            "developer-tools.md",
+            "gallery-navigation.md"
+          ],
+          "chosen": "recipe-execution.md"
+        }
+      ]
+    },
+    {
+      "set": "holdout",
+      "repeat": 1,
+      "model": "claude-haiku-5-5",
+      "served_model": "claude-haiku-5-5",
+      "cli": "2.1.296 (Claude Code)",
+      "cases": 12,
+      "correct": 10,
+      "accuracy": 0.833,
+      "correct_with_previous_answers": 10,
+      "misses": [
+        {
+          "query": "Как вывести список заказов по 10 штук с кнопками вперед и назад под сообщением бота?",
+          "expected": [
+            "bot-recipes.md",
+            "message-navigation.md"
+          ],
+          "chosen": "keyboard-recipes.md"
+        },
+        {
+          "query": "Как подключить ApiClient к своему backend и обработать 429?",
+          "expected": [
+            "api-reference.md",
+            "errors.md",
+            "api-reference-typescript.md"
+          ],
+          "chosen": "doctor.md"
+        }
+      ]
+    }
+  ],
+  "baseline": {
+    "skill_file": "e711681:.agents/skills/telegram-code-patterns/SKILL.md, the same CLI",
+    "runs": [
+      {
+        "set": "main",
+        "repeat": 1,
+        "model": "claude-haiku-4-5",
+        "served_model": "claude-haiku-4-5",
+        "cli": "2.1.296 (Claude Code)",
+        "cases": 40,
+        "correct": 39,
+        "accuracy": 0.975,
+        "correct_with_previous_answers": 39,
+        "misses": [
+          {
+            "query": "Есть ли в Bot API 10.3 метод для гостевого режима и можно ли его вызвать из группы?",
+            "expected": [
+              "api-boundaries.md"
+            ],
+            "chosen": "bot-api-10-features.md"
+          }
+        ]
+      },
+      {
+        "set": "main",
+        "repeat": 2,
+        "model": "claude-haiku-4-5",
+        "served_model": "claude-haiku-4-5",
+        "cli": "2.1.296 (Claude Code)",
+        "cases": 40,
+        "correct": 38,
+        "accuracy": 0.95,
+        "correct_with_previous_answers": 38,
+        "misses": [
+          {
+            "query": "Создай новый проект бота с мини-приложением из wheel и tarball, которые лежат у меня в Загрузках",
+            "expected": [
+              "quickstart.md",
+              "starter-selection.md"
+            ],
+            "chosen": "agent-onboarding.md"
+          },
+          {
+            "query": "Есть ли в Bot API 10.3 метод для гостевого режима и можно ли его вызвать из группы?",
+            "expected": [
+              "api-boundaries.md"
+            ],
+            "chosen": "bot-api-10-features.md"
+          }
+        ]
+      },
+      {
+        "set": "holdout",
+        "repeat": 1,
+        "model": "claude-haiku-4-5",
+        "served_model": "claude-haiku-4-5",
+        "cli": "2.1.296 (Claude Code)",
+        "cases": 12,
+        "correct": 12,
+        "accuracy": 1.0,
+        "correct_with_previous_answers": 12,
+        "misses": []
+      },
+      {
+        "set": "main",
+        "repeat": 1,
+        "model": "claude-haiku-5-5",
+        "served_model": "claude-haiku-5-5",
+        "cli": "2.1.296 (Claude Code)",
+        "cases": 40,
+        "correct": 32,
+        "accuracy": 0.8,
+        "correct_with_previous_answers": 32,
+        "misses": [
+          {
+            "query": "Хочу запустить рецепт demo-calendar локально без токена и понять, что ему нужно",
+            "expected": [
+              "recipe-execution.md"
+            ],
+            "chosen": "doctor.md"
+          },
+          {
+            "query": "Создай новый проект бота с мини-приложением из wheel и tarball, которые лежат у меня в Загрузках",
+            "expected": [
+              "quickstart.md",
+              "starter-selection.md"
+            ],
+            "chosen": "agent-onboarding.md"
+          },
+          {
+            "query": "doctor говорит mini-app-dependency-missing, что делать?",
+            "expected": [
+              "doctor.md"
+            ],
+            "chosen": "mini-app-dependency-missing.md"
+          },
+          {
+            "query": "Как найти рецепт через командную строку и посмотреть его код?",
+            "expected": [
+              "developer-tools.md",
+              "gallery-navigation.md"
+            ],
+            "chosen": "recipe-execution.md"
+          },
+          {
+            "query": "Как отличить ошибку валидации от ситуации, когда непонятно, выполнилась ли запись?",
+            "expected": [
+              "errors.md"
+            ],
+            "chosen": "dialog-restart.md"
+          },
+          {
+            "query": "Есть ли в Bot API 10.3 метод для гостевого режима и можно ли его вызвать из группы?",
+            "expected": [
+              "api-boundaries.md"
+            ],
+            "chosen": "bot-api-10-features.md"
+          },
+          {
+            "query": "Покажи готовое приложение записи на услугу с напоминаниями",
+            "expected": [
+              "service-bot.md"
+            ],
+            "chosen": "gallery-navigation.md"
+          },
+          {
+            "query": "Какие ограничения у validate_init_data и проверяет ли она права?",
+            "expected": [
+              "components.md",
+              "api-reference.md",
+              "api-reference-core.md"
+            ],
+            "chosen": "api-boundaries.md"
+          }
+        ]
+      },
+      {
+        "set": "holdout",
+        "repeat": 1,
+        "model": "claude-haiku-5-5",
+        "served_model": "claude-haiku-5-5",
+        "cli": "2.1.296 (Claude Code)",
+        "cases": 12,
+        "correct": 12,
+        "accuracy": 1.0,
+        "correct_with_previous_answers": 12,
+        "misses": []
+      }
+    ]
+  },
+  "rejected": {
+    "change": "The same links on the api-reference line of the intent table and the grep search in step 2: answers drifted to api-reference.md and components.md.",
+    "runs": [
+      {
+        "set": "main",
+        "repeat": 1,
+        "model": "claude-haiku-4-5",
+        "served_model": "claude-haiku-4-5",
+        "cli": "2.1.296 (Claude Code)",
+        "cases": 40,
+        "correct": 38,
+        "accuracy": 0.95,
+        "correct_with_previous_answers": 36,
+        "misses": [
+          {
+            "query": "Создай новый проект бота с мини-приложением из wheel и tarball, которые лежат у меня в Загрузках",
+            "expected": [
+              "quickstart.md",
+              "starter-selection.md"
+            ],
+            "chosen": "agent-onboarding.md"
+          },
+          {
+            "query": "Есть ли в Bot API 10.3 метод для гостевого режима и можно ли его вызвать из группы?",
+            "expected": [
+              "api-boundaries.md"
+            ],
+            "chosen": "bot-api-10-features.md"
+          }
+        ]
+      },
+      {
+        "set": "holdout",
+        "repeat": 1,
+        "model": "claude-haiku-4-5",
+        "served_model": "claude-haiku-4-5",
+        "cli": "2.1.296 (Claude Code)",
+        "cases": 12,
+        "correct": 11,
+        "accuracy": 0.917,
+        "correct_with_previous_answers": 11,
+        "misses": [
+          {
+            "query": "Пакет установлен, но import telegram_patterns.aiogram падает, как понять причину?",
+            "expected": [
+              "doctor.md"
+            ],
+            "chosen": "agent-onboarding.md"
+          }
+        ]
+      },
+      {
+        "set": "main",
+        "repeat": 1,
+        "model": "claude-haiku-5-5",
+        "served_model": "claude-haiku-5-5",
+        "cli": "2.1.296 (Claude Code)",
+        "cases": 40,
+        "correct": 30,
+        "accuracy": 0.75,
+        "correct_with_previous_answers": 29,
+        "misses": [
+          {
+            "query": "Какие гарантии дает SQLiteOnce и что остается на моем сервисе?",
+            "expected": [
+              "components.md",
+              "errors.md"
+            ],
+            "chosen": "api-reference.md"
+          },
+          {
+            "query": "Хочу запустить рецепт demo-calendar локально без токена и понять, что ему нужно",
+            "expected": [
+              "recipe-execution.md"
+            ],
+            "chosen": "doctor.md"
+          },
+          {
+            "query": "Создай новый проект бота с мини-приложением из wheel и tarball, которые лежат у меня в Загрузках",
+            "expected": [
+              "quickstart.md",
+              "starter-selection.md"
+            ],
+            "chosen": "agent-onboarding.md"
+          },
+          {
+            "query": "Как найти рецепт через командную строку и посмотреть его код?",
+            "expected": [
+              "developer-tools.md",
+              "gallery-navigation.md"
+            ],
+            "chosen": "api-reference.md"
+          },
+          {
+            "query": "Пользователь выбирает несколько тегов галочками, а потом подтверждает удаление",
+            "expected": [
+              "selection-controls.md"
+            ],
+            "chosen": "keyboard-recipes.md"
+          },
+          {
+            "query": "Текст с жирным шрифтом ломается, когда в имени пользователя есть символ <",
+            "expected": [
+              "message-text.md"
+            ],
+            "chosen": "formatting.md"
+          },
+          {
+            "query": "Отправь альбом из трех фото с подписью и скачай документ от пользователя",
+            "expected": [
+              "media.md"
+            ],
+            "chosen": "manifest.md"
+          },
+          {
+            "query": "Есть ли в Bot API 10.3 метод для гостевого режима и можно ли его вызвать из группы?",
+            "expected": [
+              "api-boundaries.md"
+            ],
+            "chosen": "bot-api-10-features.md"
+          },
+          {
+            "query": "Покажи готовое приложение записи на услугу с напоминаниями",
+            "expected": [
+              "service-bot.md"
+            ],
+            "chosen": "gallery-navigation.md"
+          },
+          {
+            "query": "Какие ограничения у validate_init_data и проверяет ли она права?",
+            "expected": [
+              "components.md",
+              "api-reference.md",
+              "api-reference-core.md"
+            ],
+            "chosen": "api-boundaries.md"
+          }
+        ]
+      },
+      {
+        "set": "holdout",
+        "repeat": 1,
+        "model": "claude-haiku-5-5",
+        "served_model": "claude-haiku-5-5",
+        "cli": "2.1.296 (Claude Code)",
+        "cases": 12,
+        "correct": 9,
+        "accuracy": 0.75,
+        "correct_with_previous_answers": 9,
+        "misses": [
+          {
+            "query": "Как вывести список заказов по 10 штук с кнопками вперед и назад под сообщением бота?",
+            "expected": [
+              "bot-recipes.md",
+              "message-navigation.md"
+            ],
+            "chosen": "components.md"
+          },
+          {
+            "query": "Как безопасно вставить имя пользователя в сообщение с HTML-разметкой?",
+            "expected": [
+              "message-text.md"
+            ],
+            "chosen": "security-of-html-escaping.md"
+          },
+          {
+            "query": "Какие права нужны боту, чтобы закреплять темы в форуме, и есть ли готовый компонент?",
+            "expected": [
+              "platform-operations.md",
+              "group-bot.md",
+              "api-boundaries.md"
+            ],
+            "chosen": "components.md"
+          }
+        ]
+      }
+    ]
+  }
+}

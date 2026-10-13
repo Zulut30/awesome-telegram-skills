@@ -27,6 +27,17 @@ python3 scripts/eval_reference_routing.py --skill .agents/skills/telegram-code-p
 
 Промежуточная версия таблицы давала у sonnet 50%: он понимал «видишь скилл впервые» как условие открыть onboarding для любой задачи. Условие сужено до «неясно, что за пакет передан и какая версия установлена».
 
+Отчет 2026-10-13 (`reports/telegram-code-patterns-routing-2026-10-13.json`), Claude Code CLI 2.1.296. Раздел «Проверка» теперь ссылается прямо на `api-reference-core.md`, `api-reference-bot.md` и `api-reference-typescript.md`: спецификация Agent Skills требует связывать references прямо из `SKILL.md`, и `validate_skills.py` это проверяет. Там же — поиск символа через `grep` без чтения справочника целиком. Таблица и алгоритм не менялись. Пять запросов, где ожидался `api-reference.md`, теперь принимают и раздел с нужным примером. Исходный `SKILL.md` прогнан на той же версии CLI:
+
+| Модель, набор | Исходный `SKILL.md` | С прямыми ссылками в «Проверке» |
+| --- | --- | --- |
+| claude-haiku-4-5, основной | 39/40 и 38/40 | 37/40 и 39/40 |
+| claude-haiku-4-5, отложенный | 12/12 | 12/12 |
+| claude-haiku-5-5, основной | 32/40 | 38/40 |
+| claude-haiku-5-5, отложенный | 12/12 | 10/12 |
+
+Расхождения укладываются в разброс повторов (два прогона одной версии на haiku-4-5 различаются на 1–2 запроса), порог 90% для `claude-haiku-4-5` выполнен. Те же ссылки в строке таблицы `api-reference` вместе с `grep` в шаге 2 ухудшили выбор (haiku-5-5: 30/40 и 9/12, ответы уходили к `api-reference.md` и `components.md`), поэтому этот вариант отклонен; его прогоны тоже лежат в отчете. Рост haiku-5-5 по сравнению с отчетом 2026-10-08 (24/40 и 7/12) дала новая версия CLI: исходный `SKILL.md` на ней получил 32/40 и 12/12.
+
 ## Границы между похожими скиллами
 
 `skill-boundaries.json` — 40 запросов на границах пар, которые легко спутать: bot-api и buttons, mini-app-ui, design-system и ux, testing, device-qa и visual-regression, payments, subscription-access и yookassa, project-planner и mini-app-architecture, mini-app-auth и web-login, debugging и observability, а также кнопки Mini App и клавиатуры бота, review и реализация initData, Business и пользовательский аккаунт. Поле `not` называет скилл, который выбирать нельзя. Агент видит только список `name: description`, как при старте сессии:

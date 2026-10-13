@@ -74,6 +74,22 @@ def check_skill_files(root: Path, folder: Path, skills: set[str], library_versio
 CHECKED = re.compile(r"^Проверено: (\d{4}-\d{2}-\d{2}), \S.*$", re.MULTILINE)
 
 
+def unlinked_references(folder: Path, skill_text: str) -> list[str]:
+    """Files in references/ that SKILL.md does not link. The specification keeps file references one level deep
+    from SKILL.md (agentskills.io/specification, checked 2026-10-13): an agent may only preview a file it reaches
+    through another reference."""
+    references = folder / "references"
+    if not references.is_dir():
+        return []
+    linked = set()
+    for raw in LINK_PATTERN.findall(skill_text):
+        target = raw.strip()
+        target = target[1:target.find(">")] if target.startswith("<") else target.split(' "', 1)[0]
+        linked.add(unquote(urlsplit(target).path).removeprefix("./"))
+    return sorted(path.relative_to(folder).as_posix() for path in references.rglob("*")
+                  if path.is_file() and path.relative_to(folder).as_posix() not in linked)
+
+
 def check_sources(body: str, today: date | None = None) -> str | None:
     """The last section names its sources and the ISO date they were checked against the skill."""
     headings = [line.strip() for line in re.findall(r"^## .*$", body, re.MULTILINE)]
@@ -212,6 +228,9 @@ def validate(root: Path) -> tuple[int, list[str]]:
         template_error = check_template(text[match.end():])
         if template_error:
             errors.append(f"{entry}: {template_error}")
+        unlinked = unlinked_references(folder, text)
+        if unlinked:
+            errors.append(f"{entry}: link each reference from SKILL.md, one level deep: {', '.join(unlinked)}")
         errors.extend(check_skill_files(root, folder, {path.name for path in folders}, expected_version))
 
         metadata_path = folder / "agents" / "openai.yaml"
