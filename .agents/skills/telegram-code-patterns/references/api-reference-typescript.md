@@ -1,6 +1,6 @@
-# TypeScript Mini App — 0.24.0
+# TypeScript Mini App — 0.25.0
 
-Термины: **сверка** — запрос фактического состояния у провайдера или в хранилище перед повтором или выдачей; **fallback** — запасной вариант, если основная возможность недоступна.
+Термины: **CAS** — сравнение с заменой: запись сохраняется, только если версия не изменилась с момента чтения; **сверка** — запрос фактического состояния у провайдера или в хранилище перед повтором или выдачей; **fallback** — запасной вариант, если основная возможность недоступна.
 
 [Индекс всех символов](api-reference.md). Образцы ниже воспроизводятся через установленный wheel/tarball вне исходного дерева. Assert — проверка fixture, не бизнес-правило production приложения.
 
@@ -15,7 +15,7 @@ export function check(value: unknown, message = 'Reference fixture failed'): ass
 
 ## Entry — run.ts
 
-Сохраните рядом с check.ts и пятью файлами раздела. После strict compile импортируйте runReference из dist/run.js в browser ESM entry и вызовите `await runReference(document)`. Bundler текущего проекта разрешает package import; plain browser требует import map к установленному dist/index.js и link к styles.css. Созданные fixture DOM и listeners удаляются; production UI/state предоставляет host.
+Сохраните рядом с check.ts и файлами раздела. После strict compile импортируйте runReference из dist/run.js в browser ESM entry и вызовите `await runReference(document)`. Bundler текущего проекта разрешает package import; plain browser требует import map к установленному dist/index.js и link к styles.css. Созданные fixture DOM и listeners удаляются; production UI/state предоставляет host.
 
 ```typescript
 import {referenceBridge} from './bridge.js';
@@ -24,11 +24,13 @@ import {referenceDraft} from './draft.js';
 import {referenceNative} from './native.js';
 import {referenceErrors} from './errors.js';
 import {referenceInitData} from './init-data.js';
+import {referenceState} from './state.js';
 
 export async function runReference(document: Document): Promise<string[]> {
   referenceBridge(document); await referenceClient(); referenceDraft(); referenceNative(); referenceErrors();
   await referenceInitData();
-  return ['bridge', 'client', 'draft', 'native', 'errors', 'init_data'];
+  await referenceState();
+  return ['bridge', 'client', 'draft', 'native', 'errors', 'init_data', 'state'];
 }
 ```
 
@@ -266,5 +268,58 @@ export async function referenceInitData(): Promise<void> {
   check(otherBot instanceof InvalidInitData);
   check(TELEGRAM_PUBLIC_KEYS.production.length === 64); // настоящая initData: {environment: 'production'} без publicKey
   // Сессию, права на объект и защиту от повтора проверяет backend; токен бота здесь не нужен.
+}
+```
+
+<a id="ref-client_state"></a>
+
+## Account scope, гонки чтений и незавершенная операция — ref.client_state
+
+Файл: `state.ts`. Символы: `ScopedAsyncState`, `AsyncReadSnapshot`, `AsyncReadResult`, `AsyncReadContext`, `AsyncStateOptions`, `PendingOperationStore`, `PendingOperation`, `PendingOperationRead`, `PendingOperationReservation`, `PendingOperationOptions`
+
+Границы: Framework-neutral state без fetch/retry/auth/token. Scope задает backend-validated host; смена аккаунта/dispose очищает кеш и инвалидирует ответы, даже если transport игнорирует abort. DTO только bounded plain JSON, detached/deep-frozen. PendingOperationStore хранит только scoped UUID/createdAt/pending-or-unknown отдельно от draft; corrupt/unavailable/unsupported блокирует dispatch. Только authoritative server result разрешает complete. localStorage single-owner, не межвкладочный CAS или серверная идемпотентность.
+
+```typescript
+import {ScopedAsyncState, PendingOperationStore, type AsyncStateOptions, type AsyncReadContext,
+  type AsyncReadResult, type AsyncReadSnapshot, type PendingOperationOptions, type PendingOperation,
+  type PendingOperationRead, type PendingOperationReservation} from '@awesome-telegram/patterns';
+import {check} from './check.js';
+
+export async function referenceState(): Promise<void> {
+  const options: AsyncStateOptions={maxEntries:2};
+  const cache=new ScopedAsyncState<{label:string}>(options);
+  cache.setScope('server-verified:100:42');
+  let late!: (value:{label:string})=>void;
+  const old=cache.read('order',()=>new Promise(resolve=>{late=resolve;}));
+  const result: AsyncReadResult<{label:string}>=await cache.read('order',async(context:AsyncReadContext)=>{
+    check(context.scope==='server-verified:100:42' && !context.signal.aborted);
+    return {label:'current'};
+  });
+  check(result.status==='ready' && result.value.label==='current');
+  check((await old).status==='stale');late({label:'obsolete'});
+  await Promise.resolve();
+  const snapshot: AsyncReadSnapshot<{label:string}>=cache.snapshot('order');
+  check(snapshot.status==='ready' && snapshot.value.label==='current');
+  cache.setScope('server-verified:100:77');
+  check(cache.snapshot('order').status==='idle');cache.dispose();
+
+  const values=new Map<string,string>();
+  const storage=()=>({getItem:(key:string)=>values.get(key)??null,
+    setItem:(key:string,value:string)=>{values.set(key,value);},removeItem:(key:string)=>{values.delete(key);}});
+  const pendingOptions: PendingOperationOptions={namespace:'reference',scope:'server-verified:100:42',now:()=>1000};
+  const pending=new PendingOperationStore(storage,pendingOptions);
+  const id='01234567-1234-4123-8123-0123456789ab';
+  const reserved: PendingOperationReservation=pending.reserve(id);
+  check(reserved.status==='reserved');
+  if(reserved.status!=='reserved') throw Error('Fixture reservation failed');
+  const pointer: PendingOperation=reserved.value;check(pointer.operation===id);
+  check(pending.markUnknown(id));
+  const reopened=new PendingOperationStore(storage,pendingOptions);
+  const read: PendingOperationRead=reopened.read();
+  check(read.status==='restored' && read.value.state==='unknown');
+  const reused=reopened.reserve('11234567-1234-4123-8123-0123456789ab');
+  check(reused.status==='existing' && reused.value.operation===id);
+  // Host first verifies this exact server operation. Completing a draft or closing invoice is insufficient.
+  check(reopened.complete(id) && reopened.read().status==='missing');
 }
 ```

@@ -17,6 +17,8 @@ import sys
 import tempfile
 import tomllib
 
+from release_identity import read_release_identity
+
 
 ROOT = Path(__file__).resolve().parents[1]
 
@@ -32,9 +34,8 @@ def main() -> int:
     ts_meta = json.loads((ROOT / 'packages/typescript/package.json').read_text(encoding='utf-8'))
     catalog = json.loads((ROOT / 'components.json').read_text(encoding='utf-8'))
     example = json.loads((ROOT / 'examples/mini-app/package.json').read_text(encoding='utf-8'))
-    version = python_meta['version']
-    if not re.fullmatch(r'\d+\.\d+\.\d+', version):
-        raise ValueError('Expected a numeric release version')
+    release = read_release_identity(ROOT / 'packages/python/pyproject.toml', ROOT / 'packages/typescript/package.json')
+    version = release.identity
     if ts_meta['version'] != version or catalog['library_version'] != version or example['dependencies'][ts_meta['name']] != version:
         raise ValueError('Synchronize Python, TypeScript, catalog and example versions first')
     for component in catalog['components']:
@@ -87,8 +88,8 @@ def main() -> int:
         run('workspace-build', [npm, 'run', 'build'])
         run('wheel-build', [uv, 'build', '--wheel', '--out-dir', str(artifacts), str(ROOT / 'packages/python')])
         run('tarball-build', [npm, 'pack', '--ignore-scripts', '-w', ts_meta['name'], '--pack-destination', str(artifacts)])
-        wheel = artifacts / f'awesome_telegram_patterns-{version}-py3-none-any.whl'
-        tarball = artifacts / f'awesome-telegram-patterns-{version}.tgz'
+        wheel = artifacts / release.wheel_filename(python_meta['name'])
+        tarball = artifacts / release.npm_tarball_filename(ts_meta['name'])
         if not wheel.is_file() or not tarball.is_file():
             raise RuntimeError('Expected wheel/tarball was not built')
         report['distribution_contract'] = json.loads(run('distribution-contract', [sys.executable, str(ROOT / 'scripts/verify_distribution_contract.py'), '--wheel', str(wheel), '--tarball', str(tarball)], consumers))
@@ -135,9 +136,10 @@ print(json.dumps({'core_without_sdk':True,'python':sys.version.split()[0]}))
         cli_version = run('version-cli', [str(core_console), '--version'], consumers).strip()
         installed = run('version-metadata', [str(python_in(core)), '-c', "import importlib.metadata as m, telegram_patterns as t; "
                                              "print(m.version('awesome-telegram-patterns'), t.__version__)"], consumers).split()
-        if cli_version != f'telegram-patterns {version}' or installed != [version, version]:
+        if cli_version != f'telegram-patterns {release.python_version}' or installed != [release.python_version] * 2:
             raise RuntimeError('Installed metadata, telegram_patterns.__version__ and --version differ')
         report['version'] = {'cli': cli_version, 'metadata': installed[0], 'module': installed[1]}
+        report['release_identity'] = version
         report['maturity_cli'] = json.loads(run('maturity-cli', [str(core_console), 'recipes', '--maturity', 'experimental'], consumers))
         if len(report['maturity_cli']['recipes']) != 20 or any(item['maturity'] != 'experimental' for item in report['maturity_cli']['recipes']):
             raise RuntimeError('Installed maturity CLI filter failed')
@@ -146,11 +148,31 @@ print(json.dumps({'core_without_sdk':True,'python':sys.version.split()[0]}))
         repeated = json.loads(run('booking-replay', [str(python_in(core)), str(ROOT / 'examples/python/booking.py'), str(database)], consumers))
         if first['replayed'] or not repeated['replayed'] or first['result'] != repeated['result']:
             raise RuntimeError('Booking example did not replay its persisted result')
+        report['durable_examples'] = {}
+        durable_expected = {
+            'concurrent_actions': {'business_writes': 1, 'restart_replay': True, 'foreign_origin_denied': True,
+                                   'stale_intent_denied': True, 'revoked_replay_denied': True},
+            'inbox': {'business_counter': 1, 'business_replayed': True, 'recovered_attempt': 2,
+                      'stale_claim_rejected': True, 'quarantine_reason': 'unknown-update-kind'},
+            'outbox': {'business_writes': 1, 'external_messages': 1, 'unknown_auto_retry': False,
+                       'lost_response_became_unknown': True, 'reconciled_state': 'sent'},
+            'jobs': {'restart_automatic_retry_blocked': True, 'flood_wait_respected': True,
+                     'flood_final_state': 'sent', 'flood_attempts': 2, 'remote_effects': 2},
+        }
+        for name, expected in durable_expected.items():
+            report['durable_examples'][name] = json.loads(run('durable-' + name,
+                [str(python_in(core)), str(ROOT / f'examples/python/offline_{name}.py')], consumers))
+            if any(report['durable_examples'][name].get(key) != value for key, value in expected.items()):
+                raise RuntimeError('Installed durable example failed: ' + name)
 
         sdk = consumers / 'sdk'
         run('sdk-environment', [uv, 'venv', '--python', sys.executable, str(sdk)])
         run('sdk-install', [uv, 'pip', 'install', '--python', str(python_in(sdk)), str(wheel), 'aiogram==3.31.0', 'tzdata==2026.5', 'cryptography==50.0.2', 'python-telegram-bot==22.8',
             'hypothesis==6.168.5'])  # test-only: property tests of the parsers
+        report['webhook_http'] = json.loads(run('webhook-loopback',
+            [str(python_in(sdk)), str(ROOT / 'examples/python/offline_webhook.py')], consumers))
+        if not report['webhook_http']['passed'] or report['webhook_http']['telegram_network']:
+            raise RuntimeError('Installed webhook loopback example failed')
         run('typing-install', [uv, 'pip', 'install', '--python', str(python_in(sdk)), 'mypy==2.4.0'])
         run('python-typecheck', [str(python_in(sdk)), '-m', 'mypy', '--strict', '--follow-imports=silent', '--no-incremental', str(ROOT / 'packages/python/src/telegram_patterns')], consumers)
         public_python_types = consumers / 'public_types.py'

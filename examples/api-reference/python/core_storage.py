@@ -8,16 +8,24 @@ from telegram_patterns import OnceResult, OnceStore, OperationConflict, SQLiteOn
 
 with TemporaryDirectory() as folder:
     path = Path(folder) / 'fixture.sqlite'
-    store: OnceStore[sqlite3.Connection] = SQLiteOnce(path)
+    concrete = SQLiteOnce(path)
+    store: OnceStore[sqlite3.Connection] = concrete
     store.initialize()
     with closing(sqlite3.connect(path)) as db, db:
         db.execute('CREATE TABLE entries(label TEXT)')
+        db.execute('CREATE TABLE access(actor INTEGER PRIMARY KEY, allowed INTEGER)')
+        db.execute('INSERT INTO access VALUES (42, 1)')
     def apply(transaction: sqlite3.Connection) -> dict[str, str]:
         transaction.execute('INSERT INTO entries VALUES (?)', ('public-fixture',))
         return {'status': 'recorded'}
     result: OnceResult = store.run('fixture-actor:42', 'operation-1', {'label': 'public-fixture'}, apply)
     replay = store.run('fixture-actor:42', 'operation-1', {'label': 'public-fixture'}, apply)
     assert result.value == replay.value and not result.replayed and replay.replayed
+    def check(transaction: sqlite3.Connection, replayed: bool) -> bool:
+        # Actor is server-validated; replay still checks CURRENT access in the writer transaction.
+        return transaction.execute('SELECT allowed FROM access WHERE actor=42').fetchone()[0] == 1
+    guarded = concrete.run_guarded('fixture-actor:42', 'operation-1', {'label': 'public-fixture'}, apply, check=check)
+    assert guarded.replayed and guarded.value == result.value
     try:
         store.run('fixture-actor:42', 'operation-1', {'label': 'changed'}, apply)
     except OperationConflict:

@@ -6,7 +6,7 @@
 локальной SQLite. Компонент не требует SDK, очереди-сервиса или фонового демона и сам
 ничего не отправляет. Приложение запускает worker, проверяет его полномочия и связывает
 исходы своего transport с API очереди. Основа поведения взята из
-[service-bot](../examples/service-bot/README.md); существующий пример не изменен.
+`examples/service-bot/README.md`; существующий пример не изменен.
 
 ## Намерение, получатель и расписание
 
@@ -184,10 +184,10 @@ unknown recovery. Возобновление worker не запускает св
 тестов, его нельзя брать из недоверенного update. Shared локальная SQLite и ее
 файловая система принадлежат host; multi-region/NFS и power loss здесь не проверены.
 
-`JobRecord` содержит state/reason, due/deadline, attempts/max_attempts, cancel_requested,
+`JobRecord` содержит поля `state/reason`, `due/deadline`, `attempts/max_attempts`, `cancel_requested`,
 revision, message_id, evidence_ref и lease_until. Payload и claim token исключены из
 repr; явные `.payload`/`.payload_json` остаются конфиденциальными данными. Reason codes
-фиксированы: policy/deadline/cancellation, lease/budget/rate/flood, unknown и reconciliation
+фиксированы: проверки согласия, срока, отмены, владения, числа попыток и лимитов, неизвестного итога и сверки
 не содержат raw exception text. `counts()` возвращает только агрегаты; host дополняет
 их возрастом очереди, количеством refusals/unknown и сигналами ошибок хранения.
 

@@ -35,6 +35,30 @@ bad_store: OnceStore[sqlite3.Connection] = object()  # type: ignore[assignment]
 bad_execution: RecipeRunPlan = object()  # type: ignore[assignment]
 bad_recipe_run = run_recipe_offline('demo-recovery', timeout='fast')  # type: ignore[arg-type]
 
+# Durable admission and dispatch use only public core exports.
+from telegram_patterns import SQLiteInbox, InboxState, InboxReceipt, InboxClaim, WebhookReceiver, WebhookResponse
+from telegram_patterns import SQLiteOutbox, OutboxState, OutboxClaim, SQLiteJobQueue, JobState, JobOutcome
+from telegram_patterns import InboxWorker, WorkerOutcome, Telemetry, TelemetryStage, TelemetrySnapshot, settled_to_thread
+inbox_state: InboxState = 'quarantined'
+outbox_state: OutboxState = 'unknown'
+job_state: JobState = 'unknown'
+job_outcome: JobOutcome = 'flood'
+stage: TelemetryStage = 'operation'
+inbox = SQLiteInbox('fixture.sqlite')
+receipt: InboxReceipt = inbox.receive(100, 1, {'update_id': 1, 'message': {}})
+claim: InboxClaim | None = inbox.claim(100, 'fixture')
+receiver = WebhookReceiver(inbox, bot_id=100, secret_token='fixture')
+webhook_response: WebhookResponse = receiver.receive(b'{}', 'fixture')
+outbox = SQLiteOutbox('fixture.sqlite')
+outbox_claim: OutboxClaim | None = outbox.claim('bot:100', 'fixture')
+jobs = SQLiteJobQueue('fixture.sqlite')
+telemetry = Telemetry(b'fixture-key-with-at-least-32-bytes')
+metrics: TelemetrySnapshot = telemetry.snapshot()
+bad_inbox_state: InboxState = 'accepted'  # type: ignore[assignment]
+bad_outbox_state: OutboxState = 'done'  # type: ignore[assignment]
+bad_job_outcome: JobOutcome = 'retry-timeout'  # type: ignore[assignment]
+bad_telemetry_stage: TelemetryStage = 'message-text'  # type: ignore[assignment]
+
 # Structured dialogs preserve public consumer types without importing internals.
 from telegram_patterns.aiogram import FieldValue, NumberField, ContactField, DialogSubmission, dialog_form_router
 from aiogram import Router

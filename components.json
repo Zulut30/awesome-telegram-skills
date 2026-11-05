@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "library_version": "0.24.0",
+  "library_version": "0.25.0",
   "distribution": "local; not published to package registries",
   "packages": {
     "python": {
@@ -165,13 +165,14 @@
       "id": "sqlite-once",
       "language": "python",
       "import": "telegram_patterns.SQLiteOnce, OnceResult, OperationConflict",
-      "intent": "Один SQLite effect и сохраненный replay result",
+      "intent": "Один SQLite effect и replay result с актуальным ACL в writer transaction",
       "source": "packages/python/src/telegram_patterns/sqlite_once.py",
-      "example": "examples/python/booking.py",
+      "example": "examples/python/offline_concurrent_actions.py",
       "boundaries": [
         "existing SQLite apps only",
         "authorized server-derived scope",
-        "trusted callback; authorizer owns transaction; no network/executescript"
+        "trusted callback; authorizer owns transaction; no network/executescript",
+        "run_guarded checks current access before effect and replay; expected domain revision for new effect"
       ],
       "maturity": "experimental",
       "maturity_scope": "All public API symbols in this component; local verification is not a stable 1.0 promise"
@@ -815,6 +816,114 @@
         "Existing Dispatcher/storage/isolation/foreign data retained; optional atomic capability required for DialogLifetime",
         "MemoryStorage remains nonpersistent demonstration; no distributed effect/live Telegram guarantee"
       ]
+    },
+    {
+      "language": "python",
+      "maturity": "experimental",
+      "maturity_scope": "All public API symbols in this component; local verification is not a stable 1.0 promise",
+      "id": "durable-inbox",
+      "import": "telegram_patterns.SQLiteInbox, InboxState, InboxReason, InboxReceipt, InboxClaim, InboxRecord, InboxConflict, InboxLeaseLost",
+      "intent": "Сохранить Update до ACK, обработать повтор, рестарт и карантин с fenced claims",
+      "source": "packages/python/src/telegram_patterns/inbox.py",
+      "example": "examples/python/offline_inbox.py",
+      "boundaries": [
+        "explicit schema initialization; host owns retention, workers and ACL",
+        "internal payload versions are separate from Bot API versions",
+        "receipt durability does not make external business effects idempotent"
+      ]
+    },
+    {
+      "language": "python",
+      "maturity": "experimental",
+      "maturity_scope": "All public API symbols in this component; local verification is not a stable 1.0 promise",
+      "id": "webhook-receiver",
+      "import": "telegram_patterns.WebhookReceiver, WebhookResponse, WebhookCode, create_aiohttp_webhook_app",
+      "intent": "Принять webhook с secret/body limits и durable ACK без незаметного изменения polling",
+      "source": "packages/python/src/telegram_patterns/webhook.py",
+      "example": "examples/python/offline_webhook.py",
+      "boundaries": [
+        "SDK-free envelope admission; SDK semantic decode in durable worker",
+        "optional aiohttp adapter uses host-supplied dependency; no socket or Telegram configuration mutation",
+        "host owns TLS/proxy/lifecycle/concurrency and quarantine review"
+      ]
+    },
+    {
+      "id": "transactional-outbox",
+      "language": "python",
+      "import": "telegram_patterns.SQLiteOutbox, OutboxState, OutboxResolution, OutboxReceipt, OutboxClaim, OutboxRecord, OutboxConflict, OutboxLeaseLost",
+      "intent": "Сохранить намерение отправки вместе с бизнес-записью и сверить неизвестный исход",
+      "source": "packages/python/src/telegram_patterns/outbox.py",
+      "example": "examples/python/offline_outbox.py",
+      "boundaries": [
+        "enqueue требует активный переданный SQLite connection того же main database и никогда не делает commit. Claim фиксирует sending ДО external call; expired sending становится unknown без auto-retry. absent требует host proof отсутствия эффекта и позднего результата, CAS revision и evidence_ref. Transport/ACL/provider query/retention принадлежат host."
+      ],
+      "maturity": "experimental",
+      "maturity_scope": "All public API symbols in this component; local verification is not a stable 1.0 promise"
+    },
+    {
+      "id": "durable-jobs",
+      "language": "python",
+      "import": "telegram_patterns.SQLiteJobQueue, JobState, JobOutcome, JobReason, JobClaim, JobRecord, JobConflict, JobLeaseLost, JobQueueFull",
+      "intent": "Сохранить расписание, согласие получателя, ограничить отправки и восстановиться после crash",
+      "source": "packages/python/src/telegram_patterns/jobs.py",
+      "example": "examples/python/offline_jobs.py",
+      "boundaries": [
+        "schedule и бизнес-запись — отдельные транзакции; для atomic business+intent используйте outbox. Missing recipient policy fail-closed. Только start=>sending разрешает transport; до него повторно проверяются consent/deadline/lease/rate. Sending после crash=>unknown, отмена после начала не означает remote cancel. Flood retry только после подтвержденного отказа без эффекта. Policy/cooldown/attempts persist; transport/ACL/retention принадлежат host."
+      ],
+      "maturity": "experimental",
+      "maturity_scope": "All public API symbols in this component; local verification is not a stable 1.0 promise"
+    },
+    {
+      "id": "inbox-worker",
+      "language": "python",
+      "import": "telegram_patterns.InboxWorker, WorkerOutcome, settled_to_thread",
+      "intent": "Обработать durable Update, остановить admission и дождаться owned операций",
+      "source": "packages/python/src/telegram_patterns/worker.py",
+      "example": "examples/python/offline_worker.py",
+      "boundaries": [
+        "SDK-free композиция существующего inbox. Host владеет decode/async handler, stable operation IDs, session закрывает после drain. True означает durable business completion. Cancellation не убивает SQLite thread; settled_to_thread дожидается его перед propagate. Ошибки decode/handler сохраняются карантином; потеря lease требует сверки. Telemetry best-effort, fixed schema/labels, HMAC refs не авторизуют и не анонимизируют; no message/token/initData/exceptionstr. Sink sync/fast и host-owned, без скрытой очереди."
+      ],
+      "maturity": "experimental",
+      "maturity_scope": "All public API symbols in this component; local verification is not a stable 1.0 promise"
+    },
+    {
+      "id": "safe-telemetry",
+      "language": "python",
+      "import": "telegram_patterns.Telemetry, TelemetryContext, TelemetryMetric, TelemetrySnapshot, TelemetryStage, TelemetryOutcome",
+      "intent": "Связать Update/action/operation/job безопасными refs и finite-label метриками",
+      "source": "packages/python/src/telegram_patterns/telemetry.py",
+      "example": "examples/python/offline_worker.py",
+      "boundaries": [
+        "SDK-free композиция существующего inbox. Host владеет decode/async handler, stable operation IDs, session закрывает после drain. True означает durable business completion. Cancellation не убивает SQLite thread; settled_to_thread дожидается его перед propagate. Ошибки decode/handler сохраняются карантином; потеря lease требует сверки. Telemetry best-effort, fixed schema/labels, HMAC refs не авторизуют и не анонимизируют; no message/token/initData/exceptionstr. Sink sync/fast и host-owned, без скрытой очереди."
+      ],
+      "maturity": "experimental",
+      "maturity_scope": "All public API symbols in this component; local verification is not a stable 1.0 promise"
+    },
+    {
+      "id": "scoped-async-state",
+      "language": "typescript",
+      "import": "@awesome-telegram/patterns: ScopedAsyncState, AsyncReadSnapshot, AsyncReadResult, AsyncReadContext, AsyncStateOptions",
+      "intent": "Предотвратить stale reads и очистить кеш при смене аккаунта/dispose",
+      "source": "packages/typescript/src/async-state.ts",
+      "example": "examples/api-reference/typescript/state.ts",
+      "boundaries": [
+        "Framework-neutral state без fetch/retry/auth/token. Scope задает backend-validated host; смена аккаунта/dispose очищает кеш и инвалидирует ответы, даже если transport игнорирует abort. DTO только bounded plain JSON, detached/deep-frozen. PendingOperationStore хранит только scoped UUID/createdAt/pending-or-unknown отдельно от draft; corrupt/unavailable/unsupported блокирует dispatch. Только authoritative server result разрешает complete. localStorage single-owner, не межвкладочный CAS или серверная идемпотентность."
+      ],
+      "maturity": "experimental",
+      "maturity_scope": "All public API symbols in this component; local verification is not a stable 1.0 promise"
+    },
+    {
+      "id": "pending-operation",
+      "language": "typescript",
+      "import": "@awesome-telegram/patterns: PendingOperationStore, PendingOperation, PendingOperationRead, PendingOperationReservation, PendingOperationOptions",
+      "intent": "Сохранить pending/unknown operation ID отдельно от draft и сверить сервер после reload",
+      "source": "packages/typescript/src/selection-draft.ts",
+      "example": "examples/api-reference/typescript/state.ts",
+      "boundaries": [
+        "Framework-neutral state без fetch/retry/auth/token. Scope задает backend-validated host; смена аккаунта/dispose очищает кеш и инвалидирует ответы, даже если transport игнорирует abort. DTO только bounded plain JSON, detached/deep-frozen. PendingOperationStore хранит только scoped UUID/createdAt/pending-or-unknown отдельно от draft; corrupt/unavailable/unsupported блокирует dispatch. Только authoritative server result разрешает complete. localStorage single-owner, не межвкладочный CAS или серверная идемпотентность."
+      ],
+      "maturity": "experimental",
+      "maturity_scope": "All public API symbols in this component; local verification is not a stable 1.0 promise"
     }
   ],
   "maturity_policy": "docs/v1-maturity.md",

@@ -73,7 +73,7 @@ def build() -> tuple[dict[str, str], dict]:
                             'Bridge требует настоящий Document; выполняйте exports в браузере, остальные fixtures '
                             'также могут исполняться в Node с Response. Общий check.ts:\n\n```typescript\n' +
                             (ROOT / 'examples/api-reference/typescript/check.ts').read_text(encoding='utf-8').rstrip() + '\n```\n\n')
-    bodies['typescript'] += ('## Entry — run.ts\n\nСохраните рядом с check.ts и пятью файлами раздела. '
+    bodies['typescript'] += ('## Entry — run.ts\n\nСохраните рядом с check.ts и файлами раздела. '
                             'После strict compile импортируйте runReference из dist/run.js в browser ESM entry '
                             'и вызовите `await runReference(document)`. Bundler текущего проекта разрешает package import; '
                             'plain browser требует import map к установленному dist/index.js и link к styles.css. '

@@ -131,6 +131,42 @@
       ".agents/skills/telegram-deploy/references/telegram-serverless.md",
       ".agents/skills/telegram-project-planner/references/telegram-serverless.md",
       ".agents/skills/telegram-security-review/references/telegram-serverless.md"
+    ],
+    "docs/concurrent-actions.md": [
+      ".agents/skills/telegram-code-patterns/references/concurrent-actions.md",
+      ".agents/skills/telegram-deploy/references/concurrent-actions.md"
+    ],
+    "docs/durable-inbox.md": [
+      ".agents/skills/telegram-code-patterns/references/durable-inbox.md"
+    ],
+    "docs/webhook-receiver.md": [
+      ".agents/skills/telegram-code-patterns/references/webhook-receiver.md",
+      ".agents/skills/telegram-deploy/references/webhook-receiver.md"
+    ],
+    "docs/retry-policy.md": [
+      ".agents/skills/telegram-code-patterns/references/retry-policy.md",
+      ".agents/skills/telegram-deploy/references/retry-policy.md",
+      ".agents/skills/telegram-notifications/references/retry-policy.md"
+    ],
+    "docs/transactional-outbox.md": [
+      ".agents/skills/telegram-code-patterns/references/transactional-outbox.md",
+      ".agents/skills/telegram-deploy/references/transactional-outbox.md"
+    ],
+    "docs/durable-jobs.md": [
+      ".agents/skills/telegram-code-patterns/references/durable-jobs.md",
+      ".agents/skills/telegram-notifications/references/durable-jobs.md"
+    ],
+    "docs/worker-lifecycle.md": [
+      ".agents/skills/telegram-code-patterns/references/worker-lifecycle.md",
+      ".agents/skills/telegram-deploy/references/worker-lifecycle.md"
+    ],
+    "docs/safe-telemetry.md": [
+      ".agents/skills/telegram-code-patterns/references/safe-telemetry.md",
+      ".agents/skills/telegram-observability/references/safe-telemetry.md"
+    ],
+    "docs/mini-app-state.md": [
+      ".agents/skills/telegram-code-patterns/references/mini-app-state.md",
+      ".agents/skills/telegram-mini-app-network-recovery/references/mini-app-state.md"
     ]
   }
 }

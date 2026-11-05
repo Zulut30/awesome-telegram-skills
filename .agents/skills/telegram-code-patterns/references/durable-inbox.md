@@ -1,0 +1,180 @@
+# Durable inbox для Telegram updates
+
+Термины: квитанция (receipt) — сохраненная запись о выполненной операции; повтор возвращает ее вместо второго эффекта; **outbox** — события, сохраненные в той же транзакции, что и изменение данных; отдельный обработчик выполняет их позже; **сверка** — запрос фактического состояния у провайдера или в хранилище перед повтором или выдачей.
+
+`telegram_patterns.inbox.SQLiteInbox` — синхронный компонент на стандартном `sqlite3`,
+без обязательного SDK или сервиса очередей. Он сохраняет JSON-снимок update до возврата
+receipt, выдает worker временное владение и сохраняет события, которые требуют разбора.
+Компонент предназначен для одного хоста с несколькими процессами и общей локальной БД.
+Прием HTTP, проверка webhook secret и вызов SDK принадлежат интеграции.
+
+Это отдельная подготовка пункта 34 production plan. Сам по себе inbox не доказывает
+приемку webhook, поставку пакета или готовность живого развертывания.
+
+## Подключение и прием
+
+```python
+from telegram_patterns.inbox import SQLiteInbox
+
+inbox = SQLiteInbox("private-data/updates.sqlite", max_attempts=5)
+inbox.initialize()  # Каталог, доступ к файлу и миграции обеспечивает приложение.
+
+receipt = inbox.receive(
+    bot_id=123456789,
+    update_id=42,
+    payload={"update_id": 42, "message": {"text": "hello"}},
+    payload_version=1,
+)
+# Успешный HTTP-ответ разрешен только после возврата receive().
+```
+
+`initialize()` явно создает таблицы `telegram_pattern_inbox` и
+`telegram_pattern_inbox_meta` и индекс готовых событий. Существующие бизнес-таблицы
+сохраняются. Неизвестная версия схемы или неожиданный набор колонок требуют
+проверенной миграции: компонент не удаляет таблицы и не переписывает данные.
+
+`receive()` принимает декодированный JSON-объект с точным целым `update_id`, совпадающим
+с аргументом. `bool` не считается целым ID; `bot_id` ограничен 1…2⁶³−1,
+`update_id` — 0…2⁶³−1. Значения JSON должны быть сериализуемыми, с конечными числами,
+строковыми ключами и глубиной не более 64. Записывается канонический JSON, поэтому
+пробелы и порядок ключей исходного HTTP body не сохраняются.
+
+Ключ доставки — `(bot_id, update_id)`. Повтор с тем же JSON и внутренней версией
+возвращает `duplicate=True`, ранее сохраненные state/reason и не меняет snapshot,
+время приема, число попыток или политику. Новый `quarantine_reason` на повторе
+игнорируется; receiver должен сохранять стабильные правила admission на своем
+lifecycle. Разные payload/version с тем же ключом вызывают `InboxConflict`.
+Ошибка не перезаписывает исходное событие.
+
+`payload_version` — версия внутреннего формата хранения приложения, **не версия Bot
+API**. Конструктор принимает `supported_versions=(1,)`, от 1 до 32 различных
+положительных целых версий. Неизвестная версия сохраняется в `quarantined` с причиной
+`unsupported-version`. Для неизвестного будущего вида update интеграция передает
+`quarantine_reason="unknown-update-kind"`; payload также сохраняется атомарно.
+Новая версия worker не выпускает старые события из карантина автоматически.
+
+`InboxReceipt` содержит `bot_id`, `update_id`, `state`, `duplicate`, `payload_version`,
+`reason`. Возврат receipt происходит после SQLite COMMIT с `synchronous=FULL`.
+Ошибки хранения, включая блокировку после timeout или ошибку commit, выходят наружу:
+приложение обязано вернуть повторяемую ошибку HTTP, а не успешный HTTP-ответ. При неопределенном
+результате commit повтор с тем же ключом безопасен. Гарантия зависит от корректности
+локальной файловой системы, диска и настроек окружения; сетевой файловый ресурс и
+многорегиональная очередь этим компонентом не проверены.
+
+## Worker и восстановление
+
+```python
+from telegram_patterns.inbox import InboxLeaseLost
+
+claim = inbox.claim(123456789, "worker-1", lease_seconds=30)
+if claim is not None:
+    try:
+        # Здесь SDK decode, проверка содержимого и идемпотентная бизнес-операция.
+        # claim.payload возвращает новую копию JSON при каждом обращении.
+        process_idempotently(claim.bot_id, claim.update_id, claim.payload)
+        inbox.complete(claim)
+    except InboxLeaseLost:
+        # Владение утрачено: подтверждать update уже нельзя.
+        report_lease_lost(claim.bot_id, claim.update_id)
+```
+
+| Метод | Результат |
+|---|---|
+| `receive(bot_id, update_id, payload, ...)` | Durable receipt; pending или quarantined |
+| `claim(bot_id, worker_id, lease_seconds=30)` | `InboxClaim` или `None`; только версии этого worker и указанный bot |
+| `renew(claim, lease_seconds=30)` | Обновленный claim; срок не сокращается |
+| `complete(claim)` | `done` |
+| `retry(claim, delay_seconds=..., reason="processing-failed")` | Отложенный pending либо карантин при исчерпании попыток |
+| `quarantine(claim, reason=...)` | Явный terminal карантин с сохраненным payload |
+| `get(bot_id, update_id)` | `InboxRecord` или `None`, без изменения состояния |
+| `counts(bot_id)` | Числа pending/processing/done/quarantined, без payload |
+
+Все мутации сериализуются короткими `BEGIN IMMEDIATE` транзакциями. Обработчик
+выполняется после выдачи claim и не держит transaction inbox. Claim содержит уникальный
+token, worker ID, номер попытки и deadline; переходы проверяют сохраненные ownership
+и token. На точной границе `lease_until` владение уже истекло. Устаревший worker не
+может завершить, продлить или перенести чужую попытку. Повтор того же успешного
+`complete()` или карантина с той же причиной допустим; изменение terminal исхода
+отклоняется.
+
+Следующий `claim()` для bot восстанавливает истекшие processing в pending. При
+исчерпании бюджета событие становится `quarantined/attempts-exhausted`, сохраняя
+payload. Бюджет хранится в каждой строке с момента приема: новый конфиг после restart
+не обнуляет попытки. `get()` и `counts()` не запускают восстановление. Карантин и done
+никогда не становятся pending автоматически. Интерфейс ручного redrive здесь не
+предоставлен; восстановление требует проверенной операции владельца приложения,
+решения о бизнес-идемпотентности и аудита.
+
+Сроки считаются по wall clock хоста. Для нескольких процессов нужны согласованные
+часы; откат часов может задержать recovery. `now=` доступен для детерминированных
+тестов, его нельзя брать из недоверенного update. В production используйте общий
+clock процесса и продлевайте lease до истечения. Positive duration, не сдвигающий
+число с плавающей точкой вперед, отклоняется.
+
+## Бизнес-транзакция и повтор
+
+Успешный HTTP-ответ после записи означает сохранение события. Он не означает завершение
+бизнес-операции. Если процесс погиб после side effect, но до `complete()`, следующий
+worker повторно получит payload. Fencing inbox защищает переходы очереди; он не
+останавливает уже запущенный HTTP-запрос старого worker.
+
+Для изменений в той же SQLite бизнес-операцию можно выполнить через `SQLiteOnce.run`
+со стабильным ключом bot/update: изменение и результат идемпотентности попадают в одну
+бизнес-транзакцию. Повтор после crash читает сохраненный результат и затем завершает
+новый claim. Для внешнего API нужны собственный idempotency key, reconciliation или
+transactional outbox, соответствующие операции. Компонент не обещает exactly-once
+произвольного handler и не делает сетевые вызовы.
+
+## Наблюдаемость, лимиты и интеграция
+
+Разрешены только фиксированные reason codes: `unsupported-version`,
+`unknown-update-kind`, `decode-failed`, `handler-rejected`, `processing-failed`,
+`lease-expired`, `attempts-exhausted`, `manual-review`. Raw exception text не является
+reason. Ошибки валидации имеют фиксированные сообщения без включения payload.
+`repr` receipt/claim/record скрывает payload и claim token; явные `.payload` и
+`.payload_json` содержат данные и требуют закрытого доступа. Сам `worker_id` попадает
+в диагностический объект: не используйте в нем токены или персональные сведения.
+
+По умолчанию canonical payload ограничен 1 MiB; конфигурация допускает 128 байт…8 MiB.
+Лимит канонического JSON не заменяет отдельный HTTP body limit **до JSON decode**.
+Бюджет попыток — 1…1000, lease — больше 0 и не более 3600 секунд, retry delay —
+0…86400 секунд, SQLite lock timeout — больше 0 и не более 300 секунд. Worker ID
+ограничен 128 UTF-8 байт. Суммарная очередь и retention не ограничиваются автоматически:
+приложение следит за местом, возрастом pending/processing, карантином, backup/restore и
+удалением после собственного retention window. Удаление ключа раньше окна повторной
+доставки снимает защиту от дубликата.
+
+HTTP-интеграция проверяет secret, размер body и JSON envelope до admission; SDK decode
+и semantic validation известного вида события выполняются в worker после durable
+приема. Отдельно учитывайте malformed rejection, конфликт идентичности, ошибку хранения
+и durably quarantined receipt; ни один из этих исходов не должен теряться в общем
+счетчике успешных handlers. SDK исключения переводятся в фиксированный reason, который
+выбирает приложение. `sqlite3.Error` остается ошибкой хранения.
+
+Методы синхронные и открывают отдельное соединение на вызов. В asyncio-host используйте
+`asyncio.to_thread` или управляемый executor. Timeout/cancellation ожидающего HTTP-task
+не гарантирует остановку уже выполняющегося commit: повтор должен использовать тот же
+delivery key. Остановка worker прекращает новые claims, дает активным операциям
+завершиться в пределах lease, затем оставляет незавершенные claims для recovery.
+
+## Проверка
+
+После установки локального Python-пакета:
+
+```powershell
+python -m unittest discover -s packages/python/tests -p test_inbox.py -v
+python examples/python/offline_inbox.py
+```
+
+Тесты используют реальные temporary SQLite файлы. Два spawned процесса конкурируют
+за прием одного ключа и claim; отдельный процесс завершается через `os._exit(23)`
+после бизнес-COMMIT до completion. Проверены сохранность payload после reopen,
+lease/fencing, retry deadlines и бюджет, bot/version scope, граница UTF-8 размера,
+карантин и read-only duplicates. `TELEGRAM_PATTERNS_TESTS=unit` пропускает два
+process integration теста; для этой проверки переменная должна отсутствовать.
+
+`offline_inbox.py` воспроизводит restart boundary локально и печатает только безопасные
+поля: бизнес-счетчик остается 1, повтор результата отмечен, старый claim отклонен,
+неизвестное событие сохранено в карантине. Он не обращается к Telegram или внешним
+сервисам. Эти проверки не доказывают работающий webhook, внешнюю идемпотентность,
+power-loss recovery диска или поведение Telegram в живой среде.

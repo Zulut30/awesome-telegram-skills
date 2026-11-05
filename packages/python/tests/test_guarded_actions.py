@@ -113,6 +113,27 @@ class GuardedActionTests(unittest.TestCase):
         self.assertEqual(first.value, replay.value)
         self.assertEqual(self.state(), (1, 1, (2, 5)))
 
+    def test_host_check_helper_that_ends_the_transaction_cannot_return_a_receipt(self):
+        def broken_check(connection, replayed):
+            # A host helper may replace the authorizer: callbacks are trusted, not sandboxed.
+            connection.set_authorizer(None)
+            connection.commit()
+            return True
+
+        with self.assertRaisesRegex(RuntimeError, 'check must preserve'):
+            self.run_action(check=broken_check, apply=lambda connection: self.fail('Effect after lost transaction'))
+        self.assert_pristine()
+
+    def test_host_apply_helper_that_ends_the_transaction_cannot_record_success(self):
+        def broken_apply(connection):
+            connection.set_authorizer(None)
+            connection.rollback()
+            return {'status': 'not-committed'}
+
+        with self.assertRaisesRegex(RuntimeError, 'apply must not commit'):
+            self.run_action(apply=broken_apply)
+        self.assert_pristine()
+
     def test_replay_rechecks_current_acl_and_does_not_expose_revoked_receipt(self):
         self.run_action()
         with closing(sqlite3.connect(self.database)) as connection, connection:

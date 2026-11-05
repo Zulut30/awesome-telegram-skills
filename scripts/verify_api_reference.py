@@ -12,6 +12,8 @@ import sys
 from urllib.parse import urlsplit
 from urllib.request import url2pathname
 
+from release_identity import parse_release_version
+
 ROOT = Path(__file__).resolve().parents[1]
 
 
@@ -79,7 +81,7 @@ exports={name:(importlib.import_module(name).__all__ if name!='telegram_patterns
 print(json.dumps({'version':m.version('awesome-telegram-patterns'),'module':telegram_patterns.__file__,'exports':exports}))
 """
         origin = json.loads(run(label + '-origin', [python, '-c', probe, 'yes' if sdk else 'no']))
-        assert origin['version'] == index['library_version']
+        assert parse_release_version(origin['version']) == parse_release_version(index['library_version'])
         if sdk:
             actual = {(module, name) for module, names in origin['exports'].items() for name in names}
             expected = {(r['module'], r['name']) for r in index['symbols'] if not r['module'].startswith('@')}

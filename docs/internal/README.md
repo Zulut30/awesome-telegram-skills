@@ -39,3 +39,11 @@
 - [Проверка инструкций пункта 30](platform-skill-check.md)
 - [Проверка сценариев навыка для пункта 031](dialog-restart-skill-check.md)
 - [Проверка подключения библиотеки агентом](agent-onboarding-check.md)
+
+- [Release identity и RC](release-identity-contract.md)
+
+- [Инвентаризация требований production](production-inventory-2026-11-05.md)
+
+- [Доступность внешней приемки](external-acceptance-availability.md)
+
+- [Сессии и backend магазина](shop-backend-production-contract.md)

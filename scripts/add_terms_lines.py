@@ -37,10 +37,10 @@ def main() -> int:
     for path in targets():
         text = path.read_text(encoding='utf-8')
         updated = with_terms_line(text)
-        if updated != text:
+        if updated != text or b'\r\n' in path.read_bytes():
             stale.append(path.relative_to(ROOT).as_posix())
             if not args.check:
-                path.write_text(updated, encoding='utf-8')
+                path.write_text(updated, encoding='utf-8', newline='\n')
     print(json.dumps({'passed': not (args.check and stale), 'files': stale}, ensure_ascii=False))
     return 1 if args.check and stale else 0
 

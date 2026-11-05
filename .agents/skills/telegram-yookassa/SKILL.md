@@ -3,7 +3,7 @@ name: telegram-yookassa
 description: "Интегрирует ЮKassa/ЮКасса в Python Telegram-проект: API или provider invoices, idempotence, callbacks, capture и refunds. Используйте для конкретной интеграции ЮKassa. Не для выбора платежного маршрута и Stars → telegram-payments."
 license: MIT
 metadata:
-  version: "0.24.0"
+  version: "0.25.0"
 ---
 
 # ЮKassa

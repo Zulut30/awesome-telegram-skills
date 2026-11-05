@@ -2,7 +2,7 @@
 
 Термины: **CAS** — сравнение с заменой: запись сохраняется, только если версия не изменилась с момента чтения; квитанция (receipt) — сохраненная запись о выполненной операции; повтор возвращает ее вместо второго эффекта; **outbox** — события, сохраненные в той же транзакции, что и изменение данных; отдельный обработчик выполняет их позже; **сверка** — запрос фактического состояния у провайдера или в хранилище перед повтором или выдачей.
 
-Локальная библиотека 0.24.0, optional aiogram 3.31.0. `SnapshotStore` — контракт транзакции проекта; `SnapshotFSMStorage` связывает его с BaseStorage. Если текущий storage уже работает, добавьте ему `AtomicFSMStorage.read_snapshot`/`commit_snapshot`; не меняйте Dispatcher, SDK, backend или инфраструктуру ради примера.
+Локальная библиотека 0.25.0, optional aiogram 3.31.0. `SnapshotStore` — контракт транзакции проекта; `SnapshotFSMStorage` связывает его с BaseStorage. Если текущий storage уже работает, добавьте ему `AtomicFSMStorage.read_snapshot`/`commit_snapshot`; не меняйте Dispatcher, SDK, backend или инфраструктуру ради примера.
 
 Каждая запись хранит **state и весь JSON data в одной revision**. Missing key = `(None, {}, 0)`; compare-and-set проверяет прежнюю revision и записывает revision+1 атомарно. Mismatch = `FSMConflict`, без записи и без автоматического retry. Используйте все поля `StorageKey`: bot_id, chat_id, user_id, thread_id, business_connection_id, destiny. Снимок отдает detached JSON data, ограниченное 64 KiB и глубиной 16; не храните credentials или бинарные файлы. Legacy host objects требуют явного project codec/migration, не молчаливой сериализации.
 
