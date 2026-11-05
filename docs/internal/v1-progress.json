@@ -864,10 +864,16 @@
       "id": 37,
       "title": "Сделать управляемые уведомления",
       "requirement": "Добавить rate limits, обработку flood control, отписку и прекращение отправок недоступному пользователю; очередь не бесконечно повторяет постоянные ошибки.",
-      "status": "pending",
-      "commit_subject": null,
-      "artifacts": [],
-      "evidence": []
+      "status": "done",
+      "commit_subject": "roadmap(037): accept consent pacing and bounded notification retry",
+      "artifacts": [
+        "docs/internal/delivery-025-acceptance.md",
+        "docs/internal/delivery-025-acceptance.json"
+      ],
+      "evidence": [
+        "0.25.0 immutable source ab1a432:90 stages PASS;715 Python (3 environment skips),61 TypeScript,Chrome; exact hashes in summary.",
+        "test_jobs; installed stage durable-jobs; Fail-closed recipient policy, optout/permanent recipient failure, shared rate reservation and persisted bounded flood cooldown."
+      ]
     },
     {
       "id": 38,
