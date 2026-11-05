@@ -14,6 +14,7 @@ from telegram_patterns.aiogram import stars_invoice
 from .storage import io_call
 from .refunds import ShopRefunds
 from .store import CATALOG, SESSION_SECONDS, Store, UnknownInvoice
+from .recovery_state import RecoveryMaintenance
 
 
 async def invoice(store: Store, bot: Bot, actor: int, order_id: str) -> str:
@@ -44,7 +45,10 @@ def create_app(store: Store, bot: Bot, frontend: Path, *, origin: str, terms: st
     @web.middleware
     async def boundary(request: web.Request, handler):
         try:
+            if request.path != '/api/readiness':
+                await io_call(store.require_operational)
             response=await handler(request)
+        except RecoveryMaintenance:response=web.json_response({'error':'recovery-maintenance'},status=503)
         except InvalidInitData:response=web.json_response({'error':'authentication-required'},status=401)
         except PermissionDenied:response=web.json_response({'error':'permission-denied'},status=403)
         # Before ValueError: OperationConflict is a ConflictFailure, which is also a ValueError.
@@ -60,6 +64,16 @@ def create_app(store: Store, bot: Bot, frontend: Path, *, origin: str, terms: st
         return response
 
     app=web.Application(middlewares=[boundary],client_max_size=32768)
+    async def guarded_request(make_request, request_bot, method):
+        await io_call(store.require_operational)
+        return await make_request(request_bot,method)
+    guard_released=False
+    async def release_guard(application):
+        nonlocal guard_released
+        if not guard_released:
+            bot.session.middleware.unregister(guarded_request)
+            guard_released=True
+    app.on_cleanup.append(release_guard)
     def same_origin(request: web.Request) -> None:
         if request.headers.getall('Origin',[])!=[origin]:raise PermissionDenied()
     def bearer(request: web.Request, *, write: bool = False) -> str:
@@ -91,6 +105,9 @@ def create_app(store: Store, bot: Bot, frontend: Path, *, origin: str, terms: st
         same_origin(request);data=await body(request,{'initData'})
         result=await io_call(store.session,data['initData'])
         return web.json_response(result|{'expires_in':SESSION_SECONDS})
+    async def ready(request: web.Request):
+        status=await io_call(store.recovery_status)
+        return web.json_response(status,status=200 if status['ready'] else 503)
     async def rotate_session(request: web.Request):
         token=bearer(request,write=True);await body(request,set())
         result=await session_call(store.rotate_session,token)
@@ -137,6 +154,7 @@ def create_app(store: Store, bot: Bot, frontend: Path, *, origin: str, terms: st
         text=(frontend/'index.html').read_text(encoding='utf-8')
         sdk='' if loopback_dev else '<script src="https://telegram.org/js/telegram-web-app.js"></script>'
         return web.Response(text=text.replace('<!-- telegram-sdk -->',sdk),content_type='text/html')
-    app.add_routes([web.post('/api/session',session),web.post('/api/session/rotate',rotate_session),web.post('/api/session/revoke',revoke_session),web.get('/api/catalog',catalog),web.get('/api/policy',policy),web.post('/api/orders',create),web.get('/api/operations/{operation}',lookup),web.get('/api/orders',orders),web.get('/api/orders/{id}',order),web.post('/api/orders/{id}/invoice',create_invoice),web.get('/api/content/{sku}',content),web.get('/api/operator/orders/{id}',operator_order),web.post('/api/operator/orders/{id}/refunds',operator_refund),web.get('/api/operator/orders/{id}/refunds/{operation}',operator_refund_status),web.post('/api/operator/orders/{id}/refunds/{operation}/reconcile',operator_refund_reconcile),web.get('/',index)])
+    app.add_routes([web.get('/api/readiness',ready),web.post('/api/session',session),web.post('/api/session/rotate',rotate_session),web.post('/api/session/revoke',revoke_session),web.get('/api/catalog',catalog),web.get('/api/policy',policy),web.post('/api/orders',create),web.get('/api/operations/{operation}',lookup),web.get('/api/orders',orders),web.get('/api/orders/{id}',order),web.post('/api/orders/{id}/invoice',create_invoice),web.get('/api/content/{sku}',content),web.get('/api/operator/orders/{id}',operator_order),web.post('/api/operator/orders/{id}/refunds',operator_refund),web.get('/api/operator/orders/{id}/refunds/{operation}',operator_refund_status),web.post('/api/operator/orders/{id}/refunds/{operation}/reconcile',operator_refund_reconcile),web.get('/',index)])
     app.router.add_static('/assets/',frontend/'assets',follow_symlinks=False)
+    bot.session.middleware.register(guarded_request)
     return app

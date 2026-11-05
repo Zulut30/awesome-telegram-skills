@@ -15,18 +15,28 @@ from .refunds import ShopRefunds
 from .polling import ShopDurablePolling
 
 
+async def maintenance_wait() -> None:
+    await asyncio.Event().wait()  # Cancellation closes HTTP/session/OS lock; no polling or workers start.
+
+
 async def live(args) -> None:
     settings=BotSettings.from_env()
     terms=args.terms.read_text(encoding='utf-8')
     lock=ProcessLock(args.database.absolute())
     bot=create_bot(settings);dispatcher=Dispatcher();runner=None  # honours TELEGRAM_TEST_ENVIRONMENT
     try:
-        store=Store(args.database,settings.token,terms_version=args.terms_version);store.recover()
-        await ShopRefunds(store,bot).recover()
-        dispatcher.include_router(payment_router(store,shop_url=args.origin+'/',terms=terms,support=args.support))
+        store=Store(args.database,settings.token,terms_version=args.terms_version)
+        operational=store.recovery_status()['ready']
+        if operational:
+            store.recover()
+            await ShopRefunds(store,bot).recover()
+            dispatcher.include_router(payment_router(store,shop_url=args.origin+'/',terms=terms,support=args.support))
         app=create_app(store,bot,args.frontend,origin=args.origin,terms=terms,support=args.support)
         runner=web.AppRunner(app,access_log=None,shutdown_timeout=5);await runner.setup()
         await web.TCPSite(runner,'127.0.0.1',args.port).start()
+        if not operational:
+            await maintenance_wait()
+            return
         await ShopDurablePolling(store,bot,dispatcher).serve()
     finally:
         try:

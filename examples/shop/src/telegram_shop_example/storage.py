@@ -84,6 +84,8 @@ def connection(database: Path, *, write: bool = False) -> Iterator[sqlite3.Conne
     db.row_factory = sqlite3.Row
     try:
         if write: db.execute('BEGIN IMMEDIATE')
+        from .recovery_state import assert_operational_connection
+        assert_operational_connection(db)
         yield db
         if write: db.commit()
     except BaseException:

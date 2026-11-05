@@ -195,6 +195,10 @@
     "docs/sqlite-recovery.md": [
       ".agents/skills/telegram-code-patterns/references/sqlite-recovery.md",
       ".agents/skills/telegram-deploy/references/sqlite-recovery.md"
+    ],
+    "docs/shop-recovery.md": [
+      ".agents/skills/telegram-code-patterns/references/shop-recovery.md",
+      ".agents/skills/telegram-deploy/references/shop-recovery.md"
     ]
   }
 }

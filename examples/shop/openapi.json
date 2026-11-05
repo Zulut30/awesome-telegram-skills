@@ -50,6 +50,9 @@
           },
           "422": {
             "$ref": "#/components/responses/Error"
+          },
+          "503": {
+            "$ref": "#/components/responses/Error"
           }
         }
       }
@@ -86,6 +89,9 @@
             "$ref": "#/components/responses/Error"
           },
           "422": {
+            "$ref": "#/components/responses/Error"
+          },
+          "503": {
             "$ref": "#/components/responses/Error"
           }
         }
@@ -124,6 +130,9 @@
           },
           "422": {
             "$ref": "#/components/responses/Error"
+          },
+          "503": {
+            "$ref": "#/components/responses/Error"
           }
         }
       }
@@ -143,6 +152,9 @@
                 }
               }
             }
+          },
+          "503": {
+            "$ref": "#/components/responses/Error"
           }
         }
       }
@@ -162,6 +174,9 @@
                 }
               }
             }
+          },
+          "503": {
+            "$ref": "#/components/responses/Error"
           }
         }
       }
@@ -185,6 +200,9 @@
             "$ref": "#/components/responses/Error"
           },
           "403": {
+            "$ref": "#/components/responses/Error"
+          },
+          "503": {
             "$ref": "#/components/responses/Error"
           }
         }
@@ -224,6 +242,9 @@
           },
           "422": {
             "$ref": "#/components/responses/Error"
+          },
+          "503": {
+            "$ref": "#/components/responses/Error"
           }
         }
       }
@@ -261,6 +282,9 @@
           },
           "404": {
             "$ref": "#/components/responses/Error"
+          },
+          "503": {
+            "$ref": "#/components/responses/Error"
           }
         }
       }
@@ -294,6 +318,9 @@
             "$ref": "#/components/responses/Error"
           },
           "403": {
+            "$ref": "#/components/responses/Error"
+          },
+          "503": {
             "$ref": "#/components/responses/Error"
           }
         }
@@ -378,6 +405,9 @@
             "$ref": "#/components/responses/Error"
           },
           "403": {
+            "$ref": "#/components/responses/Error"
+          },
+          "503": {
             "$ref": "#/components/responses/Error"
           }
         }
@@ -591,6 +621,35 @@
             "application/json": {
               "schema": {
                 "$ref": "#/components/schemas/EmptyBody"
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/readiness": {
+      "get": {
+        "operationId": "getReadiness",
+        "summary": "Operational gate; recovery maintenance stays closed until a separate trusted reconciliation process exists",
+        "security": [],
+        "responses": {
+          "200": {
+            "description": "Operational gate open",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Readiness"
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "Recovery maintenance or unverified database",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Readiness"
+                }
               }
             }
           }
@@ -990,6 +1049,35 @@
             "items": {
               "$ref": "#/components/schemas/RefundOperation"
             }
+          }
+        }
+      },
+      "Readiness": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "ready",
+          "mode",
+          "reason"
+        ],
+        "properties": {
+          "ready": {
+            "type": "boolean"
+          },
+          "mode": {
+            "type": "string",
+            "enum": [
+              "normal",
+              "recovery-maintenance"
+            ]
+          },
+          "reason": {
+            "type": "string",
+            "enum": [
+              "operational",
+              "operator-reconciliation-required",
+              "database-unverified"
+            ]
           }
         }
       }

@@ -19,6 +19,7 @@ from telegram_patterns import InboxLeaseLost, SQLiteInbox
 from .precheckout import PrecheckoutAdmissions
 from .storage import io_call
 from .store import Store
+from .recovery_state import RecoveryMaintenance
 
 
 class PollingReadFailure(RuntimeError):
@@ -53,6 +54,7 @@ class ShopDurablePolling:
         self._read_failures = 0
         self._read_failed = asyncio.Event()
         self.store, self.bot, self.dispatcher = store, bot, dispatcher
+        store.require_operational()
         self.inbox = SQLiteInbox(store.database, timeout=1, max_attempts=5)
         self.inbox.initialize()
         self.precheckout = PrecheckoutAdmissions(
@@ -68,6 +70,7 @@ class ShopDurablePolling:
         self._installed = False
 
     async def _request(self, make_request, bot, method):
+        await io_call(self.store.require_operational)
         if not isinstance(method, GetUpdates):
             return await make_request(
                 bot, method
@@ -184,6 +187,7 @@ class ShopDurablePolling:
     def install(self) -> None:
         if self._installed:
             return
+        self.store.require_operational()
         self._restart_uncertain = self.precheckout.open_owner()
         self.bot.session.middleware.register(self._request)
         self.dispatcher.update.outer_middleware.register(self._queue_only)
@@ -196,9 +200,13 @@ class ShopDurablePolling:
         self.dispatcher.update.outer_middleware.unregister(self._queue_only)
         self._installed = False
         if not self._uncertain and not self._restart_uncertain:
-            self.precheckout.close_owner()
+            try:
+                self.precheckout.close_owner()
+            except RecoveryMaintenance:
+                pass  # Cleanup never reopens a recovery gate or rewrites its restored owner state.
 
     async def process_one(self, *, critical: bool = False) -> bool:
+        await io_call(self.store.require_operational)
         async with self._admission:
             claim = await io_call(
                 self.inbox.claim,

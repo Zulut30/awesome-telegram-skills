@@ -13,6 +13,7 @@ from typing import TypedDict
 
 from telegram_patterns import Money, PaymentBinding, PaymentConflict, PermissionDenied, SQLiteOnce, SQLitePaymentLedger, ValidationFailure, validate_init_data
 from .storage import connection
+from .recovery_state import assert_operational_connection, readiness, require_operational
 
 class Product(TypedDict):
     id: str
@@ -47,6 +48,10 @@ class Store:
         self.database, self.token, self.now, self.terms_version = database, token, now, terms_version
         self.bot_id = int(token.split(':',1)[0])
         if self.bot_id <= 0 or not terms_version or len(terms_version)>64: raise ValidationFailure()
+        self.once=SQLiteOnce(database,timeout=1)
+        self.financial=SQLitePaymentLedger(database,timeout=1)
+        if database.exists() and not self.recovery_status()['ready']:
+            return  # Maintenance inspection/HTTP must not migrate or recover a restored database.
         with connection(database, write=True) as db:
             db.execute('CREATE TABLE IF NOT EXISTS shop_schema(version INTEGER NOT NULL)')
             versions=db.execute('SELECT version FROM shop_schema').fetchall()
@@ -67,8 +72,14 @@ class Store:
                 'CREATE TABLE IF NOT EXISTS shop_refund_facts(bot_id INTEGER NOT NULL,charge TEXT NOT NULL,order_id TEXT NOT NULL,PRIMARY KEY(bot_id,charge))',
             ):db.execute(sql)
             db.execute('UPDATE shop_schema SET version=3')  # Additive v1 migration; existing rows are preserved.
-        self.once=SQLiteOnce(database,timeout=1);self.once.initialize()
-        self.financial=SQLitePaymentLedger(database,timeout=1);self.financial.initialize()
+        self.once.initialize()
+        self.financial.initialize()
+
+    def recovery_status(self) -> dict:
+        return readiness(self.database)
+
+    def require_operational(self) -> None:
+        require_operational(self.database)
 
     def actor(self, value: int) -> int:
         if type(value) is not int or value<=0:raise PermissionDenied()
@@ -119,6 +130,7 @@ class Store:
         return check
 
     def _role(self, db: sqlite3.Connection, actor: int) -> str:
+        assert_operational_connection(db)  # Also covers core SQLiteOnce/ledger caller-owned transactions.
         self.actor(actor)
         row=db.execute('SELECT role FROM shop_roles WHERE bot_id=? AND actor_id=?',(self.bot_id,actor)).fetchone()
         return row[0] if row else 'customer'
@@ -150,6 +162,7 @@ class Store:
         return {'token':token,'scope':f'{self.bot_id}:{actor}'}
 
     def _session_actor(self, db: sqlite3.Connection, token: str, now: int) -> int:
+        assert_operational_connection(db)
         if not isinstance(token,str) or not token or len(token)>128:raise PermissionDenied()
         row=db.execute('SELECT actor_id FROM shop_sessions WHERE token_hash=? AND bot_id=? AND expires>?',(digest(token),self.bot_id,now)).fetchone()
         if not row:raise PermissionDenied()

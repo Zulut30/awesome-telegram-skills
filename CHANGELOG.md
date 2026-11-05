@@ -2,6 +2,8 @@
 
 ## Не выпущено
 
+- Магазин подготавливает восстановленную SQLite-БД только в новый закрытый candidate: сессии отозваны, известные роли заблокированы, pending/sending сохраняют исходные ID и переходят в unknown. HTTP, SDK, workers и проверки прав внутри writer-транзакций используют один recovery gate; prepare не публикует незакрытую копию даже при аварии. Команд активации и автоматической повторной отправки нет; внешний эффект после checkpoint требует отдельной доверенной сверки. Публичные API библиотеки не менялись.
+
 - Разработка 0.28.0: `SQLiteRecoveryError`, `SQLiteRecoveryResult`, `backup_sqlite` и `restore_sqlite_new` добавляют SDK-free снимок SQLite и восстановление только в новый файл. CLI `backup-sqlite`/`restore-sqlite-new` сохраняет исходные ID/ревизии и unknown, не меняет живую БД, не переключает сервис и не повторяет внешние эффекты. Корни и ACL заранее обеспечивает владелец; Windows возвращает `directory_synced=false`. Бюджет SQLite/hash не прерывает зависшие filesystem syscalls, `publication-unknown` требует проверки цели. Расширение каталога/API и локальная проверка не объявляют приемку хостинга или восстановления после потери питания.
 - В `Support response` добавлены канонические `target_business_days`, `answered_within_target` и `policy_mode`; прежние `promise_business_days`/`answered_within_promise` сохранены как aliases. Ориентир 3 рабочих дня, список просроченных и exit 1 не ослаблены. Политики SECURITY/SUPPORT различают опубликованную линию, разработку и best-effort сроки без неподтвержденного SLA.
 

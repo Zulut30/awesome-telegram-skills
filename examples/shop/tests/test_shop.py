@@ -198,6 +198,7 @@ class ShopTests(unittest.IsolatedAsyncioTestCase):
                         if '$ref' in declared:declared=CONTRACT['components']['responses'][declared['$ref'].rsplit('/',1)[1]]
                         conforms(declared['content']['application/json']['schema'],await response.json(),f'{method} {template} {status}')
                         seen.add((method,template,status));return await response.json()
+                self.assertEqual((await call('GET','/api/readiness','/api/readiness',200))['ready'],True)
                 token=(await call('POST','/api/session','/api/session',200,json_body={'initData':signed(42)}))['token']
                 owner={'Authorization':'Bearer '+token}
                 await call('POST','/api/session','/api/session',403,json_body={'initData':signed(42)},headers={'Origin':'https://foreign.invalid'})

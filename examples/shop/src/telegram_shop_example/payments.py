@@ -13,6 +13,11 @@ from .refunds import ShopRefunds
 
 def payment_router(store: Store, *, shop_url: str, terms: str, support: str) -> Router:
     router=Router(name='shop-payments')
+    async def recovery_guard(handler, event, data):
+        await io_call(store.require_operational)
+        return await handler(event,data)
+    router.message.outer_middleware.register(recovery_guard)
+    router.pre_checkout_query.outer_middleware.register(recovery_guard)
     @router.pre_checkout_query()
     async def precheckout(query: PreCheckoutQuery):
         try:
