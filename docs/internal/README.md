@@ -82,3 +82,5 @@
 - [Приемка реализации платежей Stars](stars-074-acceptance.json)
 
 - [Приемка документированного контракта Platega](platega-076-acceptance.json)
+
+- [Исходный замер первого запуска и интеграции ИИ](first-use-020-ai-baseline.json)

@@ -1,0 +1,682 @@
+{
+  "schema_version": 1,
+  "kind": "partial-ai-first-use-baseline",
+  "roadmap_item": 20,
+  "formal_status": "pending",
+  "human_study_performed": false,
+  "passed_local_ai_tasks": true,
+  "fresh_context": {
+    "native_task": "/root/first_use_020_ai",
+    "fork_turns": "none",
+    "provider_model": "gpt-6.1-sol",
+    "model_provenance": "Inherited root runtime declaration; child self-report did not expose exact build."
+  },
+  "root_verification": {
+    "report_sha256": "860d644b4f5417b842ad7fd417b3a1530decce2ef31bdb92665d32ae7784ca43",
+    "events_sha256": "d6394c690103beda95cf23e108ae6232b3d6ed97957872631a9ef31f59ea7685",
+    "journal_events": 72,
+    "journal_encoding": "UTF-8 with initial BOM; raw bytes preserved, parsed using utf-8-sig",
+    "public_document_hashes": 7,
+    "solution_hashes": 19,
+    "artifact_hashes": 2,
+    "timing_wall_monotonic_difference_under_seconds": 1
+  },
+  "observed_report": {
+    "schema_version": 1,
+    "measurement": "first-use-020-ai",
+    "start_clock_tool_utc": "2026-11-05 23:37:52 UTC",
+    "recorded_start": {
+      "event": "measurement_start",
+      "clock_utc": "2026-11-06",
+      "monotonic_ticks": 8956249863575,
+      "frequency": 10000000,
+      "utc": "2026-11-05T23:37:53.0510990+00:00",
+      "task": "first-use-020-ai"
+    },
+    "measurement_unit": "single AI session; no target time or SLA set",
+    "identity": {
+      "agent": "Codex, GPT-6 family per session instructions",
+      "exact_model_build": "not exposed by available tools",
+      "subagents": false
+    },
+    "timing_definition": "A measured from original measurement_start, including AGENTS/read/setup/wrapper work; B from original stage_B_start to stage_B_end; report and remote snapshot work excluded from both. Durations use monotonic counter, UTC also retained.",
+    "A": {
+      "passed": true,
+      "start_utc": "2026-11-05T23:37:53.0510990+00:00",
+      "end_utc": "2026-11-05T23:40:28.836173+00:00",
+      "elapsed_seconds": 155.777198,
+      "explicit_stage_marker_elapsed_seconds": 136.194519,
+      "result": {
+        "passed": true,
+        "network": false,
+        "methods": [
+          "SendMessage",
+          "AnswerCallbackQuery",
+          "SendMessage"
+        ],
+        "session_closed": true,
+        "mini_app_backend": {
+          "signed": [
+            200,
+            "Анна"
+          ],
+          "changed": [
+            401,
+            "init-data-invalid"
+          ],
+          "missing": [
+            401,
+            "authentication-required"
+          ]
+        }
+      },
+      "doctor_passed": true
+    },
+    "B": {
+      "passed": true,
+      "start_utc": "2026-11-05T23:40:28.946025+00:00",
+      "end_utc": "2026-11-05T23:42:50.272518+00:00",
+      "elapsed_seconds": 141.326496,
+      "result": {
+        "passed": true,
+        "network": false,
+        "dispatcher_updates": 9,
+        "rows": [
+          [
+            "Каталог",
+            "Помощь"
+          ],
+          [
+            "Профиль",
+            "Заказы"
+          ],
+          [
+            "Настройки",
+            "О проекте"
+          ]
+        ],
+        "callbacks_checked": [
+          "catalog",
+          "help",
+          "profile",
+          "orders",
+          "settings",
+          "about"
+        ],
+        "visible_responses": [
+          "Выберите действие",
+          "Каталог: товары пока не добавлены.",
+          "Помощь: выберите раздел меню или напишите вопрос.",
+          "Профиль: это демонстрационное меню.",
+          "Заказы: список пока пуст.",
+          "Настройки: уведомления включены.",
+          "О проекте: пример подключения Telegram Patterns."
+        ],
+        "foreign_callback_rejected": true,
+        "unknown_callback_rejected": true,
+        "methods": [
+          "SendMessage",
+          "AnswerCallbackQuery",
+          "SendMessage",
+          "AnswerCallbackQuery",
+          "SendMessage",
+          "AnswerCallbackQuery",
+          "SendMessage",
+          "AnswerCallbackQuery",
+          "SendMessage",
+          "AnswerCallbackQuery",
+          "SendMessage",
+          "AnswerCallbackQuery",
+          "SendMessage",
+          "AnswerCallbackQuery",
+          "AnswerCallbackQuery"
+        ]
+      }
+    },
+    "setup_intervals": [
+      {
+        "detail": "A tool venv and local wheel install",
+        "start_utc": "2026-11-05T23:38:40.003427+00:00",
+        "end_utc": "2026-11-05T23:39:15.019395+00:00",
+        "elapsed_seconds": 35.015966
+      },
+      {
+        "detail": "A generated project venv and dependencies",
+        "start_utc": "2026-11-05T23:39:16.464574+00:00",
+        "end_utc": "2026-11-05T23:40:16.179815+00:00",
+        "elapsed_seconds": 59.715243
+      },
+      {
+        "detail": "B independent project venv and wheel aiogram extra",
+        "start_utc": "2026-11-05T23:40:52.680077+00:00",
+        "end_utc": "2026-11-05T23:41:31.272094+00:00",
+        "elapsed_seconds": 38.592014
+      }
+    ],
+    "installed_versions": {
+      "python": "3.13.12",
+      "aiogram": "3.31.0",
+      "awesome-telegram-patterns": "0.28.0",
+      "node_doctor_probe": "v24.19.0"
+    },
+    "observations": {
+      "measurement_infrastructure": [
+        {
+          "detail": "Python stdout cp1251 caused UnicodeEncodeError while reading README emoji; explicitly reconfigured UTF-8 in measurement helper. Initial AGENTS read also had mojibake. Environment/measurement setup issue, not library API.",
+          "recorded_utc": "2026-11-05T23:38:20.572092+00:00"
+        },
+        {
+          "detail": "A_tools_install launch FileNotFoundError WinError 2: Windows subprocess needs normalized absolute executable path for slash-containing relative exe. Corrected measurement wrapper; venv creation succeeded. Measurement infrastructure issue.",
+          "recorded_utc": "2026-11-05T23:39:01.841776+00:00"
+        },
+        {
+          "detail": "Post-task evidence capture: direct urllib download of public aiogram documentation returned HTTP 403; web tool had successfully read official 3.31.0 documentation. Local public docs will be SHA256 hashed; remote page hash unavailable. Outside A/B task timings.",
+          "recorded_utc": "2026-11-05T23:43:44.536870+00:00"
+        }
+      ],
+      "search_navigation": [
+        {
+          "detail": "AGENTS.md initial Get-Content rendered UTF-8 as mojibake; rereading explicitly UTF-8. clock tool reported 2026-11-05 23:37:52 UTC; start event clock_utc field was date label, not timestamp.",
+          "recorded_utc": "2026-11-05T23:38:12.4236050+00:00"
+        },
+        {
+          "detail": "Batch output truncated README/quickstart; reread quickstart alone to ensure setup instructions observed",
+          "recorded_utc": "2026-11-05T23:38:31.691041+00:00"
+        },
+        {
+          "detail": "B: narrow search public package README plus components/API index; no implementation source",
+          "recorded_utc": "2026-11-05T23:40:41.891553+00:00"
+        },
+        {
+          "detail": "B_components exact id regex returned no matches (exit 1); broaden identifier lookup",
+          "recorded_utc": "2026-11-05T23:40:52.234079+00:00"
+        }
+      ],
+      "library_documentation": [
+        {
+          "detail": "README top badge 0.28.0 but introductory release note/download URLs still say 0.24.0; quickstart and provided exact local artifacts say 0.28.0. No wrong install attempted; nonblocking documentation inconsistency observed during first-use.",
+          "recorded_utc": "2026-11-05T23:42:50.389241+00:00"
+        }
+      ],
+      "library_runtime_failures": [],
+      "counts": "No retrospective trouble-count invented; individual observed events are retained in append-only JSONL."
+    },
+    "public_documents": [
+      {
+        "path": "AGENTS.md",
+        "sha256": "f3462c81f166b02a112f1dcb0c53693ac28d67304e8d44b340b9fb73266d2764",
+        "usage": "Project instructions; UTF-8 rendering difficulties logged"
+      },
+      {
+        "path": "README.md",
+        "sha256": "38ae00f95976c0ba79dc6e7dcf7920b94ca1d9c3f3a603e465fe8b6fb7eb090c",
+        "usage": "Initial entry point; buttons snippet and public links"
+      },
+      {
+        "path": "docs/quickstart.md",
+        "sha256": "39f4ab13780db29c7d556143434073690701da6fd8c92e39d6436494a30a8c51",
+        "usage": "A CLI installation, bot-mini-app generator and offline bot"
+      },
+      {
+        "path": "docs/for-agents.md",
+        "sha256": "45b3b2eae80e5758f0244a4dd6474ddaf50fe1b0dfef8c35dd81714307f6d020",
+        "usage": "B public API route and verification scope"
+      },
+      {
+        "path": "packages/python/README.md",
+        "sha256": "31df638210e3cc0eec72a652552523837121736fa76d0fe703bdfeeb570dabd8",
+        "usage": "Only relevant matched lines: ActionButton/action_menu/StubSession lifecycle"
+      },
+      {
+        "path": "components.json",
+        "sha256": "9e4ffdd9cded6c5ccf5b83fe6a6532770465c3c17076900836d44cafe0deaeb4",
+        "usage": "Only action-menu and bot-test-transport matched entries"
+      },
+      {
+        "path": "catalog/api-reference-index.json",
+        "sha256": "707f0084f91a6a3892acff3aebdd8fe381e4757dbbd8284d948d7cc77472811d",
+        "usage": "Only requested symbols matched entries; source paths not followed"
+      }
+    ],
+    "skills_read": [],
+    "external_documentation": [
+      {
+        "url": "https://docs.aiogram.dev/en/latest/dispatcher/dispatcher.html",
+        "observed_version": "3.31.0",
+        "method": "web open and find(feed_update), public docs only; no source links followed",
+        "sha256": null,
+        "hash_limitation": "Direct snapshot attempt after B failed HTTP 403; preserved documentation_snapshot.log"
+      }
+    ],
+    "artifact_hashes": [
+      {
+        "path": "C:\\Users\\zulut\\Documents\\awesome-telegram-skills\\output\\pattern-library-0.28.0\\dist\\awesome_telegram_patterns-0.28.0-py3-none-any.whl",
+        "sha256": "e0b42b53f1228fc804ab37b73675641fada1c148aa9eebffd11b05af1859fb7d",
+        "used_as": "installed in A/tools, A/bot and B/integration"
+      },
+      {
+        "path": "C:\\Users\\zulut\\Documents\\awesome-telegram-skills\\output\\pattern-library-0.28.0\\dist\\awesome-telegram-patterns-0.28.0.tgz",
+        "sha256": "dd24c7db27d9f1dd1f2dcc36a49bd67d14577eec1c7a15216632f92615ca3931",
+        "used_as": "passed to A generator; Mini App frontend was not installed or run"
+      }
+    ],
+    "solution_hashes": [
+      {
+        "path": "my-bot/.env.example",
+        "sha256": "c6efad8adcd243bc3ac96de609aa262340917f0574a33bb79ff5f59a9c10732f"
+      },
+      {
+        "path": "my-bot/.gitignore",
+        "sha256": "db229b499d80886c7bb12bbc1df6f3765c1cd063f91cdd63aaface517d853a59"
+      },
+      {
+        "path": "my-bot/.telegram-patterns.json",
+        "sha256": "5b4f7a74ac763ab90e4af8c59860abc4000fee83c1029d8703b872cb858a7f58"
+      },
+      {
+        "path": "my-bot/app.py",
+        "sha256": "5a490895c0d74529e587490edbb5e54a57301501d94eeaaf520f891c0ecbb91b"
+      },
+      {
+        "path": "my-bot/mini_app_server.py",
+        "sha256": "699ed044ed8b6cb853d5fed6342549a5b89c7375384f3877454c3eae677178ca"
+      },
+      {
+        "path": "my-bot/offline.py",
+        "sha256": "7d436376a6b49dc4cd83a724c9683faf46dcc938f80ef2ca05c8e8a1d9041d45"
+      },
+      {
+        "path": "my-bot/pyproject.toml",
+        "sha256": "455aeca24f9c925d0085f0f31a0b6ef249345d5c1c1ed12e12b174d211a06868"
+      },
+      {
+        "path": "my-bot/README.md",
+        "sha256": "132bfa44115b012af7571fdedf70d45506734db738672bf327a033e46fca930d"
+      },
+      {
+        "path": "my-bot/mini-app/index.html",
+        "sha256": "670f90bba2bc9b4927e2d1aad9d6c82890c6d0c4cad9bb6319fe65e10253dd39"
+      },
+      {
+        "path": "my-bot/mini-app/package.json",
+        "sha256": "37bba53c9bb5a002a219db42afa5f6c9fd3e9f48b80248e8a00d64ef9f189212"
+      },
+      {
+        "path": "my-bot/mini-app/tsconfig.json",
+        "sha256": "c94ce5128de565d79cbe57eb21956e163fd6365933947c08b6cb3ab41f2eb2ba"
+      },
+      {
+        "path": "my-bot/mini-app/vite.config.ts",
+        "sha256": "a71956cee57037a62cc9c35c0b8ca6fa34928c037ac5bafcdc111ff6451971dd"
+      },
+      {
+        "path": "my-bot/mini-app/src/main.ts",
+        "sha256": "12b30f7f92dba98e65e5ff4e65b5ab3f5d4b1e56bad1f38d0a485a83eb023a17"
+      },
+      {
+        "path": "integration/app.py",
+        "sha256": "8f913979dd178e1c21187aac094995bb880010b734aabbf5fff72ebebb6f8351"
+      },
+      {
+        "path": "integration/inspect_api.py",
+        "sha256": "bd305874fe8b1d38ff8c3a19495d2cf1ef63bf90586fc65cb314af7e9731be66"
+      },
+      {
+        "path": "integration/offline_check.py",
+        "sha256": "1f1e3ece113a92dd4d4e88642cff8f6bbb0d0bd979d1bc9a4550b78b8c2872ef"
+      },
+      {
+        "path": "integration/requirements.lock.txt",
+        "sha256": "34232d2dd002867d71cccc9d0a68b1e8f4a01824fff9971d6747cadc99f6cb81"
+      },
+      {
+        "path": "integration/requirements.txt",
+        "sha256": "e23d53fb3f10e01b694ee739b9e8531eb079e150cfa5982631cb553fdb5601b9"
+      },
+      {
+        "path": "integration/result.json",
+        "sha256": "f4d49b707f1450deaad194ed15062bfe28015610e91fcd4b0a416c22817742a9"
+      }
+    ],
+    "commands": [
+      {
+        "label": "A_tools_venv",
+        "argv": [
+          "python",
+          "-m",
+          "venv",
+          "output/first-use-020-ai/workspace/tools"
+        ],
+        "cwd": "C:\\Users\\zulut\\Documents\\awesome-telegram-skills",
+        "start_utc": "2026-11-05T23:38:40.115337+00:00",
+        "exit_code": 0,
+        "elapsed_seconds": 9.233505,
+        "log": "A_tools_venv.log",
+        "exception": null
+      },
+      {
+        "label": "A_tools_install",
+        "argv": [
+          "output/first-use-020-ai/workspace/tools/Scripts/python.exe",
+          "-m",
+          "pip",
+          "install",
+          "--no-input",
+          "--disable-pip-version-check",
+          "output/pattern-library-0.28.0/dist/awesome_telegram_patterns-0.28.0-py3-none-any.whl"
+        ],
+        "cwd": "C:\\Users\\zulut\\Documents\\awesome-telegram-skills",
+        "start_utc": "2026-11-05T23:38:49.468949+00:00",
+        "exit_code": null,
+        "elapsed_seconds": null,
+        "log": null,
+        "exception": "FileNotFoundError WinError 2 recorded in difficulty event; no end event before wrapper was hardened"
+      },
+      {
+        "label": "A_tools_install_retry",
+        "argv": [
+          "output/first-use-020-ai/workspace/tools/Scripts/python.exe",
+          "-m",
+          "pip",
+          "install",
+          "--no-input",
+          "--disable-pip-version-check",
+          "output/pattern-library-0.28.0/dist/awesome_telegram_patterns-0.28.0-py3-none-any.whl"
+        ],
+        "cwd": "C:\\Users\\zulut\\Documents\\awesome-telegram-skills",
+        "start_utc": "2026-11-05T23:39:01.969371+00:00",
+        "exit_code": 0,
+        "elapsed_seconds": 3.591983,
+        "log": "A_tools_install_retry.log",
+        "exception": null
+      },
+      {
+        "label": "A_init_dry_run",
+        "argv": [
+          "C:\\Users\\zulut\\Documents\\awesome-telegram-skills\\output\\first-use-020-ai\\workspace\\tools\\Scripts\\python.exe",
+          "-m",
+          "telegram_patterns",
+          "init",
+          "./my-bot",
+          "--library",
+          "C:\\Users\\zulut\\Documents\\awesome-telegram-skills\\output\\pattern-library-0.28.0\\dist\\awesome_telegram_patterns-0.28.0-py3-none-any.whl",
+          "--template",
+          "bot-mini-app",
+          "--typescript",
+          "C:\\Users\\zulut\\Documents\\awesome-telegram-skills\\output\\pattern-library-0.28.0\\dist\\awesome-telegram-patterns-0.28.0.tgz",
+          "--dry-run"
+        ],
+        "cwd": "C:\\Users\\zulut\\Documents\\awesome-telegram-skills\\output\\first-use-020-ai\\workspace",
+        "start_utc": "2026-11-05T23:39:15.140473+00:00",
+        "exit_code": 0,
+        "elapsed_seconds": 0.562672,
+        "log": "A_init_dry_run.log",
+        "exception": null
+      },
+      {
+        "label": "A_init",
+        "argv": [
+          "C:\\Users\\zulut\\Documents\\awesome-telegram-skills\\output\\first-use-020-ai\\workspace\\tools\\Scripts\\python.exe",
+          "-m",
+          "telegram_patterns",
+          "init",
+          "./my-bot",
+          "--library",
+          "C:\\Users\\zulut\\Documents\\awesome-telegram-skills\\output\\pattern-library-0.28.0\\dist\\awesome_telegram_patterns-0.28.0-py3-none-any.whl",
+          "--template",
+          "bot-mini-app",
+          "--typescript",
+          "C:\\Users\\zulut\\Documents\\awesome-telegram-skills\\output\\pattern-library-0.28.0\\dist\\awesome-telegram-patterns-0.28.0.tgz"
+        ],
+        "cwd": "C:\\Users\\zulut\\Documents\\awesome-telegram-skills\\output\\first-use-020-ai\\workspace",
+        "start_utc": "2026-11-05T23:39:15.814095+00:00",
+        "exit_code": 0,
+        "elapsed_seconds": 0.534322,
+        "log": "A_init.log",
+        "exception": null
+      },
+      {
+        "label": "A_bot_venv",
+        "argv": [
+          "python",
+          "-m",
+          "venv",
+          "my-bot/.venv"
+        ],
+        "cwd": "C:\\Users\\zulut\\Documents\\awesome-telegram-skills\\output\\first-use-020-ai\\workspace",
+        "start_utc": "2026-11-05T23:39:16.580976+00:00",
+        "exit_code": 0,
+        "elapsed_seconds": 7.832217,
+        "log": "A_bot_venv.log",
+        "exception": null
+      },
+      {
+        "label": "A_bot_install",
+        "argv": [
+          ".venv/Scripts/python.exe",
+          "-m",
+          "pip",
+          "install",
+          "--no-input",
+          "--disable-pip-version-check",
+          "."
+        ],
+        "cwd": "C:\\Users\\zulut\\Documents\\awesome-telegram-skills\\output\\first-use-020-ai\\workspace\\my-bot",
+        "start_utc": "2026-11-05T23:39:24.543688+00:00",
+        "exit_code": 0,
+        "elapsed_seconds": 33.003944,
+        "log": "A_bot_install.log",
+        "exception": null
+      },
+      {
+        "label": "A_offline",
+        "argv": [
+          ".venv/Scripts/python.exe",
+          "offline.py"
+        ],
+        "cwd": "C:\\Users\\zulut\\Documents\\awesome-telegram-skills\\output\\first-use-020-ai\\workspace\\my-bot",
+        "start_utc": "2026-11-05T23:40:16.294245+00:00",
+        "exit_code": 0,
+        "elapsed_seconds": 6.015919,
+        "log": "A_offline.log",
+        "exception": null
+      },
+      {
+        "label": "A_doctor",
+        "argv": [
+          ".venv/Scripts/python.exe",
+          "-m",
+          "telegram_patterns",
+          "doctor",
+          "."
+        ],
+        "cwd": "C:\\Users\\zulut\\Documents\\awesome-telegram-skills\\output\\first-use-020-ai\\workspace\\my-bot",
+        "start_utc": "2026-11-05T23:40:22.425325+00:00",
+        "exit_code": 0,
+        "elapsed_seconds": 6.301128,
+        "log": "A_doctor.log",
+        "exception": null
+      },
+      {
+        "label": "B_doc_search",
+        "argv": [
+          "rg",
+          "-n",
+          "-C",
+          "7",
+          "StubSession|feed_update|action_menu|ActionButton|bot-test-transport",
+          "packages/python/README.md"
+        ],
+        "cwd": "C:\\Users\\zulut\\Documents\\awesome-telegram-skills",
+        "start_utc": "2026-11-05T23:40:42.010120+00:00",
+        "exit_code": 0,
+        "elapsed_seconds": 0.042178,
+        "log": "B_doc_search.log",
+        "exception": null
+      },
+      {
+        "label": "B_components",
+        "argv": [
+          "rg",
+          "-n",
+          "-C",
+          "9",
+          "id: action-menu|id: bot-test-transport",
+          "components.json"
+        ],
+        "cwd": "C:\\Users\\zulut\\Documents\\awesome-telegram-skills",
+        "start_utc": "2026-11-05T23:40:42.162609+00:00",
+        "exit_code": 1,
+        "elapsed_seconds": 0.031363,
+        "log": "B_components.log",
+        "exception": null
+      },
+      {
+        "label": "B_api_search",
+        "argv": [
+          "rg",
+          "-n",
+          "-C",
+          "7",
+          "StubSession|synthetic_callback|synthetic_message|feed_updates|ActionButton|action_menu",
+          "catalog/api-reference-index.json"
+        ],
+        "cwd": "C:\\Users\\zulut\\Documents\\awesome-telegram-skills",
+        "start_utc": "2026-11-05T23:40:42.476427+00:00",
+        "exit_code": 0,
+        "elapsed_seconds": 0.039613,
+        "log": "B_api_search.log",
+        "exception": null
+      },
+      {
+        "label": "B_components_retry",
+        "argv": [
+          "rg",
+          "-n",
+          "-C",
+          "8",
+          "action-menu|bot-test-transport",
+          "components.json"
+        ],
+        "cwd": "C:\\Users\\zulut\\Documents\\awesome-telegram-skills",
+        "start_utc": "2026-11-05T23:40:52.342646+00:00",
+        "exit_code": 0,
+        "elapsed_seconds": 0.03472,
+        "log": "B_components_retry.log",
+        "exception": null
+      },
+      {
+        "label": "B_venv",
+        "argv": [
+          "python",
+          "-m",
+          "venv",
+          "output/first-use-020-ai/workspace/integration/.venv"
+        ],
+        "cwd": "C:\\Users\\zulut\\Documents\\awesome-telegram-skills",
+        "start_utc": "2026-11-05T23:40:53.105626+00:00",
+        "exit_code": 0,
+        "elapsed_seconds": 8.280861,
+        "log": "B_venv.log",
+        "exception": null
+      },
+      {
+        "label": "B_install",
+        "argv": [
+          "output/first-use-020-ai/workspace/integration/.venv/Scripts/python.exe",
+          "-m",
+          "pip",
+          "install",
+          "--no-input",
+          "--disable-pip-version-check",
+          "awesome-telegram-patterns[aiogram] @ file:///C:/Users/zulut/Documents/awesome-telegram-skills/output/pattern-library-0.28.0/dist/awesome_telegram_patterns-0.28.0-py3-none-any.whl"
+        ],
+        "cwd": "C:\\Users\\zulut\\Documents\\awesome-telegram-skills",
+        "start_utc": "2026-11-05T23:41:01.503600+00:00",
+        "exit_code": 0,
+        "elapsed_seconds": 18.043939,
+        "log": "B_install.log",
+        "exception": null
+      },
+      {
+        "label": "B_inspect_api",
+        "argv": [
+          "output/first-use-020-ai/workspace/integration/.venv/Scripts/python.exe",
+          "output/first-use-020-ai/workspace/integration/inspect_api.py"
+        ],
+        "cwd": "C:\\Users\\zulut\\Documents\\awesome-telegram-skills",
+        "start_utc": "2026-11-05T23:41:31.488605+00:00",
+        "exit_code": 0,
+        "elapsed_seconds": 5.371728,
+        "log": "B_inspect_api.log",
+        "exception": null
+      },
+      {
+        "label": "B_offline",
+        "argv": [
+          ".venv/Scripts/python.exe",
+          "offline_check.py"
+        ],
+        "cwd": "C:\\Users\\zulut\\Documents\\awesome-telegram-skills\\output\\first-use-020-ai\\workspace\\integration",
+        "start_utc": "2026-11-05T23:42:18.797666+00:00",
+        "exit_code": 0,
+        "elapsed_seconds": 5.681562,
+        "log": "B_offline.log",
+        "exception": null
+      },
+      {
+        "label": "documentation_snapshot",
+        "argv": [
+          "python",
+          "output/first-use-020-ai/workspace/snapshot_public.py"
+        ],
+        "cwd": "C:\\Users\\zulut\\Documents\\awesome-telegram-skills",
+        "start_utc": "2026-11-05T23:42:50.744191+00:00",
+        "exit_code": 1,
+        "elapsed_seconds": 0.607442,
+        "log": "documentation_snapshot.log",
+        "exception": null
+      },
+      {
+        "label": "B_freeze",
+        "argv": [
+          "output/first-use-020-ai/workspace/integration/.venv/Scripts/python.exe",
+          "-m",
+          "pip",
+          "freeze"
+        ],
+        "cwd": "C:\\Users\\zulut\\Documents\\awesome-telegram-skills",
+        "start_utc": "2026-11-05T23:42:51.460184+00:00",
+        "exit_code": 0,
+        "elapsed_seconds": 0.848638,
+        "log": "B_freeze.log",
+        "exception": null
+      },
+      {
+        "label": "report_build",
+        "argv": [
+          "python",
+          "output/first-use-020-ai/workspace/build_report.py"
+        ],
+        "cwd": "C:\\Users\\zulut\\Documents\\awesome-telegram-skills",
+        "start_utc": "2026-11-05T23:43:44.702889+00:00",
+        "exit_code": null,
+        "elapsed_seconds": null,
+        "log": null,
+        "exception": null
+      }
+    ],
+    "limits": [
+      "One AI session/model, not a human first-use study or a repeated-run estimate.",
+      "No live Telegram, token, delivery, physical-device or payment proof.",
+      "Offline calls use the actual aiogram Dispatcher with public StubSession and explicit SendMessage/AnswerCallbackQuery synthetic responses.",
+      "Python installations used network/package cache; dependency setup is included in elapsed time.",
+      "A generated bot-mini-app following public quickstart but only requested offline bot path was executed; no Mini App browser or frontend install.",
+      "No package implementation sources, repository tests, prior evaluation reports or existing solutions read. Own generated files and newly authored consumer only.",
+      "No repository/Git mutations; all authored files under output/first-use-020-ai.",
+      "Initial measurement_start clock_utc value was a date label; actual clock tool timestamp and recorded UTC are supplied separately, original event unchanged.",
+      "Initial terminal rendering errors and one wrapper launch exception were recorded in tool transcript and JSONL; they are measurement infrastructure issues, not library runtime failures."
+    ]
+  },
+  "acceptance_boundary": "One AI observation covers launch/integration only. Human baseline and representative repetitions absent; no production time target or permitted difficulty count inferred."
+}
