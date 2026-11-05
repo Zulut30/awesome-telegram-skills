@@ -972,10 +972,17 @@
       "id": 44,
       "title": "Добавить объектные права",
       "requirement": "Проверять владельца заказа/черновика и роли на каждом действии; подмена ID или Telegram user ID во frontend не дает доступа к чужим данным.",
-      "status": "pending",
-      "commit_subject": null,
-      "artifacts": [],
-      "evidence": []
+      "status": "done",
+      "commit_subject": "roadmap(044): accept current server roles and object ownership",
+      "artifacts": [
+        "examples/shop/README.md",
+        "docs/internal/backend-state-readiness-2026-11-05.md",
+        "docs/internal/local-026-acceptance.json"
+      ],
+      "evidence": [
+        "Exact 0.26 installed library and application wheels/tarball: 24 Python, 4 headless Node and 246 Chrome checks passed; real HTTP/SQLite/process recovery, no live Telegram/device/provider proof.",
+        "Bot/actor/owner and customer/viewer/blocked roles gate reads, effects, invoice/pre-checkout and saved replay; additive role migration preserves prior data."
+      ]
     },
     {
       "id": 45,
