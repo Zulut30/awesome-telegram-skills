@@ -997,10 +997,17 @@
       "id": 46,
       "title": "Оформить архитектуру frontend",
       "requirement": "Разделить доменные модели, состояние, API, Telegram adapters и UI; подключение к React или другому текущему стеку не требует переписывать доменную логику.",
-      "status": "pending",
-      "commit_subject": null,
-      "artifacts": [],
-      "evidence": []
+      "status": "done",
+      "commit_subject": "roadmap(046): accept separable frontend domain composition",
+      "artifacts": [
+        "examples/shop/README.md",
+        "docs/internal/backend-state-readiness-2026-11-05.md",
+        "docs/internal/local-026-acceptance.json"
+      ],
+      "evidence": [
+        "Exact 0.26 installed library and application wheels/tarball: 24 Python, 4 headless Node and 246 Chrome checks passed; real HTTP/SQLite/process recovery, no live Telegram/device/provider proof.",
+        "Actual main imports domain-state, shop-api and telegram-adapter; the same domain and captured transport execute without DOM/window/Telegram in four Node scenarios."
+      ]
     },
     {
       "id": 47,
