@@ -956,10 +956,17 @@
       "id": 43,
       "title": "Реализовать серверную сессию",
       "requirement": "Показать выдачу, истечение, ротацию и отзыв, а также подходящие защите транспорта CSRF/CORS/cookie правила; клиент не хранит bot token.",
-      "status": "pending",
-      "commit_subject": null,
-      "artifacts": [],
-      "evidence": []
+      "status": "done",
+      "commit_subject": "roadmap(043): accept durable scoped session lifecycle",
+      "artifacts": [
+        "examples/shop/README.md",
+        "docs/internal/backend-state-readiness-2026-11-05.md",
+        "docs/internal/local-026-acceptance.json"
+      ],
+      "evidence": [
+        "Exact 0.26 installed library and application wheels/tarball: 24 Python, 4 headless Node and 246 Chrome checks passed; real HTTP/SQLite/process recovery, no live Telegram/device/provider proof.",
+        "Hashed bearer sessions expire, rotate with one concurrent winner and revoke durably; exact Origin, no ambient cookies, lost TCP replies and process death verified."
+      ]
     },
     {
       "id": 44,
