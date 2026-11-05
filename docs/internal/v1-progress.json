@@ -1152,10 +1152,18 @@
       "id": 56,
       "title": "Проверить адаптивные композиции",
       "requirement": "Протестировать телефон в обеих ориентациях, планшет, узкое окно и ПК; длинные названия, большие шрифты и масштабирование не ломают действия.",
-      "status": "pending",
-      "commit_subject": null,
-      "artifacts": [],
-      "evidence": []
+      "status": "done",
+      "commit_subject": "roadmap(056): accept responsive composition browser matrix",
+      "artifacts": [
+        "docs/internal/responsive-056-acceptance.json",
+        "output/responsive-056-evidence.zip",
+        "output/production-run-2026-11-05/responsive-056-audit/report.json"
+      ],
+      "evidence": [
+        "Exact installed0.28 UI: six compositions x8 viewport sizes x2themes plus explicit long-data models, measured16→32px text and CSS zoom2;336/336 real locator-action cases passed.",
+        "36/36 additional CDP scale2 pointer cases passed after isolating visual-viewport coordinate mapping. Original36 timeout failures retained and explained, no DOM click/force.",
+        "Root verified10 source hashes and47 installed source/copy hashes plus the30-file evidence ZIP; physical067 remains pending and shop counts stay separate."
+      ]
     },
     {
       "id": 57,

@@ -76,3 +76,5 @@
 - [Результаты и привязки проверки навыков](skill-evaluation-088-acceptance.json)
 
 - [Приемка эксплуатационной инструкции](operations-096-acceptance.json)
+
+- [Приемка адаптивных композиций в браузере](responsive-056-acceptance.json)

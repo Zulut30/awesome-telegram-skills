@@ -1,0 +1,262 @@
+{
+  "schema_version": 1,
+  "passed": true,
+  "kind": "browser-responsive-compositions-acceptance",
+  "metadata_head": "ee33f912c8907dc56c3ddce897563411441f47aa",
+  "requirement": "Протестировать телефон в обеих ориентациях, планшет, узкое окно и ПК; длинные названия, большие шрифты и масштабирование не ломают действия.",
+  "runtime_source_commit": "92a9d151dc57d85cc5f1eb614f9980e808b36b59",
+  "canonical_distribution_sha256": "2c80c55a22db82c5f95c32b7931bf7896f4ebbd90f028ad36ff16585c2f1ef55",
+  "root_verification": {
+    "passed": true,
+    "source_files_verified": 10,
+    "installed_asset_files_verified": 47,
+    "cases": 372,
+    "report_sha256": "27c1f23b42e59e07ca3e226ce987e53d8988ca486f2510b02912240620402784",
+    "archive": "output/responsive-056-evidence.zip",
+    "archive_sha256": "62985e9db15fb5fe1b48a48750583a90a71870c0ce9e848ba50a99bc9e6e37a4",
+    "archive_bytes": 856122,
+    "archive_files": 30,
+    "file_sha256": {
+      "build_report.py": "76ae9656ee9b3575bc64b3dc1f4c1659963df67cfd08185bf22ac9b3189ae8bc",
+      "cdp-coordinate-diagnose.json": "5d601aa7714f9748d21b6674d78599b6c2d13dcd250fad6b7a710c44c879b3cd",
+      "cdp-coordinate-diagnose.mjs": "64b218faf575e21768033a4fb00db09c3be0b9d66b5a685bc67731817d6a3c88",
+      "cdp-coordinate-translated.png": "9b5a3b053c8a8cabe7effe35b4e8efa7d6e6af19b01269ffdbbad1d4c0843d7b",
+      "cdp-pointer-scale2-1280x800-dark.png": "cfde28b8dba2953362ead8859809efcd16625dc8513d695796fdeba45af49325",
+      "cdp-pointer-scale2-1280x800-light.png": "2d5e19fabcd8f3760da7a4c7a7d6283748bc34c82ee3231ab43456d657a5b630",
+      "cdp-pointer-scale2-320x568-dark.png": "316a70348e2f9d414ae619b59b9ad148e0eb330444c07478c39962a5db8d4a43",
+      "cdp-pointer-scale2-320x568-light.png": "4d327355218f1736a3ea87b313ba5e66c3afb87125749c8f9fe738bf14a5bdb2",
+      "cdp-pointer-scale2-844x390-dark.png": "fa4c18505f42efd2b6d9d79d7e1c5b2d926d008c7ac95d863052b14a4a549041",
+      "cdp-pointer-scale2-844x390-light.png": "a891eae72d3f1d1381966e5e5db4490344eceebea6cc5c24d7bafb499b307fa5",
+      "cdp-scale2-1280x800-dark.png": "d60dd5c76e793f43eccc4a9b4e212d9ed1a9c757d85f0dbf7cdd1a0a05aed59a",
+      "cdp-scale2-1280x800-light.png": "379d9e1ec5371cd14833f5fc0d1b3462cfb2b9b597a402c11c8ea4c252f7d4cc",
+      "cdp-scale2-320x568-dark.png": "66b7ce609ab14e75c4c79fd771446dbe66c5967da8136b5d5c0da917c6710ee2",
+      "cdp-scale2-320x568-light.png": "61b269a630b1d75e0691b65d51a9bb9ca6557e0b7c6d9d692d8f8f7b1db148b0",
+      "cdp-scale2-844x390-dark.png": "f376406cc77d8011433d432a432bf2604b1c3de6ccfa90d8d1114bc22d80a259",
+      "cdp-scale2-844x390-light.png": "1fa75f7257bf3f1d96d2be5bf16444c0b4523f808a2d0acfd7dbd07827b6fb90",
+      "cssZoom200-booking-844x390.png": "a7575d87857c9b087422c1e5d42e53885e9317da10544a4b567cff4c5bb8271e",
+      "harness-attempt-1/failure-light-320x568-cssZoom200-4.png": "e773efff951f4042ed320f62cfdc14d1b2cab989a73b27970394aa56a8b1ad37",
+      "harness-attempt-1/failure-light-320x568-text200-4.png": "5157bf06874a927c9a9f25c23522df30beecf816723d18b371d40e363c808412",
+      "harness-attempt-1/README.txt": "27a0d161fe0818830deaa8b617e493d6e0b6697a4f62f1cf39ca6ab505f92be7",
+      "probe-results.json": "146a0b875df6125b228eb2822975dfaae6c95892906fc8d4984ee7b5907e365e",
+      "probe.mjs": "40ee3270a683d3747233410433cb3c231b62c508dcbc7c487c2aa3dcdbdd8149",
+      "report.json": "27c1f23b42e59e07ca3e226ce987e53d8988ca486f2510b02912240620402784",
+      "source-mapping-correction.json": "b29bf8c7107506b88fc710580255fffd6b913908c86d0c4d76f1175b59bcd5b3",
+      "text200-settings-320x568.png": "b40080cd77907f0da40c6e8cc4c20a36dee8c7703d80a94b40767bb6c8e63e57",
+      "zoom-pointer-probe.mjs": "89e6bdded3aca69db19082c8626e14cddf88a855824a2a09ab9abf66bcffc2d3",
+      "zoom-pointer-results.json": "6d987bdfbb082a935a0d83efe248b8401bde620e3a489006e286429cb29ff680",
+      "zoom-probe.mjs": "be04f4c0049c01e7a43dc51aaa99e4942f358f85babfd5358adc27f831d34e82",
+      "zoom-results.json": "fd3ef4ee8f02305ade5054cb28ae9f6838b6c1df3caa6cf4049b7398c45616cc"
+    }
+  },
+  "source_mapping_correction": {
+    "report": "output/production-run-2026-11-05/responsive-056-audit/source-mapping-correction.json",
+    "sha256": "b29bf8c7107506b88fc710580255fffd6b913908c86d0c4d76f1175b59bcd5b3",
+    "note": "Original npm consumer root differs from HTTP vendor route; all47 actual served source/copy pairs were independently rehashed."
+  },
+  "compositions": [
+    "Каталог",
+    "Товар",
+    "Корзина",
+    "Профиль",
+    "Настройки",
+    "Запись"
+  ],
+  "standard_pointer_matrix": {
+    "report": "probe-results.json",
+    "script": "probe.mjs",
+    "sha256": "146a0b875df6125b228eb2822975dfaae6c95892906fc8d4984ee7b5907e365e",
+    "summary": {
+      "cases": 336,
+      "passed": 336,
+      "failed": 0
+    },
+    "matrix": [
+      {
+        "fixture": "stock copied UI preview",
+        "themes": [
+          "light",
+          "dark"
+        ],
+        "viewports": [
+          [
+            320,
+            568
+          ],
+          [
+            390,
+            844
+          ],
+          [
+            844,
+            390
+          ],
+          [
+            768,
+            1024
+          ],
+          [
+            1024,
+            768
+          ],
+          [
+            1280,
+            800
+          ],
+          [
+            480,
+            720
+          ],
+          [
+            390,
+            420
+          ]
+        ],
+        "variants": [
+          "root font-size200%",
+          "CSS zoom2"
+        ],
+        "screens": 6,
+        "cases": 192
+      },
+      {
+        "fixture": "exact copied compiled create*Screen compositions with injected local services containing six repeated long phrases plus30unbroken segments",
+        "themes": [
+          "light"
+        ],
+        "same_viewports": true,
+        "variants": [
+          "normal",
+          "root font-size200%",
+          "CSS zoom2"
+        ],
+        "screens": 6,
+        "cases": 144
+      }
+    ],
+    "action_method": "Real Playwright locator.click without force: visible/stable/enabled/receives-events checks and scrolling. No element.click/dispatchEvent was used for any measured action. Models were injected through exported composition factories; selecting a fixture is not counted as an action.",
+    "asserted_effects": {
+      "catalog": "Pointerclick Details selects Product; long fixture increments its handler exactly once.",
+      "product": "Pointerclick Add opens dialog; pointerclick Close closes it; long fixture increments local handler exactly once.",
+      "cart": "Pointerclick Review opens dialog; Close works; long fixture increments local handler once.",
+      "profile": "Read-only composition; content reflow only, no fictitious submit action.",
+      "settings": "Fill long name and valid email, pointerclick Save, observe sanitized service rejection and preserved draft; long fixture uses local save counter.",
+      "booking": "Pointerclick long slot label opens dialog; Close works; long fixture increments slot handler once."
+    },
+    "document_horizontal_overflow_cases": 0,
+    "page_errors": [],
+    "external_requests": [],
+    "observed_text": {
+      "baseline_shell_font": "16px",
+      "enlarged_shell_font": "32px",
+      "baseline_root_font": "16px",
+      "enlarged_root_font": "32px"
+    },
+    "css_zoom_observed": {
+      "innerWidth": 844,
+      "innerHeight": 390,
+      "scrollWidth": 844,
+      "rootFont": "16px",
+      "shellFont": "16px",
+      "zoom": "2",
+      "scale": 1
+    },
+    "text_witness": {
+      "innerWidth": 320,
+      "innerHeight": 568,
+      "rootFont": "32px",
+      "shellFont": "32px",
+      "zoom": "1",
+      "scale": 1
+    }
+  },
+  "cdp_pinch_pointer_matrix": {
+    "report": "zoom-pointer-results.json",
+    "script": "zoom-pointer-probe.mjs",
+    "sha256": "6d987bdfbb082a935a0d83efe248b8401bde620e3a489006e286429cb29ff680",
+    "summary": {
+      "cases": 36,
+      "passed": 36,
+      "failed": 0
+    },
+    "matrix": {
+      "viewports": [
+        [
+          320,
+          568
+        ],
+        [
+          844,
+          390
+        ],
+        [
+          1280,
+          800
+        ]
+      ],
+      "themes": [
+        "light",
+        "dark"
+      ],
+      "screens": 6,
+      "scale": 2
+    },
+    "action_method": "Visual-viewport CSS coordinates: scrollIntoViewIfNeeded, visible intersection and document.elementFromPoint checked, then page.mouse.click(layoutPoint - visualViewport.offset); no DOM click, dispatch or force",
+    "observed_scales": [
+      2
+    ],
+    "observed_visual_widths": [
+      160,
+      422,
+      640
+    ],
+    "effect_assertions": "Same selected-tab/dialog-and-close/settings-rejection-preserved-draft effects as stock preview. Profile remains read-only.",
+    "page_errors": [],
+    "limits": [
+      "CDP pageScaleFactor2 approximates pinch zoom, not native browser UI zoom or Telegram client zoom",
+      "Playwright coordinate mapping/actionability may differ from human panning at pinch zoom; failures need mechanism isolation",
+      "No physical devices, live Telegram or payments"
+    ]
+  },
+  "retained_negative_probe": {
+    "uncorrected_report": "zoom-results.json",
+    "uncorrected_summary": {
+      "cases": 36,
+      "passed": 0,
+      "failed": 36
+    },
+    "classification": "Automation coordinate mismatch, not established product failure. Ordinary locator.click at CDP pinch scale targeted layout coordinates while mouse input expected visual CSS coordinates. All36retested with explicit hit checked visual coordinates passed.",
+    "minimal_coordinate_report": "cdp-coordinate-diagnose.json",
+    "coordinate_witness": {
+      "rect": {
+        "x": 170.140625,
+        "y": 401.1875,
+        "width": 112.859375,
+        "height": 50,
+        "vv": {
+          "x": 147,
+          "y": 284,
+          "width": 160,
+          "height": 284,
+          "scale": 2
+        },
+        "hitAtCssCenter": "<button type=\"button\" id=\"tp-ui-3\" role=\"tab\" aria-controls=\"tp-ui-4\" tabindex=\"-1\" aria-selected=\"false\">Товар</button>"
+      },
+      "translated": {
+        "x": 159.140625,
+        "y": 284.375
+      },
+      "afterTranslatedMouse": "Каталог",
+      "afterCssVisualMouse": "Товар",
+      "expected": "Товар",
+      "passed": true
+    },
+    "no_runtime_fix_proposed": true
+  },
+  "limits": [
+    "Browser geometry/action evidence is distinct from physical067. No Android/iOS/tablet/Telegram client run.",
+    "CSS zoom2 tests layout reflow; CDP scale2 approximates pinch magnification. Neither is native browser-menu or Telegram accessibility zoom.",
+    "Six library compositions only. The shop frontend is not included in these372 cases; its262 checks have separate acceptance.",
+    "Local injected service callbacks and sanitized failures; no real payment or external network.",
+    "Read-only profile has no invented submit action. No runtime defect was established by the coordinate-mismatch probe."
+  ]
+}
