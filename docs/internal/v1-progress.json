@@ -1549,10 +1549,19 @@
       "id": 91,
       "title": "Организовать репозиторий и CI",
       "requirement": "Добавить историю изменений и pipeline: навыки, unit/integration, сборка, consumer и browser checks; обязательные проверки нельзя обходить молчаливым `--skip-browser`.",
-      "status": "pending",
-      "commit_subject": null,
-      "artifacts": [],
-      "evidence": []
+      "status": "done",
+      "commit_subject": "roadmap(091): accept mandatory concrete CI job checks",
+      "artifacts": [
+        ".github/workflows/repository-checks.yml",
+        ".github/workflows/full-acceptance.yml",
+        "scripts/check_required_jobs.py",
+        "tests/test_required_jobs.py",
+        "tests/test_ci_workflow.py",
+        "docs/internal/local-026-acceptance.json"
+      ],
+      "evidence": [
+        "Exact 06c4b1f run: all 38 jobs succeeded. Required job authenticated its run/head and independently audited 37 concrete dependencies via paginated GitHub API; cancelled/skipped matrix cells cannot hide behind needs.result. Skills, integration, builds, installed consumers and Chrome are mandatory; --skip-browser is rejected in CI. Seven adversarial real HTTP audit tests and nine workflow tests passed."
+      ]
     },
     {
       "id": 92,

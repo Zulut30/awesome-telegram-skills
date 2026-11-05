@@ -230,6 +230,14 @@
         "Immutable d6109aa archive, exact 0.26 wheel/tarball SHA-256 and 92 successful fresh-consumer stages, including Chrome. Independent shop application wheel uses the same library bytes. Full Linux/macOS acceptance also passed; no skip-browser acceptance."
       ],
       "installed_stage": "quality/public-consumer-and-matrix"
+    },
+    "91": {
+      "requirement": "Добавить историю изменений и pipeline: навыки, unit/integration, сборка, consumer и browser checks; обязательные проверки нельзя обходить молчаливым `--skip-browser`.",
+      "observations": [
+        "Exact 06c4b1f run: all 38 jobs succeeded. Required job authenticated its run/head and independently audited 37 concrete dependencies via paginated GitHub API; cancelled/skipped matrix cells cannot hide behind needs.result. Skills, integration, builds, installed consumers and Chrome are mandatory; --skip-browser is rejected in CI. Seven adversarial real HTTP audit tests and nine workflow tests passed."
+      ],
+      "source_commit": "06c4b1f694bdd93c1be6003bd519c114ae659fb2",
+      "repository_run": "https://github.com/Zulut30/awesome-telegram-skills/actions/runs/42088626908"
     }
   },
   "limits": [
@@ -549,5 +557,363 @@
       ]
     },
     "limits": "Evidence is bound to source d6109aa and exact 0.26 artifacts, not uncommitted 0.27, live Telegram, real devices or production readiness."
+  },
+  "ci_guard": {
+    "run_id": 42088626908,
+    "head_sha": "06c4b1f694bdd93c1be6003bd519c114ae659fb2",
+    "jobs": [
+      {
+        "id": 127460425035,
+        "run_id": 42088626908,
+        "run_attempt": 1,
+        "name": "Skills and repository tests",
+        "head_sha": "06c4b1f694bdd93c1be6003bd519c114ae659fb2",
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "id": 127460425228,
+        "run_id": 42088626908,
+        "run_attempt": 1,
+        "name": "Documented quickstart (ubuntu-latest, docs/quickstart.md)",
+        "head_sha": "06c4b1f694bdd93c1be6003bd519c114ae659fb2",
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "id": 127460425272,
+        "run_id": 42088626908,
+        "run_attempt": 1,
+        "name": "Generated files are current (every --check on the real tree)",
+        "head_sha": "06c4b1f694bdd93c1be6003bd519c114ae659fb2",
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "id": 127460425275,
+        "run_id": 42088626908,
+        "run_attempt": 1,
+        "name": "Python library types (mypy --strict)",
+        "head_sha": "06c4b1f694bdd93c1be6003bd519c114ae659fb2",
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "id": 127460425280,
+        "run_id": 42088626908,
+        "run_attempt": 1,
+        "name": "Commit messages and CHANGELOG against tags",
+        "head_sha": "06c4b1f694bdd93c1be6003bd519c114ae659fb2",
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "id": 127460425297,
+        "run_id": 42088626908,
+        "run_attempt": 1,
+        "name": "Public API compatibility and CHANGELOG",
+        "head_sha": "06c4b1f694bdd93c1be6003bd519c114ae659fb2",
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "id": 127460425426,
+        "run_id": 42088626908,
+        "run_attempt": 1,
+        "name": "Python library unit tests (aiogram 3.29.1, 30 s budget)",
+        "head_sha": "06c4b1f694bdd93c1be6003bd519c114ae659fb2",
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "id": 127460425473,
+        "run_id": 42088626908,
+        "run_attempt": 1,
+        "name": "Python library coverage (90% statements, full branches of guarded modules)",
+        "head_sha": "06c4b1f694bdd93c1be6003bd519c114ae659fb2",
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "id": 127460425506,
+        "run_id": 42088626908,
+        "run_attempt": 1,
+        "name": "Python library style (ruff)",
+        "head_sha": "06c4b1f694bdd93c1be6003bd519c114ae659fb2",
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "id": 127460425557,
+        "run_id": 42088626908,
+        "run_attempt": 1,
+        "name": "Optional service-bot container",
+        "head_sha": "06c4b1f694bdd93c1be6003bd519c114ae659fb2",
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "id": 127460425574,
+        "run_id": 42088626908,
+        "run_attempt": 1,
+        "name": "Documented quickstart (ubuntu-latest, docs/en/quickstart.md)",
+        "head_sha": "06c4b1f694bdd93c1be6003bd519c114ae659fb2",
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "id": 127460425609,
+        "run_id": 42088626908,
+        "run_attempt": 1,
+        "name": "Browser tests (patterns, gallery, starters) in Playwright Chromium",
+        "head_sha": "06c4b1f694bdd93c1be6003bd519c114ae659fb2",
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "id": 127460425612,
+        "run_id": 42088626908,
+        "run_attempt": 1,
+        "name": "Python library unit tests (aiogram 3.31.0, 30 s budget)",
+        "head_sha": "06c4b1f694bdd93c1be6003bd519c114ae659fb2",
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "id": 127460425625,
+        "run_id": 42088626908,
+        "run_attempt": 1,
+        "name": "Installed Python package, every test (Python 3.12, ubuntu-latest)",
+        "head_sha": "06c4b1f694bdd93c1be6003bd519c114ae659fb2",
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "id": 127460425640,
+        "run_id": 42088626908,
+        "run_attempt": 1,
+        "name": "TypeScript tests and Mini App build (Node.js 24, ubuntu-latest)",
+        "head_sha": "06c4b1f694bdd93c1be6003bd519c114ae659fb2",
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "id": 127460425666,
+        "run_id": 42088626908,
+        "run_attempt": 1,
+        "name": "TypeScript tests and Mini App build (Node.js 22, ubuntu-latest)",
+        "head_sha": "06c4b1f694bdd93c1be6003bd519c114ae659fb2",
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "id": 127460425681,
+        "run_id": 42088626908,
+        "run_attempt": 1,
+        "name": "TypeScript tests and Mini App build (Node.js 20, ubuntu-latest)",
+        "head_sha": "06c4b1f694bdd93c1be6003bd519c114ae659fb2",
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "id": 127460425694,
+        "run_id": 42088626908,
+        "run_attempt": 1,
+        "name": "Example applications on the current library",
+        "head_sha": "06c4b1f694bdd93c1be6003bd519c114ae659fb2",
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "id": 127460425710,
+        "run_id": 42088626908,
+        "run_attempt": 1,
+        "name": "Documented quickstart (macos-latest, docs/en/quickstart.md)",
+        "head_sha": "06c4b1f694bdd93c1be6003bd519c114ae659fb2",
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "id": 127460425711,
+        "run_id": 42088626908,
+        "run_attempt": 1,
+        "name": "Mini App performance, accessibility and bundle budgets",
+        "head_sha": "06c4b1f694bdd93c1be6003bd519c114ae659fb2",
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "id": 127460425796,
+        "run_id": 42088626908,
+        "run_attempt": 1,
+        "name": "Documentation site / Build and verify the documentation site",
+        "head_sha": "06c4b1f694bdd93c1be6003bd519c114ae659fb2",
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "id": 127460425806,
+        "run_id": 42088626908,
+        "run_attempt": 1,
+        "name": "TypeScript tests and Mini App build (Node.js 24, macos-latest)",
+        "head_sha": "06c4b1f694bdd93c1be6003bd519c114ae659fb2",
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "id": 127460425810,
+        "run_id": 42088626908,
+        "run_attempt": 1,
+        "name": "Installed Python package, every test (Python 3.11, windows-latest)",
+        "head_sha": "06c4b1f694bdd93c1be6003bd519c114ae659fb2",
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "id": 127460425824,
+        "run_id": 42088626908,
+        "run_attempt": 1,
+        "name": "Documented quickstart (macos-latest, docs/quickstart.md)",
+        "head_sha": "06c4b1f694bdd93c1be6003bd519c114ae659fb2",
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "id": 127460425836,
+        "run_id": 42088626908,
+        "run_attempt": 1,
+        "name": "Documented quickstart (windows-latest, docs/quickstart.md)",
+        "head_sha": "06c4b1f694bdd93c1be6003bd519c114ae659fb2",
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "id": 127460425843,
+        "run_id": 42088626908,
+        "run_attempt": 1,
+        "name": "Install from scratch, wheel to offline bot (ubuntu-latest, Python 3.11)",
+        "head_sha": "06c4b1f694bdd93c1be6003bd519c114ae659fb2",
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "id": 127460425858,
+        "run_id": 42088626908,
+        "run_attempt": 1,
+        "name": "Installed Python package, every test (Python 3.13, ubuntu-latest)",
+        "head_sha": "06c4b1f694bdd93c1be6003bd519c114ae659fb2",
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "id": 127460425864,
+        "run_id": 42088626908,
+        "run_attempt": 1,
+        "name": "TypeScript tests and Mini App build (Node.js 24, windows-latest)",
+        "head_sha": "06c4b1f694bdd93c1be6003bd519c114ae659fb2",
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "id": 127460425877,
+        "run_id": 42088626908,
+        "run_attempt": 1,
+        "name": "Install from scratch, wheel to offline bot (macos-latest, Python 3.11)",
+        "head_sha": "06c4b1f694bdd93c1be6003bd519c114ae659fb2",
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "id": 127460425934,
+        "run_id": 42088626908,
+        "run_attempt": 1,
+        "name": "Documented quickstart (windows-latest, docs/en/quickstart.md)",
+        "head_sha": "06c4b1f694bdd93c1be6003bd519c114ae659fb2",
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "id": 127460426007,
+        "run_id": 42088626908,
+        "run_attempt": 1,
+        "name": "Installed Python package, every test (Python 3.11, ubuntu-latest)",
+        "head_sha": "06c4b1f694bdd93c1be6003bd519c114ae659fb2",
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "id": 127460426014,
+        "run_id": 42088626908,
+        "run_attempt": 1,
+        "name": "Installed Python package, every test (Python 3.14, windows-latest)",
+        "head_sha": "06c4b1f694bdd93c1be6003bd519c114ae659fb2",
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "id": 127460426044,
+        "run_id": 42088626908,
+        "run_attempt": 1,
+        "name": "Install from scratch, wheel to offline bot (windows-latest, Python 3.11)",
+        "head_sha": "06c4b1f694bdd93c1be6003bd519c114ae659fb2",
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "id": 127460426083,
+        "run_id": 42088626908,
+        "run_attempt": 1,
+        "name": "Installed Python package, every test (Python 3.11, macos-latest)",
+        "head_sha": "06c4b1f694bdd93c1be6003bd519c114ae659fb2",
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "id": 127460426123,
+        "run_id": 42088626908,
+        "run_attempt": 1,
+        "name": "Installed Python package, every test (Python 3.14, ubuntu-latest)",
+        "head_sha": "06c4b1f694bdd93c1be6003bd519c114ae659fb2",
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "id": 127460426333,
+        "run_id": 42088626908,
+        "run_attempt": 1,
+        "name": "Installed Python package, every test (Python 3.14, macos-latest)",
+        "head_sha": "06c4b1f694bdd93c1be6003bd519c114ae659fb2",
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "id": 127460426431,
+        "run_id": 42088626908,
+        "run_attempt": 1,
+        "name": "Python library unit tests (aiogram 3.30.0, 30 s budget)",
+        "head_sha": "06c4b1f694bdd93c1be6003bd519c114ae659fb2",
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "id": 127468801240,
+        "run_id": 42088626908,
+        "run_attempt": 1,
+        "name": "Required checks passed",
+        "head_sha": "06c4b1f694bdd93c1be6003bd519c114ae659fb2",
+        "status": "completed",
+        "conclusion": "success"
+      }
+    ],
+    "required_job_id": 127468801240,
+    "required_output": {
+      "passed": true,
+      "head_sha": "06c4b1f694bdd93c1be6003bd519c114ae659fb2",
+      "checked": 37,
+      "failed": [],
+      "tested_sha": "06c4b1f694bdd93c1be6003bd519c114ae659fb2"
+    },
+    "repository_run": "https://github.com/Zulut30/awesome-telegram-skills/actions/runs/42088626908",
+    "scope": "Repository CI at exact 06c4b1f; its unchanged library source is 0.26. Uncommitted 0.27 is outside this acceptance."
   }
 }
