@@ -1013,10 +1013,17 @@
       "id": 47,
       "title": "Предотвратить гонки запросов",
       "requirement": "Поддержать отмену чтений, защиту от устаревших ответов и согласованное обновление кеша; смена пользователя очищает принадлежащие ему данные.",
-      "status": "pending",
-      "commit_subject": null,
-      "artifacts": [],
-      "evidence": []
+      "status": "done",
+      "commit_subject": "roadmap(047): accept scoped request race protection",
+      "artifacts": [
+        "examples/shop/README.md",
+        "docs/internal/backend-state-readiness-2026-11-05.md",
+        "docs/internal/local-026-acceptance.json"
+      ],
+      "evidence": [
+        "Exact 0.26 installed library and application wheels/tarball: 24 Python, 4 headless Node and 246 Chrome checks passed; real HTTP/SQLite/process recovery, no live Telegram/device/provider proof.",
+        "Ignored aborts and old reads/rotations cannot overwrite a newer generation or another account; writes invalidate reads and account changes clear private state."
+      ]
     },
     {
       "id": 48,
