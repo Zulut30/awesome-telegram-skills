@@ -3,7 +3,7 @@ name: telegram-media-processing
 description: "Строит обработку фото, видео, аудио и документов для Telegram-бота и Mini App: проверку файла, преобразование, превью, фоновые задачи и повторное использование file_id. Используйте для media pipeline; обычная отправка готового файла не требует отдельного конвейера. Не для отправки готового файла → telegram-bot-api."
 license: MIT
 metadata:
-  version: "0.24.0"
+  version: "0.25.0"
 ---
 
 # Обработка Telegram-медиа

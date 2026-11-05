@@ -3,7 +3,7 @@ name: telegram-profiles
 description: "Работает с Telegram-профилями: доступные данные, Premium, фото и bio, изменение собственного профиля бота или разрешенного аккаунта через Bot API/MTProto. Используйте для функций профиля и проверки прав. Не для истории и сообщений пользовательского аккаунта → telegram-user-client."
 license: MIT
 metadata:
-  version: "0.24.0"
+  version: "0.25.0"
 ---
 
 # Данные профиля Telegram

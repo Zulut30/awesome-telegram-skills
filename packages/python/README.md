@@ -21,7 +21,7 @@ Root экспортирует `Maturity`, `VerificationLevel`; aiogram — `Butt
 
 Все текущие группы experimental, request-only/native fragments reference. [Политика зрелости](../../docs/v1-maturity.md) не зависит от проверки: `Recipe.maturity`, `RecipeCatalog.search(maturity=...)`, CLI `recipes --maturity ...`. Старые schema-1 records читаются с conservative default.
 
-Общие компоненты для бота и backend, версия 0.24.0. Пакет пока поставляется из этого репозитория/локального wheel; публикации на PyPI нет. Python >=3.11. Core использует стандартную библиотеку; адаптер aiogram и тестовый транспорт — отдельный extra.
+Общие компоненты для бота и backend, версия 0.25.0. Пакет пока поставляется из этого репозитория/локального wheel; публикации на PyPI нет. Python >=3.11. Core использует стандартную библиотеку; адаптер aiogram и тестовый транспорт — отдельный extra.
 
 [Медиа](../../docs/media.md): `MediaFile`/`MediaItem`, `media_request`, `media_album`, `media_edit`, `download_media` и typed результаты. Byte upload, same-bot file_id, literal caption/entities, совместимый альбом и bounded explicit download через текущий Bot. Host проверяет codec/content, ACL и delivery; downloader не записывает файлы и не закрывает host session.
 
@@ -233,6 +233,6 @@ Rich-сообщения (Bot API 10.1+): `RichMessageBuilder` из того же
 
 [Специальные операции](../../docs/platform-operations.md): 51 reviewed native метод по семи семействам; current host ACL, fresh Telegram rights, durable SQLite intent/budget example, scoped observers, managed secrets и story upload bridge. Experimental; реальные права, расход Stars и пригодность медиа проверяются отдельно.
 
-## Диалог после рестарта — 0.24.0
+## Диалог после рестарта — 0.25.0
 
 [Atomic FSM snapshot](../../docs/dialog-restart.md) сохраняет шаг, form version, исходный deadline и pending operation ID. `SnapshotFSMStorage` принимает project SnapshotStore; текущий storage может добавить AtomicFSMStorage. `DialogLifetime` включается явно, MemoryStorage остается демонстрацией. Text/mixed формы используют CAS без замены Dispatcher/чужих data. Project SQLite пример и три отдельных процесса показывают восстановление и тот же effect/replay после unknown ответа.

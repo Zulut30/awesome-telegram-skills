@@ -2,7 +2,7 @@
 
 # Same value as [project].version in pyproject.toml and the installed distribution metadata;
 # verify_distribution_contract.py and the wheel consumer check all three.
-__version__ = '0.24.0'
+__version__ = '0.25.0'
 
 from .calendar_core import CalendarMonth, TimeSlot, resolve_local_time
 from .ephemeral import EphemeralMessageRef, EphemeralNotAllowed, EphemeralTrigger, ephemeral_parameters
@@ -28,12 +28,33 @@ from .errors import (
 )
 from .execution import RecipeRunPlan, RecipeRunResult, plan_recipe, run_recipe_offline
 from .extensions import AsyncTransport, OnceStore, ProviderAdapter, RefundProvider
+from .inbox import (
+    InboxClaim,
+    InboxConflict,
+    InboxLeaseLost,
+    InboxReason,
+    InboxReceipt,
+    InboxRecord,
+    InboxState,
+    SQLiteInbox,
+)
 from .initdata import (
     TELEGRAM_PUBLIC_KEYS,
     InvalidInitData,
     VerifiedLaunch,
     validate_init_data,
     validate_init_data_signature,
+)
+from .jobs import (
+    JobClaim,
+    JobConflict,
+    JobLeaseLost,
+    JobOutcome,
+    JobQueueFull,
+    JobReason,
+    JobRecord,
+    JobState,
+    SQLiteJobQueue,
 )
 from .markup import (
     MarkupPage,
@@ -58,6 +79,16 @@ from .message_text import (
     split_formatted,
     utf16_length,
 )
+from .outbox import (
+    OutboxClaim,
+    OutboxConflict,
+    OutboxLeaseLost,
+    OutboxReceipt,
+    OutboxRecord,
+    OutboxResolution,
+    OutboxState,
+    SQLiteOutbox,
+)
 from .recipes import Maturity, Recipe, RecipeCatalog, VerificationLevel
 from .rich_message import RichButton, RichButtonStyle, RichMessage, RichMessageBuilder, RichSpan, RichText
 from .selection import (
@@ -81,7 +112,10 @@ from .stars_subscription import (
 )
 from .starter import StarterPlan, create_starter
 from .starter_components import StarterComponent, StarterConflict, starter_components
+from .telemetry import Telemetry, TelemetryContext, TelemetryMetric, TelemetryOutcome, TelemetrySnapshot, TelemetryStage
 from .texts import TextLocale, Texts, default_texts
+from .webhook import WebhookCode, WebhookReceiver, WebhookResponse, create_aiohttp_webhook_app
+from .worker import InboxWorker, WorkerOutcome, settled_to_thread
 
 __all__ = [
     "BotSettings",
@@ -134,6 +168,44 @@ __all__ = [
     "OnceResult",
     "OperationConflict",
     "SQLiteOnce",
+    "InboxClaim",
+    "InboxConflict",
+    "InboxLeaseLost",
+    "InboxReason",
+    "InboxReceipt",
+    "InboxRecord",
+    "InboxState",
+    "SQLiteInbox",
+    "WebhookCode",
+    "WebhookReceiver",
+    "WebhookResponse",
+    "create_aiohttp_webhook_app",
+    "SQLiteOutbox",
+    "OutboxClaim",
+    "OutboxConflict",
+    "OutboxLeaseLost",
+    "OutboxReceipt",
+    "OutboxRecord",
+    "OutboxResolution",
+    "OutboxState",
+    "SQLiteJobQueue",
+    "JobClaim",
+    "JobConflict",
+    "JobLeaseLost",
+    "JobOutcome",
+    "JobQueueFull",
+    "JobReason",
+    "JobRecord",
+    "JobState",
+    "InboxWorker",
+    "WorkerOutcome",
+    "settled_to_thread",
+    "Telemetry",
+    "TelemetryContext",
+    "TelemetryMetric",
+    "TelemetryOutcome",
+    "TelemetrySnapshot",
+    "TelemetryStage",
     "CalendarMonth",
     "TimeSlot",
     "resolve_local_time",

@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "library_version": "0.24.0",
+  "library_version": "0.25.0",
   "scope": "Public library exports; ref.* recipes belong to the API reference, not the Telegram method snapshot",
   "groups": [
     {
@@ -127,15 +127,38 @@
     {
       "id": "core_storage",
       "section": "core",
-      "title": "SQLite effect и повтор",
+      "title": "Локальная операция SQLite и повтор",
       "example": "examples/api-reference/python/core_storage.py",
-      "limits": "Scope/ACL определяет сервер до effect и replay. Atomicity касается только переданного SQLite connection: без HTTP, другого storage, commit/rollback. Файл/миграции/retention принадлежат host.",
+      "limits": "Сервер задает область действия, автора и источник события. `run_guarded` проверяет текущие права до операции и повтора в одной транзакции записи; ревизия проверяется для новой операции. Атомарность относится только к переданному соединению SQLite: без HTTP, другого хранилища и управления транзакцией из обработчика. Файл, миграции и хранение истории принадлежат приложению.",
       "api": {
         "telegram_patterns": {
           "OnceResult": "Результат эффекта с replay flag",
           "OperationConflict": "Тот же scoped key с другим payload",
-          "SQLiteOnce": "Инициализация и атомарный run в файле SQLite",
+          "SQLiteOnce": "Атомарные `run` и `run_guarded`; текущие права проверяются без записи перед операцией и повтором",
           "OnceStore": "Структурный контракт initialize/run storage проекта"
+        }
+      }
+    },
+    {
+      "id": "core_delivery",
+      "section": "core",
+      "title": "Надежный прием событий и владение обработкой",
+      "example": "examples/api-reference/python/core_delivery.py",
+      "limits": "Прием, повторы и карантин хранятся в SQLite без обязательного SDK. Фоновый обработчик проверяет семантику события и обеспечивает идемпотентность бизнес-операции. Внутренняя `payload_version` не является версией Bot API. Необязательный HTTP-адаптер требует установки aiohttp приложением; тесты используют локальный сервер. Схема, срок хранения, TLS, остановка и ручной перезапуск событий принадлежат приложению. Единственная внешняя доставка не гарантируется.",
+      "api": {
+        "telegram_patterns": {
+          "SQLiteInbox": "Явная схема, надежное сохранение события и проверка владения перед сменой состояния",
+          "InboxState": "Состояния `pending`, `processing`, `done`, `quarantined`",
+          "InboxReason": "Фиксированные безопасные причины карантина и повтора",
+          "InboxReceipt": "Неизменяемый результат записи: ключ события, состояние, повтор, версия и причина",
+          "InboxClaim": "Неизменяемое владение обработкой с номером попытки и сроком; данные и токен скрыты в `repr`",
+          "InboxRecord": "Сохраненный снимок состояния и количества попыток, доступный только для чтения",
+          "InboxConflict": "Один ключ доставки с разными данными, версиями или итогами",
+          "InboxLeaseLost": "Потеря владения запрещает завершение события и требует проверки возможного бизнес-эффекта",
+          "WebhookReceiver": "Проверка секрета и ограничений JSON до записи; неизвестные события сохраняются в карантине",
+          "WebhookResponse": "Безопасные поля статуса, кода и повтора; `accepted` и `as_dict` без секретов",
+          "WebhookCode": "Literal безопасных результатов приема",
+          "create_aiohttp_webhook_app": "Необязательный маршрут aiohttp с проверкой секрета, размера и срока чтения; настройки Telegram не меняет"
         }
       }
     },
@@ -716,6 +739,86 @@
           "ptb_text": "text, entities и parse_mode=None из FormattedText для send_message",
           "StubRequest": "Офлайн-транспорт PTB: ответы по методам, ошибки Telegram, журнал вызовов",
           "offline_application": "Application без updater поверх StubRequest, с Defaults проекта"
+        }
+      }
+    },
+    {
+      "id": "core_outbox",
+      "section": "core",
+      "title": "Транзакционная очередь отправки и сверка",
+      "example": "examples/api-reference/python/core_outbox.py",
+      "limits": "`enqueue` требует активную транзакцию переданного соединения той же основной БД SQLite и сам ее не завершает. Перед внешним вызовом фиксируется `sending`; истекшая попытка становится `unknown` без автоматического повтора. Решение `absent` требует доказательства отсутствия эффекта и позднего результата, проверки ревизии и `evidence_ref`. Отправка, права, запрос статуса провайдера и хранение истории принадлежат приложению.",
+      "api": {
+        "telegram_patterns": {
+          "SQLiteOutbox": "Явная схема, добавление в транзакции приложения, проверка владения отправкой и ручная сверка",
+          "OutboxState": "Состояния `pending`, `sending`, `sent`, `unknown`, `failed`",
+          "OutboxResolution": "Решения `sent`, `absent`, `unresolved` после подтвержденной приложением сверки",
+          "OutboxReceipt": "Неизменяемый результат добавления с признаком повтора и сохраненной ревизией",
+          "OutboxClaim": "Неизменяемый токен, номер попытки, срок владения и копия данных для отправителя",
+          "OutboxRecord": "Снимок состояния, результата, ревизии, причины и ссылки на доказательство",
+          "OutboxConflict": "Несовместимые намерение, результат или ревизия; новая отправка не разрешена",
+          "OutboxLeaseLost": "`UnknownOutcome` при потере владения отправкой; требуется сверка"
+        }
+      }
+    },
+    {
+      "id": "core_jobs",
+      "section": "core",
+      "title": "Сохраненные задания и управляемые уведомления",
+      "example": "examples/api-reference/python/core_jobs.py",
+      "limits": "`schedule` и бизнес-запись выполняются в разных транзакциях; для общей записи нужен outbox. Без настроек получателя доставка запрещена. Только переход `start` в `sending` разрешает внешний вызов после повторной проверки согласия, срока, владения и ограничений частоты. Сбой после начала оставляет `unknown`; отмена не отзывает удаленный запрос. Повтор после HTTP 429 допустим только при подтвержденном отказе без эффекта. Настройки, задержки и попытки сохраняются; отправка, права и хранение истории принадлежат приложению.",
+      "api": {
+        "telegram_patterns": {
+          "SQLiteJobQueue": "Явная схема, настройки получателя, расписание, владение обработкой, отмена и сверка",
+          "JobState": "Сохраненные состояния ожидания, подготовки, отправки и завершения, включая `unknown`",
+          "JobOutcome": "Подтвержденный успех, постоянный отказ, отказ из-за лимита либо неподтвержденный итог",
+          "JobReason": "Фиксированные безопасные коды причин без текста внешнего исключения",
+          "JobClaim": "Неизменяемые идентификаторы задания и получателя, токен, попытка, срок владения и копия данных",
+          "JobRecord": "Снимок срока, ревизии, запроса отмены и ссылки на доказательство для чтения",
+          "JobConflict": "Конфликт намерения, ревизии или итогового состояния",
+          "JobLeaseLost": "`UnknownOutcome` при потере владения; слепой повтор эффекта запрещен",
+          "JobQueueFull": "Превышен сохраненный лимит активных заданий данного бота"
+        }
+      }
+    },
+    {
+      "id": "core_worker",
+      "section": "core",
+      "title": "Остановка обработчика и безопасная корреляция",
+      "example": "examples/api-reference/python/core_worker.py",
+      "limits": "Композиция сохраненных входящих событий без обязательного SDK. Приложение декодирует данные, обрабатывает событие, задает устойчивые идентификаторы операций и закрывает сессию после завершения работы. Только `True` подтверждает сохраненный бизнес-результат. Отмена не останавливает поток SQLite: `settled_to_thread` дожидается его завершения. Ошибки обработки сохраняются в карантине; потеря владения требует сверки. Метрики используют фиксированные поля и метки, без сообщений, токенов, `initData` и текста исключений. HMAC-ссылки не авторизуют и не анонимизируют. Быстрый синхронный приемник событий принадлежит приложению; скрытой очереди нет.",
+      "api": {
+        "telegram_patterns": {
+          "InboxWorker": "`run_one` и `serve(stop_event)` с ожиданием завершения работы, карантином и проверкой владения",
+          "WorkerOutcome": "Результаты `idle`, `done`, `quarantined`, `lease-lost`",
+          "settled_to_thread": "Дождаться завершения локальной синхронной работы перед распространением отмены и закрытием ресурсов",
+          "Telemetry": "Контекстная корреляция HMAC и безопасные события, счетчики, длительности и повторы",
+          "TelemetryContext": "Неизменяемые ссылки на трассу, бота, событие, действие, операцию и задание без исходных идентификаторов",
+          "TelemetryMetric": "Счетчики, суммы и максимумы длительности, повторы с фиксированными категориями",
+          "TelemetrySnapshot": "Неизменяемый набор метрик и число ошибок приемника без персональных данных",
+          "TelemetryStage": "Этапы `update`, `action`, `operation`, `job`",
+          "TelemetryOutcome": "Итоги начала, успеха, повтора, отказа, ошибки, неопределенности, отмены и карантина"
+        }
+      }
+    },
+    {
+      "id": "client_state",
+      "section": "typescript",
+      "title": "Account scope, гонки чтений и незавершенная операция",
+      "example": "examples/api-reference/typescript/state.ts",
+      "limits": "Framework-neutral state без fetch/retry/auth/token. Scope задает backend-validated host; смена аккаунта/dispose очищает кеш и инвалидирует ответы, даже если transport игнорирует abort. DTO только bounded plain JSON, detached/deep-frozen. PendingOperationStore хранит только scoped UUID/createdAt/pending-or-unknown отдельно от draft; corrupt/unavailable/unsupported блокирует dispatch. Только authoritative server result разрешает complete. localStorage single-owner, не межвкладочный CAS или серверная идемпотентность.",
+      "api": {
+        "@awesome-telegram/patterns": {
+          "ScopedAsyncState": "Ограниченный кеш аккаунта: побеждает последнее чтение; отмена, очистка и освобождение",
+          "AsyncReadSnapshot": "Снимок с различимыми состояниями `idle`, `loading`, `ready`, `failed`",
+          "AsyncReadResult": "Discriminated ready/failed/stale завершение чтения",
+          "AsyncReadContext": "Server-verified scope и AbortSignal конкретного чтения",
+          "AsyncStateOptions": "Ограничение числа кешированных ключей, default32",
+          "PendingOperationStore": "Сохранение указателя операции, восстановление, чтение, отметка неопределенности и завершение по точному ID",
+          "PendingOperation": "Минимальный immutable UUID/createdAt/pending-or-unknown pointer без payload",
+          "PendingOperationRead": "Restored/missing/corrupt/unsupported/unavailable результат чтения",
+          "PendingOperationReservation": "Reserved/existing либо blocked с безопасной причиной",
+          "PendingOperationOptions": "Namespace/server-verified account scope и контролируемые часы"
         }
       }
     }

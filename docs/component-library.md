@@ -1,6 +1,6 @@
 # Общая библиотека компонентов
 
-Текущая локальная поставка 0.24.0: 51 группа компонентов, 285 публичных Python/TypeScript-символов и 340 рецептов. 241 Python fixtures имеют закрытый executor, 99 native references требуют host/аргументов. [Восстановление диалога](dialog-restart.md) сохраняет atomic step/version/deadline и pending ID; текущие Dispatcher/storage остаются проектными. [Приемка 031](https://github.com/Zulut30/awesome-telegram-skills/blob/fe16ba3ea3a2b4d5bbdc69ba09e7b2ed50c0c215/docs/v1-checks/031.json) привязана к matching wheel/tarball; исторические отчеты сохраняют версии.
+Текущая локальная разработка 0.25.0: 59 групп компонентов, 333 публичных Python/TypeScript-символов и 340 рецептов. 241 Python fixtures имеют закрытый executor, 99 native references требуют host/аргументов. [Восстановление диалога](dialog-restart.md) сохраняет atomic step/version/deadline и pending ID; текущие Dispatcher/storage остаются проектными. [Приемка 031](https://github.com/Zulut30/awesome-telegram-skills/blob/fe16ba3ea3a2b4d5bbdc69ba09e7b2ed50c0c215/docs/v1-checks/031.json) привязана к matching wheel/tarball; исторические отчеты сохраняют версии.
 
 [Формы 0.3.0](internal/form-tools-review.md) добавляют поля с проверкой, возврат, отмену и подтверждение со стабильным ID заявки. Готовый [бот формы](../examples/python/form_bot.py) и [offline-проверка](../examples/python/offline_form.py) используют один create_app; backend сохраняет заявку и replay result в SQLite.
 

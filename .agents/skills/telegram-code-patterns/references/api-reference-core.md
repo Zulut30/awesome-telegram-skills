@@ -1,6 +1,6 @@
-# Python core — 0.24.0
+# Python core — 0.25.0
 
-Термины: **CAS** — сравнение с заменой: запись сохраняется, только если версия не изменилась с момента чтения; квитанция (receipt) — сохраненная запись о выполненной операции; повтор возвращает ее вместо второго эффекта; **неизвестный результат** — запрос мог выполниться, но ответа нет (таймаут, обрыв связи); повторять вслепую нельзя, сначала сверка; **сверка** — запрос фактического состояния у провайдера или в хранилище перед повтором или выдачей; **entitlement** — право на возможность (custom emoji, оплаченный доступ), которое проверяется отдельно от самого запроса; **fallback** — запасной вариант, если основная возможность недоступна.
+Термины: **CAS** — сравнение с заменой: запись сохраняется, только если версия не изменилась с момента чтения; квитанция (receipt) — сохраненная запись о выполненной операции; повтор возвращает ее вместо второго эффекта; **outbox** — события, сохраненные в той же транзакции, что и изменение данных; отдельный обработчик выполняет их позже; **неизвестный результат** — запрос мог выполниться, но ответа нет (таймаут, обрыв связи); повторять вслепую нельзя, сначала сверка; **сверка** — запрос фактического состояния у провайдера или в хранилище перед повтором или выдачей; **entitlement** — право на возможность (custom emoji, оплаченный доступ), которое проверяется отдельно от самого запроса; **fallback** — запасной вариант, если основная возможность недоступна.
 
 [Индекс всех символов](api-reference.md). Образцы ниже воспроизводятся через установленный wheel/tarball вне исходного дерева. Assert — проверка fixture, не бизнес-правило production приложения.
 
@@ -263,11 +263,11 @@ print(json.dumps({'case': 'core_markup', 'passed': True, 'network': False}))
 
 <a id="ref-core_storage"></a>
 
-## SQLite effect и повтор — ref.core_storage
+## Локальная операция SQLite и повтор — ref.core_storage
 
 Файл: `core_storage.py`. Символы: `OnceResult`, `OperationConflict`, `SQLiteOnce`, `OnceStore`
 
-Границы: Scope/ACL определяет сервер до effect и replay. Atomicity касается только переданного SQLite connection: без HTTP, другого storage, commit/rollback. Файл/миграции/retention принадлежат host.
+Границы: Сервер задает область действия, автора и источник события. `run_guarded` проверяет текущие права до операции и повтора в одной транзакции записи; ревизия проверяется для новой операции. Атомарность относится только к переданному соединению SQLite: без HTTP, другого хранилища и управления транзакцией из обработчика. Файл, миграции и хранение истории принадлежат приложению.
 
 ```python
 """SQLite effect/replay; scope/ACL здесь заранее выбраны для публичной fixture."""
@@ -280,16 +280,24 @@ from telegram_patterns import OnceResult, OnceStore, OperationConflict, SQLiteOn
 
 with TemporaryDirectory() as folder:
     path = Path(folder) / 'fixture.sqlite'
-    store: OnceStore[sqlite3.Connection] = SQLiteOnce(path)
+    concrete = SQLiteOnce(path)
+    store: OnceStore[sqlite3.Connection] = concrete
     store.initialize()
     with closing(sqlite3.connect(path)) as db, db:
         db.execute('CREATE TABLE entries(label TEXT)')
+        db.execute('CREATE TABLE access(actor INTEGER PRIMARY KEY, allowed INTEGER)')
+        db.execute('INSERT INTO access VALUES (42, 1)')
     def apply(transaction: sqlite3.Connection) -> dict[str, str]:
         transaction.execute('INSERT INTO entries VALUES (?)', ('public-fixture',))
         return {'status': 'recorded'}
     result: OnceResult = store.run('fixture-actor:42', 'operation-1', {'label': 'public-fixture'}, apply)
     replay = store.run('fixture-actor:42', 'operation-1', {'label': 'public-fixture'}, apply)
     assert result.value == replay.value and not result.replayed and replay.replayed
+    def check(transaction: sqlite3.Connection, replayed: bool) -> bool:
+        # Actor is server-validated; replay still checks CURRENT access in the writer transaction.
+        return transaction.execute('SELECT allowed FROM access WHERE actor=42').fetchone()[0] == 1
+    guarded = concrete.run_guarded('fixture-actor:42', 'operation-1', {'label': 'public-fixture'}, apply, check=check)
+    assert guarded.replayed and guarded.value == result.value
     try:
         store.run('fixture-actor:42', 'operation-1', {'label': 'changed'}, apply)
     except OperationConflict:
@@ -300,6 +308,79 @@ with TemporaryDirectory() as folder:
         assert db.execute('SELECT COUNT(*) FROM entries').fetchone()[0] == 1
 # HTTP/другой connection не входят в эту транзакцию; авторизация до replay.
 print(json.dumps({'passed': True, 'case': 'core_storage', 'network': False}))
+```
+
+<a id="ref-core_delivery"></a>
+
+## Надежный прием событий и владение обработкой — ref.core_delivery
+
+Файл: `core_delivery.py`. Символы: `SQLiteInbox`, `InboxState`, `InboxReason`, `InboxReceipt`, `InboxClaim`, `InboxRecord`, `InboxConflict`, `InboxLeaseLost`, `WebhookReceiver`, `WebhookResponse`, `WebhookCode`, `create_aiohttp_webhook_app`
+
+Границы: Прием, повторы и карантин хранятся в SQLite без обязательного SDK. Фоновый обработчик проверяет семантику события и обеспечивает идемпотентность бизнес-операции. Внутренняя `payload_version` не является версией Bot API. Необязательный HTTP-адаптер требует установки aiohttp приложением; тесты используют локальный сервер. Схема, срок хранения, TLS, остановка и ручной перезапуск событий принадлежат приложению. Единственная внешняя доставка не гарантируется.
+
+```python
+"""SDK-free receipt, replay, quarantine and fenced processing; no Telegram HTTP."""
+from __future__ import annotations
+
+import json
+from pathlib import Path
+from tempfile import TemporaryDirectory
+
+from telegram_patterns import (
+    InboxClaim,
+    InboxConflict,
+    InboxLeaseLost,
+    InboxReason,
+    InboxReceipt,
+    InboxRecord,
+    InboxState,
+    SQLiteInbox,
+    WebhookCode,
+    WebhookReceiver,
+    WebhookResponse,
+    create_aiohttp_webhook_app,
+)
+
+with TemporaryDirectory() as directory:
+    inbox = SQLiteInbox(Path(directory) / 'delivery.sqlite')
+    inbox.initialize()
+    receiver = WebhookReceiver(inbox, bot_id=100, secret_token='fixture_only')
+    response: WebhookResponse = receiver.receive(b'{"update_id":1,"message":{}}', 'fixture_only')
+    code: WebhookCode = response.code
+    assert code == 'accepted' and response.accepted
+    receipt: InboxReceipt = inbox.receive(100, 1, {'update_id': 1, 'message': {}})
+    assert receipt.duplicate
+    try:
+        inbox.receive(100, 1, {'update_id': 1, 'message': {'text': 'different'}})
+    except InboxConflict:
+        pass
+    else:
+        raise AssertionError('Changed payload accepted')
+    first = inbox.claim(100, 'worker-one', lease_seconds=1, now=10)
+    # received_at defaults to real UTC, so this synthetic clock is intentionally too early.
+    assert first is None
+    fresh = inbox.receive(100, 2, {'update_id': 2, 'message': {}}, now=10)
+    assert fresh.state == 'pending'
+    claimed = inbox.claim(100, 'worker-one', lease_seconds=1, now=10)
+    assert isinstance(claimed, InboxClaim)
+    replacement = inbox.claim(100, 'worker-two', now=11)
+    assert replacement is not None and replacement.attempt == 2
+    try:
+        inbox.complete(claimed, now=11)
+    except InboxLeaseLost:
+        pass
+    else:
+        raise AssertionError('Expired worker completed the event')
+    # A real worker would SDK-decode; this minimal fixture models a controlled decode failure.
+    reason: InboxReason = 'decode-failed'
+    inbox.quarantine(replacement, reason=reason, now=11)
+    record = inbox.get(100, 2)
+    assert isinstance(record, InboxRecord)
+    state: InboxState = record.state
+    assert state == 'quarantined' and record.reason == reason
+    # Optional adapter is importable without aiohttp; actual HTTP belongs to separate extra consumer tests.
+    assert callable(create_aiohttp_webhook_app)
+print(json.dumps({'passed': True, 'case': 'core_delivery', 'network': False}))
 ```
 
 <a id="ref-core_errors"></a>
@@ -587,4 +668,187 @@ with TemporaryDirectory(prefix='calendar public api ') as temporary:
     assert isinstance(booking, SlotBooking) and booking.status == 'active'
 print(json.dumps({'passed': True, 'case': 'core_calendar', 'network': False,
                   'business_effects': 1, 'replayed': replay.replayed}))
+```
+
+<a id="ref-core_outbox"></a>
+
+## Транзакционная очередь отправки и сверка — ref.core_outbox
+
+Файл: `core_outbox.py`. Символы: `SQLiteOutbox`, `OutboxState`, `OutboxResolution`, `OutboxReceipt`, `OutboxClaim`, `OutboxRecord`, `OutboxConflict`, `OutboxLeaseLost`
+
+Границы: `enqueue` требует активную транзакцию переданного соединения той же основной БД SQLite и сам ее не завершает. Перед внешним вызовом фиксируется `sending`; истекшая попытка становится `unknown` без автоматического повтора. Решение `absent` требует доказательства отсутствия эффекта и позднего результата, проверки ревизии и `evidence_ref`. Отправка, права, запрос статуса провайдера и хранение истории принадлежат приложению.
+
+```python
+"""Business + intent commit together; an expired sending lease never authorizes a new send."""
+from contextlib import closing
+import json
+from pathlib import Path
+import sqlite3
+from tempfile import TemporaryDirectory
+
+from telegram_patterns import (
+    OutboxClaim, OutboxConflict, OutboxLeaseLost, OutboxReceipt, OutboxRecord,
+    OutboxResolution, OutboxState, SQLiteOutbox,
+)
+
+with TemporaryDirectory() as directory:
+    path = Path(directory) / 'business.sqlite'
+    outbox = SQLiteOutbox(path)
+    outbox.initialize()
+    with closing(sqlite3.connect(path)) as db, db:
+        db.execute('CREATE TABLE orders(id TEXT PRIMARY KEY)')
+        db.execute('INSERT INTO orders VALUES (?)', ('server-intent',))
+        receipt: OutboxReceipt = outbox.enqueue(db, 'bot:100', 'server-intent', {'order': 'server-intent'}, now=10)
+    assert not receipt.duplicate and receipt.state == 'pending'
+    claimed = outbox.claim('bot:100', 'worker', lease_seconds=1, now=10)
+    assert isinstance(claimed, OutboxClaim)
+    # A crashed sender may have already delivered. Simulate lease expiry, not proof of absence.
+    assert outbox.recover_expired('bot:100', now=11) == 1
+    assert outbox.claim('bot:100', 'new-worker', now=11) is None
+    try:
+        outbox.confirm(claimed, {'message_id': 1}, now=11)
+    except OutboxLeaseLost:
+        pass
+    else:
+        raise AssertionError('Expired sender confirmed a receipt')
+    observed = outbox.get('bot:100', 'server-intent')
+    assert isinstance(observed, OutboxRecord)
+    state: OutboxState = observed.state
+    assert state == 'unknown'
+    resolution: OutboxResolution = 'sent'
+    # Host has independently verified this fake provider receipt before reconciliation.
+    final = outbox.reconcile('bot:100', 'server-intent', expected_revision=observed.revision,
+                             outcome=resolution, evidence_ref='verified-fake-receipt', result={'message_id': 1}, now=11)
+    assert final.state == 'sent'
+    try:
+        outbox.reconcile('bot:100', 'server-intent', expected_revision=observed.revision,
+                         outcome='absent', evidence_ref='stale-review', now=11)
+    except OutboxConflict:
+        pass
+    else:
+        raise AssertionError('Stale reconciliation changed the completed send')
+print(json.dumps({'passed': True, 'case': 'core_outbox', 'network': False}))
+```
+
+<a id="ref-core_jobs"></a>
+
+## Сохраненные задания и управляемые уведомления — ref.core_jobs
+
+Файл: `core_jobs.py`. Символы: `SQLiteJobQueue`, `JobState`, `JobOutcome`, `JobReason`, `JobClaim`, `JobRecord`, `JobConflict`, `JobLeaseLost`, `JobQueueFull`
+
+Границы: `schedule` и бизнес-запись выполняются в разных транзакциях; для общей записи нужен outbox. Без настроек получателя доставка запрещена. Только переход `start` в `sending` разрешает внешний вызов после повторной проверки согласия, срока, владения и ограничений частоты. Сбой после начала оставляет `unknown`; отмена не отзывает удаленный запрос. Повтор после HTTP 429 допустим только при подтвержденном отказе без эффекта. Настройки, задержки и попытки сохраняются; отправка, права и хранение истории принадлежат приложению.
+
+```python
+"""Persisted recipient consent, pacing, cancellation and no automatic retry of unknown delivery."""
+import json
+from pathlib import Path
+from tempfile import TemporaryDirectory
+
+from telegram_patterns import (
+    JobClaim, JobConflict, JobLeaseLost, JobOutcome, JobQueueFull, JobReason,
+    JobRecord, JobState, SQLiteJobQueue,
+)
+
+with TemporaryDirectory() as directory:
+    queue = SQLiteJobQueue(Path(directory) / 'jobs.sqlite', max_active_jobs=1)
+    queue.initialize()
+    queue.set_recipient(100, 42, subscribed=True, reachable=True)
+    queued: JobRecord = queue.schedule(100, 'reminder-one', 42, {'order': 'one'}, due_at=10, deadline_at=100, now=10)
+    state: JobState = queued.state
+    assert state == 'scheduled'
+    try:
+        queue.schedule(100, 'reminder-two', 42, {}, due_at=10, deadline_at=100, now=10)
+    except JobQueueFull:
+        pass
+    else:
+        raise AssertionError('Queue capacity was ignored')
+    claimed = queue.claim(100, 'worker', now=10)
+    assert isinstance(claimed, JobClaim)
+    sending = queue.start(claimed, now=10)
+    assert sending.state == 'sending'  # Only this state authorizes host transport.
+    outcome: JobOutcome = 'unknown'
+    unknown = queue.finish(claimed, outcome=outcome, now=11)
+    reason: JobReason | None = unknown.reason
+    assert unknown.state == 'unknown' and reason == 'send-outcome-unknown'
+    assert queue.claim(100, 'other-worker', now=20) is None
+    try:
+        queue.finish(claimed, outcome='sent', message_id=1, now=12)
+    except JobLeaseLost:
+        pass
+    else:
+        raise AssertionError('Old sender changed unknown delivery')
+    final = queue.reconcile(100, 'reminder-one', expected_revision=unknown.revision,
+                             evidence_ref='verified-fake-receipt', outcome='sent', message_id=1)
+    assert final.state == 'sent'
+    try:
+        queue.reconcile(100, 'reminder-one', expected_revision=unknown.revision,
+                         evidence_ref='stale-review', outcome='failed')
+    except JobConflict:
+        pass
+    else:
+        raise AssertionError('Stale reconciliation changed delivery')
+print(json.dumps({'passed': True, 'case': 'core_jobs', 'network': False}))
+```
+
+<a id="ref-core_worker"></a>
+
+## Остановка обработчика и безопасная корреляция — ref.core_worker
+
+Файл: `core_worker.py`. Символы: `InboxWorker`, `WorkerOutcome`, `settled_to_thread`, `Telemetry`, `TelemetryContext`, `TelemetryMetric`, `TelemetrySnapshot`, `TelemetryStage`, `TelemetryOutcome`
+
+Границы: Композиция сохраненных входящих событий без обязательного SDK. Приложение декодирует данные, обрабатывает событие, задает устойчивые идентификаторы операций и закрывает сессию после завершения работы. Только `True` подтверждает сохраненный бизнес-результат. Отмена не останавливает поток SQLite: `settled_to_thread` дожидается его завершения. Ошибки обработки сохраняются в карантине; потеря владения требует сверки. Метрики используют фиксированные поля и метки, без сообщений, токенов, `initData` и текста исключений. HMAC-ссылки не авторизуют и не анонимизируют. Быстрый синхронный приемник событий принадлежит приложению; скрытой очереди нет.
+
+```python
+"""Owned worker drain and safe correlation; no Telegram, external sender or background service."""
+from __future__ import annotations
+
+import asyncio
+import json
+from pathlib import Path
+from tempfile import TemporaryDirectory
+from typing import Any
+
+from telegram_patterns import (
+    InboxWorker, WorkerOutcome, settled_to_thread, SQLiteInbox,
+    Telemetry, TelemetryContext, TelemetryMetric, TelemetryOutcome, TelemetrySnapshot, TelemetryStage,
+)
+
+
+async def main() -> None:
+    events: list[str] = []
+    telemetry = Telemetry(b'local-fixture-key-with-32-bytes!!x', events.append)
+    stage: TelemetryStage = 'operation'
+    outcome: TelemetryOutcome = 'replayed'
+    with telemetry.bind(bot_id=100, update_id=1, operation_id='server-intent') as context:
+        observed: TelemetryContext = context
+        assert observed.update_ref is not None and observed.operation_ref is not None
+        telemetry.emit(stage, outcome, duration_ms=1, attempt=2)
+    assert telemetry.current() is None and 'server-intent' not in events[0]
+    snapshot: TelemetrySnapshot = telemetry.snapshot()
+    metric: TelemetryMetric = snapshot.metrics[0]
+    assert metric.count == 1 and metric.retries == 1
+    with TemporaryDirectory() as directory:
+        inbox = SQLiteInbox(Path(directory) / 'worker.sqlite')
+        inbox.initialize()
+        inbox.receive(100, 1, {'update_id': 1, 'message': {}})
+        handled: list[int] = []
+        def decode(payload: dict[str, Any]) -> int:
+            return int(payload['update_id'])
+        async def handle(update_id: int, claim: Any) -> bool:
+            # Host normally commits an idempotent operation/outbox before returning exactly True.
+            handled.append(update_id)
+            return True
+        worker = InboxWorker(inbox, 100, 'fixture-worker', decode, handle, telemetry=telemetry)
+        result: WorkerOutcome = await worker.run_one()
+        assert result == 'done' and handled == [1]
+        stored = await settled_to_thread(inbox.get, 100, 1)
+        assert stored is not None and stored.state == 'done'
+        stop = asyncio.Event()
+        stop.set()
+        await worker.serve(stop)  # An already stopped owner does not admit work.
+    print(json.dumps({'passed': True, 'case': 'core_worker', 'network': False}))
+
+
+if __name__ == '__main__':
+    asyncio.run(main())
 ```

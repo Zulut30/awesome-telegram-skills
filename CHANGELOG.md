@@ -2,6 +2,12 @@
 
 ## Не выпущено
 
+- Локальная разработка 0.25.0: `SQLiteOnce.run_guarded` проверяет текущий доступ внутри writer transaction до новой операции и replay. Durable inbox сохраняет событие до HTTP ACK, приемник проверяет секрет и лимит тела, а неизвестные события остаются в карантине.
+- Transactional outbox связывает бизнес-запись с намерением отправки; истекший sending lease становится unknown без автоматической повторной отправки. Сохраненные задания учитывают согласие получателя, deadline, отмену, rate/flood cooldown и бюджет попыток.
+- Worker останавливает прием и дожидается обработки до закрытия ресурсов; SQLite thread завершается перед передачей cancellation. Метрики используют фиксированные поля и HMAC-корреляцию без текста сообщений, initData и секретов.
+- Магазин получил durable rotation/revoke серверной сессии и проверки lost-response/process-restart. Frontend API добавляет account-scoped latest-read-wins, явную миграцию draft и отдельный pending/unknown operation pointer.
+- Release pipeline различает Python `X.Y.ZrcN` и npm `X.Y.Z-rc.N`, читает обе manifests одного ref и не выпускает RC/final 1.x с непройденными device/live отчетами. RC и production сейчас не приняты; реальные устройства, платежные кабинеты и пилот недоступны.
+
 - Сверка 05.11.2026: инструкции Telegram Serverless добавлены в скиллы Mini App, auth, deploy, planner и security review; зафиксированы callback-контракт, платформенная identity, объектные права и последствия `tgcloud push/run`. Runtime wrapper 0.24.0 для `Serverless.call` не заявляется.
 - Обновлены версии и Requires-Python справочника библиотек: pyTelegramBotAPI 4.37.1 требует Python 3.11; aiogram 3.31.0 не поддерживает Python 3.15. В политике окружений учтены выпуск Python 3.15, Node.js 26 LTS и EOL Node.js 20; минимум существующего пакета не меняется скрыто.
 - Проверка скиллов пропускает каталоги сборок и consumer-окружений до обхода; `new_skill.py` создает LF-файлы на Windows, согласованные с валидатором. Изолированные Python-процессы проверки рецептов получают `-X utf8`, поскольку `-I` игнорирует `PYTHONUTF8`. Регрессионные проверки выполняются во временных каталогах.

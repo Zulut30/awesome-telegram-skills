@@ -57,7 +57,7 @@ python -c "from telegram_patterns.aiogram import ActionButton, action_menu; prin
 The path refers to the library checkout: when running from another project, give its real absolute path or the provided wheel. The SDK-free core only needs `./packages/python`. For TypeScript, from the target project directory:
 
 ```bash
-npm install /path/to/awesome-telegram-patterns-0.24.0.tgz
+npm install /path/to/awesome-telegram-patterns-0.25.0.tgz
 npm ls @awesome-telegram/patterns
 ```
 

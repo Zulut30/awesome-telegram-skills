@@ -1,4 +1,4 @@
-# Справочник API 0.24.0
+# Справочник API 0.25.0
 
 Термины: **ACK** — ответ на нажатие кнопки через `answerCallbackQuery`: клиент убирает индикатор ожидания; это не сообщение об успехе операции; **CAS** — сравнение с заменой: запись сохраняется, только если версия не изменилась с момента чтения; квитанция (receipt) — сохраненная запись о выполненной операции; повтор возвращает ее вместо второго эффекта; **сверка** — запрос фактического состояния у провайдера или в хранилище перед повтором или выдачей; **fallback** — запасной вариант, если основная возможность недоступна.
 
@@ -60,8 +60,20 @@
 | `selection_markup` | `from telegram_patterns import selection_markup` | [ref.core_markup](api-reference-core.md#ref-core_markup) | Клавиатура SelectionMenu как JSON, как selection_keyboard |
 | `OnceResult` | `from telegram_patterns import OnceResult` | [ref.core_storage](api-reference-core.md#ref-core_storage) | Результат эффекта с replay flag |
 | `OperationConflict` | `from telegram_patterns import OperationConflict` | [ref.core_storage](api-reference-core.md#ref-core_storage) | Тот же scoped key с другим payload |
-| `SQLiteOnce` | `from telegram_patterns import SQLiteOnce` | [ref.core_storage](api-reference-core.md#ref-core_storage) | Инициализация и атомарный run в файле SQLite |
+| `SQLiteOnce` | `from telegram_patterns import SQLiteOnce` | [ref.core_storage](api-reference-core.md#ref-core_storage) | Атомарные `run` и `run_guarded`; текущие права проверяются без записи перед операцией и повтором |
 | `OnceStore` | `from telegram_patterns import OnceStore` | [ref.core_storage](api-reference-core.md#ref-core_storage) | Структурный контракт initialize/run storage проекта |
+| `SQLiteInbox` | `from telegram_patterns import SQLiteInbox` | [ref.core_delivery](api-reference-core.md#ref-core_delivery) | Явная схема, надежное сохранение события и проверка владения перед сменой состояния |
+| `InboxState` | `from telegram_patterns import InboxState` | [ref.core_delivery](api-reference-core.md#ref-core_delivery) | Состояния `pending`, `processing`, `done`, `quarantined` |
+| `InboxReason` | `from telegram_patterns import InboxReason` | [ref.core_delivery](api-reference-core.md#ref-core_delivery) | Фиксированные безопасные причины карантина и повтора |
+| `InboxReceipt` | `from telegram_patterns import InboxReceipt` | [ref.core_delivery](api-reference-core.md#ref-core_delivery) | Неизменяемый результат записи: ключ события, состояние, повтор, версия и причина |
+| `InboxClaim` | `from telegram_patterns import InboxClaim` | [ref.core_delivery](api-reference-core.md#ref-core_delivery) | Неизменяемое владение обработкой с номером попытки и сроком; данные и токен скрыты в `repr` |
+| `InboxRecord` | `from telegram_patterns import InboxRecord` | [ref.core_delivery](api-reference-core.md#ref-core_delivery) | Сохраненный снимок состояния и количества попыток, доступный только для чтения |
+| `InboxConflict` | `from telegram_patterns import InboxConflict` | [ref.core_delivery](api-reference-core.md#ref-core_delivery) | Один ключ доставки с разными данными, версиями или итогами |
+| `InboxLeaseLost` | `from telegram_patterns import InboxLeaseLost` | [ref.core_delivery](api-reference-core.md#ref-core_delivery) | Потеря владения запрещает завершение события и требует проверки возможного бизнес-эффекта |
+| `WebhookReceiver` | `from telegram_patterns import WebhookReceiver` | [ref.core_delivery](api-reference-core.md#ref-core_delivery) | Проверка секрета и ограничений JSON до записи; неизвестные события сохраняются в карантине |
+| `WebhookResponse` | `from telegram_patterns import WebhookResponse` | [ref.core_delivery](api-reference-core.md#ref-core_delivery) | Безопасные поля статуса, кода и повтора; `accepted` и `as_dict` без секретов |
+| `WebhookCode` | `from telegram_patterns import WebhookCode` | [ref.core_delivery](api-reference-core.md#ref-core_delivery) | Literal безопасных результатов приема |
+| `create_aiohttp_webhook_app` | `from telegram_patterns import create_aiohttp_webhook_app` | [ref.core_delivery](api-reference-core.md#ref-core_delivery) | Необязательный маршрут aiohttp с проверкой секрета, размера и срока чтения; настройки Telegram не меняет |
 | `PatternError` | `from telegram_patterns import PatternError` | [ref.core_errors](api-reference-core.md#ref-core_errors) | Базовая ошибка с кодом, исходом и отчетом |
 | `ValidationFailure` | `from telegram_patterns import ValidationFailure` | [ref.core_errors](api-reference-core.md#ref-core_errors) | Известный локальный отказ validation |
 | `InvalidType` | `from telegram_patterns import InvalidType` | [ref.core_errors](api-reference-core.md#ref-core_errors) | Совместимый с TypeError известный локальный отказ |
@@ -299,6 +311,42 @@
 | `ptb_text` | `from telegram_patterns.ptb import ptb_text` | [ref.ptb_adapter](api-reference-bot.md#ref-ptb_adapter) | text, entities и parse_mode=None из FormattedText для send_message |
 | `StubRequest` | `from telegram_patterns.ptb import StubRequest` | [ref.ptb_adapter](api-reference-bot.md#ref-ptb_adapter) | Офлайн-транспорт PTB: ответы по методам, ошибки Telegram, журнал вызовов |
 | `offline_application` | `from telegram_patterns.ptb import offline_application` | [ref.ptb_adapter](api-reference-bot.md#ref-ptb_adapter) | Application без updater поверх StubRequest, с Defaults проекта |
+| `SQLiteOutbox` | `from telegram_patterns import SQLiteOutbox` | [ref.core_outbox](api-reference-core.md#ref-core_outbox) | Явная схема, добавление в транзакции приложения, проверка владения отправкой и ручная сверка |
+| `OutboxState` | `from telegram_patterns import OutboxState` | [ref.core_outbox](api-reference-core.md#ref-core_outbox) | Состояния `pending`, `sending`, `sent`, `unknown`, `failed` |
+| `OutboxResolution` | `from telegram_patterns import OutboxResolution` | [ref.core_outbox](api-reference-core.md#ref-core_outbox) | Решения `sent`, `absent`, `unresolved` после подтвержденной приложением сверки |
+| `OutboxReceipt` | `from telegram_patterns import OutboxReceipt` | [ref.core_outbox](api-reference-core.md#ref-core_outbox) | Неизменяемый результат добавления с признаком повтора и сохраненной ревизией |
+| `OutboxClaim` | `from telegram_patterns import OutboxClaim` | [ref.core_outbox](api-reference-core.md#ref-core_outbox) | Неизменяемый токен, номер попытки, срок владения и копия данных для отправителя |
+| `OutboxRecord` | `from telegram_patterns import OutboxRecord` | [ref.core_outbox](api-reference-core.md#ref-core_outbox) | Снимок состояния, результата, ревизии, причины и ссылки на доказательство |
+| `OutboxConflict` | `from telegram_patterns import OutboxConflict` | [ref.core_outbox](api-reference-core.md#ref-core_outbox) | Несовместимые намерение, результат или ревизия; новая отправка не разрешена |
+| `OutboxLeaseLost` | `from telegram_patterns import OutboxLeaseLost` | [ref.core_outbox](api-reference-core.md#ref-core_outbox) | `UnknownOutcome` при потере владения отправкой; требуется сверка |
+| `SQLiteJobQueue` | `from telegram_patterns import SQLiteJobQueue` | [ref.core_jobs](api-reference-core.md#ref-core_jobs) | Явная схема, настройки получателя, расписание, владение обработкой, отмена и сверка |
+| `JobState` | `from telegram_patterns import JobState` | [ref.core_jobs](api-reference-core.md#ref-core_jobs) | Сохраненные состояния ожидания, подготовки, отправки и завершения, включая `unknown` |
+| `JobOutcome` | `from telegram_patterns import JobOutcome` | [ref.core_jobs](api-reference-core.md#ref-core_jobs) | Подтвержденный успех, постоянный отказ, отказ из-за лимита либо неподтвержденный итог |
+| `JobReason` | `from telegram_patterns import JobReason` | [ref.core_jobs](api-reference-core.md#ref-core_jobs) | Фиксированные безопасные коды причин без текста внешнего исключения |
+| `JobClaim` | `from telegram_patterns import JobClaim` | [ref.core_jobs](api-reference-core.md#ref-core_jobs) | Неизменяемые идентификаторы задания и получателя, токен, попытка, срок владения и копия данных |
+| `JobRecord` | `from telegram_patterns import JobRecord` | [ref.core_jobs](api-reference-core.md#ref-core_jobs) | Снимок срока, ревизии, запроса отмены и ссылки на доказательство для чтения |
+| `JobConflict` | `from telegram_patterns import JobConflict` | [ref.core_jobs](api-reference-core.md#ref-core_jobs) | Конфликт намерения, ревизии или итогового состояния |
+| `JobLeaseLost` | `from telegram_patterns import JobLeaseLost` | [ref.core_jobs](api-reference-core.md#ref-core_jobs) | `UnknownOutcome` при потере владения; слепой повтор эффекта запрещен |
+| `JobQueueFull` | `from telegram_patterns import JobQueueFull` | [ref.core_jobs](api-reference-core.md#ref-core_jobs) | Превышен сохраненный лимит активных заданий данного бота |
+| `InboxWorker` | `from telegram_patterns import InboxWorker` | [ref.core_worker](api-reference-core.md#ref-core_worker) | `run_one` и `serve(stop_event)` с ожиданием завершения работы, карантином и проверкой владения |
+| `WorkerOutcome` | `from telegram_patterns import WorkerOutcome` | [ref.core_worker](api-reference-core.md#ref-core_worker) | Результаты `idle`, `done`, `quarantined`, `lease-lost` |
+| `settled_to_thread` | `from telegram_patterns import settled_to_thread` | [ref.core_worker](api-reference-core.md#ref-core_worker) | Дождаться завершения локальной синхронной работы перед распространением отмены и закрытием ресурсов |
+| `Telemetry` | `from telegram_patterns import Telemetry` | [ref.core_worker](api-reference-core.md#ref-core_worker) | Контекстная корреляция HMAC и безопасные события, счетчики, длительности и повторы |
+| `TelemetryContext` | `from telegram_patterns import TelemetryContext` | [ref.core_worker](api-reference-core.md#ref-core_worker) | Неизменяемые ссылки на трассу, бота, событие, действие, операцию и задание без исходных идентификаторов |
+| `TelemetryMetric` | `from telegram_patterns import TelemetryMetric` | [ref.core_worker](api-reference-core.md#ref-core_worker) | Счетчики, суммы и максимумы длительности, повторы с фиксированными категориями |
+| `TelemetrySnapshot` | `from telegram_patterns import TelemetrySnapshot` | [ref.core_worker](api-reference-core.md#ref-core_worker) | Неизменяемый набор метрик и число ошибок приемника без персональных данных |
+| `TelemetryStage` | `from telegram_patterns import TelemetryStage` | [ref.core_worker](api-reference-core.md#ref-core_worker) | Этапы `update`, `action`, `operation`, `job` |
+| `TelemetryOutcome` | `from telegram_patterns import TelemetryOutcome` | [ref.core_worker](api-reference-core.md#ref-core_worker) | Итоги начала, успеха, повтора, отказа, ошибки, неопределенности, отмены и карантина |
+| `ScopedAsyncState` | `import {ScopedAsyncState} from "@awesome-telegram/patterns"` | [ref.client_state](api-reference-typescript.md#ref-client_state) | Ограниченный кеш аккаунта: побеждает последнее чтение; отмена, очистка и освобождение |
+| `AsyncReadSnapshot` | `import type {AsyncReadSnapshot} from "@awesome-telegram/patterns"` | [ref.client_state](api-reference-typescript.md#ref-client_state) | Снимок с различимыми состояниями `idle`, `loading`, `ready`, `failed` |
+| `AsyncReadResult` | `import type {AsyncReadResult} from "@awesome-telegram/patterns"` | [ref.client_state](api-reference-typescript.md#ref-client_state) | Discriminated ready/failed/stale завершение чтения |
+| `AsyncReadContext` | `import type {AsyncReadContext} from "@awesome-telegram/patterns"` | [ref.client_state](api-reference-typescript.md#ref-client_state) | Server-verified scope и AbortSignal конкретного чтения |
+| `AsyncStateOptions` | `import type {AsyncStateOptions} from "@awesome-telegram/patterns"` | [ref.client_state](api-reference-typescript.md#ref-client_state) | Ограничение числа кешированных ключей, default32 |
+| `PendingOperationStore` | `import {PendingOperationStore} from "@awesome-telegram/patterns"` | [ref.client_state](api-reference-typescript.md#ref-client_state) | Сохранение указателя операции, восстановление, чтение, отметка неопределенности и завершение по точному ID |
+| `PendingOperation` | `import type {PendingOperation} from "@awesome-telegram/patterns"` | [ref.client_state](api-reference-typescript.md#ref-client_state) | Минимальный immutable UUID/createdAt/pending-or-unknown pointer без payload |
+| `PendingOperationRead` | `import type {PendingOperationRead} from "@awesome-telegram/patterns"` | [ref.client_state](api-reference-typescript.md#ref-client_state) | Restored/missing/corrupt/unsupported/unavailable результат чтения |
+| `PendingOperationReservation` | `import type {PendingOperationReservation} from "@awesome-telegram/patterns"` | [ref.client_state](api-reference-typescript.md#ref-client_state) | Reserved/existing либо blocked с безопасной причиной |
+| `PendingOperationOptions` | `import type {PendingOperationOptions} from "@awesome-telegram/patterns"` | [ref.client_state](api-reference-typescript.md#ref-client_state) | Namespace/server-verified account scope и контролируемые часы |
 
 ## CLI и CSS
 

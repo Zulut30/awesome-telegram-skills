@@ -1,5 +1,7 @@
 # Надежный прием webhook
 
+Термины: квитанция (receipt) — сохраненная запись о выполненной операции; повтор возвращает ее вместо второго эффекта; **outbox** — события, сохраненные в той же транзакции, что и изменение данных; отдельный обработчик выполняет их позже; **неизвестный результат** — запрос мог выполниться, но ответа нет (таймаут, обрыв связи); повторять вслепую нельзя, сначала сверка; **сверка** — запрос фактического состояния у провайдера или в хранилище перед повтором или выдачей.
+
 `WebhookReceiver` принимает HTTP body в `SQLiteInbox` без Telegram SDK. `create_aiohttp_webhook_app` — необязательный HTTP adapter: `aiohttp` устанавливает приложение (он также приходит с extra `aiogram`). Core import не требует `aiohttp`. Компоненты пока experimental.
 
 ## Контракт приема
@@ -8,7 +10,7 @@
 2. Секрет проверяется до JSON/storage через constant-time comparison. HTTP adapter требует ровно один `X-Telegram-Bot-Api-Secret-Token`; секрет не является bot token.
 3. Adapter принимает только UTF-8 `application/json` без compression, ограничивает как Content-Length, так и chunked stream и время чтения. По умолчанию лимит 1 MiB, timeout 10 секунд; host задает соответствующий лимит в reverse proxy.
 4. Проверяются строгий UTF-8, JSON object, отсутствие повторных JSON keys и нечисловых значений NaN/Infinity, глубина JSON, целочисленный `update_id` и object envelope известного события Bot API 10.3. Полный SDK decode выполняется worker после durable receipt.
-5. `200` возвращается только после SQLite COMMIT: принятое событие, тот же повтор или сохраненный карантин. Другой payload/version того же `(bot_id, update_id)` дает `409`; ошибка storage — `503`, без успешного ACK. Клиентский timeout после commit оставляет повтор безопасным благодаря inbox identity.
+5. `200` возвращается только после SQLite COMMIT: принятое событие, тот же повтор или сохраненный карантин. Другой payload/version того же `(bot_id, update_id)` дает `409`; ошибка storage — `503`, без успешного HTTP-ответа. Клиентский timeout после commit оставляет повтор безопасным благодаря inbox identity.
 
 Неизвестное или неоднозначное событие сохраняется атомарно с `unknown-update-kind` и получает `200`; неизвестная **внутренняя версия envelope** — `unsupported-version`. Это наблюдаемый карантин для разбора оператором. Новые поля Bot API не удаляются. Компонент не выпускает карантин автоматически и не пытается угадать бизнес-обработчик. `counts(bot_id)` дает безопасные агрегаты; raw payload доступен только через host-owned storage с контролем доступа и retention.
 
@@ -29,7 +31,7 @@ python examples/python/offline_webhook.py
 python -m unittest discover -s packages/python/tests -p test_webhook.py -v
 ```
 
-Fixture поднимает только временный loopback HTTP listener и использует временную SQLite; Telegram и его настройки не затрагиваются. Тесты проверяют реальный HTTP, duplicate/changed payload, wrong/duplicate secret, body limits, storage failure и quarantine после SDK decode error. Это локальная HTTP/SQLite проверка. Доставка от Telegram по публичному HTTPS проверяется отдельно.
+Fixture поднимает только временный loopback HTTP listener и использует временную SQLite; Telegram и его настройки не затрагиваются. Тесты проверяют реальный HTTP, повторы и изменение данных, неверный или повторный заголовок секрета, лимиты тела, отказ хранения и quarantine после SDK decode error. Это локальная HTTP/SQLite проверка. Доставка от Telegram по публичному HTTPS проверяется отдельно.
 
 ## Источники
 
