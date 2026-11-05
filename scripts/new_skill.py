@@ -97,8 +97,8 @@ def create(root: Path, name: str, title: str, short: str, not_for: str, today: d
     version = json.loads((root / 'components.json').read_text(encoding='utf-8'))['library_version']
     (folder / 'agents').mkdir(parents=True)
     files = [folder / 'SKILL.md', folder / 'agents/openai.yaml']
-    files[0].write_text(SKILL.format(name=name, title=title, not_for=not_for, version=version, today=today.isoformat()), encoding='utf-8')
-    files[1].write_text(INTERFACE.format(name=name, title=title, short=short), encoding='utf-8')
+    files[0].write_text(SKILL.format(name=name, title=title, not_for=not_for, version=version, today=today.isoformat()), encoding='utf-8', newline='\n')
+    files[1].write_text(INTERFACE.format(name=name, title=title, short=short), encoding='utf-8', newline='\n')
     return files
 
 

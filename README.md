@@ -8,6 +8,8 @@
 
 # Awesome Telegram Skills
 
+[Аудит и условия выхода в production — 05.11.2026](docs/production-readiness.md) · [Telegram Serverless](docs/telegram-serverless.md)
+
 [![Version](https://img.shields.io/badge/version-0.24.0-229ED9)](CHANGELOG.md)
 [![Skills](https://img.shields.io/badge/skills-42-334155)](#skills)
 [![Status](https://img.shields.io/badge/status-experimental-f59e0b)](docs/v1-maturity.md)

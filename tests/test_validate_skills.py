@@ -35,9 +35,9 @@ class ValidateSkillsTests(unittest.TestCase):
         (folder / 'agents').mkdir(parents=True, exist_ok=True)
         (folder / 'agents/openai.yaml').write_text(
             'interface:\n  display_name: Sample\n  short_description: A sample skill used by validator tests\n'
-            f'  default_prompt: Use ${name} for a sample task.\n', encoding='utf-8')
+            f'  default_prompt: Use ${name} for a sample task.\n', encoding='utf-8', newline='\n')
         body = self.template() if body is None else body
-        (folder / 'SKILL.md').write_text(f'---\n{frontmatter}\n---\n\n{body}', encoding='utf-8')
+        (folder / 'SKILL.md').write_text(f'---\n{frontmatter}\n---\n\n{body}', encoding='utf-8', newline='\n')
 
     def errors(self):
         return self.validator.validate(self.root)[1]
@@ -48,6 +48,22 @@ class ValidateSkillsTests(unittest.TestCase):
     def test_specification_compliant_skill_passes(self):
         self.skill(self.BASE + '\ncompatibility: "Requires Python 3.11+"\nallowed-tools: Read Bash(git:*)')
         self.assertEqual(self.errors(), [])
+
+    def test_generated_consumers_are_ignored_but_source_errors_are_reported(self):
+        self.skill(self.BASE)
+        for ignored in ('output/consumer', 'node_modules/package', 'packages/example/dist', '.venv/Lib'):
+            folder = self.root / ignored
+            folder.mkdir(parents=True)
+            (folder / 'README.md').write_text('[stale](missing.md)', encoding='utf-8')
+            (folder / 'broken.py').write_text('def broken(', encoding='utf-8')
+        self.assertEqual(self.errors(), [])
+        source = self.root / 'examples'
+        source.mkdir()
+        (source / 'README.md').write_text('[broken](missing.md)', encoding='utf-8')
+        (source / 'broken.py').write_text('def broken(', encoding='utf-8')
+        errors = self.errors()
+        self.assertTrue(any('broken local link' in error and 'examples' in error for error in errors))
+        self.assertTrue(any('broken.py' in error for error in errors))
 
     def test_each_rule_is_enforced(self):
         cases = {

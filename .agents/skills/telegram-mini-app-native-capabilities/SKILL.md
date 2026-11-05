@@ -24,6 +24,8 @@ Mini App использует возможности клиента Telegram с 
 
 Для различий capabilities прочитайте [references/capabilities.md](references/capabilities.md). Проверяйте version gate и фактическую доступность метода/объекта; platform и наличие window.Telegram не доказывают поддержку. Подписки, состояние и cleanup принадлежат одному adapter.
 
+Для `Telegram.WebApp.Serverless.call` используйте [references/telegram-serverless.md](references/telegram-serverless.md). Официальная документация не задает минимальную версию: не назначайте ее по аналогии с Bot API; проверяйте наличие функции, хостинг и результат callback. Текущий wrapper библиотеки 0.24.0 этот метод не предоставляет.
+
 Опишите состояния «недоступно», «ожидает действия», «запрос отправлен», «принято с результатом», «отказ или отмена» и «ошибка» в форме, подходящей конкретному API. Не сводите отказ пользователя и отсутствие функции к success. Переход в настройки/запрос выполняется по осмысленному действию пользователя там, где API этого требует.
 
 ### Результат и запасной вариант
@@ -50,4 +52,4 @@ Mini App использует возможности клиента Telegram с 
 
 [Telegram client API](https://core.telegram.org/bots/webapps#initializing-mini-apps), [events](https://core.telegram.org/bots/webapps#events-available-for-mini-apps).
 
-Проверено: 2026-10-07, Telegram Mini Apps (Bot API 10.3).
+Проверено: 2026-11-05, только [Serverless.call](https://core.telegram.org/bots/webapps#serverless) и [Telegram Serverless](https://core.telegram.org/bots/serverless); минимальная версия клиента не указана. Остальные разделы: 2026-10-07, Telegram Mini Apps (Bot API 10.3).

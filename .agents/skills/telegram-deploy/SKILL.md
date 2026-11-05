@@ -20,6 +20,8 @@ metadata:
 
 Проверьте выбранный хостинг, модель процесса, конфигурацию, storage и способ доставки updates. Не меняйте провайдера или инфраструктуру автоматически. Подготовьте изменения и процедуру проверки, затем выполните авторизованный запуск в указанной среде.
 
+Для явно выбранного Telegram Serverless прочитайте [references/telegram-serverless.md](references/telegram-serverless.md): структура CLI 0.2.0, сборка frontend перед `push`, удаление отсутствующих модулей, отдельные миграции, платформенный webhook и секреты. Это JavaScript/V8; существующий Python backend автоматически не переносится. `tgcloud run` исполняет код на платформе и не является локальным mock.
+
 ### Polling или webhook
 
 | Условия | Подход |
@@ -57,4 +59,4 @@ metadata:
 
 [Telegram webhook guide](https://core.telegram.org/bots/webhooks), [Bot API](https://core.telegram.org/bots/api), [Mini Apps](https://core.telegram.org/bots/webapps). Условия публичного Bot API и локального Bot API server различаются.
 
-Проверено: 2026-10-07, Bot API 10.3, aiogram 3.31.0.
+Проверено: 2026-11-05, только [Telegram Serverless](https://core.telegram.org/bots/serverless), документированный CLI 0.2.0; установка CLI и облачный запуск не проверены. Остальные разделы: 2026-10-07, Bot API 10.3, aiogram 3.31.0.

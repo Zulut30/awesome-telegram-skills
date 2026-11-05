@@ -268,6 +268,11 @@
           "title": "Сайт документации",
           "goal": "Собрать сайт документации локально и понять, как он публикуется.",
           "path": "docs/pages-site.md"
+        },
+        {
+          "title": "Telegram Serverless",
+          "goal": "Выбрать платформенный backend осознанно и проверить вызовы Mini App, права и деплой.",
+          "path": "docs/telegram-serverless.md"
         }
       ]
     },
@@ -425,6 +430,16 @@
           "goal": "Внести изменение: проверки, правила и порядок pull request.",
           "path": "CONTRIBUTING.md",
           "nav": true
+        },
+        {
+          "title": "Готовность к production",
+          "goal": "Увидеть результаты аудита, границы доказательств и обязательные условия первого production-релиза.",
+          "path": "docs/production-readiness.md"
+        },
+        {
+          "title": "План выхода в production",
+          "goal": "Пройти от текущей поставки к 1.0 по этапам, зависимостям и проверяемым критериям завершения.",
+          "path": "docs/production-plan.md"
         }
       ]
     }

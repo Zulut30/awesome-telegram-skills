@@ -22,6 +22,8 @@ metadata:
 
 При подключении Telegram или смене SDK прочитайте [references/bridge.md](references/bridge.md). Не смешивайте методы разных SDK и нативного моста по похожим именам.
 
+Если проект использует Telegram Serverless, прочитайте [references/telegram-serverless.md](references/telegram-serverless.md): `Serverless.call` использует callback и платформенный endpoint. Это не HTTP-клиент существующего Python backend и не Promise; наличие нового API не требует смены стека.
+
 ### Типы и границы
 
 Опишите небольшой адаптер Telegram: данные запуска, проверка доступности возможностей, готовность и подписки на нужные события. Используйте типы установленного SDK. Если нужны собственные объявления типов, описывайте только проверенные поля; не скрывайте недоступность API через `any` или non-null assertion.
@@ -54,4 +56,4 @@ metadata:
 
 [Telegram Mini Apps](https://core.telegram.org/bots/webapps), [TypeScript strict](https://www.typescriptlang.org/tsconfig/strict.html), [Vite env](https://vite.dev/guide/env-and-mode). Для SDK используйте официальную документацию его установленной версии.
 
-Проверено: 2026-10-07, Telegram Mini Apps (Bot API 10.3).
+Проверено: 2026-11-05, только [Serverless.call](https://core.telegram.org/bots/webapps#serverless) и [Telegram Serverless](https://core.telegram.org/bots/serverless); минимальная версия клиента не указана. Остальные разделы: 2026-10-07, Telegram Mini Apps (Bot API 10.3).

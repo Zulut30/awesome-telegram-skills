@@ -36,6 +36,8 @@ metadata:
 
 Если используется AI, отделите сообщения пользователя и внешние документы от инструкций и полномочий агента. Упоминание команды в чате не должно давать доступ к секретам или инфраструктуре.
 
+В Telegram Serverless проверьте [references/telegram-serverless.md](references/telegram-serverless.md): личность из серверного `ctx.initData`, отдельные объектные права, защита от повторов, отсутствие секретов в `EndpointError` и `.tgcloud/credentials` вне git. Подставленный `--ctx` в `tgcloud run` не доказывает проверку подписи; сам `run` может менять настоящие данные.
+
 ## Проверка
 
 Используйте локальные тесты и изолированные негативные сценарии: чужой объект, поддельные данные, duplicate event, опасный URL или имя файла по релевантности. Не превращайте review в активную атаку на рабочую систему.
@@ -54,4 +56,4 @@ metadata:
 
 [Mini App validation](https://core.telegram.org/bots/webapps#validating-data-received-via-the-mini-app), [Bot API webhook](https://core.telegram.org/bots/api#setwebhook), [Stars payments](https://core.telegram.org/bots/payments-stars). Для framework-specific защиты используйте официальную документацию выбранного backend.
 
-Проверено: 2026-10-07, Bot API 10.3, Telegram Mini Apps.
+Проверено: 2026-11-05, только границы доверия [Telegram Serverless](https://core.telegram.org/bots/serverless#endpoints). Остальные разделы: 2026-10-07, Bot API 10.3, Telegram Mini Apps.

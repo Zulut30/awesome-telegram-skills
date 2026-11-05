@@ -22,6 +22,8 @@ Backend Mini App должен установить личность пользо
 
 ### Вход на backend
 
+Если выбран Telegram Serverless, сначала прочитайте [references/telegram-serverless.md](references/telegram-serverless.md): платформа проверяет `initData` перед endpoint, личность берется из серверного `ctx.initData.user`, а права на объект проверяет ваш код. Это не разрешает доверять `initDataUnsafe` в браузере и не отменяет следующую схему для собственного HTTP backend.
+
 Передавайте исходную строку `initData` на сервер по HTTPS. Для доступа проверяйте подпись, выбранный bot/environment и свежесть данных. `initDataUnsafe`, query-параметры страницы и переданный frontend `user_id` не устанавливают личность.
 
 Предпочтите поддерживаемый validator используемой библиотеки. Проверьте, обеспечивает ли он freshness и строгий разбор; успешная HMAC-проверка сама по себе их не гарантирует. Для Python изучите функции aiogram WebApp utils, если aiogram уже присутствует. Не добавляйте всю библиотеку только ради одного helper без оценки альтернатив.
@@ -52,4 +54,4 @@ Backend Mini App должен установить личность пользо
 
 [Проверка данных Mini App](https://core.telegram.org/bots/webapps#validating-data-received-via-the-mini-app), [Проверка третьей стороной](https://core.telegram.org/bots/webapps#validating-data-for-third-party-use), [WebAppInitData](https://core.telegram.org/bots/webapps#webappinitdata), [Set-Cookie: SameSite](https://developer.mozilla.org/en-US/docs/Web/HTTP/Reference/Headers/Set-Cookie), [Third-party cookies](https://developer.mozilla.org/en-US/docs/Web/Privacy/Guides/Third-party_cookies).
 
-Проверено: 2026-10-07, Telegram Mini Apps (Bot API 10.3).
+Проверено: 2026-11-05, только [платформенные endpoints Telegram Serverless](https://core.telegram.org/bots/serverless#endpoints). Остальная схема проверки подписи и сессий: 2026-10-07, Telegram Mini Apps (Bot API 10.3).

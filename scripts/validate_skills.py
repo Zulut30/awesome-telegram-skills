@@ -6,6 +6,7 @@ import argparse
 import ast
 from datetime import date, timedelta
 import json
+import os
 from pathlib import Path
 import re
 import sys
@@ -37,6 +38,22 @@ SKILL_NAME = re.compile(r"(?<![\w@/.-])(telegram-[a-z0-9]+(?:-[a-z0-9]+)*)")
 # Identifiers that look like skill names but are a CLI, SDK id, script or distribution.
 NOT_SKILLS = {"telegram-patterns", "telegram-environment", "telegram-first-run", "telegram-group-example",
               "telegram-service-example", "telegram-shop-example", "telegram-web-app", "telegram-webapp"}
+
+# Generated consumers, installed dependencies and caches are not collection sources.
+# Prune before descending: filtering rglob results still walks every installed file.
+IGNORED_DIRECTORIES = {".git", ".venv", "node_modules", "output", "build", "dist", "__pycache__",
+                       ".mypy_cache", ".pytest_cache", ".ruff_cache"}
+
+
+def source_files(root: Path):
+    for directory, folders, files in os.walk(root, followlinks=False):
+        folders[:] = sorted(folder for folder in folders if folder not in IGNORED_DIRECTORIES
+                            and not (Path(directory) / folder).is_symlink()
+                            and not getattr(Path(directory) / folder, 'is_junction', lambda: False)())
+        for name in sorted(files):
+            path = Path(directory) / name
+            if path.suffix in {".md", ".py"}:
+                yield path
 
 
 def code_spans(text: str) -> list[str]:
@@ -234,9 +251,8 @@ def validate(root: Path) -> tuple[int, list[str]]:
                 errors.append(f"{metadata_path}: default_prompt must mention ${folder.name}")
 
     # Validate local links everywhere; skill-local links must stay standalone.
-    for document in root.rglob("*.md"):
-        if any(part in {".git", ".venv", "node_modules"} for part in document.parts):
-            continue
+    sources = list(source_files(root))
+    for document in (path for path in sources if path.suffix == ".md"):
         text = document.read_text(encoding="utf-8")
         skill_folder = next((folder for folder in folders if document.is_relative_to(folder)), None)
         for raw in LINK_PATTERN.findall(text):
@@ -255,9 +271,7 @@ def validate(root: Path) -> tuple[int, list[str]]:
                 errors.append(f"{document}: broken local link: {raw}")
             if skill_folder is not None and not destination.is_relative_to(skill_folder.resolve()):
                 errors.append(f"{document}: skill link escapes standalone folder: {raw}")
-    for script in root.rglob("*.py"):
-        if any(part in {".git", ".venv", "node_modules", "__pycache__"} for part in script.parts):
-            continue
+    for script in (path for path in sources if path.suffix == ".py"):
         try:
             ast.parse(script.read_text(encoding="utf-8"), filename=str(script))
         except SyntaxError as exc:

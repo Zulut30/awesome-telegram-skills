@@ -97,7 +97,7 @@ class Composition:
             bootstrap = ('import runpy,sys;from pathlib import Path;'
                          'p=Path(sys.argv[1]).resolve(strict=True);sys.path.insert(0,str(p.parent));'
                          'sys.argv=sys.argv[1:];runpy.run_path(str(p),run_name="__main__")')
-            run = subprocess.run([sys.executable, '-I', '-B', '-c', bootstrap, str(offline)], cwd=target, env=environment,
+            run = subprocess.run([sys.executable, '-I', '-B', '-X', 'utf8', '-c', bootstrap, str(offline)], cwd=target, env=environment,
                                  capture_output=True, text=True, encoding='utf-8', timeout=90, check=False)
             if run.returncode:
                 raise RuntimeError(run.stdout + run.stderr)

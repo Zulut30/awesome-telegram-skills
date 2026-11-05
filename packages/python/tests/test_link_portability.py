@@ -21,7 +21,16 @@ class LinkPortabilityTests(unittest.TestCase):
             target = Path(folder) / 'target'
             target.mkdir()
             link = Path(folder) / 'link'
-            link.symlink_to(target, target_is_directory=True)
+            try:
+                link.symlink_to(target, target_is_directory=True)
+            except OSError as error:
+                if os.name != 'nt' or error.winerror != 1314:
+                    raise
+                if not hasattr(Path, 'is_junction'):
+                    self.skipTest('Windows symlinks need privileges; junction detection needs Python 3.12+')
+                # A real unprivileged Windows link keeps the filesystem check meaningful.
+                import _winapi
+                _winapi.CreateJunction(str(target), str(link))
             for module in (diagnostics, starter):
                 with self.subTest(module=module.__name__):
                     self.assertTrue(module._linked(link))

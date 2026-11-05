@@ -20,7 +20,8 @@ class SourcesReviewTests(unittest.TestCase):
         self.assertEqual(len(rows), len(list((ROOT / '.agents/skills').glob('*/SKILL.md'))))
         self.assertTrue(all(row['checked'] for row in rows))
         self.assertFalse([row['skill'] for row in rows if row['stale']])
-        later = review.skill_ages(ROOT / '.agents/skills', dt.date(2027, 1, 15))
+        latest = max(dt.date.fromisoformat(row['checked']) for row in rows)
+        later = review.skill_ages(ROOT / '.agents/skills', latest + dt.timedelta(days=review.QUARTER_DAYS + 1))
         self.assertTrue(all(row['stale'] for row in later))
 
     def test_missing_or_old_dates_are_stale(self):

@@ -123,6 +123,14 @@
     ],
     "docs/troubleshooting.md": [
       ".agents/skills/telegram-debugging/references/troubleshooting.md"
+    ],
+    "docs/telegram-serverless.md": [
+      ".agents/skills/telegram-mini-app-typescript/references/telegram-serverless.md",
+      ".agents/skills/telegram-mini-app-native-capabilities/references/telegram-serverless.md",
+      ".agents/skills/telegram-mini-app-auth/references/telegram-serverless.md",
+      ".agents/skills/telegram-deploy/references/telegram-serverless.md",
+      ".agents/skills/telegram-project-planner/references/telegram-serverless.md",
+      ".agents/skills/telegram-security-review/references/telegram-serverless.md"
     ]
   }
 }
