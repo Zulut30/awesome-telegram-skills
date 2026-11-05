@@ -438,5 +438,14 @@
       "same_json_value": true,
       "runtime_sources_unchanged": true
     }
+  },
+  "acceptance": {
+    "source_commit": "10ad78e89f05595be828bfdfbf8c8684c4a68adf",
+    "requirement": "Синхронизировать changelog, каталог, exports, инструкции ИИ и примеры; каждое несовместимое изменение имеет работающий before/after путь.",
+    "observations": [
+      "Canonical changelog, AI onboarding, navigation and examples agree with current0.28 catalogs/420 exports; all original100 requirement triples preserved. Twenty-seven changed historical descriptors are classified with public before/after consumers, including real SQLite/FSM state and compiler witnesses.",
+      "The copied standalone migration runner executed outside checkout: full38 stages, SDK-free18 stages and two refusal operations preserved prior report/database/backup and caller files. Historical0.5 artifacts were built without patching the old source; exact0.28 wheel/tarball were used. Repository290 tests passed with two Windows skips; future1.0RC and live acceptance are not asserted."
+    ],
+    "status": "done-for-current0.28-scope"
   }
 }
