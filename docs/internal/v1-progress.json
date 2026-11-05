@@ -1540,10 +1540,22 @@
       "id": 87,
       "title": "Провести негативные security-сценарии",
       "requirement": "Проверить чужие IDs, forged initData/callbacks, повторные webhooks, опасные файлы и утечки секретов; внешние сообщения и docs не становятся инструкциями ИИ.",
-      "status": "pending",
-      "commit_subject": null,
-      "artifacts": [],
-      "evidence": []
+      "status": "done",
+      "commit_subject": "roadmap(087): accept exercised negative security scenarios",
+      "artifacts": [
+        "docs/internal/local-028-acceptance.json",
+        "docs/internal/shop-recovery-acceptance.json",
+        "docs/internal/acceptance-087.json"
+      ],
+      "evidence": [
+        "Exact0.28 full879 Python/89TS and installed shop61 Python/262Chrome exercise current server actor/owner checks, denied saved replay and fresh-actor transaction refusal.",
+        "InitData signature/freshness, callback binding, repeated webhook/payment identity and outbox unknown cases passed in real installed modules and SQLite/HTTP/process fixtures.",
+        "Actual download byte caps/unsafe paths/stream close and protocol/body/secret redaction negatives passed; no real account or payment request.",
+        "Three cooperative blind solvers, one provider; bounded untrusted-document observations, not universal prompt-injection resistance or OS isolation.",
+        "Inbound inter-agent bodies are encrypted in the archive; actual host task metadata and visible solver/tool history retained, analysis/system/developer excluded.",
+        "Full088 remains pending; unsupported imports and separate doctor-guard assessment are not hidden by these accepted security cases.",
+        "No live Telegram/provider, physical device, human usability or pilot claim."
+      ]
     },
     {
       "id": 88,
