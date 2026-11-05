@@ -940,10 +940,17 @@
       "id": 42,
       "title": "Расширить контракт проверки initData",
       "requirement": "Покрыть поврежденную подпись, срок действия, неверный bot context и разбор полей; пользователь определяется только после серверной проверки, `initDataUnsafe` не авторизует запросы.",
-      "status": "pending",
-      "commit_subject": null,
-      "artifacts": [],
-      "evidence": []
+      "status": "done",
+      "commit_subject": "roadmap(042): accept server verified Mini App launch identity",
+      "artifacts": [
+        "examples/shop/README.md",
+        "docs/internal/backend-state-readiness-2026-11-05.md",
+        "docs/internal/local-026-acceptance.json"
+      ],
+      "evidence": [
+        "Exact 0.26 installed library and application wheels/tarball: 24 Python, 4 headless Node and 246 Chrome checks passed; real HTTP/SQLite/process recovery, no live Telegram/device/provider proof.",
+        "Malformed/forged/expired/future/duplicate launch vectors and wrong bot context are refused; frontend identity fields cannot authorize requests."
+      ]
     },
     {
       "id": 43,
