@@ -18,8 +18,10 @@ try{
   for(const [label,width,height] of devices){
     for(const theme of ['light','dark']){
       const context=await browser.newContext({viewport:{width,height}});const page=await context.newPage();
-      const errors=[];page.on('pageerror',error=>errors.push(error.message));
+      const errors=[],scripts=[];page.on('pageerror',error=>errors.push(error.message));
+      page.on('request',request=>{if(request.resourceType()==='script')scripts.push(new URL(request.url()).pathname);});
       await page.goto(base);await page.getByRole('heading',{name:'Запись на консультацию'}).waitFor();
+      verify(scripts.includes('/app/index.js')&&!scripts.some(route=>route.startsWith('/lib/')),`${label}-${theme}: initial app is a self-contained bundle, public library fixture is opt-in`);
       if(theme==='dark') await page.getByRole('button',{name:'Сменить тему'}).click();
       await page.getByRole('button',{name:'10:00',exact:true}).click();
       await page.getByLabel('Ваше имя', {exact:true}).fill('Тестовый участник');

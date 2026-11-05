@@ -1,4 +1,4 @@
-"""Build a self-contained Pages documentation site from an accepted source tree."""
+"""Build accepted production documentation, or an explicitly marked development preview."""
 from __future__ import annotations
 
 import argparse
@@ -26,6 +26,7 @@ REPOSITORY = 'https://github.com/Zulut30/awesome-telegram-skills'
 SITE_URL = 'https://zulut30.github.io/awesome-telegram-skills/'
 ROOT = Path(__file__).resolve().parents[1]
 EXCLUDED = {'.git', '.venv', 'node_modules', 'output', '__pycache__', 'dist', 'build', '.mypy_cache'}
+PREVIEW_NOTICE = '<div class="callout" role="note" data-build-mode="preview"><strong>Предварительная документация · режим разработки.</strong> Эта сборка не подтверждает приемку версии и не предназначена для публикации в Pages.</div>'
 
 
 def text(value: object) -> str:
@@ -163,7 +164,10 @@ class DocumentHTML(HTMLParser):
 
 
 class Builder:
-    def __init__(self, source: Path, output: Path, site_url: str, revision: str, quality: Path | None = None):
+    def __init__(self, source: Path, output: Path, site_url: str, revision: str, quality: Path | None = None, *, preview: bool = False):
+        if type(preview) is not bool:
+            raise ValueError('Preview must be explicitly enabled as a boolean')
+        self.preview, self.mode = preview, 'preview' if preview else 'production'
         self.source, self.output = source, output
         self.quality = quality  # CI numbers of the quality board; without them the board uses repository data only
         self.site_url, self.revision = site_url.rstrip('/') + '/', revision
@@ -182,7 +186,8 @@ class Builder:
             raise ValueError('Documentation source versions disagree')
         # Summary lines of acceptance reports; the full reports are commit permalinks or release assets.
         accepted = json.loads((source / 'docs/acceptance-history.json').read_text(encoding='utf-8'))['reports']
-        if not any(item.get('version') == self.version and item.get('passed') is True for item in accepted):
+        self.accepted_version = any(item.get('version') == self.version and item.get('passed') is True for item in accepted)
+        if not self.accepted_version and not self.preview:
             raise ValueError('Publish documentation only for an accepted version; use a clean source snapshot')
         # Sections, goals and sidebar entries of user pages; docs/internal is published but not navigated or searched.
         self.navigation = json.loads((source / 'docs/navigation.json').read_text(encoding='utf-8'))
@@ -230,8 +235,12 @@ class Builder:
         plane = '<svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="m3 10 18-7-6 18-4-7-8-4Z" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"/><path d="m11 14 10-11" stroke="currentColor" stroke-width="1.7"/></svg>'
         search_icon = '<svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><circle cx="10.5" cy="10.5" r="6.5" stroke="currentColor" stroke-width="1.8"/><path d="m15.5 15.5 5 5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>'
         tools = f'<div class="page-tools"><span class="badge">{text(self.version)}</span><span>experimental · локальная поставка</span><a href="{text(source_link)}">Исходник ↗</a></div>'
+        if self.preview:
+            tools = PREVIEW_NOTICE + tools
         table_of_contents = f'<aside class="toc" aria-label="На этой странице"><p class="toc-title">На этой странице</p>{toc}</aside>' if toc else ''
         html = f'''<!doctype html><html lang="{'en' if route.startswith(('en/', 'docs/en/')) else 'ru'}"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>{text(title)} — Awesome Telegram Skills</title><meta name="description" content="{text(description[:230])}"><link rel="canonical" href="{text(self.site_url + route.removesuffix('index.html'))}"><meta property="og:title" content="{text(title)} — Awesome Telegram Skills"><meta property="og:description" content="{text(description[:230])}"><meta property="og:image" content="{text(self.site_url + 'assets/cover.png')}"><meta name="theme-color" content="#087eb4"><script src="{assets('theme.js')}"></script><link rel="stylesheet" href="{assets('site.css')}"><script src="{assets('site.js')}" defer></script></head><body data-base="{text(base)}" data-menu="closed"><a class="skip-link" href="#content">К содержимому</a><header class="topbar"><div class="topbar-inner"><a class="brand" href="{text(relative('index.html', route))}"><span class="brand-icon">{plane}</span><span>Awesome Telegram<small>SKILLS &amp; PATTERNS</small></span></a><nav class="topnav" aria-label="Основные разделы">{nav('library/index.html','Библиотека')}{nav('skills/index.html','Скиллы')}{nav('api/index.html','API')}{nav('for-agents/index.html','Для ИИ')}</nav><div class="top-actions"><button type="button" class="search-trigger" data-open-search aria-label="Поиск по документации">{search_icon}<span>Поиск</span><kbd>Ctrl K</kbd></button><button type="button" class="icon-button" data-theme-toggle aria-label="Включить темную тему">◐</button><button type="button" class="menu-button" data-menu-toggle aria-controls="site-navigation" aria-expanded="false" aria-label="Открыть меню">☰</button></div></div></header><button type="button" class="backdrop" data-close-menu aria-label="Закрыть меню"></button><div class="layout"><nav id="site-navigation" class="sidebar" aria-label="Навигация документации"><div class="sidebar-version"><span class="version-dot"></span>Версия {text(self.version)} · experimental</div>{self.sidebar(route)}</nav><main class="main-wrap" id="content" tabindex="-1"><p class="breadcrumbs"><a href="{text(relative('index.html', route))}">Документация</a> / {text(section)}</p><div class="reading-layout"><article class="article">{tools}{content}</article>{table_of_contents}</div><footer class="page-footer"><span>Скиллы и пакеты самостоятельны. SDK/mock/browser ≠ live-приемка.</span><a href="{REPOSITORY}">GitHub ↗</a></footer></main></div><dialog class="search-dialog" id="search-dialog" aria-labelledby="search-title"><div class="search-head"><label><span id="search-title" class="visually-hidden">Поиск по документации</span><input id="doc-search" type="search" autocomplete="off" maxlength="200" placeholder="Задача, скилл или API…" aria-label="Запрос поиска"></label><button type="button" class="icon-button" data-close-search aria-label="Закрыть поиск">×</button></div><p class="search-status" id="search-status" role="status" aria-live="polite"></p><div class="search-results" id="search-results"></div></dialog></body></html>'''
+        if self.preview:
+            html = html.replace('</head>', '<meta name="robots" content="noindex,nofollow"></head>', 1)
         target = self.output / route
         target.parent.mkdir(parents=True, exist_ok=True)
         target.write_bytes(html.encode('utf-8'))
@@ -313,6 +322,8 @@ class Builder:
     def home(self) -> None:
         route = 'index.html'
         content = f'<p class="eyebrow">Практическая документация</p><h1>От идеи до работающего<br>Telegram-проекта.</h1><p class="lead">Скиллы объясняют решение. Компоненты дают код. Примеры показывают интеграцию — от клавиатуры бота до интерфейса Mini App.</p><div class="buttons"><a class="button" href="docs/quickstart/index.html">Первый запуск</a><a class="button secondary" href="for-agents/index.html">Подключить через ИИ</a></div><div class="hero"><img src="assets/cover.png" alt="Awesome Telegram Skills: Python bots. TypeScript Mini Apps." width="2048" height="768"><div class="hero-bottom"><p>Python для ботов и backend. TypeScript для Mini Apps. Сохраняйте SDK, storage и frontend-фреймворк своего проекта.</p></div></div><div class="stats"><div class="stat"><strong>{len(self.skills)}</strong><span>самостоятельный скилл</span></div><div class="stat"><strong>{len(self.components["components"])}</strong><span>группы компонентов</span></div><div class="stat"><strong>{len(self.recipes["recipes"])}</strong><span>рецептов с контекстом</span></div><div class="stat"><strong>{len(self.api["symbols"])}</strong><span>публичных API-символов</span></div></div><div class="callout"><strong>Принятая версия {text(self.version)}, experimental.</strong> Пакеты поставляются локально. Реальные Telegram-клиенты, устройства и платежные провайдеры проверяются отдельно.</div><h2>Выберите свою задачу</h2><div class="cards">'
+        if self.preview:
+            content = content.replace('Принятая версия', 'Предварительная версия', 1)
         for title, summary, target, tag in [('Разработать бота', 'Кнопки, ввод, формы, меню и события через Python/aiogram.', 'library/python/index.html', 'Python'), ('Собрать Mini App', 'Темы, safe areas, bridge, API и scoped черновики.', 'library/typescript/index.html', 'TypeScript'), ('Выбрать скилл', 'Когда использовать, как вызвать, какой результат получить.', 'skills/index.html', 'AI skills'), ('Найти готовый рецепт', 'Ряды 2/3, цвета, контекст, код и команды offline-проверки.', 'recipes/index.html', 'Cookbook'), ('Проверить API', 'Полный import, runtime/type, пример и ограничения.', 'api/index.html', 'Reference'), ('Передать библиотеку агенту', 'Установка, выбор компонента, интеграция и приемка результата.', 'for-agents/index.html', 'Для ИИ')]:
             content += self.card(route, title, summary, target, tag=tag)
         content += '</div><h2>Глубже в библиотеку</h2><p>Полные контракты, ошибки, расширение, матрица поддержки и план 1.0 находятся в меню. Исторические результаты отмечены своей версией; каталог API не объявляет все Telegram-сценарии готовыми к production.</p>'
@@ -380,6 +391,12 @@ class Builder:
         shutil.copytree(self.source / 'gallery', self.output / 'recipes')
         gallery = self.output / 'recipes/index.html'
         gallery.write_bytes(gallery.read_bytes().replace(b'data-repository-base="../"', b'data-repository-base="files/"'))
+        if self.preview:
+            # The standalone recipe gallery bypasses render(), but is still a published user page.
+            html = gallery.read_bytes().decode('utf-8')
+            html = html.replace('</head>', '<meta name="robots" content="noindex,nofollow"></head>', 1)
+            html = re.sub(r'(<body\b[^>]*>)', lambda match: match[0] + PREVIEW_NOTICE, html, count=1, flags=re.I)
+            gallery.write_bytes(html.encode('utf-8'))
         shutil.copyfile(self.source / 'catalog/recipe-gallery.json', self.output / 'recipes/recipes.json')
         for name in {name for item in self.recipes['recipes'] for name in (*item['source_files'], *item['check_files'])}:
             source = (self.source / name).resolve()
@@ -395,13 +412,16 @@ class Builder:
         (self.output / 'api-reference-index.json').write_bytes((self.source / 'catalog/api-reference-index.json').read_bytes())
         (self.output / '.nojekyll').write_bytes(b'')
         overview = f'# Awesome Telegram Skills\n\n> Самостоятельные AI skills и локальные Python/TypeScript-компоненты для Telegram. Принятая experimental версия {self.version}.\n\nНе считайте сайт установленным пакетом; не загружайте все материалы ради узкой задачи.\n\n## Начать\n\n- [Инструкция для ИИ-агента]({self.site_url}for-agents/): вход, установка, выбор API, требования рецепта и проверка\n- [Каталог скиллов]({self.site_url}skills/): назначение всех {len(self.skills)} навыков\n- [Компоненты]({self.site_url}library/): {len(self.components["components"])} групп\n- [API]({self.site_url}api/): точные импорты и виды exports\n- [Галерея]({self.site_url}recipes/): {len(self.recipes["recipes"])} рецептов\n- [Машинный каталог компонентов]({self.site_url}components.json)\n- [Машинный индекс API]({self.site_url}api-reference-index.json)\n\n## Скиллы\n' + ''.join(f'- [{skill.name}]({self.site_url}skills/{skill.name}/): {skill.description}\n' for skill in self.skills) + f'\n## Полный текст (по необходимости)\n\n- [llms-full.txt]({self.site_url}llms-full.txt): инструкции и guides; не обязателен для одной задачи\n'
+        if self.preview:
+            overview = overview.replace('Принятая experimental версия', 'Предварительная версия разработки', 1)
         (self.output / 'llms.txt').write_bytes(overview.encode('utf-8'))
         full = overview + '\n\n' + '\n\n'.join(f'---\nSource: {name}\nURL: {self.site_url + route.removesuffix("index.html")}\n\n{(self.source / name).read_text(encoding="utf-8")}' for name, route in self.mapping.items() if not name.startswith('docs/internal/'))
         (self.output / 'llms-full.txt').write_bytes(full.encode('utf-8'))
         urls = ''.join(f'<url><loc>{text(self.site_url + route.removesuffix("index.html"))}</loc></url>' for route in sorted(self.pages))
         (self.output / 'sitemap.xml').write_bytes(f'<?xml version="1.0" encoding="UTF-8"?><urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">{urls}</urlset>'.encode('utf-8'))
-        (self.output / 'robots.txt').write_bytes(f'User-agent: *\nAllow: /\nSitemap: {self.site_url}sitemap.xml\n'.encode('utf-8'))
-        manifest = {'version': self.version, 'revision': self.revision, 'skills': len(self.skills), 'component_groups': len(self.components['components']), 'api_symbols': len(self.api['symbols']), 'recipes': len(self.recipes['recipes']), 'pages': self.pages, 'files': {file.relative_to(self.output).as_posix(): hashlib.sha256(file.read_bytes()).hexdigest() for file in sorted(self.output.rglob('*')) if file.is_file()}}
+        robots = 'User-agent: *\nDisallow: /\n' if self.preview else f'User-agent: *\nAllow: /\nSitemap: {self.site_url}sitemap.xml\n'
+        (self.output / 'robots.txt').write_bytes(robots.encode('utf-8'))
+        manifest = {'version': self.version, 'revision': self.revision, 'mode': self.mode, 'accepted_version': self.accepted_version, 'skills': len(self.skills), 'component_groups': len(self.components['components']), 'api_symbols': len(self.api['symbols']), 'recipes': len(self.recipes['recipes']), 'pages': self.pages, 'files': {file.relative_to(self.output).as_posix(): hashlib.sha256(file.read_bytes()).hexdigest() for file in sorted(self.output.rglob('*')) if file.is_file()}}
         (self.output / 'site-manifest.json').write_bytes(json.dumps(manifest, ensure_ascii=False, indent=2).encode('utf-8'))
         return manifest
 
@@ -414,6 +434,7 @@ def main() -> int:
     parser.add_argument('--revision', default='preview')
     parser.add_argument('--check', action='store_true', help='Compare a fresh deterministic build without changing existing output')
     parser.add_argument('--quality', type=Path, help='quality board numbers with CI data from build_quality_board.py --ci')
+    parser.add_argument('--preview', action='store_true', help='Explicit development build: visible preview label/noindex; not a Pages publication')
     args = parser.parse_args()
     source, output = args.source.resolve(), args.output.resolve()
     if output == source or source.is_relative_to(output):
@@ -422,17 +443,23 @@ def main() -> int:
         if not output.is_dir():
             raise ValueError('Check requires an existing site')
         before = {file.relative_to(output).as_posix(): hashlib.sha256(file.read_bytes()).hexdigest() for file in output.rglob('*') if file.is_file()}
+        try:
+            existing = json.loads((output / 'site-manifest.json').read_text(encoding='utf-8'))
+        except (OSError, UnicodeError, json.JSONDecodeError) as error:
+            raise ValueError('Check requires a valid site manifest; existing output preserved') from error
+        if not isinstance(existing, dict) or existing.get('mode', 'production') != ('preview' if args.preview else 'production'):
+            raise ValueError('Site build mode differs; use matching --preview mode; existing output preserved')
         with TemporaryDirectory(prefix='telegram-docs-check-') as temporary:
             fresh = Path(temporary) / 'site'
-            manifest = Builder(source, fresh, args.site_url, args.revision, args.quality).build()
+            manifest = Builder(source, fresh, args.site_url, args.revision, args.quality, preview=args.preview).build()
             expected = {file.relative_to(fresh).as_posix(): hashlib.sha256(file.read_bytes()).hexdigest() for file in fresh.rglob('*') if file.is_file()}
         if before != expected:
             raise ValueError('Site differs from its source; existing output preserved')
     else:
         if output.exists():
             raise ValueError('Output already exists; choose a new directory or --check. Existing files preserved.')
-        manifest = Builder(source, output, args.site_url, args.revision, args.quality).build()
-    print(json.dumps({'passed': True, 'version': manifest['version'], 'skills': manifest['skills'], 'component_groups': manifest['component_groups'], 'api_symbols': manifest['api_symbols'], 'recipes': manifest['recipes'], 'pages': len(manifest['pages']), 'check': args.check, 'output': str(output)}, ensure_ascii=False))
+        manifest = Builder(source, output, args.site_url, args.revision, args.quality, preview=args.preview).build()
+    print(json.dumps({'passed': True, 'version': manifest['version'], 'mode': manifest['mode'], 'skills': manifest['skills'], 'component_groups': manifest['component_groups'], 'api_symbols': manifest['api_symbols'], 'recipes': manifest['recipes'], 'pages': len(manifest['pages']), 'check': args.check, 'output': str(output)}, ensure_ascii=False))
     return 0
 
 

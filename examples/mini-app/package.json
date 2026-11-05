@@ -5,12 +5,13 @@
   "version": "0.5.0",
   "type": "module",
   "scripts": {
-    "build": "tsc -p tsconfig.json"
+    "build": "tsc -p tsconfig.json --noEmit && node scripts/build.mjs"
   },
   "dependencies": {
     "@awesome-telegram/patterns": "0.25.0"
   },
   "devDependencies": {
+    "esbuild": "0.28.2",
     "typescript": "7.0.2"
   }
 }

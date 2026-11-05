@@ -31,11 +31,20 @@ jobs:
       - env:
           GITHUB_TOKEN: ${{ github.token }}
         run: python scripts/build_quality_board.py --ci --repo "$GITHUB_REPOSITORY" --output output/quality-board.json
-      - run: python scripts/build_docs_site.py --source . --output output/docs-site --revision '${{ github.sha }}' --quality output/quality-board.json
+      # PR/push checks may preview a new, unaccepted version. Pages always uses the accepted-production gate.
+      - name: Build explicitly marked development preview
+        if: ${{ !inputs.pages-artifact }}
+        run: python scripts/build_docs_site.py --source . --output output/docs-site --revision '${{ github.sha }}' --quality output/quality-board.json --preview
+      - name: Build accepted production site for Pages
+        if: inputs.pages-artifact
+        run: python scripts/build_docs_site.py --source . --output output/docs-site --revision '${{ github.sha }}' --quality output/quality-board.json
       - run: python scripts/verify_docs_site.py --site output/docs-site --report output/docs-site-check.json
       - run: npm ci
       - run: npx playwright install --with-deps chromium
       - run: node tests/docs-browser.mjs output/docs-site output/playwright/docs-site
+        env:
+          DOCS_BROWSER: chromium
+      - run: node site/tests/mode_browser.mjs output/docs-site output/playwright/docs-mode
         env:
           DOCS_BROWSER: chromium
       - if: always()
@@ -46,6 +55,7 @@ jobs:
             output/docs-site-check.json
             output/quality-board.json
             output/playwright/docs-site
+            output/playwright/docs-mode
           if-no-files-found: warn
       - if: inputs.pages-artifact
         uses: actions/configure-pages@45bfe0192ca1faeb007ade9deae92b16b8254a0d # v6.0.0

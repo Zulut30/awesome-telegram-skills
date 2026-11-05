@@ -30,7 +30,7 @@ export function createDemoServer({telegramSdk=false}={}){
       if(request.method!=='GET'){json(response,405,{error:'method'});return;}
       let file;
       if(url.pathname==='/') file=path.join(root,'index.html');
-      else if(url.pathname==='/app/index.js') file=path.join(root,'dist/index.js');
+      else if(['/app/index.js','/app/native-recipes.js'].includes(url.pathname)) file=path.join(root,'dist',path.basename(url.pathname));
       else if(url.pathname==='/lib/styles.css') file=path.join(library,'src/styles.css');
       else if(/^\/lib\/[a-z-]+\.js$/.test(url.pathname)) file=path.join(library,'dist',path.basename(url.pathname));
       else {json(response,404,{error:'missing'});return;}
