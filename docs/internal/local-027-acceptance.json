@@ -1,0 +1,192 @@
+{
+  "schema_version": 1,
+  "kind": "local-acceptance-summary",
+  "version": "0.27.0",
+  "date": "2026-11-05",
+  "source_commit": "91442af594a722936dbcb625bdb1be1b9ab4ce2e",
+  "source_archive_sha256": "da268894dce48296c438ba248d037ed95e552d49341a17961b07fb29141d8daa",
+  "repository_fixture_commit": "ee3d4f3ffe44615a55a5b78d907466a429a5f922",
+  "repository_fixture_delta": [
+    "tests/test_package_verification.py"
+  ],
+  "report_path": "output/pattern-library-0.27.0/distribution-report.json",
+  "report_sha256": "bab193b898db921c8b42254e9050f88e91978a9782b5ba8013eb80e3ec97fce9",
+  "stages": 92,
+  "python_tests": 853,
+  "python_skipped": 3,
+  "typescript_tests": 89,
+  "artifacts": [
+    {
+      "name": "awesome_telegram_patterns-0.27.0-py3-none-any.whl",
+      "bytes": 517554,
+      "sha256": "a377354e0909d2cd37224493cbed973441aa70f1492b89647848dac00acc695e"
+    },
+    {
+      "name": "awesome-telegram-patterns-0.27.0.tgz",
+      "bytes": 52089,
+      "sha256": "6ade55796556a6712a7c39e6ca36757561c8697f15bce6ce3d397548e9be56ae"
+    }
+  ],
+  "api": {
+    "symbols": 416,
+    "python_symbols": 309,
+    "typescript_symbols": 107,
+    "fixture_groups": 49,
+    "browser_checks": 48
+  },
+  "shop": {
+    "report_path": "output/pattern-library-0.27.0/shop-example/report.json",
+    "report_sha256": "7f7dbc2477f409d7b8fcbcfece62b4d5955ec174948938e28566ee5685cf5ac6",
+    "python_tests": 53,
+    "headless_node_tests": 5,
+    "chrome_checks": 262,
+    "library_artifacts": [
+      {
+        "name": "awesome_telegram_patterns-0.27.0-py3-none-any.whl",
+        "bytes": 517554,
+        "sha256": "a377354e0909d2cd37224493cbed973441aa70f1492b89647848dac00acc695e"
+      },
+      {
+        "name": "awesome-telegram-patterns-0.27.0.tgz",
+        "bytes": 52089,
+        "sha256": "6ade55796556a6712a7c39e6ca36757561c8697f15bce6ce3d397548e9be56ae"
+      }
+    ],
+    "application_artifact": {
+      "name": "awesome_telegram_shop_example-0.1.0-py3-none-any.whl",
+      "bytes": 47260,
+      "sha256": "70167daff1a7cbbc226093af4fc14ee8024f7a3420e145ded7da8ea4e976f9bd"
+    }
+  },
+  "native_watch": {
+    "report_sha256": "6e31738691dd836dd58dd4146d3e81906e418ba8958c11e3c0ff3077d227c1ca",
+    "frozen_source_matches": [
+      ".github/workflows/telegram-docs-watch.yml",
+      "scripts/mini_app_index.py",
+      "scripts/diff_mini_app_index.py",
+      "scripts/build_native_signatures.py",
+      "scripts/build_telegram_catalog.py",
+      "scripts/build_recipe_gallery.py",
+      "catalog/mini-app-index.json",
+      "catalog/mini-app-types.json",
+      "catalog/telegram-capabilities.json",
+      "packages/typescript/src/native-api.ts",
+      "packages/typescript/src/native-flows.ts",
+      "packages/typescript/src/native-catalog.ts",
+      "packages/typescript/src/native-signatures.ts",
+      "packages/typescript/tests/core.test.mjs",
+      "packages/typescript/tests/native-flows.test.mjs",
+      "packages/typescript/tests/native-flows-browser.mjs",
+      "packages/typescript/tests/types/native-calls.ts",
+      "packages/python/tests/test_execution.py",
+      "tests/test_api_watch.py",
+      "tests/test_native_signatures.py",
+      "docs/native-flows.md",
+      "docs/telegram-serverless.md",
+      "recipes/mini-app/README.md"
+    ],
+    "legacy": {
+      "passed": true,
+      "baseline": "b55abc2",
+      "unchanged_method_records": 99,
+      "unchanged_signature_lines": 99,
+      "global_index_checked_date": "2026-10-04",
+      "global_types_checked_date": "2026-10-07"
+    },
+    "sdk_protocol": {
+      "passed": true,
+      "sdk_sha256": "124bdff7ba3fe86c8ba5143467afec21e020405e74abdb92cfdda6c0ee3b5908",
+      "checks": [
+        "callback_second_argument",
+        "callback_third_argument",
+        "undefined_input_defaults_to_object",
+        "native_return_void",
+        "endpoint_error_fields",
+        "network_status_zero",
+        "malformed_response_error",
+        "input_validation_before_fetch",
+        "missing_initdata_rejects_before_fetch"
+      ],
+      "synthetic_requests": 6,
+      "external_network": false,
+      "scope": "Exact official Serverless IIFE in an isolated VM with synthetic fetch, no platform/device/hosting acceptance"
+    },
+    "partial_source_provenance": [
+      {
+        "checked_date": "2026-11-05",
+        "source": "https://core.telegram.org/bots/webapps#serverless",
+        "source_sha256": "5514a251a455eebb9675dea6915b07f63aa0198cef0d4c1ddd58b602e4d90272",
+        "sdk_source": "https://telegram.org/js/telegram-web-app.js",
+        "sdk_sha256": "124bdff7ba3fe86c8ba5143467afec21e020405e74abdb92cfdda6c0ee3b5908",
+        "methods": [
+          "Serverless.call"
+        ],
+        "properties": [
+          "WebApp.Serverless"
+        ],
+        "scope": "Only Serverless method, hosting context, callback overloads and error fields; no published minimum client version. Existing methods and global review dates retained."
+      }
+    ],
+    "counts": {
+      "mini_app_methods": 100,
+      "mini_app_events": 44,
+      "recipes": 341,
+      "sdk_recipes": 207,
+      "mock_recipes": 34,
+      "native_reference_recipes": 100
+    },
+    "generated_metadata_note": "Three gallery/resource hashes changed during the 0.26 to 0.27 version synchronization; final exact installed catalog and full consumers independently passed."
+  },
+  "renewal": {
+    "report_sha256": "d5e137e0ed1d99c6e9f5e795baf97eb2de12c87d608cf904a5f7f529a64539f4",
+    "new_core_tests": 18,
+    "new_sdk_tests": 13,
+    "real_renewal_spawn_cases": 2,
+    "bound_frozen_sources": [
+      "packages/python/src/telegram_patterns/_aiogram/stars_payments.py",
+      "packages/python/src/telegram_patterns/payment_ledger.py",
+      "packages/python/tests/test_stars_renewal.py",
+      "packages/python/tests/test_payment_ledger.py",
+      "examples/api-reference/python/bot_stars_payments.py",
+      "tests/public_types.py"
+    ],
+    "documentation_note": "The canonical guide later clarified separate fixture versus shop timeouts; runtime, tests, types and public composition retain their source hashes."
+  },
+  "repair_history": [
+    {
+      "source": "643abf6",
+      "result": "failed core-smoke: stale 340 recipe assertion"
+    },
+    {
+      "source": "1990616",
+      "result": "failed core_recipes reference: remaining stale catalog counts"
+    },
+    {
+      "source": "91442af",
+      "result": "passed all 92 consumer stages after source-bound count and public reference repairs"
+    },
+    {
+      "source": "ee3d4f3",
+      "result": "only the owned real-timeout test fixture adds its required catalog input; library and consumer code unchanged"
+    }
+  ],
+  "pending_ci": {
+    "repository": "https://github.com/Zulut30/awesome-telegram-skills/actions/runs/42097483339",
+    "full": "https://github.com/Zulut30/awesome-telegram-skills/actions/runs/42097488640",
+    "scope": "Local acceptance does not assert pending GitHub job results."
+  },
+  "items": {
+    "79": {
+      "requirement": "Проверить выдачу, продление, истечение, отмену и последствия возврата; поддерживаемые типы подписок определяются выбранным платежным маршрутом.",
+      "observations": [
+        "Exact installed Stars composition and 18 new ledger/13 SDK renewal cases prove paid access, expiry, refund consequences and future cancel/resume. Two real renewal process cases preserve unknown effects and prevent concurrent fresh commands; native updates lack causal RPC identity and never invent it."
+      ],
+      "source_commit": "91442af594a722936dbcb625bdb1be1b9ab4ce2e"
+    }
+  },
+  "limits": [
+    "All components remain experimental; source 0.28 work is outside this acceptance.",
+    "No live Telegram or payment cabinet, physical device, screen reader, independent human study or production pilot is proven.",
+    "The shop local eight-second budget begins at receipt; Telegram ten-second server-send deadline remains item 74 acceptance."
+  ]
+}

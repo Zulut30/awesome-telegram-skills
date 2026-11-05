@@ -58,3 +58,6 @@
 - [Привязка артефактов 0.26.0](local-026-acceptance.json)
 - [Магазин: возвраты Stars и надежный прием событий](shop-stars-refunds-2026-11-05.md)
 - [Магазин: срок pre-checkout и отдельная очередь](shop-precheckout-deadline-2026-11-05.md)
+
+- [Локальная приемка 0.27.0](local-027-acceptance.md)
+- [Привязка артефактов 0.27.0](local-027-acceptance.json)

@@ -1426,10 +1426,15 @@
       "id": 79,
       "title": "Реализовать оплачиваемый доступ",
       "requirement": "Проверить выдачу, продление, истечение, отмену и последствия возврата; поддерживаемые типы подписок определяются выбранным платежным маршрутом.",
-      "status": "pending",
-      "commit_subject": null,
-      "artifacts": [],
-      "evidence": []
+      "status": "done",
+      "commit_subject": "roadmap(079): accept durable Stars subscription lifecycle",
+      "artifacts": [
+        "docs/internal/local-027-acceptance.json",
+        "docs/internal/local-027-acceptance.md"
+      ],
+      "evidence": [
+        "Exact installed Stars composition and 18 new ledger/13 SDK renewal cases prove paid access, expiry, refund consequences and future cancel/resume. Two real renewal process cases preserve unknown effects and prevent concurrent fresh commands; native updates lack causal RPC identity and never invent it."
+      ]
     },
     {
       "id": 80,
