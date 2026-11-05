@@ -1269,10 +1269,16 @@
       "id": 65,
       "title": "Оформить biometrics и native storage",
       "requirement": "Проверить поддерживаемые операции, отказы и смену аккаунта; клиентская биометрия и значения storage не заменяют серверные права.",
-      "status": "pending",
-      "commit_subject": null,
-      "artifacts": [],
-      "evidence": []
+      "status": "done",
+      "commit_subject": "roadmap(065): accept account scoped storage and local biometrics",
+      "artifacts": [
+        "docs/internal/local-026-acceptance.json",
+        "docs/internal/local-026-acceptance.md"
+      ],
+      "evidence": [
+        "Exact d6109aa 0.26 artifacts: 92 stages, 816 Python tests (3 environment skips), 88 TypeScript tests, installed UI and public API Chrome consumers passed. No live Telegram/provider/device/screen-reader/pilot proof is inferred.",
+        "Storage read/write/remove booleans, secure recovery, biometric refusal and account changes are checked; length-prefixed namespaces prevent cross-account key collisions and local unlock never authorizes backend access."
+      ]
     },
     {
       "id": 66,
