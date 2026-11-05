@@ -1107,10 +1107,16 @@
       "id": 53,
       "title": "Добавить навигационные и модальные компоненты",
       "requirement": "Реализовать tabs, dialogs и bottom sheets с возвратом фокуса, Escape на ПК и понятным закрытием на touch-устройствах.",
-      "status": "pending",
-      "commit_subject": null,
-      "artifacts": [],
-      "evidence": []
+      "status": "done",
+      "commit_subject": "roadmap(053): accept owned tabs and modal navigation",
+      "artifacts": [
+        "docs/internal/local-026-acceptance.json",
+        "docs/internal/local-026-acceptance.md"
+      ],
+      "evidence": [
+        "Exact d6109aa 0.26 artifacts: 92 stages, 816 Python tests (3 environment skips), 88 TypeScript tests, installed UI and public API Chrome consumers passed. No live Telegram/provider/device/screen-reader/pilot proof is inferred.",
+        "Real Chrome tabs implement arrow/Home/End selection; native dialogs and sheets retain Tab focus, close by Escape or visible synthetic touch action and restore initiating focus."
+      ]
     },
     {
       "id": 54,
