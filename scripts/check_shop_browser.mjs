@@ -14,10 +14,12 @@ const base=`http://127.0.0.1:${port}`;
 const processes=[];let browser,checks=0;const cases=[];
 function verify(condition,message){assert.ok(condition,message);checks++;}
 // Bearer session tokens seen in /api/session responses, per page: the app keeps its token only in memory.
-const tokens=new WeakMap();const owner=target=>typeof target.page==='function'?target.page():target;const bearer=target=>({Authorization:'Bearer '+tokens.get(owner(target))});
+const tokens=new WeakMap(),sessionReads=new WeakMap();const owner=target=>typeof target.page==='function'?target.page():target;
+async function observedSession(target){const page=owner(target);for(;;){const read=sessionReads.get(page);if(!read)return;await read;if(sessionReads.get(page)===read)return;}}
+const bearer=async target=>{await observedSession(target);return {Authorization:'Bearer '+tokens.get(owner(target))};};
 // The observer records only fully read session replies; deliberate lost replies or context cleanup may interrupt a body.
 // Application auth/recovery and old-token refusal are asserted independently below.
-function trackSession(page){const sequence=new WeakMap();let latest=0;page.on('request',request=>{if(['/api/session','/api/session/rotate'].includes(new URL(request.url()).pathname)&&request.method()==='POST')sequence.set(request,++latest);});page.on('response',async response=>{if(['/api/session','/api/session/rotate'].includes(new URL(response.url()).pathname)&&response.ok()){let session;try{session=await response.json();}catch{return;}if(sequence.get(response.request())===latest)tokens.set(page,session.token);}});page.on('dialog',dialog=>dialog.accept());}
+function trackSession(page){const sequence=new WeakMap();let latest=0;page.on('request',request=>{if(['/api/session','/api/session/rotate'].includes(new URL(request.url()).pathname)&&request.method()==='POST')sequence.set(request,++latest);});page.on('response',response=>{if(['/api/session','/api/session/rotate'].includes(new URL(response.url()).pathname)&&response.ok()){const read=(async()=>{let session;try{session=await response.json();}catch{return;}if(sequence.get(response.request())===latest)tokens.set(page,session.token);})();if(sequence.get(response.request())===latest)sessionReads.set(page,read);}});page.on('dialog',dialog=>dialog.accept());}
 function start(name){
   const child=spawn(python,['-I','-B','-m','telegram_shop_example.offline','--database',path.join(output,`${name}.sqlite`),'--frontend',frontend,'--port',String(port)],{cwd:caller,env:{...process.env,PYTHONPATH:caller,BOT_TOKEN:'100:PRIVATE_CANARY'},stdio:['pipe','pipe','pipe'],windowsHide:true});
   const queue=[],waiters=[];let chunk='',stderr='',exitCode=null,closed=false;
@@ -45,8 +47,8 @@ async function pageFor(ready,{width,height,theme},drop=false){
   return {context,page,errors,external,get lost(){return lost;}};
 }
 const pending=page=>page.evaluate(()=>{const key=Object.keys(localStorage).find(k=>k.startsWith('telegram-shop:pending:'));return key?JSON.parse(localStorage.getItem(key)):null;});
-const orderData=page=>page.evaluate(async headers=>{const result=await fetch('/api/orders',{headers});return (await result.json()).orders[0];},bearer(page));
-const tokenKept=page=>page.evaluate(token=>Object.values(localStorage).join('').includes(token)||Object.values(sessionStorage).join('').includes(token)||document.cookie!=='',tokens.get(owner(page)));
+const orderData=async page=>page.evaluate(async headers=>{const result=await fetch('/api/orders',{headers});return (await result.json()).orders[0];},await bearer(page));
+const tokenKept=async page=>{await observedSession(page);return page.evaluate(token=>Object.values(localStorage).join('').includes(token)||Object.values(sessionStorage).join('').includes(token)||document.cookie!=='',tokens.get(owner(page)));};
 async function choose(page,both=true){await page.getByRole('button',{name:'Добавить Бот без путаницы',exact:true}).focus();await owner(page).keyboard.press('Enter');if(both)await page.getByRole('button',{name:'Добавить Mini App на любом экране',exact:true}).click();await page.getByLabel('Я прочитал(а) условия покупки ниже и согласен(на) с ними.').check();}
 async function created(page){await page.getByRole('button',{name:'Создать заказ',exact:true}).click();await page.waitForFunction(()=>document.querySelector('[role=status]').textContent.includes('Заказ создан'));return orderData(page);}
 function ratio(a,b){const luminance=color=>{const values=color.match(/\d+(?:\.\d+)?/g).slice(0,3).map(Number).map(n=>{const v=n/255;return v<=.04045?v/12.92:((v+.055)/1.055)**2.4;});return .2126*values[0]+.7152*values[1]+.0722*values[2];};const x=luminance(a),y=luminance(b);return (Math.max(x,y)+.05)/(Math.min(x,y)+.05);}
@@ -66,7 +68,7 @@ try{
       await page.getByRole('button',{name:'Создать заказ',exact:true}).click();await page.waitForFunction(()=>document.querySelector('[role=status]').textContent.includes('Результат неизвестен'));const previous=await pending(page);verify(fixture.lost&&previous!==null,'response deliberately lost after real server effect');await page.reload();await page.waitForFunction(()=>document.querySelector('[role=status]').textContent.includes('Заказ создан'));row=await orderData(page);verify((await pending(page)).operation===previous.operation&&row.operation===previous.operation,'reload reconciles the same operation');
     }else row=await created(page);
     verify(row.total===65&&row.currency==='XTR'&&row.status==='awaiting',`${id}: server-owned order`);
-    verify((await context.request.get(base+'/api/content/bot-kit',{headers:bearer(page)})).status()===403,`${id}: access denied before receipt`);
+    verify((await context.request.get(base+'/api/content/bot-kit',{headers:await bearer(page)})).status()===403,`${id}: access denied before receipt`);
     verify((await context.request.get(base+'/api/content/bot-kit')).status()===401,`${id}: no ambient credential`);
     await page.getByRole('button',{name:'Оплатить Stars',exact:true}).click();await page.waitForFunction(()=>window.__shopHost.invoiceCalls.length===1);
     const lookup=page.waitForResponse(r=>new URL(r.url()).pathname===`/api/orders/${row.id}`);await page.evaluate(()=>window.__shopHost.invoiceCallback('paid'));await lookup;
@@ -139,7 +141,7 @@ try{
     await page.getByRole('button',{name:'Оплатить Stars',exact:true}).click();await page.waitForFunction(()=>window.__shopHost.invoiceCalls.length===1);
     verify((await server.command({action:'stats'})).invoice_requests===1,'lifecycle: reconciled ready invoice reuses its link without a new remote preparation');
     await page.evaluate(()=>{window.__oldShopInvoice=window.__shopHost.invoiceCallback;});
-    const beforeLostRotation=tokens.get(page);let rotationLost=false;
+    await observedSession(page);const beforeLostRotation=tokens.get(page);let rotationLost=false;
     await page.route(base+'/api/session/rotate',async route=>{rotationLost=true;await route.fetch();await route.abort();});
     const renewedLogin=page.waitForResponse(response=>new URL(response.url()).pathname==='/api/session'&&response.request().method()==='POST');
     await page.getByRole('button',{name:'Обновить вход',exact:true}).click();await renewedLogin;await page.waitForFunction(()=>document.querySelector('[role=status]').textContent.includes('Заказ создан'));
@@ -157,9 +159,9 @@ try{
     // Real server answers first; keep that old browser read pending while rotate invalidates its bearer.
     let heldResolve,releaseHeld;const held=new Promise(resolve=>{heldResolve=resolve;}),released=new Promise(resolve=>{releaseHeld=resolve;});let hold=true;
     await page.route(base+'/api/orders',async route=>{if(hold&&route.request().method()==='GET'){hold=false;const response=await route.fetch();heldResolve();await released;try{await route.fulfill({response});}catch{/* browser request was genuinely aborted by account generation */}}else await route.continue();});
-    await page.getByRole('button',{name:'Мои покупки',exact:true}).click();await held;const oldToken=tokens.get(page);
+    await page.getByRole('button',{name:'Мои покупки',exact:true}).click();await held;await observedSession(page);const oldToken=tokens.get(page);
     await page.getByRole('button',{name:'Обновить вход',exact:true}).click();await page.waitForFunction(()=>document.querySelector('[role=status]').textContent.includes('Вход обновлён'));
-    const rotatedToken=tokens.get(page);verify(rotatedToken!==oldToken,'lifecycle: rotation updates actual UI memory bearer');
+    await observedSession(page);const rotatedToken=tokens.get(page);verify(rotatedToken!==oldToken,'lifecycle: rotation updates actual UI memory bearer');
     verify((await context.request.get(base+'/api/orders',{headers:{Authorization:'Bearer '+oldToken}})).status()===401,'lifecycle: old bearer read rejected by real backend');
     releaseHeld();await page.locator('section[aria-label="Мои покупки"] article').waitFor();
     verify((await pending(page)).operation===original,'lifecycle: rotation preserves linked original intent');
@@ -180,13 +182,13 @@ try{
     const delayedReply=page.waitForResponse(response=>new URL(response.url()).pathname==='/api/session/rotate');releaseAuth();await delayedReply;await page.unroute(base+'/api/session/rotate');await page.waitForTimeout(30);
     const newActorRead=page.waitForResponse(response=>new URL(response.url()).pathname==='/api/orders'&&response.request().method()==='GET');
     await page.getByRole('button',{name:'Мои покупки',exact:true}).click();await newActorRead;await page.getByText('Покупок пока нет. Выберите материал в каталоге.',{exact:true}).waitFor();
-    verify((await context.request.get(base+'/api/orders',{headers:bearer(page)})).status()===200,'lifecycle: delayed previous-account rotation cannot replace new login or subsequent actual UI read');
+    verify((await context.request.get(base+'/api/orders',{headers:await bearer(page)})).status()===200,'lifecycle: delayed previous-account rotation cannot replace new login or subsequent actual UI read');
     verify((await page.locator('.shop-total').textContent()).includes('0'),'lifecycle: account switch clears old cart/order immediately');
-    verify((await context.request.get(base+'/api/orders/'+row.id,{headers:bearer(page)})).status()===403,'lifecycle: new actor cannot fetch old order');
+    verify((await context.request.get(base+'/api/orders/'+row.id,{headers:await bearer(page)})).status()===403,'lifecycle: new actor cannot fetch old order');
     verify(await page.evaluate(operation=>JSON.parse(localStorage.getItem('telegram-shop:pending:100:42:v1')).operation===operation&&!localStorage.getItem('telegram-shop:pending:100:77:v1'),original),'lifecycle: pending payload remains in original verified account scope');
     let revokeHeld,revokeRelease;const heldRevoke=new Promise(resolve=>{revokeHeld=resolve;}),releaseRevoke=new Promise(resolve=>{revokeRelease=resolve;});
     await page.route(base+'/api/session/revoke',async route=>{const response=await route.fetch();revokeHeld();await releaseRevoke;await route.fulfill({response});});
-    const actor77=tokens.get(page);await page.getByRole('button',{name:'Выйти',exact:true}).click();await heldRevoke;
+    await observedSession(page);const actor77=tokens.get(page);await page.getByRole('button',{name:'Выйти',exact:true}).click();await heldRevoke;
     verify(await page.getByRole('button',{name:'Выйти',exact:true}).isHidden()&&await page.locator('section[aria-label="Мои покупки"] article').count()===0,'lifecycle: local logout clears identity and private view before delayed server acknowledgement');
     revokeRelease();await page.waitForFunction(()=>document.querySelector('[role=status]').textContent.includes('Вы вышли'));await page.unroute(base+'/api/session/revoke');
     verify((await context.request.get(base+'/api/orders',{headers:{Authorization:'Bearer '+actor77}})).status()===401,'lifecycle: logout revokes current bearer durably');
@@ -253,10 +255,10 @@ try{
       const context=await browser.newContext({viewport:{width:390,height:844}});await host(context,raw,'light');const page=await context.newPage();trackSession(page);const errors=[],external=[];
       page.on('pageerror',error=>errors.push(error.message));await page.route('**/*',async route=>{if(new URL(route.request().url()).origin!==base){external.push(route.request().url());await route.abort();}else await route.continue();});
       const screen=name==='main'?'orders':'catalog';await page.goto(base+'/?tgWebAppStartParam='+screen+'&user_id=77&role=admin');
-      if(raw){await page.waitForFunction(()=>document.querySelector('[role=status]').textContent.includes('Выберите материалы'));verify(tokens.has(page),'launch: '+name+' uses server-issued bearer');}
+      if(raw){await page.waitForFunction(()=>document.querySelector('[role=status]').textContent.includes('Выберите материалы'));await observedSession(page);verify(tokens.has(page),'launch: '+name+' uses server-issued bearer');}
       else{await page.waitForFunction(()=>document.querySelector('[role=status]').textContent.includes('Для покупки откройте Mini App'));verify(!tokens.has(page),'launch: '+name+' without initData never creates a session');}
       verify(await page.getByRole('heading',{name:screen==='orders'?'Мои покупки':'Каталог',exact:true}).isVisible(),'launch: '+name+' selects only the allowlisted screen');
-      verify((await context.request.get(base+'/api/orders',{headers:raw?bearer(page):{}})).status()===(raw?200:401),'launch: '+name+' query identity/role cannot authorize a private route');
+      verify((await context.request.get(base+'/api/orders',{headers:raw?await bearer(page):{}})).status()===(raw?200:401),'launch: '+name+' query identity/role cannot authorize a private route');
       if(!raw){await choose(page,false);verify(await page.getByRole('button',{name:'Создать заказ',exact:true}).isDisabled(),'launch: '+name+' remains useful as public catalog without pretending to buy');}
       verify((await server.command({action:'stats'})).orders===0,'launch: '+name+' navigation never creates an order');
       verify(errors.length===0&&external.length===0,'launch: '+name+' has no exceptions or external traffic');await context.close();
