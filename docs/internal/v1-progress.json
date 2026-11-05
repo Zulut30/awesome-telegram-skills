@@ -1629,10 +1629,20 @@
       "id": 95,
       "title": "Защитить выпуск артефактов",
       "requirement": "Подготовить dependency inventory/SBOM, checksums и provenance, ограничить права CI; при публикации использовать поддерживаемый registry trusted publishing вместо долгоживущих токенов.",
-      "status": "pending",
-      "commit_subject": null,
-      "artifacts": [],
-      "evidence": []
+      "status": "done",
+      "commit_subject": "roadmap(095): accept guarded release preparation",
+      "artifacts": [
+        "scripts/build_release.py",
+        "scripts/release_assets.py",
+        "docs/release-security.md",
+        ".github/workflows/release.yml",
+        ".github/workflows/publish.yml",
+        "docs/internal/local-028-acceptance.json"
+      ],
+      "evidence": [
+        "Nine release-security source hashes match immutable source92. Release assets refuse replacement/races; CI scopes append-only reports and permissions, while registry jobs require trusted publisher and exact repo/workflow/tag/source/signer identity. Thirty-three tests passed with one Windows symlink skip.",
+        "Two real frozen-ref 0.28 builds at 4b95183 yield identical wheel, tarball, SBOM and checksums; official pinned CycloneDX1.6 schema validates eight declared-direct components including host-provided peers. Source epoch build wheel is a separate artifact from the full-verifier wheel. No tag, signature, registry binding/upload or external publication is asserted."
+      ]
     },
     {
       "id": 96,

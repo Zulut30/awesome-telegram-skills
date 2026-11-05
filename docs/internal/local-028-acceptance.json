@@ -106,6 +106,30 @@
         "Twenty tests exercise policy/helper behavior with a real child CLI and loopback API, including preserved caller files and legacy aliases; no assigned staff or guaranteed SLA is claimed."
       ],
       "source_commit": "92a9d151dc57d85cc5f1eb614f9980e808b36b59"
+    },
+    "95": {
+      "requirement": "Подготовить dependency inventory/SBOM, checksums и provenance, ограничить права CI; при публикации использовать поддерживаемый registry trusted publishing вместо долгоживущих токенов.",
+      "observations": [
+        "Nine release-security source hashes match immutable source92. Release assets refuse replacement/races; CI scopes append-only reports and permissions, while registry jobs require trusted publisher and exact repo/workflow/tag/source/signer identity. Thirty-three tests passed with one Windows symlink skip.",
+        "Two real frozen-ref 0.28 builds at 4b95183 yield identical wheel, tarball, SBOM and checksums; official pinned CycloneDX1.6 schema validates eight declared-direct components including host-provided peers. Source epoch build wheel is a separate artifact from the full-verifier wheel. No tag, signature, registry binding/upload or external publication is asserted."
+      ],
+      "source_commit": "4b9518350f9fa0a6b2f9b43c4cc570a5955ad4a3"
     }
+  },
+  "release_preparation": {
+    "source_commit": "4b9518350f9fa0a6b2f9b43c4cc570a5955ad4a3",
+    "report_path": "output/production-run-2026-11-05/release-028-source4b-run2/report.json",
+    "report_sha256": "ee5eff28910aa33a2112cbee21df3413284e9621ebec5a4268dfd14d1b51eebf",
+    "builds": 2,
+    "components": 8,
+    "artifacts": {
+      "awesome-telegram-patterns-0.28.0.cdx.json": "5cb245de106f0d5066260931312e0c8a710019bac1ffecedc6ca1965e79dd246",
+      "awesome-telegram-patterns-0.28.0.tgz": "dd24c7db27d9f1dd1f2dcc36a49bd67d14577eec1c7a15216632f92615ca3931",
+      "awesome_telegram_patterns-0.28.0-py3-none-any.whl": "10de316b708709b514eb89eceae319742588c7a542c38e935eb01167af8d657e",
+      "SHA256SUMS": "3378bc21a5477d4fa17cd4caa51be7b4cfbf05d83c37a207371c8e77e9759eaf"
+    },
+    "scope": "Local frozen-ref release preparation; separate wheel hash from full-verifier artifacts. No signature, tag, release or registry write.",
+    "different_wheel_from_verifier": true,
+    "reason": "Release builder normalizes archive timestamps to the source commit epoch; verifier artifact hashes remain independently bound."
   }
 }
