@@ -1329,10 +1329,16 @@
       "id": 71,
       "title": "Зафиксировать допустимые платежные маршруты",
       "requirement": "Для цифровых товаров внутри Telegram использовать Stars; внешние провайдеры подключать только для подходящих разрешенных сценариев по актуальным правилам.",
-      "status": "pending",
-      "commit_subject": null,
-      "artifacts": [],
-      "evidence": []
+      "status": "done",
+      "commit_subject": "roadmap(071): accept documented permitted payment routes",
+      "artifacts": [
+        "docs/internal/local-026-acceptance.json",
+        "docs/internal/local-026-acceptance.md"
+      ],
+      "evidence": [
+        "Exact d6109aa 0.26 artifacts: 92 stages, 816 Python tests (3 environment skips), 88 TypeScript tests, installed UI and public API Chrome consumers passed. No live Telegram/provider/device/screen-reader/pilot proof is inferred.",
+        "Canonical payment guides classify goods and require Stars for digital goods inside Telegram; external routes require a permitted merchant scenario and do not become mandatory core dependencies."
+      ]
     },
     {
       "id": 72,
