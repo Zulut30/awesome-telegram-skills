@@ -71,3 +71,6 @@
 - [Приемка пункта 086](acceptance-086.json)
 
 - [Приемка пункта 087](acceptance-087.json)
+
+- [Независимая проверка 42 навыков](skill-evaluation-088-acceptance.md)
+- [Результаты и привязки проверки навыков](skill-evaluation-088-acceptance.json)

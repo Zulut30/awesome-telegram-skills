@@ -1,0 +1,918 @@
+{
+  "schema_version": 1,
+  "kind": "independent-skill-execution-acceptance",
+  "checked_at_utc": "2026-11-05T22:57:21.537601+00:00",
+  "study_complete": true,
+  "passed": true,
+  "all_original_tasks_passed": false,
+  "all_frozen_skills_covered": true,
+  "production_ready": false,
+  "source_commit": "92a9d151dc57d85cc5f1eb614f9980e808b36b59",
+  "source_archive_sha256": "d6268b0f742a8e45db16b71363acc7651965faa3038a3e6616d1e690da4f8693",
+  "skills_fingerprint": "d2196f80c6be2e27addb72cf1cd1d56b24d177f5a9dbd3b22c6eade2961ac01b",
+  "runtime_version": "0.28.0",
+  "artifacts": [
+    {
+      "name": "awesome_telegram_patterns-0.28.0-py3-none-any.whl",
+      "bytes": 524352,
+      "sha256": "e0b42b53f1228fc804ab37b73675641fada1c148aa9eebffd11b05af1859fb7d"
+    },
+    {
+      "name": "awesome-telegram-patterns-0.28.0.tgz",
+      "bytes": 52074,
+      "sha256": "dd24c7db27d9f1dd1f2dcc36a49bd67d14577eec1c7a15216632f92615ca3931"
+    }
+  ],
+  "coverage": {
+    "skills": 42,
+    "accepted_scenarios": 42,
+    "observed_cases": 117,
+    "model_sessions": 6,
+    "accepted_model_sessions": 5,
+    "providers": 1,
+    "model": "gpt-6.1-sol"
+  },
+  "baseline": {
+    "tasks": 42,
+    "raw_passed": 21,
+    "actual_cases": 97,
+    "expected_cases": 109,
+    "raw_score_is_unreliable_due_to_judge_defects": true
+  },
+  "same_answer_reassessment": {
+    "first_corrected_passed": 39,
+    "tasks": 42,
+    "actual_cases": 105,
+    "expected_cases": 110,
+    "after_J9_passed": 40,
+    "new_blind_solvers": false,
+    "candidate_hashes_preserved": true,
+    "judge_audit_sha256": "66af85a1f1a6ef9b5abd43a1c5ab52267562a4d08133ff2dd3ff7f262d3b375a",
+    "repair_manifest_sha256": "c3f54a946a63e17be2e8adbe6bb7ab6a09d6f3c66c187d843379f82b0082e2ad",
+    "J9_probe_sha256": "ae851b4a4ec7919944a94f7793bcb0dede159898d3d75c5ffdc670a7b043975e"
+  },
+  "new_followups": [
+    {
+      "task": "T043",
+      "passed": true,
+      "cases": 6,
+      "additional_input": "Complete public API index420 and fully specified context/output contract."
+    },
+    {
+      "task": "T044",
+      "passed": false,
+      "assessment": "boundary-not-assessed",
+      "report_sha256": "ff5eb9aed5920bfa8f1e03c133c7e1db8444c54442909553082f0fee23db7bd3",
+      "reason": "Own readonly Python child was not explicitly forbidden by the public task, but the guard stopped it before observing doctor/SDK. No blanket subprocess or candidate-specific exception was added."
+    },
+    {
+      "task": "T045",
+      "passed": true,
+      "cases": 6,
+      "additional_input": "Complete public API index420; published current-process/no-own-subprocess/exec/eval contract. New thread observer was calibrated before trial."
+    }
+  ],
+  "historical_failures": [
+    {
+      "task": "T016",
+      "status": "not-accepted-public-import",
+      "report_path": "output/production-run-2026-11-05/evaluation-088/regrade-batch-3/logs/T016/report.json",
+      "report_sha256": "175a3434b9fbb0d8fbe26e51da96ee9e8831ca8121fcc9fb1aac7ae1bb40457a"
+    },
+    {
+      "task": "T025",
+      "status": "not-accepted-public-import",
+      "report_path": "output/production-run-2026-11-05/evaluation-088/regrade-batch-3/logs/T025/report.json",
+      "report_sha256": "14d12598fdea56e974543011b4c3ba0928565082930d44b534746db21644bfd1"
+    }
+  ],
+  "accepted_results": [
+    {
+      "task": "T015",
+      "skill": "telegram-admin-panel",
+      "stage": "same-answer-repaired-judge",
+      "cases": 3,
+      "solver_id": "01a1ad94-6f34-7931-8123-0eeadab047c1",
+      "model": "gpt-6.1-sol",
+      "candidate_path": "output/production-run-2026-11-05/evaluation-088/blind-batch-2/tasks/T015/solution.py",
+      "candidate_sha256": "0be9b0fd95820657f6ebbcc01d7e374e9bfbec0dbb46a7b229edce844b3b5c23",
+      "decision_sha256": "7a3617ac84a1ba9f6472cf85ed91dd21041620c1e10c04fad4b0307e48ea9177",
+      "report_path": "output/production-run-2026-11-05/evaluation-088/regrade-batch-2/logs/T015/report.json",
+      "report_sha256": "6e7cb7ba23d557f6a27108458907c300aff257618d1df4358aab98fd74d405cb",
+      "selected_skill_sha256": "8857786496763514ccb417d50860363436958bc51679430d18def17a560dd780",
+      "artifacts": {
+        "version": "0.28.0",
+        "wheel_sha256": "e0b42b53f1228fc804ab37b73675641fada1c148aa9eebffd11b05af1859fb7d",
+        "tarball_sha256": "dd24c7db27d9f1dd1f2dcc36a49bd67d14577eec1c7a15216632f92615ca3931"
+      }
+    },
+    {
+      "task": "T028",
+      "skill": "telegram-ai-bot",
+      "stage": "same-answer-repaired-judge",
+      "cases": 2,
+      "solver_id": "01a1ad94-6f34-7931-8123-0eeadab047c1",
+      "model": "gpt-6.1-sol",
+      "candidate_path": "output/production-run-2026-11-05/evaluation-088/blind-batch-2/tasks/T028/solution.py",
+      "candidate_sha256": "b5084e671b7052609e5f2582fca44890e450628894a07a30516d8cfb8e731b1e",
+      "decision_sha256": "25a04d5016a2292b3554813628e66febd8cf46a8334153dfc425c4fbb2538fa1",
+      "report_path": "output/production-run-2026-11-05/evaluation-088/regrade-batch-2/logs/T028/report.json",
+      "report_sha256": "2d311593692d38e5ffd85431f951a2e6e0589eb44763f8b019ce1e5f632441ae",
+      "selected_skill_sha256": "c4defb4fdc1352072270c01bce436bad46b086ce485d336ca92e7d35f331c550",
+      "artifacts": {
+        "version": "0.28.0",
+        "wheel_sha256": "e0b42b53f1228fc804ab37b73675641fada1c148aa9eebffd11b05af1859fb7d",
+        "tarball_sha256": "dd24c7db27d9f1dd1f2dcc36a49bd67d14577eec1c7a15216632f92615ca3931"
+      }
+    },
+    {
+      "task": "T008",
+      "skill": "telegram-bot-api",
+      "stage": "same-answer-repaired-judge",
+      "cases": 2,
+      "solver_id": "01a1ad94-6f34-7931-8123-0eeadab047c1",
+      "model": "gpt-6.1-sol",
+      "candidate_path": "output/production-run-2026-11-05/evaluation-088/blind-batch-2/tasks/T008/solution.py",
+      "candidate_sha256": "8df571b4107a02780f6a1abc3e975d8ec54d5c3355da31248cdacd1ff7760647",
+      "decision_sha256": "cb950d3e13f50f874709e5abb3521fab39a5cba9be149fbf0fce3031b912f59a",
+      "report_path": "output/production-run-2026-11-05/evaluation-088/regrade-batch-2/logs/T008/report.json",
+      "report_sha256": "f122c0b164d6a47a39f0b2a00470e64fbcf6e7a0a997a6e15c143e987f228b5b",
+      "selected_skill_sha256": "c01401a4c9637d4f54e0d009d54ca3570308035fb6075a71f37b93c99b083e94",
+      "artifacts": {
+        "version": "0.28.0",
+        "wheel_sha256": "e0b42b53f1228fc804ab37b73675641fada1c148aa9eebffd11b05af1859fb7d",
+        "tarball_sha256": "dd24c7db27d9f1dd1f2dcc36a49bd67d14577eec1c7a15216632f92615ca3931"
+      }
+    },
+    {
+      "task": "T018",
+      "skill": "telegram-bot-python",
+      "stage": "same-answer-repaired-judge",
+      "cases": 2,
+      "solver_id": "01a1ad94-6f34-7931-8123-0eeadab047c1",
+      "model": "gpt-6.1-sol",
+      "candidate_path": "output/production-run-2026-11-05/evaluation-088/blind-batch-2/tasks/T018/solution.py",
+      "candidate_sha256": "edc0da471cdc9a49e8b8a8c5c38398a1938fb2a9971552916318c32ef36a624c",
+      "decision_sha256": "51b3cd46c38ee05bd29389c58023d4fb4b9b3454679b521a47681c9120c0867c",
+      "report_path": "output/production-run-2026-11-05/evaluation-088/regrade-batch-2/logs/T018/report.json",
+      "report_sha256": "e2665226ce2f764a9f7b6ea074b898460b6841e08d4d6ec868f12bfc9e93950b",
+      "selected_skill_sha256": "1df810fc71ace0434cd019579af980d470030b9dfd265213b08777cf135963ca",
+      "artifacts": {
+        "version": "0.28.0",
+        "wheel_sha256": "e0b42b53f1228fc804ab37b73675641fada1c148aa9eebffd11b05af1859fb7d",
+        "tarball_sha256": "dd24c7db27d9f1dd1f2dcc36a49bd67d14577eec1c7a15216632f92615ca3931"
+      }
+    },
+    {
+      "task": "T006",
+      "skill": "telegram-business-bots",
+      "stage": "same-answer-repaired-judge",
+      "cases": 3,
+      "solver_id": "01a1ad9e-86c1-7db1-9440-b1cb0f991922",
+      "model": "gpt-6.1-sol",
+      "candidate_path": "output/production-run-2026-11-05/evaluation-088/blind-batch-3/tasks/T006/solution.py",
+      "candidate_sha256": "6e3e88d245f91247be341b0773bc254ec47bcb96aa2a26cbf8bd28ccdb499b72",
+      "decision_sha256": "91bb68b49ce3237b384045783f88ce0a78199e98a25ca52e1554550173f8028d",
+      "report_path": "output/production-run-2026-11-05/evaluation-088/regrade-batch-3/logs/T006/report.json",
+      "report_sha256": "956ac36f5b35f4a86e95a4ea9bb832474d2a532f07704c5b6fa0df5b70481820",
+      "selected_skill_sha256": "63272143043a04f045a81bf4925ef5ee9e136cb5e44bc3dfde2b7ed4cfe1bd4d",
+      "artifacts": {
+        "version": "0.28.0",
+        "wheel_sha256": "e0b42b53f1228fc804ab37b73675641fada1c148aa9eebffd11b05af1859fb7d",
+        "tarball_sha256": "dd24c7db27d9f1dd1f2dcc36a49bd67d14577eec1c7a15216632f92615ca3931"
+      }
+    },
+    {
+      "task": "T031",
+      "skill": "telegram-buttons",
+      "stage": "same-answer-repaired-judge",
+      "cases": 2,
+      "solver_id": "01a1ad94-2fe2-7e43-8ddc-37f069c8423c",
+      "model": "gpt-6.1-sol",
+      "candidate_path": "output/production-run-2026-11-05/evaluation-088/blind-batch-1/tasks/T031/solution.py",
+      "candidate_sha256": "9a26712e45bbc0444f713858d807a7dbf9212e43b2e8acd11b032e5454e759a0",
+      "decision_sha256": "cb93a067c9f6ccadf39e5e68b2890ce75b4e0647e373f41e611f40e17dc6ce5f",
+      "report_path": "output/production-run-2026-11-05/evaluation-088/regrade-batch-1/logs/T031/report.json",
+      "report_sha256": "d74687cc56ba718ec18c2423fdce5a07e1394d36b50a358bed4fe5d873bca002",
+      "selected_skill_sha256": "d9f48e9c95b3450aa9f4c2a6b4a42615aa59b54f48cd15a3b90e28a551cb86ff",
+      "artifacts": {
+        "version": "0.28.0",
+        "wheel_sha256": "e0b42b53f1228fc804ab37b73675641fada1c148aa9eebffd11b05af1859fb7d",
+        "tarball_sha256": "dd24c7db27d9f1dd1f2dcc36a49bd67d14577eec1c7a15216632f92615ca3931"
+      }
+    },
+    {
+      "task": "T035",
+      "skill": "telegram-code-patterns",
+      "stage": "same-answer-repaired-judge",
+      "cases": 2,
+      "solver_id": "01a1ad9e-86c1-7db1-9440-b1cb0f991922",
+      "model": "gpt-6.1-sol",
+      "candidate_path": "output/production-run-2026-11-05/evaluation-088/blind-batch-3/tasks/T035/solution.py",
+      "candidate_sha256": "bec53da383710e7059ee14db189c754884df4a56f6e831be88c05233c6a0c223",
+      "decision_sha256": "56f36a31c705715273e978cab6b5acaf8947d37fb0d0cd670ee9bcbb4b87e675",
+      "report_path": "output/production-run-2026-11-05/evaluation-088/regrade-batch-3/logs/T035/report.json",
+      "report_sha256": "ee15ef9b234dbd633d984314edce4c49b463c03a00195f7dde2a620dfbb62e57",
+      "selected_skill_sha256": "7dda65ed37687ca20128f26a0b07f34f80caf9c8242b60fc7b42706fd9eb2107",
+      "artifacts": {
+        "version": "0.28.0",
+        "wheel_sha256": "e0b42b53f1228fc804ab37b73675641fada1c148aa9eebffd11b05af1859fb7d",
+        "tarball_sha256": "dd24c7db27d9f1dd1f2dcc36a49bd67d14577eec1c7a15216632f92615ca3931"
+      }
+    },
+    {
+      "task": "T038",
+      "skill": "telegram-cryptopay",
+      "stage": "same-answer-repaired-judge",
+      "cases": 2,
+      "solver_id": "01a1ad9e-86c1-7db1-9440-b1cb0f991922",
+      "model": "gpt-6.1-sol",
+      "candidate_path": "output/production-run-2026-11-05/evaluation-088/blind-batch-3/tasks/T038/solution.py",
+      "candidate_sha256": "eb9326dbde70a0cfaf8a0be34d603c3bc81f02853a382cc3033d82adc8e91b0b",
+      "decision_sha256": "031fffd5092554435fafb5b468139d9b0a7e968dadedbcfdf8c5869a12ec2512",
+      "report_path": "output/production-run-2026-11-05/evaluation-088/regrade-batch-3/logs/T038/report.json",
+      "report_sha256": "40c1c6fc8206819c18d38dc140ac6999d81e46f19231851b4f81a0586c4ca1c0",
+      "selected_skill_sha256": "bcc2c68efb178b9ab133cff1c9bfb90bee5a6bdbfb32e8026229b1f20f418fac",
+      "artifacts": {
+        "version": "0.28.0",
+        "wheel_sha256": "e0b42b53f1228fc804ab37b73675641fada1c148aa9eebffd11b05af1859fb7d",
+        "tarball_sha256": "dd24c7db27d9f1dd1f2dcc36a49bd67d14577eec1c7a15216632f92615ca3931"
+      }
+    },
+    {
+      "task": "T017",
+      "skill": "telegram-debugging",
+      "stage": "same-answer-after-J9",
+      "cases": 2,
+      "solver_id": "01a1ad94-2fe2-7e43-8ddc-37f069c8423c",
+      "model": "gpt-6.1-sol",
+      "candidate_path": "output/production-run-2026-11-05/evaluation-088/blind-batch-1/tasks/T017/solution.py",
+      "candidate_sha256": "dba1781a9f5e072dd63aa5a373f68abf07d05142bfdbdb2f2a0d87621f83106e",
+      "decision_sha256": "0ee2a0732ac5ed92f8fe605b478d5d84fef788b1396d8140f0354a7af578e1a9",
+      "report_path": "output/production-run-2026-11-05/evaluation-088/regrade-j9-T017/logs/T017/report.json",
+      "report_sha256": "86d8e592a3abbadf162a3052859e6c90a98c37e210455c78639088e2976c699e",
+      "selected_skill_sha256": "9c9e26252d055c16cf78d462b05f94ddf629922c08d4c0b45e897be9a6d46551",
+      "artifacts": {
+        "version": "0.28.0",
+        "wheel_sha256": "e0b42b53f1228fc804ab37b73675641fada1c148aa9eebffd11b05af1859fb7d",
+        "tarball_sha256": "dd24c7db27d9f1dd1f2dcc36a49bd67d14577eec1c7a15216632f92615ca3931"
+      }
+    },
+    {
+      "task": "T037",
+      "skill": "telegram-deploy",
+      "stage": "same-answer-repaired-judge",
+      "cases": 2,
+      "solver_id": "01a1ad94-6f34-7931-8123-0eeadab047c1",
+      "model": "gpt-6.1-sol",
+      "candidate_path": "output/production-run-2026-11-05/evaluation-088/blind-batch-2/tasks/T037/solution.py",
+      "candidate_sha256": "0975524ccb3725c988f19477141b4361ff4deebb6653ce39675a2275e0f0949e",
+      "decision_sha256": "70aaec9db579abcd686885d7908f1fda503ff0115421ddba5fe1010b1abaf4cb",
+      "report_path": "output/production-run-2026-11-05/evaluation-088/regrade-batch-2/logs/T037/report.json",
+      "report_sha256": "faf8e78ccc624f4228a80ea838530e7a809ee58a709946fbd2941f1ef0aabf8d",
+      "selected_skill_sha256": "1c530e6d1ea1c5417326ae1d150406ec09573dc85e9f803b3d8c33d4a89cd6d6",
+      "artifacts": {
+        "version": "0.28.0",
+        "wheel_sha256": "e0b42b53f1228fc804ab37b73675641fada1c148aa9eebffd11b05af1859fb7d",
+        "tarball_sha256": "dd24c7db27d9f1dd1f2dcc36a49bd67d14577eec1c7a15216632f92615ca3931"
+      }
+    },
+    {
+      "task": "T010",
+      "skill": "telegram-dialogs",
+      "stage": "same-answer-repaired-judge",
+      "cases": 4,
+      "solver_id": "01a1ad94-2fe2-7e43-8ddc-37f069c8423c",
+      "model": "gpt-6.1-sol",
+      "candidate_path": "output/production-run-2026-11-05/evaluation-088/blind-batch-1/tasks/T010/solution.py",
+      "candidate_sha256": "fccc11318a06ba2c33cd06fc992ff64303c3d2622671b5083b7950f58ac2a827",
+      "decision_sha256": "f65a7949d7cbc89191de5622ddb71cac113bae314b68da745174440a7e03b357",
+      "report_path": "output/production-run-2026-11-05/evaluation-088/regrade-batch-1/logs/T010/report.json",
+      "report_sha256": "200741cfc75030d98c7a4e6bea4c618bc5864a950d3a6ee4b3db46e927e5afa3",
+      "selected_skill_sha256": "60d125110c73d9945177a6dde90f284d10e858baa601bf1932f4c4987cb6a425",
+      "artifacts": {
+        "version": "0.28.0",
+        "wheel_sha256": "e0b42b53f1228fc804ab37b73675641fada1c148aa9eebffd11b05af1859fb7d",
+        "tarball_sha256": "dd24c7db27d9f1dd1f2dcc36a49bd67d14577eec1c7a15216632f92615ca3931"
+      }
+    },
+    {
+      "task": "T027",
+      "skill": "telegram-groups",
+      "stage": "same-answer-repaired-judge",
+      "cases": 3,
+      "solver_id": "01a1ad94-2fe2-7e43-8ddc-37f069c8423c",
+      "model": "gpt-6.1-sol",
+      "candidate_path": "output/production-run-2026-11-05/evaluation-088/blind-batch-1/tasks/T027/solution.py",
+      "candidate_sha256": "da9e47960d6a8be93a45bc2ac5019e93e4f00d34a4e7ce7594e2bceb9575f233",
+      "decision_sha256": "922c7ab8fd447dd69c4208c7e6f1d7a10461de21a6ac6da71e7e2fc67c600f0f",
+      "report_path": "output/production-run-2026-11-05/evaluation-088/regrade-batch-1/logs/T027/report.json",
+      "report_sha256": "04d36b031b06eb121a8bcf0905f62522108ff05900959666089606b4dc9bb364",
+      "selected_skill_sha256": "411ec51a5bb2265b28f5a9fd36a340b6123247a01740270251cd2032e4ce1ca6",
+      "artifacts": {
+        "version": "0.28.0",
+        "wheel_sha256": "e0b42b53f1228fc804ab37b73675641fada1c148aa9eebffd11b05af1859fb7d",
+        "tarball_sha256": "dd24c7db27d9f1dd1f2dcc36a49bd67d14577eec1c7a15216632f92615ca3931"
+      }
+    },
+    {
+      "task": "T009",
+      "skill": "telegram-inline-mode",
+      "stage": "same-answer-repaired-judge",
+      "cases": 2,
+      "solver_id": "01a1ad9e-86c1-7db1-9440-b1cb0f991922",
+      "model": "gpt-6.1-sol",
+      "candidate_path": "output/production-run-2026-11-05/evaluation-088/blind-batch-3/tasks/T009/solution.py",
+      "candidate_sha256": "9518c3ade8d5f0870b2ad89d573467122ac7712bcea959c653e6fb9e7d2aae56",
+      "decision_sha256": "f82fadc68147a670afd24cecb96d81c64cefc6c30a0c69071d2417081fbbc53b",
+      "report_path": "output/production-run-2026-11-05/evaluation-088/regrade-batch-3/logs/T009/report.json",
+      "report_sha256": "70df3883ac8eb17fc70848c280a05300002625ee3cd99bd0c181993dff85547c",
+      "selected_skill_sha256": "a9f7ba86e1da00b6aaa158ab8b2e0245d28b7224611696f24844050e27d94e1d",
+      "artifacts": {
+        "version": "0.28.0",
+        "wheel_sha256": "e0b42b53f1228fc804ab37b73675641fada1c148aa9eebffd11b05af1859fb7d",
+        "tarball_sha256": "dd24c7db27d9f1dd1f2dcc36a49bd67d14577eec1c7a15216632f92615ca3931"
+      }
+    },
+    {
+      "task": "T045",
+      "skill": "telegram-library-selection",
+      "stage": "new-independent-current-process-scenario",
+      "cases": 6,
+      "solver_id": "01a1ade4-24bf-7662-bd22-dd18aba15748",
+      "model": "gpt-6.1-sol",
+      "candidate_path": "output/production-run-2026-11-05/evaluation-088/followup-T045/tasks/T045/solution.py",
+      "candidate_sha256": "fd4a1edc3a659cff6b60be66b12e9f974c69a2adf4c3d8e6b825554dfa6a8f6d",
+      "decision_sha256": "e65097d7d999a743a68c64f725fba25c460c08aec5ec8c93b1d0e53678e6897f",
+      "report_path": "output/production-run-2026-11-05/evaluation-088/followup-T045/logs/T045/report.json",
+      "report_sha256": "12c699323648b827ca2cee19fcce5f474af195c76aac24d06e532925b80e8479",
+      "selected_skill_sha256": "be8115a8fa1f02394f068403976539e0ec385d48c6fec0a4afaf354fab0f031a",
+      "artifacts": {
+        "version": "0.28.0",
+        "wheel_sha256": "e0b42b53f1228fc804ab37b73675641fada1c148aa9eebffd11b05af1859fb7d",
+        "tarball_sha256": "dd24c7db27d9f1dd1f2dcc36a49bd67d14577eec1c7a15216632f92615ca3931"
+      }
+    },
+    {
+      "task": "T013",
+      "skill": "telegram-localization",
+      "stage": "same-answer-repaired-judge",
+      "cases": 2,
+      "solver_id": "01a1ad94-2fe2-7e43-8ddc-37f069c8423c",
+      "model": "gpt-6.1-sol",
+      "candidate_path": "output/production-run-2026-11-05/evaluation-088/blind-batch-1/tasks/T013/solution.py",
+      "candidate_sha256": "fd949e0296e7d7dc562b0d7f128d8c86af434eeeb2427abbbb73d2976d753d06",
+      "decision_sha256": "ad4c47b426d21e53d1a797a2b903a0a2dfeea1d02a8e17eb272949fcf0014c88",
+      "report_path": "output/production-run-2026-11-05/evaluation-088/regrade-batch-1/logs/T013/report.json",
+      "report_sha256": "b247499d1c04dc481abffa3b9d4e4dd9766fb1353aaadb377013ab2337ab33ab",
+      "selected_skill_sha256": "4ce8005b7b32590826d55cbff2f924c3f9c525e0f7f266610ba6443ac92898b1",
+      "artifacts": {
+        "version": "0.28.0",
+        "wheel_sha256": "e0b42b53f1228fc804ab37b73675641fada1c148aa9eebffd11b05af1859fb7d",
+        "tarball_sha256": "dd24c7db27d9f1dd1f2dcc36a49bd67d14577eec1c7a15216632f92615ca3931"
+      }
+    },
+    {
+      "task": "T005",
+      "skill": "telegram-media-processing",
+      "stage": "same-answer-repaired-judge",
+      "cases": 3,
+      "solver_id": "01a1ad94-6f34-7931-8123-0eeadab047c1",
+      "model": "gpt-6.1-sol",
+      "candidate_path": "output/production-run-2026-11-05/evaluation-088/blind-batch-2/tasks/T005/solution.py",
+      "candidate_sha256": "0b2f8f210419e4ba7d428f5c7577cc755ac7c67c3e2d5a8328d90684d36c7c1f",
+      "decision_sha256": "a29d2d6e28e30e0516cff907e3039908a44978651c05da453119d619e3d0f816",
+      "report_path": "output/production-run-2026-11-05/evaluation-088/regrade-batch-2/logs/T005/report.json",
+      "report_sha256": "16320d4f3859e54717de377a546a9911d674bee35a02ca6918a4cf60a89dee03",
+      "selected_skill_sha256": "9af8fbaae413c947a04510dbfe18528a1f3d1497478e16d880d9aaa845ce6c6c",
+      "artifacts": {
+        "version": "0.28.0",
+        "wheel_sha256": "e0b42b53f1228fc804ab37b73675641fada1c148aa9eebffd11b05af1859fb7d",
+        "tarball_sha256": "dd24c7db27d9f1dd1f2dcc36a49bd67d14577eec1c7a15216632f92615ca3931"
+      }
+    },
+    {
+      "task": "T022",
+      "skill": "telegram-mini-app-architecture",
+      "stage": "same-answer-repaired-judge",
+      "cases": 2,
+      "solver_id": "01a1ad94-2fe2-7e43-8ddc-37f069c8423c",
+      "model": "gpt-6.1-sol",
+      "candidate_path": "output/production-run-2026-11-05/evaluation-088/blind-batch-1/tasks/T022/solution.ts",
+      "candidate_sha256": "174572d063ddfeac45153920ad33a9a8037ddccdbd757503b4e849721e86d41d",
+      "decision_sha256": "baacdc79a3ec295c84c7dc544fde22a9ba59e54fb564614b9dccd44f968d8ace",
+      "report_path": "output/production-run-2026-11-05/evaluation-088/regrade-batch-1/logs/T022/report.json",
+      "report_sha256": "a72459a76ea5b6d2dc2206ae10ead64f7001eaba6c66064808079d2fba1f0967",
+      "selected_skill_sha256": "b40438bc937ad2d26bba54f40e89f6d578f21207edddac5e5f271cc09069e9f3",
+      "artifacts": {
+        "version": "0.28.0",
+        "wheel_sha256": "e0b42b53f1228fc804ab37b73675641fada1c148aa9eebffd11b05af1859fb7d",
+        "tarball_sha256": "dd24c7db27d9f1dd1f2dcc36a49bd67d14577eec1c7a15216632f92615ca3931"
+      }
+    },
+    {
+      "task": "T002",
+      "skill": "telegram-mini-app-auth",
+      "stage": "same-answer-repaired-judge",
+      "cases": 3,
+      "solver_id": "01a1ad94-6f34-7931-8123-0eeadab047c1",
+      "model": "gpt-6.1-sol",
+      "candidate_path": "output/production-run-2026-11-05/evaluation-088/blind-batch-2/tasks/T002/solution.py",
+      "candidate_sha256": "7d6c3f75ce8aae8f025bb4b028e3ed24ab0e8b96ffe1d98a411aa119c4c970a4",
+      "decision_sha256": "1fcf198a73f4580f136b01fe93eb5d96793a935d0a509eb07ade8c3abf98d49d",
+      "report_path": "output/production-run-2026-11-05/evaluation-088/regrade-batch-2/logs/T002/report.json",
+      "report_sha256": "faf77a391f0c9d37dec1b47cb82f5aa9981d34ed1c93573f4227bbf7424a57d4",
+      "selected_skill_sha256": "97657d459daedb9a1206527471674cddd983f94b22a8524f41dee5e2b9ccf1d4",
+      "artifacts": {
+        "version": "0.28.0",
+        "wheel_sha256": "e0b42b53f1228fc804ab37b73675641fada1c148aa9eebffd11b05af1859fb7d",
+        "tarball_sha256": "dd24c7db27d9f1dd1f2dcc36a49bd67d14577eec1c7a15216632f92615ca3931"
+      }
+    },
+    {
+      "task": "T032",
+      "skill": "telegram-mini-app-design-system",
+      "stage": "same-answer-repaired-judge",
+      "cases": 2,
+      "solver_id": "01a1ad94-6f34-7931-8123-0eeadab047c1",
+      "model": "gpt-6.1-sol",
+      "candidate_path": "output/production-run-2026-11-05/evaluation-088/blind-batch-2/tasks/T032/solution.ts",
+      "candidate_sha256": "f9658499c94bdf5f78fb807e40fa42e1ae7f95250e30322f293c06330d74bdb4",
+      "decision_sha256": "3d5a7ad404efc6f979db4528aba4f8e92d24a90f8f70eee61e210c57bad96798",
+      "report_path": "output/production-run-2026-11-05/evaluation-088/regrade-batch-2/logs/T032/report.json",
+      "report_sha256": "ee7e3777664cfed4d6e0d425985fabeb7e7f080cc4e43c6fda58bb3ded4aab82",
+      "selected_skill_sha256": "d8204f2c547243f5759d56d5334ce43b1e676611caf3ea30c2e0a61fb9d0139f",
+      "artifacts": {
+        "version": "0.28.0",
+        "wheel_sha256": "e0b42b53f1228fc804ab37b73675641fada1c148aa9eebffd11b05af1859fb7d",
+        "tarball_sha256": "dd24c7db27d9f1dd1f2dcc36a49bd67d14577eec1c7a15216632f92615ca3931"
+      }
+    },
+    {
+      "task": "T001",
+      "skill": "telegram-mini-app-device-qa",
+      "stage": "same-answer-repaired-judge",
+      "cases": 2,
+      "solver_id": "01a1ad94-2fe2-7e43-8ddc-37f069c8423c",
+      "model": "gpt-6.1-sol",
+      "candidate_path": "output/production-run-2026-11-05/evaluation-088/blind-batch-1/tasks/T001/solution.ts",
+      "candidate_sha256": "fced0f8ca4165c7ffad810485d8adcc8a72d18d62991b9310978f7e0d60aef0d",
+      "decision_sha256": "949ecf8562d9ec9234322bf5d07a737f4afcc71592455c7eedb7645637c13650",
+      "report_path": "output/production-run-2026-11-05/evaluation-088/regrade-batch-1/logs/T001/report.json",
+      "report_sha256": "3c6ea6d82a405c3365cc894cb4e4fc30f74281aef316c87b0279c6df8a77ee3c",
+      "selected_skill_sha256": "11520c2297b70e3378d2fdf731f56e454808e76d049d64f056757e31ca4f33a8",
+      "artifacts": {
+        "version": "0.28.0",
+        "wheel_sha256": "e0b42b53f1228fc804ab37b73675641fada1c148aa9eebffd11b05af1859fb7d",
+        "tarball_sha256": "dd24c7db27d9f1dd1f2dcc36a49bd67d14577eec1c7a15216632f92615ca3931"
+      }
+    },
+    {
+      "task": "T020",
+      "skill": "telegram-mini-app-integration",
+      "stage": "same-answer-repaired-judge",
+      "cases": 3,
+      "solver_id": "01a1ad9e-86c1-7db1-9440-b1cb0f991922",
+      "model": "gpt-6.1-sol",
+      "candidate_path": "output/production-run-2026-11-05/evaluation-088/blind-batch-3/tasks/T020/solution.py",
+      "candidate_sha256": "bd22f6512f50fb9f06bd3501c1216543fb90858e158518aaee79b75394fe6396",
+      "decision_sha256": "f69cb854210b83eda04534fddb9a632d0d8797c18d4ae7c29bbd8d662039ac77",
+      "report_path": "output/production-run-2026-11-05/evaluation-088/regrade-batch-3/logs/T020/report.json",
+      "report_sha256": "8c746f7ab7e8f086dd198b477682747bd92a3ec8e7518e01a099b9fdf5ffc984",
+      "selected_skill_sha256": "07d9977fbcd5c270d8ba6631414c05dc4d2b30eebe04b623da5e82be82fcb98f",
+      "artifacts": {
+        "version": "0.28.0",
+        "wheel_sha256": "e0b42b53f1228fc804ab37b73675641fada1c148aa9eebffd11b05af1859fb7d",
+        "tarball_sha256": "dd24c7db27d9f1dd1f2dcc36a49bd67d14577eec1c7a15216632f92615ca3931"
+      }
+    },
+    {
+      "task": "T019",
+      "skill": "telegram-mini-app-native-capabilities",
+      "stage": "same-answer-repaired-judge",
+      "cases": 4,
+      "solver_id": "01a1ad9e-86c1-7db1-9440-b1cb0f991922",
+      "model": "gpt-6.1-sol",
+      "candidate_path": "output/production-run-2026-11-05/evaluation-088/blind-batch-3/tasks/T019/solution.ts",
+      "candidate_sha256": "6eb6cb24c41d40a29d8dd5e39e4bb4733daeca14902a019454d5e3e410534a4b",
+      "decision_sha256": "c07d4c7f9336a9d4a3d85625f158e10c15d7d271835c1db09420fb6f5bf497ca",
+      "report_path": "output/production-run-2026-11-05/evaluation-088/regrade-batch-3/logs/T019/report.json",
+      "report_sha256": "ab29ad6998bd039e2259010538a45a017dd03047fd94ce9f40d0dbb47cf502a2",
+      "selected_skill_sha256": "d5204f9088cbed837ded0c0b41d612eb134c37bef83cdf3719d304477daf74e6",
+      "artifacts": {
+        "version": "0.28.0",
+        "wheel_sha256": "e0b42b53f1228fc804ab37b73675641fada1c148aa9eebffd11b05af1859fb7d",
+        "tarball_sha256": "dd24c7db27d9f1dd1f2dcc36a49bd67d14577eec1c7a15216632f92615ca3931"
+      }
+    },
+    {
+      "task": "T041",
+      "skill": "telegram-mini-app-network-recovery",
+      "stage": "same-answer-repaired-judge",
+      "cases": 2,
+      "solver_id": "01a1ad94-2fe2-7e43-8ddc-37f069c8423c",
+      "model": "gpt-6.1-sol",
+      "candidate_path": "output/production-run-2026-11-05/evaluation-088/blind-batch-1/tasks/T041/solution.ts",
+      "candidate_sha256": "2ca01f16976885fd26d31df329242db9be7357cfdec5c1cf7d57c932d11fe32f",
+      "decision_sha256": "4503f2d8fcc48cf6a749fedae8fcb959ca389bb73419b0d2732708980915ba37",
+      "report_path": "output/production-run-2026-11-05/evaluation-088/regrade-batch-1/logs/T041/report.json",
+      "report_sha256": "b3b95b907f1e98e632e698520c969dba0b285b0801e0dcb2847d1836e64a64bc",
+      "selected_skill_sha256": "ccc6dd71657b43444c9c046e609c58417bb167644d33c326c06a47254c1dcf9b",
+      "artifacts": {
+        "version": "0.28.0",
+        "wheel_sha256": "e0b42b53f1228fc804ab37b73675641fada1c148aa9eebffd11b05af1859fb7d",
+        "tarball_sha256": "dd24c7db27d9f1dd1f2dcc36a49bd67d14577eec1c7a15216632f92615ca3931"
+      }
+    },
+    {
+      "task": "T024",
+      "skill": "telegram-mini-app-performance",
+      "stage": "same-answer-repaired-judge",
+      "cases": 2,
+      "solver_id": "01a1ad94-6f34-7931-8123-0eeadab047c1",
+      "model": "gpt-6.1-sol",
+      "candidate_path": "output/production-run-2026-11-05/evaluation-088/blind-batch-2/tasks/T024/solution.ts",
+      "candidate_sha256": "151fedff52943023b44b2cccf359d6c968db92704c817c07e63f6514c23b892d",
+      "decision_sha256": "0693901295f0c46103b075839d64aa5ce5bf19d335e3c5b61134795bac8758e1",
+      "report_path": "output/production-run-2026-11-05/evaluation-088/regrade-batch-2/logs/T024/report.json",
+      "report_sha256": "cfec89b3e6c419c43d5d699fdc42fc2e17ef1048fec867614772ac8d882024a7",
+      "selected_skill_sha256": "a0269a92b33405e1e13be5798b0b240acbb7e7be88c1b3da9d3e484d58e1c03b",
+      "artifacts": {
+        "version": "0.28.0",
+        "wheel_sha256": "e0b42b53f1228fc804ab37b73675641fada1c148aa9eebffd11b05af1859fb7d",
+        "tarball_sha256": "dd24c7db27d9f1dd1f2dcc36a49bd67d14577eec1c7a15216632f92615ca3931"
+      }
+    },
+    {
+      "task": "T026",
+      "skill": "telegram-mini-app-typescript",
+      "stage": "same-answer-repaired-judge",
+      "cases": 2,
+      "solver_id": "01a1ad9e-86c1-7db1-9440-b1cb0f991922",
+      "model": "gpt-6.1-sol",
+      "candidate_path": "output/production-run-2026-11-05/evaluation-088/blind-batch-3/tasks/T026/solution.ts",
+      "candidate_sha256": "f128fc30b18ce159ec9b8d1220811af7bef54b1ef920b92d49c6a568752d0061",
+      "decision_sha256": "6273a8712b805a352004bbc3a5c5fd1b366da79ec24f72a3f923bfa0981076f5",
+      "report_path": "output/production-run-2026-11-05/evaluation-088/regrade-batch-3/logs/T026/report.json",
+      "report_sha256": "d401d47f0fb4d7757907a42a10edf1079f2486b0245245d2e2292c34d1d35f8c",
+      "selected_skill_sha256": "9bf9d878ab6e7df68d373bfc63bfe8bbb8bf16115dea1e30e18735b05516f04e",
+      "artifacts": {
+        "version": "0.28.0",
+        "wheel_sha256": "e0b42b53f1228fc804ab37b73675641fada1c148aa9eebffd11b05af1859fb7d",
+        "tarball_sha256": "dd24c7db27d9f1dd1f2dcc36a49bd67d14577eec1c7a15216632f92615ca3931"
+      }
+    },
+    {
+      "task": "T030",
+      "skill": "telegram-mini-app-ui",
+      "stage": "same-answer-repaired-judge",
+      "cases": 2,
+      "solver_id": "01a1ad94-2fe2-7e43-8ddc-37f069c8423c",
+      "model": "gpt-6.1-sol",
+      "candidate_path": "output/production-run-2026-11-05/evaluation-088/blind-batch-1/tasks/T030/solution.ts",
+      "candidate_sha256": "7a86353dfcdbf8a84a8ab78822e070df36412f8a2eb579fbfdd3a7bae2ffcd43",
+      "decision_sha256": "50409cfbffba3fce64d561ccebf787029574002225082a7a498099d3686829ff",
+      "report_path": "output/production-run-2026-11-05/evaluation-088/regrade-batch-1/logs/T030/report.json",
+      "report_sha256": "86911ad08d0cafb3ba109f600354153103de2618d0989a95edb21274c093651d",
+      "selected_skill_sha256": "29458480c3aa589b183bc35a060ad282f4fb872a760a1289eaf13b1b47b8ec26",
+      "artifacts": {
+        "version": "0.28.0",
+        "wheel_sha256": "e0b42b53f1228fc804ab37b73675641fada1c148aa9eebffd11b05af1859fb7d",
+        "tarball_sha256": "dd24c7db27d9f1dd1f2dcc36a49bd67d14577eec1c7a15216632f92615ca3931"
+      }
+    },
+    {
+      "task": "T014",
+      "skill": "telegram-mini-app-ux",
+      "stage": "same-answer-repaired-judge",
+      "cases": 2,
+      "solver_id": "01a1ad94-6f34-7931-8123-0eeadab047c1",
+      "model": "gpt-6.1-sol",
+      "candidate_path": "output/production-run-2026-11-05/evaluation-088/blind-batch-2/tasks/T014/solution.ts",
+      "candidate_sha256": "264b2c89beea1d02ca4648246035a0679df86f2d02bc39ca3e3b89be71277516",
+      "decision_sha256": "368c8d6af3863008fe573fe05504e78d8bd0f57585c1f7b6fa67bf1c4753d246",
+      "report_path": "output/production-run-2026-11-05/evaluation-088/regrade-batch-2/logs/T014/report.json",
+      "report_sha256": "9afd2471595ebd2acdf1db246f1be903c42e83f504b8b983a7c2337bcc07f7c6",
+      "selected_skill_sha256": "e3172bb3cd46abd059b1dc67f4f8b8525955f4029e04004f102528c561d059b9",
+      "artifacts": {
+        "version": "0.28.0",
+        "wheel_sha256": "e0b42b53f1228fc804ab37b73675641fada1c148aa9eebffd11b05af1859fb7d",
+        "tarball_sha256": "dd24c7db27d9f1dd1f2dcc36a49bd67d14577eec1c7a15216632f92615ca3931"
+      }
+    },
+    {
+      "task": "T034",
+      "skill": "telegram-mini-app-visual-regression",
+      "stage": "same-answer-repaired-judge",
+      "cases": 3,
+      "solver_id": "01a1ad9e-86c1-7db1-9440-b1cb0f991922",
+      "model": "gpt-6.1-sol",
+      "candidate_path": "output/production-run-2026-11-05/evaluation-088/blind-batch-3/tasks/T034/solution.ts",
+      "candidate_sha256": "42bb80570ff08d228e30cfb5efad886b59e7873e5100d1128cb15c8a98421a3e",
+      "decision_sha256": "84f0bf3327d244c7c13249e567a9815ca670484d2bbf34f54a052507919e08a5",
+      "report_path": "output/production-run-2026-11-05/evaluation-088/regrade-batch-3/logs/T034/report.json",
+      "report_sha256": "f8c7c81ca7a5b833d8013e5e4bb1a8a62cbda3e8eee475d2fce1b1e67b7d4d84",
+      "selected_skill_sha256": "fdb3e12b29b8d824b91927f1c7619665a1338b3b105033a1628f95d26d9fe2f8",
+      "artifacts": {
+        "version": "0.28.0",
+        "wheel_sha256": "e0b42b53f1228fc804ab37b73675641fada1c148aa9eebffd11b05af1859fb7d",
+        "tarball_sha256": "dd24c7db27d9f1dd1f2dcc36a49bd67d14577eec1c7a15216632f92615ca3931"
+      }
+    },
+    {
+      "task": "T003",
+      "skill": "telegram-notifications",
+      "stage": "same-answer-repaired-judge",
+      "cases": 3,
+      "solver_id": "01a1ad9e-86c1-7db1-9440-b1cb0f991922",
+      "model": "gpt-6.1-sol",
+      "candidate_path": "output/production-run-2026-11-05/evaluation-088/blind-batch-3/tasks/T003/solution.py",
+      "candidate_sha256": "5d39e8a95a0cbe6cf3d3a585b4210efbfa647c96e80ec5e6728fbce46b8a749e",
+      "decision_sha256": "e4bc44a63aaa5d6c8b8e61e85bb24b01ce1c11d08e879f64a76fc184df3278fe",
+      "report_path": "output/production-run-2026-11-05/evaluation-088/regrade-batch-3/logs/T003/report.json",
+      "report_sha256": "32263c36e28620987f9b9d15ccd8b86d5d64badee3ce6f7fea68dbfbb8b52676",
+      "selected_skill_sha256": "2fa3f53ed5bc244ee05ed9db1d28fc4463ee0478403181ab52365a68e81063cd",
+      "artifacts": {
+        "version": "0.28.0",
+        "wheel_sha256": "e0b42b53f1228fc804ab37b73675641fada1c148aa9eebffd11b05af1859fb7d",
+        "tarball_sha256": "dd24c7db27d9f1dd1f2dcc36a49bd67d14577eec1c7a15216632f92615ca3931"
+      }
+    },
+    {
+      "task": "T033",
+      "skill": "telegram-observability",
+      "stage": "same-answer-repaired-judge",
+      "cases": 2,
+      "solver_id": "01a1ad94-6f34-7931-8123-0eeadab047c1",
+      "model": "gpt-6.1-sol",
+      "candidate_path": "output/production-run-2026-11-05/evaluation-088/blind-batch-2/tasks/T033/solution.py",
+      "candidate_sha256": "68d1abbd52ffc6f32b94f5f77ce60a835d3f25d0d752f370a81774716f4f947b",
+      "decision_sha256": "082a85c352da2af493082c8b74675541e47f8f5eadbb8b0533d6dcb913656dae",
+      "report_path": "output/production-run-2026-11-05/evaluation-088/regrade-batch-2/logs/T033/report.json",
+      "report_sha256": "cd1a1ddeb95fbebd4f0bf609a1099343cd7180681ae86ab2eb1a10bb11848952",
+      "selected_skill_sha256": "120ae3f7b79c69840bb4d31ed1040035a423bf581a902342f83f5afcc3ec23a8",
+      "artifacts": {
+        "version": "0.28.0",
+        "wheel_sha256": "e0b42b53f1228fc804ab37b73675641fada1c148aa9eebffd11b05af1859fb7d",
+        "tarball_sha256": "dd24c7db27d9f1dd1f2dcc36a49bd67d14577eec1c7a15216632f92615ca3931"
+      }
+    },
+    {
+      "task": "T007",
+      "skill": "telegram-payment-provider",
+      "stage": "same-answer-repaired-judge",
+      "cases": 2,
+      "solver_id": "01a1ad94-2fe2-7e43-8ddc-37f069c8423c",
+      "model": "gpt-6.1-sol",
+      "candidate_path": "output/production-run-2026-11-05/evaluation-088/blind-batch-1/tasks/T007/solution.py",
+      "candidate_sha256": "7467ba4f1f28808e3c6fe6b573c5b2aa21761f2712e4e7684815edb1b18d1009",
+      "decision_sha256": "262921f105cbfa56820c2b5759e56853c5da8cd72f215b4756c6294cf2451617",
+      "report_path": "output/production-run-2026-11-05/evaluation-088/regrade-batch-1/logs/T007/report.json",
+      "report_sha256": "f5d2fc0b13b52f5609b55937fe948670e8564bd0e38671c92272172bd4098829",
+      "selected_skill_sha256": "bcbb524d12e90cda89b6d715979fb1ab9e308b68da4743643d1b58ccde476acc",
+      "artifacts": {
+        "version": "0.28.0",
+        "wheel_sha256": "e0b42b53f1228fc804ab37b73675641fada1c148aa9eebffd11b05af1859fb7d",
+        "tarball_sha256": "dd24c7db27d9f1dd1f2dcc36a49bd67d14577eec1c7a15216632f92615ca3931"
+      }
+    },
+    {
+      "task": "T042",
+      "skill": "telegram-payments",
+      "stage": "same-answer-repaired-judge",
+      "cases": 4,
+      "solver_id": "01a1ad9e-86c1-7db1-9440-b1cb0f991922",
+      "model": "gpt-6.1-sol",
+      "candidate_path": "output/production-run-2026-11-05/evaluation-088/blind-batch-3/tasks/T042/solution.py",
+      "candidate_sha256": "e297ac617ead3296be8876ce7ea29ca3f1984afdbac20d1485f7fa15a8ed01e7",
+      "decision_sha256": "bd3928851156c5131bc06691f357b4adb08632f375070d805756160e80510f8c",
+      "report_path": "output/production-run-2026-11-05/evaluation-088/regrade-batch-3/logs/T042/report.json",
+      "report_sha256": "9715b332b7646b280c1c98e2f2d06bdd659c7855006b38d83257f80034853186",
+      "selected_skill_sha256": "7c19fa1abe24dbd226cf659d827d85e2506397a21d7ad37fa8ed9c7ee166d590",
+      "artifacts": {
+        "version": "0.28.0",
+        "wheel_sha256": "e0b42b53f1228fc804ab37b73675641fada1c148aa9eebffd11b05af1859fb7d",
+        "tarball_sha256": "dd24c7db27d9f1dd1f2dcc36a49bd67d14577eec1c7a15216632f92615ca3931"
+      }
+    },
+    {
+      "task": "T029",
+      "skill": "telegram-platega",
+      "stage": "same-answer-repaired-judge",
+      "cases": 2,
+      "solver_id": "01a1ad9e-86c1-7db1-9440-b1cb0f991922",
+      "model": "gpt-6.1-sol",
+      "candidate_path": "output/production-run-2026-11-05/evaluation-088/blind-batch-3/tasks/T029/solution.py",
+      "candidate_sha256": "a23edee0a444d9cfcb2235496348e6aae49c1980d11e95d6f2068ca497a88b62",
+      "decision_sha256": "ad14ef8e554bb393236d2f6d800cac9722bea30cb0cece37dbeb52a113a68ceb",
+      "report_path": "output/production-run-2026-11-05/evaluation-088/regrade-batch-3/logs/T029/report.json",
+      "report_sha256": "7750ce58008c9ec8646ed764d66d823d9f141d53a2caaa1627a150e471dc6c01",
+      "selected_skill_sha256": "22a58cc4ad6a766cf37b1d140cbf879f91ddc9d050f9157d70bdb09f7b59f78b",
+      "artifacts": {
+        "version": "0.28.0",
+        "wheel_sha256": "e0b42b53f1228fc804ab37b73675641fada1c148aa9eebffd11b05af1859fb7d",
+        "tarball_sha256": "dd24c7db27d9f1dd1f2dcc36a49bd67d14577eec1c7a15216632f92615ca3931"
+      }
+    },
+    {
+      "task": "T004",
+      "skill": "telegram-profiles",
+      "stage": "same-answer-repaired-judge",
+      "cases": 2,
+      "solver_id": "01a1ad94-2fe2-7e43-8ddc-37f069c8423c",
+      "model": "gpt-6.1-sol",
+      "candidate_path": "output/production-run-2026-11-05/evaluation-088/blind-batch-1/tasks/T004/solution.py",
+      "candidate_sha256": "6af81a58cd2d0a2bb51d3cc6ef11661134aebd4f08aea5c989f5a77496d96875",
+      "decision_sha256": "17b9a180e2aa6e4879eed4a9707af8d38dc4d39880e29b4364c1f9e634d8c818",
+      "report_path": "output/production-run-2026-11-05/evaluation-088/regrade-batch-1/logs/T004/report.json",
+      "report_sha256": "2f869cf0f344514329e91df59ed6f96951ea9a45b14a82f02bfa5795764141f6",
+      "selected_skill_sha256": "f5275e2c2a4352c33d2df582bea60eefc8fdbea2523cf007e02e061b3f8168f8",
+      "artifacts": {
+        "version": "0.28.0",
+        "wheel_sha256": "e0b42b53f1228fc804ab37b73675641fada1c148aa9eebffd11b05af1859fb7d",
+        "tarball_sha256": "dd24c7db27d9f1dd1f2dcc36a49bd67d14577eec1c7a15216632f92615ca3931"
+      }
+    },
+    {
+      "task": "T043",
+      "skill": "telegram-project-planner",
+      "stage": "new-independent-public-index-scenario",
+      "cases": 6,
+      "solver_id": "01a1adcd-a364-7c90-b152-177927d73e3d",
+      "model": "gpt-6.1-sol",
+      "candidate_path": "output/production-run-2026-11-05/evaluation-088/followup-T043/tasks/T043/solution.py",
+      "candidate_sha256": "18de24fee6f6f8c4b0405dbcd727792e05597b2b4cb89a7e3671112caae2c573",
+      "decision_sha256": "e2702bd1afd1bfdfd4b9e840c5a7694f936c4e222a3e560f4c995dfb1c36aa75",
+      "report_path": "output/production-run-2026-11-05/evaluation-088/followup-T043/logs/T043/report.json",
+      "report_sha256": "7efcba24e3b3aece3940ba4a7f56a225658b043bea174d68d874701b095ea10b",
+      "selected_skill_sha256": "0334d66155b77b047ff92b7d8d63634164b2e9f844c11cd3205d576fc9f215f8",
+      "artifacts": {
+        "version": "0.28.0",
+        "wheel_sha256": "e0b42b53f1228fc804ab37b73675641fada1c148aa9eebffd11b05af1859fb7d",
+        "tarball_sha256": "dd24c7db27d9f1dd1f2dcc36a49bd67d14577eec1c7a15216632f92615ca3931"
+      }
+    },
+    {
+      "task": "T036",
+      "skill": "telegram-python-backend",
+      "stage": "same-answer-repaired-judge",
+      "cases": 4,
+      "solver_id": "01a1ad94-2fe2-7e43-8ddc-37f069c8423c",
+      "model": "gpt-6.1-sol",
+      "candidate_path": "output/production-run-2026-11-05/evaluation-088/blind-batch-1/tasks/T036/solution.py",
+      "candidate_sha256": "03b45443d9a4b935a428f4368fca638021cbeb93ab6cbd55044862687f2eb4e4",
+      "decision_sha256": "41a680580ed62c165fbeeae9b9017c00857865c60923044089f07412728ea7cb",
+      "report_path": "output/production-run-2026-11-05/evaluation-088/regrade-batch-1/logs/T036/report.json",
+      "report_sha256": "ceda719153f456fc1e769cc08eef13792b6438a15aebb020293b629262158f89",
+      "selected_skill_sha256": "5919c5cf5560e75e0f8afc6c92d153328ea9002741a5404e3ac872ce65c73567",
+      "artifacts": {
+        "version": "0.28.0",
+        "wheel_sha256": "e0b42b53f1228fc804ab37b73675641fada1c148aa9eebffd11b05af1859fb7d",
+        "tarball_sha256": "dd24c7db27d9f1dd1f2dcc36a49bd67d14577eec1c7a15216632f92615ca3931"
+      }
+    },
+    {
+      "task": "T040",
+      "skill": "telegram-security-review",
+      "stage": "same-answer-repaired-judge",
+      "cases": 3,
+      "solver_id": "01a1ad94-6f34-7931-8123-0eeadab047c1",
+      "model": "gpt-6.1-sol",
+      "candidate_path": "output/production-run-2026-11-05/evaluation-088/blind-batch-2/tasks/T040/solution.py",
+      "candidate_sha256": "f6bd2a4b82ca2099be1e5a5a8c94cfbbdec9a3b47697cd73349ba9a1aa561076",
+      "decision_sha256": "514b73fab1794c484110ce376ff95382a9546b82e1b1a52f62fe43de0725da49",
+      "report_path": "output/production-run-2026-11-05/evaluation-088/regrade-batch-2/logs/T040/report.json",
+      "report_sha256": "305f3df1e3bf25cebcdeb10f4ee359e4cd8160c43f6e3d985594fd60cdb7d088",
+      "selected_skill_sha256": "7ffeda9886be6b6b395adb993120bfd5962b2defe4af88cc96d2c34f201d4567",
+      "artifacts": {
+        "version": "0.28.0",
+        "wheel_sha256": "e0b42b53f1228fc804ab37b73675641fada1c148aa9eebffd11b05af1859fb7d",
+        "tarball_sha256": "dd24c7db27d9f1dd1f2dcc36a49bd67d14577eec1c7a15216632f92615ca3931"
+      }
+    },
+    {
+      "task": "T012",
+      "skill": "telegram-subscription-access",
+      "stage": "same-answer-repaired-judge",
+      "cases": 3,
+      "solver_id": "01a1ad9e-86c1-7db1-9440-b1cb0f991922",
+      "model": "gpt-6.1-sol",
+      "candidate_path": "output/production-run-2026-11-05/evaluation-088/blind-batch-3/tasks/T012/solution.py",
+      "candidate_sha256": "8b2cd9d760bcd5d4eacb71dfa5cbba0e478c523f2cffa6d98e93e9a9d57e082c",
+      "decision_sha256": "286bf3a9caa881eb9339908ed7532033005fc9064c7d94eebe5e879634f0dc1b",
+      "report_path": "output/production-run-2026-11-05/evaluation-088/regrade-batch-3/logs/T012/report.json",
+      "report_sha256": "24c0edbb81c25a7c5c1ee669ff42a3b199a88a2dd6382aadf38bb48cac60ca69",
+      "selected_skill_sha256": "7b1531e0458c3b50298f060bfe55156f208b189c2f47abc75cd3d7800abb60fd",
+      "artifacts": {
+        "version": "0.28.0",
+        "wheel_sha256": "e0b42b53f1228fc804ab37b73675641fada1c148aa9eebffd11b05af1859fb7d",
+        "tarball_sha256": "dd24c7db27d9f1dd1f2dcc36a49bd67d14577eec1c7a15216632f92615ca3931"
+      }
+    },
+    {
+      "task": "T021",
+      "skill": "telegram-testing",
+      "stage": "same-answer-repaired-judge",
+      "cases": 4,
+      "solver_id": "01a1ad94-2fe2-7e43-8ddc-37f069c8423c",
+      "model": "gpt-6.1-sol",
+      "candidate_path": "output/production-run-2026-11-05/evaluation-088/blind-batch-1/tasks/T021/solution.py",
+      "candidate_sha256": "937f95e618d67462ef135dcfbeb6cc5a4916850d2a47e74103c4577a9e760848",
+      "decision_sha256": "4022999687b0640f6b79ec73f33dd187fede983cf33f34cc2b97560c1a620ae4",
+      "report_path": "output/production-run-2026-11-05/evaluation-088/regrade-batch-1/logs/T021/report.json",
+      "report_sha256": "21acda66ce205087707f7ca38e53de77c52ba4a633074efc98bb297aa55f7459",
+      "selected_skill_sha256": "a56768a3142eb8bbd16bd62f49f81529da2bd28c25129f866af4a960ecd9d57b",
+      "artifacts": {
+        "version": "0.28.0",
+        "wheel_sha256": "e0b42b53f1228fc804ab37b73675641fada1c148aa9eebffd11b05af1859fb7d",
+        "tarball_sha256": "dd24c7db27d9f1dd1f2dcc36a49bd67d14577eec1c7a15216632f92615ca3931"
+      }
+    },
+    {
+      "task": "T039",
+      "skill": "telegram-user-client",
+      "stage": "same-answer-repaired-judge",
+      "cases": 3,
+      "solver_id": "01a1ad94-2fe2-7e43-8ddc-37f069c8423c",
+      "model": "gpt-6.1-sol",
+      "candidate_path": "output/production-run-2026-11-05/evaluation-088/blind-batch-1/tasks/T039/solution.py",
+      "candidate_sha256": "7e2de8336e95ff4002b11721f9fd831a504464dc38e6effee60306f7bc45a79d",
+      "decision_sha256": "41ee0ecf133cd8946472f3a7fc2c85c02a59be6431d0e5e2bd7bfc43780ec8a3",
+      "report_path": "output/production-run-2026-11-05/evaluation-088/regrade-batch-1/logs/T039/report.json",
+      "report_sha256": "5b81a10b92cc4831153df2f1696af2b415ea3fb209c78d11835cbe5ee7d70b2c",
+      "selected_skill_sha256": "fe03cfe064a997fcc515f2ce112b9f38c27c21d2fa90a8c401a5f227eb69121d",
+      "artifacts": {
+        "version": "0.28.0",
+        "wheel_sha256": "e0b42b53f1228fc804ab37b73675641fada1c148aa9eebffd11b05af1859fb7d",
+        "tarball_sha256": "dd24c7db27d9f1dd1f2dcc36a49bd67d14577eec1c7a15216632f92615ca3931"
+      }
+    },
+    {
+      "task": "T023",
+      "skill": "telegram-web-login",
+      "stage": "same-answer-repaired-judge",
+      "cases": 6,
+      "solver_id": "01a1ad94-6f34-7931-8123-0eeadab047c1",
+      "model": "gpt-6.1-sol",
+      "candidate_path": "output/production-run-2026-11-05/evaluation-088/blind-batch-2/tasks/T023/solution.py",
+      "candidate_sha256": "e6521692b18a355a6472e6b6d3295fa87cc68093f6cd0df08fd2b7552f35ba2d",
+      "decision_sha256": "f0e0a5ddb425cb000b7c8b7dc931b070839f3ad917776d31962c164c50f72a61",
+      "report_path": "output/production-run-2026-11-05/evaluation-088/regrade-batch-2/logs/T023/report.json",
+      "report_sha256": "b43a202cff29b227eacfbd30b3b45fdcd50cef19eef2034a06ec650f8c9abe99",
+      "selected_skill_sha256": "0348588810821245adcb65be3193c448167eadca460f3a28f9282d3195f0eefb",
+      "artifacts": {
+        "version": "0.28.0",
+        "wheel_sha256": "e0b42b53f1228fc804ab37b73675641fada1c148aa9eebffd11b05af1859fb7d",
+        "tarball_sha256": "dd24c7db27d9f1dd1f2dcc36a49bd67d14577eec1c7a15216632f92615ca3931"
+      }
+    },
+    {
+      "task": "T011",
+      "skill": "telegram-yookassa",
+      "stage": "same-answer-repaired-judge",
+      "cases": 2,
+      "solver_id": "01a1ad94-6f34-7931-8123-0eeadab047c1",
+      "model": "gpt-6.1-sol",
+      "candidate_path": "output/production-run-2026-11-05/evaluation-088/blind-batch-2/tasks/T011/solution.py",
+      "candidate_sha256": "72946e1d14358f9d63346e2d0465674450c491cc51b8512f42d5ca2bc2ebd146",
+      "decision_sha256": "5355dcb97c8a3b3d2201caf897322b746e46bb66b1d1a8adeb606d9aa871130d",
+      "report_path": "output/production-run-2026-11-05/evaluation-088/regrade-batch-2/logs/T011/report.json",
+      "report_sha256": "d73ef5a850af873dfecf81e25ebd49666c05a254f904e2aa4b5fab39aeef99f8",
+      "selected_skill_sha256": "96d755e42a4773b9c55be3c0ff773492d70f4e5f3819720441cac550cf234a04",
+      "artifacts": {
+        "version": "0.28.0",
+        "wheel_sha256": "e0b42b53f1228fc804ab37b73675641fada1c148aa9eebffd11b05af1859fb7d",
+        "tarball_sha256": "dd24c7db27d9f1dd1f2dcc36a49bd67d14577eec1c7a15216632f92615ca3931"
+      }
+    }
+  ],
+  "post_integration_ci": {
+    "url": "https://github.com/Zulut30/awesome-telegram-skills/actions/runs/42118388250",
+    "source_commit": "486d6c27e8d2348e8134b24f4e0072e3d056c7b2",
+    "jobs_passed": 38,
+    "concrete_dependencies_checked": 37,
+    "evidence_sha256": "103fb163a3fa14b90048aa45772eead6bb5a6e19ce8e20b74eeacd11aa488834"
+  },
+  "limits": [
+    "One bounded independently selected task per covered skill, one model/provider; not a general success-rate or universal skill-correctness guarantee.",
+    "Initial tasks and followups differ in public inputs/constraints. Original failures and T044 boundary failure remain in the record.",
+    "Frozen source92 skill snapshot, exact0.28 artifacts; later documentation or future1.0RC needs its own assessment.",
+    "Shared filesystem is cooperative isolation, not an OS sandbox. Visible history excludes reasoning/system/developer and encrypted task bodies are not recovered.",
+    "No real Telegram bot/account, provider payment, physical device, human usability participant, production pilot or registry publication."
+  ],
+  "delivery": {
+    "passed": true,
+    "archive": "output/skill-evaluation-0.28.0-evidence.zip",
+    "sha256": "eb24ea0ee2d1918570e939f94df4c8506b4ac6dfbd2e815003cdb9c428a670b5",
+    "bytes": 7737170,
+    "files": 389,
+    "checksums_verified": 388,
+    "manifest_file_records": 387,
+    "study_summary_sha256": "180f8a3a62807969429f6c7bfb47f4fbfec0479b039337e37f2d0e8c150a03a7",
+    "limits": "Local curated evidence delivery. No external publication or production approval.",
+    "reviewed_allowlist_sha256": "0ecb7c9b966c5ac13765ec57c609533c0a9148895a0b79f3dffad9a076d282fb",
+    "selftest_report_sha256": "71793fedfa8a6aff1baf735b66d8246abba0b5e9e59c91454494232add3e9223"
+  },
+  "acceptance_at_utc": "2026-11-05T23:08:50.016255+00:00",
+  "source_summary_sha256": "180f8a3a62807969429f6c7bfb47f4fbfec0479b039337e37f2d0e8c150a03a7"
+}

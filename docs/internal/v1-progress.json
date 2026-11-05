@@ -1561,10 +1561,17 @@
       "id": 88,
       "title": "Проверить решения всех 41 навыка",
       "requirement": "Выполнить слепые задачи выбора и интеграции через публичный API, перенос одного навыка и его references; измерять правильность решения, а не только YAML/ссылки.",
-      "status": "pending",
-      "commit_subject": null,
-      "artifacts": [],
-      "evidence": []
+      "status": "done",
+      "commit_subject": "roadmap(088): accept independent execution of all skills",
+      "artifacts": [
+        "docs/internal/skill-evaluation-088-acceptance.json",
+        "docs/internal/skill-evaluation-088-acceptance.md"
+      ],
+      "evidence": [
+        "All42 frozen0.28 skills have independently selected, standalone-transferred and actually executed solutions:117 observed cases, exact artifact/selected-skill hashes and actual fork-none model provenance.",
+        "Original21/42 and corrected40/42 results remain; two unsupported imports are retained. New independent T043/T045 cover the gaps with declared public-input differences. T044 remains boundary-not-assessed; no old answer or failure is rewritten.",
+        "Curated local archive389files verifies all388 checksums and source-to-delivered mappings; synthetic fixtures only, no raw reasoning/master sessions/env values, live/device/human/pilot or production approval."
+      ]
     },
     {
       "id": 89,
