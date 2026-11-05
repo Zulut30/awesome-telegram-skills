@@ -7,7 +7,8 @@
  * Lighthouse runs its default mobile profile (simulated throttling) several times and takes the median score.
  * Budgets live in budgets.json. CHROME_PATH selects the browser; otherwise an installed Chrome is used.
  */
-import {mkdir, readFile, writeFile} from 'node:fs/promises';
+import {mkdir, mkdtemp, readFile, rm, writeFile} from 'node:fs/promises';
+import {tmpdir} from 'node:os';
 import path from 'node:path';
 import {fileURLToPath} from 'node:url';
 import * as chromeLauncher from 'chrome-launcher';
@@ -34,8 +35,18 @@ const base = `http://127.0.0.1:${server.address().port}/`;
 const categories = Object.keys(budgets.lighthouse.min_scores);
 const runs = [];
 let chrome, browser;
+const chromeProfile = await mkdtemp(path.join(tmpdir(), 'telegram-quality-chrome-'));
 try {
-  chrome = await chromeLauncher.launch({chromePath, chromeFlags: ['--headless=new', ...sandbox]});
+  try {
+    chrome = await chromeLauncher.launch({chromePath, userDataDir: chromeProfile,
+      chromeFlags: ['--headless=new', ...sandbox]});
+  } catch (error) {
+    const stderr = await readFile(path.join(chromeProfile, 'chrome-err.log'), 'utf8')
+      .catch(() => 'Chrome did not produce a stderr log.');
+    await writeFile(path.join(output, 'chrome-launch-error.log'), stderr);
+    console.error(stderr.slice(-12000));
+    throw error;
+  }
   for (let run = 0; run < budgets.lighthouse.runs; run++) {
     const result = await lighthouse(base, {port: chrome.port, output: 'json', logLevel: 'error', onlyCategories: categories});
     runs.push(result.lhr);
@@ -99,6 +110,9 @@ try {
   if (failures.length) process.exitCode = 1;
 } finally {
   await chrome?.kill();
+  // launch() can reject after spawning Chrome, before assigning the result.
+  chromeLauncher.killAll();
   await browser?.close();
+  await rm(chromeProfile, {recursive: true, force: true}).catch(error => console.error(error.message));
   await new Promise(resolve => server.close(resolve));
 }

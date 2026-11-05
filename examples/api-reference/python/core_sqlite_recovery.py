@@ -15,7 +15,9 @@ from telegram_patterns import (
 )
 
 with TemporaryDirectory() as directory:
-    root = Path(directory)
+    # macOS temporary paths can traverse /var -> /private/var. Resolve our own
+    # newly created directory before calling the helper, which rejects links.
+    root = Path(directory).resolve(strict=True)
     root.chmod(0o700)
     data, snapshots, restored = (root / name for name in ("data", "snapshots", "restored"))
     for folder in (data, snapshots, restored):

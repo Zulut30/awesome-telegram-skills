@@ -38,7 +38,11 @@ def main() -> int:
                               text=True, encoding='utf-8', timeout=180, shell=False)
         (output / (label + '.log')).write_text(done.stdout + done.stderr, encoding='utf-8', newline='\n')
         stages.append({'stage': label, 'exit_code': done.returncode})
-        if done.returncode != expected_exit: raise RuntimeError('Reference consumer failed: ' + label)
+        if done.returncode != expected_exit:
+            # The nested consumer directory is temporary and is not uploaded by CI.
+            # Keep the actual fixture failure in the parent log before it disappears.
+            print((done.stdout + done.stderr)[-6000:], file=sys.stderr)
+            raise RuntimeError('Reference consumer failed: ' + label)
         return done.stdout
 
     definitions = {}
