@@ -1,6 +1,6 @@
 {
   "name": "@awesome-telegram/patterns",
-  "version": "0.25.0",
+  "version": "0.26.0",
   "description": "Reusable TypeScript components for Telegram Mini Apps",
   "license": "MIT",
   "type": "module",
@@ -28,6 +28,10 @@
     "./styles.css": {
       "types": "./dist/styles.css.d.ts",
       "default": "./dist/styles.css"
+    },
+    "./tokens.css": {
+      "types": "./dist/tokens.css.d.ts",
+      "default": "./dist/tokens.css"
     },
     "./package.json": "./package.json"
   },

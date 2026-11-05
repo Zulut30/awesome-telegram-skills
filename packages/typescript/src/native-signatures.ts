@@ -123,7 +123,7 @@ export interface TelegramNativeSignatures {
   'shareToStory': (media_url: string, params?: StoryShareParams) => void;
   'showAlert': (message: string, callback?: () => void) => void;
   'showConfirm': (message: string, callback?: (confirmed: boolean) => void) => void;
-  'showPopup': (params: PopupParams, callback?: (buttonId: string) => void) => void;
+  'showPopup': (params: PopupParams, callback?: (buttonId: string | null) => void) => void;
   'showScanQrPopup': (params: ScanQrPopupParams, callback?: (text: string) => boolean | void) => void;
   'switchInlineQuery': (query: string, choose_chat_types?: InlineQueryChatType[]) => void;
   'unlockOrientation': () => void;

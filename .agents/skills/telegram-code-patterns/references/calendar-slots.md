@@ -1,6 +1,6 @@
 # Календарь и запись на время
 
-Доступно с 0.17.0, проверено на 0.25.0. SDK-free `CalendarMonth`, `TimeSlot`, `resolve_local_time`, `SlotSchedule`, `SlotBooking`, `SQLiteSlotStore` и optional aiogram `calendar_keyboard`, `time_slot_keyboard`. Full bot «дата → время → подтверждение» — рецепт `demo-calendar`: сначала `telegram-patterns run-recipe demo-calendar`, затем явный `--offline`. Пакеты предоставляются wheel/tarball; публикация в реестрах не предполагается.
+Доступно с 0.17.0, проверено на 0.26.0. SDK-free `CalendarMonth`, `TimeSlot`, `resolve_local_time`, `SlotSchedule`, `SlotBooking`, `SQLiteSlotStore` и optional aiogram `calendar_keyboard`, `time_slot_keyboard`. Full bot «дата → время → подтверждение» — рецепт `demo-calendar`: сначала `telegram-patterns run-recipe demo-calendar`, затем явный `--offline`. Пакеты предоставляются wheel/tarball; публикация в реестрах не предполагается.
 
 Термины: **ACK** — ответ на нажатие кнопки через `answerCallbackQuery`: клиент убирает индикатор ожидания; это не сообщение об успехе операции; **CAS** — сравнение с заменой: запись сохраняется, только если версия не изменилась с момента чтения; квитанция (receipt) — сохраненная запись о выполненной операции; повтор возвращает ее вместо второго эффекта.
 

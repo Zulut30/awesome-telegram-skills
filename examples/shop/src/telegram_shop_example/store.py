@@ -50,20 +50,49 @@ class Store:
         with connection(database, write=True) as db:
             db.execute('CREATE TABLE IF NOT EXISTS shop_schema(version INTEGER NOT NULL)')
             versions=db.execute('SELECT version FROM shop_schema').fetchall()
-            if versions and [r[0] for r in versions]!=[1]:raise ValueError('Shop schema requires migration')
-            if not versions:db.execute('INSERT INTO shop_schema VALUES(1)')
+            if versions and [r[0] for r in versions] not in ([1],[2]):raise ValueError('Shop schema requires migration')
+            if not versions:db.execute('INSERT INTO shop_schema VALUES(2)')
             for sql in (
-                # csrf_hash stays NULL since bearer sessions (no cookie, no CSRF); kept so schema version 1 is unchanged.
+                # csrf_hash stays NULL since bearer sessions (no cookie); existing v1 rows stay compatible.
                 'CREATE TABLE IF NOT EXISTS shop_sessions(token_hash TEXT PRIMARY KEY,bot_id INTEGER,actor_id INTEGER,csrf_hash TEXT,expires INTEGER)',
                 'CREATE TABLE IF NOT EXISTS shop_orders(id TEXT PRIMARY KEY,bot_id INTEGER,actor_id INTEGER,operation TEXT,items TEXT,total INTEGER,currency TEXT,status TEXT,terms TEXT,invoice_state TEXT,invoice_url TEXT,precheckout TEXT,UNIQUE(bot_id,actor_id,operation))',
                 'CREATE TABLE IF NOT EXISTS shop_receipts(bot_id INTEGER,charge TEXT,order_id TEXT,actor_id INTEGER,amount INTEGER,currency TEXT,review INTEGER,PRIMARY KEY(bot_id,charge))',
                 'CREATE TABLE IF NOT EXISTS shop_access(bot_id INTEGER,actor_id INTEGER,sku TEXT,order_id TEXT,PRIMARY KEY(bot_id,actor_id,sku))',
+                "CREATE TABLE IF NOT EXISTS shop_roles(bot_id INTEGER NOT NULL,actor_id INTEGER NOT NULL,role TEXT NOT NULL CHECK(role IN ('customer','viewer','blocked')),PRIMARY KEY(bot_id,actor_id))",
             ):db.execute(sql)
+            db.execute('UPDATE shop_schema SET version=2')  # Additive v1 migration; existing rows are preserved.
         self.once=SQLiteOnce(database,timeout=1);self.once.initialize()
 
     def actor(self, value: int) -> int:
         if type(value) is not int or value<=0:raise PermissionDenied()
         return value
+
+    def configure_role(self, actor: int, role: str) -> None:
+        """Trusted owner configuration only; never exposed as a browser/body-controlled route.
+
+        Missing overrides mean the ordinary customer role. A viewer can inspect
+        their own orders/content but cannot create orders/invoices or pre-checkout.
+        A blocked actor cannot read or write private business objects. Sessions
+        remain revocable; trusted payment facts are recorded for operator review.
+        """
+        self.actor(actor)
+        if not isinstance(role,str) or role not in {'customer','viewer','blocked'}:raise ValidationFailure()
+        with connection(self.database,write=True) as db:
+            db.execute('INSERT INTO shop_roles VALUES(?,?,?) ON CONFLICT(bot_id,actor_id) DO UPDATE SET role=excluded.role',(self.bot_id,actor,role))
+
+    def _role(self, db: sqlite3.Connection, actor: int) -> str:
+        self.actor(actor)
+        row=db.execute('SELECT role FROM shop_roles WHERE bot_id=? AND actor_id=?',(self.bot_id,actor)).fetchone()
+        return row[0] if row else 'customer'
+
+    def _authorize(self, db: sqlite3.Connection, actor: int, *, write: bool = False) -> None:
+        if self._role(db,actor) not in ({'customer'} if write else {'customer','viewer'}):raise PermissionDenied()
+
+    def _owned(self, db: sqlite3.Connection, actor: int, order_id: str, *, write: bool = False) -> dict:
+        self._authorize(db,actor,write=write)
+        row=db.execute('SELECT * FROM shop_orders WHERE id=? AND bot_id=? AND actor_id=?',(order_id,self.bot_id,actor)).fetchone()
+        if row is None:raise PermissionDenied()
+        return dict(row)
 
     def session(self, raw: str) -> dict:
         """Bearer session for the Authorization header: the client keeps the token in memory only.
@@ -120,36 +149,37 @@ class Store:
             order_id=str(uuid.uuid4());total=sum(CATALOG[s]['stars'] for s in items)
             db.execute("INSERT INTO shop_orders VALUES(?,?,?,?,?,?,?,'awaiting',?,'none',NULL,NULL)",(order_id,self.bot_id,actor,operation,json.dumps(items),total,'XTR',terms))
             return {'id':order_id}
-        result=self.once.run(f'shop:{self.bot_id}:actor:{actor}',operation,{'items':items,'terms':terms},apply)
+        def check(db: sqlite3.Connection, replayed: bool) -> bool:
+            self._authorize(db,actor,write=True)
+            return True
+        result=self.once.run_guarded(f'shop:{self.bot_id}:actor:{actor}',operation,{'items':items,'terms':terms},apply,check=check)
         return self.order(actor,result.value['id'])
 
     def order(self, actor: int, order_id: str) -> dict:
         self.actor(actor)
         with connection(self.database) as db:
-            row=db.execute('SELECT * FROM shop_orders WHERE id=? AND bot_id=? AND actor_id=?',(order_id,self.bot_id,actor)).fetchone()
-            if row is None:raise PermissionDenied()
-            return dict(row)
+            return self._owned(db,actor,order_id)
 
     def operation(self, actor: int, operation: str) -> dict | None:
         self.actor(actor)
         with connection(self.database) as db:
+            self._authorize(db,actor)
             row=db.execute('SELECT id FROM shop_orders WHERE bot_id=? AND actor_id=? AND operation=?',(self.bot_id,actor,operation)).fetchone()
         return self.order(actor,row[0]) if row else None
 
     def orders(self, actor: int) -> list[dict]:
         self.actor(actor)
         with connection(self.database) as db:
-            ids=[r[0] for r in db.execute('SELECT id FROM shop_orders WHERE bot_id=? AND actor_id=? ORDER BY rowid DESC',(self.bot_id,actor))]
-        return [self.order(actor,i) for i in ids]
+            self._authorize(db,actor)
+            return [dict(r) for r in db.execute('SELECT * FROM shop_orders WHERE bot_id=? AND actor_id=? ORDER BY rowid DESC',(self.bot_id,actor))]
 
     def view(self, row: dict) -> dict:
         # No session secrets, raw personal data or charge identifiers in frontend DTO.
         return {k:row[k] for k in ('id','operation','total','currency','status','invoice_state')} | {'items':json.loads(row['items'])}
 
     def claim_invoice(self, actor: int, order_id: str) -> dict:
-        self.order(actor,order_id)
         with connection(self.database,write=True) as db:
-            row=dict(db.execute('SELECT * FROM shop_orders WHERE id=?',(order_id,)).fetchone())
+            row=self._owned(db,actor,order_id,write=True)
             if row['status']!='awaiting':raise ValidationFailure()
             if row['invoice_state']=='ready':return row
             if row['invoice_state']!='none':raise UnknownInvoice()
@@ -157,9 +187,10 @@ class Store:
             return row
 
     def finish_invoice(self, actor: int, order_id: str, url: str | None) -> None:
-        self.order(actor,order_id)
+        # Recording an already-started remote result must survive a concurrent role revocation.
         with connection(self.database,write=True) as db:
-            db.execute('UPDATE shop_orders SET invoice_state=?,invoice_url=? WHERE id=?',('ready' if url else 'unknown',url,order_id))
+            if not db.execute('SELECT 1 FROM shop_orders WHERE id=? AND bot_id=? AND actor_id=?',(order_id,self.bot_id,actor)).fetchone():raise PermissionDenied()
+            db.execute('UPDATE shop_orders SET invoice_state=?,invoice_url=? WHERE id=? AND bot_id=? AND actor_id=?',('ready' if url else 'unknown',url,order_id,self.bot_id,actor))
 
     def recover(self) -> int:
         with connection(self.database,write=True) as db:
@@ -180,6 +211,7 @@ class Store:
     def precheckout(self, bot_id: int, actor: int, query_id: str, payload: str, currency: str, amount: int) -> None:
         if not isinstance(query_id,str) or not query_id or len(query_id)>256:raise PermissionDenied()
         with connection(self.database,write=True) as db:
+            self._authorize(db,actor,write=True)
             row=self.payment_order(db,bot_id,actor,payload,currency,amount)
             if row['status']!='awaiting' or (row['precheckout'] and row['precheckout']!=query_id):raise PermissionDenied()
             if any(db.execute('SELECT 1 FROM shop_access WHERE bot_id=? AND actor_id=? AND sku=?',(self.bot_id,actor,s)).fetchone() for s in json.loads(row['items'])):raise PermissionDenied()
@@ -195,7 +227,7 @@ class Store:
             if old:
                 if old['order_id']!=row['id'] or old['actor_id']!=actor or old['amount']!=amount or old['currency']!=currency:raise PermissionDenied()
                 return {'replayed':True,'review':bool(old['review'])}
-            review=row['status'] in {'paid','review'} or any(db.execute('SELECT 1 FROM shop_access WHERE bot_id=? AND actor_id=? AND sku=?',(self.bot_id,actor,s)).fetchone() for s in json.loads(row['items']))
+            review=self._role(db,actor)!='customer' or row['status'] in {'paid','review'} or any(db.execute('SELECT 1 FROM shop_access WHERE bot_id=? AND actor_id=? AND sku=?',(self.bot_id,actor,s)).fetchone() for s in json.loads(row['items']))
             db.execute('INSERT INTO shop_receipts VALUES(?,?,?,?,?,?,?)',(self.bot_id,charge,row['id'],actor,amount,currency,int(review)))
             if not review:
                 # Authenticated receipt may arrive after restart or without a retained
@@ -210,6 +242,7 @@ class Store:
     def content(self, actor: int, sku: str) -> dict:
         self.actor(actor)
         with connection(self.database) as db:
+            self._authorize(db,actor)
             allowed=db.execute("SELECT 1 FROM shop_access a JOIN shop_orders o ON o.id=a.order_id AND o.actor_id=a.actor_id AND o.bot_id=a.bot_id WHERE a.bot_id=? AND a.actor_id=? AND a.sku=? AND o.status='paid'",(self.bot_id,actor,sku)).fetchone()
         if not allowed or sku not in CONTENT:raise PermissionDenied()
         return {'id':sku,'title':CATALOG[sku]['title'],'text':CONTENT[sku]}

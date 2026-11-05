@@ -574,7 +574,7 @@
     "showPopup": {
       "parameters": {
         "params": "PopupParams",
-        "callback": "(buttonId: string) => void"
+        "callback": "(buttonId: string | null) => void"
       },
       "returns": "void"
     },

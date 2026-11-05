@@ -165,6 +165,13 @@ def verify_distributions(root: Path, wheel: Path, tarball: Path) -> dict:
                    'package/LICENSE': (ts_path / 'LICENSE').read_bytes(),
                    'package/dist/styles.css': (ts_path / 'src/styles.css').read_bytes(),
                    'package/dist/styles.css.d.ts': (ts_path / 'dist/styles.css.d.ts').read_bytes()}
+    stylesheets = ['styles.css']
+    if release.release >= (0, 26, 0):
+        stylesheets.append('tokens.css')
+        for source, target in [('src/tokens.css', 'dist/tokens.css'),
+                               ('dist/tokens.css.d.ts', 'dist/tokens.css.d.ts')]:
+            _require((ts_path / source).is_file(), 'Missing declared token stylesheet asset')
+            ts_expected['package/' + target] = (ts_path / source).read_bytes()
     sources = list((ts_path / 'src').rglob('*.ts'))
     for source in sources:
         module = source.relative_to(ts_path / 'src').with_suffix('').as_posix()
@@ -179,7 +186,8 @@ def verify_distributions(root: Path, wheel: Path, tarball: Path) -> dict:
     frameworks = {f'./{name}': {'types': f'./dist/frameworks/{name}.d.ts', 'default': f'./dist/frameworks/{name}.js'}
                   for name in ('react', 'vue', 'svelte')}
     _require(manifest['exports'] == {'.': {'types': './dist/index.d.ts', 'default': './dist/index.js'}, **frameworks,
-                                     './styles.css': {'types': './dist/styles.css.d.ts', 'default': './dist/styles.css'},
+                                     **{f'./{name}': {'types': f'./dist/{name}.d.ts', 'default': f'./dist/{name}'}
+                                        for name in stylesheets},
                                      './package.json': './package.json'} and manifest.get('types') == './dist/index.d.ts',
              'TypeScript public export map changed')
     peers = manifest.get('peerDependencies', {})

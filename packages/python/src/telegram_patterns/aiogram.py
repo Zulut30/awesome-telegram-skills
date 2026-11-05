@@ -138,11 +138,13 @@ from ._aiogram.profiles import (
     user_profile,
 )
 from ._aiogram.selection_ui import selection_keyboard, selection_router
+from ._aiogram.stars_payments import StarsPaymentAdapter
 from .errors import AuthenticationRequired, InvalidType, PatternError, TransportFailure, ValidationFailure
 from .settings import BotSettings
 from .texts import Texts
 
 __all__ = [
+    "StarsPaymentAdapter",
     "FSMSnapshot",
     "FSMConflict",
     "SnapshotStore",

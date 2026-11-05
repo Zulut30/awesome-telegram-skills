@@ -30,9 +30,11 @@ try {
       await page.goto(url); await page.waitForFunction(() => window.referenceReport?.passed === true, undefined, {timeout: 20000});
       const proof = await page.evaluate(() => ({report: window.referenceReport,
         css: [...document.styleSheets].some(s => s.href?.endsWith('/dist/styles.css') && s.cssRules.length > 0),
+        tokens: [...document.styleSheets].some(s => s.href?.endsWith('/dist/tokens.css') && s.cssRules.length > 0),
         scripts: [...document.querySelectorAll('script[type="module"]')].length,
-        clean: document.querySelectorAll('.tp-shell').length === 0}));
-      for (const accepted of [proof.report.cases.length === 7, proof.css, proof.scripts === 1, proof.clean, failures.length === 0, external.length === 0]) {
+        clean: document.querySelectorAll('.tp-shell').length === 0,
+        filesClean: document.querySelectorAll('input[type="file"]').length === 0}));
+      for (const accepted of [proof.report.cases.length === 9, proof.report.cases.includes('flows') && proof.filesClean, proof.css, proof.tokens, proof.scripts === 1, proof.clean, failures.length === 0, external.length === 0]) {
         if (!accepted) throw Error('Installed reference example browser check failed'); checks++;
       }
       await page.screenshot({path: path.join(output, `${name}-${theme}.png`)});
@@ -40,6 +42,6 @@ try {
     }
   }
   const report = {passed: true, checks, browser: browser.version(), results,
-    scope: 'Installed tarball; seven documented ESM/DOM recipes in six viewport/theme cases, synthetic SDK/HTTP, no physical Telegram or backend auth proof'};
+    scope: 'Installed tarball; nine documented ESM/DOM recipes including native flows and file-input teardown, both public stylesheets in six viewport/theme cases, synthetic SDK/HTTP, no physical Telegram or backend auth proof'};
   fs.writeFileSync(path.join(output, 'report.json'), JSON.stringify(report, null, 2) + '\n'); console.log(JSON.stringify(report));
 } finally { if (browser) await browser.close(); await new Promise(resolve => server.close(resolve)); }

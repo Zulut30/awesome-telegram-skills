@@ -167,6 +167,29 @@
     "docs/mini-app-state.md": [
       ".agents/skills/telegram-code-patterns/references/mini-app-state.md",
       ".agents/skills/telegram-mini-app-network-recovery/references/mini-app-state.md"
+    ],
+    "docs/mini-app-ui.md": [
+      ".agents/skills/telegram-code-patterns/references/mini-app-ui.md",
+      ".agents/skills/telegram-mini-app-design-system/references/mini-app-ui.md"
+    ],
+    "docs/native-flows.md": [
+      ".agents/skills/telegram-code-patterns/references/native-flows.md",
+      ".agents/skills/telegram-mini-app-native-capabilities/references/native-flows.md"
+    ],
+    "docs/payment-ledger.md": [
+      ".agents/skills/telegram-code-patterns/references/payment-ledger.md",
+      ".agents/skills/telegram-payments/references/payment-ledger.md",
+      ".agents/skills/telegram-subscription-access/references/payment-ledger.md"
+    ],
+    "docs/payment-providers.md": [
+      ".agents/skills/telegram-code-patterns/references/payment-providers.md",
+      ".agents/skills/telegram-cryptopay/references/payment-providers.md",
+      ".agents/skills/telegram-platega/references/payment-providers.md",
+      ".agents/skills/telegram-yookassa/references/payment-providers.md"
+    ],
+    "docs/stars-payments.md": [
+      ".agents/skills/telegram-code-patterns/references/stars-payments.md",
+      ".agents/skills/telegram-payments/references/stars-payments.md"
     ]
   }
 }

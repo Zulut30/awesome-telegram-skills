@@ -112,14 +112,14 @@ print(json.dumps({'version':m.version('awesome-telegram-patterns'),'module':tele
     assert css_url.scheme == 'file' and not css_url.netloc
     assert Path(url2pathname(css_url.path)).is_file()
     html = '''<!doctype html><html lang="ru"><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
-<link rel="stylesheet" href="/node_modules/@awesome-telegram/patterns/dist/styles.css"><h1>Справочник API</h1><p id="status">Проверка примеров</p>
+<link rel="stylesheet" href="/node_modules/@awesome-telegram/patterns/dist/styles.css"><link rel='stylesheet' href='/node_modules/@awesome-telegram/patterns/dist/tokens.css'><h1>Справочник API</h1><p id="status">Проверка примеров</p>
 <script type="importmap">{"imports":{"@awesome-telegram/patterns":"/node_modules/@awesome-telegram/patterns/dist/index.js"}}</script>
 <script type="module">import{runReference}from '/dist/run.js';const cases=await runReference(document);window.referenceReport={passed:true,cases};document.querySelector('#status').textContent='Примеры прошли: '+cases.join(', ');</script></html>'''
     (ts / 'index.html').write_text(html, encoding='utf-8', newline='\n')
     browser = {'passed': False, 'skipped': True, 'checks': 0}
     if not args.skip_browser:
         browser = json.loads(run('example-browser', [node, ROOT / 'scripts/check_api_reference_browser.mjs', ts, output / 'browser']))
-        assert browser['passed'] and browser['checks'] == 36
+        assert browser['passed'] and browser['checks'] == 48
     cli = json.loads(run('example-cli-recipes', [args.core_python, '-m', 'telegram_patterns', 'recipes', 'две кнопки']))
     assert cli['recipes'][0]['id'] == 'two-columns'
     target = output / 'cli new bot'

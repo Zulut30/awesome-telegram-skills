@@ -199,3 +199,107 @@ def third_party_launch(raw: str) -> VerifiedLaunch:
     return validate_init_data_signature(raw, 7, environment='test', public_key=TELEGRAM_PUBLIC_KEYS['test'])
 def bad_third_party_launch(raw: str) -> VerifiedLaunch:
     return validate_init_data_signature(raw, 7, environment='staging')  # type: ignore[arg-type]
+
+
+# Exact financial values and synchronous transactional ACL remain public consumer contracts.
+from telegram_patterns import (MAX_MINOR_UNITS, Money, PaymentRoute, PaymentKind, PaymentState,
+    ProviderEventKind, PaymentConflict, PaymentLeaseLost, PaymentBinding, ProviderEvent,
+    PaymentOperation, PaymentClaim, PaymentReceipt, PaymentOrder, AccessDecision,
+    PaymentCheck, PaymentVerifier, SQLitePaymentLedger)
+payment_route: PaymentRoute = 'external'
+payment_kind: PaymentKind = 'refund'
+payment_state: PaymentState = 'unknown'
+provider_event_kind: ProviderEventKind = 'paid'
+exact_price: Money = Money.from_decimal('10.00', 'RUB', 2)
+maximum_minor_units: int = MAX_MINOR_UNITS
+payment_binding = PaymentBinding('merchant:type', 100, 42, 'order:type', 'yookassa', exact_price,
+                                 route=payment_route, allow_partial_refunds=True)
+payment_ledger = SQLitePaymentLedger('typed-payments.sqlite')
+
+def payment_acl(connection: sqlite3.Connection, current: PaymentOperation, replayed: bool) -> bool:
+    return connection.in_transaction and current.binding == payment_binding and type(replayed) is bool
+
+payment_check: PaymentCheck = payment_acl
+
+def payment_verifier(raw: object) -> ProviderEvent:
+    # Type fixture only: an application verifier must authenticate its actual provider protocol.
+    raise ValueError('This static fixture accepts no payment evidence')
+
+trusted_payment_verifier: PaymentVerifier = payment_verifier
+
+def payment_storage_consumer(ledger: SQLitePaymentLedger) -> tuple[PaymentOrder, AccessDecision]:
+    operation_snapshot: PaymentOperation = ledger.create_order(payment_binding, 'invoice:type')
+    claim_snapshot: PaymentClaim = ledger.start_operation(payment_binding, 'invoice:type', 'worker:type',
+                                                          check=payment_check)
+    observation: ProviderEvent = payment_verifier(object())
+    receipt_snapshot: PaymentReceipt = ledger.apply_event(observation, verify=trusted_payment_verifier)
+    return ledger.get_order(payment_binding), ledger.has_access(payment_binding)
+
+async def payment_async_acl(connection: sqlite3.Connection, current: PaymentOperation, replayed: bool) -> bool:
+    return True
+
+bad_money_float = Money(10.5, 'RUB', 2)  # type: ignore[arg-type]
+bad_money_decimal = Money.from_decimal(10.0, 'RUB', 2)  # type: ignore[arg-type]
+bad_payment_route: PaymentRoute = 'client-paid'  # type: ignore[assignment]
+bad_payment_kind: PaymentKind = 'capture'  # type: ignore[assignment]
+bad_payment_state: PaymentState = 'paid'  # type: ignore[assignment]
+bad_provider_event_kind: ProviderEventKind = 'redirect-success'  # type: ignore[assignment]
+bad_payment_check: PaymentCheck = payment_async_acl  # type: ignore[assignment]
+bad_payment_verifier: PaymentVerifier = lambda raw: True  # type: ignore[assignment,return-value]
+
+
+# SDK-free provider HTTP contracts and explicit two-stage options are exported from the root.
+from telegram_patterns import (CryptoPayAdapter, InvoiceRequest, PlategaAdapter, PlategaRefundSupport,
+    ProviderHttpRequest, ProviderHttpResponse, ProviderInvoice, ProviderNotification, ProviderRateLimited,
+    ProviderReadFailure, ProviderRefund, ProviderWriteUnknown, RefundRequest, YooKassaAdapter,
+    YooKassaCreateOptions, YooKassaPeerPolicy, binding_reference)
+invoice_request = InvoiceRequest(payment_binding, 'Typed invoice', 'https://example.com/return')
+refund_request = RefundRequest(payment_binding, 'native-charge:type', Money(200, 'RUB', 2), 'invoice:type')
+invoice_binding_digest: str = binding_reference(payment_binding, 'invoice:type')
+two_stage_options = YooKassaCreateOptions(capture=False)
+provider_peer_policy = YooKassaPeerPolicy()
+
+class TypedProviderHTTP:
+    async def send(self, request: ProviderHttpRequest) -> ProviderHttpResponse:
+        return ProviderHttpResponse(503, b'{}')
+
+provider_transport: AsyncTransport[ProviderHttpRequest, ProviderHttpResponse] = TypedProviderHTTP()
+yookassa_adapter = YooKassaAdapter(provider_transport, merchant_id='merchant:type', shop_id='shop:type',
+                                  secret_key='type-fixture-only', test=True, peer_policy=provider_peer_policy)
+cryptopay_adapter = CryptoPayAdapter(provider_transport, merchant_id='merchant:type', token='type-fixture-only')
+platega_adapter = PlategaAdapter(provider_transport, merchant_id='merchant:type', native_merchant_id='native:type',
+                                secret='type-fixture-only', payment_method=2)
+
+async def provider_consumer() -> tuple[ProviderInvoice, ProviderRefund, PlategaRefundSupport]:
+    created: ProviderInvoice = await yookassa_adapter.create(invoice_request, operation_id='invoice:type',
+                                                            options=two_stage_options)
+    hint: ProviderNotification | None = yookassa_adapter.verify_notification(b'{}', peer_ip='185.71.76.1')
+    refunded: ProviderRefund = await yookassa_adapter.refund(refund_request, operation_id='refund:type')
+    support: PlategaRefundSupport = await platega_adapter.refund_support(refund_request)
+    return created, refunded, support
+
+bad_http_method = ProviderHttpRequest('DELETE', 'https://example.com/', {})  # type: ignore[arg-type]
+bad_http_body = ProviderHttpResponse(200, '{}')  # type: ignore[arg-type]
+bad_provider_transport: AsyncTransport[ProviderHttpRequest, ProviderHttpResponse] = object()  # type: ignore[assignment]
+bad_capture_option = YooKassaCreateOptions(capture='false')  # type: ignore[arg-type]
+bad_invoice_amount = RefundRequest(payment_binding, 'native', 200, 'invoice:type')  # type: ignore[arg-type]
+
+# Stars uses the existing Bot/session, immutable whole-XTR order and current transactional operator check.
+from telegram_patterns.aiogram import StarsPaymentAdapter
+stars_binding = PaymentBinding('merchant:type', 100, 42, 'order:stars', 'telegram', Money(20, 'XTR', 0),
+                               route='telegram-stars')
+
+async def stars_consumer(bot: Bot, ledger: SQLitePaymentLedger, message: Message) -> PaymentOperation:
+    adapter = StarsPaymentAdapter(bot, ledger)
+    payload: str = adapter.invoice_payload(stars_binding, 'invoice:stars')
+    event: ProviderEvent = await adapter.paid_event(stars_binding, message, invoice_operation_id='invoice:stars',
+                                                   evidence_ref='trusted:ingress')
+    refund_observation: ProviderEvent = await adapter.refund_event(stars_binding, message,
+        invoice_operation_id='invoice:stars', evidence_ref='trusted:refund')
+    operation: PaymentOperation = await adapter.refund(stars_binding, 'native:charge', 'refund:stars', 900,
+                                                      check=payment_check)
+    return await adapter.reconcile_refund(stars_binding, 'refund:stars', 900,
+        invoice_operation_id='invoice:stars', check=payment_check)
+
+def bad_stars_consumer(bot: Bot, ledger: SQLitePaymentLedger) -> StarsPaymentAdapter:
+    return StarsPaymentAdapter(bot, ledger, timeout_seconds='fast')  # type: ignore[arg-type]

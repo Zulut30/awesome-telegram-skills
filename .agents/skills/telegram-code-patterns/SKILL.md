@@ -3,14 +3,14 @@ name: telegram-code-patterns
 description: "Подбирает и подключает готовые компоненты общей библиотеки для Telegram-бота или Mini App: импорты Python/TypeScript, совместимость, композиция и проверка в проекте. Используйте, когда пользователь просит переиспользовать код, подключить библиотеку паттернов или добавить компонент в нее. Не для одиночного исправления handler или кода без этой библиотеки → telegram-bot-python."
 license: MIT
 metadata:
-  version: "0.25.0"
+  version: "0.26.0"
 ---
 
 # Готовые компоненты Telegram
 
 ## Когда использовать
 
-Подключение готового компонента или изменение библиотеки паттернов.
+Подключение или изменение компонентов библиотеки.
 
 ## Когда не использовать
 
@@ -33,7 +33,7 @@ metadata:
 - [doctor](references/doctor.md): установка и диагностика
 - [developer-tools](references/developer-tools.md): поиск рецептов в CLI и `run-recipe`
 - [keyboard-layouts](references/keyboard-layouts.md): ряды и цвета кнопок
-- [keyboard-recipes](references/keyboard-recipes.md): reply-ввод, события, `BackButton`/`MainButton`
+- [keyboard-recipes](references/keyboard-recipes.md): reply, `BackButton`/`MainButton`
 - [bot-recipes](references/bot-recipes.md): команды, пагинация, запуск и тесты бота
 - [form-recipes](references/form-recipes.md): текстовая форма, повтор отправки
 - [dialog-fields](references/dialog-fields.md): типизированный ввод
@@ -49,7 +49,7 @@ metadata:
 - [component-texts](references/component-texts.md): язык и формулировки
 - [framework-adapters](references/framework-adapters.md): React, Vue и Svelte
 - [bot-api-10-features](references/bot-api-10-features.md): guest, bot-to-bot, live photo, заявки, медиа опросов
-- [ptb-adapter](references/ptb-adapter.md): проект на python-telegram-bot
+- [ptb-adapter](references/ptb-adapter.md): python-telegram-bot
 - [media](references/media.md): фото, документы, альбомы, скачивание
 - [profiles](references/profiles.md): профили, фото пользователя, оформление бота
 - [inline-search](references/inline-search.md): inline-поиск
@@ -65,12 +65,17 @@ metadata:
 - [worker-lifecycle](references/worker-lifecycle.md): остановка и закрытие ресурсов
 - [safe-telemetry](references/safe-telemetry.md): корреляция и метрики без секретов
 - [mini-app-state](references/mini-app-state.md): запросы, черновик и незавершенная операция
+- [mini-app-ui](references/mini-app-ui.md): токены, формы, модальные состояния
+- [native-flows](references/native-flows.md): кнопки, разрешения, хранилища
+- [payment-ledger](references/payment-ledger.md): суммы, возвраты, доступ
+- [payment-providers](references/payment-providers.md): Crypto Pay, Platega, ЮKassa
+- [stars-payments](references/stars-payments.md): возврат Stars
 - [extensions](references/extensions.md): собственный адаптер
 - [api-boundaries](references/api-boundaries.md): новые методы, контекст, права
 - [maturity](references/maturity.md): зрелость и доказательства проверки
 - [service-bot](references/service-bot.md): пример записи и напоминаний
 - [shop-example](references/shop-example.md): пример магазина Mini App и Stars
-- [group-bot](references/group-bot.md): группы и модерация
+- [group-bot](references/group-bot.md): модерация
 
 ## Проверка
 
@@ -86,4 +91,4 @@ metadata:
 
 [Bot API](https://core.telegram.org/bots/api).
 
-Проверено: 2026-11-05, awesome-telegram-patterns 0.25.0, Bot API 10.3, aiogram 3.31.0.
+Проверено: 2026-11-05, awesome-telegram-patterns 0.26.0, Bot API 10.3, aiogram 3.31.0.

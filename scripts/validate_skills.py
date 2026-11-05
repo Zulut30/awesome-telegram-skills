@@ -35,9 +35,11 @@ REPO_PATH = re.compile(r"(?<![\w./-])((?:scripts|docs|output|catalog|packages|ex
                        r"/[\w./-]*[\w-]|components\.json)")
 VERSIONED_OUTPUT = re.compile(r"(?:pattern-library-|awesome[_-]telegram[_-]patterns-)(\d+\.\d+\.\d+)")
 SKILL_NAME = re.compile(r"(?<![\w@/.-])(telegram-[a-z0-9]+(?:-[a-z0-9]+)*)")
-# Identifiers that look like skill names but are a CLI, SDK id, script or distribution.
+# Identifiers that look like skill names but are a CLI, SDK id, script, distribution,
+# payment route or application-owned storage namespace.
 NOT_SKILLS = {"telegram-patterns", "telegram-environment", "telegram-first-run", "telegram-group-example",
-              "telegram-service-example", "telegram-shop-example", "telegram-web-app", "telegram-webapp"}
+              "telegram-service-example", "telegram-shop-example", "telegram-web-app", "telegram-webapp",
+              "telegram-stars", "telegram-shop"}
 
 # Generated consumers, installed dependencies and caches are not collection sources.
 # Prune before descending: filtering rglob results still walks every installed file.

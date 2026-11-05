@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "library_version": "0.25.0",
+  "library_version": "0.26.0",
   "distribution": "local; not published to package registries",
   "packages": {
     "python": {
@@ -921,6 +921,110 @@
       "example": "examples/api-reference/typescript/state.ts",
       "boundaries": [
         "Framework-neutral state без fetch/retry/auth/token. Scope задает backend-validated host; смена аккаунта/dispose очищает кеш и инвалидирует ответы, даже если transport игнорирует abort. DTO только bounded plain JSON, detached/deep-frozen. PendingOperationStore хранит только scoped UUID/createdAt/pending-or-unknown отдельно от draft; corrupt/unavailable/unsupported блокирует dispatch. Только authoritative server result разрешает complete. localStorage single-owner, не межвкладочный CAS или серверная идемпотентность."
+      ],
+      "maturity": "experimental",
+      "maturity_scope": "All public API symbols in this component; local verification is not a stable 1.0 promise"
+    },
+    {
+      "id": "mini-app-ui",
+      "language": "typescript",
+      "import": "@awesome-telegram/patterns: createUiButton, createUiField, validateUiFields, uiUrl, createUiLink, createUiBadge, createUiCard, createUiList, createUiSkeleton, createUiFeedback, createUiTabs, createUiDialog, connectUiShell, bindUiFocusVisibility, UiControl, UiTone, UiButtonOptions, UiButton, UiFieldOptions, UiField, UiListItem, UiFeedbackOptions, UiTab, UiTabs, UiDialog, UiShellOptions",
+      "intent": "Собрать доступные элементы и состояния Mini App, сохранить ввод и освободить обработчики",
+      "source": "packages/typescript/src/ui.ts",
+      "example": "examples/ui-kit/main.ts",
+      "boundaries": [
+        "Компоненты создаются в переданном Document, используют буквальный текст и не дают серверных прав. Host владеет операцией, ответами backend, настоящими разрешениями Telegram и исходом платежа. Отмена или dispose после начала действия не отменяют удаленный эффект. Нативный dialog требует поддержки браузером; темы сохраняют ввод, отступы разрешаются host один раз. Подключите styles.css и tokens.css из того же пакета. Проверки Chrome/axe не доказывают работу системной клавиатуры, screen reader, физических устройств или полное соответствие WCAG."
+      ],
+      "maturity": "experimental",
+      "maturity_scope": "All public API symbols in this component; local verification is not a stable 1.0 promise"
+    },
+    {
+      "id": "exact-money",
+      "language": "python",
+      "import": "telegram_patterns.Money, MAX_MINOR_UNITS",
+      "intent": "Представить сумму без float и неявного округления",
+      "source": "packages/python/src/telegram_patterns/money.py",
+      "example": "examples/python/offline_payment_ledger.py",
+      "boundaries": [
+        "Только локальная SQLite и точные суммы. Verifier вызывается каждый раз вне DB и должен проверять настоящий протокол/статус провайдера; DTO и callback клиента не подтверждают оплату. Полная привязка merchant/bot/user/order/provider/currency/exponent сверяется до финансового изменения. Возврат требует текущего ACL при резервировании и отправке, unknown сохраняет резерв. Paid/period/refund и доступ изменяются одной транзакцией с аудитом. Stars только целые XTR и полный возврат, сроки подписки задает подтвержденный charge. Host владеет транспортом, секретами, допустимостью платежного маршрута и retention. Фикстура не является live/sandbox приемкой."
+      ],
+      "maturity": "experimental",
+      "maturity_scope": "All public API symbols in this component; local verification is not a stable 1.0 promise"
+    },
+    {
+      "id": "payment-ledger",
+      "language": "python",
+      "import": "telegram_patterns.SQLitePaymentLedger, PaymentRoute, PaymentKind, PaymentState, ProviderEventKind, PaymentBinding, ProviderEvent, PaymentOperation, PaymentClaim, PaymentReceipt, PaymentOrder, AccessDecision, PaymentCheck, PaymentVerifier, PaymentConflict, PaymentLeaseLost",
+      "intent": "Сохранить платеж, резерв возврата, unknown и оплаченный доступ",
+      "source": "packages/python/src/telegram_patterns/payment_ledger.py",
+      "example": "examples/python/offline_payment_ledger.py",
+      "boundaries": [
+        "Только локальная SQLite и точные суммы. Verifier вызывается каждый раз вне DB и должен проверять настоящий протокол/статус провайдера; DTO и callback клиента не подтверждают оплату. Полная привязка merchant/bot/user/order/provider/currency/exponent сверяется до финансового изменения. Возврат требует текущего ACL при резервировании и отправке, unknown сохраняет резерв. Paid/period/refund и доступ изменяются одной транзакцией с аудитом. Stars только целые XTR и полный возврат, сроки подписки задает подтвержденный charge. Host владеет транспортом, секретами, допустимостью платежного маршрута и retention. Фикстура не является live/sandbox приемкой."
+      ],
+      "maturity": "experimental",
+      "maturity_scope": "All public API symbols in this component; local verification is not a stable 1.0 promise"
+    },
+    {
+      "id": "native-flows",
+      "language": "typescript",
+      "import": "@awesome-telegram/patterns: NativeFlowScope, NativeActionButtons, NativePrompts, NativeAccountStorage, NativeSharing, createNativeFileInput, ServerlessEndpointClient, NativeFlowResult, NativeLaunch, NativeInteraction, NativeFlowKind, NativeScopeOptions, NativeCapability, NativeButtonsState, NativeButtonHandlers, NativeStorageKind, NativeStoredValue, NativeFileInputOptions, TelegramServerlessError, TelegramServerlessBridge, ServerlessCallOptions",
+      "intent": "Подключить нативные действия с проверкой возможностей и уборкой обработчиков",
+      "source": "packages/typescript/src/native-flows.ts",
+      "example": "examples/native-flows/main.mjs",
+      "boundaries": [
+        "Наличие функции, версия SDK и политика платформы проверяются отдельно от разрешения пользователя. Host владеет серверными правами и состоянием внешней операции; закрытый invoice не подтверждает оплату. Смена аккаунта и dispose подавляют старые ответы, но не отменяют удаленный эффект. У ответа записи и удаления обязательно проверяйте stored/removed. Serverless включается явно только при присутствии платформенного объекта; минимальная версия не выдумывается, неизвестная запись сверяется по сохраненному ID. Браузер не доказывает доступность на реальном устройстве."
+      ],
+      "maturity": "experimental",
+      "maturity_scope": "All public API symbols in this component; local verification is not a stable 1.0 promise"
+    },
+    {
+      "id": "crypto-pay-provider",
+      "language": "python",
+      "import": "telegram_patterns.InvoiceRequest, ProviderHttpRequest, ProviderHttpResponse, ProviderInvoice, ProviderNotification, ProviderRateLimited, ProviderReadFailure, ProviderRefund, ProviderWriteUnknown, RefundRequest, binding_reference, CryptoPayAdapter",
+      "intent": "Счет Crypto Pay, HMAC уведомления и независимый запрос статуса",
+      "source": "packages/python/src/telegram_patterns/providers/cryptopay.py",
+      "example": "examples/python/offline_providers.py",
+      "boundaries": [
+        "SDK не требуется; внедренный HTTP-транспорт приложения отвечает за TLS, ограничения потока и секреты. Уведомление ведет к независимому запросу статуса и проверке получателя, окружения, заказа и точной суммы; DTO не подтверждает оплату. Неопределенная запись не повторяется автоматически. Host заранее сохраняет параметры, ключи и нативные ID. Crypto Pay без ID после потерянного создания требует операторской сверки; нативный возврат не выдуман. Platega не дает доверенного paid_at в проверенном контракте, поэтому событие выдачи доступа не создается. ЮKassa поддерживает только полное подтверждение. Реальные кабинеты и sandbox не проверены; цифровые товары внутри Telegram оплачиваются Stars."
+      ],
+      "maturity": "experimental",
+      "maturity_scope": "All public API symbols in this component; local verification is not a stable 1.0 promise"
+    },
+    {
+      "id": "platega-provider",
+      "language": "python",
+      "import": "telegram_patterns.InvoiceRequest, ProviderHttpRequest, ProviderHttpResponse, ProviderInvoice, ProviderNotification, ProviderRateLimited, ProviderReadFailure, ProviderRefund, ProviderWriteUnknown, RefundRequest, binding_reference, PlategaAdapter, PlategaRefundSupport",
+      "intent": "Счет Platega и поддерживаемый договором возврат",
+      "source": "packages/python/src/telegram_patterns/providers/platega.py",
+      "example": "examples/python/offline_providers.py",
+      "boundaries": [
+        "SDK не требуется; внедренный HTTP-транспорт приложения отвечает за TLS, ограничения потока и секреты. Уведомление ведет к независимому запросу статуса и проверке получателя, окружения, заказа и точной суммы; DTO не подтверждает оплату. Неопределенная запись не повторяется автоматически. Host заранее сохраняет параметры, ключи и нативные ID. Crypto Pay без ID после потерянного создания требует операторской сверки; нативный возврат не выдуман. Platega не дает доверенного paid_at в проверенном контракте, поэтому событие выдачи доступа не создается. ЮKassa поддерживает только полное подтверждение. Реальные кабинеты и sandbox не проверены; цифровые товары внутри Telegram оплачиваются Stars."
+      ],
+      "maturity": "experimental",
+      "maturity_scope": "All public API symbols in this component; local verification is not a stable 1.0 promise"
+    },
+    {
+      "id": "yookassa-provider",
+      "language": "python",
+      "import": "telegram_patterns.InvoiceRequest, ProviderHttpRequest, ProviderHttpResponse, ProviderInvoice, ProviderNotification, ProviderRateLimited, ProviderReadFailure, ProviderRefund, ProviderWriteUnknown, RefundRequest, binding_reference, YooKassaAdapter, YooKassaCreateOptions, YooKassaPeerPolicy",
+      "intent": "Создание, полное подтверждение и возврат ЮKassa",
+      "source": "packages/python/src/telegram_patterns/providers/yookassa.py",
+      "example": "examples/python/offline_providers.py",
+      "boundaries": [
+        "SDK не требуется; внедренный HTTP-транспорт приложения отвечает за TLS, ограничения потока и секреты. Уведомление ведет к независимому запросу статуса и проверке получателя, окружения, заказа и точной суммы; DTO не подтверждает оплату. Неопределенная запись не повторяется автоматически. Host заранее сохраняет параметры, ключи и нативные ID. Crypto Pay без ID после потерянного создания требует операторской сверки; нативный возврат не выдуман. Platega не дает доверенного paid_at в проверенном контракте, поэтому событие выдачи доступа не создается. ЮKassa поддерживает только полное подтверждение. Реальные кабинеты и sandbox не проверены; цифровые товары внутри Telegram оплачиваются Stars."
+      ],
+      "maturity": "experimental",
+      "maturity_scope": "All public API symbols in this component; local verification is not a stable 1.0 promise"
+    },
+    {
+      "id": "stars-payment-flow",
+      "language": "python",
+      "import": "telegram_patterns.aiogram.StarsPaymentAdapter",
+      "intent": "Связать доверенное событие Stars, полный возврат и оплаченный доступ",
+      "source": "packages/python/src/telegram_patterns/_aiogram/stars_payments.py",
+      "example": "examples/api-reference/python/bot_stars_payments.py",
+      "boundaries": [
+        "Необязательный aiogram-адаптер использует Bot и SQLitePaymentLedger приложения. SDK Message не подтверждает подлинность: host обязан принимать его только через проверенный Telegram ingress. Оплата сверяется по боту, пользователю, заказу, payload, сумме XTR и charge; возврат требует текущих прав в транзакциях резервирования и отправки. Выполняется один refundStarPayment, без скрытого повтора; true не завершает возврат в журнале. Подтверждение приходит из проверенного RefundedPayment либо ограниченного getStarTransactions с точной привязкой получателя, суммы, charge, payload и времени. Отсутствие записи не доказывает отсутствие возврата. Транспорт, проверенный прием, хранение updates, таймаут pre-checkout и жизненный цикл сессии принадлежат приложению. Локальный StubSession не является live Stars-приемкой."
       ],
       "maturity": "experimental",
       "maturity_scope": "All public API symbols in this component; local verification is not a stable 1.0 promise"

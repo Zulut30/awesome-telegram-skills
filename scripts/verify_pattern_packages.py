@@ -17,7 +17,10 @@ import sys
 import tempfile
 import tomllib
 
-from release_identity import read_release_identity
+if __package__:
+    from .release_identity import read_release_identity
+else:
+    from release_identity import read_release_identity
 
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -320,6 +323,19 @@ print(json.dumps({'core_without_sdk':True,'python':sys.version.split()[0]}))
                 raise RuntimeError('Public-package tests may import only public entry points: ' + source.name)
             (client / source.name).write_text(suite, encoding='utf-8')
         ts_log = run('typescript-tests', [node, '--test', '--test-reporter=tap', *(source.name for source in suites)], client)
+        # Positive and intentional negative cases must resolve the installed declarations too.
+        declaration_checks = client / 'declaration-checks'
+        declaration_checks.mkdir()
+        for source in sorted((ROOT / 'packages/typescript/tests/types').glob('*.ts')):
+            content = source.read_text(encoding='utf-8').replace("from '../../dist/index.js'", "from '@awesome-telegram/patterns'")
+            if '../dist/' in content or '../../dist/' in content:
+                raise RuntimeError('Declaration checks must use public package entry points: ' + source.name)
+            (declaration_checks / source.name).write_text(content, encoding='utf-8', newline='\n')
+        (declaration_checks / 'tsconfig.json').write_text(json.dumps({'compilerOptions': {
+            'target': 'ES2022', 'module': 'NodeNext', 'moduleResolution': 'NodeNext', 'lib': ['ES2022', 'DOM'],
+            'strict': True, 'exactOptionalPropertyTypes': True, 'noUncheckedIndexedAccess': True,
+            'noEmit': True, 'types': []}, 'include': ['*.ts']}), encoding='utf-8')
+        run('installed-declaration-checks', [node, str(client / 'node_modules/typescript/bin/tsc'), '-p', str(declaration_checks / 'tsconfig.json')], client)
         # Compile the real composition example against the INSTALLED declarations.
         (client / 'index.ts').write_text((ROOT / 'examples/mini-app/src/index.ts').read_text(encoding='utf-8'), encoding='utf-8')
         (client / 'native-recipes.ts').write_text((ROOT / 'examples/mini-app/src/native-recipes.ts').read_text(encoding='utf-8'), encoding='utf-8')
@@ -329,7 +345,7 @@ print(json.dumps({'core_without_sdk':True,'python':sys.version.split()[0]}))
         run('native-example-build', [node, str(client / 'node_modules/typescript/bin/tsc'), '-p', 'tsconfig.json'], client)
         (client / 'native-recipes-consumer.mjs').write_text((ROOT / 'tests/native-recipes-consumer.mjs').read_text(encoding='utf-8'), encoding='utf-8')
         report['native_recipes'] = json.loads(run('native-example-test', [node, 'native-recipes-consumer.mjs'], client))
-        run('packaged-style', [node, '--input-type=module', '-e', "import {readFile} from 'node:fs/promises';const css=await readFile(new URL(import.meta.resolve('@awesome-telegram/patterns/styles.css')),'utf8');if(!css.trim())throw Error('empty style');console.log('public CSS export works')"], client)
+        run('packaged-style', [node, '--input-type=module', '-e', "import {readFile} from 'node:fs/promises';for(const asset of ['styles.css','tokens.css']){const css=await readFile(new URL(import.meta.resolve('@awesome-telegram/patterns/'+asset)),'utf8');if(!css.trim())throw Error('empty style: '+asset);}console.log('both public CSS exports work')"], client)
         # Export map consumers: require(esm), the package.json subpath and TypeScript bundler/node16 resolution.
         node_version = tuple(int(part) for part in run('node-version', [node, '-p', 'process.versions.node'], client).strip().split('.')[:2])
         if node_version >= (22, 12) or (20, 19) <= node_version < (21, 0):
@@ -346,6 +362,7 @@ print(json.dumps({'core_without_sdk':True,'python':sys.version.split()[0]}))
             (folder / 'consumer.ts').write_text(
                 "import {ApiClient, TelegramBridge} from '@awesome-telegram/patterns';\n"
                 "import '@awesome-telegram/patterns/styles.css';\n"
+                "import '@awesome-telegram/patterns/tokens.css';\n"
                 "export const exported: [typeof ApiClient, typeof TelegramBridge] = [ApiClient, TelegramBridge];\n", encoding='utf-8')
             (folder / 'tsconfig.json').write_text(json.dumps({'compilerOptions': {
                 'target': 'ES2022', 'module': module_kind, 'moduleResolution': resolution, 'lib': ['ES2022', 'DOM'], 'strict': True,
@@ -356,6 +373,10 @@ print(json.dumps({'core_without_sdk':True,'python':sys.version.split()[0]}))
             run(f'typescript-{resolution}', [node, str(client / 'node_modules/typescript/bin/tsc'), '-p', str(folder / 'tsconfig.json')], client)
         report['typescript_resolutions'] = ['nodenext', 'bundler', 'node16']
         if not args.skip_browser:
+            ui_output = output / 'ui-installed' / consumers.name
+            run('installed-ui-example', [sys.executable, str(ROOT / 'scripts/verify_ui_example.py'),
+                '--tarball', str(tarball), '--output', str(ui_output)], timeout=720)
+            report['ui_browser'] = json.loads((ui_output / 'report.json').read_text(encoding='utf-8'))
             run('browser-tests', [npm, 'run', 'test:browser'])
             report['browser'] = json.loads((output / 'browser/report.json').read_text(encoding='utf-8'))
             run('gallery-browser', [node, str(ROOT / 'tests/gallery-browser.mjs')], timeout=420)

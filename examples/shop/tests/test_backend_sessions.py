@@ -125,7 +125,7 @@ class BackendSessionTests(unittest.IsolatedAsyncioTestCase):
         self.assertEqual(restarted.authenticate(other['token']),77)
         with connection(self.database) as db:
             rows=str([tuple(row) for row in db.execute('SELECT * FROM shop_sessions')])
-            self.assertEqual(db.execute('SELECT version FROM shop_schema').fetchone()[0],1)
+            self.assertEqual(db.execute('SELECT version FROM shop_schema').fetchone()[0],2)
         for secret in (first['token'],rotated['token'],companion['token'],other['token']):self.assertNotIn(secret,rows)
 
     async def test_rotation_renews_ttl_and_expired_sessions_cannot_rotate_or_revoke(self):
@@ -228,6 +228,83 @@ class BackendSessionTests(unittest.IsolatedAsyncioTestCase):
                                      ('POST','/api/orders',payload),('POST','/api/orders/'+row['id']+'/invoice',{})]:
                 await self.call(origin,method,path,body=body,status=401)
             await self.call(origin,'POST','/api/receipt',token=owner,body={'paid':True},status=404)
+
+    async def test_current_roles_gate_reads_writes_invoice_and_saved_replay(self):
+        operation=str(uuid.uuid4());payload={'operation':operation,'items':['bot-kit'],'terms':'demo-v1'}
+        async with self.running() as (origin,transport):
+            owner=(await self.login(origin))['token']
+            row=await self.call(origin,'POST','/api/orders',token=owner,body=payload)
+            await self.call(origin,'POST','/api/orders/'+row['id']+'/invoice',token=owner,body={})
+            self.reopen().configure_role(42,'viewer')
+            await self.call(origin,'GET','/api/orders/'+row['id'],token=owner)
+            await self.call(origin,'GET','/api/operations/'+operation,token=owner)
+            for body in (payload,payload|{'operation':str(uuid.uuid4())}):
+                await self.call(origin,'POST','/api/orders',token=owner,body=body,status=403)
+            await self.call(origin,'POST','/api/orders/'+row['id']+'/invoice',token=owner,body={},status=403)
+            with self.assertRaises(PermissionDenied):self.store.precheckout(100,42,'denied-role',self.store.payload(row['id']),'XTR',25)
+            self.assertEqual(sum(isinstance(call,CreateInvoiceLink) for call in transport.calls),1)
+            self.store.configure_role(42,'customer')
+            self.store.paid(100,42,self.store.payload(row['id']),'XTR',25,'role-paid')
+            self.store.configure_role(42,'viewer')
+            await self.call(origin,'GET','/api/content/bot-kit',token=owner)
+            self.store.configure_role(42,'blocked')
+            for path in ('/api/orders','/api/orders/'+row['id'],'/api/operations/'+operation,'/api/content/bot-kit'):
+                await self.call(origin,'GET',path,token=owner,status=403)
+            # A valid token/launch or client role override never restores a server role.
+            await self.call(origin,'POST','/api/orders',token=owner,body=payload,status=403)
+            new_token=(await self.login(origin))['token']
+            await self.call(origin,'GET','/api/orders',token=new_token,status=403)
+            await self.call(origin,'POST','/api/session/revoke',token=new_token,body={})
+        with connection(self.database) as db:
+            self.assertEqual(db.execute('SELECT count(*) FROM shop_orders').fetchone()[0],1)
+            self.assertEqual(db.execute('SELECT count(*) FROM telegram_pattern_operations').fetchone()[0],1)
+
+    async def test_role_revocation_precedes_queued_writer_and_late_receipt_is_reviewed(self):
+        import threading
+        started=threading.Event();operation=str(uuid.uuid4())
+        def create_queued():
+            started.set();return self.reopen().create(42,operation,['bot-kit'],'demo-v1')
+        with ThreadPoolExecutor(max_workers=1) as pool:
+            with connection(self.database,write=True) as db:
+                queued=pool.submit(create_queued);self.assertTrue(started.wait(2))
+                db.execute("INSERT INTO shop_roles VALUES(100,42,'blocked')")
+            with self.assertRaises(PermissionDenied):queued.result(timeout=5)
+        with connection(self.database) as db:
+            self.assertEqual(db.execute('SELECT count(*) FROM shop_orders').fetchone()[0],0)
+            self.assertEqual(db.execute('SELECT count(*) FROM telegram_pattern_operations').fetchone()[0],0)
+        self.store.configure_role(42,'customer')
+        row=self.store.create(42,operation,['bot-kit'],'demo-v1');self.store.claim_invoice(42,row['id'])
+        self.store.configure_role(42,'blocked')
+        # Do not discard the fact of an already-started external effect after revocation.
+        self.store.finish_invoice(42,row['id'],'https://t.me/$started-before-revocation')
+        receipt=self.store.paid(100,42,self.store.payload(row['id']),'XTR',25,'late-after-role-revocation')
+        self.assertEqual(receipt,{'replayed':False,'review':True})
+        self.assertEqual(self.store.paid(100,42,self.store.payload(row['id']),'XTR',25,'late-after-role-revocation'),{'replayed':True,'review':True})
+        with connection(self.database) as db:
+            self.assertEqual(db.execute('SELECT status FROM shop_orders').fetchone()[0],'review')
+            self.assertEqual(db.execute('SELECT count(*) FROM shop_receipts').fetchone()[0],1)
+            self.assertEqual(db.execute('SELECT count(*) FROM shop_access').fetchone()[0],0)
+
+    async def test_additive_v1_role_migration_preserves_sessions_orders_and_access(self):
+        session=self.store.session(signed(42,timestamp=self.clock[0]))
+        operation=str(uuid.uuid4());row=self.store.create(42,operation,['bot-kit'],'demo-v1');self.store.claim_invoice(42,row['id'])
+        self.store.paid(100,42,self.store.payload(row['id']),'XTR',25,'migration-charge')
+        with connection(self.database,write=True) as db:
+            db.execute('DROP TABLE shop_roles');db.execute('UPDATE shop_schema SET version=1')
+        migrated=self.reopen()
+        self.assertEqual(migrated.authenticate(session['token']),42)
+        self.assertEqual(migrated.operation(42,operation)['id'],row['id'])
+        self.assertIn('text',migrated.content(42,'bot-kit'))
+        self.assertEqual(migrated.create(42,operation,['bot-kit'],'demo-v1')['id'],row['id'])
+        with connection(self.database) as db:
+            self.assertEqual(db.execute('SELECT version FROM shop_schema').fetchone()[0],2)
+            self.assertEqual(db.execute('SELECT count(*) FROM shop_roles').fetchone()[0],0)
+            self.assertEqual(db.execute('SELECT count(*) FROM shop_receipts').fetchone()[0],1)
+        migrated.configure_role(42,'viewer');self.assertEqual(self.reopen().order(42,row['id'])['id'],row['id'])
+        with self.assertRaises(PermissionDenied):self.reopen().create(42,operation,['bot-kit'],'demo-v1')
+        with connection(self.database,write=True) as db:db.execute('UPDATE shop_schema SET version=999')
+        with self.assertRaisesRegex(ValueError,'migration'):self.reopen()
+        with connection(self.database) as db:self.assertEqual(db.execute('SELECT version FROM shop_schema').fetchone()[0],999)
 
     async def test_lost_order_and_rotation_replies_reconcile_same_operation_after_restart(self):
         operation=str(uuid.uuid4());payload={'operation':operation,'items':['bot-kit'],'terms':'demo-v1'}

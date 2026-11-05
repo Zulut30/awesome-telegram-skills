@@ -28,8 +28,9 @@ TERMS='Учебный пример, не оферта рабочего мага�
 SUPPORT='Учебная поддержка: обратитесь к владельцу тестового проекта через /paysupport. Telegram support не обслуживает покупки этого магазина.'
 
 
-def signed(actor: int, *, timestamp: int | None = None, token: str = TOKEN) -> str:
+def signed(actor: int, *, timestamp: int | None = None, token: str = TOKEN, start_param: str | None = None) -> str:
     fields={'auth_date':str(int(time.time()) if timestamp is None else timestamp),'query_id':'offline-launch','user':json.dumps({'id':actor,'first_name':'Fixture'},separators=(',',':'))}
+    if start_param is not None:fields['start_param']=start_param
     key=hmac.new(b'WebAppData',token.encode(),hashlib.sha256).digest()
     fields['hash']=hmac.new(key,'\n'.join(f'{k}={v}' for k,v in sorted(fields.items())).encode(),hashlib.sha256).hexdigest()
     return urlencode(fields)
@@ -78,7 +79,7 @@ async def run(args) -> None:
         dp.include_router(payment_router(store,shop_url='https://fixture.invalid/',terms=TERMS,support=SUPPORT))
         app=create_app(store,bot,args.frontend,origin=f'http://127.0.0.1:{args.port}',terms=TERMS,support=SUPPORT,loopback_dev=True)
         runner=web.AppRunner(app,access_log=None,shutdown_timeout=5);await runner.setup();await web.TCPSite(runner,'127.0.0.1',args.port).start()
-        print(json.dumps({'phase':'ready','launch':{str(actor):signed(actor) for actor in (42,77)},'recovered':recovered}),flush=True)
+        print(json.dumps({'phase':'ready','launch':{str(actor):signed(actor) for actor in (42,77)},'recovered':recovered,'launch_profiles':{'menu':signed(42),'main':signed(42,start_param='orders'),'inline':signed(42,start_param='catalog'),'reply':'','inline_mode':''}}),flush=True)
         while line:=await asyncio.to_thread(sys.stdin.readline):
             command=json.loads(line);action=command['action']
             if action=='stop':break
@@ -105,6 +106,9 @@ async def run(args) -> None:
                     os._exit(76)
                 store.paid=crash_receipt  # type: ignore[method-assign]
                 result={'action':action,'passed':True,'armed':True}
+            elif action=='role':
+                store.configure_role(command.get('actor',42),command['role'])
+                result={'action':action,'passed':True}
             elif action=='stats':
                 with connection(store.database) as db:
                     result={'action':action,'passed':True,'orders':db.execute('SELECT count(*) FROM shop_orders').fetchone()[0],'receipts':db.execute('SELECT count(*) FROM shop_receipts').fetchone()[0],'access':db.execute('SELECT count(*) FROM shop_access').fetchone()[0],'invoice_requests':sum(isinstance(c,CreateInvoiceLink) for c in session.calls),'external_network_attempts':attempts[0],'telegram_requests':False}

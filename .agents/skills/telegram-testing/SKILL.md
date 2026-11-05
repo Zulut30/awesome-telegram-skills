@@ -3,7 +3,7 @@ name: telegram-testing
 description: "Проверяет Telegram-ботов и Mini Apps: обработчики updates, auth, повторную доставку, платежи и сценарии в клиенте Telegram. Используйте при добавлении или запуске проверок. Не для приемки на реальных устройствах → telegram-mini-app-device-qa; не для сравнения скриншотов → telegram-mini-app-visual-regression."
 license: MIT
 metadata:
-  version: "0.25.0"
+  version: "0.26.0"
 ---
 
 # Проверка бота и Mini App

@@ -37,7 +37,8 @@ class NativeSignatureTests(unittest.TestCase):
         self.assertEqual(done.returncode, 0, done.stderr)
         module = generator.OUTPUT.read_text(encoding='utf-8')
         self.assertEqual(module.count("\n  '"), len(self.index['methods']), 'one signature per official method')
-        self.assertIn("'showPopup': (params: PopupParams, callback?: (buttonId: string) => void) => void;", module)
+        # The official SDK emits null when the popup closes without a selected button.
+        self.assertIn("'showPopup': (params: PopupParams, callback?: (buttonId: string | null) => void) => void;", module)
         self.assertIn("'isVersionAtLeast': (version: string) => boolean;", module)
 
     def test_table_drift_is_refused(self):

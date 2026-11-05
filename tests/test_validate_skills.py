@@ -183,6 +183,8 @@ class ValidateSkillsTests(unittest.TestCase):
         self.assertTrue(any('unknown skill telegram-payments-v2' in error for error in self.errors()))
         self.reference('Соседний скилл telegram-other; CLI `telegram-patterns`; пакет `awesome-telegram-patterns`.\n')
         self.assertEqual(self.errors(), [])
+        self.reference('Платежный route `telegram-stars`; namespace `telegram-shop:cart:42:v1`.\n')
+        self.assertEqual(self.errors(), [])
 
     def test_repository_skills_pass(self):
         count, errors = self.validator.validate(ROOT)

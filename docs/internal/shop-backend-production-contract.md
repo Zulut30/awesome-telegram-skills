@@ -10,9 +10,9 @@
 | `POST /api/session/rotate` | Exact Origin, единственный bearer, JSON `{}`; live session ищется внутри write transaction | Новый token с тем же server-derived scope; старый сразу invalid. Повтор/expired/revoked → 401 |
 | `POST /api/session/revoke` | Те же guards; только текущая session, без actor/scope body | `{revoked:true}`; повтор → 401. Другие session tokens остаются действительными |
 | `GET /api/catalog`, `GET /api/policy`, static/index | Публичные данные | Никаких персональных DTO или session secrets |
-| Orders/create/list/by-ID/operation lookup/invoice, content | Server bearer identity на каждом запросе; SQL bot+actor scope и права товара/заказа | Чужой order/content/invoice → 403; чужая operation → 404; чужой actor не видит order в списке |
+| Orders/create/list/by-ID/operation lookup/invoice, content | Server bearer identity на каждом запросе; SQL bot+actor scope и текущая серверная роль/права товара/заказа | Чужой order/content/invoice → 403; чужая operation → 404; чужой actor не видит order в списке |
 
-Bearer хранится в памяти frontend, не cookie/localStorage/sessionStorage. `scope=bot_id:user_id` помогает выбирать pending storage, но не авторизует. DB сохраняет только token hash/bot/actor/expiry; ни raw token, ни initData. Session issue/rotation/revoke долговечны, схема SQLite остается version 1: существующие таблицы/строки/заказы не сбрасываются. DELETE старого token и INSERT нового выполняются в одной `BEGIN IMMEDIATE` transaction; ошибка INSERT откатывает DELETE. Конкурентный rotate одного token имеет одного победителя.
+Bearer хранится в памяти frontend, не cookie/localStorage/sessionStorage. `scope=bot_id:user_id` помогает выбирать pending storage, но не авторизует. DB сохраняет только token hash/bot/actor/expiry; ни raw token, ни initData. Session issue/rotation/revoke долговечны, схема SQLite версии 2 добавляет таблицу серверных ролей атомарной миграцией из версии 1: существующие сессии, заказы, квитанции и доступ сохраняются, неизвестная версия отклоняется. DELETE старого token и INSERT нового выполняются в одной `BEGIN IMMEDIATE` transaction; ошибка INSERT откатывает DELETE. Конкурентный rotate одного token имеет одного победителя.
 
 Expiry сравнивается с серверными часами: `expires > now`. Rotation выдает TTL 600 секунд заново; absolute lifetime сверх этого не вводится. Revoke не отменяет уже авторизованные in-flight запросы, другие устройства/сессии и подписанную Telegram initData. Свежая initData может выдать новую сессию; это session logout, а не блокировка Telegram пользователя/кражи launch data. Для инцидентного account ban/глобального logout нужен отдельный полномочный контракт, которого этот пример не заявляет.
 
@@ -22,6 +22,12 @@ Mutating endpoints требуют один точный configured `Origin`. Pri
 
 Configured origin требует HTTPS; только явный loopback fixture допускает `http://127.0.0.1:port`. Это выбранная политика этого same-origin demo, не универсальная политика стороннего API.
 
+## Текущие роли и объектные права
+
+Таблица `shop_roles` привязана к bot/actor. Без переопределения действует обычная роль `customer`; `viewer` читает только собственные заказы и оплаченный контент, но не создает заказы/счета и не подтверждает pre-checkout. `blocked` не читает и не изменяет личные бизнес-объекты. Только доверенная конфигурация владельца вызывает `Store.configure_role`; browser/body/query не назначает роль, HTTP-маршрута смены ролей нет. Роль перечитывается в каждой бизнес-операции, а не кешируется в session. Ротация/отзыв собственной сессии сохраняются доступными независимо от роли.
+
+Создание заказа использует `SQLiteOnce.run_guarded`: роль проверяется в writer-транзакции до нового эффекта и до возврата сохраненного повтора. Подготовка счета проверяет роль и владельца в своей writer-транзакции до внешней отправки; pre-checkout делает это до подтверждения. Отзыв роли не отменяет уже начавшийся сетевой эффект. Поэтому сохранение результата ранее начатого invoice и прием подлинного платежного факта остаются возможными: платеж после ограничения роли записывается как `review`, без новой выдачи доступа. Это не клиентская бизнес-операция и не основание игнорировать реальную оплату.
+
 ## Потерянный ответ, restart и смена аккаунта
 
 Session lifetime независим от business operation identity. Если ответ создания заказа потерян после commit, новый вход и `GET /api/operations/{originalOperation}` возвращают исходный order ID. Повтор исходного POST с тем же actor/key/payload дает тот же заказ; другой payload → 409. При новом actor тот же UUID находится в другой principal scope и не открывает старый заказ.
@@ -30,7 +36,7 @@ Session lifetime независим от business operation identity. Если �
 
 Restart после invoice `creating` переводит его в `unknown` через существующий `Store.recover`; новая invoice автоматически не отправляется. HTTP клиент может читать этот статус и ждать операторской сверки. Неизвестный исход внешней отправки не превращается в доказанный failure.
 
-Frontend main/UI не перестраивались: существующий reload получает новую session и читает pending под server-derived scope. Автоматический background renewal/account-switch state machine не реализован в этом изменении. Host, который добавит смену аккаунта без reload, должен сначала очистить старые memory token/visible order/cart, исключить применение старых ответов и затем загрузить только pending нового verified scope. Нельзя мигрировать pending чужого scope или создать новый operation ID для невыясненного старого заказа. Полная клиентская приемка остается в 46–50.
+После серверного этапа действующий `main.ts` подключен к `ShopDomainState` через отдельные `shop-api.ts` и `telegram-adapter.ts`. `reconcile()` и загрузка страницы при 404 никогда не отправляют новый POST: только явное нажатие повторяет сохраненные ID/товары/условия. Новая версия условий блокирует этот повтор. Корзина, согласие, заказ, связанный запрос и личность отделены от отображения; ротация/отзыв, обновление при возобновлении и смена аккаунта используют серверные маршруты. Перед новым входом прежние видимые данные и кеш очищаются; поздний ответ прежнего аккаунта не меняет новый контекст. Подробный контракт — в каноническом `docs/mini-app-state.md`. Нельзя переносить чужие незавершенные запросы или создавать новый ID для невыясненного старого заказа. Локальная связанная проверка HTTP/SQLite/Chrome не заменяет клиентскую приемку на реальных устройствах.
 
 ## Проверки и предел evidence
 
@@ -46,6 +52,9 @@ Frontend main/UI не перестраивались: существующий r
 | Все private object ACL/server price/principal-scoped operation; нет HTTP payment grant | `test_every_private_object_route_uses_server_actor_and_owner_acl` |
 | Реально потерянные order/rotation replies, SQLite restart, прежний opID, unknown invoice | `test_lost_order_and_rotation_replies_reconcile_same_operation_after_restart` |
 | Настоящее process death, повторный HTTP запуск, сохранность session/order/revoke и invoice recovery | `test_http_session_order_and_revoke_survive_actual_process_death` |
+| Роли на чтении/записи/повторе/счете/pre-checkout; новая initData не снимает запрет | `test_current_roles_gate_reads_writes_invoice_and_saved_replay` |
+| Отзыв перед ожидающим writer, поздний платеж в review без выдачи | `test_role_revocation_precedes_queued_writer_and_late_receipt_is_reviewed` |
+| Миграция v1→v2 сохраняет заказы/receipt/access/session; неизвестная версия остается без изменения | `test_additive_v1_role_migration_preserves_sessions_orders_and_access` |
 | HTTP routes/DTO соответствуют OpenAPI, включая два новых endpoints | `test_routes_and_responses_follow_the_openapi_contract` в `test_shop.py` |
 
 Команда из checkout с установленными dependencies: `$env:PYTHONPATH=(Resolve-Path 'examples/shop/src').Path; & output/production-run-2026-11-05/root-env/Scripts/python.exe -m unittest discover -s examples/shop/tests -v`. `root-env` — существующая локальная Python 3.13 среда с aiohttp 3.14.5/aiogram 3.31.0 и текущим editable core. Это source checkout acceptance, не установка нового wheel/tarball. OpenAPI client обновляется существующим `python scripts/build_openapi_types.py`; центральный generator не изменен.

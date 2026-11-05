@@ -1063,6 +1063,7 @@ class SQLitePaymentLedger:
             )
             return {
                 'paid': row['paid_at'] is not None,
+                'paid_at': row['paid_at'],
                 'amount': binding.amount,
                 'refunded': Money(row['refunded'], binding.amount.currency, binding.amount.exponent),
                 'reserved': Money(reserved, binding.amount.currency, binding.amount.exponent),

@@ -76,7 +76,7 @@ def build() -> tuple[dict[str, str], dict]:
     bodies['typescript'] += ('## Entry — run.ts\n\nСохраните рядом с check.ts и файлами раздела. '
                             'После strict compile импортируйте runReference из dist/run.js в browser ESM entry '
                             'и вызовите `await runReference(document)`. Bundler текущего проекта разрешает package import; '
-                            'plain browser требует import map к установленному dist/index.js и link к styles.css. '
+                            'plain browser требует import map к установленному dist/index.js и link к styles.css и tokens.css. '
                             'Созданные fixture DOM и listeners удаляются; production UI/state предоставляет host.\n\n```typescript\n' +
                             (ROOT / 'examples/api-reference/typescript/run.ts').read_text(encoding='utf-8').rstrip() + '\n```\n\n')
     for group in spec['groups']:
@@ -133,8 +133,8 @@ def build() -> tuple[dict[str, str], dict]:
               '`python -m telegram_patterns run-recipe demo-recovery` показывает requirements; '
               'явный `--offline` запускает закрытый installed fixture без токена. Native references требуют host/аргументов. '
               'Изменение существующего проекта и live запуск — отдельные действия. Commands/exit codes проверяются installed CLI.\n\n'
-              'CSS entry: `@awesome-telegram/patterns/styles.css`. В bundler: '
-              '`import "@awesome-telegram/patterns/styles.css";`; в browser consumer подключите link к скопированному '
+              'CSS entries: `@awesome-telegram/patterns/styles.css` и `@awesome-telegram/patterns/tokens.css`. В bundler: '
+              '`import "@awesome-telegram/patterns/styles.css"; import "@awesome-telegram/patterns/tokens.css";`; в browser consumer подключите link к скопированному '
               'CSS из resolved subpath. CSS не создает UI и не заменяет host state. '
               'Import resolution и настоящий browser stylesheet проверяются отдельно.\n\n'
               'Type-only TypeScript exports существуют в declarations, без runtime JavaScript binding. '
@@ -145,7 +145,7 @@ def build() -> tuple[dict[str, str], dict]:
     index = {'schema_version': 1, 'library_version': version, 'symbols': entries,
              'python_symbols': sum(not item['module'].startswith('@') for item in entries),
              'typescript_symbols': sum(item['module'].startswith('@') for item in entries),
-             'recipes': len(groups), 'additional_entries': ['CLI recipes', 'CLI init', 'CLI doctor', 'CLI run-recipe', 'styles.css'],
+             'recipes': len(groups), 'additional_entries': ['CLI recipes', 'CLI init', 'CLI doctor', 'CLI run-recipe', 'styles.css', 'tokens.css'],
              'evidence': 'Installed type/runtime/DOM consumers; no independent agent or physical client proof'}
     return products, index
 

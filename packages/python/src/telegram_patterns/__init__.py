@@ -2,7 +2,7 @@
 
 # Same value as [project].version in pyproject.toml and the installed distribution metadata;
 # verify_distribution_contract.py and the wheel consumer check all three.
-__version__ = '0.25.0'
+__version__ = '0.26.0'
 
 from .calendar_core import CalendarMonth, TimeSlot, resolve_local_time
 from .ephemeral import EphemeralMessageRef, EphemeralNotAllowed, EphemeralTrigger, ephemeral_parameters
@@ -79,6 +79,7 @@ from .message_text import (
     split_formatted,
     utf16_length,
 )
+from .money import MAX_MINOR_UNITS, Money
 from .outbox import (
     OutboxClaim,
     OutboxConflict,
@@ -88,6 +89,43 @@ from .outbox import (
     OutboxResolution,
     OutboxState,
     SQLiteOutbox,
+)
+from .payment_ledger import (
+    AccessDecision,
+    PaymentBinding,
+    PaymentCheck,
+    PaymentClaim,
+    PaymentConflict,
+    PaymentKind,
+    PaymentLeaseLost,
+    PaymentOperation,
+    PaymentOrder,
+    PaymentReceipt,
+    PaymentRoute,
+    PaymentState,
+    PaymentVerifier,
+    ProviderEvent,
+    ProviderEventKind,
+    SQLitePaymentLedger,
+)
+from .providers import (
+    CryptoPayAdapter,
+    InvoiceRequest,
+    PlategaAdapter,
+    PlategaRefundSupport,
+    ProviderHttpRequest,
+    ProviderHttpResponse,
+    ProviderInvoice,
+    ProviderNotification,
+    ProviderRateLimited,
+    ProviderReadFailure,
+    ProviderRefund,
+    ProviderWriteUnknown,
+    RefundRequest,
+    YooKassaAdapter,
+    YooKassaCreateOptions,
+    YooKassaPeerPolicy,
+    binding_reference,
 )
 from .recipes import Maturity, Recipe, RecipeCatalog, VerificationLevel
 from .rich_message import RichButton, RichButtonStyle, RichMessage, RichMessageBuilder, RichSpan, RichText
@@ -118,6 +156,24 @@ from .webhook import WebhookCode, WebhookReceiver, WebhookResponse, create_aioht
 from .worker import InboxWorker, WorkerOutcome, settled_to_thread
 
 __all__ = [
+    "CryptoPayAdapter",
+    "InvoiceRequest",
+    "PlategaAdapter",
+    "PlategaRefundSupport",
+    "ProviderHttpRequest",
+    "ProviderHttpResponse",
+    "ProviderInvoice",
+    "ProviderNotification",
+    "ProviderRateLimited",
+    "ProviderReadFailure",
+    "ProviderRefund",
+    "ProviderWriteUnknown",
+    "RefundRequest",
+    "YooKassaAdapter",
+    "YooKassaCreateOptions",
+    "YooKassaPeerPolicy",
+    "binding_reference",
+
     "BotSettings",
     "InvalidInitData",
     "VerifiedLaunch",
@@ -206,6 +262,24 @@ __all__ = [
     "TelemetryOutcome",
     "TelemetrySnapshot",
     "TelemetryStage",
+    "MAX_MINOR_UNITS",
+    "Money",
+    "AccessDecision",
+    "PaymentBinding",
+    "PaymentCheck",
+    "PaymentClaim",
+    "PaymentConflict",
+    "PaymentKind",
+    "PaymentLeaseLost",
+    "PaymentOperation",
+    "PaymentOrder",
+    "PaymentReceipt",
+    "PaymentRoute",
+    "PaymentState",
+    "PaymentVerifier",
+    "ProviderEvent",
+    "ProviderEventKind",
+    "SQLitePaymentLedger",
     "CalendarMonth",
     "TimeSlot",
     "resolve_local_time",

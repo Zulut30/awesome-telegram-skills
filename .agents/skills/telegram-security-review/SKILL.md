@@ -3,7 +3,7 @@ name: telegram-security-review
 description: "Проверяет безопасность Telegram-бота или Mini App: серверные права, секреты, initData, платежи, файлы и внешние URL. Используйте для запрошенного review или существенной границы доверия. Не для реализации проверки initData → telegram-mini-app-auth."
 license: MIT
 metadata:
-  version: "0.25.0"
+  version: "0.26.0"
 ---
 
 # Проверка безопасности

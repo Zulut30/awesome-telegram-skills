@@ -4,5 +4,7 @@
 import {copyFile, writeFile} from 'node:fs/promises';
 
 const root = new URL('../', import.meta.url);
-await copyFile(new URL('src/styles.css', root), new URL('dist/styles.css', root));
-await writeFile(new URL('dist/styles.css.d.ts', root), '// Side-effect stylesheet import; it exports nothing.\nexport {};\n');
+for (const name of ['styles.css', 'tokens.css']) {
+  await copyFile(new URL(`src/${name}`, root), new URL(`dist/${name}`, root));
+  await writeFile(new URL(`dist/${name}.d.ts`, root), '// Side-effect stylesheet import; it exports nothing.\nexport {};\n');
+}

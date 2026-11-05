@@ -4,6 +4,6 @@
   "private":true,
   "type":"module",
   "scripts":{"build":"tsc -p tsconfig.json && node scripts/build.mjs"},
-  "dependencies":{"@awesome-telegram/patterns":"0.25.0"},
+  "dependencies":{"@awesome-telegram/patterns":"0.26.0"},
   "devDependencies":{"typescript":"7.0.2"}
 }

@@ -2,9 +2,10 @@
 from __future__ import annotations
 import asyncio
 from aiogram import F, Router
-from aiogram.filters import Command
+from aiogram.filters import Command, CommandObject
 from aiogram.types import InlineKeyboardButton, InlineKeyboardMarkup, Message, PreCheckoutQuery, WebAppInfo
-from telegram_patterns import PermissionDenied
+from telegram_patterns import PermissionDenied, ValidationFailure
+from .launch import launch_url, screen_hint
 from .storage import io_call
 from .store import Store
 
@@ -35,8 +36,10 @@ def payment_router(store: Store, *, shop_url: str, terms: str, support: str) -> 
             await message.answer('Платёж требует сверки: /paysupport.' if result['review'] else 'Покупка доступна в магазине → «Мои покупки».',parse_mode=None)
 
     @router.message(private,Command('start'))
-    async def start(message: Message):
-        await message.answer('Каталог учебных материалов. Цена и доступ определяются сервером. Условия: /terms. Поддержка платежей: /paysupport.',parse_mode=None,reply_markup=InlineKeyboardMarkup(inline_keyboard=[[InlineKeyboardButton(text='Открыть магазин',web_app=WebAppInfo(url=shop_url))]]))
+    async def start(message: Message, command: CommandObject):
+        try:hint=screen_hint(command.args)
+        except ValidationFailure:hint='catalog'
+        await message.answer('Каталог учебных материалов. Цена и доступ определяются сервером. Условия: /terms. Поддержка платежей: /paysupport.',parse_mode=None,reply_markup=InlineKeyboardMarkup(inline_keyboard=[[InlineKeyboardButton(text='Открыть магазин',web_app=WebAppInfo(url=launch_url(shop_url,hint)))]]))
     @router.message(private,Command('terms'))
     async def conditions(message: Message):await message.answer(terms,parse_mode=None)
     @router.message(private,Command('support','paysupport'))

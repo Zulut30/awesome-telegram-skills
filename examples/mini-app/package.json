@@ -8,7 +8,7 @@
     "build": "tsc -p tsconfig.json --noEmit && node scripts/build.mjs"
   },
   "dependencies": {
-    "@awesome-telegram/patterns": "0.25.0"
+    "@awesome-telegram/patterns": "0.26.0"
   },
   "devDependencies": {
     "esbuild": "0.28.2",

@@ -1,5 +1,7 @@
 # awesome-telegram-patterns — Python
 
+В разработке 0.26.0: [точные суммы и платежный журнал](../../docs/payment-ledger.md) используют `Money` и `SQLitePaymentLedger`; [адаптеры провайдеров](../../docs/payment-providers.md) принимают HTTP-транспорт приложения. Импорт ядра не выполняет запросы и не требует платежного SDK. Уведомление и снимок счета не выдают доступ без проверки получателя, привязки и окончательного статуса; потерянная внешняя запись требует сверки.
+
 Семь типов полей: `NumberField/EmailField/PhoneField/DateField/FileField/ContactField/LocationField`, `FieldValue`, `DialogSubmission` и `dialog_form_router` из optional aiogram. [Готовая композиция](../../docs/dialog-fields.md): текущий автор/вопрос, native candidate confirmation, back/cancel и unknown receipt с тем же intent. Прежние текстовые формы сохраняют контракт.
 
 Календарь и UTC/DST: `CalendarMonth`, `TimeSlot`, `resolve_local_time`; current ACL и atomic booking/replay: `SlotSchedule`, `SlotBooking`, `SQLiteSlotStore`; optional aiogram: `calendar_keyboard`, `time_slot_keyboard`. IANA data на Windows — extra `calendar` (проверено tzdata 2026.5). [Контракт и пример](../../docs/calendar-slots.md). UI snapshot не резервирует ресурс; receipt отличается от current booking status.
@@ -21,7 +23,7 @@ Root экспортирует `Maturity`, `VerificationLevel`; aiogram — `Butt
 
 Все текущие группы experimental, request-only/native fragments reference. [Политика зрелости](../../docs/v1-maturity.md) не зависит от проверки: `Recipe.maturity`, `RecipeCatalog.search(maturity=...)`, CLI `recipes --maturity ...`. Старые schema-1 records читаются с conservative default.
 
-Общие компоненты для бота и backend, версия 0.25.0. Пакет пока поставляется из этого репозитория/локального wheel; публикации на PyPI нет. Python >=3.11. Core использует стандартную библиотеку; адаптер aiogram и тестовый транспорт — отдельный extra.
+Общие компоненты для бота и backend, версия 0.26.0. Пакет пока поставляется из этого репозитория/локального wheel; публикации на PyPI нет. Python >=3.11. Core использует стандартную библиотеку; адаптер aiogram и тестовый транспорт — отдельный extra.
 
 [Медиа](../../docs/media.md): `MediaFile`/`MediaItem`, `media_request`, `media_album`, `media_edit`, `download_media` и typed результаты. Byte upload, same-bot file_id, literal caption/entities, совместимый альбом и bounded explicit download через текущий Bot. Host проверяет codec/content, ACL и delivery; downloader не записывает файлы и не закрывает host session.
 

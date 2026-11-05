@@ -2,9 +2,9 @@
 
 Термины: квитанция (receipt) — сохраненная запись о выполненной операции; повтор возвращает ее вместо второго эффекта; **outbox** — события, сохраненные в той же транзакции, что и изменение данных; отдельный обработчик выполняет их позже; **сверка** — запрос фактического состояния у провайдера или в хранилище перед повтором или выдачей.
 
-Пример пункта 018 связывает TypeScript-каталог и корзину с Python/aiohttp backend, настоящей SQLite и aiogram 3.31.0. Использует публичные `ApiClient`, `TelegramBridge`, `TelegramNativeAPI`, `createAppShell`, `validate_init_data`, `SQLiteOnce`, `stars_invoice` и `StubSession` библиотеки 0.25.0 (CI проверяет пример на текущей версии). Приложение `awesome-telegram-shop-example` 0.1.0 поставляется отдельно; его классы не public exports библиотеки.
+Пример пункта 018 связывает TypeScript-каталог и корзину с Python/aiohttp backend, настоящей SQLite и aiogram 3.31.0. Использует публичные `ApiClient`, `TelegramBridge`, `TelegramNativeAPI`, `createAppShell`, `validate_init_data`, `SQLiteOnce`, `stars_invoice` и `StubSession` библиотеки 0.26.0 (CI проверяет пример на текущей версии). Приложение `awesome-telegram-shop-example` 0.1.0 поставляется отдельно; его классы не public exports библиотеки.
 
-Два учебных цифровых товара стоят 25 и 40 Stars. Backend принимает только IDs, operation UUID и согласие с версией условий. Цена и валюта фиксируются сервером в заказе; клиентские price/user_id/paid поля отклоняются. Данные запуска проходят HMAC/freshness проверку; сервер выдаёт сессионный токен на 10 минут, который frontend хранит только в памяти и передаёт в заголовке `Authorization: Bearer` (почему не cookie — ниже). В production требуются HTTPS и точный origin. `initDataUnsafe` не даёт прав. Получение заказа и материала проверяет владельца из сессии.
+Два учебных цифровых товара стоят 25 и 40 Stars. Backend принимает только IDs, operation UUID и согласие с версией условий. Цена и валюта фиксируются сервером в заказе; клиентские price/user_id/paid поля отклоняются. Данные запуска проходят HMAC/freshness проверку; сервер выдаёт сессионный токен на 10 минут, который frontend хранит только в памяти и передаёт в заголовке `Authorization: Bearer` (почему не cookie — ниже). В production требуются HTTPS и точный origin. `initDataUnsafe` не даёт прав. Каждое действие над заказом или материалом проверяет владельца из сессии и текущую серверную роль; роль из тела запроса не принимается.
 
 Оплата проходит через Stars (`XTR`, пустой provider_token, один price). Счёт связан с owner-scoped заказом. Pre-checkout сверяет bot, пользователя, payload, сумму, валюту, состояние и доступ; ответ не выдаёт товар. Только trusted SDK `successful_payment` атомарно сохраняет receipt, paid и access. Повтор charge не выдаёт доступ второй раз. Второй charge или поздний платёж за уже купленный товар сохраняется для ручной сверки. Публичного HTTP receipt/grant endpoint нет. Invoice callback лишь запускает чтение статуса с backend.
 
@@ -13,8 +13,8 @@
 Пакеты ещё не опубликованы. В новом окружении:
 
 ```powershell
-$patternWheel = 'C:\provided\awesome_telegram_patterns-0.25.0-py3-none-any.whl'
-$patternTarball = 'C:\provided\awesome-telegram-patterns-0.25.0.tgz'
+$patternWheel = 'C:\provided\awesome_telegram_patterns-0.26.0-py3-none-any.whl'
+$patternTarball = 'C:\provided\awesome-telegram-patterns-0.26.0.tgz'
 $shopProject = 'C:\provided\shop'
 python -m venv .venv
 & .\.venv\Scripts\python.exe -m pip install "${patternWheel}[aiogram]" 'aiogram==3.31.0' $shopProject
@@ -25,8 +25,8 @@ Pop-Location
 ```
 
 ```bash
-PATTERN_WHEEL=~/provided/awesome_telegram_patterns-0.25.0-py3-none-any.whl
-PATTERN_TARBALL=~/provided/awesome-telegram-patterns-0.25.0.tgz
+PATTERN_WHEEL=~/provided/awesome_telegram_patterns-0.26.0-py3-none-any.whl
+PATTERN_TARBALL=~/provided/awesome-telegram-patterns-0.26.0.tgz
 SHOP_PROJECT=~/provided/shop
 python3 -m venv .venv
 .venv/bin/python -m pip install "${PATTERN_WHEEL}[aiogram]" 'aiogram==3.31.0' "$SHOP_PROJECT"
@@ -44,7 +44,7 @@ python scripts/build_release.py --ref HEAD --output output/release
 ```
 
 ```bash
-python scripts/verify_shop_example.py --wheel output/release/awesome_telegram_patterns-0.25.0-py3-none-any.whl --tarball output/release/awesome-telegram-patterns-0.25.0.tgz --output output/shop-check
+python scripts/verify_shop_example.py --wheel output/release/awesome_telegram_patterns-0.26.0-py3-none-any.whl --tarball output/release/awesome-telegram-patterns-0.26.0.tgz --output output/shop-check
 ```
 
 Output должен быть новым. Helper собирает application wheel, устанавливает его с принятым pattern wheel во внешний consumer, копирует frontend и строит его из установленного tarball. Исходники и метаданные, разрешенные origins, Mypy, тесты домена и HTTP и Chrome проверяются отдельно. Loopback HTTP и synthetic initData/SDK updates существуют только в explicit offline fixture; настоящий токен и live entrypoint не используются. Fixture payment control идёт через stdin отдельного процесса, не через публичный HTTP API. Браузер и Python fixture блокируют внешнюю сеть; это не OS sandbox.
@@ -59,9 +59,25 @@ Output должен быть новым. Helper собирает application whe
 
 Parent БД должен существовать. Runtime слушает только 127.0.0.1 за вашим HTTPS proxy, владеет OS lock до cleanup HTTP/FSM/session и запускает polling без смены webhook/удаления updates. `/start` в личном чате открывает HTTPS Mini App, `/terms`, `/support`, `/paysupport` доступны пользователю. Production HTML подключает официальный WebApp SDK; обычный браузер показывает каталог и приглашение войти через Telegram. Согласие сохраняется с заказом. Учебные условия нельзя использовать как оферту рабочего магазина.
 
+## Точки запуска и параметры
+
+`launch.py` строит модели кнопки меню, inline- и reply-клавиатуры, ссылок `start`/`startapp` без вызовов сети. Владелец отдельно просматривает `launch_configuration` и применяет нужную кнопку меню; Main Mini App настраивается через BotFather. Runtime сам не меняет эту конфигурацию. `/start orders` в личном чате дает кнопку покупок, `/start catalog` — каталога. Неизвестный или слишком длинный параметр возвращает обычный каталог.
+
+| Запуск | Поведение магазина |
+| --- | --- |
+| «Menu Button», «Main Mini App», встроенная кнопка `web_app` | При наличии проверяемой `initData` вход через тот же backend; параметры выбирают только экран |
+| Reply-кнопка `web_app` | Без пользовательской `initData` доступен каталог; покупка заблокирована, предложен вход из поддерживаемого запуска |
+| Inline mode | Отдельный от inline-кнопки способ; пустые данные запуска не дают личность или доступ |
+
+`frontend/src/launch.ts` разрешает только `catalog`/`orders` из `start_param` либо `tgWebAppStartParam`; дубли, конфликт и неизвестные значения открывают каталог. Это подсказка навигации, не авторизация: даже измененный URL не задает пользователя, роль, цену или оплату. История хранит только экран; серверные права действуют на каждом запросе. Магазин использует HTTPS API, не подменяет его `sendData` или `answerWebAppQuery`. Локальные модели и профили запуска не доказывают применение настроек в настоящем Telegram.
+
+Для самостоятельной проверки домена без DOM или Telegram после сборки frontend: `node --test examples/shop/frontend/tests/domain.test.mjs` из корня checkout. Те же четыре проверки выполняются после установки tarball во внешний consumer помощником `verify_shop_example.py`; они проверяют чтение без автоматического POST, явный прежний запрос, смену условий/аккаунта, транспорт и ограничения параметров.
+
+Источники точек запуска сверены 5 ноября 2026: [способы запуска Mini Apps](https://core.telegram.org/bots/webapps#implementing-mini-apps), [данные запуска](https://core.telegram.org/bots/webapps#webappinitdata), [ссылки на бота](https://core.telegram.org/bots/features#deep-linking). Проверена только эта часть документации; дата платежных контрактов ниже не меняется.
+
 ## Контракт API
 
-`examples/shop/openapi.json` (OpenAPI 3.1) описывает все девять операций `/api/*`: тела запросов, ответы 200 и коды ошибок, bearer-сессию. `python scripts/build_openapi_types.py` генерирует из него `frontend/src/api-types.ts`: интерфейсы схем, декодеры, которые проверяют ответ целиком (лишнее или отсутствующее поле, тип, перечисление), и `callApi(client, operationId, {params, body})` поверх `ApiClient` с методом и путем из контракта. Frontend вызывает backend только через `callApi`, поэтому расхождение ловится в трех местах: устаревший `api-types.ts` (`--check` в CI), код клиента, который не совпадает с новыми типами (`tsc`), и сервер, чьи маршруты или реальные ответы не совпадают с контрактом (тест `test_routes_and_responses_follow_the_openapi_contract`). Генератор принимает только проверяемое подмножество схем и отказывает, например, на `format` или открытый объект, чтобы в контракт не попало ограничение, которое клиент молча пропустит. Этот тест нашел реальную ошибку: повтор операции с другим составом отвечал 422 вместо 409, потому что `OperationConflict` перехватывался как `ValueError`.
+`examples/shop/openapi.json` (OpenAPI 3.1) описывает все одиннадцать операций `/api/*`: тела запросов, ответы 200 и коды ошибок, bearer-сессию. `python scripts/build_openapi_types.py` генерирует из него `frontend/src/api-types.ts`: интерфейсы схем, декодеры, которые проверяют ответ целиком (лишнее или отсутствующее поле, тип, перечисление), и `callApi(client, operationId, {params, body})` поверх `ApiClient` с методом и путем из контракта. Frontend вызывает backend только через `callApi`, поэтому расхождение ловится в трех местах: устаревший `api-types.ts` (`--check` в CI), код клиента, который не совпадает с новыми типами (`tsc`), и сервер, чьи маршруты или реальные ответы не совпадают с контрактом (тест `test_routes_and_responses_follow_the_openapi_contract`). Генератор принимает только проверяемое подмножество схем и отказывает, например, на `format` или открытый объект, чтобы в контракт не попало ограничение, которое клиент молча пропустит. Этот тест нашел реальную ошибку: повтор операции с другим составом отвечал 422 вместо 409, потому что `OperationConflict` перехватывался как `ValueError`.
 
 ## Сессия: заголовок вместо cookie
 
@@ -71,17 +87,19 @@ Telegram Web показывает Mini App во фрейме `<iframe>` свое
 
 ## Восстановление и границы
 
-Bearer session хранится в памяти клиента, в SQLite — только hash, bot/actor и expiry. `POST /api/session` обменивает проверенную свежую initData на сессию на 600 секунд. `POST /api/session/rotate` с текущим bearer, точным `Origin` и JSON `{}` атомарно заменяет только эту сессию: старый token сразу недействителен, новый живет 600 секунд от rotation. `POST /api/session/revoke` с теми же заголовками и `{}` отзывает текущую сессию; повтор возвращает 401, остальные сессии устройства/пользователя сохраняются. Revoke не отменяет уже авторизованную in-flight операцию и не отзывает Telegram initData: владелец свежих подписанных данных может войти заново. Роли администратора/выдача доступа через HTTP не добавляются.
+Bearer session хранится в памяти клиента, в SQLite — только hash, bot/actor и expiry. `POST /api/session` обменивает проверенную свежую initData на сессию на 600 секунд. `POST /api/session/rotate` с текущим bearer, точным `Origin` и JSON `{}` атомарно заменяет только эту сессию: старый token сразу недействителен, новый живет 600 секунд от rotation. `POST /api/session/revoke` с теми же заголовками и `{}` отзывает текущую сессию; повтор возвращает 401, остальные сессии устройства/пользователя сохраняются. Revoke не отменяет уже авторизованную in-flight операцию и не отзывает Telegram initData: владелец свежих подписанных данных может войти заново. Роль хранится на сервере отдельно от сессии. Обычная роль `customer` может покупать, `viewer` читает только собственные заказы и уже оплаченные материалы, `blocked` не имеет доступа к личным объектам. Наличие сессии не отменяет эти ограничения; отзыв своей сессии остается доступным.
 
-При потерянном ответе rotation не повторяйте ее старым token: заново обменяйте свежую initData и проверьте тот же operation ID. Demo UI по-прежнему восстанавливает вход при повторном открытии/reload; автоматического фонового renewal или account-switch flow здесь нет. При смене аккаунта встраивающее приложение должно очистить старый token и видимые order/cart states до нового входа, затем читать pending только под новым server-derived scope. Результат старого аккаунта нельзя применять к новому. Старые pending не удаляют и не переносят под новый scope.
+При потерянном ответе ротации приложение заново обменивает свежую `initData` и проверяет тот же ID операции. Действующий `main.ts` использует `ShopDomainState`, отдельные `shop-api.ts` и `examples/shop/frontend/src/telegram-adapter.ts`: личность, корзина, согласие, заказ и связанные запросы отделены от отображения. Кнопки «Обновить вход» и «Выйти» вызывают серверные ротацию и отзыв. Возобновление окна обновляет сессию и сверяет заказ; одновременные события объединяются. При смене аккаунта старые токен, видимые заказ/корзина и кеш очищаются до нового входа. Поздний ответ прежней ротации или чтения не заменяет новую сессию. Прежний запрос остается под исходной серверной областью аккаунта и не переносится новой личности.
+
+Корзина имеет отдельную схему и срок 15 минут: только ID товаров, условия и согласие, без цены, контактов или авторизации. Срок корзины не удаляет минимальный указатель операции и связанный неизменный запрос. Подтвержденная сервером оплата очищает соответствующее намерение и старую корзину. Нативная кнопка возврата и история браузера переключают одни и те же экраны; незавершенная работа включает подтверждение закрытия. Повторное монтирование сначала освобождает обработчики прежнего экземпляра. Все события SDK в локальной проверке синтетические: это не приемка реальных клиентов Telegram.
 
 Все session/order mutations требуют единственный exact same-origin `Origin`; private GET допускает отсутствие Origin, но отвергает явно чужой. Сессия принимается только из единственного `Authorization: Bearer ...`, не cookie/query/body. CORS headers не выдаются; чужой preflight не открывает доступ. Строгий JSON parser отвергает duplicate fields, неизвестные поля и неверный Content-Type, общий body limit — 32768 bytes. Public catalog/policy/static остаются публичными; остальные маршруты заново проверяют bearer и object owner, никакой клиентский ID/роль/цена не дает полномочий.
 
-Pending operation/cart/terms сохраняются под server-derived scope до POST, отдельно от любой TTL сессии. Если локальное сохранение недоступно, новый заказ не отправляется. Reload проверяет тот же operation ID; 404 допускает явный повтор того же payload/key. Theme, back и resize не пересоздают заказ. Corrupt pending блокирует новый checkout и предлагает историю покупок. Номера в localStorage не разрешают доступ; токен сессии и initData туда не записываются, после reload вход повторяется по initData.
+Pending operation/cart/terms сохраняются под server-derived scope до POST, отдельно от любой TTL сессии. Если локальное сохранение недоступно, новый заказ не отправляется. Reload проверяет тот же operation ID; 404 только показывает кнопку «Повторить сохранённый запрос»: чтение и загрузка страницы не отправляют POST автоматически. Явное нажатие использует прежние ID, товары и условия; новая версия условий блокирует повтор, сервер заново проверяет роль и права. Theme, back и resize не пересоздают заказ. Corrupt pending блокирует новый checkout и предлагает историю покупок. Номера в localStorage не разрешают доступ; токен сессии и initData туда не записываются, после reload вход повторяется по initData.
 
 Invoice проходит none → creating → ready. Timeout/invalid response/crash после вызова без сохранённой ссылки дают unknown; новая ссылка автоматически не создаётся. Такой заказ требует сверки. Сохраняется один accepted pre-checkout query на заказ: после неизвестной/прерванной предыдущей оплаты нельзя молча разрешать второй charge. Смена accepted query требует отдельной операторской сверки. Это сознательная граница примера, не полноценный payment orchestration/refund сервис.
 
-Схема SQLite версия 1; corruption/другая схема требуют явной миграции. Один процесс и локальный диск; несколько рабочих процессов, inbox и outbox общего назначения, ограничения частоты, резервные копии, возвраты, chargeback и сверка, мониторинг продакшена и усиление безопасности — отдельные пункты. Памятки демонстрационные, реальные коммерческие материалы должны храниться в защищённом storage проекта. Цифровые товары внутри Telegram не переключаются на внешнюю карточную/крипто оплату.
+Схема SQLite версии 2 добавляет таблицу ролей одной транзакцией; переход с версии 1 сохраняет сессии, заказы, квитанции и доступ. Неизвестная версия отклоняется до изменения данных. Роли меняет доверенная конфигурация владельца через `Store.configure_role`, а не браузерный маршрут. Проверка создания и сохраненного повтора проходит внутри той же записывающей транзакции `SQLiteOnce.run_guarded`; подготовка счета и pre-checkout также проверяют текущую роль. Уже начатый внешний результат не теряется после отзыва роли: поздний платеж сохраняется для сверки без новой выдачи доступа. Один процесс и локальный диск; несколько рабочих процессов, inbox и outbox общего назначения, ограничения частоты, резервные копии, возвраты, chargeback и сверка, мониторинг продакшена и усиление безопасности — отдельные пункты. Памятки демонстрационные, реальные коммерческие материалы должны храниться в защищённом storage проекта. Цифровые товары внутри Telegram не переключаются на внешнюю карточную/крипто оплату.
 
 Приёмка этого примера — установленное приложение, настоящие SQLite/HTTP/процессы, Chrome viewport/theme проверки и покупка во фрейме чужого сайта, как в Telegram Web. Bot transport, launch vectors и native host synthetic; live Telegram/Stars test environment, настоящие клиенты Telegram (Web, Desktop, iOS, Android), физические устройства, screen readers и независимое человеческое удобство не подтверждены. Это experimental example, не объявление production готовности или выпуска 1.0.
 

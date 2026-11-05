@@ -57,7 +57,7 @@ python -c "from telegram_patterns.aiogram import ActionButton, action_menu; prin
 Путь относится к checkout библиотеки: при запуске из другого проекта укажите его фактический абсолютный путь или предоставленный wheel. Для core без Bot SDK достаточно `./packages/python`. Для TypeScript из каталога целевого проекта:
 
 ```powershell
-npm.cmd install "C:/path/to/awesome-telegram-patterns-0.25.0.tgz"
+npm.cmd install "C:/path/to/awesome-telegram-patterns-0.26.0.tgz"
 npm.cmd ls @awesome-telegram/patterns
 ```
 

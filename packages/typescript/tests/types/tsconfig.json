@@ -10,5 +10,5 @@
     "noEmit": true,
     "types": []
   },
-  "include": ["native-calls.ts", "async-state.ts"]
+  "include": ["native-calls.ts", "async-state.ts", "ui.ts", "native-flows.ts"]
 }

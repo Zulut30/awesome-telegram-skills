@@ -84,6 +84,41 @@ class DistributionContractTests(unittest.TestCase):
         after={p.relative_to(self.root):p.read_bytes() for p in self.root.rglob('*') if p.is_file()}
         self.assertEqual(before,after)
 
+    def tokens_fixture(self):
+        self.python_version = '0.26.0'
+        self.prefix = 'awesome_telegram_patterns-0.26.0.dist-info/'
+        self.wheel = self.root / 'awesome_telegram_patterns-0.26.0-py3-none-any.whl'
+        self.tarball = self.root / 'awesome-telegram-patterns-0.26.0.tgz'
+        self.py_source = {k:v.replace(b'0.9.0',b'0.26.0') for k,v in self.py_source.items()}
+        for name,value in self.py_source.items(): self.write('packages/python/src/'+name,value)
+        project=self.root/'packages/python/pyproject.toml'
+        project.write_bytes(project.read_bytes().replace(b'0.9.0',b'0.26.0'))
+        self.ts_manifest['version']='0.26.0'
+        self.ts_manifest['exports']['./tokens.css']={'types':'./dist/tokens.css.d.ts','default':'./dist/tokens.css'}
+        self.ts_files['package/package.json']=json.dumps(self.ts_manifest).encode()
+        self.ts_files['package/dist/tokens.css']=b':root{--fixture-space:4px}\n'
+        self.ts_files['package/dist/tokens.css.d.ts']=b'export {};\n'
+        for name,value in self.ts_files.items():self.write('packages/typescript/'+name.removeprefix('package/'),value)
+        self.write('packages/typescript/src/tokens.css',self.ts_files['package/dist/tokens.css'])
+        self.zip();self.tar()
+
+    def test_new_token_stylesheet_is_bound_to_source_bytes_and_public_export(self):
+        self.tokens_fixture()
+        self.assertTrue(self.verify()['passed'])
+        self.tar(lambda values:values.update({'package/dist/tokens.css':b':root{--fixture-space:999px}\n'}))
+        with self.assertRaisesRegex(DistributionViolation,'bytes differ'):self.verify()
+
+    def test_new_release_rejects_missing_token_asset_or_missing_public_export(self):
+        self.tokens_fixture()
+        self.tar(lambda values:values.pop('package/dist/tokens.css'))
+        with self.assertRaisesRegex(DistributionViolation,'missing or undeclared'):self.verify()
+        self.tar()
+        del self.ts_manifest['exports']['./tokens.css']
+        self.ts_files['package/package.json']=json.dumps(self.ts_manifest).encode()
+        self.write('packages/typescript/package.json',self.ts_files['package/package.json'])
+        self.tar()
+        with self.assertRaisesRegex(DistributionViolation,'export map changed'):self.verify()
+
     def test_missing_python_resource_or_typing_marker_is_rejected_even_with_valid_record(self):
         for name in ('telegram_patterns/resources/recipes.json','telegram_patterns/py.typed'):
             with self.subTest(name=name):
@@ -167,7 +202,12 @@ class DistributionContractTests(unittest.TestCase):
         for name, value in self.py_source.items():
             self.write('packages/python/src/' + name, value)
         self.ts_manifest['version'] = identity
+        self.ts_manifest['exports']['./tokens.css'] = {'types': './dist/tokens.css.d.ts', 'default': './dist/tokens.css'}
         self.ts_files['package/package.json'] = json.dumps(self.ts_manifest).encode()
+        self.ts_files['package/dist/tokens.css'] = b':root{--fixture-space:4px}\n'
+        self.ts_files['package/dist/tokens.css.d.ts'] = b'export {};\n'
+        self.write('packages/typescript/src/tokens.css', self.ts_files['package/dist/tokens.css'])
+        self.write('packages/typescript/dist/tokens.css.d.ts', self.ts_files['package/dist/tokens.css.d.ts'])
         self.write('packages/typescript/package.json', self.ts_files['package/package.json'])
         self.zip()
         self.tar()

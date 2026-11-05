@@ -7,7 +7,7 @@ import {
 } from '@awesome-telegram/patterns';
 
 export function documentedCalls(api: TelegramNativeAPI): boolean {
-  api.call('showPopup', {message: 'Continue?', buttons: [{id: 'ok', type: 'ok'}]}, buttonId => { buttonId.toUpperCase(); });
+  api.call('showPopup', {message: 'Continue?', buttons: [{id: 'ok', type: 'ok'}]}, buttonId => { buttonId?.toUpperCase(); });
   api.call('showConfirm', 'Delete?', confirmed => { if (confirmed) api.call('HapticFeedback.notificationOccurred', 'success'); });
   api.call('HapticFeedback.impactOccurred', 'light');
   api.call('setHeaderColor', '#112233');
