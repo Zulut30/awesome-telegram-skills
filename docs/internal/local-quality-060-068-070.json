@@ -1,0 +1,407 @@
+{
+  "schema_version": 1,
+  "kind": "partial-local-quality-evidence",
+  "source_commit": "6732dd912b5b649bae97644be99fc28df74b2710",
+  "formal_statuses": {
+    "060": "pending",
+    "068": "pending",
+    "069": "pending",
+    "070": "pending"
+  },
+  "source_sha256": {
+    "tools/visual-regression/compare.py": "2db513af2a919b9c0b440ed5caabe1aa0dbeb60847dae987f326858c0886720e",
+    "tools/visual-regression/capture.mjs": "4dbfada8485d6536719289534a402071ec61fa93ba3fb55d6ebcc337f75fa1fd",
+    "tests/test_visual_regression.py": "9c44c4be270150cb39422cf7f2696586c3ba9337223b56a6e9a357c0785ee105",
+    "docs/visual-regression.md": "a3c14818817e271b2663384ff60c9544cdafca090ac37935f44a9965d79aca44",
+    "tools/mini-app-quality/accessibility-evidence.json": "73a7e3427ab996405700ba306e533cbbf13b6b002af1582623d381bedfb2b2e8",
+    "docs/accessibility-evidence.md": "4cf502852a70552ff90ab788dfd2c294ddc075a25400ea7bb32def1e0614614c",
+    "tools/mini-app-quality/gates.mjs": "686b5929d3157449ba9570f3dc35bae88140e8a01c2805274d5cf2580957041b",
+    "tools/mini-app-quality/check.mjs": "608378225d8feb422e441ef34b0cf526f123016a8e0dbc3cb4e83064d7f4727b",
+    "tools/mini-app-quality/gates.test.mjs": "4c051315aeec48f760b1f7a4a464e562bd5999f5ff9e7374a22d22b98c874889",
+    "tools/mini-app-quality/README.md": "0dad9136fb5d44f4b60349dcaa68818713010786965208ef981963c476d18e9f",
+    "tools/local-performance/run.mjs": "9e0aaab44c7249c5b70354d00871ae7bc9b0dce82f3214ec08f74ee96944f32a",
+    "tools/local-performance/metrics.mjs": "8839e3e267b0a3b2b811f95439ba3556ef5ec583d0e4b9c40481e75b38c8b236",
+    "tools/local-performance/compare.mjs": "eb709f546782f415ad2bc4af685d8525da06c9522246ef3e2aed92d8f79f9063",
+    "tools/local-performance/check.test.mjs": "f1ef103621cf0c627dca37936fad2bca4db9afa1c2c23cb30688d04dae44e7ca",
+    "tools/local-performance/owned-browser.mjs": "faca67a67a1e5719c88576aba58169fcab95b6c0ec403af4c685ba5b9c6e2529",
+    "tools/local-performance/lifecycle.mjs": "2733aed536c2aeb1e0cc0a20d4f7b647ce2681f3b198fcf95242f9a70e63eb0e",
+    "tests/test_local_performance.py": "623533e5936575469a7e670a920b30edec8d40496fced9712ef990dd4b262735",
+    "docs/local-performance.md": "d061e2ee64f36d3b96168ac14a82149896aea707f906dbf11c4e7c60bf1675d2"
+  },
+  "evidence": {
+    "visual": {
+      "verification_path": "output/visual-regression-068/verification.json",
+      "verification_sha256": "7f5b87b528e2de097977d587924b0a27b9ceb1ccc7a3b091345c0b4bd7aabb1f",
+      "verification": {
+        "schema_version": 1,
+        "kind": "local-visual-regression-infrastructure-verification",
+        "passed": true,
+        "roadmap_item": 68,
+        "formal_status": "pending",
+        "human_review_verified": false,
+        "product_acceptance": false,
+        "tests": 13,
+        "skips": 0,
+        "captures": {
+          "runs": 2,
+          "cases_per_run": 144,
+          "byte_identical_manifests": true,
+          "capture_sha256": "28bedab74e719dfcd7d4ce6aee9a79a8b07e4e78f4c4ea1b7b38c4808eb69793",
+          "installed_assets_hash_matched": 47,
+          "page_external_requests": 0
+        },
+        "comparison": {
+          "cases": 144,
+          "different_pixels": 0,
+          "report_sha256": "aed432072113965bfda25777419f1ca6aaf122ca624fc7cfaa22914e9786f589",
+          "review_basis": "machine-fixture-only"
+        },
+        "visible_mutation_pixels": [
+          1,
+          144
+        ],
+        "restored_image_passed": true,
+        "capture_existing_output_preserved_files": 145,
+        "independent_chrome_diff_pixel": [
+          255,
+          0,
+          130,
+          255
+        ],
+        "raw_report_sha256": "fdc85cf85b71f9be5011f4919eb0ebae63c5b716c9f490d8a7692b52210aa75c",
+        "evidence_files": {
+          "tests-final.json": "853e5b7be929105521ebf7fe88decc6bebb4e582927954a09150237b1439256b",
+          "current-mutation-operations.json": "0c0d72fd8d0b582b2201e73f72d7a6cc762c6ed1103665f3a6b9459fe0022c5e",
+          "capture-existing-output-refusal.json": "96a97672045edd10f809bd427c9a357881a22026bbb9b1a4c86901f6af8b4a5c",
+          "independent-chrome-decoder.json": "2f8e415454abd079eb16ab5ee7ebdc409dc0202605c4d4a289e405dfa632ca88",
+          "equal-current-decoder-operation.json": "d407c140cd617583281142fca089d486e5d31f226873e8c500f730ec5ff39be1",
+          "product-without-review-refused.json": "fa51adaba369130dc5edad32640812793f7dd1b606fed6da35238d4e8fee446d"
+        },
+        "source_files": {
+          "tools/visual-regression/compare.py": "2db513af2a919b9c0b440ed5caabe1aa0dbeb60847dae987f326858c0886720e",
+          "tools/visual-regression/capture.mjs": "4dbfada8485d6536719289534a402071ec61fa93ba3fb55d6ebcc337f75fa1fd",
+          "tests/test_visual_regression.py": "9c44c4be270150cb39422cf7f2696586c3ba9337223b56a6e9a357c0785ee105",
+          "docs/visual-regression.md": "a3c14818817e271b2663384ff60c9544cdafca090ac37935f44a9965d79aca44"
+        },
+        "history": [
+          "Original report and12-test stages retained unchanged. Final decoder additionally rejects color/transparency metadata that a raw RGBA comparator cannot interpret;13tests and144comparisons rerun on current helper.",
+          "First capture failed before browser launch on nested vendor/frameworks; output preserved and recursive bounded inventory used in a new directory."
+        ],
+        "limits": [
+          "Product baseline and changes have no human review; item068 remains pending.",
+          "144 composition-region cases; no shell/tab/dialog/shop, physical device, Telegram or accessibility acceptance.",
+          "Machine-fixture comparisons authenticate no human. External pin is a caller trust input, not human identity evidence."
+        ]
+      }
+    },
+    "accessibility": {
+      "verification_path": "output/accessibility-060/verification.json",
+      "verification_sha256": "9908155f31fe19c18b2177dc26bfe23bf5b5171629e1975033b6ab724f819f55",
+      "verification": {
+        "schema_version": 1,
+        "kind": "accessibility-evidence-matrix-integrity",
+        "passed": true,
+        "roadmap_item": 60,
+        "roadmap_status": "pending",
+        "wcag_conformance": "not-assessed",
+        "screen_reader": "not-run",
+        "narrator_started": false,
+        "criteria": 23,
+        "evidence_files_verified": 11,
+        "exact_assertion_pointers_verified": 39,
+        "supplemental_browser_cases": 24,
+        "supplemental_browser_passed": 24,
+        "source_files": {
+          "tools/mini-app-quality/accessibility-evidence.json": "73a7e3427ab996405700ba306e533cbbf13b6b002af1582623d381bedfb2b2e8",
+          "docs/accessibility-evidence.md": "4cf502852a70552ff90ab788dfd2c294ddc075a25400ea7bb32def1e0614614c"
+        },
+        "probe_report_sha256": "7d0583ae6ec4e72f3344620442bcc71a2c6c14cbbb52b62124e6099193e55c11",
+        "matrix_sources_checked_on": "2026-11-06",
+        "remaining": [
+          "Actual screen-reader path and announcements.",
+          "Human focus/non-text contrast/content-loss review and unresolved scoped incompletes.",
+          "Full applicable A/AA assessment for any future complete-page/process conformance claim."
+        ]
+      }
+    },
+    "axe_persistence_correction": {
+      "report": "output/production-run-2026-11-05/axe-incomplete-root/report.json",
+      "sha256": "3ffb5aa5076f73ceb4cd11f21fea1eae6f882496e0217c4be84b1e200bcd8565",
+      "observation": {
+        "passed": true,
+        "browser": "156.0.8078.80",
+        "axe_version": "4.14.0",
+        "external_requests": [],
+        "state": {
+          "name": "actual-gradient-fixture",
+          "passes": 0,
+          "violations": [],
+          "incomplete": [
+            {
+              "id": "color-contrast",
+              "impact": "serious",
+              "nodes": 1,
+              "help": "Elements must meet minimum color contrast ratio thresholds",
+              "targets": [
+                [
+                  "#gradient"
+                ]
+              ]
+            }
+          ],
+          "manual_review_required": true,
+          "wcag_conformance": "not-assessed"
+        },
+        "raw_incomplete": [
+          {
+            "id": "color-contrast",
+            "impact": "serious",
+            "tags": [
+              "cat.color",
+              "wcag2aa",
+              "wcag143",
+              "TTv5",
+              "TT13.c",
+              "EN-301-549",
+              "EN-9.1.4.3",
+              "ACT",
+              "RGAAv4",
+              "RGAA-3.2.1"
+            ],
+            "description": "Ensure the contrast between foreground and background colors meets WCAG 2 AA minimum contrast ratio thresholds",
+            "help": "Elements must meet minimum color contrast ratio thresholds",
+            "helpUrl": "https://dequeuniversity.com/rules/axe/4.14/color-contrast?application=axeAPI",
+            "nodes": [
+              {
+                "any": [
+                  {
+                    "id": "color-contrast",
+                    "data": {
+                      "contrastRatio": 0,
+                      "fontSize": "12.0pt (16px)",
+                      "fontWeight": "normal",
+                      "messageKey": "bgGradient",
+                      "expectedContrastRatio": "4.5:1"
+                    },
+                    "relatedNodes": [
+                      {
+                        "html": "<p id=\"gradient\" style=\"color:#444;background:linear-gradient(#fff,#222)\">Manual contrast review fixture</p>",
+                        "target": [
+                          "#gradient"
+                        ]
+                      }
+                    ],
+                    "impact": "serious",
+                    "message": "Element's background color could not be determined due to a background gradient"
+                  }
+                ],
+                "all": [],
+                "none": [],
+                "impact": "serious",
+                "html": "<p id=\"gradient\" style=\"color:#444;background:linear-gradient(#fff,#222)\">Manual contrast review fixture</p>",
+                "target": [
+                  "#gradient"
+                ],
+                "failureSummary": "Fix any of the following:\n  Element's background color could not be determined due to a background gradient"
+              }
+            ]
+          }
+        ],
+        "automatic_violations": 0,
+        "wcag_conformance": "not-assessed",
+        "scope": "Owned HTML/real axe/browser verifies incomplete persistence only; not library UI, screen reader or WCAG conformance.",
+        "source_sha256": {
+          "tools/mini-app-quality/gates.mjs": "686b5929d3157449ba9570f3dc35bae88140e8a01c2805274d5cf2580957041b",
+          "tools/mini-app-quality/check.mjs": "608378225d8feb422e441ef34b0cf526f123016a8e0dbc3cb4e83064d7f4727b",
+          "tools/mini-app-quality/gates.test.mjs": "4c051315aeec48f760b1f7a4a464e562bd5999f5ff9e7374a22d22b98c874889",
+          "tools/mini-app-quality/README.md": "0dad9136fb5d44f4b60349dcaa68818713010786965208ef981963c476d18e9f"
+        }
+      }
+    },
+    "performance": {
+      "initial_handoff_sha256": "91d6cd2ec62c77ac5567cb3b89016325a27044cbc03086ab749d8ec526091ab6",
+      "supplemental_handoff_sha256": "141055e7cee2e7e342d8fc3c6a9c7574400b129d12c4903dff166063e5afd9c1",
+      "historical_full_reports": [
+        {
+          "path": "output\\local-performance-069-070\\run-01\\report.json",
+          "sha256": "ff6d53822a2550d9e01eadb2d5d0f9c6cfd0bb4216d426ba29d4d7d82d098e50",
+          "passed": false
+        },
+        {
+          "path": "output\\local-performance-069-070\\run-02\\report.json",
+          "sha256": "e52e95d31ffcde2ff6f11f4c54fdaeff23febe8156b250fe421eab25ac35806c",
+          "passed": false
+        },
+        {
+          "path": "output\\local-performance-069-070\\run-03\\report.json",
+          "sha256": "35948167a82d411763aad412b22199290feb37e72b132df70dd4fa21992f85ca",
+          "passed": false
+        },
+        {
+          "path": "output\\local-performance-069-070\\run-04\\report.json",
+          "sha256": "d339d7ec64b812f5e1d765d3b61bd223537f82ee70a61f18d535b30bd53a8063",
+          "passed": false
+        },
+        {
+          "path": "output\\local-performance-069-070\\run-05-holdout\\report.json",
+          "sha256": "3f49be273688a1d8fe20cefbf145603bb64556404d1df3b0901cec030f33431b",
+          "passed": false
+        }
+      ],
+      "main_report": "output/local-performance-069-070/run-04/report.json",
+      "measurements_completed": true,
+      "historical_main_passed": false,
+      "main_failure": "Actual lifecycle events absent under original Playwright focus emulation; retained unchanged.",
+      "samples_per_timing": 7,
+      "large_list_items": 500,
+      "mount_dispose_cycles": 100,
+      "gc_checkpoints": 13,
+      "first_memory": {
+        "label": "after-10-warmup-cycles",
+        "JSHeapUsedSize": 2476332,
+        "JSHeapTotalSize": 3006464,
+        "Documents": 1,
+        "Nodes": 31,
+        "JSEventListeners": 26
+      },
+      "last_memory": {
+        "label": "positive-control-released",
+        "JSHeapUsedSize": 2483988,
+        "JSHeapTotalSize": 2744320,
+        "Documents": 1,
+        "Nodes": 11,
+        "JSEventListeners": 26
+      },
+      "holdout": {
+        "path": "output\\local-performance-069-070\\holdout.json",
+        "sha256": "a65d9af5bb5f4b8ffefb10997965ba09548848a0b755f88dfc29d719af5b5d85"
+      },
+      "targeted_lifecycle_report": "output/local-performance-069-070/lifecycle-targeted-final/report.json",
+      "targeted_lifecycle_sha256": "ab0bfae299e0990f8421a886c3636792be7d3b6b8e8afcd6b5872b1d377778a9",
+      "targeted_lifecycle": {
+        "observed": true,
+        "status": "observed",
+        "profile": {
+          "owned": true,
+          "headless": true,
+          "noDefaults": true,
+          "backgrounding_disabling_flags": false
+        },
+        "browser": "156.0.8078.80",
+        "mechanism": "Owned fresh Chrome/default context, connectOverCDP noDefaults:true; two owned tabs; real Page frozen/active events.",
+        "limit": "Desktop Chrome lifecycle exercise only; not mobile OS or Telegram WebView acceptance.",
+        "external_requests": [],
+        "page_errors": [],
+        "before": {
+          "visibility": "hidden",
+          "focused": false
+        },
+        "browser_protocol": {
+          "protocolVersion": "1.3",
+          "product": "Chrome/156.0.8078.80",
+          "revision": "@fb096c0011f9d50f0a264a9376420cdea9c421e3",
+          "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/156.0.0.0 Safari/537.36",
+          "jsVersion": "15.6.75.27"
+        },
+        "after": {
+          "events": [
+            {
+              "name": "visibilitychange",
+              "trusted": true,
+              "visibility": "hidden",
+              "at_ms": 278.39999997615814
+            },
+            {
+              "name": "freeze",
+              "trusted": true,
+              "visibility": "hidden",
+              "at_ms": 357.89999997615814
+            },
+            {
+              "name": "resume",
+              "trusted": true,
+              "visibility": "hidden",
+              "at_ms": 455.39999997615814
+            },
+            {
+              "name": "visibilitychange",
+              "trusted": true,
+              "visibility": "visible",
+              "at_ms": 487
+            }
+          ],
+          "value": "Preserved local draft",
+          "visibility": "visible",
+          "focused": true
+        },
+        "cleanup": {
+          "owned_process_exited": true,
+          "owned_profile_removed": true,
+          "stderr_has_devtools_listener": true
+        }
+      },
+      "median_correction": {
+        "passed": true,
+        "correction": "Use averaged middle pair for even-sized sample medians/MAD; refuse overflowed calibration limits.",
+        "unit_checks": 6,
+        "reviewed": [
+          {
+            "run": "run-04",
+            "metric": "ready_observation_ms",
+            "samples": 7,
+            "unchanged": true
+          },
+          {
+            "run": "run-04",
+            "metric": "large_render_two_frames_ms",
+            "samples": 7,
+            "unchanged": true
+          },
+          {
+            "run": "run-04",
+            "metric": "pointer_to_two_frames_ms",
+            "samples": 7,
+            "unchanged": true
+          },
+          {
+            "run": "run-05-holdout",
+            "metric": "ready_observation_ms",
+            "samples": 7,
+            "unchanged": true
+          },
+          {
+            "run": "run-05-holdout",
+            "metric": "large_render_two_frames_ms",
+            "samples": 7,
+            "unchanged": true
+          },
+          {
+            "run": "run-05-holdout",
+            "metric": "pointer_to_two_frames_ms",
+            "samples": 7,
+            "unchanged": true
+          }
+        ],
+        "source_sha256": {
+          "tools/local-performance/metrics.mjs": "8839e3e267b0a3b2b811f95439ba3556ef5ec583d0e4b9c40481e75b38c8b236",
+          "tools/local-performance/check.test.mjs": "f1ef103621cf0c627dca37936fad2bca4db9afa1c2c23cb30688d04dae44e7ca"
+        },
+        "old_reports_mutated": false,
+        "new_browser_run_required": false,
+        "limit": "Existing7-sample raw calibration and holdout remain unchanged; no device or production SLA."
+      },
+      "limits": [
+        "No target-device, weak physical device, Telegram WebView, live backend or field performance claim.",
+        "Readiness, render and pointer-to-two-frame timing are laboratory observations, not LCP or INP.",
+        "HeapProfiler.collectGarbage + Performance metrics measure this renderer JS heap, not process RSS/native/GPU memory.",
+        "Finite soak with positive retention control cannot prove absence of all leaks.",
+        "CDP frozen/active is a Chrome page lifecycle exercise, not mobile OS background/resume.",
+        "Only local fixture writes use an in-memory server ledger; no payment or external message is sent."
+      ]
+    }
+  },
+  "limits": [
+    "No human visual approval, reader, target/weak physical device or production pilot.",
+    "Historical failures are retained; targeted lifecycle and median corrections do not relabel old full reports."
+  ]
+}

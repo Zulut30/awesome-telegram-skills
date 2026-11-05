@@ -399,8 +399,12 @@
       "requirement": "Измерить запуск и интеграцию на задачах людей и ИИ; целевое время и допустимое число затруднений задать после исходного замера.",
       "status": "pending",
       "commit_subject": null,
-      "artifacts": [],
-      "evidence": []
+      "artifacts": [
+        "docs/internal/first-use-020-ai-baseline.json"
+      ],
+      "evidence": [
+        "Partial: fresh AI launch155.78s/integration141.33s with hashes/events. One model observation; human baseline absent, no production SLA inferred."
+      ]
     },
     {
       "id": 21,
@@ -1210,8 +1214,14 @@
       "requirement": "Проверить применимые WCAG 2.2 AA: labels, contrast, focus, keyboard navigation, reflow и screen readers; собственные критерии touch targets указать отдельно от стандарта.",
       "status": "pending",
       "commit_subject": null,
-      "artifacts": [],
-      "evidence": []
+      "artifacts": [
+        "docs/accessibility-evidence.md",
+        "tools/mini-app-quality/accessibility-evidence.json",
+        "docs/internal/local-quality-060-068-070.json"
+      ],
+      "evidence": [
+        "Partial:23 selected A/AA criteria,24 actual keyboard/text-spacing cases and preserved axe incomplete findings. Screen reader and full applicable assessment remain open."
+      ]
     },
     {
       "id": 61,
@@ -1312,8 +1322,15 @@
       "requirement": "Сравнивать основные экраны и состояния в темах и размерах; эталоны и изменения просматривает человек, а нестабильные области объяснены.",
       "status": "pending",
       "commit_subject": null,
-      "artifacts": [],
-      "evidence": []
+      "artifacts": [
+        "docs/visual-regression.md",
+        "tools/visual-regression/compare.py",
+        "tools/visual-regression/capture.mjs",
+        "docs/internal/local-quality-060-068-070.json"
+      ],
+      "evidence": [
+        "Partial:13 helper tests, two identical144-image captures, actual144-image comparison and visible1/144pixel mutation detection. No human-reviewed baseline."
+      ]
     },
     {
       "id": 69,
@@ -1321,8 +1338,14 @@
       "requirement": "Снять baseline загрузки, взаимодействий, крупных списков и сетевых путей; бюджеты установить по данным и проверять на целевых устройствах.",
       "status": "pending",
       "commit_subject": null,
-      "artifacts": [],
-      "evidence": []
+      "artifacts": [
+        "docs/local-performance.md",
+        "tools/local-performance/run.mjs",
+        "docs/internal/local-quality-060-068-070.json"
+      ],
+      "evidence": [
+        "Partial:7-sample installed baseline,500items, real pointer/network timings and independently measured holdout. Provisional local thresholds only; target-device budget acceptance absent."
+      ]
     },
     {
       "id": 70,
@@ -1330,8 +1353,14 @@
       "requirement": "Измерить память, утечки listeners, повторные входы, background/resume и потерянные ответы; отказ сети не превращается в бесконечный spinner.",
       "status": "pending",
       "commit_subject": null,
-      "artifacts": [],
-      "evidence": []
+      "artifacts": [
+        "docs/local-performance.md",
+        "tools/local-performance/lifecycle.mjs",
+        "docs/internal/local-quality-060-068-070.json"
+      ],
+      "evidence": [
+        "Partial:100 mount/dispose cycles,13 GC checkpoints, positive retention control, same-operation lost reply/reopen and trusted Chrome freeze/resume after focus-emulation isolation. Weak physical device/Telegram lifecycle not proved."
+      ]
     },
     {
       "id": 71,
@@ -1403,8 +1432,13 @@
       "requirement": "Проверить действующий первичный контракт, создание счета, webhook, сверку статуса и дубли; документировать sandbox evidence и ограничения отдельно.",
       "status": "pending",
       "commit_subject": null,
-      "artifacts": [],
-      "evidence": []
+      "artifacts": [
+        "packages/python/tests/test_provider_cryptopay_durable.py",
+        "docs/payment-providers.md"
+      ],
+      "evidence": [
+        "Partial:4 new installed durable Crypto cases passed with independent GET/ledger/reopen; exact0.28 wheel. Primary page direct403; older indexedAPI1.5.2 text does not prove current whole contract. Sandbox not run."
+      ]
     },
     {
       "id": 76,
@@ -1613,8 +1647,12 @@
       "requirement": "Проверить хотя бы бот и Mini App в реальных проектах с согласованными правами/данными; заранее задать период наблюдения и критерии отказов, восстановления и поддержки.",
       "status": "pending",
       "commit_subject": null,
-      "artifacts": [],
-      "evidence": []
+      "artifacts": [
+        "docs/pilot-protocol.md"
+      ],
+      "evidence": [
+        "Partial: period/rights/observation/failure/recovery/support protocol ready. No real bot/MiniApp projects or pilot participants; not started."
+      ]
     },
     {
       "id": 91,
