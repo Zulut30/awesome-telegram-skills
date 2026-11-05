@@ -1476,10 +1476,15 @@
       "id": 84,
       "title": "Проверять публичный API потребителем",
       "requirement": "Контролировать imports, typing, exports и обратную совместимость; пример потребителя использует публичные символы, без доступа к приватным исходникам.",
-      "status": "pending",
-      "commit_subject": null,
-      "artifacts": [],
-      "evidence": []
+      "status": "done",
+      "commit_subject": "roadmap(084): accept installed public API consumer contracts",
+      "artifacts": [
+        "docs/internal/local-026-acceptance.json",
+        "docs/internal/local-026-acceptance.md"
+      ],
+      "evidence": [
+        "Exact wheel/tarball public consumers cover 416 symbols, 40 Python compositions, all 107 TypeScript exports, seven negative type cases, three module resolutions and compatibility CI; consumer module origins are outside the checkout."
+      ]
     },
     {
       "id": 85,

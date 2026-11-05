@@ -216,6 +216,13 @@
         "Concrete GitHub Actions attempt 2: all 37 jobs succeeded, including Python 3.11-3.14, aiogram 3.29.1/3.30.0/3.31.0, Node 20/22/24, Windows/Linux/macOS. Installed doctor has explicit incompatible/missing/not-tested diagnostics; unsupported capability gates fail closed."
       ],
       "installed_stage": "quality/public-consumer-and-matrix"
+    },
+    "84": {
+      "requirement": "Контролировать imports, typing, exports и обратную совместимость; пример потребителя использует публичные символы, без доступа к приватным исходникам.",
+      "observations": [
+        "Exact wheel/tarball public consumers cover 416 symbols, 40 Python compositions, all 107 TypeScript exports, seven negative type cases, three module resolutions and compatibility CI; consumer module origins are outside the checkout."
+      ],
+      "installed_stage": "quality/public-consumer-and-matrix"
     }
   },
   "limits": [
