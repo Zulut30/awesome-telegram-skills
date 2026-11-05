@@ -819,10 +819,16 @@
       "id": 34,
       "title": "Реализовать durable inbox",
       "requirement": "Сохранять входящее событие до подтверждения приема, обрабатывать повторы и версии payload; рестарт между приемом и обработкой не теряет принятое событие.",
-      "status": "pending",
-      "commit_subject": null,
-      "artifacts": [],
-      "evidence": []
+      "status": "done",
+      "commit_subject": "roadmap(034): accept durable inbox receipt and fenced recovery",
+      "artifacts": [
+        "docs/internal/delivery-025-acceptance.md",
+        "docs/internal/delivery-025-acceptance.json"
+      ],
+      "evidence": [
+        "0.25.0 immutable source ab1a432:90 stages PASS;715 Python (3 environment skips),61 TypeScript,Chrome; exact hashes in summary.",
+        "test_inbox; installed stage durable-inbox; Versioned durable receipt, duplicate/conflict/quarantine, fenced leases, multi-process claims and restart after business commit."
+      ]
     },
     {
       "id": 35,
