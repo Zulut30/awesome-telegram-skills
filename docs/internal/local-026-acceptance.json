@@ -223,6 +223,13 @@
         "Exact wheel/tarball public consumers cover 416 symbols, 40 Python compositions, all 107 TypeScript exports, seven negative type cases, three module resolutions and compatibility CI; consumer module origins are outside the checkout."
       ],
       "installed_stage": "quality/public-consumer-and-matrix"
+    },
+    "85": {
+      "requirement": "Установить wheel/tarball в чистые consumer-проекты и выполнить сценарии; привязать результаты к версиям и SHA-256 этих файлов.",
+      "observations": [
+        "Immutable d6109aa archive, exact 0.26 wheel/tarball SHA-256 and 92 successful fresh-consumer stages, including Chrome. Independent shop application wheel uses the same library bytes. Full Linux/macOS acceptance also passed; no skip-browser acceptance."
+      ],
+      "installed_stage": "quality/public-consumer-and-matrix"
     }
   },
   "limits": [

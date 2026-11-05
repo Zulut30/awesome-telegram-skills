@@ -1490,10 +1490,15 @@
       "id": 85,
       "title": "Проверять точные артефакты выпуска",
       "requirement": "Установить wheel/tarball в чистые consumer-проекты и выполнить сценарии; привязать результаты к версиям и SHA-256 этих файлов.",
-      "status": "pending",
-      "commit_subject": null,
-      "artifacts": [],
-      "evidence": []
+      "status": "done",
+      "commit_subject": "roadmap(085): accept hash bound clean artifact consumers",
+      "artifacts": [
+        "docs/internal/local-026-acceptance.json",
+        "docs/internal/local-026-acceptance.md"
+      ],
+      "evidence": [
+        "Immutable d6109aa archive, exact 0.26 wheel/tarball SHA-256 and 92 successful fresh-consumer stages, including Chrome. Independent shop application wheel uses the same library bytes. Full Linux/macOS acceptance also passed; no skip-browser acceptance."
+      ]
     },
     {
       "id": 86,
