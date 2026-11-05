@@ -1161,10 +1161,16 @@
       "id": 57,
       "title": "Согласовать safe areas и viewport",
       "requirement": "Использовать одну документированную систему координат для native insets и CSS; не складывать перекрывающиеся inset значения автоматически.",
-      "status": "pending",
-      "commit_subject": null,
-      "artifacts": [],
-      "evidence": []
+      "status": "done",
+      "commit_subject": "roadmap(057): accept explicit single plane inset composition",
+      "artifacts": [
+        "docs/internal/local-026-acceptance.json",
+        "docs/internal/local-026-acceptance.md"
+      ],
+      "evidence": [
+        "Exact d6109aa 0.26 artifacts: 92 stages, 816 Python tests (3 environment skips), 88 TypeScript tests, installed UI and public API Chrome consumers passed. No live Telegram/provider/device/screen-reader/pilot proof is inferred.",
+        "The host supplies one documented resolver; raw system/content insets are never added automatically, resolved padding is applied once and CSS fallback remains explicit."
+      ]
     },
     {
       "id": 58,
