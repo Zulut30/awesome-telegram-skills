@@ -1045,10 +1045,17 @@
       "id": 49,
       "title": "Восстанавливать незавершенные операции",
       "requirement": "Сохранять operation ID отдельно от draft, показывать pending/unknown и сверять серверный статус после reload; новый заказ не создается автоматически.",
-      "status": "pending",
-      "commit_subject": null,
-      "artifacts": [],
-      "evidence": []
+      "status": "done",
+      "commit_subject": "roadmap(049): accept explicit recovery of pending operations",
+      "artifacts": [
+        "examples/shop/README.md",
+        "docs/internal/backend-state-readiness-2026-11-05.md",
+        "docs/internal/local-026-acceptance.json"
+      ],
+      "evidence": [
+        "Exact 0.26 installed library and application wheels/tarball: 24 Python, 4 headless Node and 246 Chrome checks passed; real HTTP/SQLite/process recovery, no live Telegram/device/provider proof.",
+        "Lost replies and crashes retain the original operation ID; reload plus GET 404 creates zero orders, and only an explicit authorized retry reuses the same saved intent."
+      ]
     },
     {
       "id": 50,
