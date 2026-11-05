@@ -209,6 +209,13 @@
       "observations": [
         "Full/partial/pending refunds follow route policy, exact reserved budgets and current ACL at reserve/start/replay; lost effects retain unknown state and native transitions plus operator identity enter atomic audit."
       ]
+    },
+    "81": {
+      "requirement": "Проверять заявленные версии Python/SDK/Node/TypeScript и целевые Windows/Linux среды; неподдерживаемая комбинация имеет понятное сообщение.",
+      "observations": [
+        "Concrete GitHub Actions attempt 2: all 37 jobs succeeded, including Python 3.11-3.14, aiogram 3.29.1/3.30.0/3.31.0, Node 20/22/24, Windows/Linux/macOS. Installed doctor has explicit incompatible/missing/not-tested diagnostics; unsupported capability gates fail closed."
+      ],
+      "installed_stage": "quality/public-consumer-and-matrix"
     }
   },
   "limits": [
@@ -270,5 +277,263 @@
     "58": "DOM focus/resize/resume is proven; cold-start and third-party system keyboard behavior on physical devices is unavailable.",
     "60": "Axe, contrast, focus, reflow and keyboard evidence exists; no screen-reader or overall WCAG conformance claim.",
     "66": "Sharing/download adapters and HTML file fallback exist; actual native camera/file-picker client restrictions still require client/device acceptance."
+  },
+  "quality": {
+    "checked_date": "2026-11-05",
+    "repository_run": "https://github.com/Zulut30/awesome-telegram-skills/actions/runs/42077152013",
+    "full_acceptance_run": "https://github.com/Zulut30/awesome-telegram-skills/actions/runs/42077157629",
+    "source_commit": "d6109aa5d5bc529ad008e82db967c4e9cec25d98",
+    "repository_attempt": 2,
+    "jobs_report_sha256": "32633205447be944caddb98c51db2ede760281572767528bb18200b99079de8e",
+    "concrete_jobs": [
+      {
+        "name": "Browser tests (patterns, gallery, starters) in Playwright Chromium",
+        "id": 127445148607,
+        "attempt": 2,
+        "conclusion": "success"
+      },
+      {
+        "name": "Commit messages and CHANGELOG against tags",
+        "id": 127445086564,
+        "attempt": 2,
+        "conclusion": "success"
+      },
+      {
+        "name": "Documentation site / Build and verify the documentation site",
+        "id": 127445087001,
+        "attempt": 2,
+        "conclusion": "success"
+      },
+      {
+        "name": "Documented quickstart (macos-latest, docs/en/quickstart.md)",
+        "id": 127445174614,
+        "attempt": 2,
+        "conclusion": "success"
+      },
+      {
+        "name": "Documented quickstart (macos-latest, docs/quickstart.md)",
+        "id": 127445137986,
+        "attempt": 2,
+        "conclusion": "success"
+      },
+      {
+        "name": "Documented quickstart (ubuntu-latest, docs/en/quickstart.md)",
+        "id": 127445162350,
+        "attempt": 2,
+        "conclusion": "success"
+      },
+      {
+        "name": "Documented quickstart (ubuntu-latest, docs/quickstart.md)",
+        "id": 127445084945,
+        "attempt": 2,
+        "conclusion": "success"
+      },
+      {
+        "name": "Documented quickstart (windows-latest, docs/en/quickstart.md)",
+        "id": 127445087039,
+        "attempt": 2,
+        "conclusion": "success"
+      },
+      {
+        "name": "Documented quickstart (windows-latest, docs/quickstart.md)",
+        "id": 127445086655,
+        "attempt": 2,
+        "conclusion": "success"
+      },
+      {
+        "name": "Example applications on the current library",
+        "id": 127445145441,
+        "attempt": 2,
+        "conclusion": "success"
+      },
+      {
+        "name": "Generated files are current (every --check on the real tree)",
+        "id": 127445148488,
+        "attempt": 2,
+        "conclusion": "success"
+      },
+      {
+        "name": "Install from scratch, wheel to offline bot (macos-latest, Python 3.11)",
+        "id": 127445086441,
+        "attempt": 2,
+        "conclusion": "success"
+      },
+      {
+        "name": "Install from scratch, wheel to offline bot (ubuntu-latest, Python 3.11)",
+        "id": 127445161606,
+        "attempt": 2,
+        "conclusion": "success"
+      },
+      {
+        "name": "Install from scratch, wheel to offline bot (windows-latest, Python 3.11)",
+        "id": 127445085981,
+        "attempt": 2,
+        "conclusion": "success"
+      },
+      {
+        "name": "Installed Python package, every test (Python 3.11, macos-latest)",
+        "id": 127445085895,
+        "attempt": 2,
+        "conclusion": "success"
+      },
+      {
+        "name": "Installed Python package, every test (Python 3.11, ubuntu-latest)",
+        "id": 127445165134,
+        "attempt": 2,
+        "conclusion": "success"
+      },
+      {
+        "name": "Installed Python package, every test (Python 3.11, windows-latest)",
+        "id": 127445086268,
+        "attempt": 2,
+        "conclusion": "success"
+      },
+      {
+        "name": "Installed Python package, every test (Python 3.12, ubuntu-latest)",
+        "id": 127445177621,
+        "attempt": 2,
+        "conclusion": "success"
+      },
+      {
+        "name": "Installed Python package, every test (Python 3.13, ubuntu-latest)",
+        "id": 127445147638,
+        "attempt": 2,
+        "conclusion": "success"
+      },
+      {
+        "name": "Installed Python package, every test (Python 3.14, macos-latest)",
+        "id": 127445087667,
+        "attempt": 2,
+        "conclusion": "success"
+      },
+      {
+        "name": "Installed Python package, every test (Python 3.14, ubuntu-latest)",
+        "id": 127445086786,
+        "attempt": 2,
+        "conclusion": "success"
+      },
+      {
+        "name": "Installed Python package, every test (Python 3.14, windows-latest)",
+        "id": 127445087521,
+        "attempt": 2,
+        "conclusion": "success"
+      },
+      {
+        "name": "Mini App performance, accessibility and bundle budgets",
+        "id": 127445139827,
+        "attempt": 2,
+        "conclusion": "success"
+      },
+      {
+        "name": "Optional service-bot container",
+        "id": 127445135636,
+        "attempt": 2,
+        "conclusion": "success"
+      },
+      {
+        "name": "Public API compatibility and CHANGELOG",
+        "id": 127445147876,
+        "attempt": 2,
+        "conclusion": "success"
+      },
+      {
+        "name": "Python library coverage (90% statements, full branches of guarded modules)",
+        "id": 127445143617,
+        "attempt": 2,
+        "conclusion": "success"
+      },
+      {
+        "name": "Python library style (ruff)",
+        "id": 127445158384,
+        "attempt": 2,
+        "conclusion": "success"
+      },
+      {
+        "name": "Python library types (mypy --strict)",
+        "id": 127445165265,
+        "attempt": 2,
+        "conclusion": "success"
+      },
+      {
+        "name": "Python library unit tests (aiogram 3.29.1, 30 s budget)",
+        "id": 127445150064,
+        "attempt": 2,
+        "conclusion": "success"
+      },
+      {
+        "name": "Python library unit tests (aiogram 3.30.0, 30 s budget)",
+        "id": 127445146666,
+        "attempt": 2,
+        "conclusion": "success"
+      },
+      {
+        "name": "Python library unit tests (aiogram 3.31.0, 30 s budget)",
+        "id": 127445166027,
+        "attempt": 2,
+        "conclusion": "success"
+      },
+      {
+        "name": "Skills and repository tests",
+        "id": 127445085600,
+        "attempt": 2,
+        "conclusion": "success"
+      },
+      {
+        "name": "TypeScript tests and Mini App build (Node.js 20, ubuntu-latest)",
+        "id": 127445152933,
+        "attempt": 2,
+        "conclusion": "success"
+      },
+      {
+        "name": "TypeScript tests and Mini App build (Node.js 22, ubuntu-latest)",
+        "id": 127445134077,
+        "attempt": 2,
+        "conclusion": "success"
+      },
+      {
+        "name": "TypeScript tests and Mini App build (Node.js 24, macos-latest)",
+        "id": 127445087333,
+        "attempt": 2,
+        "conclusion": "success"
+      },
+      {
+        "name": "TypeScript tests and Mini App build (Node.js 24, ubuntu-latest)",
+        "id": 127445086249,
+        "attempt": 2,
+        "conclusion": "success"
+      },
+      {
+        "name": "TypeScript tests and Mini App build (Node.js 24, windows-latest)",
+        "id": 127445086755,
+        "attempt": 2,
+        "conclusion": "success"
+      }
+    ],
+    "full_acceptance_jobs": [
+      {
+        "id": 127425250507,
+        "os": "ubuntu-latest",
+        "conclusion": "success"
+      },
+      {
+        "id": 127425250991,
+        "os": "macos-latest",
+        "conclusion": "success"
+      }
+    ],
+    "history": "Attempt 1 macOS Python 3.11 was cancelled despite a green aggregate. Attempt 2 independently proves every concrete job; no cancelled job is accepted.",
+    "public_consumer": {
+      "python_symbols": 309,
+      "python_cases": 40,
+      "typescript_symbols": 107,
+      "typescript_runtime_exports": 45,
+      "negative_type_cases": 7,
+      "resolutions": [
+        "nodenext",
+        "bundler",
+        "node16"
+      ]
+    },
+    "limits": "Evidence is bound to source d6109aa and exact 0.26 artifacts, not uncommitted 0.27, live Telegram, real devices or production readiness."
   }
 }
