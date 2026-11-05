@@ -13,7 +13,7 @@ from pathlib import Path
 from typing import Any, Iterator, Literal, cast
 
 from ._shared import canonical_json, payload_digest
-from .errors import ConflictFailure, UnsupportedCapability, ValidationFailure
+from .errors import ConflictFailure, UnknownOutcome, UnsupportedCapability, ValidationFailure
 
 InboxState = Literal['pending', 'processing', 'done', 'quarantined']
 InboxReason = Literal[
@@ -63,8 +63,8 @@ class InboxConflict(ConflictFailure):
     """An existing delivery identity has a different payload/version or terminal outcome."""
 
 
-class InboxLeaseLost(ConflictFailure):
-    """The caller no longer owns a live claim; it must not finalize this event."""
+class InboxLeaseLost(UnknownOutcome):
+    """Claim ownership was lost; a host business effect may already have happened."""
 
 
 @dataclass(frozen=True, slots=True)
