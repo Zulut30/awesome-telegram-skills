@@ -1077,10 +1077,16 @@
       "id": 51,
       "title": "Создать систему визуальных токенов",
       "requirement": "Описать типографику, отступы, цвета, радиусы, плотность и движение; светлая/темная темы имеют согласованные состояния без жестко зашитых цветов.",
-      "status": "pending",
-      "commit_subject": null,
-      "artifacts": [],
-      "evidence": []
+      "status": "done",
+      "commit_subject": "roadmap(051): accept semantic UI tokens and density",
+      "artifacts": [
+        "docs/internal/local-026-acceptance.json",
+        "docs/internal/local-026-acceptance.md"
+      ],
+      "evidence": [
+        "Exact d6109aa 0.26 artifacts: 92 stages, 816 Python tests (3 environment skips), 88 TypeScript tests, installed UI and public API Chrome consumers passed. No live Telegram/provider/device/screen-reader/pilot proof is inferred.",
+        "Public token CSS supplies typography, spacing, paired colors, radii, density and motion; exact tarball bytes and computed Chrome states verified."
+      ]
     },
     {
       "id": 52,

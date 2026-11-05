@@ -104,6 +104,111 @@
       "observations": [
         "Back/history, closing intent, page resume and older-client fallback share actual state; repeated dispose leaves zero owned listeners and repeated mount installs one set."
       ]
+    },
+    "51": {
+      "requirement": "Описать типографику, отступы, цвета, радиусы, плотность и движение; светлая/темная темы имеют согласованные состояния без жестко зашитых цветов.",
+      "installed_stage": "installed-ui-example",
+      "observations": [
+        "Public token CSS supplies typography, spacing, paired colors, radii, density and motion; exact tarball bytes and computed Chrome states verified."
+      ]
+    },
+    "52": {
+      "requirement": "Добавить кнопки, поля, карточки, списки, бейджи, skeleton, empty/error/success; проверить композицию и взаимодействие состояний.",
+      "installed_stage": "installed-ui-example",
+      "observations": [
+        "Buttons, fields, cards, lists, badges, skeleton and empty/error/success states compose through public DOM APIs; repeated actions, safe text and disposal verified."
+      ]
+    },
+    "53": {
+      "requirement": "Реализовать tabs, dialogs и bottom sheets с возвратом фокуса, Escape на ПК и понятным закрытием на touch-устройствах.",
+      "installed_stage": "installed-ui-example",
+      "observations": [
+        "Real Chrome tabs implement arrow/Home/End selection; native dialogs and sheets retain Tab focus, close by Escape or visible synthetic touch action and restore initiating focus."
+      ]
+    },
+    "54": {
+      "requirement": "Поддержать labels, input modes, inline validation, сохранение ввода и фокус на ошибке; отказ сервера не стирает заполненную форму.",
+      "installed_stage": "installed-ui-example",
+      "observations": [
+        "Labels, hints and errors are associated; required/local validation focuses the first error and a server rejection preserves literal input, selection and controls."
+      ]
+    },
+    "55": {
+      "requirement": "Каталог, карточка товара, корзина, профиль, настройки и запись используют общие компоненты и содержат нормальные loading/empty/error состояния.",
+      "installed_stage": "installed-ui-example",
+      "observations": [
+        "Catalog, product, cart, profile, settings and booking use common controls and injected domain services; loading/empty/error/ready states and rejected settings save verified."
+      ]
+    },
+    "57": {
+      "requirement": "Использовать одну документированную систему координат для native insets и CSS; не складывать перекрывающиеся inset значения автоматически.",
+      "installed_stage": "installed-ui-example",
+      "observations": [
+        "The host supplies one documented resolver; raw system/content insets are never added automatically, resolved padding is applied once and CSS fallback remains explicit."
+      ]
+    },
+    "59": {
+      "requirement": "Сохранить приоритет Telegram theme, fallback системной темы вне Telegram, disabled/focus/error и reduced motion; смена темы не теряет ввод.",
+      "installed_stage": "installed-ui-example",
+      "observations": [
+        "Telegram theme takes precedence in Telegram, system theme supplies outside fallback; theme changes preserve focus/input, disabled/error states remain explicit and reduced motion stops skeleton animation."
+      ]
+    },
+    "61": {
+      "requirement": "Для каждого native-сценария указать версию, платформу, launch context, разрешения и fallback; наличие имени метода в индексе не означает доступность функции.",
+      "installed_stage": "api-reference-consumer/native_flows",
+      "observations": [
+        "Each of fifteen workflows reports method version gates, observed platform, declared launch, permission state and fallback; host policy/presence are required independently of an index name."
+      ]
+    },
+    "62": {
+      "requirement": "Добавить адаптеры MainButton, SecondaryButton и BackButton с проверкой возможностей, состоянием загрузки и уборкой обработчиков.",
+      "installed_stage": "api-reference-consumer/native_flows",
+      "observations": [
+        "Main/Secondary/Back adapters gate capability, preserve loading labels, block duplicate handlers and clean only owned listeners; account-generation fencing suppresses late completion."
+      ]
+    },
+    "63": {
+      "requirement": "Проверять параметры, отмену, ошибки и жизненный цикл callback; закрытие платежного окна само по себе не подтверждает оплату.",
+      "installed_stage": "api-reference-consumer/native_flows",
+      "observations": [
+        "Parameters, cancellation, null popup result, SDK errors, timeouts and late callbacks are bounded; unknown native prompts retain ownership and invoice closure never confirms payment."
+      ]
+    },
+    "64": {
+      "requirement": "Запрашивать разрешения в контексте пользовательского действия, поддержать отказ и недоступность; полученные данные не использовать как самостоятельную авторизацию.",
+      "installed_stage": "api-reference-consumer/native_flows",
+      "observations": [
+        "Contact and initialized location require an explicit user-action purpose, handle refusal/unavailable states and return no independent server authorization."
+      ]
+    },
+    "65": {
+      "requirement": "Проверить поддерживаемые операции, отказы и смену аккаунта; клиентская биометрия и значения storage не заменяют серверные права.",
+      "installed_stage": "api-reference-consumer/native_flows",
+      "observations": [
+        "Storage read/write/remove booleans, secure recovery, biometric refusal and account changes are checked; length-prefixed namespaces prevent cross-account key collisions and local unlock never authorizes backend access."
+      ]
+    },
+    "71": {
+      "requirement": "Для цифровых товаров внутри Telegram использовать Stars; внешние провайдеры подключать только для подходящих разрешенных сценариев по актуальным правилам.",
+      "installed_stage": "api-reference-consumer/core_payments/core_providers",
+      "observations": [
+        "Canonical payment guides classify goods and require Stars for digital goods inside Telegram; external routes require a permitted merchant scenario and do not become mandatory core dependencies."
+      ]
+    },
+    "73": {
+      "requirement": "Проверять подлинность выбранным способом провайдера, получателя, заказ, сумму и повторы; неизвестный ответ создания счета сверять перед новым запросом.",
+      "installed_stage": "api-reference-consumer/core_payments/core_providers/bot_stars_payments",
+      "observations": [
+        "Mandatory trusted verification, exact merchant/bot/user/order/amount binding, native event/charge deduplication and unknown-write reconciliation are checked; missing lookup evidence never permits a fresh invoice retry."
+      ]
+    },
+    "78": {
+      "requirement": "Обработать полные/частичные возвраты, pending и разрешенные переходы конкретного провайдера; операторские действия защищены правами и записываются в аудит.",
+      "installed_stage": "api-reference-consumer/core_payments/core_providers/bot_stars_payments",
+      "observations": [
+        "Full/partial/pending refunds follow route policy, exact reserved budgets and current ACL at reserve/start/replay; lost effects retain unknown state and native transitions plus operator identity enter atomic audit."
+      ]
     }
   },
   "limits": [
@@ -138,5 +243,32 @@
       "sha256": "799dc5c74a96d825af8e64cdfba382fba43a851f0d6d4bbf0980e885dfdd7834"
     },
     "scope": "Installed Python application and pattern wheel/tarball; real SQLite, HTTP, process restart and Chrome, including a cross-site iframe as in Telegram Web. Synthetic launch/native/SDK transport. No live Telegram/Stars test environment or physical devices."
+  },
+  "ui": {
+    "installed_tarball_sha256": "ca7dc96e7098495247e6f55f1330caef25d14bf2476763900de1aefbb8c36921",
+    "interaction_checks": 35,
+    "geometry_cases": 96,
+    "axe_states": 24,
+    "violations": 0,
+    "supplemental_contrast_checks": 2,
+    "limits": [
+      "Synthetic local preview domain services; no real auth, payment or Telegram launch",
+      "Headless Chrome resize/page-scale/touch and keyboard DOM automation; no physical devices or native keyboards",
+      "Screenshots are synthetic review artifacts, not approved visual baselines",
+      "axe applicable tagged rules plus incomplete findings retained; no overall WCAG conformance or screen-reader claim"
+    ]
+  },
+  "native": {
+    "installed_typescript_suite_tests": 88,
+    "reference_browser_checks": 48,
+    "reference_contexts": 6,
+    "workflow_count": 15,
+    "scope": "Public installed type/ESM/DOM recipes and synthetic SDK callbacks; no real hardware or Telegram permission claim."
+  },
+  "deferred_component_checks": {
+    "56": "Viewport sizes, root text enlargement and Chrome page-scale approximation are proven; actual device orientation/native browser zoom acceptance is not.",
+    "58": "DOM focus/resize/resume is proven; cold-start and third-party system keyboard behavior on physical devices is unavailable.",
+    "60": "Axe, contrast, focus, reflow and keyboard evidence exists; no screen-reader or overall WCAG conformance claim.",
+    "66": "Sharing/download adapters and HTML file fallback exist; actual native camera/file-picker client restrictions still require client/device acceptance."
   }
 }
