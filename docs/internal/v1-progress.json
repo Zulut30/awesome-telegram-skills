@@ -1596,10 +1596,18 @@
       "id": 93,
       "title": "Подготовить лицензирование",
       "requirement": "Собрать авторство, лицензии зависимостей/примеров, правила использования и распространения; выбор лицензии и публикации оставить явным решением владельца проекта.",
-      "status": "pending",
-      "commit_subject": null,
-      "artifacts": [],
-      "evidence": []
+      "status": "done",
+      "commit_subject": "roadmap(093): accept license and distribution inventory",
+      "artifacts": [
+        "docs/licensing.md",
+        "THIRD_PARTY_NOTICES.md",
+        "CONTRIBUTING.md",
+        "docs/internal/local-028-acceptance.json"
+      ],
+      "evidence": [
+        "All 42 standalone skills contain the unchanged complete root MIT notice; source creation/transfer/conflict operations pass 7 tests, with one Windows symlink case explicitly skipped.",
+        "47 licensing source hashes match frozen source92. The exact accepted 0.28 wheel and tarball retain the full MIT. Dependency/asset notices distinguish optional SDKs, SPDX OR/AND and the owner publication/license decision; no legal clearance or new license choice is claimed."
+      ]
     },
     {
       "id": 94,

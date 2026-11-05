@@ -1,0 +1,95 @@
+{
+  "schema_version": 1,
+  "kind": "local-acceptance-summary",
+  "version": "0.28.0",
+  "date": "2026-11-05",
+  "source_commit": "92a9d151dc57d85cc5f1eb614f9980e808b36b59",
+  "source_archive_sha256": "d6268b0f742a8e45db16b71363acc7651965faa3038a3e6616d1e690da4f8693",
+  "report_path": "output/pattern-library-0.28.0/distribution-report.json",
+  "report_sha256": "2c80c55a22db82c5f95c32b7931bf7896f4ebbd90f028ad36ff16585c2f1ef55",
+  "stages": 92,
+  "python_tests": 879,
+  "python_skipped": 5,
+  "typescript_tests": 89,
+  "artifacts": [
+    {
+      "name": "awesome_telegram_patterns-0.28.0-py3-none-any.whl",
+      "bytes": 524352,
+      "sha256": "e0b42b53f1228fc804ab37b73675641fada1c148aa9eebffd11b05af1859fb7d"
+    },
+    {
+      "name": "awesome-telegram-patterns-0.28.0.tgz",
+      "bytes": 52074,
+      "sha256": "dd24c7db27d9f1dd1f2dcc36a49bd67d14577eec1c7a15216632f92615ca3931"
+    }
+  ],
+  "api": {
+    "symbols": 420,
+    "python_symbols": 313,
+    "typescript_symbols": 107,
+    "fixture_groups": 50
+  },
+  "shop": {
+    "report_path": "output/pattern-library-0.28.0/shop-example/report.json",
+    "report_sha256": "f74836d8c5d5eec302e87e60359880a52455988c3cfc336ce4c8cbbc7760272c",
+    "python_tests": 53,
+    "headless_node_tests": 5,
+    "chrome_checks": 262,
+    "application_artifact": {
+      "name": "awesome_telegram_shop_example-0.1.0-py3-none-any.whl",
+      "bytes": 47261,
+      "sha256": "32ed9af7f11c2e3302f58b603c67d06005aabbc0339dc095cc01fc2a5665e57b"
+    }
+  },
+  "supporting_reports": {
+    "licensing": {
+      "path": "output/production-run-2026-11-05/licensing-093/report.json",
+      "sha256": "dc1a4006dc9e1b9ac8eba4d064a5bcd7c835617f491b7fbc641b157ef73a53ec"
+    },
+    "governance": {
+      "path": "output/production-run-2026-11-05/governance-094-097/report.json",
+      "sha256": "90964896ffff558534301fbad5658d427c226d53c6c788cc95c6c7e350bed929"
+    },
+    "release-security": {
+      "path": "output/production-run-2026-11-05/release-095/report.json",
+      "sha256": "bc65beaad6b5a610d1de4fc6dd441895c02de5a7e57cf1a0269f819df8df0e9c"
+    },
+    "metadata": {
+      "path": "output/production-run-2026-11-05/integration-028/report.json",
+      "sha256": "9d425bbf6f4453fd51310baf1122bae0028964fafab632a1a910a76f925b380f"
+    },
+    "repository": {
+      "path": "output/production-run-2026-11-05/repository-028-final/report.json",
+      "sha256": "74fa779ac67a65d752fc499f5e7e503c84f8a23429fcac0438412353c07a69d2"
+    }
+  },
+  "ci": {
+    "state": "pending-on-followup-source",
+    "source_commit": "4b9518350f9fa0a6b2f9b43c4cc570a5955ad4a3",
+    "repository": "https://github.com/Zulut30/awesome-telegram-skills/actions/runs/42112297705",
+    "full": "https://github.com/Zulut30/awesome-telegram-skills/actions/runs/42112303600",
+    "original_repository": "https://github.com/Zulut30/awesome-telegram-skills/actions/runs/42108484379",
+    "original_full": "https://github.com/Zulut30/awesome-telegram-skills/actions/runs/42108488933",
+    "repair_history": [
+      "Original Linux full acceptance passed; macOS failed the recovery reference fixture.",
+      "Original quality job and its single retry failed before measurements while waiting for Chrome debugging port.",
+      "Followup resolves the owned temporary path and preserves nested fixture/Chrome stderr; library package source is unchanged."
+    ]
+  },
+  "limits": [
+    "Local and installed evidence, not production release.",
+    "Synthetic Telegram/providers, no physical devices, human usability or pilots.",
+    "SQLite helper does not activate a restored service. Shop recovery guard work is not in these artifacts.",
+    "Release-builder SBOM/reproducibility evidence uses a separate artifact set and cannot replace these wheel/tarball hashes."
+  ],
+  "items": {
+    "93": {
+      "requirement": "Собрать авторство, лицензии зависимостей/примеров, правила использования и распространения; выбор лицензии и публикации оставить явным решением владельца проекта.",
+      "observations": [
+        "All 42 standalone skills contain the unchanged complete root MIT notice; source creation/transfer/conflict operations pass 7 tests, with one Windows symlink case explicitly skipped.",
+        "47 licensing source hashes match frozen source92. The exact accepted 0.28 wheel and tarball retain the full MIT. Dependency/asset notices distinguish optional SDKs, SPDX OR/AND and the owner publication/license decision; no legal clearance or new license choice is claimed."
+      ],
+      "source_commit": "92a9d151dc57d85cc5f1eb614f9980e808b36b59"
+    }
+  }
+}
