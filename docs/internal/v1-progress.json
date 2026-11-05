@@ -1224,10 +1224,16 @@
       "id": 62,
       "title": "Сделать типизированные native-кнопки",
       "requirement": "Добавить адаптеры MainButton, SecondaryButton и BackButton с проверкой возможностей, состоянием загрузки и уборкой обработчиков.",
-      "status": "pending",
-      "commit_subject": null,
-      "artifacts": [],
-      "evidence": []
+      "status": "done",
+      "commit_subject": "roadmap(062): accept typed owned native action buttons",
+      "artifacts": [
+        "docs/internal/local-026-acceptance.json",
+        "docs/internal/local-026-acceptance.md"
+      ],
+      "evidence": [
+        "Exact d6109aa 0.26 artifacts: 92 stages, 816 Python tests (3 environment skips), 88 TypeScript tests, installed UI and public API Chrome consumers passed. No live Telegram/provider/device/screen-reader/pilot proof is inferred.",
+        "Main/Secondary/Back adapters gate capability, preserve loading labels, block duplicate handlers and clean only owned listeners; account-generation fencing suppresses late completion."
+      ]
     },
     {
       "id": 63,
