@@ -402,9 +402,23 @@ jobs:
     needs: [skills, generated-files, history, python-style, python-types, python-unit, python-package, python-coverage, typescript, mini-app-quality, browser, docs-site, api-compatibility, quickstart, fresh-install, examples, docker]
     runs-on: ubuntu-latest
     timeout-minutes: 5
+    permissions:
+      contents: read
+      actions: read
     steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97 # v7.0.0
+        with:
+          python-version: '3.13'
       - if: contains(needs.*.result, 'failure') || contains(needs.*.result, 'cancelled') || contains(needs.*.result, 'skipped')
         run: |
           echo '::error::A required job did not succeed'
           exit 1
+      - name: Audit every concrete job including matrix cells
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+          REQUIRED_NEEDS: ${{ toJSON(needs) }}
+          REQUIRED_JOB_NAME: Required checks passed
+          REQUIRED_HEAD_SHA: ${{ github.event.pull_request.head.sha || github.sha }}
+        run: python scripts/check_required_jobs.py
       - run: echo 'Every required job succeeded'

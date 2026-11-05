@@ -39,6 +39,11 @@ class CiWorkflowTests(unittest.TestCase):
         # Every other job must block merging through `required`.
         self.assertEqual(sorted(listed), sorted(set(names) - {'required'}))
         self.assertIn("contains(needs.*.result, 'skipped')", CHECKS)
+        required = CHECKS.split('\n  required:\n', 1)[1]
+        self.assertIn('python scripts/check_required_jobs.py', required)
+        self.assertIn('actions: read', required)
+        self.assertIn('REQUIRED_NEEDS: ${{ toJSON(needs) }}', required)
+        self.assertIn('REQUIRED_HEAD_SHA: ${{ github.event.pull_request.head.sha || github.sha }}', required)
 
     def test_browser_job_uses_playwright_chromium(self):
         block = CHECKS.split('\n  browser:\n', 1)[1].split('\n  api-compatibility:\n', 1)[0]
