@@ -386,7 +386,7 @@
   "owned_files_sha256": {
     "docs/migration-from-0.5.md": "af94c55428522b7099c1742de3614fcbca73b826045fec52155e8e2e8f80063a",
     "examples/migration/api_contract_consumer.mjs": "4a15337e90f95defda948061cac47ed71f8f83f770e4cbd5c1d8815d41e5ae5a",
-    "examples/migration/contract-map.json": "0f221f0138dea624e959781e5d272c5bfd6b907c6c9ce82ac29c809d458e5238",
+    "examples/migration/contract-map.json": "ff32a555aead2d83f41df80119e1c09c2a9d829a904c92a9cdd7ca565d74084b",
     "examples/migration/fsm_consumer.py": "1c45bc52765dffea5bc712fb0e8ff7a496a8561bfeca3a3cb3581da28e13d690",
     "examples/migration/public-api-0.5.json": "3071bdc9500c97d402d8db48ae18e420244e62986f58421a3e68c65568d74625",
     "examples/migration/python_consumer.py": "a33dceab4c80ca44937ea0c466e28a7afab714293d9636318660c5af0faa4927",
@@ -430,6 +430,13 @@
       "build_docs_map.py --check",
       "validate_skills.py"
     ],
-    "note": "Catalogs/exports remain current0.28 and unchanged; root added navigation, changelog and AI onboarding reference. No 1.0RC claim."
+    "note": "Catalogs/exports remain current0.28 and unchanged; root added navigation, changelog and AI onboarding reference. No 1.0RC claim.",
+    "line_ending_normalization": {
+      "path": "examples/migration/contract-map.json",
+      "tested_worktree_sha256": "0f221f0138dea624e959781e5d272c5bfd6b907c6c9ce82ac29c809d458e5238",
+      "committed_lf_sha256": "ff32a555aead2d83f41df80119e1c09c2a9d829a904c92a9cdd7ca565d74084b",
+      "same_json_value": true,
+      "runtime_sources_unchanged": true
+    }
   }
 }
