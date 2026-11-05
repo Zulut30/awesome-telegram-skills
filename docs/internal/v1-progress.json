@@ -1185,10 +1185,16 @@
       "id": 59,
       "title": "Довести темы и визуальные состояния",
       "requirement": "Сохранить приоритет Telegram theme, fallback системной темы вне Telegram, disabled/focus/error и reduced motion; смена темы не теряет ввод.",
-      "status": "pending",
-      "commit_subject": null,
-      "artifacts": [],
-      "evidence": []
+      "status": "done",
+      "commit_subject": "roadmap(059): accept theme precedence and visual state lifetime",
+      "artifacts": [
+        "docs/internal/local-026-acceptance.json",
+        "docs/internal/local-026-acceptance.md"
+      ],
+      "evidence": [
+        "Exact d6109aa 0.26 artifacts: 92 stages, 816 Python tests (3 environment skips), 88 TypeScript tests, installed UI and public API Chrome consumers passed. No live Telegram/provider/device/screen-reader/pilot proof is inferred.",
+        "Telegram theme takes precedence in Telegram, system theme supplies outside fallback; theme changes preserve focus/input, disabled/error states remain explicit and reduced motion stops skeleton animation."
+      ]
     },
     {
       "id": 60,
