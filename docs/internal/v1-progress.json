@@ -1203,10 +1203,17 @@
       "id": 72,
       "title": "Создать общую модель заказа и оплаты",
       "requirement": "Определить суммы без float, валюты, состояния и журнал переходов; provider-specific состояния сохраняются и не теряются при нормализации.",
-      "status": "pending",
-      "commit_subject": null,
-      "artifacts": [],
-      "evidence": []
+      "status": "done",
+      "commit_subject": "roadmap(072): accept exact monetary order and audit model",
+      "artifacts": [
+        "docs/payment-ledger.md",
+        "examples/api-reference/python/core_payments.py",
+        "docs/internal/local-026-acceptance.json"
+      ],
+      "evidence": [
+        "Immutable d6109aa source: 92 distribution stages, 816 Python tests (3 environment skips), 88 TypeScript tests and Chrome passed; exact wheel/tarball SHA-256 bound in local-026-acceptance.json.",
+        "Money and ledger tests plus installed public core_payments fixture prove integer amounts, state transitions, durable native provider state and atomic audit."
+      ]
     },
     {
       "id": 73,

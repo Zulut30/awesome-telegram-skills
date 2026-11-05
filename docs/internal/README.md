@@ -54,3 +54,5 @@
 - [Привязка артефактов и доказательств 0.25.0](delivery-025-acceptance.json)
 
 - [Требования 41–50 и исправления backend/состояния](backend-state-readiness-2026-11-05.md)
+- [Приемка компонентов 0.26.0](local-026-acceptance.md)
+- [Привязка артефактов 0.26.0](local-026-acceptance.json)
