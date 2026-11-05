@@ -36,6 +36,9 @@ def main() -> int:
     python_meta = tomllib.loads((ROOT / 'packages/python/pyproject.toml').read_text(encoding='utf-8'))['project']
     ts_meta = json.loads((ROOT / 'packages/typescript/package.json').read_text(encoding='utf-8'))
     catalog = json.loads((ROOT / 'components.json').read_text(encoding='utf-8'))
+    expected_recipe_count = len(json.loads((ROOT / 'catalog/recipe-gallery.json').read_text(encoding='utf-8'))['recipes'])
+    if not expected_recipe_count:
+        raise ValueError('The committed recipe catalog must not be empty')
     example = json.loads((ROOT / 'examples/mini-app/package.json').read_text(encoding='utf-8'))
     release = read_release_identity(ROOT / 'packages/python/pyproject.toml', ROOT / 'packages/typescript/package.json')
     version = release.identity
@@ -108,7 +111,7 @@ from telegram_patterns import BotSettings, validate_init_data, RecipeCatalog, cr
 assert importlib.util.find_spec('aiogram') is None
 assert Path(telegram_patterns.__file__).resolve().is_relative_to(Path(sys.argv[1]).resolve())
 assert BotSettings.from_env(environ={'BOT_TOKEN':'100:CORE_FIXTURE'}).token=='100:CORE_FIXTURE'
-assert len(RecipeCatalog().recipes)==340
+assert len(RecipeCatalog().recipes)==int(sys.argv[2])
 assert RecipeCatalog().search('две кнопки')[0].id=='two-columns'
 assert RecipeCatalog().get('two-columns').maturity=='experimental'
 assert RecipeCatalog().get('api.sendPhoto').maturity=='reference'
@@ -119,7 +122,7 @@ raw='auth_date=1650385342&user=%7B%22id%22%3A42%2C%22first_name%22%3A%22Test%22%
 assert validate_init_data(raw,'42:TEST',now=1650385342).user_id==42
 print(json.dumps({'core_without_sdk':True,'python':sys.version.split()[0]}))
 ''', encoding='utf-8')
-        run('core-smoke', [str(python_in(core)), str(smoke), str(core)], consumers)
+        run('core-smoke', [str(python_in(core)), str(smoke), str(core), str(expected_recipe_count)], consumers)
         report['doctor_consumer'] = json.loads(run('doctor-consumer', [str(python_in(core)), str(ROOT / 'scripts/verify_doctor_consumer.py'),
             '--wheel', str(wheel), '--tarball', str(tarball), '--output', str(consumers / 'doctor')], consumers))
         recovery = json.loads(run('error-recovery', [str(python_in(core)), str(ROOT / 'examples/python/error_recovery.py')], consumers))
