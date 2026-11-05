@@ -909,10 +909,16 @@
       "id": 40,
       "title": "Добавить полезную наблюдаемость",
       "requirement": "Связать Update, действие, операцию и job безопасными идентификаторами; метрики задержек, повторов и отказов доступны без токенов, initData и полного текста сообщений.",
-      "status": "pending",
-      "commit_subject": null,
-      "artifacts": [],
-      "evidence": []
+      "status": "done",
+      "commit_subject": "roadmap(040): accept safe correlated operational telemetry",
+      "artifacts": [
+        "docs/internal/delivery-025-acceptance.md",
+        "docs/internal/delivery-025-acceptance.json"
+      ],
+      "evidence": [
+        "0.25.0 immutable source ab1a432:90 stages PASS;715 Python (3 environment skips),61 TypeScript,Chrome; exact hashes in summary.",
+        "test_telemetry; installed stage api-reference-consumer; Bot/domain/type-scoped HMAC refs connect update/action/operation/job; isolated contexts, finite labels, latency/retry/failure and secret canaries."
+      ]
     },
     {
       "id": 41,
