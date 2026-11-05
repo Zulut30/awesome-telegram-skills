@@ -220,7 +220,7 @@ test('partially failed SDK registration is cleaned and start can be retried', ()
   bridge.dispose();assert.equal(app.count(),0);
 });
 
-test('all documented native paths bind the SDK receiver and preserve arguments/results', () => {
+test('versioned native paths preserve SDK binding and unversioned paths never dispatch', () => {
   const app = {platform:'android',version:'10.3'}, calls=[];
   for (const path of Object.keys(TELEGRAM_NATIVE_METHODS)) {
     const parts=path.split('.');let owner=app;
@@ -228,12 +228,18 @@ test('all documented native paths bind the SDK receiver and preserve arguments/r
     owner[parts.at(-1)]=function(...args){assert.equal(this,owner);if(path==='isVersionAtLeast'&&typeof args[0]==='string')return true;calls.push({path,args});return 'native-result';};
   }
   const api=new TelegramNativeAPI(app);
+  let blocked=0;
   for (const path of Object.keys(TELEGRAM_NATIVE_METHODS)) {
+    if(TELEGRAM_NATIVE_METHODS[path].minVersion===null){
+      const before=calls.length;assert.equal(api.supports(path),false,path);
+      assert.throws(()=>api.call(path,'getProfile',{},()=>{}),UnsupportedTelegramCapability);
+      assert.equal(calls.length,before);blocked++;continue;
+    }
     assert.equal(api.supports(path),true,path);
     const callback=()=>{};assert.equal(api.call(path,{fixture:true},callback),'native-result');
     assert.equal(calls.at(-1).args[1],callback);
   }
-  assert.equal(calls.length,99);assert.equal(Object.isFrozen(TELEGRAM_NATIVE_METHODS),true);
+  assert.equal(calls.length,99);assert.equal(blocked,1);assert.equal(Object.isFrozen(TELEGRAM_NATIVE_METHODS),true);
   assert.equal(Object.isFrozen(TELEGRAM_NATIVE_METHODS['ready']),true);
 });
 

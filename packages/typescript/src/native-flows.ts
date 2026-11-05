@@ -2,7 +2,7 @@
 import {TelegramNativeAPI} from './native-api.js';
 import {TELEGRAM_NATIVE_METHODS} from './native-catalog.js';
 import type {TelegramNativeMethod} from './native-catalog.js';
-import type {TelegramNativeArguments, LocationData, InvoiceStatus} from './native-signatures.js';
+import type {TelegramNativeArguments, LocationData, InvoiceStatus, NativeServerlessError} from './native-signatures.js';
 import {isInsideTelegram} from './launch.js';
 import {AuthenticationRequired, InvalidType, PatternError, UnknownOutcome, ValidationFailure, safeErrorReport} from './errors.js';
 import type {ErrorReport, OperationKind} from './errors.js';
@@ -135,7 +135,7 @@ export class NativeFlowScope {
       let available=owner.supports(value.flow),state:NativeCapability['state']=available?'ready-to-attempt':'unavailable';
       if(available&&(value.flow==='location'||value.flow==='biometric')){const manager=owner.manager(value.flow==='location'?'LocationManager':'BiometricManager');if(!manager.initialized){available=false;state='needs-init';}else if(!manager.available){available=false;state='unavailable';}else if(!manager.granted)state='permission-needed';}
       if(available&&value.permission==='account-scope'&&owner.options.accountTag===null){available=false;state='needs-account';}
-      return Object.freeze({flow:value.flow,versions:Object.freeze([...new Set(value.methods.map(method=>TELEGRAM_NATIVE_METHODS[method].minVersion))]),platform:owner.platform(),launch:owner.options.launch,available,state,permission:value.permission,fallback:value.fallback});
+      return Object.freeze({flow:value.flow,versions:Object.freeze([...new Set(value.methods.map(method=>TELEGRAM_NATIVE_METHODS[method].minVersion).filter(version=>version!==null))]),platform:owner.platform(),launch:owner.options.launch,available,state,permission:value.permission,fallback:value.fallback});
     }));
   }
   /** Only after the host actually observed native closure; token fences an older unknown prompt. */
@@ -313,7 +313,7 @@ export function createNativeFileInput(document:Document,options:NativeFileInputO
   input.addEventListener('change',change);return {element,input,dispose(){input.removeEventListener('change',change);element.remove();}};
 }
 
-export interface TelegramServerlessError {readonly message:string;readonly type?:string;readonly status:number;readonly parameters?:Readonly<Record<string,unknown>>}
+export interface TelegramServerlessError extends NativeServerlessError {}
 export interface TelegramServerlessBridge {
   call(name:string,callback?:(error:TelegramServerlessError|null,result?:unknown)=>void):void;
   call(name:string,input:Readonly<Record<string,unknown>>,callback?:(error:TelegramServerlessError|null,result?:unknown)=>void):void;

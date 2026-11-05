@@ -3,6 +3,7 @@
 // types follow https://core.telegram.org/bots/webapps (checked 2026-10-07).
 import type {TelegramNativeEvent, TelegramNativeMethod} from './native-catalog.js';
 
+// Partial review 2026-11-05: Serverless.call; other types retain their prior review.
 export type TelegramNativeObject = Readonly<Record<string, unknown>>;
 export type TelegramColor = `#${string}` | 'bg_color' | 'secondary_bg_color';
 export type TelegramBottomBarColor = TelegramColor | 'bottom_bar_bg_color';
@@ -25,6 +26,8 @@ export type StorageCallback<T> = (error: string | null, result?: T) => void;
 export type InlineQueryChatType = 'users' | 'bots' | 'groups' | 'channels';
 export type InvoiceStatus = 'paid' | 'cancelled' | 'failed' | 'pending';
 export type HomeScreenStatus = 'unsupported' | 'unknown' | 'added' | 'missed';
+export interface NativeServerlessError { readonly message: string; readonly type?: string; readonly status: number; readonly parameters?: Readonly<Record<string, unknown>> }
+export type NativeServerlessCallback = (error: NativeServerlessError | null, result?: unknown) => void;
 
 /** Documented arguments and result of every native method, keyed by its path. */
 export interface TelegramNativeSignatures {
@@ -84,6 +87,7 @@ export interface TelegramNativeSignatures {
   'SecureStorage.removeItem': (key: string, callback?: StorageCallback<boolean>) => TelegramNativeObject;
   'SecureStorage.restoreItem': (key: string, callback?: StorageCallback<string | null>) => TelegramNativeObject;
   'SecureStorage.setItem': (key: string, value: string, callback?: StorageCallback<boolean>) => TelegramNativeObject;
+  'Serverless.call': (...args: [name: string, callback?: NativeServerlessCallback | undefined] | [name: string, input?: Readonly<Record<string, unknown>> | undefined, callback?: NativeServerlessCallback | undefined]) => void;
   'SettingsButton.hide': () => TelegramNativeObject;
   'SettingsButton.offClick': (callback: () => void) => TelegramNativeObject;
   'SettingsButton.onClick': (callback: () => void) => TelegramNativeObject;

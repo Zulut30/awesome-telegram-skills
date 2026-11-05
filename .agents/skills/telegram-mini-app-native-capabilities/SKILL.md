@@ -3,7 +3,7 @@ name: telegram-mini-app-native-capabilities
 description: "Подключает конкретные native-возможности Telegram Mini App: геолокацию, биометрию, QR, хранилища, sharing и скачивание. Используйте для client API с разрешениями, version gates и fallback, отдельно от общего подключения bridge. Не для общего подключения bridge и SDK → telegram-mini-app-typescript."
 license: MIT
 metadata:
-  version: "0.26.0"
+  version: "0.27.0"
 ---
 
 # Native-возможности Mini App
@@ -24,7 +24,7 @@ Mini App использует возможности клиента Telegram с 
 
 Для различий capabilities прочитайте [references/capabilities.md](references/capabilities.md). Проверяйте version gate и фактическую доступность метода/объекта; platform и наличие window.Telegram не доказывают поддержку. Подписки, состояние и cleanup принадлежат одному adapter.
 
-Для `Telegram.WebApp.Serverless.call` используйте [references/telegram-serverless.md](references/telegram-serverless.md). Официальная документация не задает минимальную версию: не назначайте ее по аналогии с Bot API; проверяйте наличие функции, хостинг и результат callback. Универсальный `TelegramNativeAPI` не назначает этому методу вымышленную версию; в разработке 0.26.0 отдельный `ServerlessEndpointClient` требует явного включения и присутствия объекта.
+Для `Telegram.WebApp.Serverless.call` используйте [references/telegram-serverless.md](references/telegram-serverless.md). Официальная документация не задает минимальную версию: не назначайте ее по аналогии с Bot API; проверяйте наличие функции, хостинг и результат callback. Универсальный `TelegramNativeAPI` не назначает этому методу вымышленную версию; в разработке 0.27.0 отдельный `ServerlessEndpointClient` требует явного включения и присутствия объекта.
 
 Опишите состояния «недоступно», «ожидает действия», «запрос отправлен», «принято с результатом», «отказ или отмена» и «ошибка» в форме, подходящей конкретному API. Не сводите отказ пользователя и отсутствие функции к success. Переход в настройки/запрос выполняется по осмысленному действию пользователя там, где API этого требует.
 

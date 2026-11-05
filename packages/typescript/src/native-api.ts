@@ -17,7 +17,8 @@ export class TelegramNativeAPI {
   private readonly cleanups = new Set<() => void>();
   constructor(private readonly app: unknown) {}
 
-  private atLeast(required: string): boolean {
+  private atLeast(required: string | null): boolean {
+    if (required === null) return false;
     if (!object(this.app) || typeof this.app.version !== 'string' || !/^\d+\.\d+$/.test(this.app.version)) return false;
     const [major = 0, minor = 0] = this.app.version.split('.').map(Number);
     const [requiredMajor = 0, requiredMinor = 0] = required.split('.').map(Number);
@@ -27,6 +28,8 @@ export class TelegramNativeAPI {
 
   private resolve(path: TelegramNativeMethod): { owner: ObjectLike; fn: (...args: unknown[]) => unknown } | undefined {
     if (this.disposed || !Object.hasOwn(TELEGRAM_NATIVE_METHODS, path) || !object(this.app)) return;
+    // An indexed method without an official version gate needs a separate, explicit context adapter.
+    if (TELEGRAM_NATIVE_METHODS[path].minVersion === null) return;
     if (!isInsideTelegram(this.app)) return;
     if (!this.atLeast(TELEGRAM_NATIVE_METHODS[path].minVersion)) return;
     const parts = path.split('.');

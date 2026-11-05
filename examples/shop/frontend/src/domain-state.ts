@@ -84,7 +84,7 @@ export class ShopDomainState {
   }
   setConsent(value:boolean):void {this.active();this.consent=value===true;this.saveCart();}
   toggleCart(id:string):void {if (this.busyOwner||this.order||this.pointer?.read().status==='restored')return;this.setCart(this.cart.has(id)?[...this.cart].filter(item=>item!==id):[...this.cart,id]);}
-  newSelection():void {if (this.order?.status!=='paid')return;this.order=null;this.cart.clear();this.consent=false;this.saveCart();}
+  newSelection():void {if (!this.order||!['paid','refunded'].includes(this.order.status))return;this.order=null;this.cart.clear();this.consent=false;this.saveCart();}
   selectOrder(id:string):boolean {const order=this.orders.find(item=>item.id===id);if(!order||this.busyOwner)return false;this.order=order;return true;}
   cancelReads():void {this.reads.clear();this.extraReads.clear();}
   reserveOrder(operation: string): PendingOperationReservation {
@@ -188,7 +188,7 @@ export class ShopDomainState {
   }
   private acceptOrder(order:Order):void {
     this.retryAvailable=false;this.order=Object.freeze({...order,items:Object.freeze([...order.items])});
-    if(order.status==='paid'&&this.pointer?.read().status==='restored'&&this.completeOrder(order.operation)){
+    if(['paid','refunded'].includes(order.status)&&this.pointer?.read().status==='restored'&&this.completeOrder(order.operation)){
       try{this.storage().removeItem(this.intentKey());this.intent=null;this.cart.clear();this.consent=false;this.saveCart();}catch{this.blocked=true;}
     }
   }

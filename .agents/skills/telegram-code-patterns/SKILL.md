@@ -3,7 +3,7 @@ name: telegram-code-patterns
 description: "Подбирает и подключает готовые компоненты общей библиотеки для Telegram-бота или Mini App: импорты Python/TypeScript, совместимость, композиция и проверка в проекте. Используйте, когда пользователь просит переиспользовать код, подключить библиотеку паттернов или добавить компонент в нее. Не для одиночного исправления handler или кода без этой библиотеки → telegram-bot-python."
 license: MIT
 metadata:
-  version: "0.26.0"
+  version: "0.27.0"
 ---
 
 # Готовые компоненты Telegram
@@ -91,4 +91,4 @@ metadata:
 
 [Bot API](https://core.telegram.org/bots/api).
 
-Проверено: 2026-11-05, awesome-telegram-patterns 0.26.0, Bot API 10.3, aiogram 3.31.0.
+Проверено: 2026-11-05, awesome-telegram-patterns 0.27.0, Bot API 10.3, aiogram 3.31.0.

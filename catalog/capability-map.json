@@ -736,6 +736,21 @@
           ],
           "components": [],
           "recipes": []
+        },
+        {
+          "id": "mini-app-serverless",
+          "title": "Вызов endpoint Telegram Serverless",
+          "mini_app": "^Serverless\\.call$",
+          "skills": [
+            "telegram-mini-app-native-capabilities",
+            "telegram-mini-app-typescript"
+          ],
+          "components": [
+            "native-flows"
+          ],
+          "recipes": [
+            "native.Serverless.call"
+          ]
         }
       ]
     }

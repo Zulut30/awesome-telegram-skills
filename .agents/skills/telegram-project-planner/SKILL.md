@@ -3,7 +3,7 @@ name: telegram-project-planner
 description: "Проектирует новый Telegram-бот или Mini App: сценарии, стек, архитектуру и проверяемый MVP. Используйте при старте проекта или существенном изменении его архитектуры. Не для изменения структуры готового Mini App → telegram-mini-app-architecture."
 license: MIT
 metadata:
-  version: "0.26.0"
+  version: "0.27.0"
 ---
 
 # Планирование Telegram-проекта

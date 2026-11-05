@@ -2,7 +2,7 @@
 
 Термины: квитанция (receipt) — сохраненная запись о выполненной операции; повтор возвращает ее вместо второго эффекта; **outbox** — события, сохраненные в той же транзакции, что и изменение данных; отдельный обработчик выполняет их позже; **сверка** — запрос фактического состояния у провайдера или в хранилище перед повтором или выдачей.
 
-`telegram_patterns.inbox.SQLiteInbox` — синхронный компонент на стандартном `sqlite3`,
+`telegram_patterns.SQLiteInbox` — синхронный компонент на стандартном `sqlite3`,
 без обязательного SDK или сервиса очередей. Он сохраняет JSON-снимок update до возврата
 receipt, выдает worker временное владение и сохраняет события, которые требуют разбора.
 Компонент предназначен для одного хоста с несколькими процессами и общей локальной БД.
@@ -14,7 +14,7 @@ receipt, выдает worker временное владение и сохран
 ## Подключение и прием
 
 ```python
-from telegram_patterns.inbox import SQLiteInbox
+from telegram_patterns import SQLiteInbox
 
 inbox = SQLiteInbox("private-data/updates.sqlite", max_attempts=5)
 inbox.initialize()  # Каталог, доступ к файлу и миграции обеспечивает приложение.
@@ -29,9 +29,15 @@ receipt = inbox.receive(
 ```
 
 `initialize()` явно создает таблицы `telegram_pattern_inbox` и
-`telegram_pattern_inbox_meta` и индекс готовых событий. Существующие бизнес-таблицы
-сохраняются. Неизвестная версия схемы или неожиданный набор колонок требуют
-проверенной миграции: компонент не удаляет таблицы и не переписывает данные.
+`telegram_pattern_inbox_meta` и индексы готовых событий. В 0.27.0 текущая схема inbox —
+2: схема 1 атомарно получает колонку `priority` с исходным значением 0 и индекс полос.
+Payload, время приема, состояния, попытки и действующие leases сохраняются. Перед
+обновлением остановите старые workers, создайте резервную копию и проверьте восстановление.
+Старый runtime схемы 1 после миграции откажет при инициализации; для отката нужна
+проверенная копия, а не ручное уменьшение версии. Схема inbox отдельна от схемы
+финансового ledger и прикладного хранилища. Существующие бизнес-таблицы сохраняются.
+Неизвестная версия схемы или неожиданный набор колонок требуют проверенной миграции:
+компонент не удаляет таблицы и не переписывает данные.
 
 `receive()` принимает декодированный JSON-объект с точным целым `update_id`, совпадающим
 с аргументом. `bool` не считается целым ID; `bot_id` ограничен 1…2⁶³−1,
@@ -41,7 +47,7 @@ receipt = inbox.receive(
 
 Ключ доставки — `(bot_id, update_id)`. Повтор с тем же JSON и внутренней версией
 возвращает `duplicate=True`, ранее сохраненные state/reason и не меняет snapshot,
-время приема, число попыток или политику. Новый `quarantine_reason` на повторе
+время приема, число попыток, политику или первоначальный `priority`. Новый `quarantine_reason` на повторе
 игнорируется; receiver должен сохранять стабильные правила admission на своем
 lifecycle. Разные payload/version с тем же ключом вызывают `InboxConflict`.
 Ошибка не перезаписывает исходное событие.
@@ -54,7 +60,8 @@ API**. Конструктор принимает `supported_versions=(1,)`, от
 Новая версия worker не выпускает старые события из карантина автоматически.
 
 `InboxReceipt` содержит `bot_id`, `update_id`, `state`, `duplicate`, `payload_version`,
-`reason`. Возврат receipt происходит после SQLite COMMIT с `synchronous=FULL`.
+`reason`, `priority`. Последнее поле `priority=0` сохраняет прежние вызовы конструктора.
+Возврат receipt происходит после SQLite COMMIT с `synchronous=FULL`.
 Ошибки хранения, включая блокировку после timeout или ошибку commit, выходят наружу:
 приложение обязано вернуть повторяемую ошибку HTTP, а не успешный HTTP-ответ. При неопределенном
 результате commit повтор с тем же ключом безопасен. Гарантия зависит от корректности
@@ -64,7 +71,7 @@ API**. Конструктор принимает `supported_versions=(1,)`, от
 ## Worker и восстановление
 
 ```python
-from telegram_patterns.inbox import InboxLeaseLost
+from telegram_patterns import InboxLeaseLost
 
 claim = inbox.claim(123456789, "worker-1", lease_seconds=30)
 if claim is not None:
@@ -80,14 +87,37 @@ if claim is not None:
 
 | Метод | Результат |
 |---|---|
-| `receive(bot_id, update_id, payload, ...)` | Durable receipt; pending или quarantined |
-| `claim(bot_id, worker_id, lease_seconds=30)` | `InboxClaim` или `None`; только версии этого worker и указанный bot |
+| `receive(bot_id, update_id, payload, ..., priority=0)` | Durable receipt; pending или quarantined, первоначальная полоса сохраняется на дубле |
+| `claim(bot_id, worker_id, lease_seconds=30, priorities=None)` | `InboxClaim` или `None`; только версии этого worker, указанный bot и выбранные полосы |
 | `renew(claim, lease_seconds=30)` | Обновленный claim; срок не сокращается |
 | `complete(claim)` | `done` |
 | `retry(claim, delay_seconds=..., reason="processing-failed")` | Отложенный pending либо карантин при исчерпании попыток |
 | `quarantine(claim, reason=...)` | Явный terminal карантин с сохраненным payload |
 | `get(bot_id, update_id)` | `InboxRecord` или `None`, без изменения состояния |
 | `counts(bot_id)` | Числа pending/processing/done/quarantined, без payload |
+
+### Отдельная полоса срочных событий
+
+`priority` — точное целое 0…255; `bool` и `float` отклоняются. `priorities=None`
+сохраняет прежний отбор всех полос в порядке `available_at`, `received_at`, `update_id`.
+Число priority само по себе не меняет сортировку. Явный фильтр — tuple из 1…16
+различных точных целых 0…255; пустой tuple, list и повторы недопустимы.
+Например, приложение может принимать pre-checkout с `priority=1`, выделить worker
+с `priorities=(1,)`, а обычный worker ограничить `priorities=(0,)`. Выбор полосы
+делает доверенная admission-интеграция, а не поле пользовательского JSON.
+
+`InboxRecord.priority` возвращает первоначальную сохраненную полосу; последнее поле
+имеет default 0. Поля `InboxClaim` сохранены. Duplicate не обновляет `received_at` и
+не повышает priority, даже если повтор предлагает другое значение. Таймаут и бюджет
+события приложение отсчитывает от первого приема; повторная доставка не начинает
+новый срок.
+
+Полоса отделяет очередь, но не создает worker, не прерывает уже запущенный handler
+и не гарантирует пропускную способность. Host задает конечное число workers,
+границы admission, локальный бюджет, SDK timeout и безопасный отказ при просрочке.
+[Telegram требует ответ pre-checkout в пределах 10 секунд после отправки запроса](https://core.telegram.org/bots/api#answerprecheckoutquery),
+а локальное время приема не подтверждает момент отправки Telegram. Эта граница
+сверена 2026-11-05; поведение живой доставки и внешней сети требует отдельной проверки.
 
 Все мутации сериализуются короткими `BEGIN IMMEDIATE` транзакциями. Обработчик
 выполняется после выдачи claim и не держит transaction inbox. Claim содержит уникальный

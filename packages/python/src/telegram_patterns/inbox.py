@@ -54,6 +54,7 @@ _COLUMNS = frozenset(
         'worker_id',
         'claim_token',
         'lease_until',
+        'priority',
     }
 )
 _UNSET = object()
@@ -75,6 +76,7 @@ class InboxReceipt:
     duplicate: bool
     payload_version: int
     reason: InboxReason | None
+    priority: int = 0
 
 
 @dataclass(frozen=True, slots=True)
@@ -108,6 +110,7 @@ class InboxRecord:
     worker_id: str | None
     lease_until: float | None
     payload_json: str = field(repr=False)
+    priority: int = 0
 
     @property
     def payload(self) -> dict[str, Any]:
@@ -156,6 +159,7 @@ def _receipt(row: sqlite3.Row, *, duplicate: bool = False) -> InboxReceipt:
         duplicate,
         row['payload_version'],
         cast(InboxReason | None, row['reason']),
+        row['priority'],
     )
 
 
@@ -226,7 +230,7 @@ class SQLiteInbox:
                 singleton INTEGER PRIMARY KEY CHECK(singleton=1), schema_version INTEGER NOT NULL
             )''')
             version = db.execute('SELECT schema_version FROM telegram_pattern_inbox_meta WHERE singleton=1').fetchone()
-            if version is not None and version[0] != 1:
+            if version is not None and version[0] not in (1, 2):
                 raise UnsupportedCapability('Unsupported inbox schema; apply a reviewed migration')
             db.execute('''CREATE TABLE IF NOT EXISTS telegram_pattern_inbox (
                 bot_id INTEGER NOT NULL, update_id INTEGER NOT NULL, payload_version INTEGER NOT NULL,
@@ -235,14 +239,26 @@ class SQLiteInbox:
                 reason TEXT, received_at REAL NOT NULL, available_at REAL NOT NULL,
                 attempts INTEGER NOT NULL, max_attempts INTEGER NOT NULL,
                 worker_id TEXT, claim_token TEXT, lease_until REAL,
+                priority INTEGER NOT NULL DEFAULT 0 CHECK(priority BETWEEN 0 AND 255),
                 PRIMARY KEY(bot_id, update_id)
             )''')
             columns = {row['name'] for row in db.execute('PRAGMA table_info(telegram_pattern_inbox)')}
+            if version is not None and version[0] == 1:
+                if columns != _COLUMNS - {'priority'}:
+                    raise UnsupportedCapability('Unexpected version-one inbox schema; apply a reviewed migration')
+                db.execute(
+                    'ALTER TABLE telegram_pattern_inbox ADD COLUMN priority INTEGER NOT NULL DEFAULT 0 '
+                    'CHECK(priority BETWEEN 0 AND 255)'
+                )
+                columns.add('priority')
             if columns != _COLUMNS:
                 raise UnsupportedCapability('Unexpected inbox schema; apply a reviewed migration')
-            db.execute('INSERT OR IGNORE INTO telegram_pattern_inbox_meta VALUES (1,1)')
+            db.execute('INSERT OR IGNORE INTO telegram_pattern_inbox_meta VALUES (1,2)')
+            db.execute('UPDATE telegram_pattern_inbox_meta SET schema_version=2 WHERE singleton=1')
             db.execute('''CREATE INDEX IF NOT EXISTS telegram_pattern_inbox_ready
                 ON telegram_pattern_inbox(bot_id,state,available_at,received_at,update_id)''')
+            db.execute('''CREATE INDEX IF NOT EXISTS telegram_pattern_inbox_lane
+                ON telegram_pattern_inbox(bot_id,priority,state,available_at,received_at,update_id)''')
 
     def receive(
         self,
@@ -251,10 +267,13 @@ class SQLiteInbox:
         payload: dict[str, Any],
         *,
         payload_version: int = 1,
+        priority: int = 0,
         quarantine_reason: InboxReason | None = None,
         now: float | None = None,
     ) -> InboxReceipt:
         _identity(bot_id, update_id)
+        if type(priority) is not int or not 0 <= priority <= 255:
+            raise ValidationFailure('Use an exact integer priority from zero to 255')
         if type(payload_version) is not int or not 1 <= payload_version <= 2**31 - 1:
             raise ValidationFailure('Use a positive bounded envelope version')
         if (
@@ -288,7 +307,7 @@ class SQLiteInbox:
             db.execute(
                 '''INSERT INTO telegram_pattern_inbox
                 (bot_id,update_id,payload_version,payload_json,payload_hash,state,reason,
-                 received_at,available_at,attempts,max_attempts) VALUES (?,?,?,?,?,?,?,?,?,0,?)''',
+                 received_at,available_at,attempts,max_attempts,priority) VALUES (?,?,?,?,?,?,?,?,?,0,?,?)''',
                 (
                     bot_id,
                     update_id,
@@ -300,14 +319,28 @@ class SQLiteInbox:
                     instant,
                     instant,
                     self.max_attempts,
+                    priority,
                 ),
             )
-            return InboxReceipt(bot_id, update_id, cast(InboxState, state), False, payload_version, reason)
+            return InboxReceipt(bot_id, update_id, cast(InboxState, state), False, payload_version, reason, priority)
 
     def claim(
-        self, bot_id: int, worker_id: str, *, lease_seconds: float = 30, now: float | None = None
+        self,
+        bot_id: int,
+        worker_id: str,
+        *,
+        lease_seconds: float = 30,
+        priorities: tuple[int, ...] | None = None,
+        now: float | None = None,
     ) -> InboxClaim | None:
         _identity(bot_id)
+        if priorities is not None and (
+            not isinstance(priorities, tuple)
+            or not 1 <= len(priorities) <= 16
+            or any(type(value) is not int or not 0 <= value <= 255 for value in priorities)
+            or len(set(priorities)) != len(priorities)
+        ):
+            raise ValidationFailure('Use None or one to sixteen distinct integer priority lanes')
         try:
             valid_worker = isinstance(worker_id, str) and bool(worker_id) and len(worker_id.encode('utf-8')) <= 128
         except UnicodeError:
@@ -333,11 +366,12 @@ class SQLiteInbox:
                 (instant, bot_id, instant),
             )
             versions = ','.join('?' for _ in self.supported_versions)
+            lane = '' if priorities is None else ' AND priority IN (' + ','.join('?' for _ in priorities) + ')'
             row = db.execute(
                 f'''SELECT * FROM telegram_pattern_inbox WHERE bot_id=? AND state='pending'
-                AND available_at<=? AND payload_version IN ({versions})
+                AND available_at<=? AND payload_version IN ({versions}){lane}
                 ORDER BY available_at,received_at,update_id LIMIT 1''',
-                (bot_id, instant, *sorted(self.supported_versions)),
+                (bot_id, instant, *sorted(self.supported_versions), *(priorities or ())),
             ).fetchone()
             if row is None:
                 return None
@@ -403,7 +437,9 @@ class SQLiteInbox:
                     claim.update_id,
                 ),
             )
-            return InboxReceipt(claim.bot_id, claim.update_id, state, False, row['payload_version'], reason)
+            return InboxReceipt(
+                claim.bot_id, claim.update_id, state, False, row['payload_version'], reason, row['priority']
+            )
 
     def complete(self, claim: InboxClaim, *, now: float | None = None) -> InboxReceipt:
         return self._finish(claim, 'done', None, 0, now)
@@ -472,6 +508,7 @@ class SQLiteInbox:
                 row['worker_id'],
                 row['lease_until'],
                 row['payload_json'],
+                row['priority'],
             )
         finally:
             db.close()

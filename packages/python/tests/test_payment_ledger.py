@@ -640,7 +640,7 @@ class PaymentLedgerTests(unittest.TestCase):
 
     def test_future_and_unexpected_schemas_are_refused_without_destroying_business_data(self):
         with closing(sqlite3.connect(self.database)) as db, db:
-            db.execute('UPDATE payment_ledger_meta SET version=2')
+            db.execute('UPDATE payment_ledger_meta SET version=3')
         with self.assertRaises(UnsupportedCapability):
             self.ledger.initialize()
         self.assertEqual(self.ledger.get_order(self.binding).invoice_state, 'pending')
@@ -736,6 +736,374 @@ class PaymentLedgerTests(unittest.TestCase):
         self.assertEqual(reopened.get_charge(self.binding, 'charge:1')['reserved'].minor_units, 0)
         with closing(sqlite3.connect(remote)) as db:
             self.assertEqual(db.execute('SELECT COUNT(*) FROM remote_refunds').fetchone()[0], 1)
+
+
+class RenewalLedgerTests(unittest.TestCase):
+    def setUp(self):
+        self.temp = tempfile.TemporaryDirectory()
+        self.database = Path(self.temp.name) / 'renewal.sqlite'
+        self.ledger = SQLitePaymentLedger(self.database)
+        self.ledger.initialize()
+        self.binding = _binding(
+            order_id='stars:order',
+            provider='telegram',
+            amount=Money(20, 'XTR', 0),
+            route='telegram-stars',
+            subscription_id='stars:subscription',
+            allow_partial_refunds=False,
+        )
+        self.ledger.create_order(self.binding, 'stars:invoice', now=90)
+        self.paid = _paid(
+            self.binding, charge_id='stars:charge', period_start=100, period_end=200, first_recurring=True
+        )
+        self.ledger.apply_event(_wire(self.paid), verify=_verify, now=100)
+        self.ledger.register_renewal_stream(self.binding, 'stream:one')
+        with closing(sqlite3.connect(self.database)) as db, db:
+            db.execute('CREATE TABLE operators(actor_id INTEGER PRIMARY KEY,enabled INTEGER)')
+            db.execute('INSERT INTO operators VALUES (900,1)')
+
+    def tearDown(self):
+        self.temp.cleanup()
+
+    def request(self, name='renewal:cancel', *, cancel=True, check=_operator, now=101):
+        return self.ledger.request_renewal_change(
+            self.binding, 'stars:charge', name, 900, is_canceled=cancel, check=check, now=now
+        )
+
+    def ack(self, name='renewal:cancel', *, cancel=True, now=102):
+        event = ProviderEvent(
+            self.binding,
+            'ack:' + name,
+            'renewal-state',
+            'edit-ack',
+            'fixture:native',
+            operation_id=name,
+            charge_id='stars:charge',
+            renewal='canceled' if cancel else 'active',
+        )
+        self.ledger.apply_event(_wire(event), verify=_verify, now=now)
+        return event
+
+    def update(self, native_id, state, *, epoch='stream:one', event_id=None):
+        return ProviderEvent(
+            self.binding,
+            event_id or f'update:{epoch}:{native_id}',
+            'renewal-state',
+            'BotSubscriptionUpdated-' + state,
+            'fixture:ingress',
+            renewal=state,
+            renewal_stream_epoch=epoch,
+            renewal_update_id=native_id,
+        )
+
+    def test_schema_one_reopen_migration_preserves_legacy_receipt_hash_and_paid_rows(self):
+        # The schema-1 tables are unchanged; remove only the additive schema-2 controller to freeze an old DB.
+        old = asdict(self.paid)
+        for field in ('evidence_ref', 'renewal_stream_epoch', 'renewal_update_id'):
+            old.pop(field)
+        old_hash = hashlib.sha256(json.dumps(old, sort_keys=True, separators=(',', ':')).encode()).hexdigest()
+        with closing(sqlite3.connect(self.database)) as db, db:
+            self.assertEqual(db.execute('SELECT event_hash FROM payment_events').fetchone()[0], old_hash)
+            db.execute('DROP TABLE payment_renewal_control')
+            db.execute('UPDATE payment_ledger_meta SET version=1')
+            db.execute('CREATE TABLE business_owned(value TEXT)')
+            db.execute("INSERT INTO business_owned VALUES ('preserve')")
+        reopened = SQLitePaymentLedger(self.database)
+        reopened.initialize()
+        duplicate = reopened.apply_event(_wire(self.paid), verify=_verify, now=110)
+        self.assertTrue(duplicate.duplicate)
+        self.assertEqual(reopened.get_order(self.binding).confirmed_charges, 1)
+        self.assertEqual(reopened.has_access(self.binding, now=150).expires_at, 200)
+        with closing(sqlite3.connect(self.database)) as db:
+            self.assertEqual(db.execute('SELECT version FROM payment_ledger_meta').fetchone()[0], 2)
+            self.assertEqual(db.execute('SELECT event_hash FROM payment_events').fetchone()[0], old_hash)
+            self.assertEqual(db.execute('SELECT value FROM business_owned').fetchone()[0], 'preserve')
+
+    def test_additive_migration_rolls_back_on_unexpected_legacy_columns(self):
+        with closing(sqlite3.connect(self.database)) as db, db:
+            db.execute('DROP TABLE payment_renewal_control')
+            db.execute('UPDATE payment_ledger_meta SET version=1')
+            db.execute('ALTER TABLE payment_charges ADD COLUMN unexpected TEXT')
+        with self.assertRaises(UnsupportedCapability):
+            SQLitePaymentLedger(self.database).initialize()
+        with closing(sqlite3.connect(self.database)) as db:
+            self.assertEqual(db.execute('SELECT version FROM payment_ledger_meta').fetchone()[0], 1)
+            self.assertEqual(
+                db.execute("SELECT count(*) FROM sqlite_master WHERE name='payment_renewal_control'").fetchone()[0], 0
+            )
+            self.assertEqual(db.execute('SELECT count(*) FROM payment_charges').fetchone()[0], 1)
+
+    def test_registered_epoch_changes_only_explicitly_and_never_releases_unknown_command(self):
+        with self.assertRaises(PaymentConflict):
+            self.ledger.register_renewal_stream(self.binding, 'stream:two')
+        with self.assertRaises(PaymentConflict):
+            self.ledger.register_renewal_stream(self.binding, 'stream:two', expected_epoch='wrong')
+        self.request()
+        claim = self.ledger.start_operation(self.binding, 'renewal:cancel', 'worker', check=_operator, now=101)
+        self.ledger.mark_unknown(claim, now=102)
+        with self.assertRaises(PaymentConflict):
+            self.ledger.register_renewal_stream(self.binding, 'stream:two', expected_epoch='stream:one')
+        self.assertEqual(self.ledger.get_renewal_control(self.binding)['epoch'], 'stream:one')
+        self.assertEqual(self.ledger.get_operation(self.binding, 'renewal:cancel').state, 'unknown')
+
+    def test_native_update_order_duplicates_and_conflicts_are_atomic_after_reopen(self):
+        newest = self.update(20, 'active')
+        self.ledger.apply_event(_wire(newest), verify=_verify, now=101)
+        stale = self.ledger.apply_event(_wire(self.update(19, 'canceled')), verify=_verify, now=102)
+        self.assertTrue(stale.stale)
+        self.assertEqual(self.ledger.has_access(self.binding, now=150).renewal, 'active')
+        reopened = SQLitePaymentLedger(self.database)
+        self.assertTrue(reopened.apply_event(_wire(newest), verify=_verify, now=103).duplicate)
+        with self.assertRaises(PaymentConflict):
+            reopened.apply_event(_wire(self.update(20, 'canceled', event_id='conflicting')), verify=_verify, now=103)
+        self.assertEqual(reopened.get_renewal_control(self.binding)['last_update_id'], 20)
+        self.assertEqual(reopened.has_access(self.binding, now=150).expires_at, 200)
+
+    def test_cancel_resume_and_second_cancel_change_only_future_setting(self):
+        for name, cancel in [('cancel:one', True), ('resume:one', False), ('cancel:two', True)]:
+            operation = self.request(name, cancel=cancel)
+            self.assertEqual(operation.kind, 'cancel-renewal' if cancel else 'resume-renewal')
+            self.ledger.start_operation(self.binding, name, 'worker', check=_operator, now=101)
+            self.assertEqual(self.ledger.has_access(self.binding, now=150).renewal, 'unknown')
+            self.ack(name, cancel=cancel)
+            self.assertEqual(self.ledger.has_access(self.binding, now=150).renewal, 'canceled' if cancel else 'active')
+            self.assertTrue(self.ledger.has_access(self.binding, now=199).active)
+            self.assertFalse(self.ledger.has_access(self.binding, now=200).active)
+
+    def test_only_confirmed_bot_cancellation_can_be_resumed(self):
+        self.ledger.apply_event(_wire(self.update(1, 'canceled')), verify=_verify, now=101)
+        with self.assertRaises(PaymentConflict):
+            self.request('resume:user-canceled', cancel=False)
+        with self.assertRaises(PaymentConflict):
+            self.ledger.request_renewal_change(
+                self.binding, 'foreign-charge', 'cancel:foreign', 900, is_canceled=True, check=_operator, now=101
+            )
+        with self.assertRaises(PaymentConflict):
+            self.request('cancel:expired', now=200)
+        with self.assertRaises(ValidationFailure):
+            self.ledger.request_renewal_change(
+                self.binding, 'stars:charge', 'cancel:boolean', 900, is_canceled=1, check=_operator, now=101
+            )
+
+    def test_unknown_change_blocks_new_ids_and_legacy_cancel_path(self):
+        self.request()
+        claim = self.ledger.start_operation(self.binding, 'renewal:cancel', 'worker', check=_operator, now=101)
+        self.ledger.mark_unknown(claim, now=102)
+        for name, cancel in [('other:cancel', True), ('other:resume', False)]:
+            with self.subTest(case=name), self.assertRaises(PaymentConflict):
+                self.request(name, cancel=cancel)
+        with self.assertRaises(UnsupportedCapability):
+            self.ledger.request_cancel_renewal(self.binding, 'legacy:bypass', 900, check=_operator, now=102)
+        with self.assertRaises(PaymentLeaseLost):
+            self.ledger.start_operation(self.binding, 'renewal:cancel', 'other', check=_operator, now=102)
+
+    def test_unknown_rpc_is_not_confirmed_by_uncorrelated_update_and_manual_resolution_has_two_cas_guards(self):
+        self.request()
+        claim = self.ledger.start_operation(self.binding, 'renewal:cancel', 'worker', check=_operator, now=101)
+        unknown = self.ledger.mark_unknown(claim, now=102)
+        self.ledger.apply_event(_wire(self.update(5, 'canceled')), verify=_verify, now=103)
+        self.assertEqual(self.ledger.get_operation(self.binding, 'renewal:cancel').state, 'unknown')
+        self.assertEqual(self.ledger.has_access(self.binding, now=150).renewal, 'unknown')
+        control = self.ledger.get_renewal_control(self.binding)
+        proof = ProviderEvent(
+            self.binding,
+            'operator:proof',
+            'renewal-state',
+            'operator-verified',
+            'fixture:independent',
+            operation_id='renewal:cancel',
+            charge_id='stars:charge',
+            renewal='canceled',
+        )
+        for revision, control_revision in [
+            (unknown.revision - 1, control['revision']),
+            (unknown.revision, control['revision'] - 1),
+        ]:
+            with self.subTest(case=(revision, control_revision)), self.assertRaises(PaymentConflict):
+                self.ledger.reconcile_renewal(
+                    _wire(proof),
+                    verify=_verify,
+                    expected_revision=revision,
+                    expected_control_revision=control_revision,
+                    actor_id=900,
+                    check=_operator,
+                    now=104,
+                )
+        self.ledger.reconcile_renewal(
+            _wire(proof),
+            verify=_verify,
+            expected_revision=unknown.revision,
+            expected_control_revision=control['revision'],
+            actor_id=900,
+            check=_operator,
+            now=104,
+        )
+        self.assertEqual(self.ledger.get_operation(self.binding, 'renewal:cancel').state, 'confirmed')
+        self.assertEqual(self.ledger.has_access(self.binding, now=150).renewal, 'canceled')
+        self.assertEqual(self.ledger.has_access(self.binding, now=150).expires_at, 200)
+        self.assertEqual(self.ledger.audit(self.binding)[-1]['actor_id'], 900)
+
+    def test_late_update_conflicting_with_ack_marks_future_unknown_and_older_ids_cannot_roll_it_back(self):
+        self.ledger.apply_event(_wire(self.update(1, 'active')), verify=_verify, now=100)
+        self.request()
+        self.ledger.start_operation(self.binding, 'renewal:cancel', 'worker', check=_operator, now=101)
+        self.ack()
+        self.ledger.apply_event(_wire(self.update(3, 'active')), verify=_verify, now=103)
+        self.assertEqual(self.ledger.has_access(self.binding, now=150).renewal, 'unknown')
+        old = self.ledger.apply_event(_wire(self.update(2, 'canceled')), verify=_verify, now=104)
+        self.assertTrue(old.stale)
+        self.assertEqual(self.ledger.has_access(self.binding, now=150).renewal, 'unknown')
+        self.ledger.apply_event(_wire(self.update(4, 'canceled')), verify=_verify, now=105)
+        self.assertEqual(self.ledger.has_access(self.binding, now=150).renewal, 'canceled')
+
+    def test_old_ack_cannot_overwrite_a_new_command_generation(self):
+        self.request()
+        self.ledger.start_operation(self.binding, 'renewal:cancel', 'worker', check=_operator, now=101)
+        acknowledged = self.ack()
+        self.request('renewal:resume', cancel=False)
+        conflicting = replace(acknowledged, event_id='late:other-ack')
+        with self.assertRaises(PaymentConflict):
+            self.ledger.apply_event(_wire(conflicting), verify=_verify, now=103)
+        self.assertEqual(self.ledger.get_renewal_control(self.binding)['command_operation'], 'renewal:resume')
+        self.assertEqual(self.ledger.get_operation(self.binding, 'renewal:resume').state, 'pending')
+
+    def test_acl_rechecks_reservation_replay_start_and_manual_resolution(self):
+        self.request()
+        with closing(sqlite3.connect(self.database)) as db, db:
+            db.execute('UPDATE operators SET enabled=0')
+        with self.assertRaises(PermissionDenied):
+            self.request()
+        with self.assertRaises(PermissionDenied):
+            self.ledger.start_operation(self.binding, 'renewal:cancel', 'worker', check=_operator, now=101)
+        self.assertEqual(self.ledger.get_operation(self.binding, 'renewal:cancel').state, 'pending')
+        with closing(sqlite3.connect(self.database)) as db, db:
+            db.execute('UPDATE operators SET enabled=1')
+        claim = self.ledger.start_operation(self.binding, 'renewal:cancel', 'worker', check=_operator, now=101)
+        unknown = self.ledger.mark_unknown(claim, now=102)
+        control = self.ledger.get_renewal_control(self.binding)
+        with closing(sqlite3.connect(self.database)) as db, db:
+            db.execute('UPDATE operators SET enabled=0')
+        proof = ProviderEvent(
+            self.binding,
+            'operator:revoked',
+            'renewal-state',
+            'verified',
+            'fixture:proof',
+            operation_id='renewal:cancel',
+            charge_id='stars:charge',
+            renewal='canceled',
+        )
+        with self.assertRaises(PermissionDenied):
+            self.ledger.reconcile_renewal(
+                _wire(proof),
+                verify=_verify,
+                expected_revision=unknown.revision,
+                expected_control_revision=control['revision'],
+                actor_id=900,
+                check=_operator,
+                now=103,
+            )
+        self.assertEqual(self.ledger.get_operation(self.binding, 'renewal:cancel').state, 'unknown')
+        self.assertEqual(self.ledger.get_renewal_control(self.binding)['revision'], control['revision'])
+
+    def test_schema_two_missing_controller_is_refused_instead_of_resetting_native_fences(self):
+        with closing(sqlite3.connect(self.database)) as db, db:
+            db.execute('DROP TABLE payment_renewal_control')
+        with self.assertRaises(UnsupportedCapability):
+            SQLitePaymentLedger(self.database).initialize()
+        with closing(sqlite3.connect(self.database)) as db:
+            self.assertEqual(db.execute('SELECT version FROM payment_ledger_meta').fetchone()[0], 2)
+            self.assertEqual(db.execute('SELECT count(*) FROM payment_charges').fetchone()[0], 1)
+            self.assertIsNone(db.execute("SELECT 1 FROM sqlite_master WHERE name='payment_renewal_control'").fetchone())
+
+    def test_explicit_epoch_rollover_rejects_old_stream_and_accepts_new_random_start(self):
+        self.ledger.apply_event(_wire(self.update(100, 'active')), verify=_verify, now=101)
+        changed = self.ledger.register_renewal_stream(self.binding, 'stream:two', expected_epoch='stream:one')
+        self.assertEqual(changed['last_update_id'], -1)
+        with self.assertRaises(PaymentConflict):
+            self.ledger.apply_event(_wire(self.update(101, 'canceled')), verify=_verify, now=102)
+        self.ledger.apply_event(_wire(self.update(0, 'failed', epoch='stream:two')), verify=_verify, now=103)
+        self.assertEqual(self.ledger.get_renewal_control(self.binding)['last_update_id'], 0)
+        self.assertEqual(self.ledger.has_access(self.binding, now=150).renewal, 'failed')
+        self.assertEqual(self.ledger.has_access(self.binding, now=150).expires_at, 200)
+
+    def test_another_order_for_same_subscription_cannot_overtake_unresolved_change(self):
+        self.request()
+        claim = self.ledger.start_operation(self.binding, 'renewal:cancel', 'worker', check=_operator, now=101)
+        self.ledger.mark_unknown(claim, now=102)
+        other = replace(self.binding, order_id='stars:another-order')
+        self.ledger.create_order(other, 'stars:another-invoice', now=100)
+        paid = _paid(
+            other,
+            event_id='stars:another-paid',
+            charge_id='stars:another-charge',
+            period_start=100,
+            period_end=200,
+            first_recurring=False,
+        )
+        self.ledger.apply_event(_wire(paid), verify=_verify, now=100)
+        with self.assertRaises(PaymentConflict):
+            self.ledger.request_renewal_change(
+                other, 'stars:another-charge', 'another:cancel', 900, is_canceled=True, check=_operator, now=103
+            )
+        self.assertEqual(self.ledger.get_renewal_control(other)['command_operation'], 'renewal:cancel')
+
+    def test_native_order_metadata_requires_complete_supported_unbound_identity(self):
+        common = dict(
+            binding=self.binding,
+            event_id='native:metadata',
+            kind='renewal-state',
+            provider_state='active',
+            evidence_ref='fixture:proof',
+            renewal='active',
+        )
+        for index, extra in enumerate(
+            [
+                {'renewal_stream_epoch': 'stream:one'},
+                {'renewal_update_id': 1},
+                {'renewal_stream_epoch': 'stream:one', 'renewal_update_id': -1},
+                {'renewal_stream_epoch': 'stream:one', 'renewal_update_id': True},
+                {'renewal_stream_epoch': 'stream:one', 'renewal_update_id': 1, 'operation_id': 'invented:command'},
+            ]
+        ):
+            with self.subTest(case=index), self.assertRaises(ValidationFailure):
+                ProviderEvent(**common, **extra)
+
+    def test_controlled_subscription_refund_contract_remains_available(self):
+        self.ledger.request_refund(
+            self.binding, 'stars:charge', 'refund:full', self.binding.amount, 900, check=_operator, now=101
+        )
+        claim = self.ledger.start_operation(self.binding, 'refund:full', 'worker', check=_operator, now=101)
+        self.assertEqual(claim.operation_id, 'refund:full')
+        self.assertEqual(self.ledger.get_charge(self.binding, 'stars:charge')['reserved'], self.binding.amount)
+
+    def test_refunded_subscription_charge_cannot_authorize_another_native_renewal_edit(self):
+        refunded = ProviderEvent(
+            self.binding,
+            'native:full-refund',
+            'refunded',
+            'refunded_payment',
+            'fixture:refund',
+            charge_id='stars:charge',
+            refund_id='stars:charge',
+            amount=self.binding.amount,
+        )
+        self.ledger.apply_event(_wire(refunded), verify=_verify, now=101)
+        with self.assertRaises(PaymentConflict):
+            self.request('edit:refunded-charge', now=102)
+        self.assertFalse(self.ledger.has_access(self.binding, now=150).active)
+        self.assertIsNone(self.ledger.get_renewal_control(self.binding)['command_operation'])
+
+    def test_pending_cancellation_releases_control_but_paid_replay_cannot_reenable_canceled_setting(self):
+        self.request()
+        self.ledger.cancel_operation(self.binding, 'renewal:cancel', 900, check=_operator, now=101)
+        self.request('renewal:next')
+        self.ledger.start_operation(self.binding, 'renewal:next', 'worker', check=_operator, now=101)
+        self.ack('renewal:next')
+        repeated = replace(self.paid, event_id='another:native-paid-id')
+        self.ledger.apply_event(_wire(repeated), verify=_verify, now=103)
+        self.assertEqual(self.ledger.has_access(self.binding, now=150).renewal, 'canceled')
+        self.assertEqual(self.ledger.has_access(self.binding, now=150).expires_at, 200)
 
 
 if __name__ == '__main__':

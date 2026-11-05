@@ -153,18 +153,38 @@ def build(root: Path = ROOT) -> dict:
             check_files=['scripts/build_recipe_gallery.py', 'scripts/build_telegram_catalog.py'])
     for method in api['mini_app']['methods']:
         path = method['path']
+        minimum = method['min_version']
         code = ('import { TelegramNativeAPI } from "@awesome-telegram/patterns";\n'
             'declare const nativeApp: unknown; // Host передает свой WebApp.\nconst api = new TelegramNativeAPI(nativeApp);\n'
             f'if (api.supports("{path}")) {{\n  // Native сигнатура: {method["signature"]}\n'
             f'  // api.call("{path}", ...параметры_по_документации);\n}}\napi.dispose();\n')
-        add('native.' + path, path, 'Native сигнатура: ' + method['signature'] + '. Минимальная версия ' + method['min_version'],
+        if path == 'Serverless.call':
+            code = ('import { TelegramNativeAPI, ServerlessEndpointClient } from "@awesome-telegram/patterns";\n'
+                'declare const nativeApp: unknown; // Реальный host передаёт свой Telegram.WebApp.\n'
+                'declare const serverlessHostingChosen: boolean; // Явный выбор Telegram Serverless hosting.\n'
+                'declare const decodeProfile: (value: unknown) => Readonly<{displayName: string}>;\n'
+                'const generic = new TelegramNativeAPI(nativeApp);\n'
+                '// min_version неизвестна: generic.supports("Serverless.call") === false; call запрещён.\n'
+                'generic.dispose();\n'
+                'const endpoint = new ServerlessEndpointClient(nativeApp, {serverlessHosting: serverlessHostingChosen});\n'
+                'async function readProfile() {\n'
+                '  if (!endpoint.supports()) return {status: "unsupported"} as const; // HTTP fallback проекта.\n'
+                '  return await endpoint.call("getProfile", {lang: "ru"}, decodeProfile, {operation: "read"});\n'
+                '}\n'
+                '// Host вызывает readProfile и обрабатывает отказ; endpoint проверяет права на объект.\n'
+                '// Для записи host сохраняет operation ID до попытки; unknown требует сверки, не повтора.\n'
+                '// При уходе с экрана: endpoint.dispose(); это не отменяет уже выполненную запись.\n')
+        add('native.' + path, path, 'Native сигнатура: ' + method['signature'] + '. Минимальная версия ' + (minimum if minimum is not None else 'не опубликована; универсальный фасад запрещает вызов'),
             'mini-app', 'typescript', [path, 'native', 'mini', 'app', method['signature']], code, 'not_run',
             'Справочный фрагмент. Аргументы, permissions/init/callback и реальный клиент требуют отдельного сценария; снимок не версия Telegram-клиента.', [method['url']],
             tasks=['navigation'] if path.startswith('BackButton.') else ['native'], contexts=['mini-app'], sdk='telegram-webapp',
-            sdk_ver='snapshot:' + api['mini_app']['checked_date'], api_version='mini:' + method['min_version'],
+            sdk_ver='snapshot:' + method.get('checked_date', api['mini_app']['checked_date']), api_version='mini:' + (minimum if minimum is not None else 'unknown'),
             source_files=['recipes/mini-app/README.md', 'packages/typescript/src/native-api.ts'],
             check_files=['scripts/build_telegram_catalog.py', 'packages/typescript/tests/core.test.mjs'])
         if path.startswith('BackButton.'): records[-1]['keywords'] += ['назад', 'back']
+        if path == 'Serverless.call':
+            records[-1]['scope'] = 'Справочный пример: явный Telegram Serverless hosting, presence и initData не заменяют server ACL. Минимальная версия неизвестна; обычный Python backend не мигрирует. Локальный executor и live-приёмка отсутствуют.'
+            records[-1]['source_files'] += ['docs/telegram-serverless.md', 'packages/typescript/src/native-flows.ts']
     environment = dict(os.environ); environment.pop('BOT_TOKEN', None); environment['PYTHONUTF8'] = '1'
     demos = (
         ('keyboards_bot.py', 'offline_keyboards.py', 'demo-keyboards', 'Рабочий бот клавиатур и событий'),
@@ -443,6 +463,10 @@ def build(root: Path = ROOT) -> dict:
             'live_review': 'Live executor отсутствует. Перед интеграцией проверить источники, ограничения конкретного метода/контекста, auth и ACL; metadata не подтверждает права.',
             'effects': ['Локальные SDK объекты без HTTP'] if kind.startswith('sdk-') or kind == 'ptb-markup' else ['python-telegram-bot Application + StubRequest; временная fixture, без polling'] if kind == 'application' else ['Временные файлы/SQLite fixture, очищаемые после обычного завершения'] if kind == 'sqlite' else ['Synthetic Dispatcher + StubSession; временная fixture, без polling'] if kind == 'dispatcher' else ['Offline fragment execution недоступен без host/аргументов'],
         }
+        if record['id'] == 'native.Serverless.call':
+            record['execution']['live_environment'].append('TELEGRAM_SERVERLESS_PROJECT')
+            record['execution']['live_permissions'] = ['Явный выбор хостинга, проверка initData платформой и актуальный ACL endpoint на каждый объект/операцию.']
+            record['execution']['live_data'] += ['Документированный endpoint/decoder и сохранённый scoped operation ID до записи; unknown требует сверки без нового POST.']
         if not native:
             record['source_files'] += ['packages/python/src/telegram_patterns/execution.py', 'packages/python/src/telegram_patterns/_offline_recipe.py']
         if record['id'] == 'demo-calendar':
@@ -507,7 +531,7 @@ def main():
         else:
             path.parent.mkdir(parents=True, exist_ok=True)
             if isinstance(content, bytes): path.write_bytes(content)
-            else: path.write_text(content, encoding='utf-8')
+            else: path.write_text(content, encoding='utf-8', newline='\n')
     print(json.dumps({'passed': True, 'recipes': len(data['recipes']), 'sdk': sum(item['verification']=='sdk' for item in data['recipes']),
         'mock': sum(item['verification']=='mock' for item in data['recipes']), 'reference': sum(item['verification']=='not_run' for item in data['recipes']),
         'live': 0, 'telegram_network': False, 'mode': 'check' if args.check else 'write'}))

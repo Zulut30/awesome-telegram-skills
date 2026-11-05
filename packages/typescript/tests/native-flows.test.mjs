@@ -1,6 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import {NativeFlowScope,NativeActionButtons,NativePrompts,NativeAccountStorage,NativeSharing,ServerlessEndpointClient,ValidationFailure,AuthenticationRequired,UnknownOutcome,TelegramNativeAPI} from '../dist/index.js';
+import {NativeFlowScope,NativeActionButtons,NativePrompts,NativeAccountStorage,NativeSharing,ServerlessEndpointClient,ValidationFailure,AuthenticationRequired,UnknownOutcome,TelegramNativeAPI,TELEGRAM_NATIVE_METHODS,UnsupportedTelegramCapability} from '../dist/index.js';
 // Inline protocol fixture keeps the installed-package behavior suite self-contained.
 /** Explicit local SDK fixture. No Telegram, Serverless, device permission or network calls. */
 function createFakeNativeApp({version='9.6',platform='android',automatic=false,mode='completed'}={}){
@@ -189,6 +189,28 @@ test('Serverless presence uses explicit hosting and initData rather than invente
     const client=new ServerlessEndpointClient({...f.app,...patch},{serverlessHosting:hosted});t.after(()=>client.dispose());assert.equal(client.supports(),available);
   }
   const client=new ServerlessEndpointClient(f.app,{serverlessHosting:true});t.after(()=>client.dispose());const result=client.call('getProfile',{},value=>({label:value.label}),{operation:'read'});f.flush('serverless');assert.equal((await result).value.label,'Fixture endpoint result');
+});
+
+test('unversioned Serverless is indexed but the general facade refuses before SDK or version probes',async t=>{
+  assert.equal(TELEGRAM_NATIVE_METHODS['Serverless.call'].minVersion,null);
+  for(const version of ['6.0','9.6','999.999']){
+    let probes=0,calls=0;const app={platform:'android',version,initData:'SIGNED_FIXTURE_ONLY',
+      isVersionAtLeast(){probes++;return true;},Serverless:{call(_name,_input,callback){calls++;callback(null,{label:'Fixture'});}}};
+    const generic=new TelegramNativeAPI(app);t.after(()=>generic.dispose());
+    assert.equal(generic.supports('Serverless.call'),false);
+    assert.throws(()=>generic.call('Serverless.call','getProfile',{},()=>{}),UnsupportedTelegramCapability);
+    assert.deepEqual([probes,calls],[0,0]);
+    const disabled=new ServerlessEndpointClient(app,{serverlessHosting:false});t.after(()=>disabled.dispose());
+    assert.equal((await disabled.call('getProfile',{},value=>value,{operation:'read'})).status,'unsupported');assert.equal(calls,0);
+    const hosted=new ServerlessEndpointClient(app,{serverlessHosting:true});t.after(()=>hosted.dispose());
+    assert.equal((await hosted.call('getProfile',{},value=>value.label,{operation:'read'})).value,'Fixture');
+    assert.deepEqual([probes,calls],[0,1]);
+  }
+  let touched=0;const app={get platform(){touched++;throw Error('Must not inspect native context');},
+    get version(){touched++;throw Error('Must not infer a minimum version');},
+    get Serverless(){touched++;throw Error('Must not resolve the method');}};
+  const generic=new TelegramNativeAPI(app);assert.equal(generic.supports('Serverless.call'),false);
+  assert.throws(()=>generic.call('Serverless.call','getProfile'),UnsupportedTelegramCapability);assert.equal(touched,0);generic.dispose();
 });
 test('Serverless status0 endpoint errors decoder failures and timeouts never blindly retry writes',async t=>{
   const f=setup(t);const client=new ServerlessEndpointClient(f.app,{serverlessHosting:true,timeoutMs:5});t.after(()=>client.dispose());

@@ -1,4 +1,4 @@
-# Справочник API 0.26.0
+# Справочник API 0.27.0
 
 Термины: **ACK** — ответ на нажатие кнопки через `answerCallbackQuery`: клиент убирает индикатор ожидания; это не сообщение об успехе операции; **CAS** — сравнение с заменой: запись сохраняется, только если версия не изменилась с момента чтения; квитанция (receipt) — сохраненная запись о выполненной операции; повтор возвращает ее вместо второго эффекта; **неизвестный результат** — запрос мог выполниться, но ответа нет (таймаут, обрыв связи); повторять вслепую нельзя, сначала сверка; **сверка** — запрос фактического состояния у провайдера или в хранилище перед повтором или выдачей; **fallback** — запасной вариант, если основная возможность недоступна.
 
@@ -62,12 +62,12 @@
 | `OperationConflict` | `from telegram_patterns import OperationConflict` | [ref.core_storage](api-reference-core.md#ref-core_storage) | Тот же scoped key с другим payload |
 | `SQLiteOnce` | `from telegram_patterns import SQLiteOnce` | [ref.core_storage](api-reference-core.md#ref-core_storage) | Атомарные `run` и `run_guarded`; текущие права проверяются без записи перед операцией и повтором |
 | `OnceStore` | `from telegram_patterns import OnceStore` | [ref.core_storage](api-reference-core.md#ref-core_storage) | Структурный контракт initialize/run storage проекта |
-| `SQLiteInbox` | `from telegram_patterns import SQLiteInbox` | [ref.core_delivery](api-reference-core.md#ref-core_delivery) | Явная схема, надежное сохранение события и проверка владения перед сменой состояния |
+| `SQLiteInbox` | `from telegram_patterns import SQLiteInbox` | [ref.core_delivery](api-reference-core.md#ref-core_delivery) | Схема 2 с миграцией 1→2, надежное сохранение события, явные полосы и fenced смена состояния |
 | `InboxState` | `from telegram_patterns import InboxState` | [ref.core_delivery](api-reference-core.md#ref-core_delivery) | Состояния `pending`, `processing`, `done`, `quarantined` |
 | `InboxReason` | `from telegram_patterns import InboxReason` | [ref.core_delivery](api-reference-core.md#ref-core_delivery) | Фиксированные безопасные причины карантина и повтора |
-| `InboxReceipt` | `from telegram_patterns import InboxReceipt` | [ref.core_delivery](api-reference-core.md#ref-core_delivery) | Неизменяемый результат записи: ключ события, состояние, повтор, версия и причина |
+| `InboxReceipt` | `from telegram_patterns import InboxReceipt` | [ref.core_delivery](api-reference-core.md#ref-core_delivery) | Неизменяемый результат записи: ключ события, состояние, повтор, версия, причина и первоначальный priority |
 | `InboxClaim` | `from telegram_patterns import InboxClaim` | [ref.core_delivery](api-reference-core.md#ref-core_delivery) | Неизменяемое владение обработкой с номером попытки и сроком; данные и токен скрыты в `repr` |
-| `InboxRecord` | `from telegram_patterns import InboxRecord` | [ref.core_delivery](api-reference-core.md#ref-core_delivery) | Сохраненный снимок состояния и количества попыток, доступный только для чтения |
+| `InboxRecord` | `from telegram_patterns import InboxRecord` | [ref.core_delivery](api-reference-core.md#ref-core_delivery) | Сохраненный снимок состояния, попыток, первого времени приема и priority, доступный только для чтения |
 | `InboxConflict` | `from telegram_patterns import InboxConflict` | [ref.core_delivery](api-reference-core.md#ref-core_delivery) | Один ключ доставки с разными данными, версиями или итогами |
 | `InboxLeaseLost` | `from telegram_patterns import InboxLeaseLost` | [ref.core_delivery](api-reference-core.md#ref-core_delivery) | Потеря владения запрещает завершение события и требует проверки возможного бизнес-эффекта |
 | `WebhookReceiver` | `from telegram_patterns import WebhookReceiver` | [ref.core_delivery](api-reference-core.md#ref-core_delivery) | Проверка секрета и ограничений JSON до записи; неизвестные события сохраняются в карантине |
@@ -171,15 +171,15 @@
 | `DraftOptions` | `import type {DraftOptions} from "@awesome-telegram/patterns"` | [ref.draft](api-reference-typescript.md#ref-draft) | Пространство имен, область, TTL и часы |
 | `KeyValueStorage` | `import type {KeyValueStorage} from "@awesome-telegram/patterns"` | [ref.draft](api-reference-typescript.md#ref-draft) | Контракт синхронного хранилища |
 | `StorageFactory` | `import type {StorageFactory} from "@awesome-telegram/patterns"` | [ref.draft](api-reference-typescript.md#ref-draft) | Ленивая фабрика своего хранилища |
-| `TelegramNativeAPI` | `import {TelegramNativeAPI} from "@awesome-telegram/patterns"` | [ref.native](api-reference-typescript.md#ref-native) | Проверка поддержки, вызов, подписка и освобождение с проверкой версии |
+| `TelegramNativeAPI` | `import {TelegramNativeAPI} from "@awesome-telegram/patterns"` | [ref.native](api-reference-typescript.md#ref-native) | Версия, наличие, подписка и освобождение; неизвестная минимальная версия запрещает вызов |
 | `UnsupportedTelegramCapability` | `import {UnsupportedTelegramCapability} from "@awesome-telegram/patterns"` | [ref.native](api-reference-typescript.md#ref-native) | Контролируемое отсутствие/disposed native capability |
-| `TELEGRAM_NATIVE_METHODS` | `import {TELEGRAM_NATIVE_METHODS} from "@awesome-telegram/patterns"` | [ref.native](api-reference-typescript.md#ref-native) | Каталог путей, минимальных версий и источников, только чтение |
+| `TELEGRAM_NATIVE_METHODS` | `import {TELEGRAM_NATIVE_METHODS} from "@awesome-telegram/patterns"` | [ref.native](api-reference-typescript.md#ref-native) | Пути, опубликованные минимальные версии либо null и источники, только чтение |
 | `TELEGRAM_NATIVE_EVENTS` | `import {TELEGRAM_NATIVE_EVENTS} from "@awesome-telegram/patterns"` | [ref.native](api-reference-typescript.md#ref-native) | Имена нативных событий, только чтение |
 | `TELEGRAM_NATIVE_EVENT_DETAILS` | `import {TELEGRAM_NATIVE_EVENT_DETAILS} from "@awesome-telegram/patterns"` | [ref.native](api-reference-typescript.md#ref-native) | Версии и источники событий, только чтение |
 | `TelegramNativeMethod` | `import type {TelegramNativeMethod} from "@awesome-telegram/patterns"` | [ref.native](api-reference-typescript.md#ref-native) | Literal известных native paths |
 | `TelegramNativeEvent` | `import type {TelegramNativeEvent} from "@awesome-telegram/patterns"` | [ref.native](api-reference-typescript.md#ref-native) | Literal известных event names |
 | `TelegramNativeSignatures` | `import type {TelegramNativeSignatures} from "@awesome-telegram/patterns"` | [ref.native](api-reference-typescript.md#ref-native) | Документированные аргументы и результат каждого native path |
-| `TelegramNativeArguments` | `import type {TelegramNativeArguments} from "@awesome-telegram/patterns"` | [ref.native](api-reference-typescript.md#ref-native) | Кортеж аргументов path для call |
+| `TelegramNativeArguments` | `import type {TelegramNativeArguments} from "@awesome-telegram/patterns"` | [ref.native](api-reference-typescript.md#ref-native) | Кортеж аргументов пути, включая оба положения callback у Serverless.call |
 | `TelegramNativeResult` | `import type {TelegramNativeResult} from "@awesome-telegram/patterns"` | [ref.native](api-reference-typescript.md#ref-native) | Результат call по path: void, boolean или объект для цепочки |
 | `PatternError` | `import {PatternError} from "@awesome-telegram/patterns"` | [ref.errors](api-reference-typescript.md#ref-errors) | Базовая ошибка с кодом, исходом и отчетом |
 | `ValidationFailure` | `import {ValidationFailure} from "@awesome-telegram/patterns"` | [ref.errors](api-reference-typescript.md#ref-errors) | Известная local validation rejection |
@@ -375,18 +375,18 @@
 | `UiShellOptions` | `import type {UiShellOptions} from "@awesome-telegram/patterns"` | [ref.ui_controls](api-reference-typescript.md#ref-ui_controls) | Явное разрешение отступов из проверенного снимка мостика |
 | `Money` | `from telegram_patterns import Money` | [ref.core_payments](api-reference-core.md#ref-core_payments) | Точные неотрицательные минимальные единицы, валюта и разрядность без float или округления |
 | `MAX_MINOR_UNITS` | `from telegram_patterns import MAX_MINOR_UNITS` | [ref.core_payments](api-reference-core.md#ref-core_payments) | Верхняя граница денежной суммы: максимальное знаковое целое SQLite |
-| `SQLitePaymentLedger` | `from telegram_patterns import SQLitePaymentLedger` | [ref.core_payments](api-reference-core.md#ref-core_payments) | Локальные заказы, намерения, платежи, возвраты, аудит и сверка неизвестного исхода |
+| `SQLitePaymentLedger` | `from telegram_patterns import SQLitePaymentLedger` | [ref.core_payments](api-reference-core.md#ref-core_payments) | Схема 2: заказы, оплаченные периоды, возвраты, аудит и упорядоченное состояние продления |
 | `PaymentRoute` | `from telegram_patterns import PaymentRoute` | [ref.core_payments](api-reference-core.md#ref-core_payments) | Literal внешнего маршрута либо Telegram Stars |
-| `PaymentKind` | `from telegram_patterns import PaymentKind` | [ref.core_payments](api-reference-core.md#ref-core_payments) | Literal создания invoice, возврата или отмены автопродления |
+| `PaymentKind` | `from telegram_patterns import PaymentKind` | [ref.core_payments](api-reference-core.md#ref-core_payments) | Literal создания счета, возврата, отмены либо возобновления автопродления |
 | `PaymentState` | `from telegram_patterns import PaymentState` | [ref.core_payments](api-reference-core.md#ref-core_payments) | Literal сохраненного состояния операции от pending до confirmed либо unknown |
 | `ProviderEventKind` | `from telegram_patterns import ProviderEventKind` | [ref.core_payments](api-reference-core.md#ref-core_payments) | Literal подтвержденного наблюдения провайдера, включая платеж и возврат |
 | `PaymentBinding` | `from telegram_patterns import PaymentBinding` | [ref.core_payments](api-reference-core.md#ref-core_payments) | Неизменяемая привязка продавца, бота, получателя, заказа, провайдера и точной суммы |
-| `ProviderEvent` | `from telegram_patterns import ProviderEvent` | [ref.core_payments](api-reference-core.md#ref-core_payments) | Наблюдение доверенного адаптера; DTO не является аутентификацией провайдера |
+| `ProviderEvent` | `from telegram_patterns import ProviderEvent` | [ref.core_payments](api-reference-core.md#ref-core_payments) | Доверенное наблюдение; нативное продление содержит проверенные эпоху и update_id, DTO не аутентифицирует событие |
 | `PaymentOperation` | `from telegram_patterns import PaymentOperation` | [ref.core_payments](api-reference-core.md#ref-core_payments) | Снимок операции, суммы, автора, revision и состояния неизвестного результата |
 | `PaymentClaim` | `from telegram_patterns import PaymentClaim` | [ref.core_payments](api-reference-core.md#ref-core_payments) | Принадлежащая worker попытка с приватным token и сроком владения |
-| `PaymentReceipt` | `from telegram_patterns import PaymentReceipt` | [ref.core_payments](api-reference-core.md#ref-core_payments) | Результат приема события с признаком повтора |
+| `PaymentReceipt` | `from telegram_patterns import PaymentReceipt` | [ref.core_payments](api-reference-core.md#ref-core_payments) | Результат приема с duplicate и stale; устаревшее состояние не откатывает продление |
 | `PaymentOrder` | `from telegram_patterns import PaymentOrder` | [ref.core_payments](api-reference-core.md#ref-core_payments) | Снимок заказа, подтвержденных платежей и полных или частичных возвратов |
-| `AccessDecision` | `from telegram_patterns import AccessDecision` | [ref.core_payments](api-reference-core.md#ref-core_payments) | Результат проверки оплаченного доступа и срока на момент чтения |
+| `AccessDecision` | `from telegram_patterns import AccessDecision` | [ref.core_payments](api-reference-core.md#ref-core_payments) | Оплаченный доступ и срок; неопределенность будущего продления не создает новый период |
 | `PaymentCheck` | `from telegram_patterns import PaymentCheck` | [ref.core_payments](api-reference-core.md#ref-core_payments) | Синхронная проверка текущих прав в той же writer-транзакции, до эффекта и replay |
 | `PaymentVerifier` | `from telegram_patterns import PaymentVerifier` | [ref.core_payments](api-reference-core.md#ref-core_payments) | Обязательная доверенная проверка provider protocol до открытия writer-транзакции |
 | `PaymentConflict` | `from telegram_patterns import PaymentConflict` | [ref.core_payments](api-reference-core.md#ref-core_payments) | Конфликт неизменяемой привязки, receipt или revision без разрешения на повтор |
@@ -396,7 +396,7 @@
 | `NativePrompts` | `import {NativePrompts} from "@awesome-telegram/patterns"` | [ref.native_flows](api-reference-typescript.md#ref-native_flows) | Popup, QR, invoice, контакт и геолокация с ограниченным ожиданием |
 | `NativeAccountStorage` | `import {NativeAccountStorage} from "@awesome-telegram/patterns"` | [ref.native_flows](api-reference-typescript.md#ref-native_flows) | Биометрия и хранилища с привязкой к аккаунту |
 | `NativeSharing` | `import {NativeSharing} from "@awesome-telegram/patterns"` | [ref.native_flows](api-reference-typescript.md#ref-native_flows) | Передача сообщения, истории и файла без обещания доставки |
-| `createNativeFileInput` | `import {createNativeFileInput} from "@awesome-telegram/patterns"` | [ref.native_flows](api-reference-typescript.md#ref-native_flows) | HTML-выбор файла с проверкой размера и типа |
+| `createNativeFileInput` | `import {createNativeFileInput} from "@awesome-telegram/patterns"` | [ref.native_flows](api-reference-typescript.md#ref-native_flows) | HTML-выбор с ограничением размера; accept и capture являются подсказками, не проверкой содержимого |
 | `ServerlessEndpointClient` | `import {ServerlessEndpointClient} from "@awesome-telegram/patterns"` | [ref.native_flows](api-reference-typescript.md#ref-native_flows) | Явно разрешенный адаптер присутствующего Serverless без повторов записи |
 | `NativeFlowResult` | `import type {NativeFlowResult} from "@awesome-telegram/patterns"` | [ref.native_flows](api-reference-typescript.md#ref-native_flows) | Тип результата с отказом, неизвестным исходом и устаревшим контекстом |
 | `NativeLaunch` | `import type {NativeLaunch} from "@awesome-telegram/patterns"` | [ref.native_flows](api-reference-typescript.md#ref-native_flows) | Тип известного способа запуска либо неизвестного контекста |
@@ -408,10 +408,10 @@
 | `NativeButtonHandlers` | `import type {NativeButtonHandlers} from "@awesome-telegram/patterns"` | [ref.native_flows](api-reference-typescript.md#ref-native_flows) | Обработчики главного, дополнительного и обратного действий |
 | `NativeStorageKind` | `import type {NativeStorageKind} from "@awesome-telegram/patterns"` | [ref.native_flows](api-reference-typescript.md#ref-native_flows) | Тип облачного, локального либо защищенного хранилища |
 | `NativeStoredValue` | `import type {NativeStoredValue} from "@awesome-telegram/patterns"` | [ref.native_flows](api-reference-typescript.md#ref-native_flows) | Значение хранилища и возможность восстановления |
-| `NativeFileInputOptions` | `import type {NativeFileInputOptions} from "@awesome-telegram/patterns"` | [ref.native_flows](api-reference-typescript.md#ref-native_flows) | Разрешенные типы, размер, камера и множественный выбор |
+| `NativeFileInputOptions` | `import type {NativeFileInputOptions} from "@awesome-telegram/patterns"` | [ref.native_flows](api-reference-typescript.md#ref-native_flows) | Подпись, предел размера, accept/capture-подсказки и callback выбора файла |
 | `TelegramServerlessError` | `import type {TelegramServerlessError} from "@awesome-telegram/patterns"` | [ref.native_flows](api-reference-typescript.md#ref-native_flows) | Структура ошибки платформенного вызова с явным статусом |
 | `TelegramServerlessBridge` | `import type {TelegramServerlessBridge} from "@awesome-telegram/patterns"` | [ref.native_flows](api-reference-typescript.md#ref-native_flows) | Минимальный контракт присутствующего объекта Serverless |
-| `ServerlessCallOptions` | `import type {ServerlessCallOptions} from "@awesome-telegram/patterns"` | [ref.native_flows](api-reference-typescript.md#ref-native_flows) | Тип операции, ID для сверки, отмена и декодирование ответа |
+| `ServerlessCallOptions` | `import type {ServerlessCallOptions} from "@awesome-telegram/patterns"` | [ref.native_flows](api-reference-typescript.md#ref-native_flows) | Вид чтения или записи и AbortSignal; ID и декодер задаются приложением отдельно |
 | `CryptoPayAdapter` | `from telegram_patterns import CryptoPayAdapter` | [ref.core_providers](api-reference-core.md#ref-core_providers) | Счет Crypto Pay, HMAC уведомления и независимый запрос статуса |
 | `InvoiceRequest` | `from telegram_patterns import InvoiceRequest` | [ref.core_providers](api-reference-core.md#ref-core_providers) | Привязка заказа, ID создания, описание и параметры счета |
 | `PlategaAdapter` | `from telegram_patterns import PlategaAdapter` | [ref.core_providers](api-reference-core.md#ref-core_providers) | Счет Platega и поддерживаемый договором возврат |
@@ -429,7 +429,7 @@
 | `YooKassaCreateOptions` | `from telegram_patterns import YooKassaCreateOptions` | [ref.core_providers](api-reference-core.md#ref-core_providers) | Явный одно- либо двухстадийный платеж ЮKassa |
 | `YooKassaPeerPolicy` | `from telegram_patterns import YooKassaPeerPolicy` | [ref.core_providers](api-reference-core.md#ref-core_providers) | Проверка адреса источника без произвольного proxy-заголовка |
 | `binding_reference` | `from telegram_patterns import binding_reference` | [ref.core_providers](api-reference-core.md#ref-core_providers) | Отпечаток полной привязки заказа и операции создания |
-| `StarsPaymentAdapter` | `from telegram_patterns.aiogram import StarsPaymentAdapter` | [ref.bot_stars_payments](api-reference-bot.md#ref-bot_stars_payments) | Привязка нативного Stars-платежа, однократная отправка возврата и независимая сверка |
+| `StarsPaymentAdapter` | `from telegram_patterns.aiogram import StarsPaymentAdapter` | [ref.bot_stars_payments](api-reference-bot.md#ref-bot_stars_payments) | Привязка платежа, однократные возвраты и настройки продления, наблюдатель и доверенная сверка |
 
 ## CLI и CSS
 

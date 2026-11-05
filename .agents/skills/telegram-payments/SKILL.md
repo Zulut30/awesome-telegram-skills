@@ -3,7 +3,7 @@ name: telegram-payments
 description: "Выбирает платежный маршрут Telegram и реализует Stars/provider invoices, подписки и возвраты. Используйте для правил товара, invoices и Telegram pre-checkout; внешние API имеют отдельные навыки. Не для периодов подписки и прав доступа → telegram-subscription-access; не для API ЮKassa → telegram-yookassa."
 license: MIT
 metadata:
-  version: "0.26.0"
+  version: "0.27.0"
 ---
 
 # Платежи Telegram

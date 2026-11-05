@@ -125,7 +125,7 @@ class BackendSessionTests(unittest.IsolatedAsyncioTestCase):
         self.assertEqual(restarted.authenticate(other['token']),77)
         with connection(self.database) as db:
             rows=str([tuple(row) for row in db.execute('SELECT * FROM shop_sessions')])
-            self.assertEqual(db.execute('SELECT version FROM shop_schema').fetchone()[0],2)
+            self.assertEqual(db.execute('SELECT version FROM shop_schema').fetchone()[0],3)
         for secret in (first['token'],rotated['token'],companion['token'],other['token']):self.assertNotIn(secret,rows)
 
     async def test_rotation_renews_ttl_and_expired_sessions_cannot_rotate_or_revoke(self):
@@ -297,7 +297,7 @@ class BackendSessionTests(unittest.IsolatedAsyncioTestCase):
         self.assertIn('text',migrated.content(42,'bot-kit'))
         self.assertEqual(migrated.create(42,operation,['bot-kit'],'demo-v1')['id'],row['id'])
         with connection(self.database) as db:
-            self.assertEqual(db.execute('SELECT version FROM shop_schema').fetchone()[0],2)
+            self.assertEqual(db.execute('SELECT version FROM shop_schema').fetchone()[0],3)
             self.assertEqual(db.execute('SELECT count(*) FROM shop_roles').fetchone()[0],0)
             self.assertEqual(db.execute('SELECT count(*) FROM shop_receipts').fetchone()[0],1)
         migrated.configure_role(42,'viewer');self.assertEqual(self.reopen().order(42,row['id'])['id'],row['id'])

@@ -1,7 +1,7 @@
 {
   "schema_version": 1,
-  "library_version": "0.23.0",
-  "checked_date": "2026-10-05",
+  "library_version": "0.26.0",
+  "checked_date": "2026-11-05",
   "maturity": "experimental",
   "declared": {
     "python": ">=3.11",
@@ -12,106 +12,130 @@
     "calendar": "optional tzdata>=2026.5; UTC works without it"
   },
   "verified": {
-    "python": "3.13.12",
+    "python": "3.11-3.14 on Ubuntu; 3.11 and 3.14 on Windows/macOS",
+    "python_installed_matrix": [
+      {
+        "os": "ubuntu-latest",
+        "python": [
+          "3.11",
+          "3.12",
+          "3.13",
+          "3.14"
+        ]
+      },
+      {
+        "os": "windows-latest",
+        "python": [
+          "3.11",
+          "3.14"
+        ]
+      },
+      {
+        "os": "macos-latest",
+        "python": [
+          "3.11",
+          "3.14"
+        ]
+      }
+    ],
     "aiogram": "3.31.0",
     "aiogram_unit_matrix": [
       "3.29.1",
       "3.30.0",
       "3.31.0"
     ],
-    "node": "24.19.0",
-    "npm": "12.0.2",
-    "typescript": "7.0.2",
-    "playwright": "1.63.0",
-    "os": "Windows 11",
-    "arch": "AMD64",
-    "browser": "154.0.8037.98",
-    "browser_checks": 2379,
-    "mypy": "2.4.0",
-    "quickstart_browser_checks": 60,
-    "selected_starter_browser_checks": 76,
-    "starter_selectable_groups": 15,
-    "python_passed": 433,
-    "typescript_passed": 26,
-    "doctor_consumer_cases": 12,
-    "explicit_doctor_repair_commands": 5,
-    "python_source_typing_files": 36,
-    "api_reference_symbols": 233,
-    "api_reference_python_cases": 26,
-    "api_reference_typescript_case_groups": 5,
-    "api_reference_browser_checks": 36,
-    "api_reference_ts_type_exports": 22,
-    "gallery_browser_checks": 1030,
-    "gallery_export_browser_checks": 1030,
-    "gallery_source_check_files": 253,
-    "recipes": 309,
-    "sdk_probe_timeout_seconds": 30,
-    "recipe_execution_plans": 309,
-    "recipe_execution_python_fixtures": 210,
-    "recipe_execution_guard_denials": 2,
-    "public_api_symbols": 233,
-    "keyboard_layout_tests": 7,
-    "keyboard_layout_methods": 6,
-    "portable_layout_blocks": 2,
-    "navigation_unit_tests": 17,
-    "navigation_edit_attempts": 6,
-    "portable_navigation_blocks": 1,
-    "selection_unit_tests": 27,
-    "selection_edit_methods": 13,
-    "portable_selection_blocks": 1,
-    "tzdata": "2026.5",
-    "calendar_core_tests": 21,
-    "calendar_sdk_tests": 7,
-    "calendar_edit_methods": 16,
-    "portable_calendar_blocks": 1,
-    "dialog_fields_tests": 23,
-    "dialog_fields_types": 7,
-    "portable_dialog_blocks": 1,
-    "message_text_tests": 27,
-    "portable_message_blocks": 1,
-    "media_tests": 25,
-    "portable_media_blocks": 1,
-    "profile_tests": 37,
-    "portable_profile_blocks": 1,
-    "inline_search_tests": 32,
-    "poll_tests": 34,
-    "portable_inline_blocks": 1,
-    "portable_poll_blocks": 1,
-    "platform_tests": 56,
-    "platform_contracts": 51,
-    "platform_families": 7,
-    "portable_platform_blocks": 1
+    "node": "20/22/24 on Ubuntu; 24 on Windows/macOS",
+    "node_build_test_matrix": [
+      {
+        "os": "ubuntu-latest",
+        "node": [
+          "20",
+          "22",
+          "24"
+        ]
+      },
+      {
+        "os": "windows-latest",
+        "node": [
+          "24"
+        ]
+      },
+      {
+        "os": "macos-latest",
+        "node": [
+          "24"
+        ]
+      }
+    ],
+    "os": "Ubuntu, Windows, macOS; scopes recorded in the evidence",
+    "full_distribution_ci_os": [
+      "ubuntu-latest",
+      "macos-latest"
+    ],
+    "local_distribution_os": "Windows",
+    "stages": 92,
+    "python_passed": 816,
+    "python_skipped": 3,
+    "typescript_passed": 88,
+    "api_reference_symbols": 416,
+    "public_api_symbols": 416,
+    "recipes": 340,
+    "mini_app_methods": 99,
+    "mini_app_events": 44,
+    "browser": "156.0.8078.80",
+    "installed_ui_interactions": 35,
+    "installed_ui_geometry_cases": 96,
+    "installed_ui_axe_states": 24,
+    "installed_ui_axe_violations": 0,
+    "api_reference_native_browser_checks": 48,
+    "api_reference_native_contexts": 6,
+    "concrete_repository_ci_dependencies": 37
   },
-  "evidence": "https://github.com/Zulut30/awesome-telegram-skills/blob/fe16ba3ea3a2b4d5bbdc69ba09e7b2ed50c0c215/docs/v1-checks/030.json",
+  "evidence": "docs/internal/local-026-acceptance.json",
   "artifacts": [
     {
-      "name": "awesome_telegram_patterns-0.23.0-py3-none-any.whl",
-      "bytes": 280949,
-      "sha256": "4ccd4f7dd67f93e91fc38df86de2e702032cfe2b2fa13d02305ef0e5bb9053cc"
+      "name": "awesome_telegram_patterns-0.26.0-py3-none-any.whl",
+      "bytes": 511418,
+      "sha256": "22605c15b34e13237b4c7d1209e034176f4bff2275166ec46c423f001d302512"
     },
     {
-      "name": "awesome-telegram-patterns-0.23.0.tgz",
-      "bytes": 19531,
-      "sha256": "b01da2b4dd693de45100fe23546ddb3d22b3739305c78f73a3625d76424b91c7"
+      "name": "awesome-telegram-patterns-0.26.0.tgz",
+      "bytes": 51808,
+      "sha256": "ca7dc96e7098495247e6f55f1330caef25d14bf2476763900de1aefbb8c36921"
     }
   ],
   "unverified": [
-    "other declared Python/aiogram/Node/TypeScript versions",
-    "Linux/macOS",
-    "real Telegram iOS/Android/Desktop/tablet client versions",
-    "screen readers",
-    "provider sandboxes and production payment workflows",
-    "general durable FSM/multiworker and accepted-update recovery; single-process service example checked separately"
+    "Python 3.15 and OS/runtime combinations outside the recorded matrices",
+    "Other declared aiogram versions and untested TypeScript/bundler combinations",
+    "Real Telegram iOS/Android/Desktop/tablet client versions and native permissions",
+    "Screen readers and overall WCAG conformance",
+    "Provider sandboxes, production payment workflows, distributed operations and physical-device acceptance",
+    "Development 0.27.0 full distribution and the new required-CI implementation acceptance"
   ],
   "skip": {
-    "python_tests": 1,
-    "reason": "Windows directory symlink unavailable"
+    "python_tests": 3,
+    "reason": "Three skipped cases in the immutable local 0.26.0 report; a skip is not a passed case."
   },
   "sources": [
     {
       "url": "https://nodejs.org/en/about/previous-releases",
       "scope": "Node 20 EOL; supported LTS recommendation",
       "checked_date": "2026-10-04"
+    },
+    {
+      "url": "docs/internal/local-026-acceptance.json",
+      "scope": "Immutable 0.26.0 local artifact binding and exact local totals",
+      "checked_date": "2026-11-05"
+    },
+    {
+      "url": "https://github.com/Zulut30/awesome-telegram-skills/actions/runs/42077152013/attempts/2",
+      "scope": "Concrete runtime/OS matrix for immutable 0.26.0, attempt 2",
+      "checked_date": "2026-11-05"
+    },
+    {
+      "url": "https://github.com/Zulut30/awesome-telegram-skills/actions/runs/42077157629",
+      "scope": "Full 0.26.0 Linux/macOS distribution acceptance",
+      "checked_date": "2026-11-05"
     }
   ],
   "application_examples": {
@@ -185,5 +209,141 @@
       "multiworker": false,
       "maturity": "experimental"
     }
-  }
+  },
+  "scope": "Accepted immutable 0.26.0 artifacts and concrete runtime/OS CI evidence; development 0.27.0 is separate.",
+  "source_commit": "d6109aa5d5bc529ad008e82db967c4e9cec25d98",
+  "ci_evidence": [
+    {
+      "workflow": "Repository checks",
+      "run_id": 42077152013,
+      "attempt": 2,
+      "url": "https://github.com/Zulut30/awesome-telegram-skills/actions/runs/42077152013/attempts/2",
+      "head_sha": "d6109aa5d5bc529ad008e82db967c4e9cec25d98",
+      "checked_date": "2026-11-05",
+      "concrete_dependencies": 37,
+      "conclusion": "success",
+      "scope": "Every concrete dependency including every matrix cell succeeded in attempt 2. Attempt 1 had a cancelled macOS/Python 3.11 cell and is not full-matrix proof."
+    },
+    {
+      "workflow": "Full acceptance",
+      "run_id": 42077157629,
+      "url": "https://github.com/Zulut30/awesome-telegram-skills/actions/runs/42077157629",
+      "head_sha": "d6109aa5d5bc529ad008e82db967c4e9cec25d98",
+      "checked_date": "2026-11-05",
+      "os": [
+        "ubuntu-latest",
+        "macos-latest"
+      ],
+      "conclusion": "success",
+      "scope": "Full isolated wheel/tarball acceptance for immutable 0.26.0; local Windows totals are not attributed to other OS jobs."
+    }
+  ],
+  "development": {
+    "library_version": "0.27.0",
+    "accepted": false,
+    "observer_scope": "StarsPaymentAdapter import and legacy operations checked with aiogram 3.29.0; absent BotSubscriptionUpdated observer raises UnsupportedCapability. This is separate local WIP evidence, not live Telegram or payment acceptance."
+  },
+  "historical_snapshots": [
+    {
+      "library_version": "0.23.0",
+      "checked_date": "2026-10-05",
+      "verified": {
+        "python": "3.13.12",
+        "aiogram": "3.31.0",
+        "aiogram_unit_matrix": [
+          "3.29.1",
+          "3.30.0",
+          "3.31.0"
+        ],
+        "node": "24.19.0",
+        "npm": "12.0.2",
+        "typescript": "7.0.2",
+        "playwright": "1.63.0",
+        "os": "Windows 11",
+        "arch": "AMD64",
+        "browser": "154.0.8037.98",
+        "browser_checks": 2379,
+        "mypy": "2.4.0",
+        "quickstart_browser_checks": 60,
+        "selected_starter_browser_checks": 76,
+        "starter_selectable_groups": 15,
+        "python_passed": 433,
+        "typescript_passed": 26,
+        "doctor_consumer_cases": 12,
+        "explicit_doctor_repair_commands": 5,
+        "python_source_typing_files": 36,
+        "api_reference_symbols": 233,
+        "api_reference_python_cases": 26,
+        "api_reference_typescript_case_groups": 5,
+        "api_reference_browser_checks": 36,
+        "api_reference_ts_type_exports": 22,
+        "gallery_browser_checks": 1030,
+        "gallery_export_browser_checks": 1030,
+        "gallery_source_check_files": 253,
+        "recipes": 309,
+        "sdk_probe_timeout_seconds": 30,
+        "recipe_execution_plans": 309,
+        "recipe_execution_python_fixtures": 210,
+        "recipe_execution_guard_denials": 2,
+        "public_api_symbols": 233,
+        "keyboard_layout_tests": 7,
+        "keyboard_layout_methods": 6,
+        "portable_layout_blocks": 2,
+        "navigation_unit_tests": 17,
+        "navigation_edit_attempts": 6,
+        "portable_navigation_blocks": 1,
+        "selection_unit_tests": 27,
+        "selection_edit_methods": 13,
+        "portable_selection_blocks": 1,
+        "tzdata": "2026.5",
+        "calendar_core_tests": 21,
+        "calendar_sdk_tests": 7,
+        "calendar_edit_methods": 16,
+        "portable_calendar_blocks": 1,
+        "dialog_fields_tests": 23,
+        "dialog_fields_types": 7,
+        "portable_dialog_blocks": 1,
+        "message_text_tests": 27,
+        "portable_message_blocks": 1,
+        "media_tests": 25,
+        "portable_media_blocks": 1,
+        "profile_tests": 37,
+        "portable_profile_blocks": 1,
+        "inline_search_tests": 32,
+        "poll_tests": 34,
+        "portable_inline_blocks": 1,
+        "portable_poll_blocks": 1,
+        "platform_tests": 56,
+        "platform_contracts": 51,
+        "platform_families": 7,
+        "portable_platform_blocks": 1
+      },
+      "evidence": "https://github.com/Zulut30/awesome-telegram-skills/blob/fe16ba3ea3a2b4d5bbdc69ba09e7b2ed50c0c215/docs/v1-checks/030.json",
+      "artifacts": [
+        {
+          "name": "awesome_telegram_patterns-0.23.0-py3-none-any.whl",
+          "bytes": 280949,
+          "sha256": "4ccd4f7dd67f93e91fc38df86de2e702032cfe2b2fa13d02305ef0e5bb9053cc"
+        },
+        {
+          "name": "awesome-telegram-patterns-0.23.0.tgz",
+          "bytes": 19531,
+          "sha256": "b01da2b4dd693de45100fe23546ddb3d22b3739305c78f73a3625d76424b91c7"
+        }
+      ],
+      "unverified": [
+        "other declared Python/aiogram/Node/TypeScript versions",
+        "Linux/macOS",
+        "real Telegram iOS/Android/Desktop/tablet client versions",
+        "screen readers",
+        "provider sandboxes and production payment workflows",
+        "general durable FSM/multiworker and accepted-update recovery; single-process service example checked separately"
+      ],
+      "skip": {
+        "python_tests": 1,
+        "reason": "Windows directory symlink unavailable"
+      }
+    }
+  ],
+  "application_examples_scope": "Historical application-specific evidence; each entry keeps its own library_version."
 }

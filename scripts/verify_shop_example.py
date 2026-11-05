@@ -85,8 +85,22 @@ def main() -> int:
                     'test_current_roles_gate_reads_writes_invoice_and_saved_replay',
                     'test_role_revocation_precedes_queued_writer_and_late_receipt_is_reviewed',
                     'test_additive_v1_role_migration_preserves_sessions_orders_and_access',
-                    'test_start_payload_is_a_bounded_screen_hint_and_group_launch_is_not_sent')
-    if unit_tests < 24 or not test_log.rstrip().endswith('OK') or any(name not in test_log for name in required_tests):
+                    'test_start_payload_is_a_bounded_screen_hint_and_group_launch_is_not_sent',
+                    'test_actual_process_crashes_preserve_refund_and_block_content_before_projection',
+                    'test_actual_process_crash_before_handler_replays_durable_sdk_batch_after_restart',
+                    'test_actual_sdk_polling_retries_failed_admission_without_advancing_offset',
+                    'test_current_operator_and_session_are_rechecked_between_reserve_and_send',
+                    'test_mismatched_or_optional_history_fields_never_confirm_and_never_resend',
+                    'test_cancelled_worker_joins_owned_sqlite_write_then_retains_claim_for_safe_replay',
+                    'test_actual_sdk_polling_precheckout_answers_before_blocked_ordinary_handler_is_released',
+                    'test_expired_real_admission_never_sends_positive_after_backlog_or_restart',
+                    'test_failed_batch_cannot_be_ready_or_approve_and_retry_retains_first_admission',
+                    'test_capacity_overflow_is_durable_quarantine_without_late_positive',
+                    'test_lost_positive_answer_is_unknown_and_replay_restart_never_resends_true',
+                    'test_legacy_zero_lane_query_is_never_promoted_or_given_fresh_deadline',
+                    'test_actual_process_crash_before_storage_refuses_unknown_first_admission',
+                    'test_actual_process_crash_after_positive_rpc_never_resends_on_restart')
+    if unit_tests < 53 or not test_log.rstrip().endswith('OK') or any(name not in test_log for name in required_tests):
         raise RuntimeError('Shop acceptance requires all existing tests and durable session/ACL/restart scenarios')
     frontend=consumer/'frontend';shutil.copytree(ROOT/'examples/shop/frontend',frontend,ignore=shutil.ignore_patterns('node_modules','dist'))
     supplied=consumer/'provided artifacts';supplied.mkdir();tarball=supplied/sources[1].name;shutil.copyfile(sources[1],tarball)
@@ -98,9 +112,10 @@ def main() -> int:
     required_headless=('reload and missing original operation never dispatch',
                        'changed terms and account scope prevent a stale saved-intent retry',
                        'transport captures immutable server credential',
-                       'launch hints distinguish signed-field routing')
-    if not headless_count or int(headless_count.group(1))<4 or not re.search(r'\bfail\s+0\b',domain_log) or not re.search(r'\bskipped\s+0\b',domain_log) or any(name not in domain_log for name in required_headless):
-        raise RuntimeError('Headless shop requires all four domain/transport/launch cases without skips')
+                       'launch hints distinguish signed-field routing',
+                       'a server-confirmed refund completes only its original pending pointer')
+    if not headless_count or int(headless_count.group(1))<5 or not re.search(r'\bfail\s+0\b',domain_log) or not re.search(r'\bskipped\s+0\b',domain_log) or any(name not in domain_log for name in required_headless):
+        raise RuntimeError('Headless shop requires all five domain/transport/launch/refund cases without skips')
     installed=frontend/'node_modules/@awesome-telegram/patterns';metadata=json.loads((installed/'package.json').read_text());assert metadata['version']==library_version()
     copied_files=0
     for p in (installed/'dist').rglob('*'):
@@ -109,7 +124,7 @@ def main() -> int:
     caller=consumer/'caller project';caller.mkdir();(caller/'aiogram.py').write_text("raise RuntimeError('PRIVATE_CANARY')");(caller/'.env').write_text('BOT_TOKEN=100:PRIVATE_CANARY');(caller/'owned.txt').write_text('preserve caller')
     before={p.name:hashlib.sha256(p.read_bytes()).hexdigest() for p in caller.iterdir()}
     run('browser',[node,ROOT/'scripts/check_shop_browser.mjs',python,frontend/'dist',output/'browser',caller],timeout=480)
-    browser=json.loads((output/'browser/report.json').read_text(encoding='utf-8'));assert browser['passed'] and len(browser['cases'])==7 and browser['telegram_web_iframe'] is True and browser['read_only_recovery'] is True and browser['explicit_original_retry'] is True and len(browser['launch_profiles'])==5 and browser['external_requests']==0 and browser['telegram_requests'] is False
+    browser=json.loads((output/'browser/report.json').read_text(encoding='utf-8'));assert browser['passed'] and len(browser['cases'])==7 and browser['telegram_web_iframe'] is True and browser['read_only_recovery'] is True and browser['explicit_original_retry'] is True and browser['stars_refund_ui'] is True and len(browser['launch_profiles'])==5 and browser['external_requests']==0 and browser['telegram_requests'] is False
     assert before=={p.name:hashlib.sha256(p.read_bytes()).hexdigest() for p in caller.iterdir()}
     report={'passed':True,'roadmap_item':18,'library_version':library_version(),'application_version':'0.1.0','installed_origins':origin,'typescript_consumer':str(installed),'typescript_version':metadata['version'],'vendor_byte_exact_files':copied_files,'archive_source_exact_files':len(expected),'wheel_record_verified':True,'installed_entrypoint_help':True,'unit_tests':unit_tests,'headless_domain_tests':int(headless_count.group(1)),'stages':stages,'browser':browser,'caller_files_preserved':True,'artifacts':[{'name':p.name,'bytes':p.stat().st_size,'sha256':hashlib.sha256(p.read_bytes()).hexdigest()} for p in (*sources,example)],'scope':'Installed Python application and pattern wheel/tarball; real SQLite, HTTP, process restart and Chrome, including a cross-site iframe as in Telegram Web. Synthetic launch/native/SDK transport. No live Telegram/Stars test environment or physical devices.'}
     (output/'report.json').write_text(json.dumps(report,ensure_ascii=False,indent=2)+'\n',encoding='utf-8');print(json.dumps(report));return 0

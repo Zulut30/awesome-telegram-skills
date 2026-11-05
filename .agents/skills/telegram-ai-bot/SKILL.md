@@ -3,7 +3,7 @@ name: telegram-ai-bot
 description: "Подключает языковую модель к Telegram-боту на Python: потоковый ответ через sendMessageDraft/sendRichMessageDraft, кнопку остановки генерации, очередь и лимиты запросов, стоимость и приватность истории диалога. Используйте, когда бот отвечает сгенерированным моделью текстом. Не для проверки prompt injection и доступа агента к инструментам → telegram-security-review."
 license: MIT
 metadata:
-  version: "0.26.0"
+  version: "0.27.0"
 ---
 
 # ИИ-бот в Telegram

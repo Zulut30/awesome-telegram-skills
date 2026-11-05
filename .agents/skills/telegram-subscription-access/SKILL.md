@@ -3,7 +3,7 @@ name: telegram-subscription-access
 description: "Реализует оплачиваемый доступ Telegram-сервиса: периоды подписки, продления, истечение, отмену, возвраты и ручные корректировки прав. Используйте для модели доступа продукта; checkout и протокол платежного провайдера остаются отдельными задачами. Не для checkout и invoices → telegram-payments."
 license: MIT
 metadata:
-  version: "0.26.0"
+  version: "0.27.0"
 ---
 
 # Подписка и права доступа

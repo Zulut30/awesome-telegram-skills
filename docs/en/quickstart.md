@@ -1,6 +1,6 @@
 # First run: a bot and a Mini App screen
 
-This development example is checked on Windows (PowerShell), Ubuntu and macOS (bash) with Python 3.13, Node.js 24 and local development **0.26.0**. Every step has two variants: PowerShell for Windows and bash for Linux and macOS; run one of them. You need Python >=3.11 and Node.js ^20.19 or >=22.12 (the minimum of Vite 8 used by the Mini App template). The packages are not on PyPI or npm yet: download the wheel and tarball from GitHub Releases or get them from the project owner. Both files must come from the same release.
+This development example is checked on Windows (PowerShell), Ubuntu and macOS (bash) with Python 3.13, Node.js 24 and local development **0.27.0**. Every step has two variants: PowerShell for Windows and bash for Linux and macOS; run one of them. You need Python >=3.11 and Node.js ^20.19 or >=22.12 (the minimum of Vite 8 used by the Mini App template). The packages are not on PyPI or npm yet: download the wheel and tarball from GitHub Releases or get them from the project owner. Both files must come from the same release.
 
 Before you start: installing Python/npm dependencies may use the internet. `init`, `offline.py` and the local form need no real token, no Telegram account and no payment keys. The bot runs a real aiogram Dispatcher through `StubSession`; the screen validates input locally. The template backend verifies the initData signature, but this run has no Telegram and no initData, and form submission is not connected.
 
@@ -10,14 +10,14 @@ Open PowerShell (Windows) or a terminal (Linux, macOS). Replace `$tgArtifacts` /
 
 <!-- quickstart:parameters -->
 ```powershell
-$tgArtifacts = 'C:\path\to\pattern-library-0.26.0\artifacts'
+$tgArtifacts = 'C:\path\to\pattern-library-0.27.0\artifacts'
 $tgWorkspace = Join-Path $env:TEMP 'telegram-first-run'
 $tgPreviewPort = 4173
 ```
 
 <!-- quickstart-bash:parameters -->
 ```bash
-TG_ARTIFACTS="$HOME/Downloads/pattern-library-0.26.0/artifacts"
+TG_ARTIFACTS="$HOME/Downloads/pattern-library-0.27.0/artifacts"
 TG_WORKSPACE="${TMPDIR:-/tmp}/telegram-first-run"
 TG_PREVIEW_PORT=4173
 ```
@@ -25,9 +25,9 @@ TG_PREVIEW_PORT=4173
 <!-- quickstart:setup -->
 ```powershell
 $ErrorActionPreference = 'Stop'
-$tgWheel = Join-Path $tgArtifacts 'awesome_telegram_patterns-0.26.0-py3-none-any.whl'
-$tgTarball = Join-Path $tgArtifacts 'awesome-telegram-patterns-0.26.0.tgz'
-if (!(Test-Path -LiteralPath $tgWheel -PathType Leaf) -or !(Test-Path -LiteralPath $tgTarball -PathType Leaf)) { throw 'Both local 0.26.0 artifacts are required' }
+$tgWheel = Join-Path $tgArtifacts 'awesome_telegram_patterns-0.27.0-py3-none-any.whl'
+$tgTarball = Join-Path $tgArtifacts 'awesome-telegram-patterns-0.27.0.tgz'
+if (!(Test-Path -LiteralPath $tgWheel -PathType Leaf) -or !(Test-Path -LiteralPath $tgTarball -PathType Leaf)) { throw 'Both local 0.27.0 artifacts are required' }
 if (Test-Path -LiteralPath $tgWorkspace) { throw 'Choose a new tgWorkspace directory' }
 New-Item -ItemType Directory -Path $tgWorkspace | Out-Null
 Set-Location -LiteralPath $tgWorkspace
@@ -39,13 +39,13 @@ if ($LASTEXITCODE -ne 0) { throw 'Could not install the local wheel' }
 
 <!-- quickstart-bash:setup -->
 ```bash
-TG_WHEEL="$TG_ARTIFACTS/awesome_telegram_patterns-0.26.0-py3-none-any.whl" &&
-TG_TARBALL="$TG_ARTIFACTS/awesome-telegram-patterns-0.26.0.tgz" &&
+TG_WHEEL="$TG_ARTIFACTS/awesome_telegram_patterns-0.27.0-py3-none-any.whl" &&
+TG_TARBALL="$TG_ARTIFACTS/awesome-telegram-patterns-0.27.0.tgz" &&
 test -f "$TG_WHEEL" && test -f "$TG_TARBALL" &&
 mkdir "$TG_WORKSPACE" && cd "$TG_WORKSPACE" &&
 python3 -m venv tools &&
 tools/bin/python -m pip install --no-input --disable-pip-version-check "$TG_WHEEL" ||
-{ echo 'Failed: both 0.26.0 artifacts and a new TG_WORKSPACE directory are required' >&2; false; }
+{ echo 'Failed: both 0.27.0 artifacts and a new TG_WORKSPACE directory are required' >&2; false; }
 ```
 
 The `tools` environment holds the CLI and the library core; aiogram is installed in the environment of the generated bot. You do not need to activate the venv or change the PowerShell ExecutionPolicy. On Linux and macOS Python is `python3`, and environment files live in `bin/` instead of `Scripts\`.

@@ -5,23 +5,34 @@ from __future__ import annotations
 import asyncio
 import hashlib
 import time
+from collections.abc import Awaitable, Callable
 from datetime import datetime
+from typing import TYPE_CHECKING
 
-from aiogram import Bot
-from aiogram.types import Message, StarTransaction, TransactionPartnerUser
+from aiogram import Bot, Router
+from aiogram.types import Message, StarTransaction, TransactionPartnerUser, Update
 
-from ..errors import PermissionDenied, UnknownOutcome, ValidationFailure
+from ..errors import PermissionDenied, UnknownOutcome, UnsupportedCapability, ValidationFailure
 from ..payment_ledger import (
     PaymentBinding,
     PaymentCheck,
     PaymentConflict,
     PaymentLeaseLost,
     PaymentOperation,
+    PaymentReceipt,
+    PaymentVerifier,
     ProviderEvent,
     SQLitePaymentLedger,
 )
 from ..providers.http import binding_reference
 from ..worker import settled_to_thread
+
+if TYPE_CHECKING:
+    from aiogram.types import BotSubscriptionUpdated
+else:
+    from aiogram import types as _sdk_types
+
+    BotSubscriptionUpdated = getattr(_sdk_types, 'BotSubscriptionUpdated', object)
 
 
 class StarsPaymentAdapter:
@@ -314,3 +325,193 @@ class StarsPaymentAdapter:
             if len(history.transactions) < page_size:
                 break
         raise UnknownOutcome('Bounded Stars history did not establish this refund; preserve its operation')
+
+    async def edit_renewal(
+        self,
+        binding: PaymentBinding,
+        charge_id: str,
+        operation_id: str,
+        actor_id: int,
+        *,
+        is_canceled: bool,
+        check: PaymentCheck,
+        worker_id: str = 'stars-renewal',
+        now: int | None = None,
+    ) -> PaymentOperation:
+        """One native edit after durable authorization. True confirms a future setting, never paid time."""
+        self._binding(binding)
+        await settled_to_thread(
+            self.ledger.request_renewal_change,
+            binding,
+            charge_id,
+            operation_id,
+            actor_id,
+            is_canceled=is_canceled,
+            check=check,
+            now=now,
+        )
+        claim = await settled_to_thread(
+            self.ledger.start_operation,
+            binding,
+            operation_id,
+            worker_id,
+            check=check,
+            lease_seconds=self.timeout_seconds + 5,
+            now=now,
+        )
+        try:
+            async with asyncio.timeout(self.timeout_seconds):
+                accepted = await self.bot.edit_user_star_subscription(
+                    user_id=binding.user_id, telegram_payment_charge_id=charge_id, is_canceled=is_canceled
+                )
+            if accepted is not True:
+                raise UnknownOutcome('Stars renewal edit did not return a successful native response')
+            event = ProviderEvent(
+                binding,
+                self._event_id('renewal-ack', binding, charge_id, operation_id),
+                'renewal-state',
+                'editUserStarSubscription-ack',
+                'stars:authenticated-edit',
+                operation_id=operation_id,
+                charge_id=charge_id,
+                renewal='canceled' if is_canceled else 'active',
+            )
+            await self._accept_server_observation(event, now=now)
+            return await settled_to_thread(self.ledger.get_operation, binding, operation_id)
+        except asyncio.CancelledError:
+            try:
+                await settled_to_thread(self.ledger.mark_unknown, claim, now=now)
+            except PaymentLeaseLost:
+                pass
+            raise
+        except Exception as error:
+            try:
+                await settled_to_thread(self.ledger.mark_unknown, claim, now=now)
+            except PaymentLeaseLost:
+                pass
+            raise UnknownOutcome('Stars renewal edit requires trusted reconciliation before another write') from error
+
+    async def _accept_server_observation(self, event: ProviderEvent, *, now: int | None = None) -> PaymentReceipt:
+        token = object()
+
+        def trusted(raw: object) -> ProviderEvent:
+            if raw is not token:
+                raise PermissionDenied('Untrusted Stars server observation')
+            return event
+
+        return await settled_to_thread(self.ledger.apply_event, token, verify=trusted, now=now)
+
+    async def subscription_event(
+        self,
+        binding: PaymentBinding,
+        update: Update,
+        *,
+        invoice_operation_id: str,
+        stream_epoch: str,
+        evidence_ref: str,
+    ) -> ProviderEvent:
+        """Map the complete host-authenticated Update; BotSubscriptionUpdated has no date, charge or command ID."""
+        self._binding(binding)
+        from aiogram import types as sdk_types
+
+        native_class = getattr(sdk_types, 'BotSubscriptionUpdated', None)
+        if native_class is None:
+            raise UnsupportedCapability('Subscription updates require an aiogram version with Bot API 10.2 support')
+        native = getattr(update, 'subscription', None)
+        if (
+            binding.subscription_id is None
+            or update.bot is None
+            or update.bot.id != self.bot.id
+            or native is None
+            or not isinstance(native, native_class)
+            or update.event_type != 'subscription'
+            or native.user.is_bot
+            or native.user.id != binding.user_id
+            or native.invoice_payload != self.invoice_payload(binding, invoice_operation_id)
+            or native.state not in {'active', 'canceled', 'failed'}
+            or type(update.update_id) is not int
+            or not 0 <= update.update_id <= 2**53 - 1
+        ):
+            raise PermissionDenied('Native subscription update differs from the saved buyer, bot and invoice')
+        await settled_to_thread(self._invoice, binding, invoice_operation_id)
+        control = await settled_to_thread(self.ledger.get_renewal_control, binding)
+        if control['epoch'] != stream_epoch:
+            raise PaymentConflict('Subscription update belongs to an unregistered host stream epoch')
+        # update_id is a native identity within this explicitly owned stream; it is not a timestamp.
+        return ProviderEvent(
+            binding,
+            'stars:subscription:'
+            + hashlib.sha256(f'{self.bot.id}:{stream_epoch}:{update.update_id}'.encode('utf-8')).hexdigest(),
+            'renewal-state',
+            'BotSubscriptionUpdated-' + native.state,
+            evidence_ref,
+            renewal=native.state,
+            renewal_stream_epoch=stream_epoch,
+            renewal_update_id=update.update_id,
+        )
+
+    def subscription_router(
+        self,
+        lookup: Callable[[BotSubscriptionUpdated], Awaitable[tuple[PaymentBinding, str] | None]],
+        *,
+        stream_epoch: str,
+    ) -> Router:
+        """Attach to the existing verified Dispatcher; lookup returns server binding and saved invoice operation."""
+        router = Router(name='stars-subscription-observations')
+        observer = getattr(router, 'subscription', None)
+        if observer is None:
+            raise UnsupportedCapability('Subscription observer requires an aiogram version with Bot API 10.2 support')
+
+        @router.subscription()
+        async def changed(subscription: BotSubscriptionUpdated, event_update: Update) -> None:
+            resolved = await lookup(subscription)
+            if resolved is None:
+                return
+            binding, invoice_operation_id = resolved
+            event = await self.subscription_event(
+                binding,
+                event_update,
+                invoice_operation_id=invoice_operation_id,
+                stream_epoch=stream_epoch,
+                evidence_ref='stars:trusted-subscription-worker',
+            )
+            await self._accept_server_observation(event)
+
+        return router
+
+    async def reconcile_renewal(
+        self,
+        binding: PaymentBinding,
+        operation_id: str,
+        raw: object,
+        *,
+        verify: PaymentVerifier,
+        expected_revision: int,
+        expected_control_revision: int,
+        actor_id: int,
+        check: PaymentCheck,
+        now: int | None = None,
+    ) -> PaymentOperation:
+        """Apply explicit trusted current-setting proof; no official status getter or update correlation is invented."""
+        self._binding(binding)
+        event = await settled_to_thread(self.ledger._verified, raw, verify)
+        if event.binding != binding or event.operation_id != operation_id:
+            raise PermissionDenied('Renewal resolution differs from the requested immutable command')
+        token = object()
+
+        def trusted(value: object) -> ProviderEvent:
+            if value is not token:
+                raise PermissionDenied('Untrusted Stars renewal resolution')
+            return event
+
+        await settled_to_thread(
+            self.ledger.reconcile_renewal,
+            token,
+            verify=trusted,
+            expected_revision=expected_revision,
+            expected_control_revision=expected_control_revision,
+            actor_id=actor_id,
+            check=check,
+            now=now,
+        )
+        return await settled_to_thread(self.ledger.get_operation, binding, operation_id)

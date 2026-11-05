@@ -1,6 +1,35 @@
-# Матрица поддержки 0.23.0
+# Матрица поддержки: принятая поставка 0.26.0
 
-Пункт 005. Машиночитаемый снимок — [support-matrix.json](../catalog/support-matrix.json). «Заявлено» означает dependency/runtime constraint; «проверено» — конкретный прошедший сценарий. Весь declared range не считается проверенным одной комбинацией. API пока experimental.
+Машиночитаемый снимок — [support-matrix.json](../catalog/support-matrix.json). «Заявлено» означает dependency/runtime constraint; «проверено» — конкретный прошедший сценарий. Весь declared range не считается проверенным одной комбинацией. API пока experimental. Текущая разработка 0.27.0 проходит отдельную приемку; результаты ниже относятся к неизменяемой 0.26.0.
+
+## Подтверждено 5 ноября 2026
+
+| Область | Заявлено / формат | Подтвержденный сценарий 0.26.0 | Непроверенные границы |
+| --- | --- | --- | --- |
+| Python core | Python >=3.11, stdlib, без обязательного SDK | Установленный wheel и полный набор тестов: Python 3.11–3.14 на Ubuntu, 3.11 и 3.14 на Windows и macOS | Python 3.15 и прочие комбинации не подтверждены |
+| Python bot adapters | Optional aiogram >=3.29,<4 | Unit-матрица aiogram 3.29.1, 3.30.0, 3.31.0; полная поставка с aiogram 3.31.0, synthetic Dispatcher и SDK construction | Другие SDK versions и реальные Telegram/payment запросы не подтверждены; новые возможности проверяют по установленному SDK |
+| TypeScript tooling | Node >=20, ESM, без runtime dependencies | Тесты и Mini App build: Node 20/22/24 на Ubuntu и Node 24 на Windows/macOS; локальная поставка — 88 TS-тестов | Отдельного CommonJS build нет; require(ESM) проверен отдельно в поддерживающих его Node. Другие toolchains требуют проверки |
+| Полная поставка | Свежие wheel/tarball consumers | Локальный Windows-контур: 92 этапа, 816 успешных Python-тестов, 3 пропуска, 88 TS-тестов, 416 public symbols; полный CI-контур Linux и macOS также success | Числа локального отчета не приписываются другим ОС; пропуски не считаются PASS |
+| Browser UI | DOM/fetch/ESM, Chrome для проверки | Локальный Chrome 156.0.8078.80; installed UI: 35 взаимодействий, 96 geometry cases, 24 axe-состояния без violations; installed API-reference native: 48 проверок/6 contexts | Эмуляция viewport, DOM touch/keyboard и axe не доказывают реальные устройства, screen readers или полное соответствие WCAG |
+| Telegram API / Mini Apps | Bot API snapshot 10.3; native version/platform/presence gates | 185 request methods/400 types, 99 native paths/44 events в принятой 0.26; construction, callbacks, lifecycle и контекстные отказы | Нет матрицы реальных версий Telegram iOS/Android/Desktop и permissions; сотый путь Serverless относится к разработке 0.27 |
+| Storage / recovery | Локальная файловая SQLite и принадлежащие host workers | Установленные inbox/outbox, guarded actions, durable FSM и shop consumers; replay, reopen, crash и fenced ownership | Внешние эффекты, сетевые диски, distributed operations и power-loss recovery требуют своей приемки |
+
+Основание локальных чисел — [приемка 0.26.0](internal/local-026-acceptance.md) и [привязка к артефактам](internal/local-026-acceptance.json), source commit `d6109aa5d5bc529ad008e82db967c4e9cec25d98`. [Repository checks, attempt 2](https://github.com/Zulut30/awesome-telegram-skills/actions/runs/42077152013/attempts/2) подтвердил success всех 37 конкретных зависимых jobs, включая каждую ячейку matrix. Первый attempt содержал отмененную macOS/Python 3.11 ячейку и не используется как доказательство полной матрицы. [Full acceptance](https://github.com/Zulut30/awesome-telegram-skills/actions/runs/42077157629) завершился успешно на Linux и macOS для того же source commit.
+
+Исполняемая OS/runtime matrix пункта 081 подтверждена этим контуром 0.26.0. Это не приемка разработки 0.27, новой реализации обязательного CI-gate или реальных Telegram/device/provider сценариев. Публикация таблицы не подтверждает production-ready.
+
+Для другого SDK/runtime сохраняйте выбранный стек и выполните relevant consumer/tests перед обещанием совместимости. `doctor` предупреждает об aiogram, отличном от проверенного 3.31.0; проверка формата token не проверяет Telegram identity. Обновление support matrix следует за новым evidence, а не только за изменением диапазона зависимости.
+
+В разработке 0.27.0 `StarsPaymentAdapter` сохраняет импорт и прежние операции на
+проверенном aiogram 3.29.0, но `BotSubscriptionUpdated` там отсутствует: подключение
+наблюдателя явно сообщает `UnsupportedCapability`. Для нового observer проверяйте
+класс и событие установленного SDK; минимум extra `aiogram>=3.29,<4` не обещает
+все возможности Bot API 10.3. Локальная проверка нового контроллера продления не
+подтверждает работу реального бота или тестовой оплаты.
+
+## Исторический снимок 0.23.0 — 5 октября 2026
+
+Первоначальный снимок пункта 005 сохранен ниже; его версии и количества не являются текущими результатами 0.26.0.
 
 | Область | Заявлено / формат | Проверено 5 октября 2026 | Непроверенные границы |
 | --- | --- | --- | --- |
@@ -17,9 +46,7 @@
 
 Node >=20 — текущий технический минимум manifests, а не рекомендация выбирать Node 20 для production. По [официальной таблице Node.js](https://nodejs.org/en/about/previous-releases) ветка 20 уже EOL; использовать поддерживаемую LTS и затем проверять точную версию приложения. Наш снимок проверен на 24.19.0, что не означает «самая свежая версия».
 
-Текущая приемка: [030.json](https://github.com/Zulut30/awesome-telegram-skills/blob/fe16ba3ea3a2b4d5bbdc69ba09e7b2ed50c0c215/docs/v1-checks/030.json), `output/pattern-library-0.23.0/distribution-report.json` и соответствующие logs, привязанные к hashes wheel/tarball. История предыдущих поставок описана ниже. Telegram/live/sandbox evidence сейчас отсутствует, версии клиентов поэтому не выдумываются. Расширение исполняемой OS/runtime matrix относится к 081, device acceptance — к 067; публикация таблицы не закрывает эти пункты.
-
-Для другого SDK/runtime сохраняйте выбранный стек и выполните relevant consumer/tests перед обещанием совместимости. `doctor` предупреждает об aiogram, отличном от проверенного 3.31.0; проверка формата token не проверяет Telegram identity. Обновление support matrix следует за новым evidence, а не только за изменением диапазона зависимости.
+Историческая приемка 0.23.0: [030.json](https://github.com/Zulut30/awesome-telegram-skills/blob/fe16ba3ea3a2b4d5bbdc69ba09e7b2ed50c0c215/docs/v1-checks/030.json), `output/pattern-library-0.23.0/distribution-report.json` и соответствующие logs, привязанные к hashes wheel/tarball. История предыдущих поставок описана ниже. Этот снимок не содержит Telegram/live/sandbox evidence и не задает версии реальных клиентов.
 
 Дополнительно в 0.9.0: Mypy 2.4.0 по 17 исходным файлам и consumer wheel; TypeScript consumer включает named field type и негативные assertions.
 

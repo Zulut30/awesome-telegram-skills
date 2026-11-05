@@ -48,7 +48,7 @@ export interface Order {
   readonly items: readonly string[];
   readonly total: number;
   readonly currency: Currency;
-  readonly status: 'awaiting' | 'paid' | 'review';
+  readonly status: 'awaiting' | 'paid' | 'review' | 'refunded';
   readonly invoice_state: 'none' | 'creating' | 'ready' | 'unknown';
 }
 export interface Orders {
@@ -67,11 +67,33 @@ export interface Content {
 export interface Error {
   readonly error: 'authentication-required' | 'permission-denied' | 'validation-failed' | 'operation-conflict' | 'invoice-outcome-unknown' | 'request-rejected' | 'service-unavailable';
 }
+export interface RefundRequest {
+  readonly operation: string;
+  readonly charge: string;
+}
+export interface RefundOperation {
+  readonly operation: string;
+  readonly charge: string;
+  readonly state: 'pending' | 'sending' | 'unknown' | 'confirmed' | 'failed' | 'canceled' | 'operator-review';
+  readonly amount: number;
+  readonly currency: Currency;
+}
+export interface OperatorCharge {
+  readonly charge: string;
+  readonly amount: number;
+  readonly currency: Currency;
+  readonly review: number;
+}
+export interface OperatorOrder {
+  readonly order: Order;
+  readonly charges: readonly OperatorCharge[];
+  readonly refunds: readonly RefundOperation[];
+}
 
 type Schema = {readonly ref: string} | {readonly type: 'string' | 'integer' | 'number' | 'boolean' | 'object' | 'array';
   readonly enum?: readonly string[]; readonly properties?: Readonly<Record<string, Schema>>;
   readonly required?: readonly string[]; readonly items?: Schema};
-const schemas: Readonly<Record<string, Schema>> = {"SessionRequest":{"type":"object","properties":{"initData":{"type":"string"}},"required":["initData"]},"Session":{"type":"object","properties":{"token":{"type":"string"},"scope":{"type":"string"},"expires_in":{"type":"integer"}},"required":["token","scope","expires_in"]},"SessionRevoked":{"type":"object","properties":{"revoked":{"type":"boolean"}},"required":["revoked"]},"Product":{"type":"object","properties":{"id":{"type":"string"},"title":{"type":"string"},"description":{"type":"string"},"stars":{"type":"integer"},"category":{"type":"string"}},"required":["id","title","description","stars","category"]},"Catalog":{"type":"object","properties":{"items":{"type":"array","items":{"ref":"Product"}},"currency":{"ref":"Currency"}},"required":["items","currency"]},"Currency":{"type":"string","enum":["XTR"]},"Policy":{"type":"object","properties":{"version":{"type":"string"},"terms":{"type":"string"},"support":{"type":"string"}},"required":["version","terms","support"]},"OrderRequest":{"type":"object","properties":{"operation":{"type":"string"},"items":{"type":"array","items":{"type":"string"}},"terms":{"type":"string"}},"required":["operation","items","terms"]},"Order":{"type":"object","properties":{"id":{"type":"string"},"operation":{"type":"string"},"items":{"type":"array","items":{"type":"string"}},"total":{"type":"integer"},"currency":{"ref":"Currency"},"status":{"type":"string","enum":["awaiting","paid","review"]},"invoice_state":{"type":"string","enum":["none","creating","ready","unknown"]}},"required":["id","operation","items","total","currency","status","invoice_state"]},"Orders":{"type":"object","properties":{"orders":{"type":"array","items":{"ref":"Order"}}},"required":["orders"]},"EmptyBody":{"type":"object","properties":{},"required":[]},"InvoiceLink":{"type":"object","properties":{"url":{"type":"string"}},"required":["url"]},"Content":{"type":"object","properties":{"id":{"type":"string"},"title":{"type":"string"},"text":{"type":"string"}},"required":["id","title","text"]},"Error":{"type":"object","properties":{"error":{"type":"string","enum":["authentication-required","permission-denied","validation-failed","operation-conflict","invoice-outcome-unknown","request-rejected","service-unavailable"]}},"required":["error"]}};
+const schemas: Readonly<Record<string, Schema>> = {"SessionRequest":{"type":"object","properties":{"initData":{"type":"string"}},"required":["initData"]},"Session":{"type":"object","properties":{"token":{"type":"string"},"scope":{"type":"string"},"expires_in":{"type":"integer"}},"required":["token","scope","expires_in"]},"SessionRevoked":{"type":"object","properties":{"revoked":{"type":"boolean"}},"required":["revoked"]},"Product":{"type":"object","properties":{"id":{"type":"string"},"title":{"type":"string"},"description":{"type":"string"},"stars":{"type":"integer"},"category":{"type":"string"}},"required":["id","title","description","stars","category"]},"Catalog":{"type":"object","properties":{"items":{"type":"array","items":{"ref":"Product"}},"currency":{"ref":"Currency"}},"required":["items","currency"]},"Currency":{"type":"string","enum":["XTR"]},"Policy":{"type":"object","properties":{"version":{"type":"string"},"terms":{"type":"string"},"support":{"type":"string"}},"required":["version","terms","support"]},"OrderRequest":{"type":"object","properties":{"operation":{"type":"string"},"items":{"type":"array","items":{"type":"string"}},"terms":{"type":"string"}},"required":["operation","items","terms"]},"Order":{"type":"object","properties":{"id":{"type":"string"},"operation":{"type":"string"},"items":{"type":"array","items":{"type":"string"}},"total":{"type":"integer"},"currency":{"ref":"Currency"},"status":{"type":"string","enum":["awaiting","paid","review","refunded"]},"invoice_state":{"type":"string","enum":["none","creating","ready","unknown"]}},"required":["id","operation","items","total","currency","status","invoice_state"]},"Orders":{"type":"object","properties":{"orders":{"type":"array","items":{"ref":"Order"}}},"required":["orders"]},"EmptyBody":{"type":"object","properties":{},"required":[]},"InvoiceLink":{"type":"object","properties":{"url":{"type":"string"}},"required":["url"]},"Content":{"type":"object","properties":{"id":{"type":"string"},"title":{"type":"string"},"text":{"type":"string"}},"required":["id","title","text"]},"Error":{"type":"object","properties":{"error":{"type":"string","enum":["authentication-required","permission-denied","validation-failed","operation-conflict","invoice-outcome-unknown","request-rejected","service-unavailable"]}},"required":["error"]},"RefundRequest":{"type":"object","properties":{"operation":{"type":"string"},"charge":{"type":"string"}},"required":["operation","charge"]},"RefundOperation":{"type":"object","properties":{"operation":{"type":"string"},"charge":{"type":"string"},"state":{"type":"string","enum":["pending","sending","unknown","confirmed","failed","canceled","operator-review"]},"amount":{"type":"integer"},"currency":{"ref":"Currency"}},"required":["operation","charge","state","amount","currency"]},"OperatorCharge":{"type":"object","properties":{"charge":{"type":"string"},"amount":{"type":"integer"},"currency":{"ref":"Currency"},"review":{"type":"integer"}},"required":["charge","amount","currency","review"]},"OperatorOrder":{"type":"object","properties":{"order":{"ref":"Order"},"charges":{"type":"array","items":{"ref":"OperatorCharge"}},"refunds":{"type":"array","items":{"ref":"RefundOperation"}}},"required":["order","charges","refunds"]}};
 
 /** Throws with the JSON path of the first value that breaks the contract. */
 function check(schema: Schema, value: unknown, at: string): void {
@@ -109,6 +131,10 @@ export const decode = {
   InvoiceLink: (value: unknown): InvoiceLink => { check({ref: 'InvoiceLink'}, value, 'InvoiceLink'); return value as InvoiceLink; },
   Content: (value: unknown): Content => { check({ref: 'Content'}, value, 'Content'); return value as Content; },
   Error: (value: unknown): Error => { check({ref: 'Error'}, value, 'Error'); return value as Error; },
+  RefundRequest: (value: unknown): RefundRequest => { check({ref: 'RefundRequest'}, value, 'RefundRequest'); return value as RefundRequest; },
+  RefundOperation: (value: unknown): RefundOperation => { check({ref: 'RefundOperation'}, value, 'RefundOperation'); return value as RefundOperation; },
+  OperatorCharge: (value: unknown): OperatorCharge => { check({ref: 'OperatorCharge'}, value, 'OperatorCharge'); return value as OperatorCharge; },
+  OperatorOrder: (value: unknown): OperatorOrder => { check({ref: 'OperatorOrder'}, value, 'OperatorOrder'); return value as OperatorOrder; },
 } as const;
 
 /** Every operation of the contract, keyed by operationId. */
@@ -124,6 +150,10 @@ export interface ApiOperations {
   getOrder: {readonly method: 'GET'; readonly path: '/api/orders/{id}'; readonly params: {readonly id: string;}; readonly body: undefined; readonly response: Order};
   createInvoice: {readonly method: 'POST'; readonly path: '/api/orders/{id}/invoice'; readonly params: {readonly id: string;}; readonly body: EmptyBody; readonly response: InvoiceLink};
   getContent: {readonly method: 'GET'; readonly path: '/api/content/{sku}'; readonly params: {readonly sku: string;}; readonly body: undefined; readonly response: Content};
+  operatorOrder: {readonly method: 'GET'; readonly path: '/api/operator/orders/{id}'; readonly params: {readonly id: string;}; readonly body: undefined; readonly response: OperatorOrder};
+  requestRefund: {readonly method: 'POST'; readonly path: '/api/operator/orders/{id}/refunds'; readonly params: {readonly id: string;}; readonly body: RefundRequest; readonly response: RefundOperation};
+  refundStatus: {readonly method: 'GET'; readonly path: '/api/operator/orders/{id}/refunds/{operation}'; readonly params: {readonly id: string; readonly operation: string;}; readonly body: undefined; readonly response: RefundOperation};
+  reconcileRefund: {readonly method: 'POST'; readonly path: '/api/operator/orders/{id}/refunds/{operation}/reconcile'; readonly params: {readonly id: string; readonly operation: string;}; readonly body: EmptyBody; readonly response: RefundOperation};
 }
 export type ApiOperation = keyof ApiOperations;
 
@@ -139,6 +169,10 @@ export const operations = {
   getOrder: {method: 'GET', path: '/api/orders/{id}', response: 'Order'},
   createInvoice: {method: 'POST', path: '/api/orders/{id}/invoice', response: 'InvoiceLink'},
   getContent: {method: 'GET', path: '/api/content/{sku}', response: 'Content'},
+  operatorOrder: {method: 'GET', path: '/api/operator/orders/{id}', response: 'OperatorOrder'},
+  requestRefund: {method: 'POST', path: '/api/operator/orders/{id}/refunds', response: 'RefundOperation'},
+  refundStatus: {method: 'GET', path: '/api/operator/orders/{id}/refunds/{operation}', response: 'RefundOperation'},
+  reconcileRefund: {method: 'POST', path: '/api/operator/orders/{id}/refunds/{operation}/reconcile', response: 'RefundOperation'},
 } as const satisfies {readonly [K in ApiOperation]: {readonly method: ApiOperations[K]['method']; readonly path: ApiOperations[K]['path'];
   readonly response: keyof typeof decode}};
 

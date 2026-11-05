@@ -31,7 +31,7 @@ from .money import Money
 from .stars_subscription import StarsSubscription
 
 PaymentRoute = Literal['external', 'telegram-stars']
-PaymentKind = Literal['invoice', 'refund', 'cancel-renewal']
+PaymentKind = Literal['invoice', 'refund', 'cancel-renewal', 'resume-renewal']
 PaymentState = Literal['pending', 'sending', 'confirmed', 'failed', 'cancelled', 'unknown']
 ProviderEventKind = Literal['invoice-created', 'paid', 'refunded', 'renewal-state', 'rejected', 'observed']
 _KEY = re.compile(r'[A-Za-z0-9][A-Za-z0-9_.:-]{0,127}\Z')
@@ -136,6 +136,8 @@ class ProviderEvent:
     period_end: int | None = None
     renewal: Literal['active', 'canceled', 'failed'] | None = None
     first_recurring: bool = False
+    renewal_stream_epoch: str | None = None
+    renewal_update_id: int | None = None
 
     def __post_init__(self) -> None:
         if not isinstance(self.binding, PaymentBinding):
@@ -163,6 +165,13 @@ class ProviderEvent:
             raise ValidationFailure('Paid periods must have positive half-open boundaries')
         if self.renewal not in {None, 'active', 'canceled', 'failed'}:
             raise ValidationFailure('Use a supported renewal observation')
+        if (self.renewal_stream_epoch is None) != (self.renewal_update_id is None):
+            raise ValidationFailure('Supply both trusted renewal stream epoch and native update ID')
+        if self.renewal_stream_epoch is not None:
+            _key(self.renewal_stream_epoch)
+            _integer(cast(int, self.renewal_update_id), 2**53 - 1)
+            if self.kind != 'renewal-state' or self.operation_id is not None:
+                raise ValidationFailure('Native subscription updates cannot invent a command operation ID')
 
 
 @dataclass(frozen=True, slots=True)
@@ -197,6 +206,7 @@ class PaymentReceipt:
     duplicate: bool
     event_id: str = field(repr=False)
     order_id: str
+    stale: bool = False
 
 
 @dataclass(frozen=True, slots=True)
@@ -269,8 +279,17 @@ class SQLitePaymentLedger:
         with self._transaction() as db:
             db.execute('CREATE TABLE IF NOT EXISTS payment_ledger_meta(version INTEGER NOT NULL)')
             version = db.execute('SELECT version FROM payment_ledger_meta').fetchall()
-            if version and (len(version) != 1 or version[0][0] != 1):
+            if version and (len(version) != 1 or version[0][0] not in (1, 2)):
                 raise UnsupportedCapability('Financial schema needs a reviewed migration')
+            if (
+                version
+                and version[0][0] == 2
+                and db.execute(
+                    "SELECT 1 FROM sqlite_master WHERE type='table' AND name='payment_renewal_control'"
+                ).fetchone()
+                is None
+            ):
+                raise UnsupportedCapability('Financial schema 2 lost renewal control; restore a verified backup')
             statements = [
                 '''CREATE TABLE IF NOT EXISTS payment_orders(merchant TEXT,bot INTEGER,order_id TEXT,
                     provider TEXT,user_id INTEGER,subscription_id TEXT,route TEXT,binding_json TEXT NOT NULL,
@@ -297,6 +316,12 @@ class SQLitePaymentLedger:
                 '''CREATE TABLE IF NOT EXISTS payment_audit(sequence INTEGER PRIMARY KEY AUTOINCREMENT,
                     merchant TEXT,bot INTEGER,order_id TEXT,operation_id TEXT,kind TEXT,outcome TEXT,
                     provider_state TEXT,evidence_ref TEXT,actor_id INTEGER,recorded_at INTEGER)''',
+                '''CREATE TABLE IF NOT EXISTS payment_renewal_control(merchant TEXT,bot INTEGER,provider TEXT,
+                    subscription_id TEXT,epoch TEXT NOT NULL,last_update_id INTEGER NOT NULL,
+                    last_update_state TEXT,last_update_hash TEXT,generation INTEGER NOT NULL,
+                    command_operation TEXT,command_target TEXT,command_state TEXT,command_watermark INTEGER NOT NULL,
+                    effective_state TEXT NOT NULL,bot_cancel_charge TEXT,revision INTEGER NOT NULL,
+                    PRIMARY KEY(merchant,bot,provider,subscription_id))''',
             ]
             for statement in statements:
                 db.execute(statement)
@@ -323,12 +348,19 @@ class SQLitePaymentLedger:
                     'sequence merchant bot order_id operation_id kind outcome provider_state evidence_ref '
                     'actor_id recorded_at'
                 ),
+                'payment_renewal_control': (
+                    'merchant bot provider subscription_id epoch last_update_id last_update_state last_update_hash '
+                    'generation command_operation command_target command_state command_watermark '
+                    'effective_state bot_cancel_charge revision'
+                ),
             }
             for table, columns in expected_columns.items():
                 if {row['name'] for row in db.execute(f'PRAGMA table_info({table})')} != set(columns.split()):
                     raise UnsupportedCapability('Unexpected financial schema; apply a reviewed migration')
             if not version:
-                db.execute('INSERT INTO payment_ledger_meta VALUES (1)')
+                db.execute('INSERT INTO payment_ledger_meta VALUES (2)')
+            elif version[0][0] == 1:
+                db.execute('UPDATE payment_ledger_meta SET version=2')
 
     @staticmethod
     def _key(binding: PaymentBinding) -> tuple[str, int, str]:
@@ -448,6 +480,8 @@ class SQLitePaymentLedger:
             )
             if amount.minor_units > row['amount'] - row['refunded'] - reserved:
                 raise PaymentConflict('Refund exceeds paid minus refunded and reserved amounts')
+        elif kind in {'cancel-renewal', 'resume-renewal'} and charge_id is not None:
+            self._prepare_renewal_control(db, binding, operation_id, kind, charge_id, instant)
         elif (
             db.execute(
                 '''SELECT 1 FROM payment_operations WHERE merchant=? AND bot=? AND order_id=?
@@ -556,6 +590,15 @@ class SQLitePaymentLedger:
             raise ValidationFailure('Renewal cancellation requires a bound subscription')
         with self._transaction() as db:
             self._order(db, binding)
+            if (
+                db.execute(
+                    'SELECT 1 FROM payment_renewal_control WHERE merchant=? AND bot=? '
+                    'AND provider=? AND subscription_id=?',
+                    self._renewal_key(binding),
+                ).fetchone()
+                is not None
+            ):
+                raise UnsupportedCapability('Registered Stars renewal control requires a saved native charge')
             return self._prepare(
                 db,
                 binding,
@@ -564,6 +607,92 @@ class SQLitePaymentLedger:
                 Money(0, binding.amount.currency, binding.amount.exponent),
                 actor_id,
                 None,
+                _now(now),
+                check,
+            )
+
+    def register_renewal_stream(
+        self, binding: PaymentBinding, stream_epoch: str, *, expected_epoch: str | None = None
+    ) -> dict[str, Any]:
+        """Trusted owner setup, not an end-user endpoint; epoch rollover never silently releases an intent."""
+        _key(stream_epoch)
+        if expected_epoch is not None:
+            _key(expected_epoch)
+        if binding.subscription_id is None or binding.route != 'telegram-stars':
+            raise ValidationFailure('Register a Stars subscription in the host-owned update stream')
+        with self._transaction() as db:
+            self._order(db, binding)
+            sub = self._sub(db, binding)
+            row = db.execute(
+                'SELECT * FROM payment_renewal_control WHERE merchant=? AND bot=? AND provider=? AND subscription_id=?',
+                self._renewal_key(binding),
+            ).fetchone()
+            if row is None:
+                if expected_epoch is not None:
+                    raise PaymentConflict('Renewal stream has not been registered')
+                if (
+                    db.execute(
+                        '''SELECT 1 FROM payment_operations p JOIN payment_orders o
+                    ON o.merchant=p.merchant AND o.bot=p.bot AND o.order_id=p.order_id
+                    WHERE o.merchant=? AND o.bot=? AND o.provider=? AND o.subscription_id=?
+                    AND p.kind IN ('cancel-renewal','resume-renewal') AND p.state IN ('pending','sending','unknown')''',
+                        self._renewal_key(binding),
+                    ).fetchone()
+                    is not None
+                ):
+                    raise PaymentConflict('Resolve the existing renewal intent before registering its native stream')
+                db.execute(
+                    '''INSERT INTO payment_renewal_control VALUES (?,?,?,?,?,-1,NULL,NULL,0,
+                    NULL,NULL,NULL,-1,?,NULL,1)''',
+                    (*self._renewal_key(binding), stream_epoch, sub['renewal']),
+                )
+                self._audit(db, binding, 'renewal-stream', 'registered', _now(None), evidence_ref=stream_epoch)
+            elif row['epoch'] != stream_epoch:
+                if row['epoch'] != expected_epoch or row['command_state'] in {'pending', 'sending', 'unknown'}:
+                    raise PaymentConflict('Renewal epoch changed or an unresolved command still owns the subscription')
+                db.execute(
+                    '''UPDATE payment_renewal_control SET epoch=?,last_update_id=-1,last_update_state=NULL,
+                    last_update_hash=NULL,command_watermark=-1,revision=revision+1
+                    WHERE merchant=? AND bot=? AND provider=? AND subscription_id=?''',
+                    (stream_epoch, *self._renewal_key(binding)),
+                )
+                self._audit(db, binding, 'renewal-stream', 'rotated', _now(None), evidence_ref=stream_epoch)
+            return dict(self._renewal_control(db, binding))
+
+    def get_renewal_control(self, binding: PaymentBinding) -> dict[str, Any]:
+        """Read future-setting observations and uncertainty; this never extends paid access."""
+        db = self._read_connection()
+        try:
+            self._order(db, binding)
+            return dict(self._renewal_control(db, binding))
+        finally:
+            db.close()
+
+    def request_renewal_change(
+        self,
+        binding: PaymentBinding,
+        charge_id: str,
+        operation_id: str,
+        actor_id: int,
+        *,
+        is_canceled: bool,
+        check: PaymentCheck,
+        now: int | None = None,
+    ) -> PaymentOperation:
+        """Persist exact native charge and desired setting; current ACL is checked in this writer transaction."""
+        if binding.subscription_id is None or binding.route != 'telegram-stars' or type(is_canceled) is not bool:
+            raise ValidationFailure('Use a bound Stars subscription and an exact desired cancellation boolean')
+        _opaque(charge_id)
+        with self._transaction() as db:
+            self._order(db, binding)
+            return self._prepare(
+                db,
+                binding,
+                operation_id,
+                'cancel-renewal' if is_canceled else 'resume-renewal',
+                Money(0, 'XTR', 0),
+                actor_id,
+                charge_id,
                 _now(now),
                 check,
             )
@@ -599,6 +728,18 @@ class SQLitePaymentLedger:
                 )
                 if charge['paid_at'] is None or reserved > charge['amount'] - charge['refunded']:
                     raise PaymentConflict('Reserved refund budget is no longer available')
+            elif row['kind'] in {'cancel-renewal', 'resume-renewal'} and row['charge_id'] is not None:
+                control = self._renewal_control(db, binding)
+                if control['command_operation'] != operation_id or control['command_state'] != 'pending':
+                    raise PaymentConflict('Renewal command generation no longer owns this subscription')
+                self._renewal_charge(db, binding, row['charge_id'], instant)
+                db.execute(
+                    '''UPDATE payment_renewal_control SET command_state='sending',
+                    command_watermark=last_update_id,effective_state='unknown',revision=revision+1
+                    WHERE merchant=? AND bot=? AND provider=? AND subscription_id=?''',
+                    self._renewal_key(binding),
+                )
+                self._sync_renewal_effective(db, binding)
             token = uuid.uuid4().hex
             db.execute(
                 '''UPDATE payment_operations SET state='sending',worker_id=?,token=?,lease_until=?,
@@ -629,6 +770,7 @@ class SQLitePaymentLedger:
                 (claim.binding.merchant_id, claim.binding.bot_id, claim.operation_id),
             )
             self._audit(db, claim.binding, row['kind'], 'unknown', instant, operation_id=claim.operation_id)
+            self._renewal_unknown(db, claim.binding, row)
             return self._snapshot(claim.binding, self._operation(db, claim.binding, claim.operation_id))
 
     def recover_expired(self, binding: PaymentBinding, *, now: int | None = None) -> int:
@@ -647,6 +789,7 @@ class SQLitePaymentLedger:
                     (binding.merchant_id, binding.bot_id, row['operation_id']),
                 )
                 self._audit(db, binding, row['kind'], 'unknown', instant, operation_id=row['operation_id'])
+                self._renewal_unknown(db, binding, row)
             return len(rows)
 
     def cancel_operation(
@@ -672,6 +815,12 @@ class SQLitePaymentLedger:
                     operation_id=operation_id,
                     actor_id=actor_id,
                 )
+                if state == 'cancelled' and row['kind'] in {'cancel-renewal', 'resume-renewal'}:
+                    db.execute(
+                        '''UPDATE payment_renewal_control SET command_state='cancelled',revision=revision+1
+                        WHERE merchant=? AND bot=? AND provider=? AND subscription_id=? AND command_operation=?''',
+                        (*self._renewal_key(binding), operation_id),
+                    )
             return self._snapshot(binding, self._operation(db, binding, operation_id))
 
     def _charge(self, db: sqlite3.Connection, binding: PaymentBinding, charge_id: str) -> sqlite3.Row:
@@ -689,6 +838,132 @@ class SQLitePaymentLedger:
         if not isinstance(event, ProviderEvent):
             raise InvalidType('Host verifier must return a validated provider observation')
         return event
+
+    @staticmethod
+    def _renewal_key(binding: PaymentBinding) -> tuple[str, int, str, str]:
+        if binding.subscription_id is None:
+            raise ValidationFailure('Renewal control requires a bound subscription')
+        return binding.merchant_id, binding.bot_id, binding.provider, binding.subscription_id
+
+    def _renewal_control(self, db: sqlite3.Connection, binding: PaymentBinding) -> sqlite3.Row:
+        row = db.execute(
+            'SELECT * FROM payment_renewal_control WHERE merchant=? AND bot=? AND provider=? AND subscription_id=?',
+            self._renewal_key(binding),
+        ).fetchone()
+        if row is None:
+            raise PaymentConflict('Register the trusted subscription update epoch before controlling renewal')
+        return cast(sqlite3.Row, row)
+
+    def _renewal_charge(self, db: sqlite3.Connection, binding: PaymentBinding, charge_id: str, instant: int) -> None:
+        charge = self._charge(db, binding, charge_id)
+        if (
+            charge['paid_at'] is None
+            or charge['period_end'] is None
+            or not charge['paid_at'] <= instant < charge['period_end']
+            or charge['refunded'] != 0
+        ):
+            raise PaymentConflict('Renewal editing requires its active, confirmed, unrefunded subscription charge')
+
+    def _sync_renewal_effective(self, db: sqlite3.Connection, binding: PaymentBinding) -> None:
+        if binding.subscription_id is not None:
+            db.execute(
+                '''UPDATE payment_subscriptions SET renewal=(SELECT effective_state FROM payment_renewal_control
+                WHERE merchant=? AND bot=? AND provider=? AND subscription_id=?)
+                WHERE merchant=? AND bot=? AND provider=? AND subscription_id=?
+                AND EXISTS(SELECT 1 FROM payment_renewal_control WHERE merchant=? AND bot=?
+                AND provider=? AND subscription_id=?)''',
+                self._renewal_key(binding) * 3,
+            )
+
+    def _prepare_renewal_control(
+        self,
+        db: sqlite3.Connection,
+        binding: PaymentBinding,
+        operation_id: str,
+        kind: PaymentKind,
+        charge_id: str,
+        instant: int,
+    ) -> None:
+        control = self._renewal_control(db, binding)
+        self._renewal_charge(db, binding, charge_id, instant)
+        unresolved = db.execute(
+            '''SELECT 1 FROM payment_operations p JOIN payment_orders o
+            ON o.merchant=p.merchant AND o.bot=p.bot AND o.order_id=p.order_id
+            WHERE o.merchant=? AND o.bot=? AND o.provider=? AND o.subscription_id=?
+            AND p.kind IN ('cancel-renewal','resume-renewal') AND p.state IN ('pending','sending','unknown')''',
+            self._renewal_key(binding),
+        ).fetchone()
+        if unresolved is not None or control['command_state'] in {'pending', 'sending', 'unknown'}:
+            raise PaymentConflict('Subscription already has an unresolved renewal command')
+        if kind == 'resume-renewal' and (
+            control['bot_cancel_charge'] != charge_id or control['effective_state'] != 'canceled'
+        ):
+            raise PaymentConflict('Only a confirmed bot cancellation of this charge can be resumed')
+        db.execute(
+            '''UPDATE payment_renewal_control SET generation=generation+1,command_operation=?,command_target=?,
+            command_state='pending',revision=revision+1
+            WHERE merchant=? AND bot=? AND provider=? AND subscription_id=?''',
+            (operation_id, 'canceled' if kind == 'cancel-renewal' else 'active', *self._renewal_key(binding)),
+        )
+
+    def _renewal_unknown(self, db: sqlite3.Connection, binding: PaymentBinding, operation: sqlite3.Row) -> None:
+        if operation['kind'] in {'cancel-renewal', 'resume-renewal'} and operation['charge_id'] is not None:
+            db.execute(
+                '''UPDATE payment_renewal_control SET command_state='unknown',effective_state='unknown',
+                revision=revision+1 WHERE merchant=? AND bot=? AND provider=? AND subscription_id=?
+                AND command_operation=?''',
+                (*self._renewal_key(binding), operation['operation_id']),
+            )
+            self._sync_renewal_effective(db, binding)
+
+    def _ordered_renewal_update(self, db: sqlite3.Connection, event: ProviderEvent) -> bool:
+        control = self._renewal_control(db, event.binding)
+        if event.renewal_stream_epoch != control['epoch']:
+            raise PaymentConflict('Native renewal update belongs to another explicitly registered epoch')
+        native_id = cast(int, event.renewal_update_id)
+        digest = payload_digest([asdict(event.binding), event.renewal_stream_epoch, native_id, event.renewal])
+        if native_id <= control['last_update_id']:
+            if native_id == control['last_update_id'] and control['last_update_hash'] != digest:
+                raise PaymentConflict('Native renewal update identity has conflicting contents')
+            return False
+        effective: str | None = event.renewal
+        if control['command_state'] in {'sending', 'unknown'}:
+            effective = 'unknown'
+        elif (
+            control['command_state'] == 'confirmed'
+            and native_id > control['command_watermark']
+            and event.renewal != control['command_target']
+        ):
+            # Native subscription updates have no time or command ID. Do not invent causal order against an RPC ack.
+            effective = 'unknown'
+        db.execute(
+            '''UPDATE payment_renewal_control SET last_update_id=?,last_update_state=?,last_update_hash=?,
+            effective_state=?,revision=revision+1 WHERE merchant=? AND bot=? AND provider=? AND subscription_id=?''',
+            (native_id, event.renewal, digest, effective, *self._renewal_key(event.binding)),
+        )
+        return True
+
+    def _confirm_renewal_control(
+        self, db: sqlite3.Connection, event: ProviderEvent, operation: sqlite3.Row, *, manual_resolution: bool
+    ) -> None:
+        control = self._renewal_control(db, event.binding)
+        if control['command_operation'] != event.operation_id or control['command_target'] != event.renewal:
+            raise PaymentConflict('Renewal observation does not own the current command generation')
+        effective: str | None = event.renewal
+        watermark = control['last_update_id'] if manual_resolution else control['command_watermark']
+        if control['last_update_id'] > watermark and control['last_update_state'] != event.renewal:
+            effective = 'unknown'
+        db.execute(
+            '''UPDATE payment_renewal_control SET command_state='confirmed',effective_state=?,
+            command_watermark=?,bot_cancel_charge=?,revision=revision+1
+            WHERE merchant=? AND bot=? AND provider=? AND subscription_id=?''',
+            (
+                effective,
+                watermark,
+                operation['charge_id'] if event.renewal == 'canceled' else None,
+                *self._renewal_key(event.binding),
+            ),
+        )
 
     def _sub(self, db: sqlite3.Connection, binding: PaymentBinding) -> sqlite3.Row:
         row = db.execute(
@@ -744,10 +1019,11 @@ class SQLitePaymentLedger:
                 binding.subscription_id,
             ),
         )
+        self._sync_renewal_effective(db, binding)
 
     def _settle(self, db: sqlite3.Connection, event: ProviderEvent, kind: PaymentKind) -> None:
         if event.operation_id is None:
-            if kind in {'invoice', 'cancel-renewal'}:
+            if kind in {'invoice', 'cancel-renewal', 'resume-renewal'}:
                 raise ValidationFailure('Operation result requires its stable operation ID')
             return
         row = self._operation(db, event.binding, event.operation_id)
@@ -777,7 +1053,9 @@ class SQLitePaymentLedger:
             ),
         )
 
-    def _apply(self, db: sqlite3.Connection, event: ProviderEvent) -> None:
+    def _apply(
+        self, db: sqlite3.Connection, event: ProviderEvent, *, manual_renewal_resolution: bool = False
+    ) -> bool | None:
         b = event.binding
         self._order(db, b)
         if event.kind in {'paid', 'refunded'}:
@@ -919,14 +1197,40 @@ class SQLitePaymentLedger:
         elif event.kind == 'rejected':
             if event.operation_id is None:
                 raise ValidationFailure('Authoritative rejection requires the operation ID')
-            self._settle(db, event, cast(PaymentKind, self._operation(db, b, event.operation_id)['kind']))
+            rejected = self._operation(db, b, event.operation_id)
+            self._settle(db, event, cast(PaymentKind, rejected['kind']))
+            if rejected['kind'] in {'cancel-renewal', 'resume-renewal'} and rejected['charge_id'] is not None:
+                db.execute(
+                    '''UPDATE payment_renewal_control SET command_state='failed',revision=revision+1
+                    WHERE merchant=? AND bot=? AND provider=? AND subscription_id=? AND command_operation=?''',
+                    (*self._renewal_key(b), event.operation_id),
+                )
         elif event.kind == 'renewal-state':
             if b.subscription_id is None or event.renewal is None:
                 raise ValidationFailure('Renewal state requires the bound subscription and explicit state')
-            if event.operation_id is not None:
-                if event.renewal != 'canceled':
-                    raise PaymentConflict('Cancellation receipt must confirm cancellation of renewal')
-                self._settle(db, event, 'cancel-renewal')
+            if event.renewal_stream_epoch is not None:
+                if not self._ordered_renewal_update(db, event):
+                    return False
+            elif event.operation_id is not None:
+                operation = self._operation(db, b, event.operation_id)
+                kind = cast(PaymentKind, operation['kind'])
+                expected = 'canceled' if kind == 'cancel-renewal' else 'active'
+                if kind not in {'cancel-renewal', 'resume-renewal'} or event.renewal != expected:
+                    raise PaymentConflict('Renewal receipt differs from the saved command target')
+                if operation['charge_id'] is not None:
+                    if event.charge_id != operation['charge_id']:
+                        raise PaymentConflict('Renewal receipt differs from the saved native subscription charge')
+                    self._confirm_renewal_control(db, event, operation, manual_resolution=manual_renewal_resolution)
+                self._settle(db, event, kind)
+            elif (
+                db.execute(
+                    'SELECT 1 FROM payment_renewal_control WHERE merchant=? AND bot=? '
+                    'AND provider=? AND subscription_id=?',
+                    self._renewal_key(b),
+                ).fetchone()
+                is not None
+            ):
+                raise ValidationFailure('Controlled native renewal updates require their registered epoch and ID')
             self._sub(db, b)
             db.execute(
                 '''UPDATE payment_subscriptions SET renewal=? WHERE merchant=? AND bot=? AND provider=?
@@ -934,14 +1238,26 @@ class SQLitePaymentLedger:
                 (event.renewal, b.merchant_id, b.bot_id, b.provider, b.subscription_id),
             )
             self._stars(db, event)
+        return None
 
-    def _accept(self, event: ProviderEvent, instant: int, *, expected_revision: int | None = None) -> PaymentReceipt:
+    def _accept(
+        self,
+        event: ProviderEvent,
+        instant: int,
+        *,
+        expected_revision: int | None = None,
+        renewal_resolution: tuple[int, int, int, PaymentCheck] | None = None,
+    ) -> PaymentReceipt:
         b = event.binding
         data = asdict(event)
         del data['evidence_ref']  # A fresh verification reference does not create a second financial effect.
+        for field_name in ('renewal_stream_epoch', 'renewal_update_id'):
+            if data[field_name] is None:
+                del data[field_name]  # Preserve exact hashes of receipts accepted by schema 1 / release 0.26.
         digest = payload_digest(data)
         failure: Exception | None = None
         duplicate = False
+        stale = False
         with self._transaction() as db:
             self._order(db, b)
             if expected_revision is not None:
@@ -950,6 +1266,21 @@ class SQLitePaymentLedger:
                 op = self._operation(db, b, event.operation_id)
                 if op['state'] != 'unknown' or op['revision'] != expected_revision:
                     raise PaymentConflict('Reconciliation state or revision changed')
+            if renewal_resolution is not None:
+                operation_revision, control_revision, actor_id, check = renewal_resolution
+                if event.operation_id is None:
+                    raise ValidationFailure('Renewal resolution requires the original operation ID')
+                op = self._operation(db, b, event.operation_id)
+                control = self._renewal_control(db, b)
+                if (
+                    op['state'] not in {'unknown', 'confirmed'}
+                    or op['revision'] != operation_revision
+                    or op['actor_id'] != actor_id
+                    or control['revision'] != control_revision
+                    or control['command_operation'] != event.operation_id
+                ):
+                    raise PaymentConflict('Renewal resolution ownership, state or revision changed')
+                self._check(db, check, self._snapshot(b, op), True)
             db.execute('SAVEPOINT provider_observation')
             try:
                 old = db.execute(
@@ -962,7 +1293,7 @@ class SQLitePaymentLedger:
                         raise PaymentConflict('Provider event identity has conflicting contents')
                     duplicate = True
                 else:
-                    self._apply(db, event)
+                    stale = self._apply(db, event, manual_renewal_resolution=renewal_resolution is not None) is False
                     db.execute(
                         'INSERT INTO payment_events VALUES (?,?,?,?,?,?,?)',
                         (
@@ -984,15 +1315,16 @@ class SQLitePaymentLedger:
                 db,
                 b,
                 event.kind,
-                'rejected' if failure else 'duplicate' if duplicate else 'accepted',
+                'rejected' if failure else 'duplicate' if duplicate else 'stale' if stale else 'accepted',
                 instant,
                 operation_id=event.operation_id,
                 provider_state=event.provider_state,
                 evidence_ref=event.evidence_ref,
+                actor_id=renewal_resolution[2] if renewal_resolution is not None else None,
             )
         if failure is not None:
             raise failure
-        return PaymentReceipt(event.kind, duplicate, event.event_id, b.order_id)
+        return PaymentReceipt(event.kind, duplicate, event.event_id, b.order_id, stale)
 
     def apply_event(self, raw: Any, *, verify: PaymentVerifier, now: int | None = None) -> PaymentReceipt:
         """ALWAYS verify outside SQLite; a constructed ProviderEvent is never accepted by itself."""
@@ -1007,6 +1339,30 @@ class SQLitePaymentLedger:
         if event.kind not in {'invoice-created', 'refunded', 'renewal-state', 'rejected'}:
             raise ValidationFailure('Reconciliation needs an authoritative terminal operation observation')
         return self._accept(event, _now(now), expected_revision=expected_revision)
+
+    def reconcile_renewal(
+        self,
+        raw: Any,
+        *,
+        verify: PaymentVerifier,
+        expected_revision: int,
+        expected_control_revision: int,
+        actor_id: int,
+        check: PaymentCheck,
+        now: int | None = None,
+    ) -> PaymentReceipt:
+        """Explicit trusted operator/provider proof, never a fabricated status GET or an uncorrelated update."""
+        event = self._verified(raw, verify)
+        _integer(expected_revision, 2**63 - 1, positive=True)
+        _integer(expected_control_revision, 2**63 - 1, positive=True)
+        _id(actor_id)
+        if event.kind != 'renewal-state' or event.operation_id is None or event.renewal_stream_epoch is not None:
+            raise ValidationFailure('Resolve a saved renewal command using independently verified current setting')
+        return self._accept(
+            event,
+            _now(now),
+            renewal_resolution=(expected_revision, expected_control_revision, actor_id, check),
+        )
 
     def get_operation(self, binding: PaymentBinding, operation_id: str) -> PaymentOperation:
         db = self._read_connection()

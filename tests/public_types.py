@@ -303,3 +303,33 @@ async def stars_consumer(bot: Bot, ledger: SQLitePaymentLedger, message: Message
 
 def bad_stars_consumer(bot: Bot, ledger: SQLitePaymentLedger) -> StarsPaymentAdapter:
     return StarsPaymentAdapter(bot, ledger, timeout_seconds='fast')  # type: ignore[arg-type]
+
+# Future renewal settings have their own native command kind and fenced update identity.
+from aiogram.types import BotSubscriptionUpdated, Update
+renewal_kind: PaymentKind = 'resume-renewal'
+stars_subscription_binding = PaymentBinding('merchant:type', 100, 42, 'order:subscription', 'telegram',
+    Money(20, 'XTR', 0), route='telegram-stars', subscription_id='sub:type')
+
+async def renewal_lookup(native: BotSubscriptionUpdated) -> tuple[PaymentBinding, str] | None:
+    return (stars_subscription_binding, 'invoice:subscription') if native.user.id == 42 else None
+
+async def renewal_consumer(bot: Bot, ledger: SQLitePaymentLedger, update: Update, raw: object) -> PaymentOperation:
+    adapter = StarsPaymentAdapter(bot, ledger)
+    controller = ledger.register_renewal_stream(stars_subscription_binding, 'stream:type')
+    native: ProviderEvent = await adapter.subscription_event(stars_subscription_binding, update,
+        invoice_operation_id='invoice:subscription', stream_epoch='stream:type', evidence_ref='trusted:update')
+    subscription_router: Router = adapter.subscription_router(renewal_lookup, stream_epoch='stream:type')
+    saved: PaymentOperation = ledger.request_renewal_change(stars_subscription_binding, 'native:charge',
+        'renewal:type', 900, is_canceled=True, check=payment_check)
+    edited: PaymentOperation = await adapter.edit_renewal(stars_subscription_binding, 'native:charge',
+        'renewal:type', 900, is_canceled=True, check=payment_check)
+    future_setting: str = ledger.get_renewal_control(stars_subscription_binding)['effective_state']
+    return await adapter.reconcile_renewal(stars_subscription_binding, 'renewal:type', raw,
+        verify=trusted_payment_verifier, expected_revision=edited.revision,
+        expected_control_revision=controller['revision'], actor_id=900, check=payment_check)
+
+def renewal_stale(receipt: PaymentReceipt) -> bool:
+    return receipt.stale
+
+bad_native_renewal_id = ProviderEvent(stars_subscription_binding, 'native', 'renewal-state', 'active', 'proof',
+    renewal='active', renewal_stream_epoch='stream:type', renewal_update_id='42')  # type: ignore[arg-type]

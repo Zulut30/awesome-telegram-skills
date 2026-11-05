@@ -3,7 +3,7 @@ name: telegram-mini-app-integration
 description: "Связывает Telegram-бот, Mini App и backend: точки запуска, menu buttons, deep links и обмен данными. Используйте для интеграции компонентов и входа пользователя в приложение. Не для проверки initData на backend → telegram-mini-app-auth."
 license: MIT
 metadata:
-  version: "0.26.0"
+  version: "0.27.0"
 ---
 
 # Интеграция бота и Mini App

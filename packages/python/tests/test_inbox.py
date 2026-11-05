@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import hashlib
 import json
 import multiprocessing
 import os
@@ -47,6 +48,32 @@ def _effect_then_crash(database):
 
     once.run('bot:100', 'update:1', claim.payload, effect)
     os._exit(23)  # Durable effect happened; queue completion did not.
+
+
+def _legacy_v1_database(path):
+    payload = json.dumps(
+        {'update_id': 1, 'pre_checkout_query': {'id': 'old-query'}}, sort_keys=True, separators=(',', ':')
+    )
+    with closing(sqlite3.connect(path)) as db, db:
+        db.execute(
+            'CREATE TABLE telegram_pattern_inbox_meta(singleton INTEGER PRIMARY KEY CHECK(singleton=1),'
+            'schema_version INTEGER NOT NULL)'
+        )
+        db.execute('INSERT INTO telegram_pattern_inbox_meta VALUES(1,1)')
+        db.execute("""CREATE TABLE telegram_pattern_inbox (
+            bot_id INTEGER NOT NULL, update_id INTEGER NOT NULL, payload_version INTEGER NOT NULL,
+            payload_json TEXT NOT NULL,payload_hash TEXT NOT NULL,
+            state TEXT NOT NULL CHECK(state IN ('pending','processing','done','quarantined')),
+            reason TEXT,received_at REAL NOT NULL,available_at REAL NOT NULL,
+            attempts INTEGER NOT NULL,max_attempts INTEGER NOT NULL,worker_id TEXT,claim_token TEXT,lease_until REAL,
+            PRIMARY KEY(bot_id,update_id))""")
+        db.execute(
+            "INSERT INTO telegram_pattern_inbox VALUES(100,1,1,?,?,'pending',NULL,100,100,0,5,NULL,NULL,NULL)",
+            (payload, hashlib.sha256(payload.encode()).hexdigest()),
+        )
+        db.execute('CREATE TABLE business(value TEXT)')
+        db.execute("INSERT INTO business VALUES('preserve')")
+    return payload
 
 
 class InboxTests(unittest.TestCase):
@@ -293,10 +320,88 @@ class InboxTests(unittest.TestCase):
         self.store.initialize()
         with closing(sqlite3.connect(self.database)) as db, db:
             self.assertEqual(db.execute('SELECT value FROM business').fetchone()[0], 'preserve')
-            db.execute('UPDATE telegram_pattern_inbox_meta SET schema_version=2')
+            db.execute('UPDATE telegram_pattern_inbox_meta SET schema_version=999')
         with self.assertRaises(UnsupportedCapability):
             self.store.initialize()
         self.assertEqual(self.store.get(100, 1).state, 'pending')
+
+    def test_priority_lanes_are_explicit_and_default_claim_preserves_fifo(self):
+        self.store.receive(100, 1, {'update_id': 1, 'message': {}}, priority=0, now=100)
+        self.store.receive(100, 2, {'update_id': 2, 'pre_checkout_query': {}}, priority=1, now=101)
+        self.store.receive(100, 3, {'update_id': 3, 'other': {}}, priority=2, now=102)
+        ordinary = self.store.claim(100, 'default', now=103)
+        self.assertEqual(
+            ordinary.update_id, 1, 'None retains existing FIFO rather than silently preferring a larger priority'
+        )
+        critical = self.store.claim(100, 'critical', priorities=(2, 1), now=103)
+        self.assertEqual(
+            critical.update_id, 2, 'filter order cannot rewrite first-seen order within the selected lanes'
+        )
+        self.assertEqual(self.store.complete(critical, now=104).priority, 1)
+        self.assertEqual(self.store.get(100, 2).received_at, 101)
+        self.assertEqual(self.store.get(100, 3).received_at, 102)
+        self.assertIsNone(self.store.claim(100, 'ordinary', priorities=(0,), now=104))
+        self.assertEqual(self.store.claim(100, 'second-lane', priorities=(2,), now=104).update_id, 3)
+
+    def test_replayed_priority_and_time_do_not_promote_or_refresh_an_existing_receipt(self):
+        payload = {'update_id': 1, 'pre_checkout_query': {'id': 'original'}}
+        original = self.store.receive(100, 1, payload, priority=0, now=100)
+        replay = self.store.receive(100, 1, payload, priority=255, now=999)
+        record = SQLiteInbox(self.database).get(100, 1)
+        self.assertEqual((original.priority, replay.priority, record.priority), (0, 0, 0))
+        self.assertTrue(replay.duplicate)
+        self.assertEqual((record.received_at, record.available_at), (100, 100))
+        self.assertEqual(record.payload, payload)
+        self.assertIsNone(self.store.claim(100, 'urgent', priorities=(255,), now=1000))
+        self.assertEqual(self.store.claim(100, 'ordinary', priorities=(0,), now=1000).update_id, 1)
+
+    def test_invalid_priority_and_lane_filters_cannot_change_or_claim_queue_state(self):
+        for priority in (True, False, -1, 256, 1.0, '1', None):
+            with self.subTest(priority=priority), self.assertRaises(ValidationFailure):
+                self.store.receive(100, 1, {'update_id': 1}, priority=priority, now=100)
+        self.assertIsNone(self.store.get(100, 1))
+        self.receive()
+        for lanes in ((), [], [0], (True,), (1.0,), (-1,), (256,), ('0 OR 1=1',), (1, 1), tuple(range(17))):
+            with self.subTest(lanes=repr(lanes)), self.assertRaises(ValidationFailure):
+                self.store.claim(100, 'worker', priorities=lanes, now=100)
+        record = self.store.get(100, 1)
+        self.assertEqual((record.state, record.attempts), ('pending', 0))
+
+    def test_version_one_reopen_migrates_zero_lane_without_freshness_or_business_changes(self):
+        path = Path(self.temporary.name) / 'legacy-v1.sqlite'
+        payload = _legacy_v1_database(path)
+        migrated = SQLiteInbox(path)
+        migrated.initialize()
+        migrated.initialize()
+        reopened = SQLiteInbox(path)
+        record = reopened.get(100, 1)
+        self.assertEqual((record.priority, record.received_at, record.available_at, record.attempts), (0, 100, 100, 0))
+        self.assertEqual(record.payload_json, payload)
+        replay = reopened.receive(100, 1, record.payload, priority=1, now=1000)
+        self.assertEqual((replay.priority, replay.duplicate), (0, True))
+        self.assertIsNone(reopened.claim(100, 'urgent', priorities=(1,), now=1000))
+        self.assertEqual(reopened.claim(100, 'legacy', now=1000).update_id, 1)
+        with closing(sqlite3.connect(path)) as db:
+            self.assertEqual(db.execute('SELECT schema_version FROM telegram_pattern_inbox_meta').fetchone()[0], 2)
+            self.assertEqual(db.execute('SELECT value FROM business').fetchone()[0], 'preserve')
+
+    def test_version_one_migration_rolls_back_column_and_version_when_metadata_write_fails(self):
+        path = Path(self.temporary.name) / 'rollback-v1.sqlite'
+        payload = _legacy_v1_database(path)
+        with closing(sqlite3.connect(path)) as db, db:
+            db.execute(
+                "CREATE TRIGGER fail_migration BEFORE UPDATE ON telegram_pattern_inbox_meta "
+                "BEGIN SELECT RAISE(ABORT,'fixture migration failure'); END"
+            )
+        with self.assertRaisesRegex(sqlite3.IntegrityError, 'fixture migration failure'):
+            SQLiteInbox(path).initialize()
+        with closing(sqlite3.connect(path)) as db, db:
+            self.assertEqual(db.execute('SELECT schema_version FROM telegram_pattern_inbox_meta').fetchone()[0], 1)
+            self.assertNotIn('priority', {row[1] for row in db.execute('PRAGMA table_info(telegram_pattern_inbox)')})
+            self.assertEqual(db.execute('SELECT payload_json FROM telegram_pattern_inbox').fetchone()[0], payload)
+            db.execute('DROP TRIGGER fail_migration')
+        SQLiteInbox(path).initialize()
+        self.assertEqual(SQLiteInbox(path).get(100, 1).priority, 0)
 
     def test_storage_failure_is_not_reported_as_receipt(self):
         with patch.object(self.store, '_connect', side_effect=sqlite3.OperationalError('fixture unavailable')):

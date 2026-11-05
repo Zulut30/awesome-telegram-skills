@@ -160,10 +160,11 @@ def main():
     files[ROOT / 'packages/typescript/src/native-catalog.ts'] += ('const eventDefinitions = ' + json.dumps(event_definitions, indent=2)
         + ' as const;\nexport const TELEGRAM_NATIVE_EVENT_DETAILS = Object.freeze(Object.fromEntries(Object.entries(eventDefinitions).map(([key,value]) => [key,Object.freeze(value)]))) as Readonly<typeof eventDefinitions>;\n')
     files[ROOT / 'recipes/mini-app/README.md'] = ('# Native Mini App API\n\n'
-        'Каталог функций текущего официального client API. `TelegramNativeAPI` проверяет version gate и наличие метода; permissions, параметры, результат callback и жизненный цикл экрана проверяет вызывающий код. Сигнатуры здесь справочные; wrapper не подменяет их полной TypeScript схемой SDK.\n\n'
+        'Каталог функций текущего официального client API. `TelegramNativeAPI` проверяет опубликованную минимальную версию и наличие метода; permissions, результат callback и жизненный цикл экрана проверяет вызывающий код. Аргументы и возвращаемые значения типизированы по отдельной таблице документации.\n\n'
+        'Для `Serverless.call` минимальная версия не опубликована (`min_version: null`). Универсальный фасад всегда возвращает false из supports и запрещает call этого пути. Для явно выбранного Telegram Serverless hosting используйте `ServerlessEndpointClient` с opt-in и presence gate; обычный Python backend сохраняется. Контекст, серверные права, неизвестный исход записи и сверка описаны в [инструкции Serverless](../../docs/telegram-serverless.md). Отдельный адаптер не подтверждает реальную поддержку устройства.\n\n'
         '```typescript\nimport { TelegramNativeAPI } from "@awesome-telegram/patterns";\ndeclare const nativeApp: unknown; // Host передает свой Telegram.WebApp.\nconst api = new TelegramNativeAPI(nativeApp);\nif (api.supports("HapticFeedback.selectionChanged")) {\n  api.call("HapticFeedback.selectionChanged");\n}\nconst unsubscribe = api.supports("onEvent") && api.supports("offEvent")\n  ? api.listen("themeChanged", () => { /* перечитать тему */ }) : () => {};\n// При уходе с экрана:\nunsubscribe();\napi.dispose();\n```\n\n'
         '| Путь | Native сигнатура | Минимальная версия | Документация |\n| --- | --- | --- | --- |\n'
-        + ''.join(f'| `{item["path"]}` | `{item["signature"]}` | {item["min_version"]} | [Telegram]({item["url"]}) |\n' for item in mini['methods'])
+        + ''.join(f'| `{item["path"]}` | `{item["signature"]}` | {item["min_version"] if item["min_version"] is not None else "не опубликована; вызов фасадом запрещён"} | [Telegram]({item["url"]}) |\n' for item in mini['methods'])
         + '\n## События\n\n' + ', '.join(f'`{item["name"]}`' for item in mini['events']) + '.\n\n'
         'Обычный браузер и mock не подтверждают поддержку настоящим Telegram-клиентом. Методы с user interaction / init / permissions вызывайте в указанном документацией порядке; callback может означать отказ или отмену, а отсутствие синхронной ошибки не означает успех. Отписки для `onClick`/`onEvent`, вызванных напрямую через call, принадлежат вам; listen управляет только своими подписками.\n')
     readme = '# Все методы Bot API\n\nСнимок ' + index['bot_api_version'] + ', ' + str(len(entries)) + ' методов. Для каждой строки есть Python пример построения запроса через публичный API библиотеки. Значения искусственные; Telegram HTTP/права/бизнес-сценарии ими не проверены. Практические примеры клавиатур: [keyboards.md](keyboards.md).\n\n| Метод | Обязательные параметры SDK |\n| --- | --- |\n'
@@ -175,7 +176,7 @@ def main():
             if not path.is_file() or path.read_text(encoding='utf-8') != content: raise ValueError('Generated output drift: ' + str(path))
         else:
             path.parent.mkdir(parents=True, exist_ok=True)
-            path.write_text(content, encoding='utf-8')
+            path.write_text(content, encoding='utf-8', newline='\n')
     print(json.dumps({'passed': True, 'methods': len(entries), 'types': len(types), 'mini_app_methods': len(mini['methods']),
                       'mini_app_events': len(mini['events']), 'mode': 'check' if args.check else 'write', 'network': False}))
 

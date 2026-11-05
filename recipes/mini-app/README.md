@@ -1,6 +1,8 @@
 # Native Mini App API
 
-Каталог функций текущего официального client API. `TelegramNativeAPI` проверяет version gate и наличие метода; permissions, параметры, результат callback и жизненный цикл экрана проверяет вызывающий код. Сигнатуры здесь справочные; wrapper не подменяет их полной TypeScript схемой SDK.
+Каталог функций текущего официального client API. `TelegramNativeAPI` проверяет опубликованную минимальную версию и наличие метода; permissions, результат callback и жизненный цикл экрана проверяет вызывающий код. Аргументы и возвращаемые значения типизированы по отдельной таблице документации.
+
+Для `Serverless.call` минимальная версия не опубликована (`min_version: null`). Универсальный фасад всегда возвращает false из supports и запрещает call этого пути. Для явно выбранного Telegram Serverless hosting используйте `ServerlessEndpointClient` с opt-in и presence gate; обычный Python backend сохраняется. Контекст, серверные права, неизвестный исход записи и сверка описаны в [инструкции Serverless](../../docs/telegram-serverless.md). Отдельный адаптер не подтверждает реальную поддержку устройства.
 
 ```typescript
 import { TelegramNativeAPI } from "@awesome-telegram/patterns";
@@ -74,6 +76,7 @@ api.dispose();
 | `SecureStorage.removeItem` | `removeItem(key[, callback])` | 9.0 | [Telegram](https://core.telegram.org/bots/webapps#securestorage) |
 | `SecureStorage.restoreItem` | `restoreItem(key[, callback])` | 9.0 | [Telegram](https://core.telegram.org/bots/webapps#securestorage) |
 | `SecureStorage.setItem` | `setItem(key, value[, callback])` | 9.0 | [Telegram](https://core.telegram.org/bots/webapps#securestorage) |
+| `Serverless.call` | `call(name[, input][, callback])` | не опубликована; вызов фасадом запрещён | [Telegram](https://core.telegram.org/bots/webapps#serverless) |
 | `SettingsButton.hide` | `hide()` | 7.0 | [Telegram](https://core.telegram.org/bots/webapps#settingsbutton) |
 | `SettingsButton.offClick` | `offClick(callback)` | 7.0 | [Telegram](https://core.telegram.org/bots/webapps#settingsbutton) |
 | `SettingsButton.onClick` | `onClick(callback)` | 7.0 | [Telegram](https://core.telegram.org/bots/webapps#settingsbutton) |

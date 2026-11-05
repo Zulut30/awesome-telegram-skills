@@ -11,7 +11,7 @@ import time
 import uuid
 from typing import TypedDict
 
-from telegram_patterns import PermissionDenied, SQLiteOnce, ValidationFailure, validate_init_data
+from telegram_patterns import Money, PaymentBinding, PaymentConflict, PermissionDenied, SQLiteOnce, SQLitePaymentLedger, ValidationFailure, validate_init_data
 from .storage import connection
 
 class Product(TypedDict):
@@ -50,8 +50,8 @@ class Store:
         with connection(database, write=True) as db:
             db.execute('CREATE TABLE IF NOT EXISTS shop_schema(version INTEGER NOT NULL)')
             versions=db.execute('SELECT version FROM shop_schema').fetchall()
-            if versions and [r[0] for r in versions] not in ([1],[2]):raise ValueError('Shop schema requires migration')
-            if not versions:db.execute('INSERT INTO shop_schema VALUES(2)')
+            if versions and [r[0] for r in versions] not in ([1],[2],[3]):raise ValueError('Shop schema requires migration')
+            if not versions:db.execute('INSERT INTO shop_schema VALUES(3)')
             for sql in (
                 # csrf_hash stays NULL since bearer sessions (no cookie); existing v1 rows stay compatible.
                 'CREATE TABLE IF NOT EXISTS shop_sessions(token_hash TEXT PRIMARY KEY,bot_id INTEGER,actor_id INTEGER,csrf_hash TEXT,expires INTEGER)',
@@ -59,9 +59,16 @@ class Store:
                 'CREATE TABLE IF NOT EXISTS shop_receipts(bot_id INTEGER,charge TEXT,order_id TEXT,actor_id INTEGER,amount INTEGER,currency TEXT,review INTEGER,PRIMARY KEY(bot_id,charge))',
                 'CREATE TABLE IF NOT EXISTS shop_access(bot_id INTEGER,actor_id INTEGER,sku TEXT,order_id TEXT,PRIMARY KEY(bot_id,actor_id,sku))',
                 "CREATE TABLE IF NOT EXISTS shop_roles(bot_id INTEGER NOT NULL,actor_id INTEGER NOT NULL,role TEXT NOT NULL CHECK(role IN ('customer','viewer','blocked')),PRIMARY KEY(bot_id,actor_id))",
+                'CREATE TABLE IF NOT EXISTS shop_operators(bot_id INTEGER NOT NULL,actor_id INTEGER NOT NULL,enabled INTEGER NOT NULL CHECK(enabled IN (0,1)),PRIMARY KEY(bot_id,actor_id))',
+                'CREATE TABLE IF NOT EXISTS shop_payment_links(bot_id INTEGER NOT NULL,charge TEXT NOT NULL,order_id TEXT NOT NULL,actor_id INTEGER NOT NULL,amount INTEGER NOT NULL,currency TEXT NOT NULL,payload TEXT NOT NULL,invoice_operation TEXT NOT NULL,financial_order TEXT NOT NULL,financial_ready INTEGER NOT NULL DEFAULT 0,PRIMARY KEY(bot_id,charge))',
+                'CREATE TABLE IF NOT EXISTS shop_payment_ingress(id INTEGER PRIMARY KEY AUTOINCREMENT,bot_id INTEGER NOT NULL,charge TEXT NOT NULL,kind TEXT NOT NULL,event_json TEXT NOT NULL,event_hash TEXT NOT NULL,processed INTEGER NOT NULL DEFAULT 0,UNIQUE(bot_id,charge,kind))',
+                'CREATE TABLE IF NOT EXISTS shop_refund_intents(bot_id INTEGER NOT NULL,operation TEXT NOT NULL,order_id TEXT NOT NULL,charge TEXT NOT NULL,actor_id INTEGER NOT NULL,created_at INTEGER NOT NULL,PRIMARY KEY(bot_id,operation))',
+                'CREATE TABLE IF NOT EXISTS shop_operator_audit(sequence INTEGER PRIMARY KEY AUTOINCREMENT,bot_id INTEGER NOT NULL,actor_id INTEGER NOT NULL,order_id TEXT NOT NULL,operation TEXT,action TEXT NOT NULL,outcome TEXT NOT NULL,recorded_at INTEGER NOT NULL)',
+                'CREATE TABLE IF NOT EXISTS shop_refund_facts(bot_id INTEGER NOT NULL,charge TEXT NOT NULL,order_id TEXT NOT NULL,PRIMARY KEY(bot_id,charge))',
             ):db.execute(sql)
-            db.execute('UPDATE shop_schema SET version=2')  # Additive v1 migration; existing rows are preserved.
+            db.execute('UPDATE shop_schema SET version=3')  # Additive v1 migration; existing rows are preserved.
         self.once=SQLiteOnce(database,timeout=1);self.once.initialize()
+        self.financial=SQLitePaymentLedger(database,timeout=1);self.financial.initialize()
 
     def actor(self, value: int) -> int:
         if type(value) is not int or value<=0:raise PermissionDenied()
@@ -79,6 +86,37 @@ class Store:
         if not isinstance(role,str) or role not in {'customer','viewer','blocked'}:raise ValidationFailure()
         with connection(self.database,write=True) as db:
             db.execute('INSERT INTO shop_roles VALUES(?,?,?) ON CONFLICT(bot_id,actor_id) DO UPDATE SET role=excluded.role',(self.bot_id,actor,role))
+
+    def configure_operator(self, actor: int, enabled: bool) -> None:
+        """Trusted owner-only capability configuration; never accepts a browser role claim."""
+        self.actor(actor)
+        if type(enabled) is not bool:raise ValidationFailure()
+        with connection(self.database,write=True) as db:
+            db.execute('INSERT INTO shop_operators VALUES(?,?,?) ON CONFLICT(bot_id,actor_id) DO UPDATE SET enabled=excluded.enabled',(self.bot_id,actor,int(enabled)))
+
+    def _operator(self, db: sqlite3.Connection, actor: int) -> None:
+        if self._role(db,actor)=='blocked' or not db.execute('SELECT 1 FROM shop_operators WHERE bot_id=? AND actor_id=? AND enabled=1',(self.bot_id,actor)).fetchone():raise PermissionDenied()
+
+    def operator_identity(self, token: str) -> int:
+        with connection(self.database) as db:
+            actor=self._session_actor(db,token,int(self.now()));self._operator(db,actor);return actor
+
+    def operator_order(self, token: str, order_id: str) -> dict:
+        with connection(self.database) as db:
+            actor=self._session_actor(db,token,int(self.now()));self._operator(db,actor)
+            row=db.execute('SELECT * FROM shop_orders WHERE id=? AND bot_id=?',(order_id,self.bot_id)).fetchone()
+            if row is None:raise PermissionDenied()
+            return dict(row)
+
+    def refund_check(self, token: str, actor: int):
+        """The ledger runs this exact session/current-capability check inside reserve/start/replay writer."""
+        def check(db,operation,replayed):
+            if self._session_actor(db,token,int(self.now()))!=actor or operation.actor_id!=actor or operation.binding.bot_id!=self.bot_id or operation.kind!='refund':return False
+            self._operator(db,actor)
+            link=db.execute('SELECT order_id,actor_id,amount,currency,financial_order FROM shop_payment_links WHERE bot_id=? AND charge=? AND financial_ready=1',(self.bot_id,operation.charge_id)).fetchone()
+            if link is None:return False
+            return (link['actor_id'],link['amount'],link['currency'],link['financial_order'])==(operation.binding.user_id,operation.amount.minor_units,operation.amount.currency,operation.binding.order_id)
+        return check
 
     def _role(self, db: sqlite3.Connection, actor: int) -> str:
         self.actor(actor)
@@ -222,27 +260,148 @@ class Store:
     def paid(self, bot_id: int, actor: int, payload: str, currency: str, amount: int, charge: str) -> dict:
         if not isinstance(charge,str) or not charge or len(charge)>512:raise PermissionDenied()
         with connection(self.database,write=True) as db:
-            row=self.payment_order(db,bot_id,actor,payload,currency,amount)
-            old=db.execute('SELECT * FROM shop_receipts WHERE bot_id=? AND charge=?',(self.bot_id,charge)).fetchone()
-            if old:
-                if old['order_id']!=row['id'] or old['actor_id']!=actor or old['amount']!=amount or old['currency']!=currency:raise PermissionDenied()
-                return {'replayed':True,'review':bool(old['review'])}
-            review=self._role(db,actor)!='customer' or row['status'] in {'paid','review'} or any(db.execute('SELECT 1 FROM shop_access WHERE bot_id=? AND actor_id=? AND sku=?',(self.bot_id,actor,s)).fetchone() for s in json.loads(row['items']))
-            db.execute('INSERT INTO shop_receipts VALUES(?,?,?,?,?,?,?)',(self.bot_id,charge,row['id'],actor,amount,currency,int(review)))
-            if not review:
-                # Authenticated receipt may arrive after restart or without a retained
-                # precheckout update. Never require browser callback as proof.
-                db.execute("UPDATE shop_orders SET status='paid' WHERE id=?",(row['id'],))
-                for sku in json.loads(row['items']):
-                    db.execute('INSERT OR IGNORE INTO shop_access VALUES(?,?,?,?)',(self.bot_id,actor,sku,row['id']))
-            elif row['status']!='paid':
-                db.execute("UPDATE shop_orders SET status='review' WHERE id=?",(row['id'],))
-            return {'replayed':False,'review':review}
+            return self._paid(db,bot_id,actor,payload,currency,amount,charge)
+
+    def _paid(self, db: sqlite3.Connection, bot_id: int, actor: int, payload: str, currency: str, amount: int, charge: str) -> dict:
+        row=self.payment_order(db,bot_id,actor,payload,currency,amount)
+        old=db.execute('SELECT * FROM shop_receipts WHERE bot_id=? AND charge=?',(self.bot_id,charge)).fetchone()
+        if old:
+            if old['order_id']!=row['id'] or old['actor_id']!=actor or old['amount']!=amount or old['currency']!=currency:raise PermissionDenied()
+            return {'replayed':True,'review':bool(old['review'])}
+        refunded=db.execute('SELECT 1 FROM shop_refund_facts WHERE bot_id=? AND charge=?',(self.bot_id,charge)).fetchone() is not None
+        review=refunded or self._role(db,actor)!='customer' or row['status'] in {'paid','review','refunded'} or any(db.execute('SELECT 1 FROM shop_access WHERE bot_id=? AND actor_id=? AND sku=?',(self.bot_id,actor,s)).fetchone() for s in json.loads(row['items']))
+        db.execute('INSERT INTO shop_receipts VALUES(?,?,?,?,?,?,?)',(self.bot_id,charge,row['id'],actor,amount,currency,int(review)))
+        if not review:
+            # Authenticated receipt may arrive after restart or without a retained
+            # precheckout update. Never require browser callback as proof.
+            db.execute("UPDATE shop_orders SET status='paid' WHERE id=?",(row['id'],))
+            for sku in json.loads(row['items']):
+                db.execute('INSERT OR IGNORE INTO shop_access VALUES(?,?,?,?)',(self.bot_id,actor,sku,row['id']))
+        elif refunded:
+            db.execute("UPDATE shop_orders SET status='refunded' WHERE id=?",(row['id'],))
+        elif row['status'] not in {'paid','refunded'}:
+            db.execute("UPDATE shop_orders SET status='review' WHERE id=?",(row['id'],))
+        return {'replayed':False,'review':review}
+
 
     def content(self, actor: int, sku: str) -> dict:
         self.actor(actor)
         with connection(self.database) as db:
             self._authorize(db,actor)
-            allowed=db.execute("SELECT 1 FROM shop_access a JOIN shop_orders o ON o.id=a.order_id AND o.actor_id=a.actor_id AND o.bot_id=a.bot_id WHERE a.bot_id=? AND a.actor_id=? AND a.sku=? AND o.status='paid'",(self.bot_id,actor,sku)).fetchone()
+            allowed=db.execute("SELECT a.order_id FROM shop_access a JOIN shop_orders o ON o.id=a.order_id AND o.actor_id=a.actor_id AND o.bot_id=a.bot_id WHERE a.bot_id=? AND a.actor_id=? AND a.sku=? AND o.status='paid'",(self.bot_id,actor,sku)).fetchone()
         if not allowed or sku not in CONTENT:raise PermissionDenied()
+        with connection(self.database) as db:
+            closed=db.execute('SELECT 1 FROM shop_receipts r JOIN shop_refund_facts f ON f.bot_id=r.bot_id AND f.charge=r.charge WHERE r.bot_id=? AND r.order_id=? AND r.actor_id=? AND r.review=0',(self.bot_id,allowed['order_id'],actor)).fetchone()
+            if closed is not None:raise PermissionDenied()
+            linked=db.execute('SELECT l.* FROM shop_receipts r JOIN shop_payment_links l ON l.bot_id=r.bot_id AND l.charge=r.charge WHERE r.bot_id=? AND r.order_id=? AND r.actor_id=? AND r.review=0 AND l.financial_ready=1',(self.bot_id,allowed['order_id'],actor)).fetchone()
+        if linked is not None:
+            try:active=self.financial.has_access(self.link_binding(dict(linked)),now=int(self.now())).active
+            except PaymentConflict:raise PermissionDenied() from None
+            if not active:raise PermissionDenied()
         return {'id':sku,'title':CATALOG[sku]['title'],'text':CONTENT[sku]}
+
+    @staticmethod
+    def link_binding(link: dict) -> PaymentBinding:
+        return PaymentBinding(f"shop:{link['bot_id']}",link['bot_id'],link['actor_id'],link['financial_order'],'telegram-stars',Money(link['amount'],link['currency'],0),route='telegram-stars')
+
+    def receipt_target(self, actor: int, payload: str, currency: str, amount: int) -> dict:
+        with connection(self.database) as db:return self.payment_order(db,self.bot_id,actor,payload,currency,amount)
+
+    def payment_link(self, order_id: str, charge: str) -> dict | None:
+        with connection(self.database) as db:
+            row=db.execute('SELECT * FROM shop_payment_links WHERE bot_id=? AND charge=? AND order_id=?',(self.bot_id,charge,order_id)).fetchone()
+            return None if row is None else dict(row)
+
+    def record_financial_ingress(self, order: dict, charge: str, kind: str, event: dict) -> int:
+        """Trusted SDK/history ingress only. Commit native facts before ledger/projection work or ack."""
+        if kind not in {'paid','refunded'} or not isinstance(charge,str) or not charge or len(charge)>512:raise ValidationFailure()
+        encoded=json.dumps(event,sort_keys=True,separators=(',',':'),ensure_ascii=False)
+        if len(encoded.encode('utf-8'))>16384:raise ValidationFailure()
+        fingerprint=digest(encoded)
+        tag=digest(charge)
+        with connection(self.database,write=True) as db:
+            current=self.payment_order(db,self.bot_id,order['actor_id'],self.payload(order['id']),'XTR',order['total'])
+            link=(self.bot_id,charge,current['id'],current['actor_id'],current['total'],'XTR',self.payload(current['id']),'shop-import:'+current['operation']+':'+tag[:16],current['id']+':charge:'+tag)
+            old=db.execute('SELECT * FROM shop_payment_links WHERE bot_id=? AND charge=?',(self.bot_id,charge)).fetchone()
+            if old is None:db.execute('INSERT INTO shop_payment_links(bot_id,charge,order_id,actor_id,amount,currency,payload,invoice_operation,financial_order) VALUES(?,?,?,?,?,?,?,?,?)',link)
+            elif tuple(old[name] for name in ('bot_id','charge','order_id','actor_id','amount','currency','payload','invoice_operation','financial_order'))!=link:raise PaymentConflict('Native charge already belongs to another immutable shop order')
+            if kind=='refunded':
+                db.execute('INSERT OR IGNORE INTO shop_refund_facts VALUES(?,?,?)',(self.bot_id,charge,current['id']))
+                db.execute('UPDATE shop_payment_links SET financial_ready=1 WHERE bot_id=? AND charge=?',(self.bot_id,charge))
+            old=db.execute('SELECT id,event_hash,event_json FROM shop_payment_ingress WHERE bot_id=? AND charge=? AND kind=?',(self.bot_id,charge,kind)).fetchone()
+            if old is not None:
+                if digest(old['event_json'])!=old['event_hash']:raise PaymentConflict('Financial ingress record changed')
+                original=json.loads(old['event_json'])
+                financial=lambda value:{k:v for k,v in value.items() if k not in {'origin','evidence_ref','provider_state'}}
+                if financial(original)!=financial(event):raise PaymentConflict('Native charge has conflicting financial data')
+                return old['id']
+            identifier=db.execute('INSERT INTO shop_payment_ingress(bot_id,charge,kind,event_json,event_hash) VALUES(?,?,?,?,?)',(self.bot_id,charge,kind,encoded,fingerprint)).lastrowid
+            assert identifier is not None
+            return identifier
+
+    def financial_ingress(self, identifier: int) -> dict:
+        with connection(self.database) as db:
+            row=db.execute('SELECT * FROM shop_payment_ingress WHERE id=? AND bot_id=?',(identifier,self.bot_id)).fetchone()
+            if row is None:raise PermissionDenied()
+            result=dict(row)
+            if digest(result['event_json'])!=result['event_hash']:raise PaymentConflict('Financial ingress record changed')
+            return result
+
+    def pending_financial_ingress(self, *, limit: int = 100) -> list[int]:
+        if type(limit) is not int or not 1<=limit<=1000:raise ValidationFailure()
+        with connection(self.database) as db:return [r[0] for r in db.execute('SELECT id FROM shop_payment_ingress WHERE bot_id=? AND processed=0 ORDER BY id LIMIT ?',(self.bot_id,limit))]
+
+    def complete_financial_ingress(self, identifier: int) -> dict:
+        """Projection + handled marker commit together; the ledger was already independently committed."""
+        with connection(self.database,write=True) as db:
+            row=db.execute('SELECT * FROM shop_payment_ingress WHERE id=? AND bot_id=?',(identifier,self.bot_id)).fetchone()
+            if row is None:raise PermissionDenied()
+            event=json.loads(row['event_json']);link=db.execute('SELECT * FROM shop_payment_links WHERE bot_id=? AND charge=?',(self.bot_id,row['charge'])).fetchone()
+            if link is None:raise PaymentConflict('Missing immutable financial binding')
+            if row['processed']:return {'replayed':True,'review':False}
+            if row['kind']=='paid':
+                result=self._paid(db,self.bot_id,link['actor_id'],link['payload'],'XTR',link['amount'],row['charge'])
+            else:
+                db.execute('INSERT OR IGNORE INTO shop_refund_facts VALUES(?,?,?)',(self.bot_id,row['charge'],link['order_id']))
+                primary=db.execute('SELECT charge FROM shop_receipts WHERE bot_id=? AND order_id=? AND actor_id=? AND review=0',(self.bot_id,link['order_id'],link['actor_id'])).fetchone()
+                if primary is None or primary['charge']==row['charge']:
+                    db.execute('DELETE FROM shop_access WHERE bot_id=? AND actor_id=? AND order_id=?',(self.bot_id,link['actor_id'],link['order_id']))
+                    db.execute("UPDATE shop_orders SET status='refunded' WHERE id=? AND bot_id=?",(link['order_id'],self.bot_id))
+                result={'replayed':False,'review':False}
+            db.execute('UPDATE shop_payment_links SET financial_ready=1 WHERE bot_id=? AND charge=?',(self.bot_id,row['charge']))
+            db.execute('UPDATE shop_payment_ingress SET processed=1 WHERE id=?',(identifier,))
+            return result
+
+    def operator_receipts(self, token: str, order_id: str) -> list[dict]:
+        self.operator_order(token,order_id)
+        with connection(self.database) as db:return [dict(r) for r in db.execute('SELECT charge,amount,currency,review FROM shop_receipts WHERE bot_id=? AND order_id=?',(self.bot_id,order_id))]
+
+    def begin_refund_intent(self, token: str, order_id: str, charge: str, operation: str) -> dict:
+        if not isinstance(operation,str) or not UUID.fullmatch(operation) or not isinstance(charge,str) or not charge or len(charge)>512:raise ValidationFailure()
+        with connection(self.database,write=True) as db:
+            actor=self._session_actor(db,token,int(self.now()));self._operator(db,actor)
+            if not db.execute('SELECT 1 FROM shop_orders WHERE id=? AND bot_id=?',(order_id,self.bot_id)).fetchone():raise PermissionDenied()
+            old=db.execute('SELECT * FROM shop_refund_intents WHERE bot_id=? AND operation=?',(self.bot_id,operation)).fetchone()
+            if old is not None:
+                if (old['order_id'],old['charge'],old['actor_id'])!=(order_id,charge,actor):raise PaymentConflict('Refund operation already has another immutable intent')
+                return dict(old)
+            db.execute('INSERT INTO shop_refund_intents VALUES(?,?,?,?,?,?)',(self.bot_id,operation,order_id,charge,actor,int(self.now())))
+            db.execute('INSERT INTO shop_operator_audit(bot_id,actor_id,order_id,operation,action,outcome,recorded_at) VALUES(?,?,?,?,?,?,?)',(self.bot_id,actor,order_id,operation,'refund-request','intent-saved',int(self.now())))
+            return dict(db.execute('SELECT * FROM shop_refund_intents WHERE bot_id=? AND operation=?',(self.bot_id,operation)).fetchone())
+
+    def refund_intent(self, token: str, order_id: str, operation: str) -> dict | None:
+        self.operator_order(token,order_id)
+        with connection(self.database) as db:
+            row=db.execute('SELECT * FROM shop_refund_intents WHERE bot_id=? AND order_id=? AND operation=?',(self.bot_id,order_id,operation)).fetchone()
+            return None if row is None else dict(row)
+
+    def refund_intents(self, token: str, order_id: str) -> list[dict]:
+        self.operator_order(token,order_id)
+        with connection(self.database) as db:return [dict(r) for r in db.execute('SELECT * FROM shop_refund_intents WHERE bot_id=? AND order_id=? ORDER BY created_at,operation LIMIT 200',(self.bot_id,order_id))]
+
+    def record_operator_result(self, actor: int, order_id: str, operation: str | None, action: str, outcome: str) -> None:
+        """Trusted completion audit for an already-authorized action; revocation cannot erase its result."""
+        self.actor(actor)
+        if action not in {'refund-dispatch','refund-reconcile'} or outcome not in {'pending','sending','unknown','confirmed','failed','canceled','operator-review'}:raise ValidationFailure()
+        with connection(self.database,write=True) as db:
+            db.execute('INSERT INTO shop_operator_audit(bot_id,actor_id,order_id,operation,action,outcome,recorded_at) VALUES(?,?,?,?,?,?,?)',(self.bot_id,actor,order_id,operation,action,outcome,int(self.now())))

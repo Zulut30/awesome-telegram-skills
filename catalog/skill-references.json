@@ -189,7 +189,8 @@
     ],
     "docs/stars-payments.md": [
       ".agents/skills/telegram-code-patterns/references/stars-payments.md",
-      ".agents/skills/telegram-payments/references/stars-payments.md"
+      ".agents/skills/telegram-payments/references/stars-payments.md",
+      ".agents/skills/telegram-subscription-access/references/stars-payments.md"
     ]
   }
 }

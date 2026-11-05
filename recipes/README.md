@@ -8,7 +8,7 @@
 | Контакт, геопозиция, poll, выбор users/chat, ввод | [Клавиатуры и ввод](bot-api/keyboards.md), команды `/requests`, `/input`, `/hide` того же бота |
 | Нажатия, редактирование меню, события | [События](bot-api/events.md), owner-bound callback и UpdateObserver в боте |
 | Произвольный метод Bot API | [185 Python примеров](bot-api/README.md), [поиск SDK](../examples/python/api_catalog.py) |
-| Native функции Mini App | [99 методов / 44 события](mini-app/README.md), [примеры TypeScript](../examples/mini-app/src/native-recipes.ts) |
+| Native функции Mini App | [100 методов / 44 события](mini-app/README.md), [примеры TypeScript](../examples/mini-app/src/native-recipes.ts) |
 | Форма с подтверждением и повтором заявки | [Рабочая форма](../examples/python/form_bot.py), [сценарий без сети](../examples/python/offline_form.py) |
 | Адаптивный интерфейс на телефоне/планшете/ПК | [Mini App](../examples/mini-app/src/index.ts), shared shell/fields/styles |
 

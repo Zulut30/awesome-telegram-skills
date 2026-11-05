@@ -141,7 +141,7 @@ print(json.dumps({'core_without_sdk':True,'python':sys.version.split()[0]}))
                                              "print(m.version('awesome-telegram-patterns'), t.__version__)"], consumers).split()
         if cli_version != f'telegram-patterns {release.python_version}' or installed != [release.python_version] * 2:
             raise RuntimeError('Installed metadata, telegram_patterns.__version__ and --version differ')
-        report['version'] = {'cli': cli_version, 'metadata': installed[0], 'module': installed[1]}
+        report['version_probe'] = {'cli': cli_version, 'metadata': installed[0], 'module': installed[1]}
         report['release_identity'] = version
         report['maturity_cli'] = json.loads(run('maturity-cli', [str(core_console), 'recipes', '--maturity', 'experimental'], consumers))
         if len(report['maturity_cli']['recipes']) != 20 or any(item['maturity'] != 'experimental' for item in report['maturity_cli']['recipes']):
@@ -396,6 +396,8 @@ print(json.dumps({'core_without_sdk':True,'python':sys.version.split()[0]}))
         report['python_test_seconds'] = python_report['seconds']
         report['typescript_tests'] = int(re.search(r'# tests (\d+)', ts_log).group(1))
         report['artifacts'] = [{'name': file.name, 'bytes': file.stat().st_size, 'sha256': hashlib.sha256(file.read_bytes()).hexdigest()} for file in (wheel, tarball)]
+        if report['version'] != version:
+            raise RuntimeError('The report identity changed during verification')
         report['passed'] = True
         print(f"PASS {version}: wheel/tarball consumers, {report['python_tests']} Python and {report['typescript_tests']} TypeScript tests; browser={report['browser'] if args.skip_browser else 'passed'}", flush=True)
     finally:

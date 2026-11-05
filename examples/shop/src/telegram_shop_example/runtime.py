@@ -11,6 +11,8 @@ from .api import create_app
 from .payments import payment_router
 from .storage import ProcessLock
 from .store import Store
+from .refunds import ShopRefunds
+from .polling import ShopDurablePolling
 
 
 async def live(args) -> None:
@@ -20,11 +22,12 @@ async def live(args) -> None:
     bot=create_bot(settings);dispatcher=Dispatcher();runner=None  # honours TELEGRAM_TEST_ENVIRONMENT
     try:
         store=Store(args.database,settings.token,terms_version=args.terms_version);store.recover()
+        await ShopRefunds(store,bot).recover()
         dispatcher.include_router(payment_router(store,shop_url=args.origin+'/',terms=terms,support=args.support))
         app=create_app(store,bot,args.frontend,origin=args.origin,terms=terms,support=args.support)
         runner=web.AppRunner(app,access_log=None,shutdown_timeout=5);await runner.setup()
         await web.TCPSite(runner,'127.0.0.1',args.port).start()
-        await dispatcher.start_polling(bot,close_bot_session=False)
+        await ShopDurablePolling(store,bot,dispatcher).serve()
     finally:
         try:
             if runner is not None:await runner.cleanup()

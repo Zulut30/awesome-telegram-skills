@@ -1,8 +1,8 @@
 """Index of the official Mini Apps page: WebApp functions, native modules, events and properties.
 
-No dependencies and no Telegram calls. build_telegram_catalog.py imports it strictly (an unknown
-module is an error there); the weekly docs watch runs it in watch mode, where a function of an
-unknown module is still indexed, with min_version null when the page names no version gate.
+No dependencies and no Telegram calls. Strict imports accept reviewed modules only, including
+Serverless whose official section publishes no version gate (represented by null). Watch mode
+still indexes an unknown module so it can be reviewed before the strict catalog accepts it.
 """
 from __future__ import annotations
 
@@ -20,7 +20,7 @@ MINI_URL = 'https://core.telegram.org/bots/webapps'
 MODULE_VERSIONS = {'BackButton': '6.1', 'SettingsButton': '6.10', 'BottomButton': '6.1',
     'HapticFeedback': '6.1', 'CloudStorage': '6.9', 'BiometricManager': '7.2', 'LocationManager': '8.0',
     'Accelerometer': '8.0', 'DeviceOrientation': '8.0', 'Gyroscope': '8.0',
-    'DeviceStorage': '9.0', 'SecureStorage': '9.0'}
+    'DeviceStorage': '9.0', 'SecureStorage': '9.0', 'Serverless': None}
 
 
 class MiniParser(HTMLParser):
@@ -53,7 +53,7 @@ class MiniParser(HTMLParser):
 def mini_index(html: str, *, strict: bool = True, checked_date: str = '2026-10-04') -> dict:
     parser = MiniParser()
     parser.feed(html)
-    methods, events, properties = {}, {}, []
+    methods, events, properties, serverless_error = {}, {}, [], {}
     for section, anchor, row in parser.tables:
         if len(row) < 2: continue
         signature, kind = row[:2]
@@ -71,17 +71,23 @@ def mini_index(html: str, *, strict: bool = True, checked_date: str = '2026-10-0
             if kind == 'Function' and strict: raise ValueError('Unmapped Mini App module: ' + section)
             continue
         if kind != 'Function':
+            # Its second table describes callback Error fields, not Serverless object properties.
+            if section == 'Serverless':
+                serverless_error[name] = {'type': kind, 'optional': description.startswith('Optional.')}
+                continue
             properties.append({'owner': 'WebApp' if section == 'Initializing Mini Apps' else section,
                                'name': name, 'type': kind, 'url': url})
             continue
         gates = re.findall(r'\b(\d+\.\d+)\+', description)
-        # A function of a module this index does not know yet has no documented gate: null, not a guess.
+        # Reviewed unversioned modules and unknown watch-only modules retain null, never a guessed gate.
         minimum = gates[0] if gates else (MODULE_VERSIONS.get(section, '6.0') if known else None)
         owners = [''] if section == 'Initializing Mini Apps' else (['MainButton', 'SecondaryButton'] if section == 'BottomButton' else [section])
         for owner in owners:
             path = f'{owner}.{name}' if owner else name
             if owner == 'SecondaryButton' and tuple(map(int, minimum.split('.'))) < (7, 10): minimum = '7.10'
             methods[path] = {'path': path, 'signature': signature.removesuffix(' NEW'), 'min_version': minimum, 'url': url}
+    if serverless_error and 'Serverless.call' in methods:
+        methods['Serverless.call']['callback_error'] = serverless_error
     if not {'ready', 'showPopup', 'BackButton.show', 'LocationManager.getLocation'}.issubset(methods):
         raise ValueError('Mini App documentation layout changed; required methods missing')
     if not {'themeChanged', 'viewportChanged'}.issubset(events):

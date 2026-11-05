@@ -1,4 +1,4 @@
-# TypeScript Mini App — 0.26.0
+# TypeScript Mini App — 0.27.0
 
 Термины: **CAS** — сравнение с заменой: запись сохраняется, только если версия не изменилась с момента чтения; **сверка** — запрос фактического состояния у провайдера или в хранилище перед повтором или выдачей; **fallback** — запасной вариант, если основная возможность недоступна.
 
@@ -171,7 +171,7 @@ export function referenceDraft(): void {
 
 Файл: `native.ts`. Символы: `TelegramNativeAPI`, `UnsupportedTelegramCapability`, `TELEGRAM_NATIVE_METHODS`, `TELEGRAM_NATIVE_EVENTS`, `TELEGRAM_NATIVE_EVENT_DETAILS`, `TelegramNativeMethod`, `TelegramNativeEvent`, `TelegramNativeSignatures`, `TelegramNativeArguments`, `TelegramNativeResult`
 
-Границы: Типы аргументов и результатов каждого пути сгенерированы из официальных сигнатур и документации (scripts/build_native_signatures.py): неверный аргумент ловит tsc, runtime значения не проверяет. Presence/platform/version не consent, launch, auth или успешный платеж. Callback и receiver сохраняются; host выбирает arguments/permissions. Listener/dispose подавляют late callbacks, native cleanup failure может требовать повторного dispose.
+Границы: Типы аргументов и результатов каждого пути сгенерированы из официальных сигнатур и документации (scripts/build_native_signatures.py): неверный аргумент ловит tsc, runtime значения не проверяет. Presence/platform/version не consent, launch, auth или успешный платеж. Callback и receiver сохраняются; host выбирает arguments/permissions. Listener/dispose подавляют late callbacks, native cleanup failure может требовать повторного dispose. Serverless.call индексируется с minVersion null: универсальный фасад отказывает до SDK. Для выбранного хостинга используется отдельный ServerlessEndpointClient с явным включением и проверкой наличия.
 
 ```typescript
 import {TelegramNativeAPI, UnsupportedTelegramCapability, TELEGRAM_NATIVE_METHODS,

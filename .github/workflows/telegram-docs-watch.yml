@@ -1,8 +1,9 @@
 name: Telegram docs watch
 
 # Weekly: rebuild the Bot API and Mini Apps indexes from core.telegram.org and compare their content
-# (Bot API: version, methods, types, field names; Mini Apps: methods and events with min_version,
-# properties) with the committed ones. The page hash changes on every rebuild, so it is not compared.
+# (Bot API: version, methods, types, field names; Mini Apps: signatures, callback error fields,
+# methods/events with min_version including null, properties) with the committed ones.
+# The page hash changes on every rebuild, so it is not compared.
 # A real change opens one issue per distinct change (digest in the title).
 on:
   schedule:

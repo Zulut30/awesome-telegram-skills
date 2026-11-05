@@ -5,7 +5,7 @@ import path from 'node:path';
 import {fileURLToPath} from 'node:url';
 import {chromium} from 'playwright';
 import {createNativePreviewServer} from '../../../examples/native-flows/server.mjs';
-const root=fileURLToPath(new URL('../../../',import.meta.url)),output=path.join(root,'output/production-run-2026-11-05/native-flows');
+const root=fileURLToPath(new URL('../../../',import.meta.url)),output=path.resolve(process.env.PATTERNS_NATIVE_OUTPUT??path.join(root,'output/native-flows-check'));
 await mkdir(output,{recursive:true});await readFile(path.join(root,'packages/typescript/dist/native-flows.js'));
 const server=createNativePreviewServer();await new Promise(resolve=>server.listen(0,'127.0.0.1',resolve));let browser,report;const checks=[];
 try{

@@ -265,6 +265,36 @@ try{
     }
     await server.stop();
   }
+  // Operator HTTP is server-authorized; the buyer UI learns a refund only from its own order DTO.
+  {
+    const server=start('stars-refund'),ready=await server.take(r=>r.phase==='ready');
+    const fixture=await pageFor(ready,{width:390,height:844,theme:'dark'});const {page,context}=fixture;
+    await choose(page,false);const row=await created(page),operation=(await pending(page)).operation;
+    await page.getByRole('button',{name:'Оплатить Stars',exact:true}).click();await page.waitForFunction(()=>window.__shopHost.invoiceCalls.length===1);
+    await server.command({action:'receipt',id:row.id,charge:'browser-refund-charge'});
+    verify((await context.request.get(base+'/api/content/bot-kit',{headers:await bearer(page)})).status()===200,'refund: authoritative paid receipt gives access before refund confirmation');
+    verify((await context.request.get(base+'/api/operator/orders/'+row.id,{headers:await bearer(page)})).status()===403,'refund: a buyer has no operator permission');
+    await server.command({action:'operator',actor:77,enabled:true});
+    const login=await context.request.post(base+'/api/session',{headers:{Origin:base},data:{initData:ready.launch['77']}});verify(login.status()===200,'refund: operator uses a separately verified server session');
+    const operator={Origin:base,Authorization:'Bearer '+(await login.json()).token};const refundOperation=crypto.randomUUID();
+    const intent={operation:refundOperation,charge:'browser-refund-charge'},endpoint=base+'/api/operator/orders/'+row.id+'/refunds';
+    const sent=await context.request.post(endpoint,{headers:operator,data:intent});verify(sent.status()===200&&(await sent.json()).state==='unknown','refund: native True is retained as unknown until independent evidence');
+    const repeated=await context.request.post(endpoint,{headers:operator,data:intent});verify(repeated.status()===200&&(await repeated.json()).state==='unknown','refund: same intent returns its original unknown state');
+    verify((await server.command({action:'stats'})).refund_requests===1,'refund: duplicate HTTP request never resends native refund');
+    verify((await context.request.get(base+'/api/content/bot-kit',{headers:await bearer(page)})).status()===200,'refund: an unconfirmed attempt is not fabricated into a confirmed refund');
+    const settled=await context.request.post(endpoint+'/'+refundOperation+'/reconcile',{headers:operator,data:{}});
+    verify(settled.status()===200&&(await settled.json()).state==='confirmed','refund: authenticated independent native history confirms the original charge');
+    verify((await context.request.get(base+'/api/content/bot-kit',{headers:await bearer(page)})).status()===403,'refund: confirmed refund immediately denies protected content');
+    await page.getByRole('button',{name:'Проверить заказ',exact:true}).click();await page.waitForFunction(()=>document.querySelector('[role=status]').textContent.includes('Возврат подтверждён сервером'));
+    verify((await pending(page))===null,'refund: terminal refunded DTO clears only its original pending pointer '+operation);
+    verify(await page.getByRole('button',{name:'Оплатить Stars',exact:true}).isHidden(),'refund: refunded order cannot be paid again from the old UI action');
+    await page.getByRole('button',{name:'Мои покупки',exact:true}).click();await page.getByText('25 ★ · Возврат подтверждён сервером',{exact:true}).waitFor();
+    verify(await page.getByRole('button',{name:'Открыть Бот без путаницы',exact:true}).count()===0,'refund: purchase history removes the refunded content action');
+    await page.getByRole('button',{name:'Продолжить выбор',exact:true}).click();await choose(page,false);
+    const stats=await server.command({action:'stats'});verify(stats.orders===1&&stats.refund_requests===1,'refund: selecting again never creates a new order or refund automatically');
+    verify(fixture.errors.length===0&&fixture.external.length===0,'refund: buyer flow has no browser exceptions or external traffic');
+    await context.close();await server.stop();
+  }
   // Two actual abrupt exits, then a fresh server on the same SQLite database.
   let server=start('crash');let ready=await server.take(r=>r.phase==='ready');const fixture=await pageFor(ready,{width:375,height:812,theme:'dark'});const {page,context}=fixture;await choose(page,false);const row=await created(page);
   await server.command({action:'crash-invoice'});const marker=server.take(r=>r.phase==='crash-invoice');await page.getByRole('button',{name:'Оплатить Stars',exact:true}).click();verify((await marker).invoice_called&&await server.exit===75,'actual exit after invoice call');
@@ -273,5 +303,5 @@ try{
   await server.command({action:'crash-receipt'});const committed=server.take(r=>r.phase==='crash-receipt');server.child.stdin.write(JSON.stringify({action:'receipt',id:row.id,charge:'fault-charge'})+'\n');verify((await committed).committed&&await server.exit===76,'actual exit after atomic receipt/access commit');
   server=start('crash');await server.take(r=>r.phase==='ready');await page.reload();await page.waitForFunction(()=>document.querySelector('[role=status]').textContent.includes('Оплата подтверждена сервером'));await server.command({action:'receipt',id:row.id,charge:'fault-charge'});stats=await server.command({action:'stats'});verify(stats.receipts===1&&stats.access===1&&stats.orders===1&&stats.invoice_requests===0,'restart and duplicate receipt preserve one grant');
   verify(fixture.errors.length===0&&fixture.external.length===0,'fault UI has no exceptions or external traffic');await context.close();await server.stop();
-  const report={passed:true,browser:browser.version(),checks,cases,telegram_web_iframe:true,lifecycle_account_integration:true,read_only_recovery:true,explicit_original_retry:true,launch_profiles:['menu','main','inline','reply','inline_mode'],crash_exit_codes:[75,76],lost_response_reconciled:true,invoice_callback_not_proof:true,receipt_and_access_atomic:true,external_requests:0,telegram_requests:false,scope:'Six actual Chrome viewport/theme cases, a cross-site iframe, wired shop account/lifecycle/history/session flows, and real HTTP/SQLite/backend processes. Native host and payment updates synthetic; no live Telegram/Stars settlement or physical device acceptance.'};await writeFile(path.join(output,'report.json'),JSON.stringify(report,null,2)+'\n');console.log(JSON.stringify(report));
+  const report={passed:true,browser:browser.version(),checks,cases,telegram_web_iframe:true,lifecycle_account_integration:true,read_only_recovery:true,explicit_original_retry:true,stars_refund_ui:true,launch_profiles:['menu','main','inline','reply','inline_mode'],crash_exit_codes:[75,76],lost_response_reconciled:true,invoice_callback_not_proof:true,receipt_and_access_atomic:true,external_requests:0,telegram_requests:false,scope:'Six actual Chrome viewport/theme cases, a cross-site iframe, wired shop account/lifecycle/history/session flows, and real HTTP/SQLite/backend processes. Native host and payment updates synthetic; no live Telegram/Stars settlement or physical device acceptance.'};await writeFile(path.join(output,'report.json'),JSON.stringify(report,null,2)+'\n');console.log(JSON.stringify(report));
 }finally{await browser?.close();for(const server of processes)if(!server.closed){server.child.kill('SIGKILL');await server.exit;}}

@@ -4,10 +4,11 @@ import asyncio
 from aiogram import F, Router
 from aiogram.filters import Command, CommandObject
 from aiogram.types import InlineKeyboardButton, InlineKeyboardMarkup, Message, PreCheckoutQuery, WebAppInfo
-from telegram_patterns import PermissionDenied, ValidationFailure
+from telegram_patterns import PaymentConflict, PermissionDenied, ValidationFailure
 from .launch import launch_url, screen_hint
 from .storage import io_call
 from .store import Store
+from .refunds import ShopRefunds
 
 
 def payment_router(store: Store, *, shop_url: str, terms: str, support: str) -> Router:
@@ -19,8 +20,9 @@ def payment_router(store: Store, *, shop_url: str, terms: str, support: str) -> 
             async with asyncio.timeout(3):
                 await io_call(store.precheckout,query.bot.id,query.from_user.id,query.id,query.invoice_payload,query.currency,query.total_amount)
         except Exception:
-            await query.answer(ok=False,error_message='Заказ недоступен или требует сверки. Откройте магазин или /paysupport.')
-        else:await query.answer(ok=True)
+            async with asyncio.timeout(3):await query.answer(ok=False,error_message='Заказ недоступен или требует сверки. Откройте магазин или /paysupport.')
+        else:
+            async with asyncio.timeout(3):await query.answer(ok=True)
 
     private=(F.chat.type=='private') & (F.from_user.is_bot==False) & (F.business_connection_id==None)
     @router.message(private,F.successful_payment)
@@ -28,12 +30,20 @@ def payment_router(store: Store, *, shop_url: str, terms: str, support: str) -> 
         receipt=message.successful_payment
         if receipt is None or message.from_user is None or message.bot is None or message.chat.id!=message.from_user.id:raise PermissionDenied()
         try:
-            result=await io_call(store.paid,message.bot.id,message.from_user.id,receipt.invoice_payload,receipt.currency,receipt.total_amount,receipt.telegram_payment_charge_id)
-        except PermissionDenied:
+            result=await ShopRefunds(store,message.bot).paid(message)
+        except (PermissionDenied,PaymentConflict):
             await message.answer('Платёж требует сверки. Обратитесь в /paysupport.',parse_mode=None);return
         # A failed notification never rolls back paid/access and never starts a refund.
         if not result['replayed']:
             await message.answer('Платёж требует сверки: /paysupport.' if result['review'] else 'Покупка доступна в магазине → «Мои покупки».',parse_mode=None)
+
+    @router.message(private,F.refunded_payment)
+    async def refunded(message: Message):
+        if message.bot is None:raise PermissionDenied()
+        try:result=await ShopRefunds(store,message.bot).refunded(message)
+        except (PermissionDenied,PaymentConflict):
+            await message.answer('Возврат требует сверки. Обратитесь в /paysupport.',parse_mode=None);return
+        if not result['replayed']:await message.answer('Возврат учтён. Доступ к возвращённой покупке закрыт.',parse_mode=None)
 
     @router.message(private,Command('start'))
     async def start(message: Message, command: CommandObject):

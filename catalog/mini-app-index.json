@@ -341,6 +341,31 @@
       "url": "https://core.telegram.org/bots/webapps#securestorage"
     },
     {
+      "path": "Serverless.call",
+      "signature": "call(name[, input][, callback])",
+      "min_version": null,
+      "url": "https://core.telegram.org/bots/webapps#serverless",
+      "checked_date": "2026-11-05",
+      "callback_error": {
+        "message": {
+          "type": "String",
+          "optional": false
+        },
+        "type": {
+          "type": "String",
+          "optional": true
+        },
+        "status": {
+          "type": "Integer",
+          "optional": false
+        },
+        "parameters": {
+          "type": "Object",
+          "optional": true
+        }
+      }
+    },
+    {
       "path": "SettingsButton.hide",
       "signature": "hide()",
       "min_version": "7.0",
@@ -1229,6 +1254,28 @@
       "name": "isAccessGranted",
       "type": "Boolean",
       "url": "https://core.telegram.org/bots/webapps#locationmanager"
+    },
+    {
+      "owner": "WebApp",
+      "name": "Serverless",
+      "type": "Serverless",
+      "url": "https://core.telegram.org/bots/webapps#initializing-mini-apps"
+    }
+  ],
+  "partial_reviews": [
+    {
+      "checked_date": "2026-11-05",
+      "source": "https://core.telegram.org/bots/webapps#serverless",
+      "source_sha256": "5514a251a455eebb9675dea6915b07f63aa0198cef0d4c1ddd58b602e4d90272",
+      "sdk_source": "https://telegram.org/js/telegram-web-app.js",
+      "sdk_sha256": "124bdff7ba3fe86c8ba5143467afec21e020405e74abdb92cfdda6c0ee3b5908",
+      "methods": [
+        "Serverless.call"
+      ],
+      "properties": [
+        "WebApp.Serverless"
+      ],
+      "scope": "Only Serverless method, hosting context, callback overloads and error fields; no published minimum client version. Existing methods and global review dates retained."
     }
   ]
 }

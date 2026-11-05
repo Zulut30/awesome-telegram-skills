@@ -1,6 +1,6 @@
 # Локальная диагностика и исправления
 
-Доступно с 0.11.0, проверено на 0.26.0.
+Доступно с 0.11.0, проверено на 0.27.0.
 
 `python -m telegram_patterns doctor .` проверяет окружение нашего aiogram starter и принятую структуру `mini-app/package.json`. В существующем PTB/React/Vue проекте сохраняйте стек: отсутствие aiogram означает отсутствие readiness этого adapter, а не необходимость переписать приложение. Doctor читает локальные manifests и установленные package metadata, проверяет источник aiogram import и запускает фиксированную проверку установленного adapter в отдельном Python `-I -B` с cwd окружения. Каталог проекта, PYTHONPATH и user-site не входят в этот import probe. Для обнаруженного Mini App дополнительно выполняется `node --version`.
 

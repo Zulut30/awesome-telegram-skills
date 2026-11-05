@@ -15,7 +15,8 @@ import sys
 
 ROOT = Path(__file__).resolve().parents[1]
 OUTPUT = 'docs/capability-map.md'
-SDK_LABELS = {'aiogram': 'aiogram', 'python-telegram-bot': 'python-telegram-bot', 'python-core': 'без SDK'}
+SDK_LABELS = {'aiogram': 'aiogram', 'python-telegram-bot': 'python-telegram-bot', 'python-core': 'без SDK',
+              'telegram-webapp': 'Telegram WebApp'}
 CHECKS = (('sdk', 'SDK-запрос'), ('dispatcher', 'Dispatcher'), ('browser', 'браузер'), ('reference', 'справка'), ('live', 'live'))
 
 
@@ -135,7 +136,7 @@ def main(argv: list[str] | None = None) -> int:
         if not target.is_file() or target.read_text(encoding='utf-8') != text:
             raise SystemExit(f'{OUTPUT} is out of date; run python scripts/build_capability_map.py')
     else:
-        target.write_text(text, encoding='utf-8')
+        target.write_text(text, encoding='utf-8', newline='\n')
     print(json.dumps({'passed': True, **summary, 'check': args.check}))
     return 0
 

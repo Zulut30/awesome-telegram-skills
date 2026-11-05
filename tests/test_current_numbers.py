@@ -10,9 +10,11 @@ ROOT = Path(__file__).resolve().parents[1]
 
 def facts() -> dict[str, int]:
     recipes = json.loads((ROOT / 'catalog/recipe-gallery.json').read_text(encoding='utf-8'))['recipes']
+    mini_app = json.loads((ROOT / 'catalog/telegram-capabilities.json').read_text(encoding='utf-8'))['mini_app']
     verification = Counter(recipe['verification'] for recipe in recipes)
     kinds = Counter(recipe['execution']['kind'] for recipe in recipes)
     return {'recipes': len(recipes), 'sdk': verification['sdk'], 'mock': verification['mock'],
+            'native_methods': len(mini_app['methods']), 'native_events': len(mini_app['events']),
             'reference': kinds['reference'], 'executors': len(recipes) - kinds['reference'],
             'dispatcher': kinds['dispatcher'],
             'symbols': len(json.loads((ROOT / 'catalog/api-reference-index.json').read_text(encoding='utf-8'))['symbols']),
@@ -22,13 +24,15 @@ def facts() -> dict[str, int]:
 
 # (file, pattern, names of the facts its groups quote, in order)
 QUOTES = [
+    ('packages/python/README.md', r'Галерея рецептов \((\d+)\)', ['recipes']),
+    ('recipes/README.md', r'\[(\d+) методов / (\d+) события\]', ['native_methods', 'native_events']),
     ('README.md', r'skills-(\d+)-', ['skills']),
     ('README.md', r'\| (\d+) скилла? для ИИ-агентов', ['skills']),
     ('README.md', r'\*\*(\d+) скилла?\*\*', ['skills']),
     ('README.md', r'все (\d+) скилла? ставятся', ['skills']),
     ('README.md', r'Рецепты \((\d+)\) \| [^|]+\| (\d+) — на настоящем SDK без сети, (\d+) — на заглушках, (\d+) — справочные',
      ['recipes', 'sdk', 'mock', 'reference']),
-    ('README.md', r'\*\*(\d+) рецептов', ['recipes']),
+    ('README.md', r'\*\*(\d+) рецепт(?:ов|а)?', ['recipes']),
     ('README.md', r'\*\*(\d+) групп[аы]? компонентов\*\*', ['groups']),
     ('.agents/skills/telegram-code-patterns/references/components.md', r'Текущий каталог содержит (\d+) групп[аыу]? компонентов', ['groups']),
     ('.agents/skills/telegram-code-patterns/references/maturity.md', r'В (?:поставке|разработке) [\d.]+: (\d+) групп[аы]? experimental', ['groups']),
@@ -38,11 +42,11 @@ QUOTES = [
     ('README.en.md', r'Recipes \((\d+)\) \| [^|]+\| (\d+) run on the real SDK offline, (\d+) on stubs, (\d+) are reference',
      ['recipes', 'sdk', 'mock', 'reference']),
     ('.claude-plugin/marketplace.json', r'"(\d+) skills for Telegram', ['skills']),
-    ('docs/component-library.md', r'(\d+) групп[аы]? компонентов, (\d+) публичных Python/TypeScript-символ(?:а|ов)? и (\d+) рецептов?\. '
+    ('docs/component-library.md', r'(\d+) групп[аы]? компонентов, (\d+) публичных Python/TypeScript-символ(?:а|ов)? и (\d+) рецепт(?:ов|а)?\. '
      r'(\d+) Python fixtures', ['groups', 'symbols', 'recipes', 'executors']),
-    ('docs/internal/library-roadmap-100.md', r'(\d+) групп[аы]? компонентов, (\d+) публичных Python/TypeScript-символ(?:а|ов)?, (\d+) навыка и (\d+) рецептов?',
+    ('docs/internal/library-roadmap-100.md', r'(\d+) групп[аы]? компонентов, (\d+) публичных Python/TypeScript-символ(?:а|ов)?, (\d+) навыка и (\d+) рецепт(?:ов|а)?',
      ['groups', 'symbols', 'skills', 'recipes']),
-    ('docs/recipe-execution.md', r'У всех (\d+) cookbook-рецептов', ['recipes']),
+    ('docs/recipe-execution.md', r'Все cookbook-рецепты \((\d+)\)', ['recipes']),
     ('docs/recipe-execution.md', r'(\d+) Python-рецепт(?:ов|а)? име(?:ют|ет) локальный исполнитель', ['executors']),
     ('docs/recipe-execution.md', r'все (\d+) Python fixtures', ['executors']),
     ('.agents/skills/telegram-code-patterns/references/components.md', r'есть (\d+) Python fixtures и (\d+) native references',

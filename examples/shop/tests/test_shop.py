@@ -219,6 +219,19 @@ class ShopTests(unittest.IsolatedAsyncioTestCase):
                 await call('GET','/api/content/bot-kit','/api/content/{sku}',200,headers=owner)
                 other={'Authorization':'Bearer '+(await call('POST','/api/session','/api/session',200,json_body={'initData':signed(77)}))['token']}
                 await call('GET','/api/orders/'+row['id'],'/api/orders/{id}',403,headers=other)
+                operator_base='/api/operator/orders/'+row['id']
+                await call('GET',operator_base,'/api/operator/orders/{id}',403,headers=owner)
+                self.store.configure_operator(77,True)
+                await call('GET',operator_base,'/api/operator/orders/{id}',200,headers=other)
+                refund={'operation':str(uuid.uuid4()),'charge':'fixture-charge'}
+                refund_path=operator_base+'/refunds'
+                await call('POST',refund_path,'/api/operator/orders/{id}/refunds',403,json_body=refund,headers=owner)
+                result=await call('POST',refund_path,'/api/operator/orders/{id}/refunds',200,json_body=refund,headers=other)
+                self.assertEqual(result['state'],'unknown')
+                status_path=refund_path+'/'+refund['operation']
+                await call('GET',status_path,'/api/operator/orders/{id}/refunds/{operation}',200,headers=other)
+                await call('GET',refund_path+'/'+str(uuid.uuid4()),'/api/operator/orders/{id}/refunds/{operation}',404,headers=other)
+                await call('POST',status_path+'/reconcile','/api/operator/orders/{id}/refunds/{operation}/reconcile',200,json_body={},headers=other)
                 rotated=await call('POST','/api/session/rotate','/api/session/rotate',200,json_body={},headers=owner)
                 await call('POST','/api/session/rotate','/api/session/rotate',401,json_body={},headers=owner)
                 replacement={'Authorization':'Bearer '+rotated['token']}

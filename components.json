@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "library_version": "0.26.0",
+  "library_version": "0.27.0",
   "distribution": "local; not published to package registries",
   "packages": {
     "python": {
@@ -129,7 +129,8 @@
       "boundaries": [
         "callbacks/results remain native unknown; no complete SDK parameter schema",
         "permissions/init/user-interaction/auth stay with host",
-        "direct onClick/onEvent via call requires caller cleanup; mock is not device evidence"
+        "direct onClick/onEvent via call requires caller cleanup; mock is not device evidence",
+        "minVersion null сохраняет неизвестность: TelegramNativeAPI запрещает вызов; наличие метода не назначает ему вымышленную версию."
       ],
       "maturity": "experimental",
       "maturity_scope": "All public API symbols in this component; local verification is not a stable 1.0 promise"
@@ -829,7 +830,8 @@
       "boundaries": [
         "explicit schema initialization; host owns retention, workers and ACL",
         "internal payload versions are separate from Bot API versions",
-        "receipt durability does not make external business effects idempotent"
+        "receipt durability does not make external business effects idempotent",
+        "schema 2 migrates version 1 atomically; explicit priority lanes preserve first admission and default FIFO; host owns bounded concurrency and deadlines"
       ]
     },
     {
@@ -959,7 +961,8 @@
       "source": "packages/python/src/telegram_patterns/payment_ledger.py",
       "example": "examples/python/offline_payment_ledger.py",
       "boundaries": [
-        "Только локальная SQLite и точные суммы. Verifier вызывается каждый раз вне DB и должен проверять настоящий протокол/статус провайдера; DTO и callback клиента не подтверждают оплату. Полная привязка merchant/bot/user/order/provider/currency/exponent сверяется до финансового изменения. Возврат требует текущего ACL при резервировании и отправке, unknown сохраняет резерв. Paid/period/refund и доступ изменяются одной транзакцией с аудитом. Stars только целые XTR и полный возврат, сроки подписки задает подтвержденный charge. Host владеет транспортом, секретами, допустимостью платежного маршрута и retention. Фикстура не является live/sandbox приемкой."
+        "Только локальная SQLite и точные суммы. Verifier вызывается каждый раз вне DB и должен проверять настоящий протокол/статус провайдера; DTO и callback клиента не подтверждают оплату. Полная привязка merchant/bot/user/order/provider/currency/exponent сверяется до финансового изменения. Возврат требует текущего ACL при резервировании и отправке, unknown сохраняет резерв. Paid/period/refund и доступ изменяются одной транзакцией с аудитом. Stars только целые XTR и полный возврат, сроки подписки задает подтвержденный charge. Host владеет транспортом, секретами, допустимостью платежного маршрута и retention. Фикстура не является live/sandbox приемкой.",
+        "Финансовая схема 2: атомарная миграция 1→2; старые receipt и оплаченные периоды сохраняются. Неизвестное продление требует доверенной сверки, не повторного RPC."
       ],
       "maturity": "experimental",
       "maturity_scope": "All public API symbols in this component; local verification is not a stable 1.0 promise"

@@ -28,7 +28,7 @@ class OpenApiTypesTests(unittest.TestCase):
                 self.assertIn(f"{operation['operationId']}: {{method: '{method.upper()}', path: '{path}'", text)
         for name in CONTRACT['components']['schemas']:
             self.assertIn(f"  {name}: (value: unknown): {name} =>", text)
-        self.assertIn("readonly status: 'awaiting' | 'paid' | 'review';", text)
+        self.assertIn("readonly status: 'awaiting' | 'paid' | 'review' | 'refunded';", text)
         self.assertIn('readonly params: {readonly id: string;}', text)
 
     def test_unsupported_contracts_are_refused(self):

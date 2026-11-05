@@ -46,3 +46,12 @@ test('launch hints distinguish signed-field routing and raw query fallback while
   assert.deepEqual(shopLaunch('','?tgWebAppStartParam=orders'),{screen:'orders',valid:true,source:'query'});
   for(const [raw,search] of [['start_param=orders','?tgWebAppStartParam=catalog'],['start_param=orders&start_param=catalog',''],['','?tgWebAppStartParam=admin'],['start_param=user_77',''],['','?tgWebAppStartParam=orders&tgWebAppStartParam=orders'],['','?tgWebAppStartParam='+('x'.repeat(5000))]])assert.deepEqual(shopLaunch(raw,search),{screen:'catalog',valid:false,source:'none'});
 });
+
+test('a server-confirmed refund completes only its original pending pointer and permits a fresh selection',async()=>{
+  const storage=memory();let sent=0;
+  const domain=new ShopDomainState(()=>storage,{operation:async()=>({...dto,status:'refunded'}),order:async()=>({...dto,status:'refunded'}),create:async()=>{sent++;return dto;}});
+  domain.configureCatalog(['bot-kit'],'v1');domain.setSession({token:'server-issued',scope:'100:42'});domain.setCart(['bot-kit']);domain.setConsent(true);
+  await domain.submit('v1',operation);assert.equal(domain.snapshot().pending.status,'restored');
+  await domain.reconcile();assert.equal(domain.snapshot().order.status,'refunded');assert.equal(domain.snapshot().pending.status,'missing');assert.equal(sent,1);
+  domain.newSelection();domain.setCart(['bot-kit']);domain.setConsent(true);assert.equal(domain.snapshot().order,null);assert.equal(sent,1,'selecting again never dispatches a new order automatically');domain.dispose();
+});

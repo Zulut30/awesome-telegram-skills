@@ -1,5 +1,7 @@
 # Shop backend: границы identity, sessions и recovery
 
+Этап схемы 2 ниже относится к подготовке 0.26. Последующее расширение схемы 3, операторские возвраты Stars и долговечный polling описаны в [отчете подготовки 0.27](shop-stars-refunds-2026-11-05.md); прежние результаты не переименовываются в проверку новых файлов.
+
 5 ноября 2026; локальное дополнение к пунктам 41–44 и серверной части 49. Действующий aiohttp/SQLite/Python backend `examples/shop` сохранен; frontend transport использует сгенерированный из OpenAPI TypeScript client. Это experimental example, не production certificate, не приемка live Telegram и не основание автоматически закрыть целиком 41–44/49.
 
 ## API и полномочия

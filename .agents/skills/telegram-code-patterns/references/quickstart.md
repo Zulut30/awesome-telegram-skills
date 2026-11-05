@@ -1,6 +1,6 @@
 # Первый запуск: бот и экран Mini App
 
-Этот пример проверяется на Windows (PowerShell), Ubuntu и macOS (bash) с Python 3.13, Node.js 24 и локальной разработкой **0.26.0**. Каждый шаг дан в двух вариантах: PowerShell для Windows и bash для Linux и macOS; выполняйте один из них. Требуются Python >=3.11 и Node.js ^20.19 или >=22.12 (минимум Vite 8 из шаблона Mini App); проверенные версии перечислены в матрице поддержки проекта. Пакеты пока не опубликованы в PyPI/npm: скачайте wheel и tarball из GitHub Releases или получите их от владельца проекта. Оба файла должны относиться к одной поставке.
+Этот пример проверяется на Windows (PowerShell), Ubuntu и macOS (bash) с Python 3.13, Node.js 24 и локальной разработкой **0.27.0**. Каждый шаг дан в двух вариантах: PowerShell для Windows и bash для Linux и macOS; выполняйте один из них. Требуются Python >=3.11 и Node.js ^20.19 или >=22.12 (минимум Vite 8 из шаблона Mini App); проверенные версии перечислены в матрице поддержки проекта. Пакеты пока не опубликованы в PyPI/npm: скачайте wheel и tarball из GitHub Releases или получите их от владельца проекта. Оба файла должны относиться к одной поставке.
 
 До начала: установка Python/npm-зависимостей может использовать интернет. `init`, `offline.py` и локальная форма не требуют настоящего токена, аккаунта Telegram или платежных ключей. Бот выполняет настоящий aiogram Dispatcher через `StubSession`; экран проверяет ввод локально. Backend шаблона проверяет подпись initData, но в этом запуске Telegram и initData нет, а отправка формы не подключена.
 
@@ -10,14 +10,14 @@
 
 <!-- quickstart:parameters -->
 ```powershell
-$tgArtifacts = 'C:\path\to\pattern-library-0.26.0\artifacts'
+$tgArtifacts = 'C:\path\to\pattern-library-0.27.0\artifacts'
 $tgWorkspace = Join-Path $env:TEMP 'telegram-first-run'
 $tgPreviewPort = 4173
 ```
 
 <!-- quickstart-bash:parameters -->
 ```bash
-TG_ARTIFACTS="$HOME/Downloads/pattern-library-0.26.0/artifacts"
+TG_ARTIFACTS="$HOME/Downloads/pattern-library-0.27.0/artifacts"
 TG_WORKSPACE="${TMPDIR:-/tmp}/telegram-first-run"
 TG_PREVIEW_PORT=4173
 ```
@@ -25,9 +25,9 @@ TG_PREVIEW_PORT=4173
 <!-- quickstart:setup -->
 ```powershell
 $ErrorActionPreference = 'Stop'
-$tgWheel = Join-Path $tgArtifacts 'awesome_telegram_patterns-0.26.0-py3-none-any.whl'
-$tgTarball = Join-Path $tgArtifacts 'awesome-telegram-patterns-0.26.0.tgz'
-if (!(Test-Path -LiteralPath $tgWheel -PathType Leaf) -or !(Test-Path -LiteralPath $tgTarball -PathType Leaf)) { throw 'Нужны оба локальных артефакта 0.26.0' }
+$tgWheel = Join-Path $tgArtifacts 'awesome_telegram_patterns-0.27.0-py3-none-any.whl'
+$tgTarball = Join-Path $tgArtifacts 'awesome-telegram-patterns-0.27.0.tgz'
+if (!(Test-Path -LiteralPath $tgWheel -PathType Leaf) -or !(Test-Path -LiteralPath $tgTarball -PathType Leaf)) { throw 'Нужны оба локальных артефакта 0.27.0' }
 if (Test-Path -LiteralPath $tgWorkspace) { throw 'Выберите новый каталог tgWorkspace' }
 New-Item -ItemType Directory -Path $tgWorkspace | Out-Null
 Set-Location -LiteralPath $tgWorkspace
@@ -39,13 +39,13 @@ if ($LASTEXITCODE -ne 0) { throw 'Не удалось установить ло�
 
 <!-- quickstart-bash:setup -->
 ```bash
-TG_WHEEL="$TG_ARTIFACTS/awesome_telegram_patterns-0.26.0-py3-none-any.whl" &&
-TG_TARBALL="$TG_ARTIFACTS/awesome-telegram-patterns-0.26.0.tgz" &&
+TG_WHEEL="$TG_ARTIFACTS/awesome_telegram_patterns-0.27.0-py3-none-any.whl" &&
+TG_TARBALL="$TG_ARTIFACTS/awesome-telegram-patterns-0.27.0.tgz" &&
 test -f "$TG_WHEEL" && test -f "$TG_TARBALL" &&
 mkdir "$TG_WORKSPACE" && cd "$TG_WORKSPACE" &&
 python3 -m venv tools &&
 tools/bin/python -m pip install --no-input --disable-pip-version-check "$TG_WHEEL" ||
-{ echo 'Не удалось: нужны оба артефакта 0.26.0 и новый каталог TG_WORKSPACE' >&2; false; }
+{ echo 'Не удалось: нужны оба артефакта 0.27.0 и новый каталог TG_WORKSPACE' >&2; false; }
 ```
 
 Окружение `tools` содержит CLI и ядро библиотеки; aiogram будет установлен в окружении созданного бота. Активация venv и изменение ExecutionPolicy не нужны. В Linux и macOS Python вызывается как `python3`, а файлы окружения лежат в `bin/` вместо `Scripts\`.

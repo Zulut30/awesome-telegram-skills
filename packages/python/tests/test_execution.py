@@ -28,6 +28,24 @@ from telegram_patterns.cli import main
 
 
 class ExecutionTests(unittest.TestCase):
+    def test_unversioned_serverless_recipe_is_contextual_reference_and_cannot_start_an_offline_worker(self):
+        recipe = RecipeCatalog().get('native.Serverless.call')
+        self.assertEqual(
+            (recipe.maturity, recipe.verification, recipe.api_version), ('reference', 'not_run', 'mini:unknown')
+        )
+        self.assertIn('ServerlessEndpointClient', recipe.code)
+        self.assertIn('serverlessHosting: serverlessHostingChosen', recipe.code)
+        self.assertIn('unknown', recipe.code)
+        plan = plan_recipe(recipe.id)
+        self.assertIn('TELEGRAM_SERVERLESS_PROJECT', plan.live_environment)
+        self.assertTrue(any('ACL' in permission for permission in plan.live_permissions))
+        with (
+            patch.object(execution.subprocess, 'run', side_effect=AssertionError('child forbidden')),
+            patch.object(execution, 'TemporaryDirectory', side_effect=AssertionError('write forbidden')),
+        ):
+            with self.assertRaises(UnsupportedCapability):
+                run_recipe_offline(recipe.id)
+
     @integration
     def test_restart_fixture_does_not_inherit_runner_arguments_and_restores_caller(self):
         code = '''import json,sys

@@ -1,6 +1,6 @@
 """Compare two Mini Apps indexes by content and describe the change for an issue.
 
-Compared: method paths with their min_version, event names with their min_version and
+Compared: method paths with their min_version and signature, event names with their min_version and
 property names. The page hash and check date change without an API change and are ignored.
 Exit code 0 either way; "changed" in the JSON summary (and in GITHUB_OUTPUT) tells the caller.
 """
@@ -15,6 +15,8 @@ import sys
 
 def content(index: dict) -> dict:
     return {'methods': {item['path']: item['min_version'] for item in index['methods']},
+            'signatures': {item['path']: item['signature'] for item in index['methods']},
+            'callback_errors': {item['path']: item['callback_error'] for item in index['methods'] if item.get('callback_error')},
             'events': {item['name']: item['min_version'] for item in index['events']},
             'properties': sorted({f'{item["owner"]}.{item["name"]}' for item in index['properties']})}
 
@@ -30,6 +32,12 @@ def diff(old: dict, new: dict) -> dict:
                                      if before[kind][name] != after[kind][name]}
     result['added_properties'] = sorted(set(after['properties']) - set(before['properties']))
     result['removed_properties'] = sorted(set(before['properties']) - set(after['properties']))
+    result['changed_signatures'] = {name: {'old': before['signatures'][name], 'new': after['signatures'][name]}
+                                    for name in sorted(set(before['signatures']) & set(after['signatures']))
+                                    if before['signatures'][name] != after['signatures'][name]}
+    result['changed_callback_errors'] = {name: {'old': before['callback_errors'].get(name), 'new': after['callback_errors'].get(name)}
+                                         for name in sorted(set(before['callback_errors']) | set(after['callback_errors']))
+                                         if before['callback_errors'].get(name) != after['callback_errors'].get(name)}
     result['changed'] = before != after
     digest = json.dumps(result, sort_keys=True, ensure_ascii=False)
     result['digest'] = hashlib.sha256(digest.encode('utf-8')).hexdigest()[:12]
@@ -59,9 +67,19 @@ def markdown(result: dict, source: str) -> str:
     if result['added_properties'] or result['removed_properties']:
         lines += ['### Свойства', '', *(f'- добавлено `{name}`' for name in result['added_properties']),
                   *(f'- удалено `{name}`' for name in result['removed_properties']), '']
-    lines += ['Что сделать: прочитать раздел документации, задать минимальную версию нового модуля в '
-              '`scripts/mini_app_index.py`, пересобрать каталог (`scripts/build_telegram_catalog.py --mini-app-html <сохраненная страница>`), '
-              'сверить скиллы Mini App и добавить запись в журнал `docs/sources.md`.']
+    if result['changed_signatures']:
+        lines += ['### Изменились сигнатуры', '',
+                  *(f'- `{name}`: `{change["old"]}` → `{change["new"]}`' for name, change in result['changed_signatures'].items()), '']
+    if result['changed_callback_errors']:
+        lines += ['### Изменились поля ошибки callback', '',
+                  *(f'- `{name}`: `{json.dumps(change["old"], ensure_ascii=False)}` → `{json.dumps(change["new"], ensure_ascii=False)}`'
+                    for name, change in result['changed_callback_errors'].items()), '']
+    lines += [('Что сделать: прочитать раздел документации и сверить SDK. Добавить новый модуль в '
+              '`scripts/mini_app_index.py` с опубликованной минимальной версией либо явным `None`, если её нет; '
+              'unknown version запрещает вызов через универсальный фасад. Пересобрать каталог '
+              '(`scripts/build_telegram_catalog.py --mini-app-html <сохраненная страница>`), '
+              'сверить параметры и overloads в `catalog/mini-app-types.json`, выполнить `scripts/build_native_signatures.py`, '
+              'сверить скиллы Mini App и добавить запись в журнал `docs/sources.md`.')]
     return '\n'.join(lines) + '\n'
 
 
@@ -75,9 +93,9 @@ def main() -> int:
     old, new = (json.loads(path.read_text(encoding='utf-8')) for path in (args.old, args.new))
     result = diff(old, new)
     if args.markdown and result['changed']:
-        args.markdown.write_text(markdown(result, new.get('source', 'https://core.telegram.org/bots/webapps')), encoding='utf-8')
+        args.markdown.write_text(markdown(result, new.get('source', 'https://core.telegram.org/bots/webapps')), encoding='utf-8', newline='\n')
     if args.github_output:
-        with args.github_output.open('a', encoding='utf-8') as output:
+        with args.github_output.open('a', encoding='utf-8', newline='\n') as output:
             output.write(f'changed={str(result["changed"]).lower()}\ntitle={title(result)}\ndigest={result["digest"]}\n')
     print(json.dumps(result, ensure_ascii=False))
     return 0

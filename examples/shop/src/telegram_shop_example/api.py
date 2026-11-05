@@ -9,9 +9,10 @@ from urllib.parse import urlsplit
 
 from aiohttp import web
 from aiogram import Bot
-from telegram_patterns import InvalidInitData, OperationConflict, PermissionDenied, ValidationFailure
+from telegram_patterns import InvalidInitData, OperationConflict, PaymentConflict, PermissionDenied, ValidationFailure
 from telegram_patterns.aiogram import stars_invoice
 from .storage import io_call
+from .refunds import ShopRefunds
 from .store import CATALOG, SESSION_SECONDS, Store, UnknownInvoice
 
 
@@ -47,7 +48,7 @@ def create_app(store: Store, bot: Bot, frontend: Path, *, origin: str, terms: st
         except InvalidInitData:response=web.json_response({'error':'authentication-required'},status=401)
         except PermissionDenied:response=web.json_response({'error':'permission-denied'},status=403)
         # Before ValueError: OperationConflict is a ConflictFailure, which is also a ValueError.
-        except OperationConflict:response=web.json_response({'error':'operation-conflict'},status=409)
+        except (OperationConflict,PaymentConflict):response=web.json_response({'error':'operation-conflict'},status=409)
         except (ValidationFailure,ValueError,TypeError,json.JSONDecodeError):response=web.json_response({'error':'validation-failed'},status=422)
         except UnknownInvoice:response=web.json_response({'error':'invoice-outcome-unknown'},status=503)
         except web.HTTPException as error:response=web.json_response({'error':'request-rejected'},status=error.status)
@@ -115,10 +116,27 @@ def create_app(store: Store, bot: Bot, frontend: Path, *, origin: str, terms: st
         actor=await identity(request,write=True);await body(request,set())
         return web.json_response({'url':await invoice(store,bot,actor,request.match_info['id'])})
     async def content(request):return web.json_response(await io_call(store.content,await identity(request),request.match_info['sku']))
+    financial=ShopRefunds(store,bot)
+    async def operator_order(request):
+        await identity(request)
+        return web.json_response(await financial.overview(bearer(request),request.match_info['id']))
+    async def operator_refund(request):
+        await identity(request,write=True);data=await body(request,{'operation','charge'})
+        return web.json_response(await financial.request(bearer(request,write=True),request.match_info['id'],data['charge'],data['operation']))
+    async def operator_refund_status(request):
+        await identity(request)
+        result=await financial.status(bearer(request),request.match_info['id'],request.match_info['operation'])
+        if result is None:raise web.HTTPNotFound()
+        return web.json_response(result)
+    async def operator_refund_reconcile(request):
+        await identity(request,write=True);await body(request,set())
+        result=await financial.reconcile(bearer(request,write=True),request.match_info['id'],request.match_info['operation'])
+        if result is None:raise web.HTTPNotFound()
+        return web.json_response(result)
     async def index(request):
         text=(frontend/'index.html').read_text(encoding='utf-8')
         sdk='' if loopback_dev else '<script src="https://telegram.org/js/telegram-web-app.js"></script>'
         return web.Response(text=text.replace('<!-- telegram-sdk -->',sdk),content_type='text/html')
-    app.add_routes([web.post('/api/session',session),web.post('/api/session/rotate',rotate_session),web.post('/api/session/revoke',revoke_session),web.get('/api/catalog',catalog),web.get('/api/policy',policy),web.post('/api/orders',create),web.get('/api/operations/{operation}',lookup),web.get('/api/orders',orders),web.get('/api/orders/{id}',order),web.post('/api/orders/{id}/invoice',create_invoice),web.get('/api/content/{sku}',content),web.get('/',index)])
+    app.add_routes([web.post('/api/session',session),web.post('/api/session/rotate',rotate_session),web.post('/api/session/revoke',revoke_session),web.get('/api/catalog',catalog),web.get('/api/policy',policy),web.post('/api/orders',create),web.get('/api/operations/{operation}',lookup),web.get('/api/orders',orders),web.get('/api/orders/{id}',order),web.post('/api/orders/{id}/invoice',create_invoice),web.get('/api/content/{sku}',content),web.get('/api/operator/orders/{id}',operator_order),web.post('/api/operator/orders/{id}/refunds',operator_refund),web.get('/api/operator/orders/{id}/refunds/{operation}',operator_refund_status),web.post('/api/operator/orders/{id}/refunds/{operation}/reconcile',operator_refund_reconcile),web.get('/',index)])
     app.router.add_static('/assets/',frontend/'assets',follow_symlinks=False)
     return app

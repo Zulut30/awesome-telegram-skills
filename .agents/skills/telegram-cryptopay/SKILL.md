@@ -3,7 +3,7 @@ name: telegram-cryptopay
 description: "Интегрирует CryptoBot/Crypto Pay в Python backend Telegram-проекта: invoices, webhook signature, сверку статуса и однократную выдачу. Используйте для явно выбранного Crypto Pay. Не для Stars и выбора платежного маршрута → telegram-payments."
 license: MIT
 metadata:
-  version: "0.26.0"
+  version: "0.27.0"
 ---
 
 # Crypto Pay / CryptoBot

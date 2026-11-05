@@ -24,8 +24,8 @@ python scripts/build_release.py --ref v0.24.0 --notes
 4. После слияния в `main` поставьте тег на этот коммит и отправьте его:
 
    ```bash
-   git tag -a v0.26.0 -m "awesome-telegram-patterns 0.26.0"
-   git push origin v0.26.0
+   git tag -a v0.27.0 -m "awesome-telegram-patterns 0.27.0"
+   git push origin v0.27.0
    ```
 
 5. Workflow Release соберет артефакты из тега и опубликует релиз. Тот же тег запускает workflow [Full acceptance](../.github/workflows/full-acceptance.yml): полный `verify_pattern_packages.py` на Ubuntu и macOS с отчетами в артефактах запуска.

@@ -15,13 +15,16 @@ from urllib.parse import urlencode
 from aiohttp import web
 from aiogram import Bot, Dispatcher
 from aiogram.client.session.aiohttp import AiohttpSession
-from aiogram.methods import AnswerPreCheckoutQuery, CreateInvoiceLink, SendMessage
+from aiogram.methods import AnswerPreCheckoutQuery, CreateInvoiceLink, GetStarTransactions, GetUpdates, RefundStarPayment, SendMessage
 from aiogram.types import Update
 from telegram_patterns.testing import StubSession
 from .api import create_app
 from .payments import payment_router
 from .storage import ProcessLock, connection
 from .store import Store
+from .refunds import ShopRefunds
+from .offline_refunds import FakeStarsHistory
+from .polling import ShopDurablePolling
 
 TOKEN='100:OFFLINE_FIXTURE'
 TERMS='Учебный пример, не оферта рабочего магазина. Одноразовые цифровые памятки, доступ после server receipt. Для запуска нужны ваши реальные условия и поддержка.'
@@ -55,11 +58,15 @@ def update(store: Store, row: dict, *, actor: int = 42, kind: str = 'paid', char
     user={'id':actor,'is_bot':False,'first_name':'Fixture'}
     payment={'invoice_payload':store.payload(row['id']),'currency':currency,'total_amount':row['total'] if amount is None else amount}
     if kind=='precheckout':return Update.model_validate({'update_id':1,'pre_checkout_query':{'id':query_id,'from':user,**payment}})
-    return Update.model_validate({'update_id':2,'message':{'message_id':5,'date':int(time.time()),'chat':{'id':actor,'type':'private'},'from':user,'successful_payment':{**payment,'telegram_payment_charge_id':charge,'provider_payment_charge_id':''}}})
+    native_date=int(store.now())
+    with connection(store.database) as db:
+        previous=db.execute("SELECT event_json FROM shop_payment_ingress WHERE bot_id=? AND charge=? AND kind='paid'",(store.bot_id,charge)).fetchone()
+    if previous:native_date=json.loads(previous['event_json'])['paid_at']
+    return Update.model_validate({'update_id':2,'message':{'message_id':5,'date':native_date,'chat':{'id':actor,'type':'private'},'from':user,'successful_payment':{**payment,'telegram_payment_charge_id':charge,'provider_payment_charge_id':''}}})
 
 
 def stub() -> StubSession:
-    session=StubSession().respond(AnswerPreCheckoutQuery,True)
+    session=StubSession().respond(AnswerPreCheckoutQuery,True).respond(RefundStarPayment,True).respond(GetStarTransactions,{'transactions':[]})
     def link(method):
         assert method.currency=='XTR' and method.provider_token=='' and len(method.prices)==1
         return 'https://t.me/$fixture_'+method.payload.rsplit(':',1)[1].replace('-','')
@@ -75,11 +82,29 @@ async def run(args) -> None:
     attempts=guards();lock=ProcessLock(args.database)
     session=stub();bot=Bot(TOKEN,session=session);dp=Dispatcher();runner=None
     try:
-        store=Store(args.database,TOKEN,terms_version='demo-v1');recovered=store.recover()
+        clock_offset=[0]
+        store=Store(args.database,TOKEN,terms_version='demo-v1',now=lambda:time.time()+clock_offset[0]);recovered=store.recover()
+        provider=FakeStarsHistory(args.database.with_name(args.database.name+'.fake-stars.sqlite'))
+        refund_mode=['normal']
+        def refund_effect(method):
+            accepted=provider.refund(method.user_id,method.telegram_payment_charge_id,int(store.now()))
+            if refund_mode[0]=='lost-reply':raise TimeoutError('Synthetic lost refund reply after committed effect')
+            if refund_mode[0]=='crash':
+                print(json.dumps({'phase':'crash-refund','effect_committed':True,'refund_calls':provider.calls()}),flush=True)
+                os._exit(85)
+            return accepted
+        def history_response(method):return provider.history(method.offset or 0,method.limit or 100)
+        session.respond(RefundStarPayment,refund_effect).respond(GetStarTransactions,history_response)
+        financial_recovered=await ShopRefunds(store,bot).recover()
         dp.include_router(payment_router(store,shop_url='https://fixture.invalid/',terms=TERMS,support=SUPPORT))
+        intake=ShopDurablePolling(store,bot,dp);intake.install()
+        try:inbox_recovered=await intake.drain_ready()
+        finally:intake.close()
+        with connection(store.database) as db:retained=[json.loads(r[0]) for r in db.execute("SELECT event_json FROM shop_payment_ingress WHERE bot_id=? AND kind='paid' AND processed=1",(store.bot_id,))]
+        for fact in retained:provider.paid(fact['charge'],fact['actor'],fact['amount'],fact['payload'],fact['paid_at'])
         app=create_app(store,bot,args.frontend,origin=f'http://127.0.0.1:{args.port}',terms=TERMS,support=SUPPORT,loopback_dev=True)
         runner=web.AppRunner(app,access_log=None,shutdown_timeout=5);await runner.setup();await web.TCPSite(runner,'127.0.0.1',args.port).start()
-        print(json.dumps({'phase':'ready','launch':{str(actor):signed(actor) for actor in (42,77)},'recovered':recovered,'launch_profiles':{'menu':signed(42),'main':signed(42,start_param='orders'),'inline':signed(42,start_param='catalog'),'reply':'','inline_mode':''}}),flush=True)
+        print(json.dumps({'phase':'ready','launch':{str(actor):signed(actor) for actor in (42,77)},'recovered':recovered,'financial_recovered':financial_recovered,'inbox_recovered':inbox_recovered,'launch_profiles':{'menu':signed(42),'main':signed(42,start_param='orders'),'inline':signed(42,start_param='catalog'),'reply':'','inline_mode':''}}),flush=True)
         while line:=await asyncio.to_thread(sys.stdin.readline):
             command=json.loads(line);action=command['action']
             if action=='stop':break
@@ -87,6 +112,10 @@ async def run(args) -> None:
                 row=store.order(command.get('owner',42),command['id'])
                 before=len(session.calls)
                 await dp.feed_update(bot,update(store,row,actor=command.get('actor',42),kind=action if action=='precheckout' else 'paid',charge=command.get('charge','fixture-'+row['id']),amount=command.get('amount'),currency=command.get('currency','XTR'),query_id=command.get('query','query-'+row['id'])))
+                if action=='receipt':
+                    with connection(store.database) as db:native=db.execute("SELECT event_json FROM shop_payment_ingress WHERE bot_id=? AND charge=? AND kind='paid'",(store.bot_id,command.get('charge','fixture-'+row['id']))).fetchone()
+                    if native:
+                        fact=json.loads(native['event_json']);provider.paid(fact['charge'],fact['actor'],fact['amount'],fact['payload'],fact['paid_at'])
                 checkout=[c.ok for c in session.calls[before:] if isinstance(c,AnswerPreCheckoutQuery)]
                 result={'action':action,'passed':True,'checkout':checkout,'order':store.view(store.order(command.get('owner',42),command['id']))}
             elif action=='crash-invoice':
@@ -98,20 +127,50 @@ async def run(args) -> None:
                 store.finish_invoice=crash  # type: ignore[method-assign]
                 result={'action':action,'passed':True,'armed':True}
             elif action=='crash-receipt':
-                original_paid=store.paid
-                def crash_receipt(bot_id,actor,payload,currency,amount,charge):
-                    result=original_paid(bot_id,actor,payload,currency,amount,charge)
+                original_complete=store.complete_financial_ingress
+                def crash_receipt(identifier, original_complete=original_complete):
+                    result=original_complete(identifier)
                     assert not result['replayed'] and attempts[0]==0
                     print(json.dumps({'phase':'crash-receipt','committed':True,'external_network_attempts':0,'telegram_requests':False}),flush=True)
                     os._exit(76)
-                store.paid=crash_receipt  # type: ignore[method-assign]
+                store.complete_financial_ingress=crash_receipt  # type: ignore[method-assign]
                 result={'action':action,'passed':True,'armed':True}
+            elif action=='poll-admit-crash':
+                row=store.order(42,command['id']);native=update(store,row,charge=command.get('charge','admission-charge')).model_dump(mode='json',exclude_none=True);native['update_id']=991
+                session.respond(GetUpdates,[native]);intake.install()
+                await bot.get_updates(offset=991,limit=100,timeout=1)
+                admitted=intake.inbox.get(store.bot_id,991)
+                assert admitted is not None and admitted.state=='pending'
+                print(json.dumps({'phase':'crash-before-handler','receipt_committed':True,'update_id':991}),flush=True)
+                os._exit(87)
+            elif action=='refund-mode':
+                if command['mode'] not in {'normal','lost-reply','crash'}:raise ValueError('Unknown fake refund mode')
+                refund_mode[0]=command['mode'];result={'action':action,'passed':True}
+            elif action=='clock-advance':
+                seconds=command['seconds']
+                if type(seconds) is not int or not 0<seconds<=3600:raise ValueError('Bound the fixture clock advance')
+                clock_offset[0]+=seconds;result={'action':action,'passed':True}
+            elif action=='crash-refund-projection':
+                original_complete=store.complete_financial_ingress
+                def crash_refund_projection(identifier, original_complete=original_complete):
+                    record=store.financial_ingress(identifier)
+                    if record['kind']=='refunded':
+                        fact=json.loads(record['event_json']);target=store.receipt_target(fact['actor'],fact['payload'],fact['currency'],fact['amount']);link=store.payment_link(target['id'],fact['charge'])
+                        assert link and link['financial_ready'] and not store.financial.has_access(store.link_binding(link),now=int(store.now())).active
+                        print(json.dumps({'phase':'crash-refund-projection','ledger_confirmed':True,'refund_calls':provider.calls()}),flush=True)
+                        os._exit(86)
+                    return original_complete(identifier)
+                store.complete_financial_ingress=crash_refund_projection  # type: ignore[method-assign]
+                result={'action':action,'passed':True,'armed':True}
+            elif action=='operator':
+                store.configure_operator(command.get('actor',77),command.get('enabled',True))
+                result={'action':action,'passed':True}
             elif action=='role':
                 store.configure_role(command.get('actor',42),command['role'])
                 result={'action':action,'passed':True}
             elif action=='stats':
                 with connection(store.database) as db:
-                    result={'action':action,'passed':True,'orders':db.execute('SELECT count(*) FROM shop_orders').fetchone()[0],'receipts':db.execute('SELECT count(*) FROM shop_receipts').fetchone()[0],'access':db.execute('SELECT count(*) FROM shop_access').fetchone()[0],'invoice_requests':sum(isinstance(c,CreateInvoiceLink) for c in session.calls),'external_network_attempts':attempts[0],'telegram_requests':False}
+                    result={'action':action,'passed':True,'orders':db.execute('SELECT count(*) FROM shop_orders').fetchone()[0],'receipts':db.execute('SELECT count(*) FROM shop_receipts').fetchone()[0],'access':db.execute('SELECT count(*) FROM shop_access').fetchone()[0],'invoice_requests':sum(isinstance(c,CreateInvoiceLink) for c in session.calls),'refund_requests':provider.calls(),'external_network_attempts':attempts[0],'telegram_requests':False}
             else:raise ValueError('Unknown fixture action')
             print(json.dumps(result),flush=True)
     finally:

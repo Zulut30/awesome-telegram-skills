@@ -55,7 +55,7 @@ export function mountShop():ShopMount {
     consent.checked=state.consent;consent.disabled=busy||pending||current!==null;
     checkout.hidden=pending||current!==null;checkout.disabled=state.blocked||busy||!state.cart.length||!state.scope||!state.consent;
     pay.hidden=!current||current.status!=='awaiting'||['unknown','creating'].includes(current.invoice_state);pay.disabled=busy;
-    check.hidden=!pending&&!current;check.disabled=busy;retry.hidden=!state.retryAvailable;retry.disabled=busy;again.hidden=current?.status!=='paid';again.disabled=busy;
+    check.hidden=!pending&&!current;check.disabled=busy;retry.hidden=!state.retryAvailable;retry.disabled=busy;again.hidden=!current||!['paid','refunded'].includes(current.status);again.disabled=busy;
     refresh.disabled=busy||!telegram.initData;logout.hidden=!state.scope;logout.disabled=busy;syncClosing();
   }
   const consentChanged=()=>{domain.setConsent(consent.checked);render();};consent.addEventListener('change',consentChanged);
@@ -72,7 +72,7 @@ export function mountShop():ShopMount {
     if(result.status!=='ready'){orders.replaceChildren(node('h2','Мои покупки'),node('p','Покупки не удалось загрузить.'),button('Обновить покупки',()=>{void purchases();}));return;}
     orders.replaceChildren(node('h2','Мои покупки'));if(!result.value.length)orders.append(node('p','Покупок пока нет. Выберите материал в каталоге.'));
     const revision=domain.revision;
-    for(const o of result.value){const card=node('article');card.className='shop-card';card.append(node('h3',`Заказ ${o.id.slice(0,8)}`),node('p',`${o.total} ★ · ${o.status==='paid'?'Оплата подтверждена сервером':o.status==='review'?'Требует сверки с поддержкой':'Ожидает оплаты'}`));
+    for(const o of result.value){const card=node('article');card.className='shop-card';card.append(node('h3',`Заказ ${o.id.slice(0,8)}`),node('p',`${o.total} ★ · ${o.status==='paid'?'Оплата подтверждена сервером':o.status==='refunded'?'Возврат подтверждён сервером':o.status==='review'?'Требует сверки с поддержкой':'Ожидает оплаты'}`));
       if(o.status==='paid')for(const sku of o.items)card.append(button(`Открыть ${products.find(p=>p.id===sku)?.title??sku}`,()=>{if(revision===domain.revision)void readContent(sku,card);}));
       else card.append(button('Показать заказ',()=>{if(revision===domain.revision&&domain.selectOrder(o.id)){status.textContent='Проверьте статус и оплату заказа.';render();}}));orders.append(card);}
   }
@@ -80,6 +80,7 @@ export function mountShop():ShopMount {
     if(result.status==='ready'){parent.querySelector('pre')?.remove();const pre=node('pre',result.value.text);pre.className='shop-content';parent.append(pre);}else status.textContent='Доступ не подтверждён. Обновите покупки или обратитесь в поддержку.';}
   function received<T>(result:ShopResult<T>){if(!valid(result))return;const order=domain.snapshot().order;if(!order)return;
     if(order.status==='paid'){status.textContent='Оплата подтверждена сервером. Материалы доступны в «Мои покупки».';void purchases();}
+    else if(order.status==='refunded'){status.textContent='Возврат подтверждён сервером. Доступ к возвращённой покупке закрыт; можно выбрать материалы заново.';void purchases();}
     else status.textContent=['unknown','creating'].includes(order.invoice_state)?'Подготовка оплаты не подтверждена. Новую ссылку не создаём; обратитесь в поддержку.':'Заказ создан. Оплатите Stars или проверьте статус позднее.';render();}
   async function submit(){if(authBusy||!active)return;const work=domain.submit(termsVersion,crypto.randomUUID());render();status.textContent='Создаём заказ…';const result=await work;if(!active)return;
     if(result.status==='blocked')status.textContent='Не удалось сохранить номер операции. Заказ не отправлен; проверьте сохранённую операцию и локальное хранение.';

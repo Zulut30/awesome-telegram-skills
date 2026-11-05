@@ -224,6 +224,10 @@ const definitions = {
     "minVersion": "9.0",
     "url": "https://core.telegram.org/bots/webapps#securestorage"
   },
+  "Serverless.call": {
+    "minVersion": null,
+    "url": "https://core.telegram.org/bots/webapps#serverless"
+  },
   "SettingsButton.hide": {
     "minVersion": "7.0",
     "url": "https://core.telegram.org/bots/webapps#settingsbutton"

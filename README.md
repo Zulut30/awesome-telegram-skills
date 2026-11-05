@@ -10,7 +10,7 @@
 
 [Аудит и условия выхода в production — 05.11.2026](docs/production-readiness.md) · [Telegram Serverless](docs/telegram-serverless.md)
 
-[![Version](https://img.shields.io/badge/version-0.26.0-229ED9)](CHANGELOG.md)
+[![Version](https://img.shields.io/badge/version-0.27.0-229ED9)](CHANGELOG.md)
 [![Skills](https://img.shields.io/badge/skills-42-334155)](#skills)
 [![Status](https://img.shields.io/badge/status-experimental-f59e0b)](docs/v1-maturity.md)
 [![License: MIT](https://img.shields.io/badge/license-MIT-16a34a)](LICENSE)
@@ -33,7 +33,7 @@
 | 42 скилла для ИИ-агентов | 🟢 Можно использовать | Это инструкции: агент применяет их к вашему коду, решение и проверку вы оставляете за собой |
 | Python-компоненты (54 группы) | 🟡 Экспериментально | Покрыты тестами с настоящими aiogram и python-telegram-bot и тестовым транспортом; API может измениться в следующей минорной версии |
 | TypeScript-компоненты (13 групп) | 🟡 Экспериментально | Проверены в Chrome на разных размерах экрана, но не в Telegram на телефоне |
-| Рецепты (340) | 🟡 Проверены без Telegram | 207 — на настоящем SDK без сети, 34 — на заглушках, 99 — справочные и не запускались |
+| Рецепты (341) | 🟡 Проверены без Telegram | 207 — на настоящем SDK без сети, 34 — на заглушках, 100 — справочные и не запускались |
 | Примеры приложений | 🟡 Учебные | Показывают, как собрать бота, магазин и групповой бот; это не готовые продукты |
 | Работа в настоящем Telegram, на устройствах и с платежами | 🔴 Не проверено | Живой приемки на клиентах Telegram и у платежных провайдеров еще не было |
 
@@ -47,7 +47,7 @@
 | **67 групп компонентов** | Клавиатуры, формы, навигация, календари, медиа, состояния и проверка `initData`; [каталог](components.json) |
 | **Python-пакет** | `telegram_patterns`: ядро без SDK и адаптеры aiogram и python-telegram-bot; [API](packages/python/README.md) |
 | **TypeScript-пакет** | `@awesome-telegram/patterns`: bridge, темы, viewport, safe areas, API-клиент, черновики и UI-основа; [API](packages/typescript/README.md) |
-| **340 рецептов + CLI** | Поиск, фильтры, примеры кода, создание заготовок и `doctor`; [инструкция](docs/gallery-navigation.md) |
+| **341 рецепт + CLI** | Поиск, фильтры, примеры кода, создание заготовок и `doctor`; [инструкция](docs/gallery-navigation.md) |
 | **Карта возможностей** | 51 возможность Telegram: навык, компонент, сценарий, способ проверки и пробелы; [что умеет бот](docs/capability-map.md) |
 
 <a id="quickstart"></a>

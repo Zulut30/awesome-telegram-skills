@@ -25,7 +25,9 @@
     "StorageCallback<T>": "(error: string | null, result?: T) => void",
     "InlineQueryChatType": "'users' | 'bots' | 'groups' | 'channels'",
     "InvoiceStatus": "'paid' | 'cancelled' | 'failed' | 'pending'",
-    "HomeScreenStatus": "'unsupported' | 'unknown' | 'added' | 'missed'"
+    "HomeScreenStatus": "'unsupported' | 'unknown' | 'added' | 'missed'",
+    "NativeServerlessError": "{ readonly message: string; readonly type?: string; readonly status: number; readonly parameters?: Readonly<Record<string, unknown>> }",
+    "NativeServerlessCallback": "(error: NativeServerlessError | null, result?: unknown) => void"
   },
   "methods": {
     "Accelerometer.start": {
@@ -355,6 +357,26 @@
       },
       "returns": "TelegramNativeObject"
     },
+    "Serverless.call": {
+      "parameters": {
+        "name": "string",
+        "input": "Readonly<Record<string, unknown>> | undefined",
+        "callback": "NativeServerlessCallback | undefined"
+      },
+      "returns": "void",
+      "overloads": [
+        [
+          "name",
+          "callback"
+        ],
+        [
+          "name",
+          "input",
+          "callback"
+        ]
+      ],
+      "callback_error_declaration": "NativeServerlessError"
+    },
     "SettingsButton.hide": {
       "parameters": {},
       "returns": "TelegramNativeObject"
@@ -596,5 +618,21 @@
       "parameters": {},
       "returns": "void"
     }
-  }
+  },
+  "partial_reviews": [
+    {
+      "checked_date": "2026-11-05",
+      "source": "https://core.telegram.org/bots/webapps#serverless",
+      "source_sha256": "5514a251a455eebb9675dea6915b07f63aa0198cef0d4c1ddd58b602e4d90272",
+      "sdk_source": "https://telegram.org/js/telegram-web-app.js",
+      "sdk_sha256": "124bdff7ba3fe86c8ba5143467afec21e020405e74abdb92cfdda6c0ee3b5908",
+      "methods": [
+        "Serverless.call"
+      ],
+      "properties": [
+        "WebApp.Serverless"
+      ],
+      "scope": "Only Serverless method, hosting context, callback overloads and error fields; no published minimum client version. Existing methods and global review dates retained."
+    }
+  ]
 }

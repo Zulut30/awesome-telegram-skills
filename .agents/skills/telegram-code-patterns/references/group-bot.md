@@ -2,7 +2,7 @@
 
 Термины: **ACK** — ответ на нажатие кнопки через `answerCallbackQuery`: клиент убирает индикатор ожидания; это не сообщение об успехе операции; квитанция (receipt) — сохраненная запись о выполненной операции; повтор возвращает ее вместо второго эффекта; **неизвестный результат** — запрос мог выполниться, но ответа нет (таймаут, обрыв связи); повторять вслепую нельзя, сначала сверка; **сверка** — запрос фактического состояния у провайдера или в хранилище перед повтором или выдачей.
 
-Самостоятельное приложение `examples/group-bot`, distribution `awesome-telegram-group-example` 0.1.0, использует предоставленный Python wheel библиотеки 0.26.0 и aiogram; CI проверяет пример на текущей версии библиотеки. Это пример композиции `BotSettings`, `build_request`, `event_router`, `ActionButton` и `action_menu`. Его `Application`, `Store`, `ProcessLock` и `Context` принадлежат приложению, не являются новыми публичными exports библиотеки и не требуют сервисного/магазинного примера.
+Самостоятельное приложение `examples/group-bot`, distribution `awesome-telegram-group-example` 0.1.0, использует предоставленный Python wheel библиотеки 0.27.0 и aiogram; CI проверяет пример на текущей версии библиотеки. Это пример композиции `BotSettings`, `build_request`, `event_router`, `ActionButton` и `action_menu`. Его `Application`, `Store`, `ProcessLock` и `Context` принадлежат приложению, не являются новыми публичными exports библиотеки и не требуют сервисного/магазинного примера.
 
 ## Что попробовать
 
@@ -31,7 +31,7 @@ python scripts/build_release.py --ref HEAD --output output/release
 ```
 
 ```bash
-python scripts/verify_group_bot.py --wheel output/release/awesome_telegram_patterns-0.26.0-py3-none-any.whl --output output/group-bot-check
+python scripts/verify_group_bot.py --wheel output/release/awesome_telegram_patterns-0.27.0-py3-none-any.whl --output output/group-bot-check
 ```
 
 Output должен быть новым каталогом, существующие каталоги и известные links отклоняются до build/install. Helper собирает отдельный app wheel и проверяет его source bytes, RECORD и entrypoint. В новом consumer вне репозитория устанавливает предоставленную библиотеку и приложение, проверяет installed origins, console `--help`, Mypy, 20 тестов с SDK Dispatcher и настоящей file SQLite, четыре отдельные процессные фазы и OS lock. Фазы: сохранение предпросмотра → подтверждение после рестарта → реальный `os._exit(77)` после synthetic createForumTopic до сохранения результата → восстановление unknown без повторной отправки. Shadow modules/.env текущего проекта не читаются и не исполняются.

@@ -119,8 +119,8 @@ class MiniAppWatchTests(unittest.TestCase):
                          {'ready': '6.0', 'showPopup': '6.2', 'BackButton.show': '6.1', 'LocationManager.getLocation': '8.0'})
         serverless = mini_table('Serverless', [('call(name[, input][, callback])', 'Function', 'Calls an endpoint.')])
         new_page = mini_page(serverless, ('endpointCalled', 'Bot API 10.4+ Occurs after a call.'))
-        with self.assertRaisesRegex(ValueError, 'Unmapped Mini App module: Serverless'):
-            self.index.mini_index(new_page)  # the catalog build refuses a module it cannot gate
+        strict = self.index.mini_index(new_page)
+        self.assertIsNone(next(item for item in strict['methods'] if item['path'] == 'Serverless.call')['min_version'])
         new = self.index.mini_index(new_page, strict=False)
         result = self.differ.diff(old, new)
         self.assertTrue(result['changed'])
@@ -130,6 +130,58 @@ class MiniAppWatchTests(unittest.TestCase):
         for text in ('`Serverless.call` — версия в документации не указана', '`endpointCalled` — с версии 10.4'):
             self.assertIn(text, body)
         self.assertIn(result['digest'], self.differ.title(result))
+
+    def test_reviewed_serverless_has_no_invented_version_and_error_fields_are_not_module_properties(self):
+        table = mini_table('Serverless', [('call(name[, input][, callback])', 'Function', 'Calls an endpoint.'),
+                                         ('message', 'String', 'Error text.'), ('status', 'Integer', 'HTTP status or 0.')])
+        parsed = self.index.mini_index(mini_page(table))
+        method = next(item for item in parsed['methods'] if item['path'] == 'Serverless.call')
+        self.assertEqual(method['signature'], 'call(name[, input][, callback])')
+        self.assertIsNone(method['min_version'])
+        self.assertEqual(method['callback_error'], {'message': {'type': 'String', 'optional': False},
+                                                   'status': {'type': 'Integer', 'optional': False}})
+        self.assertFalse(any(item['owner'] == 'Serverless' for item in parsed['properties']))
+        unknown = mini_table('UnreviewedHosting', [('call(name)', 'Function', 'Unreviewed.')])
+        with self.assertRaisesRegex(ValueError, 'Unmapped Mini App module: UnreviewedHosting'):
+            self.index.mini_index(mini_page(unknown))
+        watch = self.index.mini_index(mini_page(unknown), strict=False)
+        self.assertIsNone(next(item for item in watch['methods'] if item['path'] == 'UnreviewedHosting.call')['min_version'])
+
+    def test_callback_signature_change_is_detected_without_faking_a_version_change(self):
+        original = mini_table('Serverless', [('call(name[, input][, callback])', 'Function', 'Calls an endpoint.')])
+        changed = original.replace('call(name[, input][, callback])', 'call(name, input, callback)')
+        old, new = self.index.mini_index(mini_page(original)), self.index.mini_index(mini_page(changed))
+        result = self.differ.diff(old, new)
+        self.assertTrue(result['changed'])
+        self.assertEqual(result['changed_methods'], {})
+        self.assertEqual(result['changed_signatures'], {'Serverless.call': {
+            'old': 'call(name[, input][, callback])', 'new': 'call(name, input, callback)'}})
+        self.assertIn('### Изменились сигнатуры', self.differ.markdown(result, old['source']))
+        later = {**old, 'checked_date': '2099-01-01', 'source_sha256': '0' * 64,
+                 'partial_reviews': [{'checked_date': '2099-01-01'}]}
+        self.assertFalse(self.differ.diff(old, later)['changed'])
+
+    def test_callback_error_type_and_optionality_drift_are_visible_to_the_watcher(self):
+        original = mini_table('Serverless', [('call(name[, input][, callback])', 'Function', 'Calls an endpoint.'),
+                                            ('status', 'Integer', 'HTTP status or 0.'),
+                                            ('parameters', 'Object', 'Optional. Endpoint details.')])
+        old = self.index.mini_index(mini_page(original))
+        for label, updated in (
+            ('status-type', original.replace('<td>Integer</td>', '<td>String</td>')),
+            ('parameters-required', original.replace('Optional. Endpoint details.', 'Endpoint details.')),
+        ):
+            with self.subTest(case=label):
+                new = self.index.mini_index(mini_page(updated))
+                result = self.differ.diff(old, new)
+                self.assertTrue(result['changed'])
+                self.assertEqual(result['changed_methods'], {})
+                self.assertEqual(result['changed_signatures'], {})
+                self.assertEqual(result['changed_callback_errors'], {'Serverless.call': {
+                    'old': next(item for item in old['methods'] if item['path'] == 'Serverless.call')['callback_error'],
+                    'new': next(item for item in new['methods'] if item['path'] == 'Serverless.call')['callback_error']}})
+                self.assertIn('### Изменились поля ошибки callback', self.differ.markdown(result, old['source']))
+        description_only = self.index.mini_index(mini_page(original.replace('Endpoint details.', 'Endpoint diagnostics.')))
+        self.assertFalse(self.differ.diff(old, description_only)['changed'])
 
     def test_same_api_on_a_rebuilt_page_is_not_a_change_but_a_new_gate_is(self):
         old = self.index.mini_index(mini_page(), strict=False)

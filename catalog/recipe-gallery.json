@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "library_version": "0.26.0",
+  "library_version": "0.27.0",
   "source_snapshot": "2026-10-04",
   "source_hashes": {
     "bot_api": "29f5f25caa18d303f14ce83af5a4df784eb3094c3076cb040a1ad950c157ad44",
@@ -17971,6 +17971,75 @@
       }
     },
     {
+      "id": "native.Serverless.call",
+      "title": "Serverless.call",
+      "summary": "Native сигнатура: call(name[, input][, callback]). Минимальная версия не опубликована; универсальный фасад запрещает вызов",
+      "category": "mini-app",
+      "language": "typescript",
+      "maturity": "reference",
+      "keywords": [
+        "Serverless.call",
+        "native",
+        "mini",
+        "app",
+        "call(name[, input][, callback])",
+        "apps"
+      ],
+      "code": "import { TelegramNativeAPI, ServerlessEndpointClient } from \"@awesome-telegram/patterns\";\ndeclare const nativeApp: unknown; // Реальный host передаёт свой Telegram.WebApp.\ndeclare const serverlessHostingChosen: boolean; // Явный выбор Telegram Serverless hosting.\ndeclare const decodeProfile: (value: unknown) => Readonly<{displayName: string}>;\nconst generic = new TelegramNativeAPI(nativeApp);\n// min_version неизвестна: generic.supports(\"Serverless.call\") === false; call запрещён.\ngeneric.dispose();\nconst endpoint = new ServerlessEndpointClient(nativeApp, {serverlessHosting: serverlessHostingChosen});\nasync function readProfile() {\n  if (!endpoint.supports()) return {status: \"unsupported\"} as const; // HTTP fallback проекта.\n  return await endpoint.call(\"getProfile\", {lang: \"ru\"}, decodeProfile, {operation: \"read\"});\n}\n// Host вызывает readProfile и обрабатывает отказ; endpoint проверяет права на объект.\n// Для записи host сохраняет operation ID до попытки; unknown требует сверки, не повтора.\n// При уходе с экрана: endpoint.dispose(); это не отменяет уже выполненную запись.\n",
+      "verification": "not_run",
+      "scope": "Справочный пример: явный Telegram Serverless hosting, presence и initData не заменяют server ACL. Минимальная версия неизвестна; обычный Python backend не мигрирует. Локальный executor и live-приёмка отсутствуют.",
+      "sources": [
+        "https://core.telegram.org/bots/webapps#serverless"
+      ],
+      "preview": null,
+      "code_sha256": "4b1b9164b04d0b2a0c1c5dbb45d73852a25b79897a72ba48b172ef0cffef6b16",
+      "tasks": [
+        "native"
+      ],
+      "contexts": [
+        "mini-app"
+      ],
+      "sdk": "telegram-webapp",
+      "sdk_version": "snapshot:2026-11-05",
+      "api_version": "mini:unknown",
+      "source_files": [
+        "recipes/mini-app/README.md",
+        "packages/typescript/src/native-api.ts",
+        "docs/telegram-serverless.md",
+        "packages/typescript/src/native-flows.ts"
+      ],
+      "check_files": [
+        "scripts/build_telegram_catalog.py",
+        "packages/typescript/tests/core.test.mjs"
+      ],
+      "execution": {
+        "kind": "reference",
+        "dependencies": [
+          "Предоставленный TypeScript tarball и host Mini App"
+        ],
+        "offline_environment": [],
+        "offline_permissions": [],
+        "offline_data": [],
+        "live_environment": [
+          "HTTPS_APP_URL",
+          "TELEGRAM_WEBAPP_CONTEXT",
+          "TELEGRAM_SERVERLESS_PROJECT"
+        ],
+        "live_permissions": [
+          "Явный выбор хостинга, проверка initData платформой и актуальный ACL endpoint на каждый объект/операцию."
+        ],
+        "live_data": [
+          "Host Telegram.WebApp и аргументы: Native сигнатура: call(name[, input][, callback]). Минимальная версия не опубликована; универсальный фасад запрещает вызов",
+          "Клиентская версия, launch mechanism и server auth/ACL приложения",
+          "Документированный endpoint/decoder и сохранённый scoped operation ID до записи; unknown требует сверки без нового POST."
+        ],
+        "live_review": "Live executor отсутствует. Перед интеграцией проверить источники, ограничения конкретного метода/контекста, auth и ACL; metadata не подтверждает права.",
+        "effects": [
+          "Offline fragment execution недоступен без host/аргументов"
+        ]
+      }
+    },
+    {
       "id": "native.SettingsButton.hide",
       "title": "SettingsButton.hide",
       "summary": "Native сигнатура: hide(). Минимальная версия 7.0",
@@ -24330,7 +24399,7 @@
         "backend"
       ],
       "sdk": "python-core",
-      "sdk_version": "0.26.0",
+      "sdk_version": "0.27.0",
       "api_version": "none",
       "source_files": [
         "examples/python/error_recovery.py",

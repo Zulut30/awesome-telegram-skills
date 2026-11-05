@@ -143,6 +143,9 @@ Host проверяет содержимое, MIME и доступ на серв
 `ServerlessEndpointClient(app, {serverlessHosting: true})` предназначен только для
 явно выбранного Telegram Serverless hosting. `supports()` требует native presence,
 непустой initData и функцию `Serverless.call`; минимальная версия не выдумывается.
+В каноническом каталоге `Serverless.call` имеет `min_version: null`. Универсальный
+`TelegramNativeAPI` запрещает этот вызов до SDK даже при большом номере версии
+и наличии метода; типизированные callback overloads не заменяют проверку поддержки.
 Обычный Python/backend не мигрирует автоматически.
 [Официальные Serverless.call](https://core.telegram.org/bots/webapps#serverless),
 [hosting и проверка initData](https://core.telegram.org/bots/serverless).

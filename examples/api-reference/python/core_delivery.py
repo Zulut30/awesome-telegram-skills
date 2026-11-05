@@ -57,6 +57,26 @@ with TemporaryDirectory() as directory:
     assert isinstance(record, InboxRecord)
     state: InboxState = record.state
     assert state == 'quarantined' and record.reason == reason
+    # An explicit lane can serve urgent work while the normal lane stays pending.
+    inbox.receive(100, 3, {'update_id': 3, 'message': {}}, now=12)
+    urgent = inbox.receive(100, 4, {'update_id': 4, 'pre_checkout_query': {}}, priority=1, now=13)
+    assert urgent.priority == 1
+    duplicate = inbox.receive(100, 4, {'update_id': 4, 'pre_checkout_query': {}}, priority=0, now=900)
+    stored = inbox.get(100, 4)
+    assert duplicate.duplicate and duplicate.priority == 1
+    assert stored is not None and stored.priority == 1 and stored.received_at == 13
+    urgent_claim = inbox.claim(100, 'urgent-worker', priorities=(1,), now=14)
+    assert urgent_claim is not None and urgent_claim.update_id == 4
+    inbox.complete(urgent_claim, now=14)
+    normal_claim = inbox.claim(100, 'normal-worker', priorities=(0,), now=14)
+    assert normal_claim is not None and normal_claim.update_id == 3
+    inbox.complete(normal_claim, now=14)
+    # Default selection remains FIFO across all lanes, without numeric priority sorting.
+    inbox.receive(100, 5, {'update_id': 5, 'message': {}}, now=15)
+    inbox.receive(100, 6, {'update_id': 6, 'pre_checkout_query': {}}, priority=255, now=16)
+    fifo = inbox.claim(100, 'default-worker', now=17)
+    assert fifo is not None and fifo.update_id == 5
+    inbox.complete(fifo, now=17)
     # Optional adapter is importable without aiohttp; actual HTTP belongs to separate extra consumer tests.
     assert callable(create_aiohttp_webhook_app)
 print(json.dumps({'passed': True, 'case': 'core_delivery', 'network': False}))

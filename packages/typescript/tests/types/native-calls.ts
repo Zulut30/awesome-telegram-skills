@@ -4,7 +4,34 @@ import {
   type TelegramNativeArguments,
   type TelegramNativeResult,
   type TelegramNativeSignatures,
+  type TelegramServerlessError,
 } from '@awesome-telegram/patterns';
+
+/** These signatures typecheck; the universal facade rejects their unknown version at runtime. */
+export function documentedServerlessArguments(api:TelegramNativeAPI):void {
+  const callback=(error:TelegramServerlessError|null,result?:unknown)=>{
+    if(error){const code:number=error.status;const type:string|undefined=error.type;const details:Readonly<Record<string,unknown>>|undefined=error.parameters;void code;void type;void details;}
+    void result;
+  };
+  const second:TelegramNativeArguments<'Serverless.call'>=['getProfile',callback];
+  const third:TelegramNativeArguments<'Serverless.call'>=['getProfile',{lang:'ru'},callback];void second;void third;
+  const raw:TelegramNativeSignatures['Serverless.call']=(...args)=>{const name:string=args[0];void name;};
+  raw('getProfile');raw('getProfile',callback);raw('getProfile',{lang:'ru'},callback);raw('getProfile',undefined,callback);
+  const returned:TelegramNativeResult<'Serverless.call'>=api.call('Serverless.call','getProfile',{lang:'ru'},callback);const noPromise:void=returned;void noPromise;
+  api.call('Serverless.call','getProfile',callback);
+  // @ts-expect-error an endpoint name is required
+  api.call('Serverless.call');
+  // @ts-expect-error endpoint name is a string
+  api.call('Serverless.call',42);
+  // @ts-expect-error input is an object, never an array
+  api.call('Serverless.call','getProfile',[],callback);
+  // @ts-expect-error callback receives an error object or null, never a string
+  api.call('Serverless.call','getProfile',(error:string)=>{void error;});
+  // @ts-expect-error native SDK return is void; callback carries the result
+  const promise:Promise<unknown>=api.call('Serverless.call','getProfile');void promise;
+  // @ts-expect-error HTTP status is numeric, including zero for network failure
+  const error:TelegramServerlessError={message:'Fixture',status:'0'};void error;
+}
 
 export function documentedCalls(api: TelegramNativeAPI): boolean {
   api.call('showPopup', {message: 'Continue?', buttons: [{id: 'ok', type: 'ok'}]}, buttonId => { buttonId?.toUpperCase(); });

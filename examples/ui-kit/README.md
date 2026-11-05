@@ -29,7 +29,7 @@ Browser runner сохраняет отчёт и synthetic screenshots в ignored
 Проверка установленного tarball выполняется отдельно от checkout-сборки:
 
 ```sh
-python scripts/verify_ui_example.py --tarball output/pattern-library-0.26.0/dist/awesome-telegram-patterns-0.26.0.tgz --output output/ui-installed
+python scripts/verify_ui_example.py --tarball output/pattern-library-0.27.0/dist/awesome-telegram-patterns-0.27.0.tgz --output output/ui-installed
 ```
 
 Нужны Node/npm, зависимости checkout (`npm ci`) и Chrome либо `CHROME_PATH`.
