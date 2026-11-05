@@ -90,6 +90,14 @@
         "47 licensing source hashes match frozen source92. The exact accepted 0.28 wheel and tarball retain the full MIT. Dependency/asset notices distinguish optional SDKs, SPDX OR/AND and the owner publication/license decision; no legal clearance or new license choice is claimed."
       ],
       "source_commit": "92a9d151dc57d85cc5f1eb614f9980e808b36b59"
+    },
+    "94": {
+      "requirement": "Добавить SECURITY.md, поддерживаемые версии, приватный канал и порядок исправления; проверить, что опубликованный контакт доступен.",
+      "observations": [
+        "SECURITY.md defines supported published/development lines, private reporting, severity triage and correction/disclosure steps; no guaranteed human SLA is invented.",
+        "Authenticated GitHub GET on 2026-11-05 confirms private-vulnerability-reporting enabled=true; the existing published security URL supplies the private form under GitHub official contract. No advisory was submitted; notification delivery and another human response are not asserted. Twenty governance/helper tests passed."
+      ],
+      "source_commit": "92a9d151dc57d85cc5f1eb614f9980e808b36b59"
     }
   }
 }
