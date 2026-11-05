@@ -22,6 +22,32 @@
         }
       }
     },
+    "/api/session/rotate": {
+      "post": {
+        "operationId": "rotateSession",
+        "summary": "Atomically replace this bearer session; old token immediately stops working. Lost response requires new initData exchange, preserving order operation ID.",
+        "requestBody": {"required": true, "content": {"application/json": {"schema": {"$ref": "#/components/schemas/EmptyBody"}}}},
+        "responses": {
+          "200": {"description": "Replacement session", "content": {"application/json": {"schema": {"$ref": "#/components/schemas/Session"}}}},
+          "401": {"$ref": "#/components/responses/Error"},
+          "403": {"$ref": "#/components/responses/Error"},
+          "422": {"$ref": "#/components/responses/Error"}
+        }
+      }
+    },
+    "/api/session/revoke": {
+      "post": {
+        "operationId": "revokeSession",
+        "summary": "Revoke only this bearer session; repeated use is unauthorized. Does not cancel already-authorized in-flight operations or other sessions.",
+        "requestBody": {"required": true, "content": {"application/json": {"schema": {"$ref": "#/components/schemas/EmptyBody"}}}},
+        "responses": {
+          "200": {"description": "Current session revoked", "content": {"application/json": {"schema": {"$ref": "#/components/schemas/SessionRevoked"}}}},
+          "401": {"$ref": "#/components/responses/Error"},
+          "403": {"$ref": "#/components/responses/Error"},
+          "422": {"$ref": "#/components/responses/Error"}
+        }
+      }
+    },
     "/api/catalog": {
       "get": {
         "operationId": "getCatalog",
@@ -44,7 +70,8 @@
         "summary": "Orders of the session owner",
         "responses": {
           "200": {"description": "Orders", "content": {"application/json": {"schema": {"$ref": "#/components/schemas/Orders"}}}},
-          "401": {"$ref": "#/components/responses/Error"}
+          "401": {"$ref": "#/components/responses/Error"},
+          "403": {"$ref": "#/components/responses/Error"}
         }
       },
       "post": {
@@ -68,6 +95,7 @@
         "responses": {
           "200": {"description": "Order", "content": {"application/json": {"schema": {"$ref": "#/components/schemas/Order"}}}},
           "401": {"$ref": "#/components/responses/Error"},
+          "403": {"$ref": "#/components/responses/Error"},
           "404": {"$ref": "#/components/responses/Error"}
         }
       }
@@ -131,6 +159,10 @@
           "scope": {"type": "string", "description": "bot_id:user_id; keys local drafts, grants nothing"},
           "expires_in": {"type": "integer", "description": "Seconds"}
         }
+      },
+      "SessionRevoked": {
+        "type": "object", "additionalProperties": false, "required": ["revoked"],
+        "properties": {"revoked": {"type": "boolean"}}
       },
       "Product": {
         "type": "object", "additionalProperties": false, "required": ["id", "title", "description", "stars", "category"],

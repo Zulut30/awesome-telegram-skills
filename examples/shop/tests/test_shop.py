@@ -219,6 +219,11 @@ class ShopTests(unittest.IsolatedAsyncioTestCase):
                 await call('GET','/api/content/bot-kit','/api/content/{sku}',200,headers=owner)
                 other={'Authorization':'Bearer '+(await call('POST','/api/session','/api/session',200,json_body={'initData':signed(77)}))['token']}
                 await call('GET','/api/orders/'+row['id'],'/api/orders/{id}',403,headers=other)
+                rotated=await call('POST','/api/session/rotate','/api/session/rotate',200,json_body={},headers=owner)
+                await call('POST','/api/session/rotate','/api/session/rotate',401,json_body={},headers=owner)
+                replacement={'Authorization':'Bearer '+rotated['token']}
+                await call('POST','/api/session/revoke','/api/session/revoke',200,json_body={},headers=replacement)
+                await call('POST','/api/session/revoke','/api/session/revoke',401,json_body={},headers=replacement)
             self.assertEqual({(m,p) for m,p,status in seen if status==200},set(operations),'every operation answered with its 200 schema')
         finally:
             if runner is not None:await runner.cleanup()

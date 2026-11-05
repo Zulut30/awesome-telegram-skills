@@ -31,6 +31,7 @@ CONTENT = {
     'ui-guide':'Памятка: не стирайте ввод при theme/resize/back. Цена и доступ приходят с backend. Проверяйте узкие и широкие экраны, focus, touch и error/empty/loading. invoiceClosed не подтверждает выдачу.',
 }
 UUID = re.compile(r'[a-f0-9]{8}-[a-f0-9]{4}-4[a-f0-9]{3}-[89ab][a-f0-9]{3}-[a-f0-9]{12}')
+SESSION_SECONDS = 600
 
 
 class UnknownInvoice(RuntimeError):
@@ -71,18 +72,42 @@ class Store:
         A header the browser never attaches on its own also needs no CSRF token.
         """
         launch=validate_init_data(raw,self.token,max_age_seconds=3600,now=int(self.now()))
-        token=secrets.token_urlsafe(32)
         with connection(self.database,write=True) as db:
-            db.execute('DELETE FROM shop_sessions WHERE expires<=?',(int(self.now()),))
-            db.execute('INSERT INTO shop_sessions(token_hash,bot_id,actor_id,expires) VALUES(?,?,?,?)',(digest(token),self.bot_id,launch.user_id,int(self.now())+600))
-        return {'token':token,'scope':f'{self.bot_id}:{launch.user_id}'}
+            return self._issue_session(db,launch.user_id,int(self.now()))
+
+    def _issue_session(self, db: sqlite3.Connection, actor: int, now: int) -> dict:
+        self.actor(actor)
+        token=secrets.token_urlsafe(32)
+        db.execute('DELETE FROM shop_sessions WHERE bot_id=? AND expires<=?',(self.bot_id,now))
+        db.execute('INSERT INTO shop_sessions(token_hash,bot_id,actor_id,expires) VALUES(?,?,?,?)',(digest(token),self.bot_id,actor,now+SESSION_SECONDS))
+        return {'token':token,'scope':f'{self.bot_id}:{actor}'}
+
+    def _session_actor(self, db: sqlite3.Connection, token: str, now: int) -> int:
+        if not isinstance(token,str) or not token or len(token)>128:raise PermissionDenied()
+        row=db.execute('SELECT actor_id FROM shop_sessions WHERE token_hash=? AND bot_id=? AND expires>?',(digest(token),self.bot_id,now)).fetchone()
+        if not row:raise PermissionDenied()
+        return self.actor(row['actor_id'])
 
     def authenticate(self, token: str) -> int:
-        if not isinstance(token,str) or not token or len(token)>128:raise PermissionDenied()
         with connection(self.database) as db:
-            row=db.execute('SELECT actor_id FROM shop_sessions WHERE token_hash=? AND bot_id=? AND expires>?',(digest(token),self.bot_id,int(self.now()))).fetchone()
-            if not row:raise PermissionDenied()
-            return self.actor(row['actor_id'])
+            return self._session_actor(db,token,int(self.now()))
+
+    def rotate_session(self, token: str) -> dict:
+        """Consume one live token and issue a replacement atomically; no grace/replay token.
+
+        A lost response requires a new initData exchange. Orders/operation IDs are
+        independent of sessions and remain reconcilable by the same verified actor.
+        """
+        with connection(self.database,write=True) as db:
+            now=int(self.now());actor=self._session_actor(db,token,now)
+            db.execute('DELETE FROM shop_sessions WHERE token_hash=? AND bot_id=?',(digest(token),self.bot_id))
+            return self._issue_session(db,actor,now)
+
+    def revoke_session(self, token: str) -> None:
+        """Revoke only the supplied live session; other devices/accounts remain intact."""
+        with connection(self.database,write=True) as db:
+            self._session_actor(db,token,int(self.now()))
+            db.execute('DELETE FROM shop_sessions WHERE token_hash=? AND bot_id=?',(digest(token),self.bot_id))
 
     def create(self, actor: int, operation: str, skus: list[str], terms: str) -> dict:
         self.actor(actor)
