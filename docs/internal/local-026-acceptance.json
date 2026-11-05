@@ -41,11 +41,102 @@
         "Immutable full order binding, invoice/payment/refund states and transactional audit.",
         "Native provider state and rejected authenticated observations survive reopen; no normalization loss."
       ]
+    },
+    "41": {
+      "requirement": "Соединить Mini App, бот и API через общие сервисы и storage; оставить loopback mock пример для обучения и тестов.",
+      "installed_stage": "shop-example: tests/headless-domain/browser",
+      "observations": [
+        "Shop bot, API and Mini App share the installed file-SQLite service; the loopback teaching mock remains separate."
+      ]
+    },
+    "42": {
+      "requirement": "Покрыть поврежденную подпись, срок действия, неверный bot context и разбор полей; пользователь определяется только после серверной проверки, `initDataUnsafe` не авторизует запросы.",
+      "installed_stage": "shop-example: tests/headless-domain/browser",
+      "observations": [
+        "Malformed/forged/expired/future/duplicate launch vectors and wrong bot context are refused; frontend identity fields cannot authorize requests."
+      ]
+    },
+    "43": {
+      "requirement": "Показать выдачу, истечение, ротацию и отзыв, а также подходящие защите транспорта CSRF/CORS/cookie правила; клиент не хранит bot token.",
+      "installed_stage": "shop-example: tests/headless-domain/browser",
+      "observations": [
+        "Hashed bearer sessions expire, rotate with one concurrent winner and revoke durably; exact Origin, no ambient cookies, lost TCP replies and process death verified."
+      ]
+    },
+    "44": {
+      "requirement": "Проверять владельца заказа/черновика и роли на каждом действии; подмена ID или Telegram user ID во frontend не дает доступа к чужим данным.",
+      "installed_stage": "shop-example: tests/headless-domain/browser",
+      "observations": [
+        "Bot/actor/owner and customer/viewer/blocked roles gate reads, effects, invoice/pre-checkout and saved replay; additive role migration preserves prior data."
+      ]
+    },
+    "46": {
+      "requirement": "Разделить доменные модели, состояние, API, Telegram adapters и UI; подключение к React или другому текущему стеку не требует переписывать доменную логику.",
+      "installed_stage": "shop-example: tests/headless-domain/browser",
+      "observations": [
+        "Actual main imports domain-state, shop-api and telegram-adapter; the same domain and captured transport execute without DOM/window/Telegram in four Node scenarios."
+      ]
+    },
+    "47": {
+      "requirement": "Поддержать отмену чтений, защиту от устаревших ответов и согласованное обновление кеша; смена пользователя очищает принадлежащие ему данные.",
+      "installed_stage": "shop-example: tests/headless-domain/browser",
+      "observations": [
+        "Ignored aborts and old reads/rotations cannot overwrite a newer generation or another account; writes invalidate reads and account changes clear private state."
+      ]
+    },
+    "48": {
+      "requirement": "Добавить версии, миграции, TTL, scope пользователя и очищение; обычный draft хранит только разрешенные поля, а не секреты и подтверждение оплаты.",
+      "installed_stage": "shop-example: tests/headless-domain/browser",
+      "observations": [
+        "Explicit migrations retain original expiry and scope, write before deleting legacy data, strip forbidden fields and keep pending identity outside cart TTL."
+      ]
+    },
+    "49": {
+      "requirement": "Сохранять operation ID отдельно от draft, показывать pending/unknown и сверять серверный статус после reload; новый заказ не создается автоматически.",
+      "installed_stage": "shop-example: tests/headless-domain/browser",
+      "observations": [
+        "Lost replies and crashes retain the original operation ID; reload plus GET 404 creates zero orders, and only an explicit authorized retry reuses the same saved intent."
+      ]
+    },
+    "50": {
+      "requirement": "Обработать BackButton, браузерную историю, подтверждение закрытия, resume и dispose; повторный mount не удваивает listeners и действия.",
+      "installed_stage": "shop-example: tests/headless-domain/browser",
+      "observations": [
+        "Back/history, closing intent, page resume and older-client fallback share actual state; repeated dispose leaves zero owned listeners and repeated mount installs one set."
+      ]
     }
   },
   "limits": [
     "Local Windows with fresh core/SDK/TypeScript/Chrome consumers; all components remain experimental.",
     "This accepts a monetary data model, not live provider operation, real devices or production release.",
     "Other roadmap requirements retain their existing status until separately proved and committed."
-  ]
+  ],
+  "shop": {
+    "source_base_commit": "04147d61654473c4aa72f01ad4f47d9bc4ec5a9f",
+    "driver_sha256": "89bed536c27c8d1a116402fd68e64bee34657dc185ea6b9876794b9167b2598a",
+    "driver_commit": "b52f83d01de0a8ee649bc66c96a33184b114a54f",
+    "report_path": "output/pattern-library-0.26.0/shop-example/report.json",
+    "report_sha256": "8570b08f86e6641a673f29eaac49fb715241be6864adc06e5835375b6af6c1c1",
+    "python_tests": 24,
+    "headless_node_tests": 4,
+    "chrome_checks": 246,
+    "library_artifacts": [
+      {
+        "name": "awesome_telegram_patterns-0.26.0-py3-none-any.whl",
+        "bytes": 511418,
+        "sha256": "22605c15b34e13237b4c7d1209e034176f4bff2275166ec46c423f001d302512"
+      },
+      {
+        "name": "awesome-telegram-patterns-0.26.0.tgz",
+        "bytes": 51808,
+        "sha256": "ca7dc96e7098495247e6f55f1330caef25d14bf2476763900de1aefbb8c36921"
+      }
+    ],
+    "application_artifact": {
+      "name": "awesome_telegram_shop_example-0.1.0-py3-none-any.whl",
+      "bytes": 27442,
+      "sha256": "799dc5c74a96d825af8e64cdfba382fba43a851f0d6d4bbf0980e885dfdd7834"
+    },
+    "scope": "Installed Python application and pattern wheel/tarball; real SQLite, HTTP, process restart and Chrome, including a cross-site iframe as in Telegram Web. Synthetic launch/native/SDK transport. No live Telegram/Stars test environment or physical devices."
+  }
 }

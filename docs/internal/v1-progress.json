@@ -924,10 +924,17 @@
       "id": 41,
       "title": "Создать пример с настоящим Python backend",
       "requirement": "Соединить Mini App, бот и API через общие сервисы и storage; оставить loopback mock пример для обучения и тестов.",
-      "status": "pending",
-      "commit_subject": null,
-      "artifacts": [],
-      "evidence": []
+      "status": "done",
+      "commit_subject": "roadmap(041): accept the installed Python shop backend",
+      "artifacts": [
+        "examples/shop/README.md",
+        "docs/internal/backend-state-readiness-2026-11-05.md",
+        "docs/internal/local-026-acceptance.json"
+      ],
+      "evidence": [
+        "Exact 0.26 installed library and application wheels/tarball: 24 Python, 4 headless Node and 246 Chrome checks passed; real HTTP/SQLite/process recovery, no live Telegram/device/provider proof.",
+        "Shop bot, API and Mini App share the installed file-SQLite service; the loopback teaching mock remains separate."
+      ]
     },
     {
       "id": 42,
