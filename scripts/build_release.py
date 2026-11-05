@@ -24,6 +24,9 @@ import tempfile
 import tomllib
 import uuid
 
+sys.path.insert(0, str(Path(__file__).resolve().parent))
+from release_identity import ReleaseIdentity, ReleaseIdentityError, parse_release_tag, read_release_identity  # noqa: E402
+
 ROOT = Path(__file__).resolve().parents[1]
 NPM = 'npm.cmd' if os.name == 'nt' else 'npm'
 
@@ -32,12 +35,34 @@ def _git(*arguments: str) -> bytes:
     return subprocess.run(['git', *arguments], cwd=ROOT, check=True, capture_output=True).stdout
 
 
+def ref_identity(ref: str, root: Path | None = None) -> ReleaseIdentity:
+    """Read both manifests from one immutable commit, never from the working checkout."""
+    repository = ROOT if root is None else root
+    commit = subprocess.run(['git', 'rev-parse', f'{ref}^{{commit}}'], cwd=repository,
+                            check=True, capture_output=True, text=True).stdout.strip()
+    with tempfile.TemporaryDirectory(prefix='release-manifests-') as temporary:
+        paths = []
+        for source, basename in [('packages/python/pyproject.toml', 'pyproject.toml'),
+                                 ('packages/typescript/package.json', 'package.json')]:
+            content = subprocess.run(['git', 'show', f'{commit}:{source}'], cwd=repository,
+                                     check=True, capture_output=True).stdout
+            path = Path(temporary) / basename
+            path.write_bytes(content)
+            paths.append(path)
+        return read_release_identity(*paths)
+
+
 def _version(ref: str) -> str:
-    pyproject = _git('show', f'{ref}:packages/python/pyproject.toml').decode('utf-8')
-    match = re.search(r'^version\s*=\s*"([^"]+)"', pyproject, re.M)
-    if match is None:
-        raise SystemExit(f'{ref}: packages/python/pyproject.toml has no version')
-    return match.group(1)
+    return ref_identity(ref).identity
+
+
+def validate_tag(tag: str, root: Path | None = None) -> ReleaseIdentity:
+    """Canonical existing tag whose two committed manifests have exactly this identity."""
+    release = parse_release_tag(tag)
+    actual = ref_identity('refs/tags/' + tag, root)
+    if actual.identity != release.identity:
+        raise ReleaseIdentityError('Release tag differs from its committed package manifests')
+    return release
 
 
 def _sha256(path: Path) -> str:
@@ -51,12 +76,12 @@ def sbom(tree: Path, commit: str, epoch: int, sums: dict[str, str]) -> dict:
     """Deterministic CycloneDX 1.6 inventory of the two artifacts and their declared dependencies."""
     project = tomllib.loads((tree / 'packages/python/pyproject.toml').read_text(encoding='utf-8'))['project']
     package = json.loads((tree / 'packages/typescript/package.json').read_text(encoding='utf-8'))
-    version = project['version']
+    release = read_release_identity(tree / 'packages/python/pyproject.toml', tree / 'packages/typescript/package.json')
     licenses = [{'license': {'id': project['license']}}] if isinstance(project.get('license'), str) else []
-    python_ref = f"pkg:pypi/{project['name']}@{version}"
-    npm_ref = 'pkg:npm/' + package['name'].replace('@', '%40', 1) + f'@{version}'
-    wheel = f"{project['name'].replace('-', '_')}-{version}-py3-none-any.whl"
-    tarball = f"{package['name'].lstrip('@').replace('/', '-')}-{version}.tgz"
+    python_ref = f"pkg:pypi/{project['name']}@{release.python_version}"
+    npm_ref = 'pkg:npm/' + package['name'].replace('@', '%40', 1) + f'@{release.npm_version}'
+    wheel = release.wheel_filename(project['name'])
+    tarball = release.npm_tarball_filename(package['name'])
     optional = []
     for extra, requirements in sorted(project.get('optional-dependencies', {}).items()):
         for requirement in requirements:
@@ -66,7 +91,7 @@ def sbom(tree: Path, commit: str, epoch: int, sums: dict[str, str]) -> dict:
                              'properties': [{'name': 'python:requirement', 'value': f'{requirement}; extra == "{extra}"'}]})
     runtime = [{'type': 'library', 'bom-ref': f'pkg:npm/{name}', 'name': name, 'purl': 'pkg:npm/' + name.replace('@', '%40', 1),
                 'properties': [{'name': 'npm:range', 'value': value}]} for name, value in sorted(package.get('dependencies', {}).items())]
-    def component(ref: str, name: str, artifact: str) -> dict:
+    def component(ref: str, name: str, artifact: str, version: str) -> dict:
         return {'type': 'library', 'bom-ref': ref, 'name': name, 'version': version, 'purl': ref, 'licenses': licenses,
                 'hashes': [{'alg': 'SHA-256', 'content': sums[artifact]}],
                 'externalReferences': [{'type': 'vcs', 'url': f'{REPOSITORY}/tree/{commit}'}]}
@@ -75,7 +100,8 @@ def sbom(tree: Path, commit: str, epoch: int, sums: dict[str, str]) -> dict:
             'serialNumber': 'urn:uuid:' + str(uuid.uuid5(uuid.NAMESPACE_URL, f'{REPOSITORY}@{commit}')),
             'metadata': {'timestamp': datetime.fromtimestamp(epoch, timezone.utc).strftime('%Y-%m-%dT%H:%M:%SZ'),
                          'tools': {'components': [{'type': 'application', 'name': 'scripts/build_release.py'}]}},
-            'components': [component(python_ref, project['name'], wheel), component(npm_ref, package['name'], tarball),
+            'components': [component(python_ref, project['name'], wheel, release.python_version),
+                           component(npm_ref, package['name'], tarball, release.npm_version),
                            *optional, *runtime],
             'dependencies': [{'ref': python_ref, 'dependsOn': [c['bom-ref'] for c in optional]},
                              {'ref': npm_ref, 'dependsOn': [c['bom-ref'] for c in runtime]},
@@ -101,7 +127,10 @@ def build(ref: str, output: Path) -> dict[str, str]:
         subprocess.run([NPM, 'pack', '-w', '@awesome-telegram/patterns', '--pack-destination', str(output.resolve())],
                        cwd=tree, env=environment, check=True, stdout=subprocess.DEVNULL)
         artifacts = sorted(p for p in output.iterdir() if p.suffix in {'.whl', '.tgz'})
-        expected = {f'awesome_telegram_patterns-{version}-py3-none-any.whl', f'awesome-telegram-patterns-{version}.tgz'}
+        release = read_release_identity(tree / 'packages/python/pyproject.toml', tree / 'packages/typescript/package.json')
+        project = tomllib.loads((tree / 'packages/python/pyproject.toml').read_text(encoding='utf-8'))['project']
+        package = json.loads((tree / 'packages/typescript/package.json').read_text(encoding='utf-8'))
+        expected = {release.wheel_filename(project['name']), release.npm_tarball_filename(package['name'])}
         if {p.name for p in artifacts} != expected:
             raise SystemExit(f'{ref}: unexpected artifacts {[p.name for p in artifacts]}')
         sums = {p.name: _sha256(p) for p in artifacts}

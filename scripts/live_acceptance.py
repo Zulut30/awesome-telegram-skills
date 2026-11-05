@@ -26,7 +26,10 @@ import zipfile
 from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))  # shared helpers live next to this script
-from device_report import ReportError, _text, read_directory, read_ref, ref_version, version_tuple  # noqa: E402
+from device_report import (  # noqa: E402
+    ReportError, _text, canonical_version, production_report_required, read_directory, read_ref,
+    ref_version, require_production_pass, resolve_ref, version_tuple,
+)
 
 ROOT = Path(__file__).resolve().parents[1]
 REPORTS = 'docs/live-checks'
@@ -59,7 +62,7 @@ SCENARIOS = {
 
 def template(version: str) -> dict:
     """A report where nothing is claimed yet: every case is not-run until someone checks it in Telegram."""
-    version_tuple(version)
+    version = canonical_version(version)
     scenarios = {name: {'bot': '', 'status': 'not-run', 'automated': None,
                         'cases': {case: {'status': 'not-run', 'note': 'not checked yet'} for case in cases}}
                  for name, cases in SCENARIOS.items()}
@@ -79,6 +82,7 @@ def derived(statuses: list[str]) -> str:
 
 def validate(report: object, version: str, *, today: dt.date | None = None) -> dict:
     """Check a parsed report and return its summary. Raises ReportError."""
+    version = canonical_version(version)
     today = today or dt.date.today()
     if not isinstance(report, dict) or report.get('schema_version') != 1:
         raise ReportError('report.json must be an object with schema_version 1')
@@ -176,10 +180,11 @@ def probe(token: str, scenario: str, *, api: str = API, now: dt.datetime | None 
 
 
 def bundle(ref: str, output: Path, root: Path = ROOT) -> dict:
-    version = ref_version(ref, root)
-    found = read_ref(ref, version, root, REPORTS)
+    commit = resolve_ref(ref, root)
+    version = ref_version(commit, root)
+    found = read_ref(commit, version, root, REPORTS)
     if found is None:
-        if version_tuple(version) >= REQUIRED_FROM:
+        if version_tuple(version) >= REQUIRED_FROM or production_report_required(version):
             raise ReportError(f'{ref}: {REPORTS}/{version}/report.json is required from '
                               f'{".".join(map(str, REQUIRED_FROM))}; see docs/live-acceptance.md')
         return {'release': version, 'skipped': True, 'reason': 'released before live reports were required'}
@@ -187,6 +192,7 @@ def bundle(ref: str, output: Path, root: Path = ROOT) -> dict:
     if set(files) != {'report.json'}:
         raise ReportError(f'Only report.json belongs in {REPORTS}/{version}')
     summary = validate(report, version)
+    require_production_pass(summary, version, 'scenarios')
     output.mkdir(parents=True, exist_ok=True)
     with zipfile.ZipFile(output / f'live-report-{version}.zip', 'w', zipfile.ZIP_DEFLATED) as archive:
         archive.writestr(zipfile.ZipInfo('report.json', date_time=(1980, 1, 1, 0, 0, 0)), files['report.json'], zipfile.ZIP_DEFLATED)
@@ -211,6 +217,8 @@ def main() -> int:
     pack.add_argument('--output', type=Path, required=True)
     args = parser.parse_args()
     try:
+        if args.command in {'new', 'probe', 'check'}:
+            args.version = canonical_version(args.version)
         if args.command == 'new':
             target = ROOT / REPORTS / args.version / 'report.json'
             if target.exists():
@@ -234,6 +242,7 @@ def main() -> int:
             if set(files) != {'report.json'}:
                 raise ReportError(f'Only report.json belongs in {args.folder}')
             result = validate(report, args.version)
+            require_production_pass(result, args.version, 'scenarios')
         else:
             result = bundle(args.ref, args.output)
     except ReportError as error:

@@ -1,6 +1,6 @@
 # Общая identity numeric и RC выпуска
 
-Подготовка пункта 099 от 5 ноября 2026. `scripts/release_identity.py` — небольшой stdlib-only контракт для дальнейшего подключения к существующим consumers, а не новая система выпуска. Он не изменяет manifests, не собирает пакет, не создает тег и не принимает production/RC критерии. Существующие verifier/workflows пока не подключены.
+Подготовка пункта 099 от 5 ноября 2026. `scripts/release_identity.py` — небольшой stdlib-only контракт существующего release pipeline. Он не изменяет manifests и сам не принимает production/RC критерии. Подключены builder/SBOM, distribution contract, device/live reports, changelog и release/publish workflows. Эта интеграция не создает RC, тег или публикацию; внешняя приемка остается обязательной.
 
 ## Поддерживаемый формат
 
@@ -30,17 +30,27 @@ Epoch/post/dev/local/build metadata, alpha/beta, implicit RC number, alternate P
 
 `read_release_identity(pyproject_path, package_json_path)` читает ровно переданные UTF-8 файлы через TOML/JSON parsers. Требует `[project].version` и top-level npm `version`, canonical Python/npm forms и совпадение identity. Не ищет manifests в cwd/git/env, не использует network, не записывает и не исправляет файлы. Ошибки чтения/формата/отсутствующих полей и duplicate JSON keys отклоняются; TOML duplicate keys отклоняет `tomllib`. Пути могут быть абсолютными или относительными к caller cwd, согласно обычному `Path`.
 
-## Границы дальнейшей интеграции
+## Интеграция и границы
 
 Не заменять исторические numeric tags и не менять immutability выпущенных версий. Catalog/report directory/release notes используют общую identity, package metadata и filenames — формат конкретного registry. Device/live report thresholds должны явно сравнивать base tuple, чтобы новый RC не обходил требование отчетов. Для exact release acceptance/equality использовать всю identity; `release` не означает passed final.
 
-`is_prerelease` означает наличие RC segment. Политика GitHub «все 0.x releases являются prerelease» остается отдельным условием caller, а не свойством SemVer numeric version. Artifact existence/hash/content, source commit, full acceptance, реальные device/provider/pilot проверки и решение публикации этот модуль не проверяет. Consumers еще должны быть отдельно интегрированы и приняты.
+`is_prerelease` означает наличие RC segment. Политика GitHub «все 0.x releases являются prerelease» остается отдельным условием caller, а не свойством SemVer numeric version. Release workflow оставляет prerelease для 0.x и любого RC; final >=1.0.0 может быть обычным release только после обязательных gates. Registry workflow сохраняет opt-in `PUBLISH_TO_REGISTRIES=true`, OIDC, SHA256SUMS и pinned actions; RC npm получает dist-tag `rc`, numeric использует `latest`. Эти настройки не запускают workflow и не подтверждают доступ к registry.
+
+`build_release.ref_identity(ref, root=None)` сначала разрешает ref в один commit, затем читает **обе** manifests через `git show` этого commit и передает временные копии общему reader. Dirty checkout и более новый HEAD не подменяют исходные версии. `validate_tag(tag, root=None)` требует canonical существующий tag и точное совпадение его identity с обеими committed manifests. Исторический `.github/release-tags.json` не изменен; backfill по-прежнему допускает только numeric entries и проверяет обе версии перед созданием отсутствующего тега.
+
+Builder выбирает wheel/tarball basenames общим helper. SBOM содержит Python `version/purl` с `rcN`, npm — с `-rc.N`; SHA256 привязан к соответствующему artifact. Общие SBOM filename, notes и result version используют canonical identity. Distribution contract проверяет basename, Python `__version__` и METADATA, canonical recipe identity, точные исходные bytes, archive allowlist, RECORD и TypeScript dist bytes. RC не ослабляет source/hash binding; source module `__version__` остается Python form.
+
+Device/live `template`, `new`, `probe` path и `check` нормализуют поддержанный Python-form input в canonical identity. Поле report.release должно точно совпадать с canonical identity: нельзя приложить final отчет к RC или заменить номер candidate. Bundle закрепляет один commit для manifests и report archive. `version_tuple()` сравнивает base tuple для прежнего threshold `(0,25,0)`, сохраняя numeric 0.x policy; RC не может обойти report requirement. Для **любого RC** и **numeric final >=1.0.0** `check`/`bundle` дополнительно требуют все platform/scenario status=`passed`. Оформленные blocked/not-run/failed вызывают отказ до записи release assets; снятие `rc` не снимает production gate. Numeric 0.x сохраняет прежние явно размеченные partial/blocked результаты, которые не являются production приемкой. Templates всегда not-run и без device/live evidence. Missing report завершается ошибкой для любого RC и numeric от 0.25.0; более старый numeric release сохраняет прежний skip.
+
+Artifact existence/hash/content, source commit, полный installed-consumer verifier, реальные device/provider/pilot проверки и решение публикации принимаются отдельно. Доступных живых устройств/тестовых ботов для этой работы нет; локальные фикстуры не выданы за реальную приемку.
 
 ## Проверка и источники
 
 Узкая команда: `python -m unittest discover -s tests -p test_release_identity.py -v`. Тесты используют реальные раздельные temporary manifest paths, проверяют байты/mtime до и после success/refusal, отсутствие создаваемых файлов, canonical RC0/ordering/tag/filename boundaries и отказ неподдержанных форм. Выпуск не собирается.
 
-Результат 5 ноября 2026: 16 tests passed, без skips; exit code 0. Полный verifier, сборка/установка дистрибутивов и внешняя приемка не выполнялись для этого helper.
+Исходный helper: 16 tests passed, без skips, 5 ноября 2026. Узкие integration tests pipeline используют настоящие temporary git refs/manifests и ZIP/TAR archives: dirty checkout, missing/mismatched manifests, canonical RC artifacts/SBOM purls, recomputed RECORD при подмене source, numeric RC ordering, обязательные missing/blocked report failures и passed фикстуры. Embedded Python workflows компилируется локально; публикация не запускается. Полный verifier root выполняет отдельно после общей интеграции; эти проверки не объявляют выпуск готовым.
+
+Локальный результат integration 5 ноября 2026: **74 tests passed**, без skips, Windows/Python 3.13.12, включая существующие helper/history tests. Shell blocks обоих workflows проверены `bash -n` без исполнения; Python heredoc blocks компилируются. `check_changelog.py` проходит для текущей numeric development version; исторические entries проверены по обеим доступным committed manifests. Лог: `output/production-run-2026-11-05/agent-034/release-pipeline-tests.txt`. Ни публикация, ни настоящие live/device проверки не выполнялись.
 
 Фактически сверено 5 ноября 2026:
 

@@ -21,8 +21,9 @@ class DistributionContractTests(unittest.TestCase):
         self.temp = tempfile.TemporaryDirectory(prefix='distribution-contract-')
         self.addCleanup(self.temp.cleanup)
         self.root = Path(self.temp.name)
-        self.wheel = self.root / 'fixture.whl'
-        self.tarball = self.root / 'fixture.tgz'
+        self.wheel = self.root / 'awesome_telegram_patterns-0.9.0-py3-none-any.whl'
+        self.tarball = self.root / 'awesome-telegram-patterns-0.9.0.tgz'
+        self.python_version = '0.9.0'
         self.prefix = 'awesome_telegram_patterns-0.9.0.dist-info/'
         self.py_source = {'telegram_patterns/__init__.py':b"__version__ = '0.9.0'\n__all__=[]\n", 'telegram_patterns/py.typed':b'',
                           'telegram_patterns/resources/recipes.json':b'{"library_version":"0.9.0"}\n'}
@@ -51,7 +52,7 @@ class DistributionContractTests(unittest.TestCase):
 
     def zip(self, mutate=None):
         values={**self.py_source,
-          self.prefix+'METADATA':b'Name: awesome-telegram-patterns\nVersion: 0.9.0\nRequires-Python: >=3.11\nLicense-Expression: MIT\nLicense-File: LICENSE\nRequires-Dist: aiogram<4,>=3.29; extra == "aiogram"\nRequires-Dist: tzdata>=2026.5; extra == "calendar"\nRequires-Dist: cryptography<52,>=46; extra == "signature"\nRequires-Dist: python-telegram-bot<23,>=22.8; extra == "ptb"\n\n',
+          self.prefix+'METADATA':b'Name: awesome-telegram-patterns\nVersion: 0.9.0\nRequires-Python: >=3.11\nLicense-Expression: MIT\nLicense-File: LICENSE\nRequires-Dist: aiogram<4,>=3.29; extra == "aiogram"\nRequires-Dist: tzdata>=2026.5; extra == "calendar"\nRequires-Dist: cryptography<52,>=46; extra == "signature"\nRequires-Dist: python-telegram-bot<23,>=22.8; extra == "ptb"\n\n'.replace(b'0.9.0', self.python_version.encode()),
           self.prefix+'WHEEL':b'Wheel-Version: 1.0\nRoot-Is-Purelib: true\nTag: py3-none-any\n',
           self.prefix+'entry_points.txt':b'[console_scripts]\ntelegram-patterns = telegram_patterns.cli:main\n',
           self.prefix+'top_level.txt':b'telegram_patterns\n',self.prefix+'licenses/LICENSE':self.license}
@@ -152,6 +153,51 @@ class DistributionContractTests(unittest.TestCase):
         with self.assertRaisesRegex(DistributionViolation, r'__version__ differs'): self.verify()
         self.write('packages/python/src/telegram_patterns/__init__.py', b'__all__=[]\n')
         with self.assertRaisesRegex(DistributionViolation, r'__version__ differs'): self.verify()
+
+    def rc_fixture(self):
+        self.python_version = '1.0.0rc1'
+        identity = '1.0.0-rc.1'
+        self.prefix = 'awesome_telegram_patterns-1.0.0rc1.dist-info/'
+        self.wheel = self.root / 'awesome_telegram_patterns-1.0.0rc1-py3-none-any.whl'
+        self.tarball = self.root / 'awesome-telegram-patterns-1.0.0-rc.1.tgz'
+        project = self.root / 'packages/python/pyproject.toml'
+        project.write_text(project.read_text(encoding='utf-8').replace('0.9.0', self.python_version), encoding='utf-8')
+        self.py_source['telegram_patterns/__init__.py'] = b"__version__ = '1.0.0rc1'\n__all__=[]\n"
+        self.py_source['telegram_patterns/resources/recipes.json'] = json.dumps({'library_version': identity}).encode()
+        for name, value in self.py_source.items():
+            self.write('packages/python/src/' + name, value)
+        self.ts_manifest['version'] = identity
+        self.ts_files['package/package.json'] = json.dumps(self.ts_manifest).encode()
+        self.write('packages/typescript/package.json', self.ts_files['package/package.json'])
+        self.zip()
+        self.tar()
+
+    def test_rc_archives_bind_python_metadata_and_canonical_npm_recipe_identity(self):
+        self.rc_fixture()
+        result = self.verify()
+        self.assertEqual(result['version'], '1.0.0-rc.1')
+        self.assertTrue(result['wheel']['source_files_exact'])
+        self.zip(lambda values: values.update({self.prefix + 'METADATA': values[self.prefix + 'METADATA'].replace(
+            b'Version: 1.0.0rc1', b'Version: 1.0.0-rc.1')}))
+        with self.assertRaisesRegex(DistributionViolation, 'Wheel identity mismatch'):
+            self.verify()
+
+    def test_rc_record_rehash_does_not_relax_source_byte_binding(self):
+        self.rc_fixture()
+        self.zip(lambda values: values.update({'telegram_patterns/__init__.py': b"__version__ = '1.0.0rc1'\n# changed\n"}))
+        with self.assertRaisesRegex(DistributionViolation, 'bytes mismatch'):
+            self.verify()
+
+    def test_wrong_registry_form_in_artifact_basename_is_rejected(self):
+        self.rc_fixture()
+        renamed = self.root / 'awesome_telegram_patterns-1.0.0_rc.1-py3-none-any.whl'
+        renamed.write_bytes(self.wheel.read_bytes())
+        with self.assertRaisesRegex(DistributionViolation, 'Wheel filename'):
+            verify_distributions(self.root, renamed, self.tarball)
+        renamed = self.root / 'awesome-telegram-patterns-1.0.0rc1.tgz'
+        renamed.write_bytes(self.tarball.read_bytes())
+        with self.assertRaisesRegex(DistributionViolation, 'Tarball filename'):
+            verify_distributions(self.root, self.wheel, renamed)
 
 
 if __name__=='__main__': unittest.main()

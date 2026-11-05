@@ -2,13 +2,16 @@
 
 import datetime as dt
 import importlib.util
+import io
 import json
 import re
 import subprocess
 import tempfile
 import unittest
 import zipfile
+from contextlib import redirect_stderr, redirect_stdout
 from pathlib import Path
+from unittest.mock import patch
 
 ROOT = Path(__file__).resolve().parents[1]
 spec = importlib.util.spec_from_file_location('device_report', ROOT / 'scripts/device_report.py')
@@ -31,6 +34,19 @@ def valid():
 
 
 class ValidationTests(unittest.TestCase):
+    def test_rc_cli_creates_only_canonical_not_run_template_and_check_refuses_it(self):
+        with tempfile.TemporaryDirectory(prefix='device-template-') as temporary:
+            root = Path(temporary)
+            with patch.object(device_report, 'ROOT', root), patch('sys.argv', ['device_report.py', 'new', '--version', '1.0.0rc0']), redirect_stdout(io.StringIO()):
+                self.assertEqual(device_report.main(), 0)
+            folder = root / 'docs/device-checks/1.0.0-rc.0'
+            report = json.loads((folder / 'report.json').read_text(encoding='utf-8'))
+            self.assertEqual(report['release'], '1.0.0-rc.0')
+            self.assertTrue(all(entry['status'] == 'not-run' for entry in report['platforms'].values()))
+            self.assertFalse((root / 'docs/device-checks/1.0.0rc0').exists())
+            with patch('sys.argv', ['device_report.py', 'check', str(folder), '--version', '1.0.0rc0']), redirect_stderr(io.StringIO()):
+                self.assertEqual(device_report.main(), 1)
+
     def check(self, report, files):
         return device_report.validate(report, '0.25.0', {**files, 'report.json': b'{}'}, today=TODAY)
 
@@ -111,9 +127,12 @@ class BundleTests(unittest.TestCase):
         subprocess.run(['git', *arguments], cwd=self.repo, check=True, capture_output=True)
 
     def release(self, version, report=None, files=None, extra=None):
-        (self.repo / 'packages/python/pyproject.toml').write_text(f'[project]\nversion = "{version}"\n', encoding='utf-8')
+        release = device_report.parse_release_version(version)
+        (self.repo / 'packages/python/pyproject.toml').write_text(f'[project]\nversion = "{release.python_version}"\n', encoding='utf-8')
+        (self.repo / 'packages/typescript').mkdir(exist_ok=True)
+        (self.repo / 'packages/typescript/package.json').write_text(json.dumps({'version': release.npm_version}), encoding='utf-8')
         if report is not None:
-            folder = self.repo / device_report.REPORTS / version
+            folder = self.repo / device_report.REPORTS / release.identity
             folder.mkdir(parents=True)
             (folder / 'report.json').write_text(json.dumps(report, ensure_ascii=False), encoding='utf-8')
             for name, data in (files or {}).items():
@@ -123,7 +142,7 @@ class BundleTests(unittest.TestCase):
                 (folder / name).write_bytes(data)
         self.git('add', '-A')
         self.git('commit', '-q', '-m', version, '--allow-empty')
-        self.git('tag', f'v{version}')
+        self.git('tag', release.tag)
 
     def test_older_releases_are_skipped_and_new_ones_require_a_report(self):
         self.release('0.24.0')
@@ -155,6 +174,61 @@ class BundleTests(unittest.TestCase):
         self.release('0.25.0', report, files, extra={'raw/ios.png': PNG})
         with self.assertRaisesRegex(ReportError, 'Nested files'):
             device_report.bundle('v0.25.0', self.repo.parent / 'out', self.repo)
+
+    def test_rc_uses_canonical_report_path_and_requires_report_at_base_threshold(self):
+        self.release('0.25.0rc1')
+        with self.assertRaisesRegex(ReportError, 'docs/device-checks/0.25.0-rc.1/report.json is required'):
+            device_report.bundle('v0.25.0-rc.1', self.repo.parent / 'out', self.repo)
+
+    def test_even_rc_below_historical_threshold_requires_a_report(self):
+        self.release('0.24.0rc0')
+        with self.assertRaisesRegex(ReportError, 'report.json is required'):
+            device_report.bundle('v0.24.0-rc.0', self.repo.parent / 'out', self.repo)
+
+    def test_rc_template_has_no_claimed_device_evidence(self):
+        report = device_report.template('1.0.0rc0')
+        self.assertEqual(report['release'], '1.0.0-rc.0')
+        self.assertTrue(all(entry['status'] == 'not-run' for entry in report['platforms'].values()))
+        self.assertTrue(all(not entry['screenshots'] for entry in report['platforms'].values()))
+        with self.assertRaises(ReportError):
+            device_report.validate(report, '1.0.0rc0', {})
+
+    def test_rc_and_final_production_require_passed_status_but_numeric_zero_preserves_policy(self):
+        for version in ['0.25.0', '0.25.1-rc.1', '1.0.0']:
+            report, files = valid()
+            report['release'] = version
+            report['platforms']['ios'].update(status='blocked', screenshots=[])
+            for case in report['platforms']['ios']['cases'].values():
+                case.update(status='blocked', note='Fixture lacks a device')
+            files.pop('ios-light.png')
+            self.release(version, report, files)
+            out = self.repo.parent / version
+            if version == '0.25.0':
+                self.assertEqual(device_report.bundle('v' + version, out, self.repo)['platforms']['ios']['status'], 'blocked')
+            else:
+                with self.assertRaisesRegex(ReportError, 'require every acceptance status to be passed'):
+                    device_report.bundle('v' + version, out, self.repo)
+                self.assertFalse(out.exists())
+
+    def test_passed_rc_bundle_uses_both_committed_manifests_and_exact_report_identity(self):
+        report, files = valid()
+        report['release'] = '1.0.0-rc.1'
+        self.release('1.0.0rc1', report, files)
+        (self.repo / 'packages/python/pyproject.toml').write_text('[project]\nversion="9.9.9"', encoding='utf-8')
+        (self.repo / 'packages/typescript/package.json').write_text('{"version":"invalid"}', encoding='utf-8')
+        out = self.repo.parent / 'out'
+        self.assertEqual(device_report.bundle('v1.0.0-rc.1', out, self.repo)['release'], '1.0.0-rc.1')
+        self.assertTrue((out / 'device-report-1.0.0-rc.1.zip').is_file())
+        with self.assertRaisesRegex(ReportError, 'not 1.0.0-rc.2'):
+            device_report.validate(report, '1.0.0rc2', files)
+
+    def test_report_cannot_hide_mismatching_committed_npm_manifest(self):
+        self.release('0.24.0')
+        (self.repo / 'packages/typescript/package.json').write_text('{"version":"0.24.1"}', encoding='utf-8')
+        self.git('add', '-A')
+        self.git('commit', '-q', '-m', 'mismatching fixture')
+        with self.assertRaisesRegex(ReportError, 'invalid or unavailable release manifests'):
+            device_report.bundle('HEAD', self.repo.parent / 'out', self.repo)
 
 
 if __name__ == '__main__':
