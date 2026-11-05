@@ -1463,10 +1463,15 @@
       "id": 82,
       "title": "Проверять важные инварианты тестами",
       "requirement": "Покрыть права, суммы, переходы, UTF-16, время, concurrency и чистоту cleanup; property/fuzz проверки применять к местам, где они находят реальные ошибки.",
-      "status": "pending",
-      "commit_subject": null,
-      "artifacts": [],
-      "evidence": []
+      "status": "done",
+      "commit_subject": "roadmap(082): accept exercised business and cleanup invariants",
+      "artifacts": [
+        "docs/internal/local-027-acceptance.json",
+        "docs/internal/local-027-acceptance.md"
+      ],
+      "evidence": [
+        "All 853 Python and 89 TypeScript tests passed through exact installed consumers, plus 53 application tests and Chrome. Rights, integer money, transitions, UTF-16, clocks, concurrency and owned cleanup are covered; 10,000 seeded text/entity compositions test lossless sendable splitting."
+      ]
     },
     {
       "id": 83,
