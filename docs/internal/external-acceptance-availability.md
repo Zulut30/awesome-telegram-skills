@@ -6,11 +6,18 @@
 
 | Требование | Доступная работа | Недоступное доказательство |
 | --- | --- | --- |
-| 20, 88–89 | Воспроизводимые tasks, hashes, scoring и инструменты наблюдений | Независимый human+AI baseline и разработчики двух раундов |
-| 45, 58, 60–70 | Browser/SDK/fallback/listener проверки и device scripts | Настоящий Telegram launch, системная клавиатура, physical tablet/iOS/Android, screen reader и weak-device замеры |
-| 74–79 | Provider-specific contracts, authentic-fixture negatives, ledger/reconcile | Настоящий invoice/payment/refund и кабинеты трех провайдеров |
+| 20, 89 | Воспроизводимые задачи, привязки файлов, оценка и инструменты наблюдений | Исходный замер первого использования людьми и ИИ, разработчики двух usability-раундов |
+| 88 | Независимые ИИ-сессии без истории доступны: выбор навыка, перенос и выполнение в установленном consumer; результаты оценивает отдельный контур | Внешние участники не требуются самим пунктом 88; полнота и качество выполненных решений проверяются отдельно |
+| 45, 56, 58, 60–70 | Browser/SDK/fallback/listener проверки и device scripts | Настоящий Telegram launch, системная клавиатура, physical tablet/iOS/Android, screen reader и weak-device замеры |
+| 74–77 | Provider-specific contracts, authentic-fixture negatives, ledger/reconcile | Настоящий invoice/payment/refund и кабинеты трех провайдеров |
 | 80 | Сохранить optional extension contract; не вводить случайный сервис | Дополнительный provider/use case не выбран и владельцу не требуется |
 | 90, 96 | Готовый runtime, инструкции deploy/backup/restore/rollback | Пользовательский pilot и эксплуатация на выбранной инфраструктуре |
-| 93–100 | Package metadata, license inventory, SBOM/provenance preparation, CI и release gates | Owner registry publishing setup, независимая приемка, production evidence и выпуск |
+| 99–100 | Package metadata, license inventory, SBOM/provenance preparation, CI и release gates | Owner registry publishing setup, обязательная внешняя приемка, production evidence и выпуск |
 
 Этот документ фиксирует доступность ресурсов и решение продолжать работу. Он не помечает пункты выполненными и не понижает обязательные release gates.
+
+Текущие формальные результаты находятся в [регистре](v1-progress.json).
+Локальные контракты подписок и возвратов, политики безопасности/поддержки,
+инвентаризация лицензий, подготовка артефактов и миграция принимаются по своим
+доказательствам; отсутствие внешних ресурсов не делает эти работы невозможными.
+Их приемка не подтверждает настоящий платеж, физическое устройство или пилот.
