@@ -1,0 +1,40 @@
+{
+  "schema_version": 1,
+  "passed": true,
+  "kind": "recipe-evidence-binding-acceptance",
+  "source_commit": "013d321a6e03a5ce16387b906c8d2c652619f9ba",
+  "runtime_source_commit": "92a9d151dc57d85cc5f1eb614f9980e808b36b59",
+  "registry_path": "output/pattern-library-0.28.0/source-evidence/recipe-evidence-registry.json",
+  "registry_sha256": "44effe83b4d414985ab5146153142f09adfa6818e60961ccd66ad79c8082f0e8",
+  "helper_sha256": "9f535622ba922b27c10820c683f07a97a9861d7666b0712dd0c159a8997eac15",
+  "summary": {
+    "recipes": 341,
+    "offline_pass": 241,
+    "not_run": 100,
+    "maturity": {
+      "experimental": 56,
+      "reference": 285
+    }
+  },
+  "stable_gate": {
+    "status": "no_stable_scope",
+    "stable_recipes": 0,
+    "missing_recipe_ids": [],
+    "evidence_complete": false,
+    "quality_or_production_approved": false
+  },
+  "agent_report_sha256": "4ef0ba7e624006a3e5cf62e3004f3abe8bbc49f7b2b7789fdfe52862ff55acd6",
+  "current_helper_check_sha256": "35638e6e6e6957d29665aa8efdbaee2c243a767936e69c21cf8b4dfcd5ee38eb",
+  "commands_origin": "Reconstructed from hashed producer AST and installed interpreter origin, explicitly labeled; historical report did not capture full argv.",
+  "checks": [
+    "24 unit/archive tests passed; ten newly target attribution and freshness.",
+    "Actual consumer create/check, artifact/source/Git-ref mismatch refusals and output preservation passed.",
+    "Read-only source Git comparison bound489 files; root current helper rechecked the exact registry after import-style-only fixes."
+  ],
+  "limits": [
+    "Accepts stored and checkable version/command/result/limitations, not recipe quality or a stable portfolio.",
+    "No stable recipes currently; require-stable deliberately fails and remains a release-scope gate for099.",
+    "100 reference fragments have no individual execution result. No live/device/pilot approval."
+  ],
+  "requirement": "Для каждого stable рецепта хранить версию, команду, результат и ограничения; устаревшая проверка не маскируется свежей датой источника."
+}

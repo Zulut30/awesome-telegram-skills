@@ -1519,10 +1519,22 @@
       "id": 86,
       "title": "Сделать evidence рецептов проверяемым",
       "requirement": "Для каждого stable рецепта хранить версию, команду, результат и ограничения; устаревшая проверка не маскируется свежей датой источника.",
-      "status": "pending",
-      "commit_subject": null,
-      "artifacts": [],
-      "evidence": []
+      "status": "done",
+      "commit_subject": "roadmap(086): accept source-bound recipe evidence",
+      "artifacts": [
+        "scripts/recipe_evidence.py",
+        "docs/recipe-evidence.md",
+        "catalog/recipe-evidence.schema.json",
+        "docs/internal/acceptance-086.json"
+      ],
+      "evidence": [
+        "24 unit/archive tests passed; ten newly target attribution and freshness.",
+        "Actual consumer create/check, artifact/source/Git-ref mismatch refusals and output preservation passed.",
+        "Read-only source Git comparison bound489 files; root current helper rechecked the exact registry after import-style-only fixes.",
+        "Accepts stored and checkable version/command/result/limitations, not recipe quality or a stable portfolio.",
+        "No stable recipes currently; require-stable deliberately fails and remains a release-scope gate for099.",
+        "100 reference fragments have no individual execution result. No live/device/pilot approval."
+      ]
     },
     {
       "id": 87,
