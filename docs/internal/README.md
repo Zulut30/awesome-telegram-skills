@@ -80,3 +80,5 @@
 - [Приемка адаптивных композиций в браузере](responsive-056-acceptance.json)
 
 - [Приемка реализации платежей Stars](stars-074-acceptance.json)
+
+- [Приемка документированного контракта Platega](platega-076-acceptance.json)

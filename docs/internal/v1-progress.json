@@ -1410,10 +1410,18 @@
       "id": 76,
       "title": "Сделать адаптер Platega",
       "requirement": "Проверить актуальные callbacks, статусы и доступные операции конкретного контракта; обработать неверную сумму, повтор и потерянный ответ без выдуманной подписи.",
-      "status": "pending",
-      "commit_subject": null,
-      "artifacts": [],
-      "evidence": []
+      "status": "done",
+      "commit_subject": "roadmap(076): accept bounded Platega provider contract",
+      "artifacts": [
+        "docs/payment-providers.md",
+        "packages/python/tests/test_provider_platega_durable.py",
+        "docs/internal/platega-076-acceptance.json"
+      ],
+      "evidence": [
+        "Published callback/status/create/refund contract rechecked on official pages6Nov; real adapter uses documented shared headers, no fabricated HMAC.",
+        "12 canonical installed Platega tests plus4 new installed durable cases: wrong amounts, duplicate/reopen, lost create and no second operation;174 package files match exact0.28 wheel.",
+        "Native paid time is absent: payment_event Unsupported, zero confirmed charges/access and denied refund without paid charge. Synthetic transport and account limitations explicit."
+      ]
     },
     {
       "id": 77,

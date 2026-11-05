@@ -1,0 +1,73 @@
+{
+  "schema_version": 1,
+  "passed": true,
+  "kind": "platega-published-contract-acceptance",
+  "source_commit": "af896a1e02b059b68abb3cfd673c22851af98f95",
+  "runtime_source_commit": "92a9d151dc57d85cc5f1eb614f9980e808b36b59",
+  "requirement": "Проверить актуальные callbacks, статусы и доступные операции конкретного контракта; обработать неверную сумму, повтор и потерянный ответ без выдуманной подписи.",
+  "canonical_runtime_acceptance": "docs/internal/local-028-acceptance.json",
+  "provider_durable_report": "output/provider-durable-075-076/style-verified/report.json",
+  "provider_durable_report_sha256": "eb4d23effb9da4935ebb5ec1396ca7d9f71a6010213ac5e33a3845f63fe40843",
+  "provider_durable_verification_sha256": "c3e5d8731f1b0c1de229550d5f12f6e82e027502fc3410897fe95a00347da1bc",
+  "shared_fixture_total_tests": 8,
+  "platega_specific_new_tests": 4,
+  "canonical_platega_tests": 12,
+  "source_sha256": [
+    {
+      "path": "packages/python/tests/test_provider_cryptopay_durable.py",
+      "sha256": "6827ab2476cd761049777f96ddec14c121c5a0a11cbbcc1f1cadc308e1518423"
+    },
+    {
+      "path": "packages/python/tests/test_provider_platega_durable.py",
+      "sha256": "35d676254adab8f10580a683640b51ee8e0e39013472266e4436fc63abe2423a"
+    }
+  ],
+  "primary_sources": [
+    {
+      "url": "https://docs.platega.io/колбэки-общая-информация-2499110m0",
+      "checked_date": "2026-11-06",
+      "mode": "direct official page",
+      "observed": "X-MerchantId/X-Secret, camelCase, duplicate/out-of-order callbacks; refundId distinguishes refund operations."
+    },
+    {
+      "url": "https://docs.platega.io/проверка-статуса-оплаты-платежа-29203844e0",
+      "checked_date": "2026-11-06",
+      "mode": "direct official page",
+      "observed": "GET /transaction/{id}, exact mechantId, paymentDetails and payload; native paid_at not present."
+    },
+    {
+      "url": "https://docs.platega.io/поля-колбэка-по-возврату-18505579d0",
+      "checked_date": "2026-11-06",
+      "mode": "direct official page",
+      "observed": "refundId/refundAmount/refundStatus fields; no native paid_at."
+    }
+  ],
+  "additional_primary_checks": [
+    {
+      "url": "https://docs.platega.io/создание-платежной-ссылки-с-заданным-методом-29203843e0",
+      "mode": "direct official page",
+      "observed": "POST /transaction/process, native generated transactionId and merchantId response; metadata.user_email and stable buyer metadata required. Synthetic fixture email is not merchant evidence."
+    },
+    {
+      "url": "https://docs.platega.io/confirmed-29209725e0",
+      "mode": "direct official page",
+      "observed": "Repeated CONFIRMED on same payment id is not a second incoming payment; shown callback has no native paid_at."
+    }
+  ],
+  "checks": [
+    "Authenticated shared-header callback validates amount/currency/payload and durable mapping before receipt.",
+    "Independent bound GET records only invoice-created observation; duplicate/reopen is idempotent.",
+    "Lost create remains original unknown until explicit native-ID evidence and GET; no second create or invented idempotency header.",
+    "Native paid_at is absent: payment_event stays Unsupported, charges/access/refund intents cannot be fabricated."
+  ],
+  "limits": [
+    "Synthetic authenticated callbacks and injected status transport; no provider account, TLS, public webhook, sandbox or settlement.",
+    "Distinct file SQLite host/provider stores and actual close/reopen; post-ledger/pre-receipt failure is a local injected exception, not a process/power-loss claim.",
+    "Fixture native-ID discovery is explicit closed-fixture operator evidence, not a documented search-by-operation endpoint.",
+    "Platega invoice confirmation is not payment confirmation; no paid timestamp invented and no access granted.",
+    "No runtime/docs/catalog/progress/version changes and no publication.",
+    "Platega payment_event remains Unsupported because the observed native contract has no paid_at. This accepts the published supported operation boundary, not a working paid-access route.",
+    "CryptoPay075 remains pending: direct primary-page freshness was not established after403. Its four new local durable cases still passed.",
+    "No official provider account, sandbox transaction, public ingress/TLS, process crash or production readiness is inferred from these fixtures."
+  ]
+}
