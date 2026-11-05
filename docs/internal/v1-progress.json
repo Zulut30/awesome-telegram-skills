@@ -1477,10 +1477,15 @@
       "id": 83,
       "title": "Ввести интеграционные проверки отказов",
       "requirement": "Проверить повторы, таймауты, потерянные ответы, падение процесса и восстановление storage; доказать сохранение бизнес-инвариантов.",
-      "status": "pending",
-      "commit_subject": null,
-      "artifacts": [],
-      "evidence": []
+      "status": "done",
+      "commit_subject": "roadmap(083): accept fault recovery across durable transitions",
+      "artifacts": [
+        "docs/internal/local-027-acceptance.json",
+        "docs/internal/local-027-acceptance.md"
+      ],
+      "evidence": [
+        "Actual file SQLite, loopback HTTP, independent provider-effect databases and spawned processes exercise repeated delivery, timeouts, lost replies and crashes. Shop exits 75/76 and 85-89 preserve original IDs, receipt/access atomicity, priority admission and unknown-write no-resend invariants; full inbox/outbox/jobs/FSM/payment suites passed."
+      ]
     },
     {
       "id": 84,

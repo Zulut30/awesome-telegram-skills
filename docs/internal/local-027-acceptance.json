@@ -189,6 +189,13 @@
         "All 853 Python and 89 TypeScript tests passed through exact installed consumers, plus 53 application tests and Chrome. Rights, integer money, transitions, UTF-16, clocks, concurrency and owned cleanup are covered; 10,000 seeded text/entity compositions test lossless sendable splitting."
       ],
       "source_commit": "91442af594a722936dbcb625bdb1be1b9ab4ce2e"
+    },
+    "83": {
+      "requirement": "Проверить повторы, таймауты, потерянные ответы, падение процесса и восстановление storage; доказать сохранение бизнес-инвариантов.",
+      "observations": [
+        "Actual file SQLite, loopback HTTP, independent provider-effect databases and spawned processes exercise repeated delivery, timeouts, lost replies and crashes. Shop exits 75/76 and 85-89 preserve original IDs, receipt/access atomicity, priority admission and unknown-write no-resend invariants; full inbox/outbox/jobs/FSM/payment suites passed."
+      ],
+      "source_commit": "91442af594a722936dbcb625bdb1be1b9ab4ce2e"
     }
   },
   "limits": [
