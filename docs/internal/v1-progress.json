@@ -1061,10 +1061,17 @@
       "id": 50,
       "title": "Согласовать навигацию и жизненный цикл",
       "requirement": "Обработать BackButton, браузерную историю, подтверждение закрытия, resume и dispose; повторный mount не удваивает listeners и действия.",
-      "status": "pending",
-      "commit_subject": null,
-      "artifacts": [],
-      "evidence": []
+      "status": "done",
+      "commit_subject": "roadmap(050): accept owned navigation and lifecycle cleanup",
+      "artifacts": [
+        "examples/shop/README.md",
+        "docs/internal/backend-state-readiness-2026-11-05.md",
+        "docs/internal/local-026-acceptance.json"
+      ],
+      "evidence": [
+        "Exact 0.26 installed library and application wheels/tarball: 24 Python, 4 headless Node and 246 Chrome checks passed; real HTTP/SQLite/process recovery, no live Telegram/device/provider proof.",
+        "Back/history, closing intent, page resume and older-client fallback share actual state; repeated dispose leaves zero owned listeners and repeated mount installs one set."
+      ]
     },
     {
       "id": 51,
