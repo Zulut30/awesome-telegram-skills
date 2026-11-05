@@ -1,0 +1,898 @@
+{
+  "schema_version": 1,
+  "kind": "wcag22-critical-applicability-evidence-matrix",
+  "roadmap_item": 60,
+  "requirement": "Проверить применимые WCAG 2.2 AA: labels, contrast, focus, keyboard navigation, reflow и screen readers; собственные критерии touch targets указать отдельно от стандарта.",
+  "roadmap_status": "pending",
+  "wcag_conformance": "not-assessed",
+  "human_review_performed": false,
+  "scope": {
+    "screens": [
+      "Каталог",
+      "Товар",
+      "Корзина",
+      "Профиль",
+      "Настройки",
+      "Запись"
+    ],
+    "library_version": "0.28.0",
+    "source_commit": "92a9d151dc57d85cc5f1eb614f9980e808b36b59",
+    "browser": "156.0.8078.80",
+    "axe": "4.14.0",
+    "selection": "23 critical A/AA criteria related to named labels/contrast/focus/keyboard/reflow/input/status needs; not all WCAG A/AA criteria.",
+    "unlisted_criteria": "not-assessed; no implicit not-applicable or pass for omitted criteria",
+    "exclusions": [
+      "Shop frontend, separate booking demo and native Telegram controls are outside six-composition evidence.",
+      "144pixel comparisons prove image stability/diffs, not semantics or reader behavior.",
+      "No real screen reader, physical device, human visual acceptance or complete process/page conformance."
+    ],
+    "artifact_tarball_sha256": "dd24c7db27d9f1dd1f2dcc36a49bd67d14577eec1c7a15216632f92615ca3931"
+  },
+  "standard": {
+    "name": "WCAG2.2",
+    "normative_url": "https://www.w3.org/TR/WCAG22/",
+    "observed_recommendation_date": "2024-12-12",
+    "checked_on": "2026-11-06",
+    "understanding_documents": "Informative explanations; success criteria are normative in the Recommendation.",
+    "conformance_rule": "AA requires all applicable A and AA criteria over the claimed complete pages/processes, not just this selected matrix."
+  },
+  "assessment_legend": {
+    "bounded_browser_observations": "Selected assertions executed; not whole-criterion conformance.",
+    "partial_browser_observations": "Relevant but incomplete programmatic/runtime evidence.",
+    "partial_automated_with_incomplete": "Automated observations include unresolved manual/incomplete findings.",
+    "not_run": "No executed criterion-specific result; source review may be listed separately."
+  },
+  "evidence": {
+    "E028": {
+      "path": "output/pattern-library-0.28.0/distribution-report.json",
+      "sha256": "2c80c55a22db82c5f95c32b7931bf7896f4ebbd90f028ad36ff16585c2f1ef55",
+      "scope": "Installed0.28.0 UI fixture; six compositions,24axe audits,96geometry rows,35contract/browser assertions.",
+      "source_commit": "92a9d151dc57d85cc5f1eb614f9980e808b36b59",
+      "execution_level": "browser"
+    },
+    "E056": {
+      "path": "output/production-run-2026-11-05/responsive-056-audit/report.json",
+      "sha256": "27c1f23b42e59e07ca3e226ce987e53d8988ca486f2510b02912240620402784",
+      "scope": "Supplemental copied-installed composition geometry and pointer actions; not semantics or reader output.",
+      "execution_level": "browser"
+    },
+    "E060": {
+      "path": "output/accessibility-060/probe-report.json",
+      "sha256": "7d0583ae6ec4e72f3344620442bcc71a2c6c14cbbb52b62124e6099193e55c11",
+      "scope": "24 bounded keyboard/text-spacing ready-state composition cases;47copied installed asset hashes verified.",
+      "execution_level": "browser"
+    },
+    "EQUALITY_OLD": {
+      "path": "output/production-run-2026-11-05/quality-launch-diagnostics-windows/report.json",
+      "sha256": "f711e0875c9a4e83aa748c2ca25698bf43de7a3b34f53795b9a0d1bfe53f4651",
+      "scope": "Separate booking demo, eightaxe states and Lighthouse; historical report lacks incomplete data.",
+      "source_revision": "Not recorded by this historical report; not exact six-composition/library evidence.",
+      "execution_level": "browser"
+    },
+    "ESERIALIZER": {
+      "path": "output/production-run-2026-11-05/axe-incomplete-root/report.json",
+      "sha256": "3ffb5aa5076f73ceb4cd11f21fea1eae6f882496e0217c4be84b1e200bcd8565",
+      "scope": "Root real-Chrome/axe gradient fixture validates incomplete persistence only; no UI conformance claim.",
+      "execution_level": "browser"
+    },
+    "S_UI": {
+      "path": "packages/typescript/src/ui.ts",
+      "sha256": "e23b248b4d40390d9e284578a6f7b2f68de1e5b8cab5098af79da9ef58430be4",
+      "scope": "Read-only source inspection; source text is not an executed criterion or screen-reader result.",
+      "execution_level": "source-review"
+    },
+    "S_SCREENS": {
+      "path": "examples/ui-kit/screens.ts",
+      "sha256": "5bf5d0b6f04c797d59a008e63b6e0cf9c4c195843182ba03deea291dbc55cd41",
+      "scope": "Read-only source inspection; source text is not an executed criterion or screen-reader result.",
+      "execution_level": "source-review"
+    },
+    "S_MAIN": {
+      "path": "examples/ui-kit/main.ts",
+      "sha256": "677eeb67d186f3d1a032c454289c24a541eb768e5ddeca2fed6bdd00b4b684b6",
+      "scope": "Read-only source inspection; source text is not an executed criterion or screen-reader result.",
+      "execution_level": "source-review"
+    },
+    "S_TOKENS": {
+      "path": "packages/typescript/src/tokens.css",
+      "sha256": "275dbfaf788a4b4ccbf9cb737d39590c29cf4cdebba39250f71e8ae75ec29fae",
+      "scope": "Read-only source inspection; source text is not an executed criterion or screen-reader result.",
+      "execution_level": "source-review"
+    },
+    "S_HARNESS": {
+      "path": "packages/typescript/tests/ui-browser.mjs",
+      "sha256": "a9b1f0c6f148e4e04382c1932c371c8cbb706af49dc42820a7533148c59a3af7",
+      "scope": "Read-only source inspection; source text is not an executed criterion or screen-reader result.",
+      "execution_level": "source-review"
+    },
+    "S_PROBE": {
+      "path": "output/accessibility-060/probe.mjs",
+      "sha256": "3780d42945e0eac8d11b5ad518214b6b98d35b01b213a5a43463b1ac89cc7c72",
+      "scope": "Read-only source inspection; source text is not an executed criterion or screen-reader result.",
+      "execution_level": "source-review"
+    }
+  },
+  "criteria": [
+    {
+      "id": "1.3.1",
+      "title": "Info and Relationships",
+      "level": "A",
+      "official_url": "https://www.w3.org/WAI/WCAG22/Understanding/info-and-relationships.html",
+      "applicability": "Связи labels/errors и структура формы Настроек, tabs/panels, списки и карточки остальных пяти композиций.",
+      "assessment": "partial_browser_observations",
+      "actual_checks": [
+        {
+          "evidence_id": "E028",
+          "json_pointer": "/ui_browser/browser/checks/11",
+          "observed": "label and inline error are associated"
+        },
+        {
+          "evidence_id": "E028",
+          "json_pointer": "/ui_browser/browser/checks/22",
+          "observed": "real keyboard tabs support Home/End/arrows and selected panels"
+        }
+      ],
+      "source_review_evidence_ids": [
+        "S_UI",
+        "S_SCREENS"
+      ],
+      "remaining": [
+        "Проверить всю смысловую структуру/заголовки и связи ошибок в accessibility tree и выбранном reader.",
+        "Наличие role или связанного label не доказывает полный порядок чтения и понятность структуры."
+      ],
+      "criterion_conformance": "not-assessed"
+    },
+    {
+      "id": "1.3.2",
+      "title": "Meaningful Sequence",
+      "level": "A",
+      "official_url": "https://www.w3.org/WAI/WCAG22/Understanding/meaningful-sequence.html",
+      "applicability": "Смысловой порядок карточек/полей/ошибок и чтения сменяемой панели во всех шести композициях.",
+      "assessment": "not_run",
+      "actual_checks": [],
+      "source_review_evidence_ids": [
+        "S_MAIN",
+        "S_SCREENS"
+      ],
+      "remaining": [
+        "Прочитать экран без визуального позиционирования, записать порядок reader и отсутствие перемешивания скрытых панелей.",
+        "Keyboard Tab order не является порядком чтения всего текста."
+      ],
+      "criterion_conformance": "not-assessed"
+    },
+    {
+      "id": "1.3.4",
+      "title": "Orientation",
+      "level": "AA",
+      "official_url": "https://www.w3.org/WAI/WCAG22/Understanding/orientation.html",
+      "applicability": "Шесть композиций не требуют единственной ориентации по смыслу; размеры меняются в рамках browser fixture.",
+      "assessment": "partial_browser_observations",
+      "actual_checks": [
+        {
+          "evidence_id": "E028",
+          "json_pointer": "/ui_browser/browser/checks/26",
+          "observed": "six compositions reflow across eight desktop Chrome viewport sizes/orientations in light/dark"
+        },
+        {
+          "evidence_id": "E056",
+          "json_pointer": "/fresh_evidence/standard_pointer_cases/summary",
+          "observed": {
+            "cases": 336,
+            "passed": 336,
+            "failed": 0
+          }
+        }
+      ],
+      "source_review_evidence_ids": [],
+      "remaining": [
+        "Browser portrait/landscape geometry и действия наблюдались; реальные ограничения Telegram/ОС не проверены.",
+        "Не переносить эти результаты в физическую device-приемку067."
+      ],
+      "criterion_conformance": "not-assessed"
+    },
+    {
+      "id": "1.3.5",
+      "title": "Identify Input Purpose",
+      "level": "AA",
+      "official_url": "https://www.w3.org/WAI/WCAG22/Understanding/identify-input-purpose.html",
+      "applicability": "Имя и email пользователя в Настройках имеют определимые типы назначения ввода; не все произвольные строки относятся к этому SC.",
+      "assessment": "not_run",
+      "actual_checks": [],
+      "source_review_evidence_ids": [
+        "S_SCREENS",
+        "S_UI"
+      ],
+      "remaining": [
+        "Источник задает autocomplete name/email; отдельного runtime assertion назначения полей не записано.",
+        "Проверить фактические autocomplete/семантику и адаптацию в целевой среде."
+      ],
+      "criterion_conformance": "not-assessed"
+    },
+    {
+      "id": "1.4.1",
+      "title": "Use of Color",
+      "level": "A",
+      "official_url": "https://www.w3.org/WAI/WCAG22/Understanding/use-of-color.html",
+      "applicability": "Ошибки, pending/disabled и смысловые badges не должны передавать состояние только цветом.",
+      "assessment": "partial_browser_observations",
+      "actual_checks": [
+        {
+          "evidence_id": "E028",
+          "json_pointer": "/ui_browser/browser/checks/3",
+          "observed": "pending keeps focus and accessible label"
+        },
+        {
+          "evidence_id": "E028",
+          "json_pointer": "/ui_browser/browser/checks/32",
+          "observed": "six injected-service compositions cover loading/empty/error/ready; error text is sanitized; settings rejection preserves draft"
+        }
+      ],
+      "source_review_evidence_ids": [
+        "S_UI",
+        "S_MAIN"
+      ],
+      "remaining": [
+        "Проверить визуально все cues без цвета; текст наблюдавшейся ошибки не принимает все badge/selected-state случаи."
+      ],
+      "criterion_conformance": "not-assessed"
+    },
+    {
+      "id": "1.4.3",
+      "title": "Contrast (Minimum)",
+      "level": "AA",
+      "official_url": "https://www.w3.org/WAI/WCAG22/Understanding/contrast-minimum.html",
+      "applicability": "Текст в обеих темах, формах и feedback/dialog. Для обычного текста4.5:1, крупного3:1; исключения стандарта оцениваются отдельно.",
+      "assessment": "partial_automated_with_incomplete",
+      "actual_checks": [
+        {
+          "evidence_id": "E028",
+          "json_pointer": "/ui_browser/browser/supplementalContrast",
+          "observed": [
+            {
+              "name": "light-solid-dialog-text",
+              "foreground": "rgb(23, 47, 69)",
+              "background": "rgb(255, 255, 255)",
+              "ratio": 13.73471878607421,
+              "minimum": 4.5,
+              "scope": "Known solid dialog parent surface; supplemental check for axe overlap incomplete, not blanket contrast acceptance"
+            },
+            {
+              "name": "dark-solid-dialog-text",
+              "foreground": "rgb(237, 244, 255)",
+              "background": "rgb(28, 48, 64)",
+              "ratio": 12.278689369917647,
+              "minimum": 4.5,
+              "scope": "Known solid dialog parent surface; supplemental check for axe overlap incomplete, not blanket contrast acceptance"
+            }
+          ]
+        },
+        {
+          "evidence_id": "E028",
+          "json_pointer": "/ui_browser/browser/audits/6/incomplete",
+          "observed": [
+            {
+              "id": "color-contrast",
+              "nodes": [
+                {
+                  "target": [
+                    ".tp-ui-dialog-content"
+                  ],
+                  "summary": "Fix any of the following:\n  Element's background color could not be determined because it partially overlaps other elements"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "evidence_id": "E028",
+          "json_pointer": "/ui_browser/browser/audits/18/incomplete",
+          "observed": [
+            {
+              "id": "color-contrast",
+              "nodes": [
+                {
+                  "target": [
+                    ".tp-ui-dialog-content"
+                  ],
+                  "summary": "Fix any of the following:\n  Element's background color could not be determined because it partially overlaps other elements"
+                }
+              ]
+            }
+          ]
+        }
+      ],
+      "source_review_evidence_ids": [],
+      "remaining": [
+        "Два axe overlap-incomplete остаются incomplete; solid dialog parent pairs13.7347/12.2787 подтверждают только эти пары.",
+        "Вручную разобрать перекрытия, фактические фоны, все text/state пары и будущие themeParams; не объявлять incomplete пройденным."
+      ],
+      "criterion_conformance": "not-assessed"
+    },
+    {
+      "id": "1.4.4",
+      "title": "Resize Text",
+      "level": "AA",
+      "official_url": "https://www.w3.org/WAI/WCAG22/Understanding/resize-text.html",
+      "applicability": "Текст шести композиций и сохранность доступных действий при увеличении до200%.",
+      "assessment": "partial_browser_observations",
+      "actual_checks": [
+        {
+          "evidence_id": "E056",
+          "json_pointer": "/fresh_evidence/standard_pointer_cases/observed_text",
+          "observed": {
+            "baseline_shell_font": "16px",
+            "enlarged_shell_font": "32px",
+            "baseline_root_font": "16px",
+            "enlarged_root_font": "32px"
+          }
+        },
+        {
+          "evidence_id": "E056",
+          "json_pointer": "/fresh_evidence/standard_pointer_cases/summary",
+          "observed": {
+            "cases": 336,
+            "passed": 336,
+            "failed": 0
+          }
+        }
+      ],
+      "source_review_evidence_ids": [],
+      "remaining": [
+        "Root/shell16→32px и выбранные действия наблюдались; прочитать все тексты и исключить clipping/потерю информации.",
+        "CSSzoom и CDP pinch-scale не объявляются native browser-menu/Telegram zoom."
+      ],
+      "criterion_conformance": "not-assessed"
+    },
+    {
+      "id": "1.4.10",
+      "title": "Reflow",
+      "level": "AA",
+      "official_url": "https://www.w3.org/WAI/WCAG22/Understanding/reflow.html",
+      "applicability": "Для этих вертикально прокручиваемых русских экранов применим эквивалент320CSSpx;256CSSpx относится к горизонтально прокручиваемому содержимому.",
+      "assessment": "bounded_browser_observations",
+      "actual_checks": [
+        {
+          "evidence_id": "E028",
+          "json_pointer": "/ui_browser/browser/checks/26",
+          "observed": "six compositions reflow across eight desktop Chrome viewport sizes/orientations in light/dark"
+        },
+        {
+          "evidence_id": "E060",
+          "json_pointer": "/summary",
+          "observed": {
+            "cases": 24,
+            "passed": 24,
+            "failed": 0
+          }
+        }
+      ],
+      "source_review_evidence_ids": [],
+      "remaining": [
+        "Нет document horizontal overflow в заявленных размерах, включая320px; основные keyboard действия сохранены.",
+        "Проверить чтение всего содержимого и исключить скрытую обрезку; нулевой overflow не доказывает полноту информации.",
+        "Не требовать обе размерные формулы для каждого типа потока и не заявлять полный400% native zoom из CDPscale2."
+      ],
+      "criterion_conformance": "not-assessed"
+    },
+    {
+      "id": "1.4.11",
+      "title": "Non-text Contrast",
+      "level": "AA",
+      "official_url": "https://www.w3.org/WAI/WCAG22/Understanding/non-text-contrast.html",
+      "applicability": "Значимые границы/состояния input/button и focus indicator относительно соседних цветов; не тот же тест, что контраст текста.",
+      "assessment": "not_run",
+      "actual_checks": [],
+      "source_review_evidence_ids": [
+        "S_TOKENS"
+      ],
+      "remaining": [
+        "Собрать необходимые adjacent color pairs и проверить применимые3:1/исключения для controls, states и focus.",
+        "Computed outline3px и axe text-contrast не подтверждают этот критерий."
+      ],
+      "criterion_conformance": "not-assessed"
+    },
+    {
+      "id": "1.4.12",
+      "title": "Text Spacing",
+      "level": "AA",
+      "official_url": "https://www.w3.org/WAI/WCAG22/Understanding/text-spacing.html",
+      "applicability": "В HTML-композициях поддерживаются line/paragraph/letter/word spacing; одновременно проверены1.5/2em/.12em/.16em.",
+      "assessment": "bounded_browser_observations",
+      "actual_checks": [
+        {
+          "evidence_id": "E060",
+          "json_pointer": "/summary",
+          "observed": {
+            "cases": 24,
+            "passed": 24,
+            "failed": 0
+          }
+        }
+      ],
+      "source_review_evidence_ids": [],
+      "remaining": [
+        "24ready-state cases: document не переполняется по горизонтали, keyboard действия доступны, значения формы сохранены.",
+        "Ручной просмотр всего текста/ошибок/loading/empty при переопределении spacing остается; probe не проверяет все состояния и отсутствие любого clipping."
+      ],
+      "criterion_conformance": "not-assessed"
+    },
+    {
+      "id": "2.1.1",
+      "title": "Keyboard",
+      "level": "A",
+      "official_url": "https://www.w3.org/WAI/WCAG22/Understanding/keyboard.html",
+      "applicability": "Навигация tabs и основные действия Каталога/Товара/Корзины/Настроек/Записи; Профиль только чтение.",
+      "assessment": "bounded_browser_observations",
+      "actual_checks": [
+        {
+          "evidence_id": "E028",
+          "json_pointer": "/ui_browser/browser/checks/22",
+          "observed": "real keyboard tabs support Home/End/arrows and selected panels"
+        },
+        {
+          "evidence_id": "E060",
+          "json_pointer": "/summary",
+          "observed": {
+            "cases": 24,
+            "passed": 24,
+            "failed": 0
+          }
+        }
+      ],
+      "source_review_evidence_ids": [],
+      "remaining": [
+        "Home/arrows/Tab/Enter и keyboard ввод действительно исполнены; начальный focus в probe установлен программно как setup.",
+        "Пройти все вторичные действия и состояния, полную последовательность без мыши; DOMclick/control fixtures не считать клавиатурным прохождением."
+      ],
+      "criterion_conformance": "not-assessed"
+    },
+    {
+      "id": "2.1.2",
+      "title": "No Keyboard Trap",
+      "level": "A",
+      "official_url": "https://www.w3.org/WAI/WCAG22/Understanding/no-keyboard-trap.html",
+      "applicability": "Modal должен удерживать focus пока открыт и позволять стандартный выход с возвратом; tabs/fields не должны создавать ловушек.",
+      "assessment": "bounded_browser_observations",
+      "actual_checks": [
+        {
+          "evidence_id": "E028",
+          "json_pointer": "/ui_browser/browser/checks/17",
+          "observed": "actual Chrome Tab/Shift+Tab stays in native modal"
+        },
+        {
+          "evidence_id": "E028",
+          "json_pointer": "/ui_browser/browser/checks/18",
+          "observed": "Escape closes native modal and restores initiating focus"
+        },
+        {
+          "evidence_id": "E060",
+          "json_pointer": "/summary",
+          "observed": {
+            "cases": 24,
+            "passed": 24,
+            "failed": 0
+          }
+        }
+      ],
+      "source_review_evidence_ids": [],
+      "remaining": [
+        "Ограниченный цикл и Escape наблюдались, а не все варианты вложенных controls/длинных модальных окон.",
+        "Само удержание focus в открытом modal не является нарушением, если доступен стандартный выход."
+      ],
+      "criterion_conformance": "not-assessed"
+    },
+    {
+      "id": "2.4.3",
+      "title": "Focus Order",
+      "level": "A",
+      "official_url": "https://www.w3.org/WAI/WCAG22/Understanding/focus-order.html",
+      "applicability": "Порядок name→email→submit, возврат из modal, перенос focus к ошибке и roving tabs.",
+      "assessment": "partial_browser_observations",
+      "actual_checks": [
+        {
+          "evidence_id": "E028",
+          "json_pointer": "/ui_browser/browser/checks/12",
+          "observed": "submit validation focuses first error"
+        },
+        {
+          "evidence_id": "E028",
+          "json_pointer": "/ui_browser/browser/checks/13",
+          "observed": "all fields validate and next error receives focus"
+        },
+        {
+          "evidence_id": "E060",
+          "json_pointer": "/summary",
+          "observed": {
+            "cases": 24,
+            "passed": 24,
+            "failed": 0
+          }
+        }
+      ],
+      "source_review_evidence_ids": [],
+      "remaining": [
+        "Записать полный осмысленный Tab/Shift+Tab путь для всех веток и reader-переходов.",
+        "Локальная достижимость primary action не подтверждает порядок всех элементов страницы."
+      ],
+      "criterion_conformance": "not-assessed"
+    },
+    {
+      "id": "2.4.6",
+      "title": "Headings and Labels",
+      "level": "AA",
+      "official_url": "https://www.w3.org/WAI/WCAG22/Understanding/headings-and-labels.html",
+      "applicability": "Название экрана, подписи действий/полей и заголовки feedback должны объяснять назначение.",
+      "assessment": "partial_browser_observations",
+      "actual_checks": [
+        {
+          "evidence_id": "E028",
+          "json_pointer": "/ui_browser/browser/checks/11",
+          "observed": "label and inline error are associated"
+        },
+        {
+          "evidence_id": "E060",
+          "json_pointer": "/summary",
+          "observed": {
+            "cases": 24,
+            "passed": 24,
+            "failed": 0
+          }
+        }
+      ],
+      "source_review_evidence_ids": [
+        "S_SCREENS",
+        "S_MAIN"
+      ],
+      "remaining": [
+        "Role/label locators находили конкретные элементы; понятность всех названий и headings hierarchy требует смыслового просмотра."
+      ],
+      "criterion_conformance": "not-assessed"
+    },
+    {
+      "id": "2.4.7",
+      "title": "Focus Visible",
+      "level": "AA",
+      "official_url": "https://www.w3.org/WAI/WCAG22/Understanding/focus-visible.html",
+      "applicability": "При keyboard interaction пользователь должен видеть текущий focus; это не автоматическое требованиеAAA2.4.13.",
+      "assessment": "partial_browser_observations",
+      "actual_checks": [
+        {
+          "evidence_id": "E060",
+          "json_pointer": "/summary",
+          "observed": {
+            "cases": 24,
+            "passed": 24,
+            "failed": 0
+          }
+        }
+      ],
+      "source_review_evidence_ids": [
+        "S_TOKENS"
+      ],
+      "remaining": [
+        "Probe сохранил :focus-visible и computed solid3px outline для выбранных targets, плюс screenshots; человек их не принимал.",
+        "Проверить видимость индикатора в обеих темах/состояниях и на соседних фонах, отдельно1.4.11."
+      ],
+      "criterion_conformance": "not-assessed"
+    },
+    {
+      "id": "2.4.11",
+      "title": "Focus Not Obscured (Minimum)",
+      "level": "AA",
+      "official_url": "https://www.w3.org/WAI/WCAG22/Understanding/focus-not-obscured-minimum.html",
+      "applicability": "Сфокусированный component не должен быть целиком закрыт содержимым автора; полная видимость относится к более строгомуAAA2.4.12.",
+      "assessment": "bounded_browser_observations",
+      "actual_checks": [
+        {
+          "evidence_id": "E028",
+          "json_pointer": "/ui_browser/browser/checks/30",
+          "observed": "first focused field and following action remain reachable after reduced-height resize; synthetic persisted resume keeps input"
+        },
+        {
+          "evidence_id": "E060",
+          "json_pointer": "/summary",
+          "observed": {
+            "cases": 24,
+            "passed": 24,
+            "failed": 0
+          }
+        }
+      ],
+      "source_review_evidence_ids": [],
+      "remaining": [
+        "24case probe сохранил пересечение viewport и реальный elementFromPoint hit выбранных focus targets.",
+        "Проверить все scroll/fixed/overlay сочетания вручную; native keyboard и OS overlays здесь не запускались."
+      ],
+      "criterion_conformance": "not-assessed"
+    },
+    {
+      "id": "2.5.3",
+      "title": "Label in Name",
+      "level": "A",
+      "official_url": "https://www.w3.org/WAI/WCAG22/Understanding/label-in-name.html",
+      "applicability": "Текст видимой подписи action/field должен входить в accessible name для speech/assistive input.",
+      "assessment": "partial_browser_observations",
+      "actual_checks": [
+        {
+          "evidence_id": "E028",
+          "json_pointer": "/ui_browser/browser/checks/3",
+          "observed": "pending keeps focus and accessible label"
+        },
+        {
+          "evidence_id": "E060",
+          "json_pointer": "/summary",
+          "observed": {
+            "cases": 24,
+            "passed": 24,
+            "failed": 0
+          }
+        }
+      ],
+      "source_review_evidence_ids": [
+        "S_UI"
+      ],
+      "remaining": [
+        "getByRole/getByLabel и неизменная pending подпись наблюдались, но полный аудит computed names и speech activation не выполнен."
+      ],
+      "criterion_conformance": "not-assessed"
+    },
+    {
+      "id": "2.5.8",
+      "title": "Target Size (Minimum)",
+      "level": "AA",
+      "official_url": "https://www.w3.org/WAI/WCAG22/Understanding/target-size-minimum.html",
+      "applicability": "Pointer targets:24×24CSSpx либо применимое spacing/equivalent/inline/user-agent/essential исключение; эти исключения не означают blanket exemption.",
+      "assessment": "partial_browser_observations",
+      "actual_checks": [
+        {
+          "evidence_id": "E028",
+          "json_pointer": "/ui_browser/browser/checks/31",
+          "observed": "visible compact controls meet the toolkit 44 CSS px target criterion"
+        },
+        {
+          "evidence_id": "E060",
+          "json_pointer": "/summary",
+          "observed": {
+            "cases": 24,
+            "passed": 24,
+            "failed": 0
+          }
+        }
+      ],
+      "source_review_evidence_ids": [],
+      "remaining": [
+        "Исходный44px assertion видел текущие visible compact controls при выбранной панели Настройки390×844; не все controls всех6×4states.",
+        "Дополнительный probe измерил20primary action rectangles (минимальная высота50px); это частичное покрытие targets.",
+        "Проверить остальные targets/состояния и обосновать каждое исключение;44px внутреннего набора не переименовывать вAA."
+      ],
+      "criterion_conformance": "not-assessed"
+    },
+    {
+      "id": "3.3.1",
+      "title": "Error Identification",
+      "level": "A",
+      "official_url": "https://www.w3.org/WAI/WCAG22/Understanding/error-identification.html",
+      "applicability": "Настройки: обязательное поле, неверный email и отказ сохранения должны иметь понятный текст и связь с соответствующим input.",
+      "assessment": "partial_browser_observations",
+      "actual_checks": [
+        {
+          "evidence_id": "E028",
+          "json_pointer": "/ui_browser/browser/checks/11",
+          "observed": "label and inline error are associated"
+        },
+        {
+          "evidence_id": "E028",
+          "json_pointer": "/ui_browser/browser/checks/12",
+          "observed": "submit validation focuses first error"
+        },
+        {
+          "evidence_id": "E060",
+          "json_pointer": "/summary",
+          "observed": {
+            "cases": 24,
+            "passed": 24,
+            "failed": 0
+          }
+        }
+      ],
+      "source_review_evidence_ids": [],
+      "remaining": [
+        "Фокус/связанный inline error и текст отказа наблюдались; объявление ошибки reader и смысловое различение типов ошибок not-run."
+      ],
+      "criterion_conformance": "not-assessed"
+    },
+    {
+      "id": "3.3.2",
+      "title": "Labels or Instructions",
+      "level": "A",
+      "official_url": "https://www.w3.org/WAI/WCAG22/Understanding/labels-or-instructions.html",
+      "applicability": "Для требуемого ввода name/email присутствует видимая подпись; обязательность и формат должны быть понятны.",
+      "assessment": "partial_browser_observations",
+      "actual_checks": [
+        {
+          "evidence_id": "E028",
+          "json_pointer": "/ui_browser/browser/checks/11",
+          "observed": "label and inline error are associated"
+        },
+        {
+          "evidence_id": "E060",
+          "json_pointer": "/summary",
+          "observed": {
+            "cases": 24,
+            "passed": 24,
+            "failed": 0
+          }
+        }
+      ],
+      "source_review_evidence_ids": [
+        "S_SCREENS"
+      ],
+      "remaining": [
+        "Проверить достаточность инструкций, обязательность/формат до ошибки и произнесенные labels/description в выбранном reader."
+      ],
+      "criterion_conformance": "not-assessed"
+    },
+    {
+      "id": "3.3.3",
+      "title": "Error Suggestion",
+      "level": "AA",
+      "official_url": "https://www.w3.org/WAI/WCAG22/Understanding/error-suggestion.html",
+      "applicability": "Если способ исправления известен, name/email ошибки должны сообщать его, с учетом исключений безопасности.",
+      "assessment": "not_run",
+      "actual_checks": [],
+      "source_review_evidence_ids": [
+        "S_SCREENS"
+      ],
+      "remaining": [
+        "Source содержит email format suggestion; отдельный assertion правильного текста подсказки для каждой ошибки не записан.",
+        "Проверить известные исправления и их чтение reader; sanitized server error не является универсальной field suggestion."
+      ],
+      "criterion_conformance": "not-assessed"
+    },
+    {
+      "id": "4.1.2",
+      "title": "Name, Role, Value",
+      "level": "A",
+      "official_url": "https://www.w3.org/WAI/WCAG22/Understanding/name-role-value.html",
+      "applicability": "Native button/input/dialog и custom tabs имеют определимые names/roles/states; изменения доступны user agents.",
+      "assessment": "partial_browser_observations",
+      "actual_checks": [
+        {
+          "evidence_id": "E028",
+          "json_pointer": "/ui_browser/browser/checks/3",
+          "observed": "pending keeps focus and accessible label"
+        },
+        {
+          "evidence_id": "E028",
+          "json_pointer": "/ui_browser/browser/checks/22",
+          "observed": "real keyboard tabs support Home/End/arrows and selected panels"
+        },
+        {
+          "evidence_id": "E028",
+          "json_pointer": "/ui_browser/browser/checks/15",
+          "observed": "native modal opens with focus inside"
+        }
+      ],
+      "source_review_evidence_ids": [
+        "S_UI"
+      ],
+      "remaining": [
+        "Проверить actual accessibility tree, изменение busy/selected/error и совместимость с конкретным reader.",
+        "24axe scans и role attrs не доказывают правильное произнесение/уведомление обо всех состояниях."
+      ],
+      "criterion_conformance": "not-assessed"
+    },
+    {
+      "id": "4.1.3",
+      "title": "Status Messages",
+      "level": "AA",
+      "official_url": "https://www.w3.org/WAI/WCAG22/Understanding/status-messages.html",
+      "applicability": "Loading/pending, ошибка и подтверждение локального сохранения должны быть доступны без обязательного переноса focus.",
+      "assessment": "not_run",
+      "actual_checks": [],
+      "source_review_evidence_ids": [
+        "S_UI",
+        "S_SCREENS"
+      ],
+      "remaining": [
+        "Source использует status/alert/aria-busy; actual speech output, своевременность и отсутствие дублирования не проверены.",
+        "Пройти изменение loading/error/success/pending с reader; DOM role и появившийся heading не равны наблюдаемому объявлению."
+      ],
+      "criterion_conformance": "not-assessed"
+    }
+  ],
+  "touch_targets": {
+    "internal_toolkit_criterion": "44CSSpx at base16px via2.75rem; own design criterion, not universal WCAGAA.",
+    "aa_criterion": "2.5.8",
+    "aa_minimum_css_pixels": [
+      24,
+      24
+    ],
+    "exceptions": [
+      "spacing (24px-diameter target-circle condition)",
+      "equivalent control",
+      "inline",
+      "user agent control",
+      "essential"
+    ],
+    "aaa_reference": "https://www.w3.org/WAI/WCAG22/Understanding/target-size-enhanced.html",
+    "aaa_note": "2.5.5 uses44CSSpx with its own exceptions; toolkit44px result does not establish fullAAA or allAA.",
+    "compact_observation_scope": "Visible controls in selectedSettings panel at390x844, not six-composition exhaustive target scan.",
+    "supplemental_primary_action_count": 20,
+    "supplemental_minimum_action_rect": {
+      "width": 134.828125,
+      "height": 50
+    }
+  },
+  "axe_findings": {
+    "six_composition_audits": 24,
+    "automatic_violations": 0,
+    "incomplete_items": 2,
+    "incomplete_classification": "Two dialog color-contrast overlap cases; retained, not converted to pass.",
+    "solid_pair_ratios": [
+      {
+        "name": "light-solid-dialog-text",
+        "foreground": "rgb(23, 47, 69)",
+        "background": "rgb(255, 255, 255)",
+        "ratio": 13.73471878607421,
+        "minimum": 4.5,
+        "scope": "Known solid dialog parent surface; supplemental check for axe overlap incomplete, not blanket contrast acceptance"
+      },
+      {
+        "name": "dark-solid-dialog-text",
+        "foreground": "rgb(237, 244, 255)",
+        "background": "rgb(28, 48, 64)",
+        "ratio": 12.278689369917647,
+        "minimum": 4.5,
+        "scope": "Known solid dialog parent surface; supplemental check for axe overlap incomplete, not blanket contrast acceptance"
+      }
+    ],
+    "historical_quality_gap": {
+      "evidence_id": "EQUALITY_OLD",
+      "incomplete": "not-recorded; absence of key is not zero",
+      "scope": "Separate demo; no six-composition transfer."
+    },
+    "persistence_fix": {
+      "evidence_id": "ESERIALIZER",
+      "observed_incomplete": 1,
+      "scope": "Current root serializer preserves actual gradient incomplete and manual_review_required; not a rerun/repair of historical report or UI contrast acceptance."
+    }
+  },
+  "assistive_technology": {
+    "status": "not-run",
+    "reader": null,
+    "reader_version": null,
+    "client_version": null,
+    "announcements_recorded": false,
+    "narrator_started": false,
+    "required_record": [
+      "Reader/browser/OS versions, input method and exact scenario.",
+      "Observed names, roles, reading/focus order, error/status announcements and repetition.",
+      "Expected vs actual behavior and issue/retest reference; no secrets or user data."
+    ],
+    "scenario": [
+      "Navigate six named panels and read content/relationships.",
+      "Editname/email using keyboard; cause required/format error, fix it, submit and hear sanitized rejection.",
+      "Open and dismiss dialog, check initial focus/background exclusion/return.",
+      "Observe controlled loading/empty/error and status changes without repeated/conflicting announcements."
+    ]
+  },
+  "open_manual_work": [
+    "Reader scenario remains not-run; no mobile-device prerequisite is added to a desktop-reader probe.",
+    "Visually evaluate focus indicators, non-text contrasts, all text/background combinations and overflow/clipping.",
+    "Resolve each axe incomplete by scoped measurements/manual evidence; keep raw finding.",
+    "Extend applicability assessment to all criteria of any future complete page/process conformance claim."
+  ],
+  "sources": [
+    {
+      "url": "https://www.w3.org/WAI/test-evaluate/tools/selecting/",
+      "checked_on": "2026-11-06",
+      "use": "Automated evaluation does not cover every accessibility check."
+    },
+    {
+      "url": "https://www.w3.org/WAI/WCAG22/Understanding/focus-appearance.html",
+      "checked_on": "2026-11-06",
+      "use": "2.4.13 isAAA, not an addedAA focus-dimension gate."
+    }
+  ]
+}
