@@ -12,6 +12,7 @@ from dataclasses import replace
 from pathlib import Path
 
 from _support import integration
+
 from telegram_patterns import SQLiteOnce, UnsupportedCapability, ValidationFailure, safe_error_report
 from telegram_patterns.outbox import OutboxConflict, OutboxLeaseLost, SQLiteOutbox
 

@@ -73,7 +73,17 @@ def main() -> int:
     help_text=run('entrypoint-help',[console,'--help']);assert all(option in help_text for option in ('--origin','--terms-version','--database','--support'))
     run('typecheck',[python,'-m','mypy','--check-untyped-defs','--warn-unused-ignores',ROOT/'examples/shop/src'])
     run('tests',[python,'-I','-m','unittest','discover','-s',ROOT/'examples/shop/tests','-v'])
-    test_log=(output/'tests.log').read_text(encoding='utf-8');unit_tests=int(re.search(r'Ran (\d+) tests',test_log).group(1));assert unit_tests==11 and test_log.rstrip().endswith('OK')
+    test_log=(output/'tests.log').read_text(encoding='utf-8')
+    matched=re.search(r'Ran (\d+) tests',test_log)
+    if not matched:
+        raise RuntimeError('Shop test runner did not report executed tests')
+    unit_tests=int(matched.group(1))
+    required_tests=('test_rotation_and_current_session_revoke_are_durable_and_actor_bound',
+                    'test_every_private_object_route_uses_server_actor_and_owner_acl',
+                    'test_lost_order_and_rotation_replies_reconcile_same_operation_after_restart',
+                    'test_http_session_order_and_revoke_survive_actual_process_death')
+    if unit_tests < 19 or not test_log.rstrip().endswith('OK') or any(name not in test_log for name in required_tests):
+        raise RuntimeError('Shop acceptance requires all existing tests and durable session/ACL/restart scenarios')
     frontend=consumer/'frontend';shutil.copytree(ROOT/'examples/shop/frontend',frontend,ignore=shutil.ignore_patterns('node_modules','dist'))
     supplied=consumer/'provided artifacts';supplied.mkdir();tarball=supplied/sources[1].name;shutil.copyfile(sources[1],tarball)
     package_json=frontend/'package.json';data=json.loads(package_json.read_text());data['dependencies']['@awesome-telegram/patterns']='file:'+tarball.as_posix();package_json.write_text(json.dumps(data,indent=2)+'\n')

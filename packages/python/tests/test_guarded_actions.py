@@ -14,6 +14,7 @@ from contextlib import closing
 from pathlib import Path
 
 from _support import integration
+
 from telegram_patterns import ConflictFailure, InvalidType, OperationConflict, PermissionDenied, SQLiteOnce
 
 CONTEXT = (100, -42, 42, 7, 900)
