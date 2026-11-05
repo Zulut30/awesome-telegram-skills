@@ -14,6 +14,9 @@ export interface Session {
   /** Seconds */
   readonly expires_in: number;
 }
+export interface SessionRevoked {
+  readonly revoked: boolean;
+}
 export interface Product {
   readonly id: string;
   readonly title: string;
@@ -68,7 +71,7 @@ export interface Error {
 type Schema = {readonly ref: string} | {readonly type: 'string' | 'integer' | 'number' | 'boolean' | 'object' | 'array';
   readonly enum?: readonly string[]; readonly properties?: Readonly<Record<string, Schema>>;
   readonly required?: readonly string[]; readonly items?: Schema};
-const schemas: Readonly<Record<string, Schema>> = {"SessionRequest":{"type":"object","properties":{"initData":{"type":"string"}},"required":["initData"]},"Session":{"type":"object","properties":{"token":{"type":"string"},"scope":{"type":"string"},"expires_in":{"type":"integer"}},"required":["token","scope","expires_in"]},"Product":{"type":"object","properties":{"id":{"type":"string"},"title":{"type":"string"},"description":{"type":"string"},"stars":{"type":"integer"},"category":{"type":"string"}},"required":["id","title","description","stars","category"]},"Catalog":{"type":"object","properties":{"items":{"type":"array","items":{"ref":"Product"}},"currency":{"ref":"Currency"}},"required":["items","currency"]},"Currency":{"type":"string","enum":["XTR"]},"Policy":{"type":"object","properties":{"version":{"type":"string"},"terms":{"type":"string"},"support":{"type":"string"}},"required":["version","terms","support"]},"OrderRequest":{"type":"object","properties":{"operation":{"type":"string"},"items":{"type":"array","items":{"type":"string"}},"terms":{"type":"string"}},"required":["operation","items","terms"]},"Order":{"type":"object","properties":{"id":{"type":"string"},"operation":{"type":"string"},"items":{"type":"array","items":{"type":"string"}},"total":{"type":"integer"},"currency":{"ref":"Currency"},"status":{"type":"string","enum":["awaiting","paid","review"]},"invoice_state":{"type":"string","enum":["none","creating","ready","unknown"]}},"required":["id","operation","items","total","currency","status","invoice_state"]},"Orders":{"type":"object","properties":{"orders":{"type":"array","items":{"ref":"Order"}}},"required":["orders"]},"EmptyBody":{"type":"object","properties":{},"required":[]},"InvoiceLink":{"type":"object","properties":{"url":{"type":"string"}},"required":["url"]},"Content":{"type":"object","properties":{"id":{"type":"string"},"title":{"type":"string"},"text":{"type":"string"}},"required":["id","title","text"]},"Error":{"type":"object","properties":{"error":{"type":"string","enum":["authentication-required","permission-denied","validation-failed","operation-conflict","invoice-outcome-unknown","request-rejected","service-unavailable"]}},"required":["error"]}};
+const schemas: Readonly<Record<string, Schema>> = {"SessionRequest":{"type":"object","properties":{"initData":{"type":"string"}},"required":["initData"]},"Session":{"type":"object","properties":{"token":{"type":"string"},"scope":{"type":"string"},"expires_in":{"type":"integer"}},"required":["token","scope","expires_in"]},"SessionRevoked":{"type":"object","properties":{"revoked":{"type":"boolean"}},"required":["revoked"]},"Product":{"type":"object","properties":{"id":{"type":"string"},"title":{"type":"string"},"description":{"type":"string"},"stars":{"type":"integer"},"category":{"type":"string"}},"required":["id","title","description","stars","category"]},"Catalog":{"type":"object","properties":{"items":{"type":"array","items":{"ref":"Product"}},"currency":{"ref":"Currency"}},"required":["items","currency"]},"Currency":{"type":"string","enum":["XTR"]},"Policy":{"type":"object","properties":{"version":{"type":"string"},"terms":{"type":"string"},"support":{"type":"string"}},"required":["version","terms","support"]},"OrderRequest":{"type":"object","properties":{"operation":{"type":"string"},"items":{"type":"array","items":{"type":"string"}},"terms":{"type":"string"}},"required":["operation","items","terms"]},"Order":{"type":"object","properties":{"id":{"type":"string"},"operation":{"type":"string"},"items":{"type":"array","items":{"type":"string"}},"total":{"type":"integer"},"currency":{"ref":"Currency"},"status":{"type":"string","enum":["awaiting","paid","review"]},"invoice_state":{"type":"string","enum":["none","creating","ready","unknown"]}},"required":["id","operation","items","total","currency","status","invoice_state"]},"Orders":{"type":"object","properties":{"orders":{"type":"array","items":{"ref":"Order"}}},"required":["orders"]},"EmptyBody":{"type":"object","properties":{},"required":[]},"InvoiceLink":{"type":"object","properties":{"url":{"type":"string"}},"required":["url"]},"Content":{"type":"object","properties":{"id":{"type":"string"},"title":{"type":"string"},"text":{"type":"string"}},"required":["id","title","text"]},"Error":{"type":"object","properties":{"error":{"type":"string","enum":["authentication-required","permission-denied","validation-failed","operation-conflict","invoice-outcome-unknown","request-rejected","service-unavailable"]}},"required":["error"]}};
 
 /** Throws with the JSON path of the first value that breaks the contract. */
 function check(schema: Schema, value: unknown, at: string): void {
@@ -94,6 +97,7 @@ function check(schema: Schema, value: unknown, at: string): void {
 export const decode = {
   SessionRequest: (value: unknown): SessionRequest => { check({ref: 'SessionRequest'}, value, 'SessionRequest'); return value as SessionRequest; },
   Session: (value: unknown): Session => { check({ref: 'Session'}, value, 'Session'); return value as Session; },
+  SessionRevoked: (value: unknown): SessionRevoked => { check({ref: 'SessionRevoked'}, value, 'SessionRevoked'); return value as SessionRevoked; },
   Product: (value: unknown): Product => { check({ref: 'Product'}, value, 'Product'); return value as Product; },
   Catalog: (value: unknown): Catalog => { check({ref: 'Catalog'}, value, 'Catalog'); return value as Catalog; },
   Currency: (value: unknown): Currency => { check({ref: 'Currency'}, value, 'Currency'); return value as Currency; },
@@ -110,6 +114,8 @@ export const decode = {
 /** Every operation of the contract, keyed by operationId. */
 export interface ApiOperations {
   createSession: {readonly method: 'POST'; readonly path: '/api/session'; readonly params: Record<string, never>; readonly body: SessionRequest; readonly response: Session};
+  rotateSession: {readonly method: 'POST'; readonly path: '/api/session/rotate'; readonly params: Record<string, never>; readonly body: EmptyBody; readonly response: Session};
+  revokeSession: {readonly method: 'POST'; readonly path: '/api/session/revoke'; readonly params: Record<string, never>; readonly body: EmptyBody; readonly response: SessionRevoked};
   getCatalog: {readonly method: 'GET'; readonly path: '/api/catalog'; readonly params: Record<string, never>; readonly body: undefined; readonly response: Catalog};
   getPolicy: {readonly method: 'GET'; readonly path: '/api/policy'; readonly params: Record<string, never>; readonly body: undefined; readonly response: Policy};
   listOrders: {readonly method: 'GET'; readonly path: '/api/orders'; readonly params: Record<string, never>; readonly body: undefined; readonly response: Orders};
@@ -123,6 +129,8 @@ export type ApiOperation = keyof ApiOperations;
 
 export const operations = {
   createSession: {method: 'POST', path: '/api/session', response: 'Session'},
+  rotateSession: {method: 'POST', path: '/api/session/rotate', response: 'Session'},
+  revokeSession: {method: 'POST', path: '/api/session/revoke', response: 'SessionRevoked'},
   getCatalog: {method: 'GET', path: '/api/catalog', response: 'Catalog'},
   getPolicy: {method: 'GET', path: '/api/policy', response: 'Policy'},
   listOrders: {method: 'GET', path: '/api/orders', response: 'Orders'},

@@ -12,7 +12,7 @@ from aiogram import Bot
 from telegram_patterns import InvalidInitData, OperationConflict, PermissionDenied, ValidationFailure
 from telegram_patterns.aiogram import stars_invoice
 from .storage import io_call
-from .store import CATALOG, Store, UnknownInvoice
+from .store import CATALOG, SESSION_SECONDS, Store, UnknownInvoice
 
 
 async def invoice(store: Store, bot: Bot, actor: int, order_id: str) -> str:
@@ -60,23 +60,44 @@ def create_app(store: Store, bot: Bot, frontend: Path, *, origin: str, terms: st
 
     app=web.Application(middlewares=[boundary],client_max_size=32768)
     def same_origin(request: web.Request) -> None:
-        if request.headers.get('Origin')!=origin:raise PermissionDenied()
-    async def identity(request: web.Request, *, write: bool = False) -> int:
+        if request.headers.getall('Origin',[])!=[origin]:raise PermissionDenied()
+    def bearer(request: web.Request, *, write: bool = False) -> str:
         # Bearer token from memory, not a cookie: Telegram Web runs the Mini App in a cross-site iframe.
-        if write:same_origin(request)
+        # Reads permit no Origin (same-origin GET), but an explicitly foreign Origin is refused.
+        if write or 'Origin' in request.headers:same_origin(request)
+        if len(request.headers.getall('Authorization',[]))!=1:raise web.HTTPUnauthorized()
         scheme,_,token=request.headers.get('Authorization','').partition(' ')
-        try:return await io_call(store.authenticate,token if scheme=='Bearer' else '')
+        if scheme!='Bearer' or not token:raise web.HTTPUnauthorized()
+        return token
+    async def session_call(action, token: str):
+        try:return await io_call(action,token)
         except PermissionDenied:raise web.HTTPUnauthorized() from None
+    async def identity(request: web.Request, *, write: bool = False) -> int:
+        return await session_call(store.authenticate,bearer(request,write=write))
+    def unique_fields(pairs):
+        result={}
+        for name,value in pairs:
+            if name in result:raise ValidationFailure()
+            result[name]=value
+        return result
     async def body(request: web.Request, fields: set[str]) -> dict:
         if request.content_type!='application/json':raise ValidationFailure()
-        value=await request.json()
+        value=await request.json(loads=lambda raw:json.loads(raw,object_pairs_hook=unique_fields))
         if not isinstance(value,dict) or set(value)!=fields:raise ValidationFailure()
         return value
 
     async def session(request: web.Request):
         same_origin(request);data=await body(request,{'initData'})
         result=await io_call(store.session,data['initData'])
-        return web.json_response({'token':result['token'],'scope':result['scope'],'expires_in':600})
+        return web.json_response(result|{'expires_in':SESSION_SECONDS})
+    async def rotate_session(request: web.Request):
+        token=bearer(request,write=True);await body(request,set())
+        result=await session_call(store.rotate_session,token)
+        return web.json_response(result|{'expires_in':SESSION_SECONDS})
+    async def revoke_session(request: web.Request):
+        token=bearer(request,write=True);await body(request,set())
+        await session_call(store.revoke_session,token)
+        return web.json_response({'revoked':True})
     async def catalog(request):return web.json_response({'items':list(CATALOG.values()),'currency':'XTR'})
     async def policy(request):return web.json_response({'version':store.terms_version,'terms':terms,'support':support})
     async def create(request):
@@ -98,6 +119,6 @@ def create_app(store: Store, bot: Bot, frontend: Path, *, origin: str, terms: st
         text=(frontend/'index.html').read_text(encoding='utf-8')
         sdk='' if loopback_dev else '<script src="https://telegram.org/js/telegram-web-app.js"></script>'
         return web.Response(text=text.replace('<!-- telegram-sdk -->',sdk),content_type='text/html')
-    app.add_routes([web.post('/api/session',session),web.get('/api/catalog',catalog),web.get('/api/policy',policy),web.post('/api/orders',create),web.get('/api/operations/{operation}',lookup),web.get('/api/orders',orders),web.get('/api/orders/{id}',order),web.post('/api/orders/{id}/invoice',create_invoice),web.get('/api/content/{sku}',content),web.get('/',index)])
+    app.add_routes([web.post('/api/session',session),web.post('/api/session/rotate',rotate_session),web.post('/api/session/revoke',revoke_session),web.get('/api/catalog',catalog),web.get('/api/policy',policy),web.post('/api/orders',create),web.get('/api/operations/{operation}',lookup),web.get('/api/orders',orders),web.get('/api/orders/{id}',order),web.post('/api/orders/{id}/invoice',create_invoice),web.get('/api/content/{sku}',content),web.get('/',index)])
     app.router.add_static('/assets/',frontend/'assets',follow_symlinks=False)
     return app
