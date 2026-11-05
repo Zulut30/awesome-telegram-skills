@@ -1029,10 +1029,17 @@
       "id": 48,
       "title": "Завершить контракт черновиков",
       "requirement": "Добавить версии, миграции, TTL, scope пользователя и очищение; обычный draft хранит только разрешенные поля, а не секреты и подтверждение оплаты.",
-      "status": "pending",
-      "commit_subject": null,
-      "artifacts": [],
-      "evidence": []
+      "status": "done",
+      "commit_subject": "roadmap(048): accept scoped draft version and expiry contract",
+      "artifacts": [
+        "examples/shop/README.md",
+        "docs/internal/backend-state-readiness-2026-11-05.md",
+        "docs/internal/local-026-acceptance.json"
+      ],
+      "evidence": [
+        "Exact 0.26 installed library and application wheels/tarball: 24 Python, 4 headless Node and 246 Chrome checks passed; real HTTP/SQLite/process recovery, no live Telegram/device/provider proof.",
+        "Explicit migrations retain original expiry and scope, write before deleting legacy data, strip forbidden fields and keep pending identity outside cart TTL."
+      ]
     },
     {
       "id": 49,
