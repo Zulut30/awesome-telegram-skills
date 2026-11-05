@@ -879,10 +879,16 @@
       "id": 38,
       "title": "Добавить фоновые задания и расписание",
       "requirement": "Поддержать сохраненный статус, дедлайны, отмену и восстановление jobs средствами проекта; перезапуск не создает повторное напоминание без проверки.",
-      "status": "pending",
-      "commit_subject": null,
-      "artifacts": [],
-      "evidence": []
+      "status": "done",
+      "commit_subject": "roadmap(038): accept durable jobs deadlines and cancellation",
+      "artifacts": [
+        "docs/internal/delivery-025-acceptance.md",
+        "docs/internal/delivery-025-acceptance.json"
+      ],
+      "evidence": [
+        "0.25.0 immutable source ab1a432:90 stages PASS;715 Python (3 environment skips),61 TypeScript,Chrome; exact hashes in summary.",
+        "test_jobs; installed stage durable-jobs; Persisted status/deadline/cancel/attempts, concurrent workers and real restart; sending expiry stays unknown and cancellation has explicit limits."
+      ]
     },
     {
       "id": 39,
