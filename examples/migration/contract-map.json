@@ -1,0 +1,282 @@
+{
+  "schema_version": 1,
+  "baseline": {
+    "version": "0.5.0",
+    "source_commit": "73963b2e4add8ee6922bc07a6b7baa4104fdd00e"
+  },
+  "target": {
+    "version": "0.28.0",
+    "source_commit": "92a9d151dc57d85cc5f1eb614f9980e808b36b59",
+    "scope": "Exact development artifacts; no 1.0 RC claim"
+  },
+  "historical_surface": {
+    "python_names": 47,
+    "typescript_exports": 23,
+    "removed": []
+  },
+  "changes": [
+    {
+      "language": "python",
+      "public_name": "telegram_patterns.BotSettings",
+      "classification": "compatible-optional-additions-plus-from-env-placeholder-guard",
+      "consumer": "python_consumer.py",
+      "before_after": "run.py installs each supplied artifact separately; before and after modes use their own installed public API",
+      "evidence_relative_to_output": "state/python-after.json"
+    },
+    {
+      "language": "python",
+      "public_name": "telegram_patterns.InvalidInitData",
+      "classification": "compatible-addition-or-annotation",
+      "consumer": "python_consumer.py",
+      "before_after": "run.py installs each supplied artifact separately; before and after modes use their own installed public API",
+      "evidence_relative_to_output": "state/python-after.json"
+    },
+    {
+      "language": "python",
+      "public_name": "telegram_patterns.OperationConflict",
+      "classification": "compatible-addition-or-annotation",
+      "consumer": "python_consumer.py",
+      "before_after": "run.py installs each supplied artifact separately; before and after modes use their own installed public API",
+      "evidence_relative_to_output": "state/python-after.json"
+    },
+    {
+      "language": "python",
+      "public_name": "telegram_patterns.Recipe",
+      "classification": "compatible-addition-or-annotation",
+      "consumer": "sdk_consumer.py",
+      "before_after": "run.py installs each supplied artifact separately; before and after modes use their own installed public API",
+      "evidence_relative_to_output": "sdk-after.json"
+    },
+    {
+      "language": "python",
+      "public_name": "telegram_patterns.RecipeCatalog",
+      "classification": "compatible-addition-or-annotation",
+      "consumer": "sdk_consumer.py",
+      "before_after": "run.py installs each supplied artifact separately; before and after modes use their own installed public API",
+      "evidence_relative_to_output": "sdk-after.json"
+    },
+    {
+      "language": "python",
+      "public_name": "telegram_patterns.SQLiteOnce",
+      "classification": "behavioral-migration",
+      "consumer": "python_consumer.py",
+      "before_after": "run.py installs each supplied artifact separately; before and after modes use their own installed public API",
+      "evidence_relative_to_output": "state/python-after.json"
+    },
+    {
+      "language": "python",
+      "public_name": "telegram_patterns.StarterPlan",
+      "classification": "compatible-addition-or-annotation",
+      "consumer": "sdk_consumer.py",
+      "before_after": "run.py installs each supplied artifact separately; before and after modes use their own installed public API",
+      "evidence_relative_to_output": "sdk-after.json"
+    },
+    {
+      "language": "python",
+      "public_name": "telegram_patterns.VerifiedLaunch",
+      "classification": "behavioral-migration",
+      "consumer": "python_consumer.py",
+      "before_after": "run.py installs each supplied artifact separately; before and after modes use their own installed public API",
+      "evidence_relative_to_output": "state/python-after.json"
+    },
+    {
+      "language": "python",
+      "public_name": "telegram_patterns.aiogram.BotSettings",
+      "classification": "compatible-optional-additions-plus-from-env-placeholder-guard",
+      "consumer": "python_consumer.py",
+      "before_after": "run.py installs each supplied artifact separately; before and after modes use their own installed public API",
+      "evidence_relative_to_output": "state/python-after.json"
+    },
+    {
+      "language": "python",
+      "public_name": "telegram_patterns.aiogram.InvalidAPIRequest",
+      "classification": "compatible-addition-or-annotation",
+      "consumer": "sdk_consumer.py",
+      "before_after": "run.py installs each supplied artifact separately; before and after modes use their own installed public API",
+      "evidence_relative_to_output": "sdk-after.json"
+    },
+    {
+      "language": "python",
+      "public_name": "telegram_patterns.aiogram.InvalidField",
+      "classification": "compatible-addition-or-annotation",
+      "consumer": "sdk_consumer.py",
+      "before_after": "run.py installs each supplied artifact separately; before and after modes use their own installed public API",
+      "evidence_relative_to_output": "sdk-after.json"
+    },
+    {
+      "language": "python",
+      "public_name": "telegram_patterns.aiogram.UpdateTrace",
+      "classification": "compatible-addition-or-annotation",
+      "consumer": "sdk_consumer.py",
+      "before_after": "run.py installs each supplied artifact separately; before and after modes use their own installed public API",
+      "evidence_relative_to_output": "sdk-after.json"
+    },
+    {
+      "language": "python",
+      "public_name": "telegram_patterns.aiogram.callback_router",
+      "classification": "compatible-addition-or-annotation",
+      "consumer": "sdk_consumer.py",
+      "before_after": "run.py installs each supplied artifact separately; before and after modes use their own installed public API",
+      "evidence_relative_to_output": "sdk-after.json"
+    },
+    {
+      "language": "python",
+      "public_name": "telegram_patterns.aiogram.paginated_menu",
+      "classification": "compatible-addition-or-annotation",
+      "consumer": "sdk_consumer.py",
+      "before_after": "run.py installs each supplied artifact separately; before and after modes use their own installed public API",
+      "evidence_relative_to_output": "sdk-after.json"
+    },
+    {
+      "language": "python",
+      "public_name": "telegram_patterns.aiogram.run_bot",
+      "classification": "behavioral-migration",
+      "consumer": "sdk_consumer.py",
+      "before_after": "run.py installs each supplied artifact separately; before and after modes use their own installed public API",
+      "evidence_relative_to_output": "sdk-after.json"
+    },
+    {
+      "language": "python",
+      "public_name": "telegram_patterns.aiogram.text_form_router",
+      "classification": "compatible-addition-or-annotation",
+      "consumer": "fsm_consumer.py",
+      "before_after": "run.py installs each supplied artifact separately; before and after modes use their own installed public API",
+      "evidence_relative_to_output": "fsm-after.json"
+    },
+    {
+      "language": "python",
+      "public_name": "telegram_patterns.cli.doctor",
+      "classification": "behavioral-migration",
+      "consumer": "python_consumer.py",
+      "before_after": "run.py installs each supplied artifact separately; before and after modes use their own installed public API",
+      "evidence_relative_to_output": "state/python-after.json"
+    },
+    {
+      "language": "python",
+      "public_name": "telegram_patterns.create_starter",
+      "classification": "behavioral-migration",
+      "consumer": "python_consumer.py",
+      "before_after": "run.py installs each supplied artifact separately; before and after modes use their own installed public API",
+      "evidence_relative_to_output": "state/python-after.json"
+    },
+    {
+      "language": "python",
+      "public_name": "telegram_patterns.testing.StubSession",
+      "classification": "compatible-addition-or-annotation",
+      "consumer": "sdk_consumer.py",
+      "before_after": "run.py installs each supplied artifact separately; before and after modes use their own installed public API",
+      "evidence_relative_to_output": "sdk-after.json"
+    },
+    {
+      "language": "typescript",
+      "public_name": "ApiError",
+      "classification": "typed-migration",
+      "consumer": "types/after-adapted.ts",
+      "before_after": "run.py installs each supplied artifact separately; before and after modes use their own installed public API",
+      "evidence_relative_to_output": "report.json#/typed"
+    },
+    {
+      "language": "typescript",
+      "public_name": "ClientOptions",
+      "classification": "compatible-options-plus-behavioral-migration",
+      "consumer": "api_contract_consumer.mjs",
+      "before_after": "run.py installs each supplied artifact separately; before and after modes use their own installed public API",
+      "evidence_relative_to_output": "api-contract-after.json"
+    },
+    {
+      "language": "typescript",
+      "public_name": "DraftOptions",
+      "classification": "compatible-addition-or-annotation",
+      "consumer": "typescript_consumer.mjs",
+      "before_after": "run.py installs each supplied artifact separately; before and after modes use their own installed public API",
+      "evidence_relative_to_output": "state/typescript-after.json"
+    },
+    {
+      "language": "typescript",
+      "public_name": "RequestOptions",
+      "classification": "compatible-options-plus-behavioral-migration",
+      "consumer": "api_contract_consumer.mjs",
+      "before_after": "run.py installs each supplied artifact separately; before and after modes use their own installed public API",
+      "evidence_relative_to_output": "api-contract-after.json"
+    },
+    {
+      "language": "typescript",
+      "public_name": "SelectionDraftStore",
+      "classification": "compatible-addition-or-annotation",
+      "consumer": "typescript_consumer.mjs",
+      "before_after": "run.py installs each supplied artifact separately; before and after modes use their own installed public API",
+      "evidence_relative_to_output": "state/typescript-after.json"
+    },
+    {
+      "language": "typescript",
+      "public_name": "TelegramNativeAPI",
+      "classification": "typed-migration",
+      "consumer": "types/after-adapted.ts",
+      "before_after": "run.py installs each supplied artifact separately; before and after modes use their own installed public API",
+      "evidence_relative_to_output": "report.json#/typed"
+    },
+    {
+      "language": "typescript",
+      "public_name": "UnsupportedTelegramCapability",
+      "classification": "compatible-error-taxonomy-base-extension",
+      "consumer": "typescript_inventory.mjs",
+      "before_after": "run.py installs each supplied artifact separately; before and after modes use their own installed public API",
+      "evidence_relative_to_output": "inventory/report.json"
+    },
+    {
+      "language": "typescript",
+      "public_name": "createTextField",
+      "classification": "structural-return-type-name-no-DOM-proof",
+      "consumer": "typescript_inventory.mjs",
+      "before_after": "run.py installs each supplied artifact separately; before and after modes use their own installed public API",
+      "evidence_relative_to_output": "inventory/report.json"
+    }
+  ],
+  "additional_runtime_contracts": [
+    {
+      "contract": "SQLite strict JSON payload",
+      "consumer": "python_consumer.py",
+      "evidence_relative_to_output": "state/python-after.json"
+    },
+    {
+      "contract": "VerifiedLaunch deep readonly",
+      "consumer": "python_consumer.py",
+      "evidence_relative_to_output": "state/python-after.json"
+    },
+    {
+      "contract": "ApiClient prefix + outside URL rejection",
+      "consumer": "typescript_consumer.mjs",
+      "evidence_relative_to_output": "state/typescript-after.json"
+    },
+    {
+      "contract": "ApiClient timeout bound + JSON body + header error redaction",
+      "consumer": "api_contract_consumer.mjs",
+      "evidence_relative_to_output": "api-contract-after.json"
+    },
+    {
+      "contract": "TelegramBridge platform + listener fanout",
+      "consumer": "typescript_consumer.mjs",
+      "evidence_relative_to_output": "state/typescript-after.json"
+    },
+    {
+      "contract": "nullable native minimum",
+      "consumer": "types/legacy-minimum.ts",
+      "evidence_relative_to_output": "report.json#/typed"
+    },
+    {
+      "contract": "unknown old FSM default resume + schema refusal",
+      "consumer": "fsm_consumer.py",
+      "evidence_relative_to_output": "fsm-after.json"
+    },
+    {
+      "contract": "BotSettings.from_env placeholder guard; direct invalid token denied on both versions",
+      "consumer": "python_consumer.py",
+      "evidence_relative_to_output": "state/python-after.json"
+    }
+  ],
+  "coverage_limits": [
+    "Direct declarations are not exhaustive semantic equivalence",
+    "createTextField descriptor has no DOM runtime proof",
+    "No automatic mapping of arbitrary legacy financial/session/auth schemas"
+  ]
+}

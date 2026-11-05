@@ -32,6 +32,7 @@
 
 - [Локальная приемка 0.28.0 и состояние CI](local-028-acceptance.md)
 - [Привязка артефактов 0.28.0](local-028-acceptance.json)
+- [Приемка перехода с 0.5.0](migration-098-acceptance.json)
 
 - [Проверка набора](verification.md)
 - [Проверка качества навыков](quality-review.md)
@@ -64,3 +65,5 @@
 
 - [Локальная приемка 0.27.0](local-027-acceptance.md)
 - [Привязка артефактов 0.27.0](local-027-acceptance.json)
+
+- [??????? ????????? ?????????????? ????????](shop-recovery-acceptance.json)

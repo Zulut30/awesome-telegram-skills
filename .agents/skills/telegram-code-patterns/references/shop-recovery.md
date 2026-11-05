@@ -38,8 +38,8 @@ python -m telegram_shop_example.recovery inspect --candidate C:/shop/recovery/ca
 4. Pending/sending outbox перевести в unknown: прежние scope, operation keys,
    payload и attempts сохраняются; revision увеличивается на один. Это fence,
    а не новая отправка. Уже unknown не очищаются.
-5. Проверить SQLite и опубликовать новый файл. До quarantine commit final path
-   отсутствует; после публикации он уже содержит обязательный guard. Crash до
+5. Проверить SQLite и опубликовать новый файл. До фиксации транзакции карантина
+   конечный файл отсутствует; после публикации он уже содержит обязательный guard. Crash до
    commit оставляет private stage, после публикации — закрытую копию.
 
 Paid/access facts не переиздаются и не признаются свежим разрешением на доступ.

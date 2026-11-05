@@ -1,0 +1,49 @@
+{
+  "schema_version": 1,
+  "kind": "shop-recovery-installed-acceptance",
+  "date": "2026-11-05",
+  "passed": true,
+  "source_commit": "524b2ead9a1e25901f24f74e46f5523f247b0e7b",
+  "source_archive_sha256": "5f5fa4179fb7606bb03098b14cfe3f1ea6f69fa6783d7ff0c64bdd8f15235088",
+  "library_version": "0.28.0",
+  "application_version": "0.1.0",
+  "report_path": "output/shop-recovery-source524b2ead/resumed-report.json",
+  "report_sha256": "3e5dddbf97a7a7e3da3bb7a44aef7f6b02f98d39318e69f98a75a4b5d7632fe7",
+  "python_tests": 61,
+  "headless_node_tests": 5,
+  "chrome_checks": 262,
+  "source_exact_files": 15,
+  "vendor_exact_files": 42,
+  "artifacts": [
+    {
+      "name": "awesome_telegram_patterns-0.28.0-py3-none-any.whl",
+      "bytes": 524352,
+      "sha256": "e0b42b53f1228fc804ab37b73675641fada1c148aa9eebffd11b05af1859fb7d"
+    },
+    {
+      "name": "awesome-telegram-patterns-0.28.0.tgz",
+      "bytes": 52074,
+      "sha256": "dd24c7db27d9f1dd1f2dcc36a49bd67d14577eec1c7a15216632f92615ca3931"
+    },
+    {
+      "name": "awesome_telegram_shop_example-0.1.0-py3-none-any.whl",
+      "bytes": 54673,
+      "sha256": "d46e68e1e58b7ba36fd07d7c34977951b7b26bb9576d59d507861c5ceb1e4295"
+    }
+  ],
+  "runtime_source_report_sha256": "512ed7e586ddd12e89d9aed0aeb8266fde94318ab2886eaab89cac23b1143337",
+  "setup_repair": "Initial verifier reached browser after all 61 tests, types, package and Node stages passed. Browser import failed before execution because the new source snapshot had no root Playwright. npm ci installed the frozen lockfile; only the unstarted browser stage was resumed, retaining the original failure.",
+  "caller_files_preserved": true,
+  "guards": [
+    "New candidate published only after quarantine commit; crashes91/92 test boundaries.",
+    "Restored sessions revoked, known actors blocked, operators disabled, pending/sending outbox fenced to unknown with original IDs/attempts.",
+    "HTTP, fresh actors, SDK transport/router, runtime and workers check the gate; writer ACL callback checks before business commit."
+  ],
+  "requirement096_status": "pending",
+  "limits": [
+    "No restored-service activation/unpause or trusted provider reconciliation command.",
+    "No target hosting, secret store, live Telegram/provider, physical device or pilot acceptance.",
+    "Raw in-place administrator restore cannot be detected without an external trusted witness; procedure forbids it.",
+    "Windows directory_synced=false remains explicit; no power-loss durability claim."
+  ]
+}

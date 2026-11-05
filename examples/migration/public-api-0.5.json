@@ -1,0 +1,57 @@
+{
+  "telegram_patterns": [
+    "InvalidInitData",
+    "VerifiedLaunch",
+    "validate_init_data",
+    "OnceResult",
+    "OperationConflict",
+    "SQLiteOnce",
+    "BotSettings",
+    "Recipe",
+    "RecipeCatalog",
+    "StarterPlan",
+    "create_starter"
+  ],
+  "telegram_patterns.aiogram": [
+    "Action",
+    "ActionButton",
+    "ActionResult",
+    "BotSettings",
+    "CommandReply",
+    "FormSubmission",
+    "InvalidAPIRequest",
+    "InvalidField",
+    "MenuPage",
+    "MethodSpec",
+    "TextField",
+    "UpdateObserver",
+    "UpdateTrace",
+    "action_keyboard",
+    "action_menu",
+    "build_request",
+    "callback_router",
+    "command_menu",
+    "command_router",
+    "event_router",
+    "inline_keyboard",
+    "input_prompt",
+    "method_catalog",
+    "page_number",
+    "paginated_menu",
+    "remove_keyboard",
+    "reply_keyboard",
+    "run_bot",
+    "stars_invoice",
+    "start_router",
+    "text_form_router",
+    "update_kinds"
+  ],
+  "telegram_patterns.testing": [
+    "StubSession",
+    "Responder"
+  ],
+  "telegram_patterns.cli": [
+    "doctor",
+    "main"
+  ]
+}

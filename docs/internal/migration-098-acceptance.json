@@ -1,0 +1,435 @@
+{
+  "schema_version": 1,
+  "kind": "migration-acceptance-summary",
+  "date": "2026-11-05",
+  "passed": true,
+  "scope": "Original098 migration part: frozen 0.5.0 to exact development artifacts 0.28.0; not 1.0 RC or production/live acceptance",
+  "before_source_commit": "73963b2e4add8ee6922bc07a6b7baa4104fdd00e",
+  "after_source_commit": "92a9d151dc57d85cc5f1eb614f9980e808b36b59",
+  "artifacts": {
+    "before": [
+      {
+        "name": "awesome_telegram_patterns-0.5.0-py3-none-any.whl",
+        "sha256": "8996afaac89555c4796f4a5cd064cd31ae41eb692d01de6672f53316099236a6",
+        "bytes": 85691
+      },
+      {
+        "name": "awesome-telegram-patterns-0.5.0.tgz",
+        "sha256": "7ee13e86b343665807a57ccffda8900ce538f72f2e9a659fb3a441bd32b163a3",
+        "bytes": 16544
+      }
+    ],
+    "after": [
+      {
+        "name": "awesome_telegram_patterns-0.28.0-py3-none-any.whl",
+        "sha256": "e0b42b53f1228fc804ab37b73675641fada1c148aa9eebffd11b05af1859fb7d",
+        "bytes": 524352
+      },
+      {
+        "name": "awesome-telegram-patterns-0.28.0.tgz",
+        "sha256": "dd24c7db27d9f1dd1f2dcc36a49bd67d14577eec1c7a15216632f92615ca3931",
+        "bytes": 52074
+      }
+    ]
+  },
+  "environment": {
+    "platform": "Windows-11-10.0.26200-SP0",
+    "python": "3.13.12 (tags/v3.13.12:1cbe481, Feb  3 2026, 18:22:25) [MSC v.1944 64 bit (AMD64)]",
+    "node": "v24.19.0",
+    "npm": "12.0.2",
+    "aiogram": "3.31.0",
+    "typescript_compiler": "7.0.2",
+    "declaration_parser": "5.9.3",
+    "linux_execution_verified": false
+  },
+  "canonical_helper": {
+    "path": "examples/migration/run.py",
+    "copied_folder_independent_of_checkout": true,
+    "working_directory_outside_checkout": true,
+    "paths_with_spaces": true,
+    "full": {
+      "passed": true,
+      "stages": 38,
+      "with_sdk": true,
+      "with_types": true,
+      "report_sha256": "b716e86d7def8ad2ac3c8a5394ab9eb13efb6847794f213355d48775359a3c61"
+    },
+    "sdk_free": {
+      "passed": true,
+      "stages": 18,
+      "with_sdk": false,
+      "with_types": false,
+      "report_sha256": "9240331208895b0be7b8ceed975c912172473ffcc9555eae8da25eab8ae483d0"
+    },
+    "output_conflicts": {
+      "passed": true,
+      "completed_output": {
+        "exit_code": 2,
+        "owner_report_database_backup_unchanged": true,
+        "sha256": {
+          ".migration-owner.json": "c54652a405461467ce70d904316d7d2305d0714e0fbdc42ca88be3dc454b8c42",
+          "report.json": "9240331208895b0be7b8ceed975c912172473ffcc9555eae8da25eab8ae483d0",
+          "business.sqlite": "8777498b5742aedd5c9bd7b00236a4b2bc87a36ac433bbebb240b0aec935ca64",
+          "pre-migration-backup.sqlite": "e13bcd55b326ddd343a2149e810fa418e2ce01ebb6e0f6dab8c513f5767982e3"
+        }
+      },
+      "foreign_output": {
+        "exit_code": 2,
+        "host_files_unchanged": true,
+        "migration_owner_not_created": true
+      },
+      "scope": "Real canonical helper execution; refusal before installers or writes to existing output."
+    }
+  },
+  "inventory": {
+    "passed": true,
+    "scope": "Historical explicitly public Python names and transitive root TypeScript declarations; no exhaustive semantic equivalence claim.",
+    "python": {
+      "before_version": "0.5.0",
+      "after_version": "0.28.0",
+      "before": 47,
+      "after": 47,
+      "removed": [],
+      "missing": [],
+      "changed": [
+        "telegram_patterns.BotSettings",
+        "telegram_patterns.InvalidInitData",
+        "telegram_patterns.OperationConflict",
+        "telegram_patterns.Recipe",
+        "telegram_patterns.RecipeCatalog",
+        "telegram_patterns.SQLiteOnce",
+        "telegram_patterns.StarterPlan",
+        "telegram_patterns.VerifiedLaunch",
+        "telegram_patterns.aiogram.BotSettings",
+        "telegram_patterns.aiogram.InvalidAPIRequest",
+        "telegram_patterns.aiogram.InvalidField",
+        "telegram_patterns.aiogram.UpdateTrace",
+        "telegram_patterns.aiogram.callback_router",
+        "telegram_patterns.aiogram.paginated_menu",
+        "telegram_patterns.aiogram.run_bot",
+        "telegram_patterns.aiogram.text_form_router",
+        "telegram_patterns.cli.doctor",
+        "telegram_patterns.create_starter",
+        "telegram_patterns.testing.StubSession"
+      ],
+      "added": []
+    },
+    "typescript": {
+      "before_version": "0.5.0",
+      "after_version": "0.28.0",
+      "before": 23,
+      "after": 107,
+      "removed": [],
+      "missing": [],
+      "changed": [
+        "ApiError",
+        "ClientOptions",
+        "DraftOptions",
+        "RequestOptions",
+        "SelectionDraftStore",
+        "TelegramNativeAPI",
+        "UnsupportedTelegramCapability",
+        "createTextField"
+      ],
+      "added": [
+        "AsyncReadContext",
+        "AsyncReadResult",
+        "AsyncReadSnapshot",
+        "AsyncStateOptions",
+        "AuthenticationRequired",
+        "ErrorCategory",
+        "ErrorCode",
+        "ErrorOutcome",
+        "ErrorReport",
+        "FetchTransport",
+        "InitDataSignatureOptions",
+        "InvalidInitData",
+        "InvalidType",
+        "KeyValueStorage",
+        "NativeAccountStorage",
+        "NativeActionButtons",
+        "NativeButtonHandlers",
+        "NativeButtonsState",
+        "NativeCapability",
+        "NativeFileInputOptions",
+        "NativeFlowKind",
+        "NativeFlowResult",
+        "NativeFlowScope",
+        "NativeInteraction",
+        "NativeLaunch",
+        "NativePrompts",
+        "NativeScopeOptions",
+        "NativeSharing",
+        "NativeStorageKind",
+        "NativeStoredValue",
+        "OperationKind",
+        "PatternError",
+        "PendingOperation",
+        "PendingOperationOptions",
+        "PendingOperationRead",
+        "PendingOperationReservation",
+        "PendingOperationStore",
+        "PermissionDenied",
+        "RecoveryAction",
+        "ScopedAsyncState",
+        "ServerlessCallOptions",
+        "ServerlessEndpointClient",
+        "SignedLaunch",
+        "SignedObject",
+        "StorageFactory",
+        "TELEGRAM_PUBLIC_KEYS",
+        "TelegramNativeArguments",
+        "TelegramNativeResult",
+        "TelegramNativeSignatures",
+        "TelegramServerlessBridge",
+        "TelegramServerlessError",
+        "TextFieldControl",
+        "UiButton",
+        "UiButtonOptions",
+        "UiControl",
+        "UiDialog",
+        "UiFeedbackOptions",
+        "UiField",
+        "UiFieldOptions",
+        "UiListItem",
+        "UiShellOptions",
+        "UiTab",
+        "UiTabs",
+        "UiTone",
+        "UnknownOutcome",
+        "UnsupportedCapability",
+        "ValidationFailure",
+        "bindUiFocusVisibility",
+        "connectUiShell",
+        "createNativeFileInput",
+        "createUiBadge",
+        "createUiButton",
+        "createUiCard",
+        "createUiDialog",
+        "createUiFeedback",
+        "createUiField",
+        "createUiLink",
+        "createUiList",
+        "createUiSkeleton",
+        "createUiTabs",
+        "safeErrorReport",
+        "uiUrl",
+        "validateUiFields",
+        "verifyInitDataSignature"
+      ],
+      "legacy_native_records_unchanged": true
+    }
+  },
+  "typed": {
+    "passed": true,
+    "compiler": "7.0.2",
+    "declaration_parser": "5.9.3",
+    "cases": [
+      {
+        "role": "before",
+        "file": "legacy-error-exhaustive.ts",
+        "expected_compile_success": true
+      },
+      {
+        "role": "before",
+        "file": "legacy-minimum.ts",
+        "expected_compile_success": true
+      },
+      {
+        "role": "before",
+        "file": "legacy-native-invalid.ts",
+        "expected_compile_success": true
+      },
+      {
+        "role": "before",
+        "file": "legacy-valid.ts",
+        "expected_compile_success": true
+      },
+      {
+        "role": "after",
+        "file": "after-adapted.ts",
+        "expected_compile_success": true
+      },
+      {
+        "role": "after",
+        "file": "legacy-error-exhaustive.ts",
+        "expected_compile_success": false
+      },
+      {
+        "role": "after",
+        "file": "legacy-minimum.ts",
+        "expected_compile_success": false
+      },
+      {
+        "role": "after",
+        "file": "legacy-native-invalid.ts",
+        "expected_compile_success": false
+      },
+      {
+        "role": "after",
+        "file": "legacy-valid.ts",
+        "expected_compile_success": true
+      }
+    ]
+  },
+  "fsm_observations": {
+    "default_schema_legacy_resume": true,
+    "unknown_cannot_cancel_or_restart": true,
+    "foreign_actor_denied": true,
+    "original_id_reconciled_once": true,
+    "explicit_schema_change_refused_without_identity_loss": true
+  },
+  "sdk_runner_before": [
+    "SetMyCommands"
+  ],
+  "sdk_runner_after": [
+    "GetMe",
+    "SetMyCommands"
+  ],
+  "state": {
+    "sqlite_normalized_rows_unchanged": true,
+    "business_effect_count": 1,
+    "readonly_backup_before_new_library_access": true,
+    "backup_integrity_check": "ok",
+    "backup_sha256": "e13bcd55b326ddd343a2149e810fa418e2ce01ebb6e0f6dab8c513f5767982e3",
+    "legacy_financial_rows": [
+      [
+        "unbound-order",
+        "original-unbound-operation",
+        "legacy-unbound"
+      ],
+      [
+        "unknown-order",
+        "original-unknown-operation",
+        "unknown"
+      ]
+    ],
+    "financial_policy": "Host-owned unknown/unbound rows remain quarantined with original IDs; read-only snapshot and backup precede new-library access; no paid or new send transition.",
+    "original_unknown_fsm_id_preserved": true,
+    "explicit_schema2_refuses_without_identity_loss": true,
+    "draft_scope_and_expiry_preserved": true
+  },
+  "runtime_observations": {
+    "python": [
+      "completed-replay-preserved",
+      "explicit-tuple-array-mapping-keeps-key",
+      "ambiguous-legacy-key-refused",
+      "current-acl-on-saved-replay",
+      "as-dict-detached-copy-for-recursive-readonly",
+      "invalid-direct-settings-rejected-on-both-versions",
+      "placeholder-config-now-rejected",
+      "doctor-schema-reason-remediation",
+      "new-starter-complete-and-existing-target-refused"
+    ],
+    "typescript": [
+      "schema1-compatible",
+      "explicit-v2-migration-preserves-scope-and-bounds-ttl",
+      "base-prefix-resolution-changed",
+      "directory-base-relative-route-portable",
+      "unknown-write-stays-one-attempt",
+      "platform-must-be-observed",
+      "listener-error-fanout-changed",
+      "valid-native-call-preserved",
+      "owned-dispose"
+    ],
+    "api_after": {
+      "passed": true,
+      "mode": "after",
+      "version": "0.28.0",
+      "timeoutAboveInt32Rejected": true,
+      "nonJSONFunctionBodyRejected": true,
+      "headerFailureRedacted": true,
+      "portableValidRequestCalls": 1
+    }
+  },
+  "frozen_baseline_build": {
+    "passed": true,
+    "helper": "scripts/build_release.py",
+    "ref": "73963b2e4add8ee6922bc07a6b7baa4104fdd00e",
+    "build_tool": "build==1.6.1",
+    "wheel_and_tarball_match_tested_baseline_sha256": true,
+    "source_tree_patched": false,
+    "result": {
+      "ref": "73963b2e4add8ee6922bc07a6b7baa4104fdd00e",
+      "commit": "73963b2e4add8ee6922bc07a6b7baa4104fdd00e",
+      "version": "0.5.0",
+      "awesome-telegram-patterns-0.5.0.tgz": "7ee13e86b343665807a57ccffda8900ce538f72f2e9a659fb3a441bd32b163a3",
+      "awesome_telegram_patterns-0.5.0-py3-none-any.whl": "8996afaac89555c4796f4a5cd064cd31ae41eb692d01de6672f53316099236a6",
+      "awesome-telegram-patterns-0.5.0.cdx.json": "d44d60a8d2cd51c6e5fe9d1709bc2023165e838a48e86a58ed5382d6cc25248d"
+    }
+  },
+  "reproduce": {
+    "entrypoint": "examples/migration/README.md",
+    "required_arguments": [
+      "--before-wheel",
+      "--before-tarball",
+      "--after-wheel",
+      "--after-tarball",
+      "--after-version",
+      "--output"
+    ],
+    "full_options": [
+      "--with-sdk",
+      "--with-types"
+    ],
+    "report_files_relative_to_new_output": [
+      "report.json",
+      "inventory/report.json",
+      "state/python-before.json",
+      "state/python-after.json",
+      "fsm-before.json",
+      "fsm-after.json",
+      "api-contract-before.json",
+      "api-contract-after.json"
+    ]
+  },
+  "owned_files_sha256": {
+    "docs/migration-from-0.5.md": "af94c55428522b7099c1742de3614fcbca73b826045fec52155e8e2e8f80063a",
+    "examples/migration/api_contract_consumer.mjs": "4a15337e90f95defda948061cac47ed71f8f83f770e4cbd5c1d8815d41e5ae5a",
+    "examples/migration/contract-map.json": "0f221f0138dea624e959781e5d272c5bfd6b907c6c9ce82ac29c809d458e5238",
+    "examples/migration/fsm_consumer.py": "1c45bc52765dffea5bc712fb0e8ff7a496a8561bfeca3a3cb3581da28e13d690",
+    "examples/migration/public-api-0.5.json": "3071bdc9500c97d402d8db48ae18e420244e62986f58421a3e68c65568d74625",
+    "examples/migration/python_consumer.py": "a33dceab4c80ca44937ea0c466e28a7afab714293d9636318660c5af0faa4927",
+    "examples/migration/python_inventory.py": "1e13592d1d2edf2bf671ab20c0b2fc9bf7291e6bb4bb353c1256804dfc119feb",
+    "examples/migration/README.md": "551ced9e92ff30b1ce5fd9d878522090a8a9826a1d6ca6d61a971f1e218f94ff",
+    "examples/migration/run.py": "fab30d9db24b03c5322a95281bc5140e2a2a07e44b4245d41ba401aade11e315",
+    "examples/migration/sdk_consumer.py": "a6dc413439e248b63d58649b9646c62361da8216382b6862182e1cc47a409648",
+    "examples/migration/types/after-adapted.ts": "342573e5a6adb3c7e20cc5f39c66e133ecaee8fba19fbaa1ca1528ab94274865",
+    "examples/migration/types/legacy-error-exhaustive.ts": "4c1d35eaa2c18717154702d0ccf8f825c0a97166f46e796cbd991e17a6eead7e",
+    "examples/migration/types/legacy-minimum.ts": "98651fc90ba8f6b92a6108d6e98218f8c17bfa47b13814ea6c43e57b25bfe9dc",
+    "examples/migration/types/legacy-native-invalid.ts": "ebed7bc5808f74a12fd306b0e9ca493b7f5ee7e4149e6c4956eed7d3315bd2c0",
+    "examples/migration/types/legacy-valid.ts": "21121dbfc4dd321473ce75c92423047276ff7ba4bf879fb72daa2b07d7484f03",
+    "examples/migration/typescript_consumer.mjs": "ece0286d96815fc287293029cd10f25a12dfa78ab9d4709c65ad67b43b3458de",
+    "examples/migration/typescript_inventory.mjs": "55551286b26943aea017db7b6c71d7e3ebf40f386fd7e898382898f2c399df26"
+  },
+  "limitations": [
+    "No 1.0 RC artifact or migration acceptance",
+    "No live Telegram, physical devices, provider accounts, pilot participants or deployment proof",
+    "No automatic paid/access/send transition or provider binding for unknown legacy state",
+    "No DOM runtime proof for createTextField return descriptor",
+    "Declaration inventory and targeted witnesses are not exhaustive semantic equivalence"
+  ],
+  "failed_fixture_history": [
+    "An extra lab probe initially assumed old direct BotSettings empty-token construction was unvalidated; real frozen0.5 rejected it. Canonical probe now checks denial on both versions and separately verifies the new from_env placeholder guard. Failed temporary runs preserved."
+  ],
+  "skill_workflow": "telegram-testing: real installed synthetic transports plus state/identity invariants; no hidden skill evaluation run",
+  "integration": {
+    "api_reference_symbols": 420,
+    "python_symbols": 313,
+    "typescript_symbols": 107,
+    "skills": 42,
+    "docs_pages": 98,
+    "sidebar_pages": 25,
+    "standalone_copies": 94,
+    "repository_tests": 290,
+    "repository_skipped": 2,
+    "repository_log_sha256": "4303fc3267e2a499f0a9ec409296570a5c34fdd9785c1cf41c34a01ac9b3ee38",
+    "checks": [
+      "build_api_reference.py --check",
+      "sync_skill_references.py --check",
+      "build_docs_map.py --check",
+      "validate_skills.py"
+    ],
+    "note": "Catalogs/exports remain current0.28 and unchanged; root added navigation, changelog and AI onboarding reference. No 1.0RC claim."
+  }
+}
