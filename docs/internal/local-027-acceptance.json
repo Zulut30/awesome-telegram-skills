@@ -196,6 +196,13 @@
         "Actual file SQLite, loopback HTTP, independent provider-effect databases and spawned processes exercise repeated delivery, timeouts, lost replies and crashes. Shop exits 75/76 and 85-89 preserve original IDs, receipt/access atomicity, priority admission and unknown-write no-resend invariants; full inbox/outbox/jobs/FSM/payment suites passed."
       ],
       "source_commit": "91442af594a722936dbcb625bdb1be1b9ab4ce2e"
+    },
+    "92": {
+      "requirement": "Отслеживать официальные изменения Telegram/SDK, воспроизводить несовместимости и обновлять fixtures; дата проверки относится только к проверенным частям.",
+      "observations": [
+        "Official Serverless source and exact SDK IIFE pass nine isolated protocol checks with zero external requests; watcher/signature/execution tests reproduce callback/error/version changes. One hundred methods and 44 events are indexed, 99 legacy records/global dates preserved, unknown minimum version fails closed; tested older aiogram observers refuse UnsupportedCapability."
+      ],
+      "source_commit": "91442af594a722936dbcb625bdb1be1b9ab4ce2e"
     }
   },
   "limits": [

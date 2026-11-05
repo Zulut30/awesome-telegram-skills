@@ -1582,10 +1582,15 @@
       "id": 92,
       "title": "Наладить обновление зависимостей и API",
       "requirement": "Отслеживать официальные изменения Telegram/SDK, воспроизводить несовместимости и обновлять fixtures; дата проверки относится только к проверенным частям.",
-      "status": "pending",
-      "commit_subject": null,
-      "artifacts": [],
-      "evidence": []
+      "status": "done",
+      "commit_subject": "roadmap(092): accept scoped official API and SDK update checks",
+      "artifacts": [
+        "docs/internal/local-027-acceptance.json",
+        "docs/internal/local-027-acceptance.md"
+      ],
+      "evidence": [
+        "Official Serverless source and exact SDK IIFE pass nine isolated protocol checks with zero external requests; watcher/signature/execution tests reproduce callback/error/version changes. One hundred methods and 44 events are indexed, 99 legacy records/global dates preserved, unknown minimum version fails closed; tested older aiogram observers refuse UnsupportedCapability."
+      ]
     },
     {
       "id": 93,
