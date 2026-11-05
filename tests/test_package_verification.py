@@ -18,6 +18,7 @@ class PackageVerificationTests(unittest.TestCase):
             write('packages/python/pyproject.toml','[project]\nname="awesome-telegram-patterns"\nversion="0.0.1"\n')
             write('packages/typescript/package.json',json.dumps({'name':'@awesome-telegram/patterns','version':'0.0.1'}))
             write('components.json',json.dumps({'library_version':'0.0.1','components':[]}))
+            write('catalog/recipe-gallery.json',json.dumps({'library_version':'0.0.1','recipes':[{'id':'timeout-fixture'}]}))
             write('examples/mini-app/package.json',json.dumps({'dependencies':{'@awesome-telegram/patterns':'0.0.1'}}))
             consumer=root/'consumer';consumer.mkdir()
             original_run=subprocess.run
