@@ -3,7 +3,7 @@ name: telegram-code-patterns
 description: "Подбирает и подключает готовые компоненты общей библиотеки для Telegram-бота или Mini App: импорты Python/TypeScript, совместимость, композиция и проверка в проекте. Используйте, когда пользователь просит переиспользовать код, подключить библиотеку паттернов или добавить компонент в нее. Не для одиночного исправления handler или кода без этой библиотеки → telegram-bot-python."
 license: MIT
 metadata:
-  version: "0.27.0"
+  version: "0.28.0"
 ---
 
 # Готовые компоненты Telegram
@@ -18,8 +18,8 @@ metadata:
 
 ## Алгоритм
 
-1. Проверьте версию `awesome-telegram-patterns`/`@awesome-telegram/patterns`. Установка — из локальных wheel/tarball; сохраняйте SDK, БД и frontend проекта.
-2. Выберите задачу ниже и откройте соответствующий reference. Неясны пакет/версия — начните с agent-onboarding.
+1. Проверьте версию `awesome-telegram-patterns`/`@awesome-telegram/patterns`. Установите локальные wheel/tarball; сохраните SDK, БД и frontend.
+2. Выберите задачу и откройте reference. Неясны пакет/версия — начните с agent-onboarding.
 3. Подключите импорты; приложение обеспечивает права, безопасный повтор и сохранение результата. `validate_init_data` не проверяет права; invoice не выдает доступ.
 
 - [agent-onboarding](references/agent-onboarding.md): пакет и установленная версия
@@ -70,6 +70,7 @@ metadata:
 - [payment-ledger](references/payment-ledger.md): суммы, возвраты, доступ
 - [payment-providers](references/payment-providers.md): Crypto Pay, Platega, ЮKassa
 - [stars-payments](references/stars-payments.md): возврат Stars
+- [sqlite-recovery](references/sqlite-recovery.md): копия SQLite, восстановление
 - [extensions](references/extensions.md): собственный адаптер
 - [api-boundaries](references/api-boundaries.md): новые методы, контекст, права
 - [maturity](references/maturity.md): зрелость и доказательства проверки
@@ -91,4 +92,4 @@ metadata:
 
 [Bot API](https://core.telegram.org/bots/api).
 
-Проверено: 2026-11-05, awesome-telegram-patterns 0.27.0, Bot API 10.3, aiogram 3.31.0.
+Проверено: 2026-11-05, контракты awesome-telegram-patterns 0.28.0, Bot API 10.3, aiogram 3.31.0.

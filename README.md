@@ -10,7 +10,7 @@
 
 [Аудит и условия выхода в production — 05.11.2026](docs/production-readiness.md) · [Telegram Serverless](docs/telegram-serverless.md)
 
-[![Version](https://img.shields.io/badge/version-0.27.0-229ED9)](CHANGELOG.md)
+[![Version](https://img.shields.io/badge/version-0.28.0-229ED9)](CHANGELOG.md)
 [![Skills](https://img.shields.io/badge/skills-42-334155)](#skills)
 [![Status](https://img.shields.io/badge/status-experimental-f59e0b)](docs/v1-maturity.md)
 [![License: MIT](https://img.shields.io/badge/license-MIT-16a34a)](LICENSE)
@@ -31,7 +31,7 @@
 | Часть | Статус | Что это значит для вас |
 | --- | --- | --- |
 | 42 скилла для ИИ-агентов | 🟢 Можно использовать | Это инструкции: агент применяет их к вашему коду, решение и проверку вы оставляете за собой |
-| Python-компоненты (54 группы) | 🟡 Экспериментально | Покрыты тестами с настоящими aiogram и python-telegram-bot и тестовым транспортом; API может измениться в следующей минорной версии |
+| Python-компоненты (55 групп) | 🟡 Экспериментально | Core проверяется без SDK, адаптеры — с настоящими aiogram и python-telegram-bot и тестовым транспортом; API может измениться в следующей минорной версии |
 | TypeScript-компоненты (13 групп) | 🟡 Экспериментально | Проверены в Chrome на разных размерах экрана, но не в Telegram на телефоне |
 | Рецепты (341) | 🟡 Проверены без Telegram | 207 — на настоящем SDK без сети, 34 — на заглушках, 100 — справочные и не запускались |
 | Примеры приложений | 🟡 Учебные | Показывают, как собрать бота, магазин и групповой бот; это не готовые продукты |
@@ -44,7 +44,7 @@
 | Часть | Что получите |
 | --- | --- |
 | **42 скилла** | Архитектура, Bot API, Mini Apps, платежи, профили, безопасность, тестирование и развертывание |
-| **67 групп компонентов** | Клавиатуры, формы, навигация, календари, медиа, состояния и проверка `initData`; [каталог](components.json) |
+| **68 групп компонентов** | Клавиатуры, формы, навигация, календари, медиа, состояния и проверка `initData`; [каталог](components.json) |
 | **Python-пакет** | `telegram_patterns`: ядро без SDK и адаптеры aiogram и python-telegram-bot; [API](packages/python/README.md) |
 | **TypeScript-пакет** | `@awesome-telegram/patterns`: bridge, темы, viewport, safe areas, API-клиент, черновики и UI-основа; [API](packages/typescript/README.md) |
 | **341 рецепт + CLI** | Поиск, фильтры, примеры кода, создание заготовок и `doctor`; [инструкция](docs/gallery-navigation.md) |
@@ -247,4 +247,4 @@ keyboard = action_menu([
 
 Скиллы, библиотеки и примеры распространяются по лицензии [MIT](LICENSE): их можно использовать, изменять и включать в коммерческие проекты при сохранении уведомления об авторских правах. Файл лицензии входит в Python wheel и npm tarball, а поле `license: MIT` — во frontmatter каждого скилла, поэтому скопированный каталог скилла сохраняет условия.
 
-Вопросы — через [форму «Вопрос»](https://github.com/Zulut30/awesome-telegram-skills/issues/new?template=question.yml); мейнтейнер отвечает в течение 3 рабочих дней, правила — в [SUPPORT.md](SUPPORT.md). Для изменений набора: [CONTRIBUTING.md](CONTRIBUTING.md). Уязвимости сообщайте приватно по [SECURITY.md](SECURITY.md). Участники соблюдают [кодекс поведения](CODE_OF_CONDUCT.md). Источники: [docs/sources.md](docs/sources.md). Развитие: [план из 100 пунктов](docs/internal/library-roadmap-100.md) и [регистр выполнения](docs/internal/v1-progress.json).
+Вопросы — через [форму «Вопрос»](https://github.com/Zulut30/awesome-telegram-skills/issues/new?template=question.yml); поддержка по возможности, без гарантированного SLA, правила и наблюдаемые цели — в [SUPPORT.md](SUPPORT.md). Для изменений набора: [CONTRIBUTING.md](CONTRIBUTING.md). Уязвимости сообщайте приватно по [SECURITY.md](SECURITY.md). Участники соблюдают [кодекс поведения](CODE_OF_CONDUCT.md). Источники: [docs/sources.md](docs/sources.md). Развитие: [план из 100 пунктов](docs/internal/library-roadmap-100.md) и [регистр выполнения](docs/internal/v1-progress.json).

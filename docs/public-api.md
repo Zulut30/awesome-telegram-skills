@@ -170,3 +170,16 @@ CLI `run-recipe ID [--offline] [--timeout SECONDS]` сначала flush-ит pl
 ## Медиа — 0.20.0
 
 `telegram_patterns.aiogram` exports `MediaKind`, `MediaSendRequest`, `MediaFile`, `MediaItem`, `DownloadedMedia`, `media_request`, `media_album`, `media_edit`, `download_media`. Полные параметры, типы результата, ошибки, владение и side effects описаны в [контрактах медиа](media.md). Construct/send отдельно; downloader — explicit bounded read через host session, no filesystem/retry. Приложение отвечает за кодек, содержимое, права на объект, маршрутизацию и доставку. Native URL/FSInputFile/другие виды сохраняются через SDK, без скрытой миграции.
+
+## Копия SQLite и восстановление — 0.28.0
+
+`SQLiteRecoveryError`, `SQLiteRecoveryResult`, `backup_sqlite` и `restore_sqlite_new`
+из `telegram_patterns` описаны в [контракте восстановления](sqlite-recovery.md).
+Существующие корни с правами владельца — обязательное условие; исходник открывается
+только для чтения, готовый снимок публикуется по отсутствующему пути после проверок
+целостности и внешних ключей. Результат содержит SHA-256, размеры и явные признаки
+синхронизации каталога и очистки. Windows не обещает синхронизацию каталога,
+а бюджет не прерывает системные вызовы. Копирование сохраняет исходные ID, ревизии
+и неизвестные операции; переключение сервиса, бизнес-миграция и повтор внешних
+эффектов не выполняются. Это SDK-free компонент, не доказательство работоспособного
+production restore или восстановления после потери питания.

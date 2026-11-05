@@ -20,7 +20,8 @@ class LicenseTests(unittest.TestCase):
             data = tomllib.loads((ROOT / f'examples/{example}/pyproject.toml').read_text(encoding='utf-8'))
             self.assertEqual(data['project']['license'], 'MIT', example)
         for manifest in ('package.json', 'packages/typescript/package.json', 'examples/mini-app/package.json',
-                         'examples/shop/frontend/package.json'):
+                         'examples/shop/frontend/package.json', 'examples/frameworks/package.json',
+                         'tools/mini-app-quality/package.json'):
             self.assertEqual(json.loads((ROOT / manifest).read_text(encoding='utf-8'))['license'], 'MIT', manifest)
         self.assertIn('LICENSE', json.loads((ROOT / 'packages/typescript/package.json').read_text(encoding='utf-8'))['files'])
 
@@ -30,6 +31,7 @@ class LicenseTests(unittest.TestCase):
         for skill in skills:
             front = skill.read_text(encoding='utf-8').split('---', 2)[1]
             self.assertRegex(front, re.compile(r'^license: MIT\r?$', re.M), skill.parent.name)
+            self.assertEqual((skill.parent / 'LICENSE').read_bytes(), (ROOT / 'LICENSE').read_bytes(), skill.parent.name)
 
 
 if __name__ == '__main__':

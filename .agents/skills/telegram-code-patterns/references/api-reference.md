@@ -1,4 +1,4 @@
-# Справочник API 0.27.0
+# Справочник API 0.28.0
 
 Термины: **ACK** — ответ на нажатие кнопки через `answerCallbackQuery`: клиент убирает индикатор ожидания; это не сообщение об успехе операции; **CAS** — сравнение с заменой: запись сохраняется, только если версия не изменилась с момента чтения; квитанция (receipt) — сохраненная запись о выполненной операции; повтор возвращает ее вместо второго эффекта; **неизвестный результат** — запрос мог выполниться, но ответа нет (таймаут, обрыв связи); повторять вслепую нельзя, сначала сверка; **сверка** — запрос фактического состояния у провайдера или в хранилище перед повтором или выдачей; **fallback** — запасной вариант, если основная возможность недоступна.
 
@@ -430,6 +430,10 @@
 | `YooKassaPeerPolicy` | `from telegram_patterns import YooKassaPeerPolicy` | [ref.core_providers](api-reference-core.md#ref-core_providers) | Проверка адреса источника без произвольного proxy-заголовка |
 | `binding_reference` | `from telegram_patterns import binding_reference` | [ref.core_providers](api-reference-core.md#ref-core_providers) | Отпечаток полной привязки заказа и операции создания |
 | `StarsPaymentAdapter` | `from telegram_patterns.aiogram import StarsPaymentAdapter` | [ref.bot_stars_payments](api-reference-bot.md#ref-bot_stars_payments) | Привязка платежа, однократные возвраты и настройки продления, наблюдатель и доверенная сверка |
+| `SQLiteRecoveryError` | `from telegram_patterns import SQLiteRecoveryError` | [ref.core_sqlite_recovery](api-reference-core.md#ref-core_sqlite_recovery) | Безопасный отказ с фиксированными code/phase без исходных путей и текста SQLite |
+| `SQLiteRecoveryResult` | `from telegram_patterns import SQLiteRecoveryResult` | [ref.core_sqlite_recovery](api-reference-core.md#ref-core_sqlite_recovery) | Неизменяемый результат: операция, скрытая из repr цель, SHA-256, размеры, синхронизация каталога и очистка |
+| `backup_sqlite` | `from telegram_patterns import backup_sqlite` | [ref.core_sqlite_recovery](api-reference-core.md#ref-core_sqlite_recovery) | Проверенный online-снимок существующей SQLite-БД в отсутствующий файл внутри корней владельца |
+| `restore_sqlite_new` | `from telegram_patterns import restore_sqlite_new` | [ref.core_sqlite_recovery](api-reference-core.md#ref-core_sqlite_recovery) | Восстановление снимка только в новый файл без переключения сервиса и сброса неизвестных операций |
 
 ## CLI и CSS
 

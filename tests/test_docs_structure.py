@@ -1,12 +1,15 @@
 """Documentation structure: four sections with goals, a short sidebar and internal material kept apart."""
 
 import importlib.util
+import io
 import json
 import shutil
 import sys
 import tempfile
 import unittest
+from contextlib import redirect_stdout
 from pathlib import Path
+from unittest.mock import patch
 
 ROOT = Path(__file__).resolve().parents[1]
 spec = importlib.util.spec_from_file_location('build_docs_map', ROOT / 'scripts/build_docs_map.py')
@@ -17,6 +20,25 @@ MANIFEST = json.loads((ROOT / 'docs/navigation.json').read_text(encoding='utf-8'
 
 
 class DocsStructureTests(unittest.TestCase):
+    def test_real_write_uses_lf_and_check_preserves_caller_files(self):
+        with tempfile.TemporaryDirectory(prefix='docs map writer ') as temporary:
+            folder = Path(temporary)
+            target = folder / 'map.md'
+            marker = folder / 'caller.txt'
+            marker.write_bytes(b'owned by caller\n')
+            with patch.object(docs_map, 'OUTPUT', target), redirect_stdout(io.StringIO()):
+                with patch.object(sys, 'argv', ['build-docs-map']):
+                    self.assertEqual(docs_map.main(), 0)
+                data = target.read_bytes()
+                self.assertNotIn(b'\r\n', data)
+                self.assertEqual(data, docs_map.render(MANIFEST).encode('utf-8'))
+                stamp = target.stat().st_mtime_ns
+                with patch.object(sys, 'argv', ['build-docs-map', '--check']):
+                    self.assertEqual(docs_map.main(), 0)
+                self.assertEqual(target.read_bytes(), data)
+                self.assertEqual(target.stat().st_mtime_ns, stamp)
+                self.assertEqual(marker.read_bytes(), b'owned by caller\n')
+
     def test_repository_structure_has_no_problems_and_the_map_is_current(self):
         self.assertEqual(docs_map.problems(MANIFEST, ROOT), [])
         self.assertEqual((ROOT / 'docs/README.md').read_text(encoding='utf-8'), docs_map.render(MANIFEST))

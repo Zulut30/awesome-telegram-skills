@@ -645,6 +645,18 @@
             "ptb-adapter"
           ],
           "recipes": []
+        },
+        {
+          "id": "sqlite-recovery",
+          "title": "Копия SQLite и восстановление в новый файл",
+          "skills": [
+            "telegram-deploy",
+            "telegram-code-patterns"
+          ],
+          "components": [
+            "sqlite-recovery"
+          ],
+          "recipes": []
         }
       ]
     },

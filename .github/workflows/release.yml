@@ -123,7 +123,8 @@ jobs:
         run: |
           for tag in $TAGS; do
             if gh release view "$tag" >/dev/null 2>&1; then
-              gh release upload "$tag" dist/"$tag"/* --clobber
+              # Existing bytes are immutable: matching assets stay, conflicts require a new version.
+              python scripts/release_assets.py --directory "dist/$tag" --repo "$GITHUB_REPOSITORY" --tag "$tag"
             else
               # 0.x remains experimental; every RC also stays a prerelease.
               prerelease=$(python - "$tag" <<'PY'

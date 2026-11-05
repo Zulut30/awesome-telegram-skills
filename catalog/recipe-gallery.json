@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "library_version": "0.27.0",
+  "library_version": "0.28.0",
   "source_snapshot": "2026-10-04",
   "source_hashes": {
     "bot_api": "29f5f25caa18d303f14ce83af5a4df784eb3094c3076cb040a1ad950c157ad44",
@@ -24399,7 +24399,7 @@
         "backend"
       ],
       "sdk": "python-core",
-      "sdk_version": "0.27.0",
+      "sdk_version": "0.28.0",
       "api_version": "none",
       "source_files": [
         "examples/python/error_recovery.py",

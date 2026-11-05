@@ -1,9 +1,16 @@
 {
-  "name":"@awesome-telegram/shop-example","license":"MIT",
-  "version":"0.1.0",
-  "private":true,
-  "type":"module",
-  "scripts":{"build":"tsc -p tsconfig.json && node scripts/build.mjs"},
-  "dependencies":{"@awesome-telegram/patterns":"0.27.0"},
-  "devDependencies":{"typescript":"7.0.2"}
+  "name": "@awesome-telegram/shop-example",
+  "license": "MIT",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "build": "tsc -p tsconfig.json && node scripts/build.mjs"
+  },
+  "dependencies": {
+    "@awesome-telegram/patterns": "0.28.0"
+  },
+  "devDependencies": {
+    "typescript": "7.0.2"
+  }
 }

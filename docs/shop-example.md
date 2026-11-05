@@ -2,7 +2,7 @@
 
 Термины: квитанция (receipt) — сохраненная запись о выполненной операции; повтор возвращает ее вместо второго эффекта; **outbox** — события, сохраненные в той же транзакции, что и изменение данных; отдельный обработчик выполняет их позже; **неизвестный результат** — запрос мог выполниться, но ответа нет (таймаут, обрыв связи); повторять вслепую нельзя, сначала сверка; **сверка** — запрос фактического состояния у провайдера или в хранилище перед повтором или выдачей.
 
-Пример пункта 018 связывает TypeScript-каталог и корзину с Python/aiohttp backend, настоящей SQLite и aiogram 3.31.0. Использует публичные `ApiClient`, `TelegramBridge`, `TelegramNativeAPI`, `createAppShell`, `validate_init_data`, `SQLiteOnce`, `stars_invoice` и `StubSession` библиотеки 0.27.0 (CI проверяет пример на текущей версии). Приложение `awesome-telegram-shop-example` 0.1.0 поставляется отдельно; его классы не public exports библиотеки.
+Пример пункта 018 связывает TypeScript-каталог и корзину с Python/aiohttp backend, настоящей SQLite и aiogram 3.31.0. Использует публичные `ApiClient`, `TelegramBridge`, `TelegramNativeAPI`, `createAppShell`, `validate_init_data`, `SQLiteOnce`, `stars_invoice` и `StubSession` библиотеки 0.28.0 (CI проверяет пример на текущей версии). Приложение `awesome-telegram-shop-example` 0.1.0 поставляется отдельно; его классы не public exports библиотеки.
 
 Два учебных цифровых товара стоят 25 и 40 Stars. Backend принимает только IDs, operation UUID и согласие с версией условий. Цена и валюта фиксируются сервером в заказе; клиентские price/user_id/paid поля отклоняются. Данные запуска проходят HMAC/freshness проверку; сервер выдаёт сессионный токен на 10 минут, который frontend хранит только в памяти и передаёт в заголовке `Authorization: Bearer` (почему не cookie — ниже). В production требуются HTTPS и точный origin. `initDataUnsafe` не даёт прав. Каждое действие над заказом или материалом проверяет владельца из сессии и текущую серверную роль; роль из тела запроса не принимается.
 
@@ -13,8 +13,8 @@
 Пакеты ещё не опубликованы. В новом окружении:
 
 ```powershell
-$patternWheel = 'C:\provided\awesome_telegram_patterns-0.27.0-py3-none-any.whl'
-$patternTarball = 'C:\provided\awesome-telegram-patterns-0.27.0.tgz'
+$patternWheel = 'C:\provided\awesome_telegram_patterns-0.28.0-py3-none-any.whl'
+$patternTarball = 'C:\provided\awesome-telegram-patterns-0.28.0.tgz'
 $shopProject = 'C:\provided\shop'
 python -m venv .venv
 & .\.venv\Scripts\python.exe -m pip install "${patternWheel}[aiogram]" 'aiogram==3.31.0' $shopProject
@@ -25,8 +25,8 @@ Pop-Location
 ```
 
 ```bash
-PATTERN_WHEEL=~/provided/awesome_telegram_patterns-0.27.0-py3-none-any.whl
-PATTERN_TARBALL=~/provided/awesome-telegram-patterns-0.27.0.tgz
+PATTERN_WHEEL=~/provided/awesome_telegram_patterns-0.28.0-py3-none-any.whl
+PATTERN_TARBALL=~/provided/awesome-telegram-patterns-0.28.0.tgz
 SHOP_PROJECT=~/provided/shop
 python3 -m venv .venv
 .venv/bin/python -m pip install "${PATTERN_WHEEL}[aiogram]" 'aiogram==3.31.0' "$SHOP_PROJECT"
@@ -44,7 +44,7 @@ python scripts/build_release.py --ref HEAD --output output/release
 ```
 
 ```bash
-python scripts/verify_shop_example.py --wheel output/release/awesome_telegram_patterns-0.27.0-py3-none-any.whl --tarball output/release/awesome-telegram-patterns-0.27.0.tgz --output output/shop-check
+python scripts/verify_shop_example.py --wheel output/release/awesome_telegram_patterns-0.28.0-py3-none-any.whl --tarball output/release/awesome-telegram-patterns-0.28.0.tgz --output output/shop-check
 ```
 
 Output должен быть новым. Helper собирает application wheel, устанавливает его с принятым pattern wheel во внешний consumer, копирует frontend и строит его из установленного tarball. Исходники и метаданные, разрешенные origins, Mypy, тесты домена и HTTP и Chrome проверяются отдельно. Loopback HTTP и synthetic initData/SDK updates существуют только в explicit offline fixture; настоящий токен и live entrypoint не используются. Fixture payment control идёт через stdin отдельного процесса, не через публичный HTTP API. Браузер и Python fixture блокируют внешнюю сеть; это не OS sandbox.

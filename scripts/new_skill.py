@@ -3,7 +3,7 @@
     python scripts/new_skill.py telegram-example --title "Пример" --short "Короткое описание для каталога" \\
         --not-for telegram-bot-python
 
-Creates .agents/skills/<name>/SKILL.md in the standard outline and agents/openai.yaml. Every place that needs your
+Creates .agents/skills/<name>/SKILL.md, agents/openai.yaml and a full canonical MIT LICENSE. Every place that needs your
 text holds a "[TODO: ...]" marker, so `python scripts/validate_skills.py` fails with "unfinished scaffold" until
 the skill is written. The remaining steps (catalog row, sources, evaluation tasks, counts) are in
 docs/contributing-skills.md; `--next-steps` prints them for the created skill.
@@ -20,6 +20,24 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
 NAME = re.compile(r'telegram-[a-z0-9]+(?:-[a-z0-9]+)*')
+
+MIT_TERMS = '''Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.'''
 
 SKILL = '''---
 name: {name}
@@ -81,6 +99,23 @@ NEXT_STEPS = '''Дальше (подробно — docs/contributing-skills.md):
 '''
 
 
+def canonical_license(root: Path) -> bytes:
+    """A MIT-declaring scaffold must carry the complete source notice before creating a target."""
+    path = root / 'LICENSE'
+    try:
+        if path.is_symlink() or getattr(path.lstat(), 'st_file_attributes', 0) & 0x400:
+            raise ValueError('Use a complete canonical MIT LICENSE, not a linked source')
+        data = path.read_bytes()
+        parts = data.decode('utf-8').replace('\r\n', '\n').strip().split('\n\n', 2)
+    except (OSError, UnicodeError) as error:
+        raise ValueError('A complete canonical MIT LICENSE is required before creating a skill') from error
+    if (len(parts) != 3 or parts[0] != 'MIT License'
+            or not parts[1].startswith('Copyright ') or len(parts[1]) <= len('Copyright ')
+            or ' '.join(parts[2].split()) != ' '.join(MIT_TERMS.split())):
+        raise ValueError('A complete canonical MIT LICENSE is required before creating a skill')
+    return data
+
+
 def create(root: Path, name: str, title: str, short: str, not_for: str, today: dt.date) -> list[Path]:
     if not NAME.fullmatch(name) or len(name) > 64:
         raise ValueError('name must look like telegram-example (lowercase words joined by hyphens)')
@@ -94,9 +129,11 @@ def create(root: Path, name: str, title: str, short: str, not_for: str, today: d
         raise ValueError('--short must be 25-64 characters')
     if any(character in title + short for character in '"\\<>'):
         raise ValueError('--title and --short may not contain quotes, backslashes or angle brackets')
+    license_bytes = canonical_license(root)
     version = json.loads((root / 'components.json').read_text(encoding='utf-8'))['library_version']
     (folder / 'agents').mkdir(parents=True)
-    files = [folder / 'SKILL.md', folder / 'agents/openai.yaml']
+    files = [folder / 'SKILL.md', folder / 'agents/openai.yaml', folder / 'LICENSE']
+    files[2].write_bytes(license_bytes)
     files[0].write_text(SKILL.format(name=name, title=title, not_for=not_for, version=version, today=today.isoformat()), encoding='utf-8', newline='\n')
     files[1].write_text(INTERFACE.format(name=name, title=title, short=short), encoding='utf-8', newline='\n')
     return files

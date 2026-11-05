@@ -6,14 +6,14 @@ body:
     id: environment
     attributes:
       label: Версия и среда
-      description: Версия библиотеки, компонент или скилл, ОС, Python/Node и Telegram-клиент, если он участвует.
+      description: Версия и способ установки, commit или SHA-256 артефакта, компонент или скилл, ОС, Python/Node, SDK и версия Telegram-клиента, если он участвует.
     validations:
       required: true
   - type: textarea
     id: reproduction
     attributes:
       label: Шаги воспроизведения
-      description: Минимальный пример с синтетическими данными. Токены и session-файлы не публикуйте.
+      description: Точная команда и последовательность действий, минимальный код с синтетическими данными, условия повтора или перезапуска. Токены, initData и session-файлы не публикуйте.
     validations:
       required: true
   - type: textarea

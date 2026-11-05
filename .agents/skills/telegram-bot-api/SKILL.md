@@ -4,7 +4,7 @@ description: "Реализует сообщения, медиа, клавиат�
 license: MIT
 compatibility: "scripts/update_api_index.py: Python 3.11+ и доступ к core.telegram.org; остальное работает без сети"
 metadata:
-  version: "0.27.0"
+  version: "0.28.0"
 ---
 
 # Работа с Bot API

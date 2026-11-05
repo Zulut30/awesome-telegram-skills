@@ -5,6 +5,7 @@ import importlib.util
 import json
 import re
 import shutil
+import subprocess
 import sys
 import tempfile
 import unittest
@@ -22,6 +23,7 @@ def load(name):
 
 
 scaffold = load('new_skill')
+installer = load('install_skills')
 try:
     validator = load('validate_skills')
 except SystemExit:  # PyYAML missing
@@ -33,6 +35,7 @@ class NewSkillTests(unittest.TestCase):
         folder = tempfile.TemporaryDirectory()
         self.addCleanup(folder.cleanup)
         self.root = Path(folder.name)
+        shutil.copyfile(ROOT / 'LICENSE', self.root / 'LICENSE')
         shutil.copy(ROOT / 'components.json', self.root / 'components.json')
         shutil.copytree(ROOT / '.agents/skills/telegram-bot-api', self.root / '.agents/skills/telegram-bot-api')
 
@@ -77,6 +80,76 @@ class NewSkillTests(unittest.TestCase):
             with self.subTest(needle):
                 self.assertIn(needle, guide)
         self.assertIn('docs/contributing-skills.md', scaffold.NEXT_STEPS)
+
+    def test_created_skill_keeps_full_notice_when_installed_alone_and_conflicts_preserve_it(self):
+        tool = self.root / 'scripts/new_skill.py'
+        tool.parent.mkdir()
+        shutil.copyfile(ROOT / 'scripts/new_skill.py', tool)
+        command = [sys.executable, str(tool), 'telegram-example-polls', '--title', 'Опросы',
+                   '--short', 'Опросы и викторины в чатах Telegram', '--not-for', 'telegram-bot-api']
+        created = subprocess.run(command, capture_output=True, text=True, encoding='utf-8', timeout=20)
+        self.assertEqual(created.returncode, 0, created.stderr)
+        files = [self.root / name for name in json.loads(created.stdout)['created']]
+        self.assertEqual(len(files), 3)
+        source = self.root / '.agents/skills/telegram-example-polls'
+        notice = (self.root / 'LICENSE').read_bytes()
+        self.assertEqual(files[-1], source / 'LICENSE')
+        self.assertEqual((source / 'LICENSE').read_bytes(), notice)
+        project = self.root / 'consumer project'
+        project.mkdir()
+        marker = project / 'owner.txt'
+        marker.write_bytes(b'caller-owned')
+        installed = installer.install_skills(self.root / '.agents/skills', project, ['telegram-example-polls'])
+        self.assertEqual(len(installed), 1)
+        self.assertEqual((installed[0] / 'LICENSE').read_bytes(), notice)
+        self.assertFalse((installed[0].parent / 'telegram-bot-api').exists())
+        before = {p.relative_to(project): p.read_bytes() for p in project.rglob('*') if p.is_file()}
+        with self.assertRaisesRegex(ValueError, 'already exists'):
+            self.create()
+        with self.assertRaises(installer.InstallError):
+            installer.install_skills(self.root / '.agents/skills', project, ['telegram-example-polls'])
+        self.assertEqual(before, {p.relative_to(project): p.read_bytes() for p in project.rglob('*') if p.is_file()})
+        self.assertEqual(marker.read_bytes(), b'caller-owned')
+
+    def test_missing_or_incomplete_notice_is_refused_before_any_target_write(self):
+        canonical = (ROOT / 'LICENSE').read_bytes()
+        license_path = self.root / 'LICENSE'
+        for data in (None, b'MIT License\n\nCopyright (c) Fixture\n', b'Proprietary notice',
+                     canonical.replace(b'Permission is hereby granted', b'Permission is NOT granted'), b'\xff\xfe'):
+            with self.subTest(data=data):
+                if data is None:
+                    license_path.unlink()
+                else:
+                    license_path.write_bytes(data)
+                before = {p.relative_to(self.root): p.read_bytes() for p in self.root.rglob('*') if p.is_file()}
+                with self.assertRaisesRegex(ValueError, 'complete canonical MIT LICENSE'):
+                    self.create()
+                self.assertFalse((self.root / '.agents/skills/telegram-example-polls').exists())
+                self.assertEqual(before, {p.relative_to(self.root): p.read_bytes() for p in self.root.rglob('*') if p.is_file()})
+                license_path.write_bytes(canonical)
+        tool = self.root / 'scripts/new_skill.py'
+        tool.parent.mkdir()
+        shutil.copyfile(ROOT / 'scripts/new_skill.py', tool)
+        license_path.write_bytes(b'MIT License\n\nCopyright (c) Fixture\n')
+        refused = subprocess.run([sys.executable, str(tool), 'telegram-example-polls', '--title', 'Опросы',
+                                  '--short', 'Опросы и викторины в чатах Telegram', '--not-for', 'telegram-bot-api'],
+                                 capture_output=True, text=True, encoding='utf-8', timeout=20)
+        self.assertEqual(refused.returncode, 1)
+        self.assertEqual(refused.stdout, '')
+        self.assertIn('complete canonical MIT LICENSE', refused.stderr)
+        self.assertNotIn('Traceback', refused.stderr)
+        self.assertFalse((self.root / '.agents/skills/telegram-example-polls').exists())
+
+    def test_linked_notice_is_not_followed(self):
+        license_path = self.root / 'LICENSE'
+        license_path.unlink()
+        try:
+            license_path.symlink_to(ROOT / 'LICENSE')
+        except (OSError, NotImplementedError):
+            self.skipTest('Filesystem does not allow this user to create symlinks')
+        with self.assertRaisesRegex(ValueError, 'complete canonical MIT LICENSE'):
+            self.create()
+        self.assertFalse((self.root / '.agents/skills/telegram-example-polls').exists())
 
 
 if __name__ == '__main__':

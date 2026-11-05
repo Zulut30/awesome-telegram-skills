@@ -60,11 +60,11 @@ jobs:
           TAG: ${{ steps.tag.outputs.tag }}
         run: |
           gh release download "$TAG" --repo "$GITHUB_REPOSITORY" --dir dist
-          (cd dist && sha256sum -c SHA256SUMS)
           python - <<'PY'
           import json, os, subprocess, tomllib
           from pathlib import Path
           from scripts.build_release import validate_tag
+          from scripts.release_assets import verify_checksums
           release = validate_tag(os.environ['TAG'])
           def manifest(path):
               return subprocess.run(['git', 'show', f'{release.tag}:{path}'], check=True,
@@ -75,7 +75,23 @@ jobs:
           actual = {path.name for path in Path('dist').iterdir() if path.suffix in {'.whl', '.tgz'}}
           if actual != expected:
               raise SystemExit('Downloaded artifact basenames differ from the committed release identity')
+          sbom = f'awesome-telegram-patterns-{release.identity}.cdx.json'
+          verify_checksums(Path('dist'), required=expected | {sbom})
           PY
+          (cd dist && sha256sum -c SHA256SUMS)
+      - name: Verify signed provenance of the exact tag-built artifacts
+        env:
+          GH_TOKEN: ${{ github.token }}
+          TAG: ${{ steps.tag.outputs.tag }}
+        run: |
+          source_commit=$(git rev-parse "$TAG^{commit}")
+          for artifact in dist/*.whl dist/*.tgz dist/*.cdx.json; do
+            gh attestation verify "$artifact" --repo "$GITHUB_REPOSITORY" \
+              --signer-workflow "$GITHUB_REPOSITORY/.github/workflows/release.yml" \
+              --source-ref "refs/tags/$TAG" --source-digest "$source_commit" \
+              --signer-digest "$source_commit" --deny-self-hosted-runners \
+              --predicate-type 'https://slsa.dev/provenance/v1'
+          done
       - uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
         with:
           name: release-artifacts

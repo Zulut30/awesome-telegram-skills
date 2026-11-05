@@ -4,7 +4,7 @@ body:
   - type: markdown
     attributes:
       value: |
-        Ответ мейнтейнера — в течение 3 рабочих дней ([SUPPORT.md](https://github.com/Zulut30/awesome-telegram-skills/blob/main/SUPPORT.md)). Не публикуйте токены, `initData` и личные данные.
+        Поддержка по возможности, без гарантированного SLA; цели и правила — в [SUPPORT.md](https://github.com/Zulut30/awesome-telegram-skills/blob/main/SUPPORT.md). Не публикуйте токены, `initData` и личные данные.
   - type: textarea
     id: question
     attributes:

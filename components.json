@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "library_version": "0.27.0",
+  "library_version": "0.28.0",
   "distribution": "local; not published to package registries",
   "packages": {
     "python": {
@@ -1028,6 +1028,23 @@
       "example": "examples/api-reference/python/bot_stars_payments.py",
       "boundaries": [
         "Необязательный aiogram-адаптер использует Bot и SQLitePaymentLedger приложения. SDK Message не подтверждает подлинность: host обязан принимать его только через проверенный Telegram ingress. Оплата сверяется по боту, пользователю, заказу, payload, сумме XTR и charge; возврат требует текущих прав в транзакциях резервирования и отправки. Выполняется один refundStarPayment, без скрытого повтора; true не завершает возврат в журнале. Подтверждение приходит из проверенного RefundedPayment либо ограниченного getStarTransactions с точной привязкой получателя, суммы, charge, payload и времени. Отсутствие записи не доказывает отсутствие возврата. Транспорт, проверенный прием, хранение updates, таймаут pre-checkout и жизненный цикл сессии принадлежат приложению. Локальный StubSession не является live Stars-приемкой."
+      ],
+      "maturity": "experimental",
+      "maturity_scope": "All public API symbols in this component; local verification is not a stable 1.0 promise"
+    },
+    {
+      "id": "sqlite-recovery",
+      "language": "python",
+      "import": "telegram_patterns.SQLiteRecoveryError, SQLiteRecoveryResult, backup_sqlite, restore_sqlite_new; telegram-patterns backup-sqlite; telegram-patterns restore-sqlite-new",
+      "intent": "Создать проверенную SQLite-копию и восстановить только в новый файл, сохранив неизвестные операции",
+      "source": "packages/python/src/telegram_patterns/sqlite_recovery.py",
+      "example": "examples/api-reference/python/core_sqlite_recovery.py",
+      "available_since": "0.28.0",
+      "boundaries": [
+        "SDK не требуется; существующие корни и ACL заранее защищает владелец сервиса. Компонент не настраивает права.",
+        "Снимок одной SQLite-БД открывает исходник только для чтения, проверяет целостность и внешние ключи и публикуется только по отсутствующему пути; нет перезаписи или переключения сервиса.",
+        "Исходные ID состояний pending/sending/unknown сохраняются; восстановление не разрешает автоматический повтор внешних эффектов или откат бизнес-операции.",
+        "Бюджет SQLite и вычисления хеша не прерывает системные вызовы файловой системы. Windows возвращает directory_synced=false; потеря питания и непроверенный POSIX deployment не подтверждены."
       ],
       "maturity": "experimental",
       "maturity_scope": "All public API symbols in this component; local verification is not a stable 1.0 promise"

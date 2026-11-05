@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "library_version": "0.27.0",
+  "library_version": "0.28.0",
   "scope": "Public library exports; ref.* recipes belong to the API reference, not the Telegram method snapshot",
   "groups": [
     {
@@ -957,6 +957,21 @@
       "api": {
         "telegram_patterns.aiogram": {
           "StarsPaymentAdapter": "Привязка платежа, однократные возвраты и настройки продления, наблюдатель и доверенная сверка"
+        }
+      }
+    },
+    {
+      "id": "core_sqlite_recovery",
+      "section": "core",
+      "title": "Проверенная SQLite-копия и восстановление в новый файл",
+      "example": "examples/api-reference/python/core_sqlite_recovery.py",
+      "limits": "SDK не требуется. Корни заранее существуют и защищены владельцем сервиса; ACL и безопасный выбор путей принадлежат приложению. Снимок одной SQLite-БД включает committed WAL, проходит integrity/FK checks и публикуется только по новому пути. Восстановление сохраняет исходные ID, ревизии и unknown в настоящем SQLiteOutbox; новая отправка не разрешается. Нет перезаписи, переключения сервиса, бизнес-миграции, шифрования или автоматического replay. Бюджет SQLite/hash не прерывает filesystem syscalls; Windows directory_synced=False и локальный прогон не доказывают power-loss/POSIX deployment.",
+      "api": {
+        "telegram_patterns": {
+          "SQLiteRecoveryError": "Безопасный отказ с фиксированными code/phase без исходных путей и текста SQLite",
+          "SQLiteRecoveryResult": "Неизменяемый результат: операция, скрытая из repr цель, SHA-256, размеры, синхронизация каталога и очистка",
+          "backup_sqlite": "Проверенный online-снимок существующей SQLite-БД в отсутствующий файл внутри корней владельца",
+          "restore_sqlite_new": "Восстановление снимка только в новый файл без переключения сервиса и сброса неизвестных операций"
         }
       }
     }

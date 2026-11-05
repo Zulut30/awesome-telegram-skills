@@ -1,7 +1,7 @@
 name: Support response
 
-# The support promise (SUPPORT.md): a maintainer answers every issue within 3 business days. Every weekday this
-# workflow measures first responses and turns red when an open issue waits longer, so the owner is notified.
+# The best-effort response target (SUPPORT.md) remains 3 business days. Every weekday this
+# workflow measures first responses and turns red when an open issue waits longer; this is not an SLA.
 # The report (median first response, share answered in time) is attached to the run for the quality board.
 on:
   schedule:
@@ -14,7 +14,7 @@ permissions:
 
 jobs:
   response:
-    name: First responses within 3 business days
+    name: First response target and overdue backlog (3 business days)
     runs-on: ubuntu-latest
     timeout-minutes: 10
     steps:

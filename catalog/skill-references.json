@@ -191,6 +191,10 @@
       ".agents/skills/telegram-code-patterns/references/stars-payments.md",
       ".agents/skills/telegram-payments/references/stars-payments.md",
       ".agents/skills/telegram-subscription-access/references/stars-payments.md"
+    ],
+    "docs/sqlite-recovery.md": [
+      ".agents/skills/telegram-code-patterns/references/sqlite-recovery.md",
+      ".agents/skills/telegram-deploy/references/sqlite-recovery.md"
     ]
   }
 }

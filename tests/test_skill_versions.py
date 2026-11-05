@@ -1,4 +1,4 @@
-"""Skills label library versions as 'доступно с X, проверено на <current>' and never point at old artifacts."""
+"""Current preparation and checked-library labels are explicit; old artifact pins stay forbidden."""
 from pathlib import Path
 import re
 import unittest
@@ -23,12 +23,12 @@ def skill_texts():
 
 
 class SkillVersionLabelTests(unittest.TestCase):
-    def test_checked_on_is_the_current_version_and_available_since_is_real(self):
+    def test_current_target_and_available_since_are_consistent(self):
         labels = 0
         for name, text in skill_texts():
-            for version in re.findall(r'проверено на ' + VERSION, text):
+            for version in re.findall(r'(?:проверено на|подготовлено для) ' + VERSION, text):
                 labels += 1
-                self.assertEqual(version, CURRENT, f'{name}: recheck against {CURRENT} and update the label')
+                self.assertEqual(version, CURRENT, f'{name}: use the current preparation target or rechecked version {CURRENT}')
             for version in re.findall(r'(?:[Дд]оступно с|\(с) ' + VERSION, text):
                 self.assertIn(version, KNOWN, f'{name}: {version} is not a released version')
                 self.assertLessEqual(key(version), key(CURRENT), name)

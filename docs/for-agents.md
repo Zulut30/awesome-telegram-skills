@@ -28,6 +28,7 @@ npm.cmd ls @awesome-telegram/patterns
 | Многошаговый ввод | `telegram-dialogs`; формы и storage-контракты текущего проекта |
 | Mini App и серверная авторизация | `telegram-mini-app-architecture`, `telegram-mini-app-auth`; TypeScript bridge и backend-проверка `initData` |
 | Другой SDK или готовый React/PostgreSQL-проект | Сохраните стек. Подключите только совместимый core/адаптер; aiogram и DOM shell не требуют миграции проекта |
+| Копия и восстановление выбранной SQLite-БД | `sqlite-recovery`; публичные `backup_sqlite`/`restore_sqlite_new`, только новый файл и защищенные корни владельца, без переключения сервиса |
 | Чтение чатов пользовательского аккаунта | Отдельная задача `telegram-user-client` / MTProto, а не обычный Bot API |
 
 ## Найдите рецепт и проверьте его требования
@@ -57,7 +58,7 @@ python -c "from telegram_patterns.aiogram import ActionButton, action_menu; prin
 Путь относится к checkout библиотеки: при запуске из другого проекта укажите его фактический абсолютный путь или предоставленный wheel. Для core без Bot SDK достаточно `./packages/python`. Для TypeScript из каталога целевого проекта:
 
 ```powershell
-npm.cmd install "C:/path/to/awesome-telegram-patterns-0.27.0.tgz"
+npm.cmd install "C:/path/to/awesome-telegram-patterns-0.28.0.tgz"
 npm.cmd ls @awesome-telegram/patterns
 ```
 

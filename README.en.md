@@ -10,7 +10,7 @@
 
 [Production readiness audit — 2026-11-05 (RU)](docs/production-readiness.md) · [Telegram Serverless (RU)](docs/telegram-serverless.md)
 
-[![Version](https://img.shields.io/badge/version-0.27.0-229ED9)](CHANGELOG.md)
+[![Version](https://img.shields.io/badge/version-0.28.0-229ED9)](CHANGELOG.md)
 [![Skills](https://img.shields.io/badge/skills-42-334155)](#skills)
 [![Status](https://img.shields.io/badge/status-experimental-f59e0b)](docs/v1-maturity.md)
 [![License: MIT](https://img.shields.io/badge/license-MIT-16a34a)](LICENSE)
@@ -28,7 +28,7 @@ Skills help an AI coding agent choose a solution and verify the result. The libr
 | Part | Status | What it means for you |
 | --- | --- | --- |
 | 42 skills for AI agents | 🟢 Ready to use | They are instructions: the agent applies them to your code, you keep the decisions and the review |
-| Python components (54 groups) | 🟡 Experimental | Tested with real aiogram and python-telegram-bot and a test transport; the API may change in the next minor version |
+| Python components (55 groups) | 🟡 Experimental | Core works without SDKs; adapters are tested with real aiogram and python-telegram-bot and a test transport; the API may change in the next minor version |
 | TypeScript components (13 groups) | 🟡 Experimental | Checked in Chrome at several screen sizes, not inside Telegram on a phone |
 | Recipes (341) | 🟡 Verified without Telegram | 207 run on the real SDK offline, 34 on stubs, 100 are reference snippets that were not executed |
 | [Capability map](docs/capability-map.md) | 🟢 Generated from the catalogs | 51 Telegram capabilities with their skill, component, recipe, check and gaps (in Russian) |
@@ -197,4 +197,4 @@ The API catalog contains request examples; it does not mean that every Telegram 
 
 ## License and community
 
-Questions go through the [question form](https://github.com/Zulut30/awesome-telegram-skills/issues/new?template=question.yml); a maintainer answers within 3 business days, see [SUPPORT.md](SUPPORT.md). MIT licensed ([LICENSE](LICENSE)). Report vulnerabilities privately according to [SECURITY.md](SECURITY.md). Contributors follow the [code of conduct](CODE_OF_CONDUCT.md); see [CONTRIBUTING.md](CONTRIBUTING.md) (Russian) for how to propose changes.
+Questions go through the [question form](https://github.com/Zulut30/awesome-telegram-skills/issues/new?template=question.yml); support is best effort, with measured targets and no guaranteed SLA, see [SUPPORT.md](SUPPORT.md). MIT licensed ([LICENSE](LICENSE)). Report vulnerabilities privately according to [SECURITY.md](SECURITY.md). Contributors follow the [code of conduct](CODE_OF_CONDUCT.md); see [CONTRIBUTING.md](CONTRIBUTING.md) (Russian) for how to propose changes.

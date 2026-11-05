@@ -2,7 +2,7 @@
 
 # Same value as [project].version in pyproject.toml and the installed distribution metadata;
 # verify_distribution_contract.py and the wheel consumer check all three.
-__version__ = '0.27.0'
+__version__ = '0.28.0'
 
 from .calendar_core import CalendarMonth, TimeSlot, resolve_local_time
 from .ephemeral import EphemeralMessageRef, EphemeralNotAllowed, EphemeralTrigger, ephemeral_parameters
@@ -141,6 +141,7 @@ from .selection import (
 from .settings import BotSettings
 from .slots import SlotBooking, SlotSchedule, SQLiteSlotStore
 from .sqlite_once import OnceResult, OperationConflict, SQLiteOnce
+from .sqlite_recovery import SQLiteRecoveryError, SQLiteRecoveryResult, backup_sqlite, restore_sqlite_new
 from .stars_subscription import (
     STARS_SUBSCRIPTION_PERIOD,
     RenewalState,
@@ -156,6 +157,10 @@ from .webhook import WebhookCode, WebhookReceiver, WebhookResponse, create_aioht
 from .worker import InboxWorker, WorkerOutcome, settled_to_thread
 
 __all__ = [
+    "SQLiteRecoveryError",
+    "SQLiteRecoveryResult",
+    "backup_sqlite",
+    "restore_sqlite_new",
     "CryptoPayAdapter",
     "InvoiceRequest",
     "PlategaAdapter",

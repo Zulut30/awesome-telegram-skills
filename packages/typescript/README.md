@@ -1,6 +1,6 @@
 # @awesome-telegram/patterns — TypeScript
 
-Разработка 0.27.0 добавляет [UI-компоненты и токены](../../docs/mini-app-ui.md), а также [нативные сценарии](../../docs/native-flows.md) с привязкой к аккаунту, ограниченным ожиданием и освобождением обработчиков. Для UI подключаются `styles.css` и `tokens.css` из одной версии пакета. Нативное закрытие счета и принятие загрузки не подтверждают платеж или сохранение файла; приложение проверяет результат на сервере.
+Библиотека содержит [UI-компоненты и токены](../../docs/mini-app-ui.md), а также [нативные сценарии](../../docs/native-flows.md) с привязкой к аккаунту, ограниченным ожиданием и освобождением обработчиков. Для UI подключаются `styles.css` и `tokens.css` из одной версии пакета. Нативное закрытие счета и принятие загрузки не подтверждают платеж или сохранение файла; приложение проверяет результат на сервере.
 
 Все публичные value/type imports и полные композиции: [справочник TypeScript](../../docs/api-reference-typescript.md), [индекс API](../../docs/api-reference.md). Эти ссылки доступны в source checkout; при передаче tarball отдельно приложите portable references навыка telegram-code-patterns. Declarations доступны в пакете; type exports не существуют в runtime JavaScript.
 
@@ -14,7 +14,7 @@ Root имеет явные value/type exports; `TextFieldControl` именует
 
 Все текущие публичные API experimental. [Зрелость и evidence](../../docs/v1-maturity.md) задаются отдельно: browser/mock проверка не дает обещание стабильности 1.0.
 
-ESM-пакет 0.27.0 с declarations, без runtime dependencies и привязки к React/Vue. Карта `exports`: `.` (условия `types` и `default`), `./styles.css`, `./tokens.css` и `./package.json`. Оба CSS-подпути имеют declarations и поддерживают `noUncheckedSideEffectImports`. Подпути `./react` (`useTelegramBridge`), `./vue` (`useTelegramBridge`) и `./svelte` (`telegramBridgeStore`) подключают снимок `TelegramBridge` к компонентам; React и Vue — необязательные peer-зависимости, основной импорт фреймворков не тянет ([адаптеры фреймворков](../../docs/framework-adapters.md)). CommonJS-код загружает ESM через `require()` в Node.js 20.19+ и 22.12+; в более старых версиях используйте `import()`. TypeScript проверяется с `moduleResolution` `bundler`, `node16` и `nodenext`. Поставка локальная; публикации в npm нет. Node >=20 нужен для tooling/tests, runtime предназначен для браузера Mini App.
+ESM-пакет 0.28.0 с declarations, без runtime dependencies и привязки к React/Vue. Карта `exports`: `.` (условия `types` и `default`), `./styles.css`, `./tokens.css` и `./package.json`. Оба CSS-подпути имеют declarations и поддерживают `noUncheckedSideEffectImports`. Подпути `./react` (`useTelegramBridge`), `./vue` (`useTelegramBridge`) и `./svelte` (`telegramBridgeStore`) подключают снимок `TelegramBridge` к компонентам; React и Vue — необязательные peer-зависимости, основной импорт фреймворков не тянет ([адаптеры фреймворков](../../docs/framework-adapters.md)). CommonJS-код загружает ESM через `require()` в Node.js 20.19+ и 22.12+; в более старых версиях используйте `import()`. TypeScript проверяется с `moduleResolution` `bundler`, `node16` и `nodenext`. Поставка локальная; публикации в npm нет. Node >=20 нужен для tooling/tests, runtime предназначен для браузера Mini App.
 
 Каталог содержит 100 методов и 44 события. `TelegramNativeAPI.call(path, ...args)` использует сгенерированные `TelegramNativeSignatures`, `TelegramNativeArguments<P>` и `TelegramNativeResult<P>`: неправильный стиль `call('HapticFeedback.impactOccurred', 'loud')` не компилируется. Для 99 прежних методов сохранены сигнатуры и версии. У `Serverless.call` минимальная версия не опубликована, поэтому `minVersion` равна `null`, а универсальный фасад запрещает вызов до SDK. При обходе каталога сначала обрабатывайте `null`. Для явно выбранного Telegram Serverless hosting используется отдельный `ServerlessEndpointClient` с проверкой присутствия; отсутствие поддержки ведет к существующему HTTP-пути проекта.
 
@@ -23,7 +23,7 @@ ESM-пакет 0.27.0 с declarations, без runtime dependencies и привя
 После сборки и npm pack в исходном репозитории, из каталога consumer-проекта:
 
 ```powershell
-npm.cmd install "C:/path/to/library/output/pattern-library-0.27.0/dist/awesome-telegram-patterns-0.27.0.tgz"
+npm.cmd install "C:/path/to/library/output/pattern-library-0.28.0/dist/awesome-telegram-patterns-0.28.0.tgz"
 ```
 
 В проекте с существующим bundler:

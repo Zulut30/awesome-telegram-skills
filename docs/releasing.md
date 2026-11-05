@@ -1,5 +1,8 @@
 # Выпуск версий
 
+Источник сборки, состав SBOM, проверка подписи и безопасный повтор публикации
+описаны в [контракте защиты артефактов](release-security.md).
+
 Каждая версия библиотеки отмечена аннотированным git-тегом `vX.Y.Z` на коммите, который ее ввел. По тегу [workflow Release](../.github/workflows/release.yml) собирает Python wheel, npm tarball и `SHA256SUMS` и публикует их в GitHub Release. Пока пакеты не опубликованы в PyPI и npm, релиз — основной источник установки.
 
 ## Как собирается релиз
@@ -24,8 +27,8 @@ python scripts/build_release.py --ref v0.24.0 --notes
 4. После слияния в `main` поставьте тег на этот коммит и отправьте его:
 
    ```bash
-   git tag -a v0.27.0 -m "awesome-telegram-patterns 0.27.0"
-   git push origin v0.27.0
+   git tag -a v0.28.0 -m "awesome-telegram-patterns 0.28.0"
+   git push origin v0.28.0
    ```
 
 5. Workflow Release соберет артефакты из тега и опубликует релиз. Тот же тег запускает workflow [Full acceptance](../.github/workflows/full-acceptance.yml): полный `verify_pattern_packages.py` на Ubuntu и macOS с отчетами в артефактах запуска.

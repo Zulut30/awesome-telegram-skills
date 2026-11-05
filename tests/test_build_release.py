@@ -36,8 +36,17 @@ class BuildReleaseTests(unittest.TestCase):
         self.assertEqual((python['purl'], python['hashes'][0]['content'], python['licenses']),
                          ('pkg:pypi/awesome-telegram-patterns@' + release.python_version, 'a' * 64, [{'license': {'id': 'MIT'}}]))
         self.assertTrue(npm['purl'].startswith('pkg:npm/%40awesome-telegram/patterns@'))
-        self.assertEqual({c['name'] for c in optional}, {'aiogram', 'cryptography', 'python-telegram-bot', 'tzdata'})
+        self.assertEqual({c['name'] for c in optional}, {'aiogram', 'cryptography', 'python-telegram-bot', 'tzdata', 'react', 'vue'})
         self.assertTrue(all(c['scope'] == 'optional' for c in optional))
+        package = json.loads((ROOT / 'packages/typescript/package.json').read_text(encoding='utf-8'))
+        by_name = {component['name']: component for component in optional}
+        for name, constraint in package['peerDependencies'].items():
+            peer = by_name[name]
+            properties = {prop['name']: prop['value'] for prop in peer['properties']}
+            self.assertEqual(properties['npm:peerDependencies'], constraint)
+            self.assertEqual(properties['npm:peer-host-provided'], 'true')
+            self.assertEqual(properties['npm:peer-optional'], 'true')
+            self.assertNotIn('version', peer, 'host peer ranges are not bundled installed copies')
         self.assertEqual(bom, build_release.sbom(ROOT, '0' * 40, 0, sums), 'deterministic')
 
     def test_workflow_validates_tags_and_publishes_prereleases(self):
@@ -155,6 +164,57 @@ class RefIdentityTests(unittest.TestCase):
                          ('1.0.0-rc.1', 'pkg:npm/%40awesome-telegram/patterns@1.0.0-rc.1', 'b' * 64))
         self.assertEqual(bom, build_release.sbom(self.root, '0' * 40, 0, sums))
 
+    def test_sbom_preserves_required_and_extra_constraints_without_inventing_resolved_versions(self):
+        self.commit()
+        self.python.write_text(self.python.read_text('utf-8') +
+            'dependencies=["some_lib>=1"]\n[project.optional-dependencies]\n'
+            'first=["Some.Lib<3"]\nsecond=["Some_Lib<4", "other>=2"]\n', encoding='utf-8')
+        npm = json.loads(self.npm.read_text('utf-8'))
+        npm.update(license='BSD-3-Clause', dependencies={'required': '^1'}, optionalDependencies={'optional': '^2'})
+        self.npm.write_text(json.dumps(npm), encoding='utf-8')
+        sums = {'awesome_telegram_patterns-1.0.0rc1-py3-none-any.whl': 'a' * 64,
+                'awesome-telegram-patterns-1.0.0-rc.1.tgz': 'b' * 64}
+        bom = build_release.sbom(self.root, '0' * 40, 0, sums)
+        by_ref = {component['bom-ref']: component for component in bom['components']}
+        self.assertEqual(len(by_ref), len(bom['components']), 'shared extras must not duplicate bom-ref')
+        dependency = by_ref['pkg:pypi/some-lib']
+        self.assertEqual(dependency['scope'], 'required')
+        self.assertNotIn('version', dependency, 'a range is not a resolved installed version')
+        self.assertEqual({item['value'] for item in dependency['properties']},
+                         {'some_lib>=1', 'Some.Lib<3; extra == "first"', 'Some_Lib<4; extra == "second"'})
+        self.assertEqual(by_ref['pkg:pypi/other']['scope'], 'optional')
+        self.assertEqual(by_ref['pkg:npm/required']['scope'], 'required')
+        self.assertEqual(by_ref['pkg:npm/optional']['scope'], 'optional')
+        self.assertEqual(bom['components'][1]['licenses'], [{'license': {'id': 'BSD-3-Clause'}}])
+        self.assertEqual(len(bom['dependencies']), 2, 'unresolved transitive nodes must not claim empty dependencies')
+
+    def test_sbom_peer_overlap_retains_effective_runtime_scope_and_separate_package_namespaces(self):
+        self.commit()
+        self.python.write_text(self.python.read_text('utf-8') + 'dependencies=["react>=1"]\n', encoding='utf-8')
+        npm = json.loads(self.npm.read_text('utf-8'))
+        npm.update(dependencies={'overlap': '^1', 'react': '^18'}, optionalDependencies={'overlap': '^2'},
+                   peerDependencies={'overlap': '>=1', 'react': '>=18', 'vue': '^3', 'needed': '^2'},
+                   peerDependenciesMeta={'overlap': {'optional': True}, 'react': {'optional': True},
+                                         'vue': {'optional': True}})
+        self.npm.write_text(json.dumps(npm), encoding='utf-8')
+        sums = {'awesome_telegram_patterns-1.0.0rc1-py3-none-any.whl': 'a' * 64,
+                'awesome-telegram-patterns-1.0.0-rc.1.tgz': 'b' * 64}
+        bom = build_release.sbom(self.root, '0' * 40, 0, sums)
+        by_ref = {component['bom-ref']: component for component in bom['components']}
+        self.assertEqual(len(by_ref), len(bom['components']))
+        self.assertIn('pkg:pypi/react', by_ref)
+        self.assertIn('pkg:npm/react', by_ref)
+        self.assertEqual(by_ref['pkg:npm/overlap']['scope'], 'optional')
+        self.assertEqual({prop['name'] for prop in by_ref['pkg:npm/overlap']['properties']},
+                         {'npm:dependencies', 'npm:optionalDependencies', 'npm:peerDependencies',
+                          'npm:peer-host-provided', 'npm:peer-optional'})
+        self.assertEqual(by_ref['pkg:npm/react']['scope'], 'required', 'optional peer cannot weaken required runtime')
+        self.assertEqual(by_ref['pkg:npm/vue']['scope'], 'optional')
+        self.assertEqual(by_ref['pkg:npm/needed']['scope'], 'required')
+        npm_edges = bom['dependencies'][1]['dependsOn']
+        self.assertEqual(len(npm_edges), 4)
+        self.assertEqual(set(npm_edges), {'pkg:npm/overlap', 'pkg:npm/react', 'pkg:npm/vue', 'pkg:npm/needed'})
+
     def test_rc_notes_use_canonical_identity_in_changelog_and_heading(self):
         self.commit()
         (self.root / 'CHANGELOG.md').write_text('## Не выпущено\n\n## 1.0.0-rc.1\n\n- candidate fixture\n', encoding='utf-8')
@@ -178,13 +238,27 @@ class PublishWorkflowTests(unittest.TestCase):
         self.assertIn('scripts/device_report.py bundle --ref "$TAG"', workflow)
         self.assertIn('scripts/live_acceptance.py bundle --ref "$TAG"', workflow)
         self.assertNotIn('secrets.', workflow, 'no long-lived registry tokens')
+        self.assertIn('verify_checksums(Path(\'dist\'), required=expected | {sbom})', workflow)
+        for flag in ('--signer-workflow', '--source-ref', '--source-digest', '--signer-digest',
+                     '--deny-self-hosted-runners', '--predicate-type'):
+            self.assertIn(flag, workflow)
+        self.assertIn('refs/tags/$TAG', workflow)
+        self.assertIn('https://slsa.dev/provenance/v1', workflow)
         for line in re.findall(r'uses: (\S+)', workflow):
             self.assertRegex(line, r'@[0-9a-f]{40}$')
+
+    def test_published_assets_and_run_scoped_reports_are_never_overwritten(self):
+        release = (ROOT / '.github/workflows/release.yml').read_text(encoding='utf-8')
+        acceptance = (ROOT / '.github/workflows/full-acceptance.yml').read_text(encoding='utf-8')
+        for workflow in (release, acceptance):
+            self.assertNotIn('--clobber', workflow)
+            self.assertIn('python scripts/release_assets.py', workflow)
+        self.assertIn('distribution-report-${GITHUB_RUN_ID}-${GITHUB_RUN_ATTEMPT}.json', acceptance)
+        self.assertIn('/releases/download/$TAG/$asset', acceptance)
 
 
 class ReleaseTagManifestTests(unittest.TestCase):
     def test_manifest_matches_history_where_available(self):
-        import json, subprocess
         entries = json.loads((ROOT / '.github/release-tags.json').read_text(encoding='utf-8'))['tags']
         versions = [tuple(map(int, e['version'].split('.'))) for e in entries]
         self.assertEqual(versions, sorted(set(versions)), 'unique and ascending')
@@ -193,7 +267,7 @@ class ReleaseTagManifestTests(unittest.TestCase):
             self.assertEqual(entry['tag'], 'v' + entry['version'])
             self.assertRegex(entry['commit'], r'^[0-9a-f]{40}$')
             shown = subprocess.run(['git', 'show', f"{entry['commit']}:packages/python/pyproject.toml"], cwd=ROOT,
-                                   capture_output=True, text=True)
+                                   capture_output=True, text=True, check=False)
             if shown.returncode != 0:
                 continue  # shallow CI checkout: history is not available
             self.assertIn(f'version = "{entry["version"]}"', shown.stdout, entry['tag'])

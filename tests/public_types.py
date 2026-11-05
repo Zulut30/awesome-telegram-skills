@@ -333,3 +333,20 @@ def renewal_stale(receipt: PaymentReceipt) -> bool:
 
 bad_native_renewal_id = ProviderEvent(stars_subscription_binding, 'native', 'renewal-state', 'active', 'proof',
     renewal='active', renewal_stream_epoch='stream:type', renewal_update_id='42')  # type: ignore[arg-type]
+
+# Recovery creates new files only; a result does not switch a service or release unknown intents.
+from telegram_patterns import SQLiteRecoveryError, SQLiteRecoveryResult, backup_sqlite, restore_sqlite_new
+
+def sqlite_recovery_consumer(source: str, destination: str, source_root: str, target_root: str) -> SQLiteRecoveryResult:
+    result: SQLiteRecoveryResult = backup_sqlite(source, destination, source_root=source_root,
+        destination_root=target_root, deadline_seconds=10)
+    restored: SQLiteRecoveryResult = restore_sqlite_new(destination, destination + '.restored',
+        source_root=target_root, destination_root=target_root, deadline_seconds=10)
+    checksum: str = result.sha256
+    directory_synced: bool = restored.directory_synced
+    classified: SQLiteRecoveryError = SQLiteRecoveryError('deadline-exceeded', 'snapshot')
+    return restored
+
+def bad_sqlite_recovery_consumer(source: str, destination: str) -> SQLiteRecoveryResult:
+    return backup_sqlite(source, destination, source_root='.', destination_root='.',
+        deadline_seconds='unbounded')  # type: ignore[arg-type]

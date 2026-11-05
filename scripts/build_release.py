@@ -14,18 +14,24 @@ import hashlib
 import io
 import json
 import os
-from pathlib import Path
 import re
 import shutil
 import subprocess
 import sys
 import tarfile
 import tempfile
-import tomllib
 import uuid
+from pathlib import Path
+
+import tomllib
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
-from release_identity import ReleaseIdentity, ReleaseIdentityError, parse_release_tag, read_release_identity  # noqa: E402
+from release_identity import (
+    ReleaseIdentity,
+    ReleaseIdentityError,
+    parse_release_tag,
+    read_release_identity,
+)
 
 ROOT = Path(__file__).resolve().parents[1]
 NPM = 'npm.cmd' if os.name == 'nt' else 'npm'
@@ -77,35 +83,77 @@ def sbom(tree: Path, commit: str, epoch: int, sums: dict[str, str]) -> dict:
     project = tomllib.loads((tree / 'packages/python/pyproject.toml').read_text(encoding='utf-8'))['project']
     package = json.loads((tree / 'packages/typescript/package.json').read_text(encoding='utf-8'))
     release = read_release_identity(tree / 'packages/python/pyproject.toml', tree / 'packages/typescript/package.json')
-    licenses = [{'license': {'id': project['license']}}] if isinstance(project.get('license'), str) else []
+    def licenses(value: object) -> list[dict]:
+        if not isinstance(value, str) or not value:
+            return []
+        if re.fullmatch(r'[A-Za-z0-9.-]+', value):
+            return [{'license': {'id': value}}]
+        return [{'expression': value}] if ' OR ' in value or ' AND ' in value else [{'license': {'name': value}}]
     python_ref = f"pkg:pypi/{project['name']}@{release.python_version}"
     npm_ref = 'pkg:npm/' + package['name'].replace('@', '%40', 1) + f'@{release.npm_version}'
     wheel = release.wheel_filename(project['name'])
     tarball = release.npm_tarball_filename(package['name'])
-    optional = []
-    for extra, requirements in sorted(project.get('optional-dependencies', {}).items()):
-        for requirement in requirements:
-            name = re.match(r'[A-Za-z0-9_.-]+', requirement).group(0).lower()
-            optional.append({'type': 'library', 'bom-ref': f'pkg:pypi/{name}', 'name': name, 'scope': 'optional',
-                             'purl': f'pkg:pypi/{name}',
-                             'properties': [{'name': 'python:requirement', 'value': f'{requirement}; extra == "{extra}"'}]})
-    runtime = [{'type': 'library', 'bom-ref': f'pkg:npm/{name}', 'name': name, 'purl': 'pkg:npm/' + name.replace('@', '%40', 1),
-                'properties': [{'name': 'npm:range', 'value': value}]} for name, value in sorted(package.get('dependencies', {}).items())]
-    def component(ref: str, name: str, artifact: str, version: str) -> dict:
-        return {'type': 'library', 'bom-ref': ref, 'name': name, 'version': version, 'purl': ref, 'licenses': licenses,
+    python_dependencies: dict[str, dict] = {}
+    declared_requirements = [(requirement, None) for requirement in project.get('dependencies', [])]
+    for extra, extra_requirements in sorted(project.get('optional-dependencies', {}).items()):
+        declared_requirements += [(requirement, extra) for requirement in extra_requirements]
+    for requirement, extra in declared_requirements:
+        match = re.match(r'[A-Za-z0-9_.-]+', requirement)
+        if match is None:
+            raise ValueError('Unsupported Python dependency declaration')
+        name = re.sub(r'[-_.]+', '-', match.group(0)).lower()
+        ref = f'pkg:pypi/{name}'
+        dependency = python_dependencies.setdefault(ref, {'type': 'library', 'bom-ref': ref, 'name': name,
+                                                          'purl': ref, 'scope': 'optional', 'properties': []})
+        if extra is None:
+            dependency['scope'] = 'required'
+        value = requirement if extra is None else f'{requirement}; extra == "{extra}"'
+        item = {'name': 'python:requirement', 'value': value}
+        if item not in dependency['properties']:
+            dependency['properties'].append(item)
+    python_declared = list(python_dependencies.values())
+    npm_dependencies: dict[str, dict] = {}
+    for field, scope in [('dependencies', 'required'), ('optionalDependencies', 'optional')]:
+        for name, value in sorted(package.get(field, {}).items()):
+            ref = 'pkg:npm/' + name.replace('@', '%40', 1)
+            dependency = npm_dependencies.setdefault(ref, {'type': 'library', 'bom-ref': ref, 'name': name,
+                                                           'purl': ref, 'properties': []})
+            dependency['scope'] = scope  # npm optionalDependencies overrides the same required declaration.
+            dependency['properties'].append({'name': f'npm:{field}', 'value': value})
+    peer_metadata = package.get('peerDependenciesMeta', {})
+    for name, value in sorted(package.get('peerDependencies', {}).items()):
+        ref = 'pkg:npm/' + name.replace('@', '%40', 1)
+        details = peer_metadata.get(name, {})
+        optional = isinstance(details, dict) and details.get('optional') is True
+        scope = 'optional' if optional else 'required'
+        dependency = npm_dependencies.setdefault(ref, {'type': 'library', 'bom-ref': ref, 'name': name,
+                                                       'purl': ref, 'scope': scope, 'properties': []})
+        if not optional:
+            dependency['scope'] = 'required'
+        dependency['properties'].extend([
+            {'name': 'npm:peerDependencies', 'value': value},
+            {'name': 'npm:peer-host-provided', 'value': 'true'},
+            {'name': 'npm:peer-optional', 'value': str(optional).lower()},
+        ])
+    npm_declared = list(npm_dependencies.values())
+    def component(ref: str, name: str, artifact: str, version: str, license_value: object) -> dict:
+        return {'type': 'library', 'bom-ref': ref, 'name': name, 'version': version, 'purl': ref,
+                'licenses': licenses(license_value),
                 'hashes': [{'alg': 'SHA-256', 'content': sums[artifact]}],
                 'externalReferences': [{'type': 'vcs', 'url': f'{REPOSITORY}/tree/{commit}'}]}
     from datetime import datetime, timezone
     return {'bomFormat': 'CycloneDX', 'specVersion': '1.6', 'version': 1,
             'serialNumber': 'urn:uuid:' + str(uuid.uuid5(uuid.NAMESPACE_URL, f'{REPOSITORY}@{commit}')),
             'metadata': {'timestamp': datetime.fromtimestamp(epoch, timezone.utc).strftime('%Y-%m-%dT%H:%M:%SZ'),
-                         'tools': {'components': [{'type': 'application', 'name': 'scripts/build_release.py'}]}},
-            'components': [component(python_ref, project['name'], wheel, release.python_version),
-                           component(npm_ref, package['name'], tarball, release.npm_version),
-                           *optional, *runtime],
-            'dependencies': [{'ref': python_ref, 'dependsOn': [c['bom-ref'] for c in optional]},
-                             {'ref': npm_ref, 'dependsOn': [c['bom-ref'] for c in runtime]},
-                             *({'ref': c['bom-ref'], 'dependsOn': []} for c in optional + runtime)]}
+                         'tools': {'components': [{'type': 'application', 'name': 'scripts/build_release.py'}]},
+                         'properties': [{'name': 'awesome-telegram:inventory-scope', 'value': 'artifacts-and-declared-direct-dependencies'},
+                                        {'name': 'awesome-telegram:transitive-dependencies', 'value': 'not-resolved'},
+                                        {'name': 'awesome-telegram:source-commit', 'value': commit}]},
+            'components': [component(python_ref, project['name'], wheel, release.python_version, project.get('license')),
+                           component(npm_ref, package['name'], tarball, release.npm_version, package.get('license')),
+                           *python_declared, *npm_declared],
+            'dependencies': [{'ref': python_ref, 'dependsOn': [c['bom-ref'] for c in python_declared]},
+                             {'ref': npm_ref, 'dependsOn': [c['bom-ref'] for c in npm_declared]}]}
 
 
 def build(ref: str, output: Path) -> dict[str, str]:
@@ -145,7 +193,7 @@ def notes(ref: str) -> str:
     """Release notes from the current CHANGELOG: the version section, or the bullets naming it."""
     version = _version(ref)
     changelog = (ROOT / 'CHANGELOG.md').read_text(encoding='utf-8')
-    sections = re.split(r'^## ', changelog, flags=re.M)[1:]
+    sections = re.split(r'^## ', changelog, flags=re.MULTILINE)[1:]
     for section in sections:
         heading, _, body = section.partition('\n')
         if re.match(rf'{re.escape(version)}(\s|$)', heading):

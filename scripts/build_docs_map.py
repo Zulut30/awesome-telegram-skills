@@ -88,7 +88,7 @@ def main() -> int:
         sys.stderr.write('\n'.join(found) + '\n')
         return 1
     if not args.check and current != text:
-        OUTPUT.write_text(text, encoding='utf-8')
+        OUTPUT.write_text(text, encoding='utf-8', newline='\n')
     entries = [entry for section in manifest['sections'] for entry in section['pages']]
     print(json.dumps({'passed': True, 'pages': len(entries), 'sidebar': sum(1 for entry in entries if entry.get('nav')),
                       'mode': 'check' if args.check else 'write'}))

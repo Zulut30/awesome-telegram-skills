@@ -3,7 +3,7 @@ name: telegram-admin-panel
 description: "Создает и изменяет админский интерфейс Telegram-сервиса на TypeScript с Python backend: заказы, пользователи, контент, роли и журнал операций. Используйте для рабочих сценариев операторов; общая авторизация API не заменяет права на конкретное административное действие. Не для пользовательских экранов Mini App → telegram-mini-app-ui."
 license: MIT
 metadata:
-  version: "0.27.0"
+  version: "0.28.0"
 ---
 
 # Админка Telegram-сервиса

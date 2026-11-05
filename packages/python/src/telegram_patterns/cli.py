@@ -1,4 +1,4 @@
-"""Local CLI: recipe discovery, NEW project scaffolding and read-only diagnostics."""
+"""Local CLI: recipes, NEW projects, diagnostics and SQLite recovery to new files."""
 
 from __future__ import annotations
 
@@ -98,11 +98,18 @@ def _report(payload: dict[str, Any], *, as_json: bool) -> None:
 
 
 def main(argv: list[str] | None = None) -> int:
+    from ._sqlite_recovery_cli import RECOVERY_COMMANDS, register_help
+    from ._sqlite_recovery_cli import main as recovery_main
+
+    arguments = sys.argv[1:] if argv is None else argv
+    if arguments and arguments[0] in RECOVERY_COMMANDS:
+        return recovery_main(arguments)
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument('--version', action='version', version=f'telegram-patterns {__version__}')
     common = argparse.ArgumentParser(add_help=False)
     common.add_argument('--json', action='store_true', help='Print errors as one ASCII JSON object on stderr')
     commands = parser.add_subparsers(dest='command', required=True)
+    register_help(commands)
     recipes = commands.add_parser('recipes', parents=[common], help='Search bundled recipes; never executes them')
     recipes.add_argument('query', nargs='?', default='')
     recipes.add_argument('--category')

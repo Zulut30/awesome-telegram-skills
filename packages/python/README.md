@@ -1,6 +1,8 @@
 # awesome-telegram-patterns — Python
 
-В разработке 0.27.0: [платежный журнал схемы 2](../../docs/payment-ledger.md) сохраняет точные суммы, возвраты и порядок команд продления. [Адаптер Stars](../../docs/stars-payments.md) поддерживает отмену/возобновление будущего списания, observer и доверенную сверку неизвестного исхода; оплаченный период не создается настройкой. [Адаптеры провайдеров](../../docs/payment-providers.md) принимают HTTP-транспорт приложения. Импорт ядра не выполняет запросы и не требует платежного SDK.
+Разработка 0.28.0 добавляет [проверенную SQLite-копию и восстановление в новый файл](../../docs/sqlite-recovery.md) без SDK, перезаписи живой базы и автоматической повторной отправки неизвестных операций. Корни и ACL заранее обеспечивает владелец сервиса.
+
+С 0.27.0: [платежный журнал схемы 2](../../docs/payment-ledger.md) сохраняет точные суммы, возвраты и порядок команд продления. [Адаптер Stars](../../docs/stars-payments.md) поддерживает отмену/возобновление будущего списания, observer и доверенную сверку неизвестного исхода; оплаченный период не создается настройкой. [Адаптеры провайдеров](../../docs/payment-providers.md) принимают HTTP-транспорт приложения. Импорт ядра не выполняет запросы и не требует платежного SDK.
 
 Семь типов полей: `NumberField/EmailField/PhoneField/DateField/FileField/ContactField/LocationField`, `FieldValue`, `DialogSubmission` и `dialog_form_router` из optional aiogram. [Готовая композиция](../../docs/dialog-fields.md): текущий автор/вопрос, native candidate confirmation, back/cancel и unknown receipt с тем же intent. Прежние текстовые формы сохраняют контракт.
 
@@ -23,7 +25,7 @@ Root экспортирует `Maturity`, `VerificationLevel`; aiogram — `Butt
 
 Все текущие группы experimental, request-only/native fragments reference. [Политика зрелости](../../docs/v1-maturity.md) не зависит от проверки: `Recipe.maturity`, `RecipeCatalog.search(maturity=...)`, CLI `recipes --maturity ...`. Старые schema-1 records читаются с conservative default.
 
-Общие компоненты для бота и backend, версия 0.27.0. Пакет пока поставляется из этого репозитория/локального wheel; публикации на PyPI нет. Python >=3.11. Core использует стандартную библиотеку; адаптер aiogram и тестовый транспорт — отдельный extra.
+Общие компоненты для бота и backend, версия 0.28.0. Пакет пока поставляется из этого репозитория/локального wheel; публикации на PyPI нет. Python >=3.11. Core использует стандартную библиотеку; адаптер aiogram и тестовый транспорт — отдельный extra.
 
 [Медиа](../../docs/media.md): `MediaFile`/`MediaItem`, `media_request`, `media_album`, `media_edit`, `download_media` и typed результаты. Byte upload, same-bot file_id, literal caption/entities, совместимый альбом и bounded explicit download через текущий Bot. Host проверяет codec/content, ACL и delivery; downloader не записывает файлы и не закрывает host session.
 

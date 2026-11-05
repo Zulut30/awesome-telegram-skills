@@ -110,7 +110,7 @@
     "Real Telegram iOS/Android/Desktop/tablet client versions and native permissions",
     "Screen readers and overall WCAG conformance",
     "Provider sandboxes, production payment workflows, distributed operations and physical-device acceptance",
-    "Development 0.27.0 full distribution and the new required-CI implementation acceptance"
+    "Development 0.27/0.28 runtime matrices beyond the recorded exact 0.26 evidence; version-specific distribution reports remain separate"
   ],
   "skip": {
     "python_tests": 3,
@@ -239,9 +239,12 @@
     }
   ],
   "development": {
-    "library_version": "0.27.0",
+    "library_version": "0.28.0",
     "accepted": false,
-    "observer_scope": "StarsPaymentAdapter import and legacy operations checked with aiogram 3.29.0; absent BotSubscriptionUpdated observer raises UnsupportedCapability. This is separate local WIP evidence, not live Telegram or payment acceptance."
+    "observer_scope": "StarsPaymentAdapter import and legacy operations checked with aiogram 3.29.0; absent BotSubscriptionUpdated observer raises UnsupportedCapability. This is separate local WIP evidence, not live Telegram or payment acceptance.",
+    "previous_development_version": "0.27.0",
+    "matrix_accepted": false,
+    "sqlite_recovery_scope": "Owner-protected existing roots/ACL; restore only to new file; Windows directory_synced=False; SQLite/hash checkpoints cannot interrupt filesystem syscalls. Local Windows source tests do not replace POSIX, power-loss or hosted restore acceptance."
   },
   "historical_snapshots": [
     {

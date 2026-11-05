@@ -1,12 +1,12 @@
-"""Measure the support promise: a maintainer answers every issue within 3 business days.
+"""Measure the best-effort first-response target and retain the overdue support backlog.
 
     python scripts/support_response.py --repo Zulut30/awesome-telegram-skills --output output/support.json
 
 Reads issues of the last --days days through the GitHub REST API (GITHUB_TOKEN is used when set). Issues opened by
 maintainers and pull requests are skipped. Business days are Monday to Friday in UTC; holidays are not excluded.
-Exits with 1 when an open issue waits longer than the promise without a maintainer comment, so the scheduled
-Support response workflow turns red and its owner is notified. The JSON report (median first response, share
-answered in time, overdue issues) also feeds the quality board.
+Exits with 1 when an open issue waits longer than the 3-business-day target without a maintainer comment,
+so the scheduled Support response workflow remains red for an overdue backlog. The report measures
+observations, not a guaranteed SLA, notification delivery or human availability.
 """
 
 from __future__ import annotations
@@ -20,7 +20,8 @@ import sys
 import urllib.request
 from pathlib import Path
 
-PROMISE_BUSINESS_DAYS = 3
+RESPONSE_TARGET_BUSINESS_DAYS = 3
+PROMISE_BUSINESS_DAYS = RESPONSE_TARGET_BUSINESS_DAYS  # Legacy internal readers; no SLA is implied.
 MAINTAINERS = {'OWNER', 'MEMBER', 'COLLABORATOR'}
 
 
@@ -49,12 +50,16 @@ def evaluate(issues: list[dict], comments: dict[int, list[dict]], now: dt.dateti
         if replies:
             wait = business_days(created, parse(min(reply['created_at'] for reply in replies)))
             waits.append(wait)
-            answered_in_time += wait <= PROMISE_BUSINESS_DAYS
-        elif issue['state'] == 'open' and business_days(created, now) > PROMISE_BUSINESS_DAYS:
+            answered_in_time += wait <= RESPONSE_TARGET_BUSINESS_DAYS
+        elif issue['state'] == 'open' and business_days(created, now) > RESPONSE_TARGET_BUSINESS_DAYS:
             overdue.append({'number': issue['number'], 'title': issue['title'], 'waiting_business_days': business_days(created, now)})
-    return {'promise_business_days': PROMISE_BUSINESS_DAYS, 'issues': considered, 'answered': len(waits),
+    within_target = round(answered_in_time / len(waits), 3) if waits else None
+    return {'policy_mode': 'best-effort-no-sla', 'target_business_days': RESPONSE_TARGET_BUSINESS_DAYS,
+            'answered_within_target': within_target,
+            'legacy_metric_keys': ['promise_business_days', 'answered_within_promise'],
+            'promise_business_days': RESPONSE_TARGET_BUSINESS_DAYS, 'issues': considered, 'answered': len(waits),
             'median_first_response_business_days': statistics.median(waits) if waits else None,
-            'answered_within_promise': round(answered_in_time / len(waits), 3) if waits else None,
+            'answered_within_promise': within_target,
             'overdue': overdue, 'checked_at': now.isoformat(timespec='seconds')}
 
 
@@ -64,7 +69,7 @@ def fetch(url: str) -> list[dict]:
         headers['Authorization'] = 'Bearer ' + os.environ['GITHUB_TOKEN']
     items: list[dict] = []
     while url:
-        with urllib.request.urlopen(urllib.request.Request(url, headers=headers), timeout=30) as response:  # noqa: S310
+        with urllib.request.urlopen(urllib.request.Request(url, headers=headers), timeout=30) as response:
             items += json.loads(response.read())
             links = response.headers.get('Link', '')
         url = next((part.split(';')[0].strip(' <>') for part in links.split(',') if 'rel="next"' in part), '')
