@@ -32,7 +32,7 @@ try{
       const context=await browser.newContext({viewport:{width,height},colorScheme:theme});const page=await context.newPage();const errors=[],outside=[];
       page.on('pageerror',error=>errors.push(error.message));page.on('request',request=>{if(!request.url().startsWith(base))outside.push(request.url());});
       await page.goto(base);await page.getByRole('heading',{name:'Найти рецепт. Собрать бота.'}).waitFor();
-      verify(await page.locator('#recipes .recipe-card').count()===340,`${name}/${theme}: catalog count`);
+      verify(await page.locator('#recipes .recipe-card').count()===catalogData.recipes.length,`${name}/${theme}: catalog count`);
       await page.getByLabel('Что хотите сделать?').fill('восстановление диалога после рестарта');
       verify(await page.getByRole('button',{name:'Восстановление диалога после рестарта',exact:true}).isVisible(),`${name}/${theme}: persistent dialog discoverable`);
       await page.getByRole('button',{name:'Восстановление диалога после рестарта',exact:true}).click();
@@ -50,7 +50,7 @@ try{
       await page.getByLabel('Зрелость',{exact:true}).selectOption('stable');
       verify(await page.locator('#recipes .recipe-card').count()===0,`${name}/${theme}: no fabricated stable claim`);
       await page.getByRole('button',{name:'Сбросить',exact:true}).click();
-      verify(await page.locator('#recipes .recipe-card').count()===340,`${name}/${theme}: reset clears maturity`);
+      verify(await page.locator('#recipes .recipe-card').count()===catalogData.recipes.length,`${name}/${theme}: reset clears maturity`);
       await page.getByLabel('Что хотите сделать?').fill('две кнопки');
       await page.getByRole('button',{name:'Две кнопки в ряд',exact:true}).click();
       verify((await page.locator('#preview .keyboard-row').evaluateAll(rows=>rows.map(row=>row.children.length))).join(',')==='2,2',`${name}/${theme}: two rows`);
@@ -205,7 +205,7 @@ try{
       await page.getByRole('button',{name:'Сбросить',exact:true}).click();await page.getByLabel('Контекст',{exact:true}).selectOption('group');
       verify(await page.locator('[data-id="api.getUpdates"]').count()===0,`${name}/${theme}: unspecified context is not all chats`);
       await page.getByRole('button',{name:'Сбросить',exact:true}).click();
-      verify(await page.locator('#recipes .recipe-card').count()===340&&await page.getByLabel('Что хотите сделать?').evaluate(input=>input===document.activeElement),`${name}/${theme}: full filter reset and focus`);
+      verify(await page.locator('#recipes .recipe-card').count()===catalogData.recipes.length&&await page.getByLabel('Что хотите сделать?').evaluate(input=>input===document.activeElement),`${name}/${theme}: full filter reset and focus`);
       verify(errors.length===0&&outside.length===0,`${name}/${theme}: page errors/external requests`);
       await page.getByLabel('Что хотите сделать?').fill('цветные');
       await page.screenshot({path:path.join(output,`${name}-${theme}.png`),fullPage:true});results.push({name,width,height,theme,geometry});await context.close();

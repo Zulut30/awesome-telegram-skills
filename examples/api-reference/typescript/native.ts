@@ -8,7 +8,8 @@ import {check} from './check.js';
 export function referenceNative(): void {
   const path: TelegramNativeMethod = 'HapticFeedback.impactOccurred';
   const event: TelegramNativeEvent = 'themeChanged';
-  check(Object.keys(TELEGRAM_NATIVE_METHODS).length === 99 && TELEGRAM_NATIVE_EVENTS.length === 44);
+  check(Object.keys(TELEGRAM_NATIVE_METHODS).length === 100 && TELEGRAM_NATIVE_EVENTS.length === 44);
+  check(TELEGRAM_NATIVE_METHODS['Serverless.call'].minVersion === null);
   check(TELEGRAM_NATIVE_METHODS[path].minVersion && TELEGRAM_NATIVE_EVENT_DETAILS[event].url.startsWith('https://'));
   let impacts = 0, received = 0;
   const handlers = new Map<string, (...args: unknown[]) => void>();

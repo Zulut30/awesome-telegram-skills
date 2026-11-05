@@ -33,7 +33,8 @@ def main() -> int:
         return result.stdout
     builder = ROOT / 'scripts/build_recipe_gallery.py'
     result = json.loads(run('export', [sys.executable, builder, '--output-dir', gallery], timeout=120))
-    assert result['recipes'] == 340 and not result['telegram_network']
+    expected = json.loads((ROOT / 'catalog/recipe-gallery.json').read_text(encoding='utf-8'))
+    assert result['recipes'] == len(expected['recipes']) and not result['telegram_network']
     marker = gallery / 'owned.txt'; marker.write_bytes(b'preserve consumer notes\n')
     before = {p.relative_to(gallery): hashlib.sha256(p.read_bytes()).hexdigest() for p in gallery.rglob('*') if p.is_file()}
     run('check', [sys.executable, builder, '--output-dir', gallery, '--check'], timeout=120)

@@ -982,8 +982,8 @@
       "example": "examples/api-reference/python/core_recipes.py",
       "limits": "Чтение не исполняет recipe code. Maturity отдельно от verification; SDK/mock не доказывают live/device. Preview — независимая копия. Этот пример ищет существующий cookbook recipe two-columns; ref.* — имена справочника API.",
       "intent": "Literal-зрелость: stable, experimental или reference",
-      "example_sha256": "066ea9cc9f5358a192bfb4539b0b498e4404c8776f86555ce560a3e293a163c0",
-      "example_source_sha256": "066ea9cc9f5358a192bfb4539b0b498e4404c8776f86555ce560a3e293a163c0",
+      "example_sha256": "060796002e29c8746e3875fb497c0905d8ca0e7c2b62754f2a89a19b1db4d8b7",
+      "example_source_sha256": "060796002e29c8746e3875fb497c0905d8ca0e7c2b62754f2a89a19b1db4d8b7",
       "kind": "value"
     },
     {
@@ -994,8 +994,8 @@
       "example": "examples/api-reference/python/core_recipes.py",
       "limits": "Чтение не исполняет recipe code. Maturity отдельно от verification; SDK/mock не доказывают live/device. Preview — независимая копия. Этот пример ищет существующий cookbook recipe two-columns; ref.* — имена справочника API.",
       "intent": "Literal-уровень проверки: sdk, mock, browser, live или not_run",
-      "example_sha256": "066ea9cc9f5358a192bfb4539b0b498e4404c8776f86555ce560a3e293a163c0",
-      "example_source_sha256": "066ea9cc9f5358a192bfb4539b0b498e4404c8776f86555ce560a3e293a163c0",
+      "example_sha256": "060796002e29c8746e3875fb497c0905d8ca0e7c2b62754f2a89a19b1db4d8b7",
+      "example_source_sha256": "060796002e29c8746e3875fb497c0905d8ca0e7c2b62754f2a89a19b1db4d8b7",
       "kind": "value"
     },
     {
@@ -1006,8 +1006,8 @@
       "example": "examples/api-reference/python/core_recipes.py",
       "limits": "Чтение не исполняет recipe code. Maturity отдельно от verification; SDK/mock не доказывают live/device. Preview — независимая копия. Этот пример ищет существующий cookbook recipe two-columns; ref.* — имена справочника API.",
       "intent": "Неизменяемая запись и копия preview",
-      "example_sha256": "066ea9cc9f5358a192bfb4539b0b498e4404c8776f86555ce560a3e293a163c0",
-      "example_source_sha256": "066ea9cc9f5358a192bfb4539b0b498e4404c8776f86555ce560a3e293a163c0",
+      "example_sha256": "060796002e29c8746e3875fb497c0905d8ca0e7c2b62754f2a89a19b1db4d8b7",
+      "example_source_sha256": "060796002e29c8746e3875fb497c0905d8ca0e7c2b62754f2a89a19b1db4d8b7",
       "kind": "value"
     },
     {
@@ -1018,8 +1018,8 @@
       "example": "examples/api-reference/python/core_recipes.py",
       "limits": "Чтение не исполняет recipe code. Maturity отдельно от verification; SDK/mock не доказывают live/device. Preview — независимая копия. Этот пример ищет существующий cookbook recipe two-columns; ref.* — имена справочника API.",
       "intent": "Версия, recipes, get/search с фильтрами",
-      "example_sha256": "066ea9cc9f5358a192bfb4539b0b498e4404c8776f86555ce560a3e293a163c0",
-      "example_source_sha256": "066ea9cc9f5358a192bfb4539b0b498e4404c8776f86555ce560a3e293a163c0",
+      "example_sha256": "060796002e29c8746e3875fb497c0905d8ca0e7c2b62754f2a89a19b1db4d8b7",
+      "example_source_sha256": "060796002e29c8746e3875fb497c0905d8ca0e7c2b62754f2a89a19b1db4d8b7",
       "kind": "value"
     },
     {
@@ -1894,8 +1894,8 @@
       "example": "examples/api-reference/typescript/native.ts",
       "limits": "Типы аргументов и результатов каждого пути сгенерированы из официальных сигнатур и документации (scripts/build_native_signatures.py): неверный аргумент ловит tsc, runtime значения не проверяет. Presence/platform/version не consent, launch, auth или успешный платеж. Callback и receiver сохраняются; host выбирает arguments/permissions. Listener/dispose подавляют late callbacks, native cleanup failure может требовать повторного dispose. Serverless.call индексируется с minVersion null: универсальный фасад отказывает до SDK. Для выбранного хостинга используется отдельный ServerlessEndpointClient с явным включением и проверкой наличия.",
       "intent": "Версия, наличие, подписка и освобождение; неизвестная минимальная версия запрещает вызов",
-      "example_sha256": "bc99b05585a3d4a447fbc8bed31f4d5d2ff350406040ae530988b82220fde8dd",
-      "example_source_sha256": "bc99b05585a3d4a447fbc8bed31f4d5d2ff350406040ae530988b82220fde8dd",
+      "example_sha256": "84c56ecfa0e523607adb85f2a50ebe0bb3c30cc8310e3601ef6a3d559305ad46",
+      "example_source_sha256": "84c56ecfa0e523607adb85f2a50ebe0bb3c30cc8310e3601ef6a3d559305ad46",
       "kind": "value"
     },
     {
@@ -1906,8 +1906,8 @@
       "example": "examples/api-reference/typescript/native.ts",
       "limits": "Типы аргументов и результатов каждого пути сгенерированы из официальных сигнатур и документации (scripts/build_native_signatures.py): неверный аргумент ловит tsc, runtime значения не проверяет. Presence/platform/version не consent, launch, auth или успешный платеж. Callback и receiver сохраняются; host выбирает arguments/permissions. Listener/dispose подавляют late callbacks, native cleanup failure может требовать повторного dispose. Serverless.call индексируется с minVersion null: универсальный фасад отказывает до SDK. Для выбранного хостинга используется отдельный ServerlessEndpointClient с явным включением и проверкой наличия.",
       "intent": "Контролируемое отсутствие/disposed native capability",
-      "example_sha256": "bc99b05585a3d4a447fbc8bed31f4d5d2ff350406040ae530988b82220fde8dd",
-      "example_source_sha256": "bc99b05585a3d4a447fbc8bed31f4d5d2ff350406040ae530988b82220fde8dd",
+      "example_sha256": "84c56ecfa0e523607adb85f2a50ebe0bb3c30cc8310e3601ef6a3d559305ad46",
+      "example_source_sha256": "84c56ecfa0e523607adb85f2a50ebe0bb3c30cc8310e3601ef6a3d559305ad46",
       "kind": "value"
     },
     {
@@ -1918,8 +1918,8 @@
       "example": "examples/api-reference/typescript/native.ts",
       "limits": "Типы аргументов и результатов каждого пути сгенерированы из официальных сигнатур и документации (scripts/build_native_signatures.py): неверный аргумент ловит tsc, runtime значения не проверяет. Presence/platform/version не consent, launch, auth или успешный платеж. Callback и receiver сохраняются; host выбирает arguments/permissions. Listener/dispose подавляют late callbacks, native cleanup failure может требовать повторного dispose. Serverless.call индексируется с minVersion null: универсальный фасад отказывает до SDK. Для выбранного хостинга используется отдельный ServerlessEndpointClient с явным включением и проверкой наличия.",
       "intent": "Пути, опубликованные минимальные версии либо null и источники, только чтение",
-      "example_sha256": "bc99b05585a3d4a447fbc8bed31f4d5d2ff350406040ae530988b82220fde8dd",
-      "example_source_sha256": "bc99b05585a3d4a447fbc8bed31f4d5d2ff350406040ae530988b82220fde8dd",
+      "example_sha256": "84c56ecfa0e523607adb85f2a50ebe0bb3c30cc8310e3601ef6a3d559305ad46",
+      "example_source_sha256": "84c56ecfa0e523607adb85f2a50ebe0bb3c30cc8310e3601ef6a3d559305ad46",
       "kind": "value"
     },
     {
@@ -1930,8 +1930,8 @@
       "example": "examples/api-reference/typescript/native.ts",
       "limits": "Типы аргументов и результатов каждого пути сгенерированы из официальных сигнатур и документации (scripts/build_native_signatures.py): неверный аргумент ловит tsc, runtime значения не проверяет. Presence/platform/version не consent, launch, auth или успешный платеж. Callback и receiver сохраняются; host выбирает arguments/permissions. Listener/dispose подавляют late callbacks, native cleanup failure может требовать повторного dispose. Serverless.call индексируется с minVersion null: универсальный фасад отказывает до SDK. Для выбранного хостинга используется отдельный ServerlessEndpointClient с явным включением и проверкой наличия.",
       "intent": "Имена нативных событий, только чтение",
-      "example_sha256": "bc99b05585a3d4a447fbc8bed31f4d5d2ff350406040ae530988b82220fde8dd",
-      "example_source_sha256": "bc99b05585a3d4a447fbc8bed31f4d5d2ff350406040ae530988b82220fde8dd",
+      "example_sha256": "84c56ecfa0e523607adb85f2a50ebe0bb3c30cc8310e3601ef6a3d559305ad46",
+      "example_source_sha256": "84c56ecfa0e523607adb85f2a50ebe0bb3c30cc8310e3601ef6a3d559305ad46",
       "kind": "value"
     },
     {
@@ -1942,8 +1942,8 @@
       "example": "examples/api-reference/typescript/native.ts",
       "limits": "Типы аргументов и результатов каждого пути сгенерированы из официальных сигнатур и документации (scripts/build_native_signatures.py): неверный аргумент ловит tsc, runtime значения не проверяет. Presence/platform/version не consent, launch, auth или успешный платеж. Callback и receiver сохраняются; host выбирает arguments/permissions. Listener/dispose подавляют late callbacks, native cleanup failure может требовать повторного dispose. Serverless.call индексируется с minVersion null: универсальный фасад отказывает до SDK. Для выбранного хостинга используется отдельный ServerlessEndpointClient с явным включением и проверкой наличия.",
       "intent": "Версии и источники событий, только чтение",
-      "example_sha256": "bc99b05585a3d4a447fbc8bed31f4d5d2ff350406040ae530988b82220fde8dd",
-      "example_source_sha256": "bc99b05585a3d4a447fbc8bed31f4d5d2ff350406040ae530988b82220fde8dd",
+      "example_sha256": "84c56ecfa0e523607adb85f2a50ebe0bb3c30cc8310e3601ef6a3d559305ad46",
+      "example_source_sha256": "84c56ecfa0e523607adb85f2a50ebe0bb3c30cc8310e3601ef6a3d559305ad46",
       "kind": "value"
     },
     {
@@ -1954,8 +1954,8 @@
       "example": "examples/api-reference/typescript/native.ts",
       "limits": "Типы аргументов и результатов каждого пути сгенерированы из официальных сигнатур и документации (scripts/build_native_signatures.py): неверный аргумент ловит tsc, runtime значения не проверяет. Presence/platform/version не consent, launch, auth или успешный платеж. Callback и receiver сохраняются; host выбирает arguments/permissions. Listener/dispose подавляют late callbacks, native cleanup failure может требовать повторного dispose. Serverless.call индексируется с minVersion null: универсальный фасад отказывает до SDK. Для выбранного хостинга используется отдельный ServerlessEndpointClient с явным включением и проверкой наличия.",
       "intent": "Literal известных native paths",
-      "example_sha256": "bc99b05585a3d4a447fbc8bed31f4d5d2ff350406040ae530988b82220fde8dd",
-      "example_source_sha256": "bc99b05585a3d4a447fbc8bed31f4d5d2ff350406040ae530988b82220fde8dd",
+      "example_sha256": "84c56ecfa0e523607adb85f2a50ebe0bb3c30cc8310e3601ef6a3d559305ad46",
+      "example_source_sha256": "84c56ecfa0e523607adb85f2a50ebe0bb3c30cc8310e3601ef6a3d559305ad46",
       "kind": "type"
     },
     {
@@ -1966,8 +1966,8 @@
       "example": "examples/api-reference/typescript/native.ts",
       "limits": "Типы аргументов и результатов каждого пути сгенерированы из официальных сигнатур и документации (scripts/build_native_signatures.py): неверный аргумент ловит tsc, runtime значения не проверяет. Presence/platform/version не consent, launch, auth или успешный платеж. Callback и receiver сохраняются; host выбирает arguments/permissions. Listener/dispose подавляют late callbacks, native cleanup failure может требовать повторного dispose. Serverless.call индексируется с minVersion null: универсальный фасад отказывает до SDK. Для выбранного хостинга используется отдельный ServerlessEndpointClient с явным включением и проверкой наличия.",
       "intent": "Literal известных event names",
-      "example_sha256": "bc99b05585a3d4a447fbc8bed31f4d5d2ff350406040ae530988b82220fde8dd",
-      "example_source_sha256": "bc99b05585a3d4a447fbc8bed31f4d5d2ff350406040ae530988b82220fde8dd",
+      "example_sha256": "84c56ecfa0e523607adb85f2a50ebe0bb3c30cc8310e3601ef6a3d559305ad46",
+      "example_source_sha256": "84c56ecfa0e523607adb85f2a50ebe0bb3c30cc8310e3601ef6a3d559305ad46",
       "kind": "type"
     },
     {
@@ -1978,8 +1978,8 @@
       "example": "examples/api-reference/typescript/native.ts",
       "limits": "Типы аргументов и результатов каждого пути сгенерированы из официальных сигнатур и документации (scripts/build_native_signatures.py): неверный аргумент ловит tsc, runtime значения не проверяет. Presence/platform/version не consent, launch, auth или успешный платеж. Callback и receiver сохраняются; host выбирает arguments/permissions. Listener/dispose подавляют late callbacks, native cleanup failure может требовать повторного dispose. Serverless.call индексируется с minVersion null: универсальный фасад отказывает до SDK. Для выбранного хостинга используется отдельный ServerlessEndpointClient с явным включением и проверкой наличия.",
       "intent": "Документированные аргументы и результат каждого native path",
-      "example_sha256": "bc99b05585a3d4a447fbc8bed31f4d5d2ff350406040ae530988b82220fde8dd",
-      "example_source_sha256": "bc99b05585a3d4a447fbc8bed31f4d5d2ff350406040ae530988b82220fde8dd",
+      "example_sha256": "84c56ecfa0e523607adb85f2a50ebe0bb3c30cc8310e3601ef6a3d559305ad46",
+      "example_source_sha256": "84c56ecfa0e523607adb85f2a50ebe0bb3c30cc8310e3601ef6a3d559305ad46",
       "kind": "type"
     },
     {
@@ -1990,8 +1990,8 @@
       "example": "examples/api-reference/typescript/native.ts",
       "limits": "Типы аргументов и результатов каждого пути сгенерированы из официальных сигнатур и документации (scripts/build_native_signatures.py): неверный аргумент ловит tsc, runtime значения не проверяет. Presence/platform/version не consent, launch, auth или успешный платеж. Callback и receiver сохраняются; host выбирает arguments/permissions. Listener/dispose подавляют late callbacks, native cleanup failure может требовать повторного dispose. Serverless.call индексируется с minVersion null: универсальный фасад отказывает до SDK. Для выбранного хостинга используется отдельный ServerlessEndpointClient с явным включением и проверкой наличия.",
       "intent": "Кортеж аргументов пути, включая оба положения callback у Serverless.call",
-      "example_sha256": "bc99b05585a3d4a447fbc8bed31f4d5d2ff350406040ae530988b82220fde8dd",
-      "example_source_sha256": "bc99b05585a3d4a447fbc8bed31f4d5d2ff350406040ae530988b82220fde8dd",
+      "example_sha256": "84c56ecfa0e523607adb85f2a50ebe0bb3c30cc8310e3601ef6a3d559305ad46",
+      "example_source_sha256": "84c56ecfa0e523607adb85f2a50ebe0bb3c30cc8310e3601ef6a3d559305ad46",
       "kind": "type"
     },
     {
@@ -2002,8 +2002,8 @@
       "example": "examples/api-reference/typescript/native.ts",
       "limits": "Типы аргументов и результатов каждого пути сгенерированы из официальных сигнатур и документации (scripts/build_native_signatures.py): неверный аргумент ловит tsc, runtime значения не проверяет. Presence/platform/version не consent, launch, auth или успешный платеж. Callback и receiver сохраняются; host выбирает arguments/permissions. Listener/dispose подавляют late callbacks, native cleanup failure может требовать повторного dispose. Serverless.call индексируется с minVersion null: универсальный фасад отказывает до SDK. Для выбранного хостинга используется отдельный ServerlessEndpointClient с явным включением и проверкой наличия.",
       "intent": "Результат call по path: void, boolean или объект для цепочки",
-      "example_sha256": "bc99b05585a3d4a447fbc8bed31f4d5d2ff350406040ae530988b82220fde8dd",
-      "example_source_sha256": "bc99b05585a3d4a447fbc8bed31f4d5d2ff350406040ae530988b82220fde8dd",
+      "example_sha256": "84c56ecfa0e523607adb85f2a50ebe0bb3c30cc8310e3601ef6a3d559305ad46",
+      "example_source_sha256": "84c56ecfa0e523607adb85f2a50ebe0bb3c30cc8310e3601ef6a3d559305ad46",
       "kind": "type"
     },
     {
