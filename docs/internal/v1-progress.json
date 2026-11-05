@@ -1679,10 +1679,19 @@
       "id": 96,
       "title": "Подготовить эксплуатационные инструкции",
       "requirement": "Дать варианты запуска на целевой инфраструктуре, секреты, backups, restore, monitoring и rollback; команды проверить в тестовой среде без обязательного нового сервиса.",
-      "status": "pending",
-      "commit_subject": null,
-      "artifacts": [],
-      "evidence": []
+      "status": "done",
+      "commit_subject": "roadmap(096): accept exercised operational instructions",
+      "artifacts": [
+        "docs/production-operations.md",
+        "scripts/check_local_operations.py",
+        "tests/test_local_operations.py",
+        "docs/internal/operations-096-acceptance.json"
+      ],
+      "evidence": [
+        "15 real local operations passed using the accepted installed0.28/shop consumer: HTTP lifecycle, backup/restore/prepare/inspect and rollback refusals.",
+        "Root installed consumer5/5 without skips; docs4/4; editable checkout correctly skips the separate-consumer integration.",
+        "Unknown IDs preserved, no external network, candidate ready:false; same-artifact restart only, no cross-version rollback or production-host claim."
+      ]
     },
     {
       "id": 97,

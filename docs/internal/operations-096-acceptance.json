@@ -1,0 +1,58 @@
+{
+  "schema_version": 1,
+  "passed": true,
+  "kind": "local-operations-acceptance",
+  "source_commit": "2f1412bc76d7f3135d20505167d52f694125faf7",
+  "requirement": "Дать варианты запуска на целевой инфраструктуре, секреты, backups, restore, monitoring и rollback; команды проверить в тестовой среде без обязательного нового сервиса.",
+  "runbook": "docs/production-operations.md",
+  "operation_report": "output/local-operations-096-ready/report.json",
+  "operation_report_sha256": "537a1eccb7191dcfd866ae62a0205b823b95a4f40b76a6b2f0afa3cd0dd13b8c",
+  "installed_root_recheck": "output/production-run-2026-11-05/operations-096-root-installed/report.json",
+  "installed_root_recheck_sha256": "1c53ea7f42d75dfc88039da51d03e4e3cca44a6af943d6f26647776c37c8184c",
+  "installed_tests": 5,
+  "installed_skips": 0,
+  "source_sha256": {
+    "docs/production-operations.md": "7678f9dfe1fcd8440cf7dbe1d0419135eb499478ceebae78ac9e648722b6b344",
+    "scripts/check_local_operations.py": "4a641d79206b5112b525682b25aa42f24dd28c8070c355903fae22c7c52bd283",
+    "tests/test_local_operations.py": "318d0f1395609bc603d43e241a4cee65a8e5936401e488c3046027b076ddca78"
+  },
+  "stages": [
+    "installed-loopback-start",
+    "readiness-probe",
+    "active-writer-refused",
+    "graceful-stop-and-lock-release",
+    "backup-cli",
+    "existing-backup-refused",
+    "restore-new-cli",
+    "existing-restore-refused",
+    "unknown-identity-preserved",
+    "prepare-closed-cli",
+    "inspect-maintenance-cli",
+    "marker-rollback-refused",
+    "schema-rollback-refused",
+    "same-artifact-command-restart",
+    "stopped-probe-unavailable"
+  ],
+  "runtime_acceptance": "docs/internal/shop-recovery-acceptance.json",
+  "checks": [
+    "Launch profiles preserve existing infrastructure; secrets are not placed in argv or logs.",
+    "Actual loopback start/readiness/graceful stop and same-command restart use the accepted installed wheel consumer.",
+    "SDK-free backup/restore-new and application prepare/inspect CLIs execute on owned temporary SQLite files.",
+    "Existing targets, active writers, recovery marker and changed schema-version rows are refused; unknown identity is preserved.",
+    "Root found editable imports incorrectly triggering installed-only integration. The origin gate was corrected; 5/5 tests then passed in a real installed consumer.",
+    "Documentation navigation was regenerated; 4/4 structure checks and42-skill validation passed."
+  ],
+  "historical_repository_run": {
+    "report": "output/production-run-2026-11-05/repository-operations-096-root/report.json",
+    "passed": false,
+    "tests": 295,
+    "failures": 3,
+    "resolution": "Two cached navigation snapshots overlapped root metadata edits; fresh4/4 documentation checks passed. Editable-origin integration failure fixed and rechecked in both checkout and installed consumer."
+  },
+  "limits": [
+    "Synthetic local installed consumer; no selected production host, live secret store, Telegram or provider.",
+    "Same installed artifact command restart; writer/marker/schema refusal witnesses. No cross-version compatibility or restored-service activation.",
+    "Windows directory_synced=false: no power-loss durability claim.",
+    "Candidate remains maintenance-only; no activation/unpause or live payment evidence is generated."
+  ]
+}

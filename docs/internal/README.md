@@ -74,3 +74,5 @@
 
 - [Независимая проверка 42 навыков](skill-evaluation-088-acceptance.md)
 - [Результаты и привязки проверки навыков](skill-evaluation-088-acceptance.json)
+
+- [Приемка эксплуатационной инструкции](operations-096-acceptance.json)
