@@ -1,7 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import {ScopedAsyncState} from '../dist/async-state.js';
-import {AuthenticationRequired,ValidationFailure} from '../dist/errors.js';
+import {ScopedAsyncState,AuthenticationRequired,ValidationFailure} from '../dist/index.js';
 
 function deferred(){let resolve,reject;const promise=new Promise((ok,fail)=>{resolve=ok;reject=fail;});return {promise,resolve,reject};}
 

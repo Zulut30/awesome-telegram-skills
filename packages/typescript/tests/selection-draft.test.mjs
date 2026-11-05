@@ -1,7 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import {SelectionDraftStore,PendingOperationStore} from '../dist/selection-draft.js';
-import {ValidationFailure} from '../dist/errors.js';
+import {SelectionDraftStore,PendingOperationStore,ValidationFailure} from '../dist/index.js';
 
 class MemoryStorage {
   data=new Map();failRead=false;failWrite=false;failRemove=false;
