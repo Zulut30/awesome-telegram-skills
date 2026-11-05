@@ -6,6 +6,19 @@ export function median(values) {
   return sorted.length % 2 ? sorted[middle] : (sorted[middle - 1] + sorted[middle]) / 2;
 }
 
+/** Preserve findings that require a person; zero violations is not WCAG conformance. */
+export function summarizeAxeAudit(name, result) {
+  if (!Array.isArray(result.passes) || !Array.isArray(result.violations) || !Array.isArray(result.incomplete)) {
+    throw new TypeError('Complete axe result arrays are required');
+  }
+  const findings = items => items.map(item => ({id: item.id, impact: item.impact,
+    nodes: item.nodes.length, help: item.help,
+    targets: item.nodes.map(node => node.target)}));
+  return {name, passes: result.passes.length, violations: findings(result.violations),
+    incomplete: findings(result.incomplete), manual_review_required: result.incomplete.length > 0,
+    wcag_conformance: 'not-assessed'};
+}
+
 /** Human-readable failures of measured results against budgets.json; an empty list means every gate passed. */
 export function evaluate(measured, budgets) {
   const failures = [];

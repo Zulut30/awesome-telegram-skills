@@ -15,7 +15,7 @@ import * as chromeLauncher from 'chrome-launcher';
 import lighthouse from 'lighthouse';
 import {chromium} from 'playwright';
 import {createDemoServer} from '../../examples/mini-app/server.mjs';
-import {evaluate, median} from './gates.mjs';
+import {evaluate, median, summarizeAxeAudit} from './gates.mjs';
 
 const here = path.dirname(fileURLToPath(import.meta.url)), root = path.resolve(here, '../..');
 const budgets = JSON.parse(await readFile(path.join(here, 'budgets.json'), 'utf8'));
@@ -78,7 +78,7 @@ try {
   async function audit(page, name) {
     if (!await page.evaluate(() => 'axe' in window)) await page.addScriptTag({content: axeSource});
     const result = await page.evaluate(tags => window.axe.run(document, {runOnly: {type: 'tag', values: tags}}), budgets.axe.tags);
-    axe.push({name, passes: result.passes.length, violations: result.violations.map(item => ({id: item.id, impact: item.impact, nodes: item.nodes.length, help: item.help}))});
+    axe.push(summarizeAxeAudit(name, result));
   }
   for (const [device, width, height] of [['phone', 320, 640], ['desktop', 1440, 900]]) for (const theme of ['light', 'dark']) {
     const context = await browser.newContext({viewport: {width, height}, colorScheme: theme});
@@ -103,7 +103,8 @@ try {
   await writeFile(path.join(output, 'lighthouse.json'), JSON.stringify(representative));
   const report = {passed: failures.length === 0, failures, budgets, lighthouse: {median: scores, runs: runs.map(lhr => Object.fromEntries(categories.map(category => [category, lhr.categories[category].score]))),
     version: representative.lighthouseVersion, form_factor: representative.configSettings.formFactor, throttling: representative.configSettings.throttlingMethod, metrics},
-    bundle, axe: {version: JSON.parse(await readFile(path.join(here, 'node_modules/axe-core/package.json'), 'utf8')).version, states: axe},
+    bundle, axe: {version: JSON.parse(await readFile(path.join(here, 'node_modules/axe-core/package.json'), 'utf8')).version,
+      states: axe, manual_review_required: axe.some(state => state.manual_review_required), wcag_conformance: 'not-assessed'},
     browser: browser.version(), scope: 'Local demo server without compression; Lighthouse mobile profile with simulated throttling; not a real device or Telegram WebView'};
   await writeFile(path.join(output, 'report.json'), JSON.stringify(report, null, 2) + '\n');
   console.log(JSON.stringify({passed: report.passed, failures, lighthouse: scores, bundle: {script_bytes: bundle.script_bytes, stylesheet_bytes: bundle.stylesheet_bytes, requests: bundle.requests}, axe_states: axe.length}));

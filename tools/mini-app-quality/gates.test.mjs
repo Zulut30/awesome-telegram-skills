@@ -1,7 +1,7 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import {readFile} from 'node:fs/promises';
-import {evaluate, median} from './gates.mjs';
+import {evaluate, median, summarizeAxeAudit} from './gates.mjs';
 
 const budgets = JSON.parse(await readFile(new URL('./budgets.json', import.meta.url), 'utf8'));
 const passing = () => ({
@@ -14,6 +14,25 @@ test('median of Lighthouse runs', () => {
   assert.equal(median([0.91, 0.5, 0.99]), 0.91);
   assert.equal(median([0.8, 1]), 0.9);
   assert.ok(Number.isNaN(median([])));
+});
+
+test('incomplete axe findings survive a green automatic budget and require manual review', () => {
+  const raw = {passes: [{id: 'label'}], violations: [], incomplete: [{id: 'color-contrast',
+    impact: 'serious', help: 'Review contrast', nodes: [{target: ['#gradient'], html: 'not retained'}]}]};
+  const state = summarizeAxeAudit('manual-review', raw);
+  const measured = passing(); measured.axe = [state];
+  assert.deepEqual(evaluate(measured, budgets), []);
+  assert.equal(state.manual_review_required, true);
+  assert.equal(state.wcag_conformance, 'not-assessed');
+  assert.equal(state.incomplete[0].id, 'color-contrast');
+  assert.deepEqual(state.incomplete[0].targets, [['#gradient']]);
+  assert.equal(JSON.stringify(state).includes('not retained'), false);
+  assert.equal(raw.incomplete.length, 1);
+  assert.equal(summarizeAxeAudit('no-incomplete', {...raw, incomplete: []}).manual_review_required, false);
+});
+
+test('missing axe incomplete data cannot masquerade as an empty manual review queue', () => {
+  assert.throws(() => summarizeAxeAudit('missing', {passes: [], violations: []}), /Complete axe/);
 });
 
 test('budgets pass at the limit and fail just past it', () => {
