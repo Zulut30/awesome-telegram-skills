@@ -3,6 +3,7 @@
 import datetime as dt
 import http.server
 import importlib.util
+import io
 import json
 import subprocess
 import sys
@@ -10,10 +11,13 @@ import tempfile
 import threading
 import unittest
 import zipfile
+from contextlib import redirect_stderr, redirect_stdout
 from pathlib import Path
+from unittest.mock import patch
 
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT / 'scripts'))
+from release_identity import parse_release_version
 spec = importlib.util.spec_from_file_location('live_acceptance', ROOT / 'scripts/live_acceptance.py')
 live = importlib.util.module_from_spec(spec)
 sys.modules[spec.name] = live
@@ -58,6 +62,19 @@ class FakeBotApi(http.server.BaseHTTPRequestHandler):
 
 
 class ValidationTests(unittest.TestCase):
+    def test_rc_cli_creates_canonical_not_run_report_and_check_never_claims_it_passed(self):
+        with tempfile.TemporaryDirectory(prefix='live-template-') as temporary:
+            root = Path(temporary)
+            with patch.object(live, 'ROOT', root), patch('sys.argv', ['live_acceptance.py', 'new', '--version', '1.0.0rc0']), redirect_stdout(io.StringIO()):
+                self.assertEqual(live.main(), 0)
+            folder = root / 'docs/live-checks/1.0.0-rc.0'
+            report = json.loads((folder / 'report.json').read_text(encoding='utf-8'))
+            self.assertEqual(report['release'], '1.0.0-rc.0')
+            self.assertTrue(all(entry['status'] == 'not-run' for entry in report['scenarios'].values()))
+            self.assertFalse((root / 'docs/live-checks/1.0.0rc0').exists())
+            with patch('sys.argv', ['live_acceptance.py', 'check', str(folder), '--version', '1.0.0rc0']), redirect_stderr(io.StringIO()):
+                self.assertEqual(live.main(), 1)
+
     def test_template_claims_nothing_and_a_complete_report_passes(self):
         with self.assertRaises(ReportError):
             live.validate(live.template('0.25.0'), '0.25.0', today=TODAY)
@@ -140,14 +157,17 @@ class BundleTests(unittest.TestCase):
         subprocess.run(['git', *arguments], cwd=self.repo, check=True, capture_output=True)
 
     def release(self, version, report=None):
-        (self.repo / 'packages/python/pyproject.toml').write_text(f'[project]\nversion = "{version}"\n', encoding='utf-8')
+        release = parse_release_version(version)
+        (self.repo / 'packages/python/pyproject.toml').write_text(f'[project]\nversion = "{release.python_version}"\n', encoding='utf-8')
+        (self.repo / 'packages/typescript').mkdir(exist_ok=True)
+        (self.repo / 'packages/typescript/package.json').write_text(json.dumps({'version': release.npm_version}), encoding='utf-8')
         if report is not None:
-            folder = self.repo / live.REPORTS / version
+            folder = self.repo / live.REPORTS / release.identity
             folder.mkdir(parents=True)
             (folder / 'report.json').write_text(json.dumps(report, ensure_ascii=False), encoding='utf-8')
         self.git('add', '-A')
         self.git('commit', '-q', '-m', version, '--allow-empty')
-        self.git('tag', f'v{version}')
+        self.git('tag', release.tag)
 
     def test_old_releases_skip_new_ones_require_a_valid_report(self):
         self.release('0.24.0')
@@ -163,6 +183,53 @@ class BundleTests(unittest.TestCase):
         with zipfile.ZipFile(self.repo.parent / 'out/live-report-0.25.0.zip') as archive:
             self.assertEqual(archive.namelist(), ['report.json'])
         self.assertIn('| service-bot | passed |', (self.repo.parent / 'out/live-report-0.25.0.md').read_text(encoding='utf-8'))
+
+    def test_rc_missing_report_cannot_bypass_base_threshold(self):
+        self.release('0.25.0rc1')
+        with self.assertRaisesRegex(ReportError, 'docs/live-checks/0.25.0-rc.1/report.json is required'):
+            live.bundle('v0.25.0-rc.1', self.repo.parent / 'out', self.repo)
+
+    def test_even_rc_below_historical_threshold_requires_a_report(self):
+        self.release('0.24.0rc0')
+        with self.assertRaisesRegex(ReportError, 'report.json is required'):
+            live.bundle('v0.24.0-rc.0', self.repo.parent / 'out', self.repo)
+
+    def test_rc_and_final_require_passed_while_numeric_zero_retains_blocked_report(self):
+        for version in ['0.25.0', '0.25.1-rc.1', '1.0.0']:
+            report = valid()
+            report['release'] = version
+            entry = report['scenarios']['shop']
+            entry['status'] = 'blocked'
+            for case in entry['cases'].values():
+                case.update(status='blocked', note='Fixture lacks a test bot')
+            self.release(version, report)
+            out = self.repo.parent / version
+            if version == '0.25.0':
+                self.assertEqual(live.bundle('v' + version, out, self.repo)['scenarios']['shop']['status'], 'blocked')
+            else:
+                with self.assertRaisesRegex(ReportError, 'require every acceptance status to be passed'):
+                    live.bundle('v' + version, out, self.repo)
+                self.assertFalse(out.exists())
+
+    def test_passed_rc_reads_committed_identity_and_keeps_canonical_archive_name(self):
+        report = valid()
+        report['release'] = '1.0.0-rc.1'
+        self.release('1.0.0rc1', report)
+        (self.repo / 'packages/python/pyproject.toml').write_text('[project]\nversion="9.9.9"', encoding='utf-8')
+        (self.repo / 'packages/typescript/package.json').write_text('{"version":"invalid"}', encoding='utf-8')
+        out = self.repo.parent / 'out'
+        self.assertEqual(live.bundle('v1.0.0-rc.1', out, self.repo)['release'], '1.0.0-rc.1')
+        self.assertTrue((out / 'live-report-1.0.0-rc.1.zip').is_file())
+        report['release'] = '1.0.0rc1'
+        with self.assertRaisesRegex(ReportError, 'release must be 1.0.0-rc.1'):
+            live.validate(report, '1.0.0rc1', today=TODAY)
+
+    def test_rc_templates_are_canonical_and_do_not_claim_acceptance(self):
+        report = live.template('1.0.0rc0')
+        self.assertEqual(report['release'], '1.0.0-rc.0')
+        self.assertTrue(all(entry['status'] == 'not-run' for entry in report['scenarios'].values()))
+        with self.assertRaisesRegex(ReportError, 'checked_at'):
+            live.validate(report, '1.0.0-rc.0')
 
 
 if __name__ == '__main__':

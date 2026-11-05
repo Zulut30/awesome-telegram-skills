@@ -17,6 +17,9 @@ import tarfile
 import tomllib
 import zipfile
 
+sys.path.insert(0, str(Path(__file__).resolve().parent))
+from release_identity import ReleaseIdentityError, read_release_identity  # noqa: E402
+
 ROOT = Path(__file__).resolve().parents[1]
 MAX_FILES = 4096
 MAX_FILE_BYTES = 8 * 1024 * 1024
@@ -102,8 +105,13 @@ def verify_distributions(root: Path, wheel: Path, tarball: Path) -> dict:
     python = tomllib.loads((root / 'packages/python/pyproject.toml').read_text(encoding='utf-8'))['project']
     ts_path = root / 'packages/typescript'
     ts = json.loads((ts_path / 'package.json').read_text(encoding='utf-8'))
-    version = python['version']
-    _require(ts['version'] == version, 'Package versions differ')
+    try:
+        release = read_release_identity(root / 'packages/python/pyproject.toml', ts_path / 'package.json')
+    except ReleaseIdentityError as error:
+        raise DistributionViolation('Package release identities differ or are invalid') from error
+    version = release.python_version
+    _require(wheel.name == release.wheel_filename(python['name']), 'Wheel filename differs from release identity')
+    _require(tarball.name == release.npm_tarball_filename(ts['name']), 'Tarball filename differs from release identity')
     init = (root / 'packages/python/src/telegram_patterns/__init__.py').read_text(encoding='utf-8')
     declared = re.search(r"^__version__ = '([^']+)'$", init, re.M)
     _require(declared is not None and declared.group(1) == version, 'telegram_patterns.__version__ differs from pyproject.toml')
@@ -149,7 +157,7 @@ def verify_distributions(root: Path, wheel: Path, tarball: Path) -> dict:
     _require(dict(entry['console_scripts']) == python['scripts'], 'Wheel console entry points mismatch')
     _verify_record(py_files, prefix + 'RECORD')
     recipes = json.loads(py_files['telegram_patterns/resources/recipes.json'])
-    _require(recipes.get('library_version') == version, 'Bundled recipe version mismatch')
+    _require(recipes.get('library_version') == release.identity, 'Bundled recipe version mismatch')
 
     ts_files = _read_archive(tarball, wheel=False)
     ts_expected = {'package/package.json': (ts_path / 'package.json').read_bytes(),
@@ -180,7 +188,7 @@ def verify_distributions(root: Path, wheel: Path, tarball: Path) -> dict:
              'Framework peers must stay optional; the core entry point has no dependencies')
     _require('**/*.css' in manifest.get('sideEffects', []), 'CSS must remain a declared side effect')
     _require(manifest.get('license') == 'MIT', 'TypeScript package license changed')
-    return {'passed': True, 'version': version, 'network': False, 'extracts_files': False,
+    return {'passed': True, 'version': release.identity, 'network': False, 'extracts_files': False,
             'wheel': {'files': len(py_files), 'source_files_exact': len(expected), 'record_verified': True},
             'tarball': {'files': len(ts_files), 'modules_with_types': len(sources), 'css_exact': True},
             'limits': 'Content/metadata check; imports, installed types, CLI and browser runtime are separate consumer stages.'}

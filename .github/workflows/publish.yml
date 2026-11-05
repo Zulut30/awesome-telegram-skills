@@ -28,13 +28,32 @@ jobs:
     timeout-minutes: 10
     outputs:
       tag: ${{ steps.tag.outputs.tag }}
+      npm_tag: ${{ steps.tag.outputs.npm_tag }}
     steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97 # v7.0.0
+        with:
+          python-version: '3.13'
       - id: tag
         env:
           TAG: ${{ github.event.release.tag_name || inputs.tag }}
         run: |
-          [[ "$TAG" =~ ^v[0-9]+\.[0-9]+\.[0-9]+$ ]] || { echo "::error::Not a release tag: $TAG"; exit 1; }
-          echo "tag=$TAG" >> "$GITHUB_OUTPUT"
+          python - <<'PY'
+          import os
+          from scripts.build_release import validate_tag
+          release = validate_tag(os.environ['TAG'])
+          with open(os.environ['GITHUB_OUTPUT'], 'a', encoding='utf-8') as stream:
+              stream.write(f'tag={release.tag}\n')
+              stream.write('npm_tag=' + ('rc' if release.is_prerelease else 'latest') + '\n')
+          PY
+      - name: Require acceptance reports from the selected tag
+        env:
+          TAG: ${{ steps.tag.outputs.tag }}
+        run: |
+          python scripts/device_report.py bundle --ref "$TAG" --output acceptance
+          python scripts/live_acceptance.py bundle --ref "$TAG" --output acceptance
       - name: Download and check SHA256SUMS
         env:
           GH_TOKEN: ${{ github.token }}
@@ -42,6 +61,21 @@ jobs:
         run: |
           gh release download "$TAG" --repo "$GITHUB_REPOSITORY" --dir dist
           (cd dist && sha256sum -c SHA256SUMS)
+          python - <<'PY'
+          import json, os, subprocess, tomllib
+          from pathlib import Path
+          from scripts.build_release import validate_tag
+          release = validate_tag(os.environ['TAG'])
+          def manifest(path):
+              return subprocess.run(['git', 'show', f'{release.tag}:{path}'], check=True,
+                  capture_output=True, text=True).stdout
+          python = tomllib.loads(manifest('packages/python/pyproject.toml'))['project']
+          npm = json.loads(manifest('packages/typescript/package.json'))
+          expected = {release.wheel_filename(python['name']), release.npm_tarball_filename(npm['name'])}
+          actual = {path.name for path in Path('dist').iterdir() if path.suffix in {'.whl', '.tgz'}}
+          if actual != expected:
+              raise SystemExit('Downloaded artifact basenames differ from the committed release identity')
+          PY
       - uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
         with:
           name: release-artifacts
@@ -86,4 +120,6 @@ jobs:
           registry-url: 'https://registry.npmjs.org'
       # Trusted publishing needs npm >= 11.5.1; provenance is attached automatically.
       - run: npm install -g npm@11
-      - run: npm publish dist/*.tgz --access public
+      - env:
+          DIST_TAG: ${{ needs.artifacts.outputs.npm_tag }}
+        run: npm publish dist/*.tgz --access public --tag "$DIST_TAG"

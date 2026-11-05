@@ -16,17 +16,20 @@ import json
 import re
 import subprocess
 import sys
-import tomllib
 from pathlib import Path
+
+sys.path.insert(0, str(Path(__file__).resolve().parent))
+from release_identity import (  # noqa: E402
+    ReleaseIdentityError, parse_release_tag, parse_release_version, read_release_identity,
+)
 
 ROOT = Path(__file__).resolve().parents[1]
 UNRELEASED = 'Не выпущено'
 HEADING = re.compile(r'^## (.+)$', re.M)
-VERSION = re.compile(r'(\d+)\.(\d+)\.(\d+)(?=$| — )')
 
 
 def key(version: str) -> tuple[int, ...]:
-    return tuple(int(part) for part in version.split('.'))
+    return parse_release_version(version).precedence_key
 
 
 def sections(text: str) -> tuple[list[str], list[str]]:
@@ -36,11 +39,15 @@ def sections(text: str) -> tuple[list[str], list[str]]:
     if not headings or headings[0] != UNRELEASED:
         found.append(f'the first section must be "## {UNRELEASED}"')
     for heading in headings[1:]:
-        match = VERSION.match(heading)
-        if not match:
+        candidate = heading.partition(' — ')[0]
+        try:
+            release = parse_release_version(candidate)
+            if candidate != release.identity:
+                raise ReleaseIdentityError('Use canonical release identity')
+        except ReleaseIdentityError:
             found.append(f'"## {heading}" is not a version section (use "## X.Y.Z" or "## X.Y.Z — note")')
             continue
-        versions.append(match.group(0))
+        versions.append(release.identity)
     for version in sorted({version for version in versions if versions.count(version) > 1}, key=key):
         found.append(f'{version}: more than one section')
     if versions != sorted(versions, key=key, reverse=True):
@@ -50,7 +57,14 @@ def sections(text: str) -> tuple[list[str], list[str]]:
 
 def problems(text: str, tags: list[str], package_version: str, require_tag: str | None = None) -> list[str]:
     versions, found = sections(text)
-    tagged = sorted({tag[1:] for tag in tags if re.fullmatch(r'v\d+\.\d+\.\d+', tag)}, key=key)
+    canonical_tags = set()
+    for tag in tags:
+        try:
+            canonical_tags.add(parse_release_tag(tag).identity)
+        except ReleaseIdentityError:
+            continue  # non-release tags do not participate in release history
+    tagged = sorted(canonical_tags, key=key)
+    package_version = parse_release_version(package_version).identity
     for version in tagged:
         if version not in versions:
             found.append(f'tag v{version} has no CHANGELOG section')
@@ -62,7 +76,11 @@ def problems(text: str, tags: list[str], package_version: str, require_tag: str 
     if package_version not in versions and versions and key(package_version) <= key(versions[0]):
         found.append(f'package version {package_version} has no section and is not newer than {versions[0]}')
     if require_tag:
-        version = require_tag.removeprefix('v')
+        try:
+            version = parse_release_tag(require_tag).identity
+        except ReleaseIdentityError:
+            found.append(f'{require_tag}: not a canonical release tag')
+            return found
         if version not in versions:
             found.append(f'{require_tag}: add a "## {version}" section before releasing')
     return found
@@ -74,7 +92,12 @@ def main() -> int:
     args = parser.parse_args()
     text = (ROOT / 'CHANGELOG.md').read_text(encoding='utf-8')
     tags = subprocess.run(['git', 'tag', '--list', 'v*'], cwd=ROOT, capture_output=True, text=True, check=True).stdout.split()
-    package = tomllib.loads((ROOT / 'packages/python/pyproject.toml').read_text(encoding='utf-8'))['project']['version']
+    try:
+        package = read_release_identity(ROOT / 'packages/python/pyproject.toml',
+                                        ROOT / 'packages/typescript/package.json').identity
+    except ReleaseIdentityError as error:
+        sys.stderr.write(str(error) + '\n')
+        return 1
     found = problems(text, tags, package, args.tag)
     if found:
         sys.stderr.write('\n'.join(found) + '\n')

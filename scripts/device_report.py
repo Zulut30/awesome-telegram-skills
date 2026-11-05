@@ -22,6 +22,10 @@ import sys
 import tarfile
 import zipfile
 
+sys.path.insert(0, str(Path(__file__).resolve().parent))
+from build_release import ref_identity  # noqa: E402
+from release_identity import ReleaseIdentityError, parse_release_version  # noqa: E402
+
 ROOT = Path(__file__).resolve().parents[1]
 REPORTS = 'docs/device-checks'
 REQUIRED_FROM = (0, 25, 0)
@@ -40,16 +44,31 @@ class ReportError(ValueError):
     """The report is missing, malformed or incomplete."""
 
 
-def version_tuple(version: str) -> tuple[int, int, int]:
-    match = re.fullmatch(r'(\d+)\.(\d+)\.(\d+)', version)
-    if match is None:
+def canonical_version(version: str) -> str:
+    try:
+        return parse_release_version(version).identity
+    except ReleaseIdentityError:
         raise ReportError(f'Not a release version: {version}')
-    return tuple(int(part) for part in match.groups())  # type: ignore[return-value]
+
+
+def version_tuple(version: str) -> tuple[int, int, int]:
+    return parse_release_version(canonical_version(version)).release
+
+
+def production_report_required(version: str) -> bool:
+    release = parse_release_version(canonical_version(version))
+    return release.is_prerelease or release.release >= (1, 0, 0)
+
+
+def require_production_pass(summary: dict, version: str, collection: str) -> None:
+    if production_report_required(version):
+        if any(item['status'] != 'passed' for item in summary[collection].values()):
+            raise ReportError('RC and production releases require every acceptance status to be passed')
 
 
 def template(version: str) -> dict:
     """A report where nothing is claimed yet: every case is not-run until someone checks it on a device."""
-    version_tuple(version)
+    version = canonical_version(version)
     platform = {'device': '', 'os': '', 'telegram': '', 'launch': 'menu button, Telegram test environment', 'status': 'not-run',
                 'cases': {case: {'status': 'not-run', 'note': 'not checked yet'} for case in CASES}, 'screenshots': []}
     return {'schema_version': 1, 'release': version, 'app': 'examples/mini-app demo', 'checked_at': '', 'checked_by': '',
@@ -66,6 +85,7 @@ def _text(value: object, field: str, *, required: bool = True, limit: int = 300)
 
 def validate(report: object, version: str, files: dict[str, bytes], *, today: dt.date | None = None) -> dict:
     """Check a parsed report and its screenshot bytes; return a summary. Raises ReportError."""
+    version = canonical_version(version)
     if not isinstance(report, dict) or report.get('schema_version') != 1:
         raise ReportError('report.json must be an object with schema_version 1')
     if report.get('release') != version:
@@ -153,7 +173,7 @@ def read_directory(folder: Path) -> tuple[dict, dict[str, bytes]]:
 
 def read_ref(ref: str, version: str, root: Path = ROOT, reports: str = REPORTS) -> tuple[dict, dict[str, bytes]] | None:
     """Report files of the ref via git archive; None when the ref has no report directory."""
-    prefix = f'{reports}/{version}'
+    prefix = f'{reports}/{canonical_version(version)}'
     listed = subprocess.run(['git', 'ls-tree', '--name-only', ref, prefix + '/'], cwd=root, capture_output=True, text=True)
     if listed.returncode or not listed.stdout.strip():
         return None
@@ -175,24 +195,32 @@ def read_ref(ref: str, version: str, root: Path = ROOT, reports: str = REPORTS) 
 
 
 def ref_version(ref: str, root: Path = ROOT) -> str:
-    pyproject = subprocess.run(['git', 'show', f'{ref}:packages/python/pyproject.toml'], cwd=root, check=True,
-                               capture_output=True, text=True).stdout
-    match = re.search(r'^version\s*=\s*"([^"]+)"', pyproject, re.M)
-    if match is None:
-        raise ReportError(f'{ref}: no version in packages/python/pyproject.toml')
-    return match.group(1)
+    try:
+        return ref_identity(ref, root).identity
+    except (ReleaseIdentityError, subprocess.CalledProcessError) as error:
+        raise ReportError(f'{ref}: invalid or unavailable release manifests') from error
+
+
+def resolve_ref(ref: str, root: Path = ROOT) -> str:
+    try:
+        return subprocess.run(['git', 'rev-parse', f'{ref}^{{commit}}'], cwd=root, check=True,
+                              capture_output=True, text=True).stdout.strip()
+    except subprocess.CalledProcessError as error:
+        raise ReportError('Release ref cannot be resolved to a commit') from error
 
 
 def bundle(ref: str, output: Path, root: Path = ROOT) -> dict:
-    version = ref_version(ref, root)
-    found = read_ref(ref, version, root)
+    commit = resolve_ref(ref, root)
+    version = ref_version(commit, root)
+    found = read_ref(commit, version, root)
     if found is None:
-        if version_tuple(version) >= REQUIRED_FROM:
+        if version_tuple(version) >= REQUIRED_FROM or production_report_required(version):
             raise ReportError(f'{ref}: {REPORTS}/{version}/report.json is required from '
                               f'{".".join(map(str, REQUIRED_FROM))}; see docs/device-qa-checklist.md')
         return {'release': version, 'skipped': True, 'reason': 'released before device reports were required'}
     report, files = found
     summary = validate(report, version, files)
+    require_production_pass(summary, version, 'platforms')
     output.mkdir(parents=True, exist_ok=True)
     with zipfile.ZipFile(output / f'device-report-{version}.zip', 'w', zipfile.ZIP_DEFLATED) as archive:
         for name in sorted(files):
@@ -215,6 +243,8 @@ def main() -> int:
     pack.add_argument('--output', type=Path, required=True)
     args = parser.parse_args()
     try:
+        if args.command in {'new', 'check'}:
+            args.version = canonical_version(args.version)
         if args.command == 'new':
             folder = ROOT / REPORTS / args.version
             folder.mkdir(parents=True, exist_ok=False)
@@ -224,6 +254,7 @@ def main() -> int:
         elif args.command == 'check':
             report, files = read_directory(args.folder)
             result = validate(report, args.version, files)
+            require_production_pass(result, args.version, 'platforms')
         else:
             result = bundle(args.ref, args.output)
     except (ReportError, FileExistsError) as error:
