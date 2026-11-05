@@ -30,6 +30,7 @@ class LinkPortabilityTests(unittest.TestCase):
                     self.skipTest('Windows symlinks need privileges; junction detection needs Python 3.12+')
                 # A real unprivileged Windows link keeps the filesystem check meaningful.
                 import _winapi
+
                 _winapi.CreateJunction(str(target), str(link))
             for module in (diagnostics, starter):
                 with self.subTest(module=module.__name__):

@@ -173,7 +173,6 @@ __all__ = [
     "YooKassaCreateOptions",
     "YooKassaPeerPolicy",
     "binding_reference",
-
     "BotSettings",
     "InvalidInitData",
     "VerifiedLaunch",

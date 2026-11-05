@@ -85,10 +85,27 @@ class ModuleLayoutTests(unittest.TestCase):
     def test_aiogram_code_lives_in_the_subpackage_and_old_paths_alias_it(self):
         moved = {path.stem for path in (PACKAGE / '_aiogram').glob('*.py')} - {'__init__', 'common'}
         # Preserve the historical import paths while permitting new private implementations.
-        legacy_aliases = {'_dialog_storage', 'api', 'calendar', 'calendar_aiogram', 'dialog_fields',
-                          'dialog_forms', 'events', 'forms', 'fsm_storage', 'inline_mode_aiogram',
-                          'keyboard_layouts', 'keyboards', 'media_aiogram', 'native_keyboards',
-                          'navigation', 'platform_aiogram', 'polls_aiogram', 'profiles_aiogram', 'selection_aiogram'}
+        legacy_aliases = {
+            '_dialog_storage',
+            'api',
+            'calendar',
+            'calendar_aiogram',
+            'dialog_fields',
+            'dialog_forms',
+            'events',
+            'forms',
+            'fsm_storage',
+            'inline_mode_aiogram',
+            'keyboard_layouts',
+            'keyboards',
+            'media_aiogram',
+            'native_keyboards',
+            'navigation',
+            'platform_aiogram',
+            'polls_aiogram',
+            'profiles_aiogram',
+            'selection_aiogram',
+        }
         self.assertEqual(_aliases(), legacy_aliases)
         for alias in legacy_aliases - {'calendar'}:
             module = importlib.import_module('telegram_patterns.' + alias)
