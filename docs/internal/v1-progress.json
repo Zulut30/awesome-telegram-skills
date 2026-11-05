@@ -1122,10 +1122,16 @@
       "id": 54,
       "title": "Сделать формы удобными для исправления",
       "requirement": "Поддержать labels, input modes, inline validation, сохранение ввода и фокус на ошибке; отказ сервера не стирает заполненную форму.",
-      "status": "pending",
-      "commit_subject": null,
-      "artifacts": [],
-      "evidence": []
+      "status": "done",
+      "commit_subject": "roadmap(054): accept corrective forms without losing input",
+      "artifacts": [
+        "docs/internal/local-026-acceptance.json",
+        "docs/internal/local-026-acceptance.md"
+      ],
+      "evidence": [
+        "Exact d6109aa 0.26 artifacts: 92 stages, 816 Python tests (3 environment skips), 88 TypeScript tests, installed UI and public API Chrome consumers passed. No live Telegram/provider/device/screen-reader/pilot proof is inferred.",
+        "Labels, hints and errors are associated; required/local validation focuses the first error and a server rejection preserves literal input, selection and controls."
+      ]
     },
     {
       "id": 55,
