@@ -47,3 +47,7 @@
 - [Доступность внешней приемки](external-acceptance-availability.md)
 
 - [Сессии и backend магазина](shop-backend-production-contract.md)
+
+- [Эксплуатационная приемка: 5 ноября](operations-readiness-2026-11-05.md)
+
+- [Локальная приемка надежной доставки 0.25.0](delivery-025-acceptance.md)

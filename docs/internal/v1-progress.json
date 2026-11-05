@@ -789,10 +789,16 @@
       "id": 32,
       "title": "Защитить действия от конкуренции",
       "requirement": "Проверять автора, scope, revision и operation ID; два worker или повторное нажатие не создают двойную запись бизнес-операции.",
-      "status": "pending",
-      "commit_subject": null,
-      "artifacts": [],
-      "evidence": []
+      "status": "done",
+      "commit_subject": "roadmap(032): accept guarded concurrent action receipts",
+      "artifacts": [
+        "docs/internal/delivery-025-acceptance.md",
+        "docs/internal/delivery-025-acceptance.json"
+      ],
+      "evidence": [
+        "0.25.0 immutable source ab1a432:90 stages PASS;715 Python (3 environment skips),61 TypeScript,Chrome; exact hashes in summary.",
+        "test_guarded_actions; installed stage durable-concurrent_actions; Current ACL before effect/replay, actor/origin bindings, two processes, revision race and crash before/after commit."
+      ]
     },
     {
       "id": 33,

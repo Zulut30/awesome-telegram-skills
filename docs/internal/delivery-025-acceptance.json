@@ -1,0 +1,95 @@
+{
+  "schema_version": 1,
+  "kind": "local-acceptance-summary",
+  "version": "0.25.0",
+  "date": "2026-11-05",
+  "source_commit": "ab1a432edad086ea014ff6df565d9603df2630e2",
+  "equivalent_commit_after_message_repair": "65995053e026046b3b1a992c0d09a58e21aa32c9",
+  "source_tree": "9142abf8cc1db54fd2c3356c512c1db13a775795",
+  "source_archive_sha256": "99b20d0587724bb86733f73cd07344a1d996b27f221aec1c9eb7965d83656e08",
+  "report_path": "output/pattern-library-0.25.0/distribution-report.json",
+  "report_sha256": "fcee0c60546195dec2b29f6c06879350ea2ee3466c875f64e049d60d4aaa2a9d",
+  "stages": 90,
+  "python_tests": 715,
+  "python_skipped": 3,
+  "typescript_tests": 61,
+  "browser": "passed",
+  "coverage": {
+    "statements_percent": 92.03,
+    "branches_percent": 84.8,
+    "guarded_modules_full_branches": true
+  },
+  "artifacts": [
+    {
+      "name": "awesome_telegram_patterns-0.25.0-py3-none-any.whl",
+      "bytes": 479877,
+      "sha256": "2dcdf57c1a88d81112a6dcdcac81e79cc0e4f4c8081fbd5c37f6c486383902a4"
+    },
+    {
+      "name": "awesome-telegram-patterns-0.25.0.tgz",
+      "bytes": 34956,
+      "sha256": "d35938d42d76d70e87ce58741d7a964f1138055ab2675a8bbfb92072609c48a5"
+    }
+  ],
+  "items": {
+    "32": {
+      "tests": "test_guarded_actions",
+      "installed_stage": "durable-concurrent_actions",
+      "component": "SQLiteOnce.run_guarded",
+      "observations": "Current ACL before effect/replay, actor/origin bindings, two processes, revision race and crash before/after commit."
+    },
+    "33": {
+      "tests": "test_webhook",
+      "installed_stage": "webhook-loopback",
+      "component": "WebhookReceiver",
+      "observations": "Real HTTP secret/body/content boundaries, receipt committed before success, duplicate/conflict, storage503 and decode quarantine."
+    },
+    "34": {
+      "tests": "test_inbox",
+      "installed_stage": "durable-inbox",
+      "component": "SQLiteInbox",
+      "observations": "Versioned durable receipt, duplicate/conflict/quarantine, fenced leases, multi-process claims and restart after business commit."
+    },
+    "35": {
+      "tests": "test_outbox",
+      "installed_stage": "durable-outbox",
+      "component": "SQLiteOutbox",
+      "observations": "Same-connection business+intent transaction, real process crashes, lost fake-provider response, unknown without resend and CAS reconciliation."
+    },
+    "36": {
+      "tests": "test_errors/test_outbox/test_jobs",
+      "installed_stage": "durable-outbox",
+      "component": "safe_error_report",
+      "observations": "Read/write outcomes separated; lost write and lease loss require reconcile; confirmed flood refusal has persisted bounded retry."
+    },
+    "37": {
+      "tests": "test_jobs",
+      "installed_stage": "durable-jobs",
+      "component": "SQLiteJobQueue",
+      "observations": "Fail-closed recipient policy, optout/permanent recipient failure, shared rate reservation and persisted bounded flood cooldown."
+    },
+    "38": {
+      "tests": "test_jobs",
+      "installed_stage": "durable-jobs",
+      "component": "SQLiteJobQueue",
+      "observations": "Persisted status/deadline/cancel/attempts, concurrent workers and real restart; sending expiry stays unknown and cancellation has explicit limits."
+    },
+    "39": {
+      "tests": "test_worker",
+      "installed_stage": "api-reference-consumer",
+      "component": "InboxWorker",
+      "observations": "Stop admission then drain, session closure after owned work, repeated cancellation joins SQLite thread, decode/handler failures retained."
+    },
+    "40": {
+      "tests": "test_telemetry",
+      "installed_stage": "api-reference-consumer",
+      "component": "Telemetry",
+      "observations": "Bot/domain/type-scoped HMAC refs connect update/action/operation/job; isolated contexts, finite labels, latency/retry/failure and secret canaries."
+    }
+  },
+  "limits": [
+    "Local Windows plus fresh installed core/SDK/TypeScript/Chrome consumers; no live Telegram/device/provider/human/pilot proof.",
+    "Components remain experimental. Repository CI has separately tracked style/docs/build/migration/harness corrections; production is not accepted.",
+    "Full raw report/logs are local output; this tracked file is a compact summary with exact artifact and source binding."
+  ]
+}
