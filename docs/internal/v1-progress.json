@@ -1383,10 +1383,19 @@
       "id": 74,
       "title": "Реализовать полный Stars-сценарий",
       "requirement": "Invoice, pre-checkout ответ в установленный срок, `successful_payment`, сохраненный charge ID и возврат; доступ выдается после подтвержденной оплаты.",
-      "status": "pending",
-      "commit_subject": null,
-      "artifacts": [],
-      "evidence": []
+      "status": "done",
+      "commit_subject": "roadmap(074): accept verified Stars payment implementation",
+      "artifacts": [
+        "docs/stars-payments.md",
+        "packages/python/tests/test_stars_payments.py",
+        "examples/shop/tests/test_precheckout.py",
+        "docs/internal/stars-074-acceptance.json"
+      ],
+      "evidence": [
+        "Exact0.28 installed15 Stars tests passed including full Dispatcher invoice/pre-checkout/payment/charge/refund/access chain, duplicate and crash/reopen cases.",
+        "Exact installed shop61-test suite proves dedicated pre-checkout lane answers within2seconds while ordinary handler is blocked, with expiry/overload/lost-response/restart refusals.",
+        "Root matched5 current source/test files to accepted commits and rechecked the official Stars process; real Telegram payment remains explicitly unperformed."
+      ]
     },
     {
       "id": 75,

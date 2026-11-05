@@ -78,3 +78,5 @@
 - [Приемка эксплуатационной инструкции](operations-096-acceptance.json)
 
 - [Приемка адаптивных композиций в браузере](responsive-056-acceptance.json)
+
+- [Приемка реализации платежей Stars](stars-074-acceptance.json)

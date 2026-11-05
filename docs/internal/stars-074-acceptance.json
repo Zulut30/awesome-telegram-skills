@@ -1,0 +1,79 @@
+{
+  "schema_version": 1,
+  "passed": true,
+  "kind": "stars-implementation-acceptance",
+  "metadata_head": "3e5e2369ced02142a7f5bd9063b7642ee4e15506",
+  "requirement": "Invoice, pre-checkout ответ в установленный срок, `successful_payment`, сохраненный charge ID и возврат; доступ выдается после подтвержденной оплаты.",
+  "library_acceptance": "docs/internal/local-028-acceptance.json",
+  "shop_acceptance": "docs/internal/shop-recovery-acceptance.json",
+  "library_log_sha256": "25f015b556375e0d22391f0613bbc4b7acfd6baef9251c080ebcd84f4ef18a6d",
+  "shop_log_sha256": "dbfd8f4eeaf92be76330fd913b73426b64cca981d6bf21064ecfaca486e8d761",
+  "library_test_count": 15,
+  "library_test_lines": [
+    "test_bounded_history_only_and_acl_recheck_before_lookup (test_stars_payments.StarsPaymentTests.test_bounded_history_only_and_acl_recheck_before_lookup) ... ok",
+    "test_constructor_route_history_limits_and_unstarted_reconciliation_are_explicit (test_stars_payments.StarsPaymentTests.test_constructor_route_history_limits_and_unstarted_reconciliation_are_explicit) ... ok",
+    "test_current_acl_at_reservation_start_and_replay_blocks_native_send (test_stars_payments.StarsPaymentTests.test_current_acl_at_reservation_start_and_replay_blocks_native_send) ... ok",
+    "test_full_sdk_invoice_precheckout_paid_duplicate_refund_history_and_access (test_stars_payments.StarsPaymentTests.test_full_sdk_invoice_precheckout_paid_duplicate_refund_history_and_access) ... ok",
+    "test_history_mismatch_absence_direction_fraction_time_and_optional_payload_stay_unknown (test_stars_payments.StarsPaymentTests.test_history_mismatch_absence_direction_fraction_time_and_optional_payload_stay_unknown) ... ok",
+    "test_native_timeout_preserves_unknown_and_never_automatically_resends (test_stars_payments.StarsPaymentTests.test_native_timeout_preserves_unknown_and_never_automatically_resends) ... ok",
+    "test_out_of_order_refunded_update_then_paid_never_grants_access (test_stars_payments.StarsPaymentTests.test_out_of_order_refunded_update_then_paid_never_grants_access) ... ok",
+    "test_recurring_receipt_uses_native_period_and_refund_revokes_only_its_charge (test_stars_payments.StarsPaymentTests.test_recurring_receipt_uses_native_period_and_refund_revokes_only_its_charge) ... ok",
+    "test_refunded_update_after_history_is_one_financial_effect_and_wrong_amount_denied (test_stars_payments.StarsPaymentTests.test_refunded_update_after_history_is_one_financial_effect_and_wrong_amount_denied) ... ok",
+    "test_subscription_period_boundary_and_naive_message_time_are_rejected (test_stars_payments.StarsPaymentTests.test_subscription_period_boundary_and_naive_message_time_are_rejected) ... ok",
+    "test_true_false_error_and_cancel_never_confirm_without_authoritative_refund (test_stars_payments.StarsPaymentTests.test_true_false_error_and_cancel_never_confirm_without_authoritative_refund) ... ok",
+    "test_trusted_refund_update_racing_native_reply_settles_without_extra_history (test_stars_payments.StarsPaymentTests.test_trusted_refund_update_racing_native_reply_settles_without_extra_history) ... ok",
+    "test_wrong_bot_owner_amount_currency_payload_and_context_never_map_payment (test_stars_payments.StarsPaymentTests.test_wrong_bot_owner_amount_currency_payload_and_context_never_map_payment) ... ok",
+    "test_crash_after_native_effect_reopens_and_history_reconciles_without_resending (test_stars_payments.StarsProcessTests.test_crash_after_native_effect_reopens_and_history_reconciles_without_resending) ... ok",
+    "test_two_processes_cannot_dispatch_same_full_refund_twice (test_stars_payments.StarsProcessTests.test_two_processes_cannot_dispatch_same_full_refund_twice) ... ok"
+  ],
+  "source_witnesses": {
+    "packages/python/src/telegram_patterns/_aiogram/stars_payments.py": {
+      "accepted_source_commit": "92a9d151dc57d85cc5f1eb614f9980e808b36b59",
+      "committed_sha256": "57ecfa4335210f3ebbd7622e2c4dfe0c7d7f06995fb9e5320a1ba116137edfc2",
+      "current_file_sha256": "57ecfa4335210f3ebbd7622e2c4dfe0c7d7f06995fb9e5320a1ba116137edfc2",
+      "text_matches": true
+    },
+    "packages/python/tests/test_stars_payments.py": {
+      "accepted_source_commit": "92a9d151dc57d85cc5f1eb614f9980e808b36b59",
+      "committed_sha256": "583e68c525179251ed2e61afc942b173cde61d3b61f9e68f83232480f97f540b",
+      "current_file_sha256": "583e68c525179251ed2e61afc942b173cde61d3b61f9e68f83232480f97f540b",
+      "text_matches": true
+    },
+    "examples/api-reference/python/bot_stars_payments.py": {
+      "accepted_source_commit": "92a9d151dc57d85cc5f1eb614f9980e808b36b59",
+      "committed_sha256": "b120175313def60a00bee0ddb857717f556bddda71a42f64be050dc1c4afab64",
+      "current_file_sha256": "b120175313def60a00bee0ddb857717f556bddda71a42f64be050dc1c4afab64",
+      "text_matches": true
+    },
+    "examples/shop/src/telegram_shop_example/polling.py": {
+      "accepted_source_commit": "524b2ead9a1e25901f24f74e46f5523f247b0e7b",
+      "committed_sha256": "6088279a0215b47c2e82fd92f6521ec553f955027f07b443fa8be3070fd465b8",
+      "current_file_sha256": "6088279a0215b47c2e82fd92f6521ec553f955027f07b443fa8be3070fd465b8",
+      "text_matches": true
+    },
+    "examples/shop/tests/test_precheckout.py": {
+      "accepted_source_commit": "524b2ead9a1e25901f24f74e46f5523f247b0e7b",
+      "committed_sha256": "bc81d00e0ec14fbcdb559d65912ad3628ad09143589fc63e680178218dd5c0c7",
+      "current_file_sha256": "bc81d00e0ec14fbcdb559d65912ad3628ad09143589fc63e680178218dd5c0c7",
+      "text_matches": true
+    }
+  },
+  "official_contract_recheck": {
+    "date": "2026-11-06",
+    "url": "https://core.telegram.org/bots/payments-stars",
+    "checked_scope": "XTR invoice, answerPreCheckoutQuery within10 seconds, successful_payment before delivery, charge ID storage and refundStarPayment. Dedicated Telegram test environment remains separate."
+  },
+  "requirement_mapping": {
+    "invoice": "Installed full-chain test sends real aiogram invoice method through StubSession.",
+    "pre_checkout_deadline": "Installed shop61-test suite includes actual polling lane response within2 seconds while normal handler is blocked, expired admission/overload refusal and restart/lost-answer cases.",
+    "successful_payment_and_charge": "Real Dispatcher feeds authenticated synthetic update into adapter; charge recorded in file-backed SQLite; duplicate does not grant access twice.",
+    "refund": "One native refund method call, unknown until independently verified history; confirmed refund revokes the corresponding access.",
+    "access": "No access after invoice or pre-checkout; only matching confirmed payment grants access. Wrong owner/bot/amount/currency/payload are refused."
+  },
+  "limits": [
+    "Implementation-scope074 does not itself require an actual charge. Live acceptance remains a separate release concern.",
+    "Real SDK/Dispatcher/SQLite/process fixtures with synthetic Telegram responses; no test bot, real balance, charge or refund.",
+    "Local2-second polling witness does not guarantee Telegram network round-trip time.",
+    "No device, human pilot or production release claim."
+  ]
+}
