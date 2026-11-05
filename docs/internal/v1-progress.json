@@ -1647,10 +1647,18 @@
       "id": 97,
       "title": "Определить поддержку после релиза",
       "requirement": "Указать каналы ошибок, требования к воспроизводимому отчету, поддерживаемые ветки и сроки исправлений по серьезности; не обещать SLA без ресурсов.",
-      "status": "pending",
-      "commit_subject": null,
-      "artifacts": [],
-      "evidence": []
+      "status": "done",
+      "commit_subject": "roadmap(097): accept explicit best-effort support policy",
+      "artifacts": [
+        "SUPPORT.md",
+        "scripts/support_response.py",
+        "docs/internal/operations-readiness-2026-11-05.md",
+        "docs/internal/local-028-acceptance.json"
+      ],
+      "evidence": [
+        "SUPPORT.md and issue/discussion entrypoints define channels, reproduction requirements, supported branches and best-effort severity windows. Separate three-business-day observation remains enforced; existing overdue cases are retained.",
+        "Twenty tests exercise policy/helper behavior with a real child CLI and loopback API, including preserved caller files and legacy aliases; no assigned staff or guaranteed SLA is claimed."
+      ]
     },
     {
       "id": 98,

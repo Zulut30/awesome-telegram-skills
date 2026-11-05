@@ -98,6 +98,14 @@
         "Authenticated GitHub GET on 2026-11-05 confirms private-vulnerability-reporting enabled=true; the existing published security URL supplies the private form under GitHub official contract. No advisory was submitted; notification delivery and another human response are not asserted. Twenty governance/helper tests passed."
       ],
       "source_commit": "92a9d151dc57d85cc5f1eb614f9980e808b36b59"
+    },
+    "97": {
+      "requirement": "Указать каналы ошибок, требования к воспроизводимому отчету, поддерживаемые ветки и сроки исправлений по серьезности; не обещать SLA без ресурсов.",
+      "observations": [
+        "SUPPORT.md and issue/discussion entrypoints define channels, reproduction requirements, supported branches and best-effort severity windows. Separate three-business-day observation remains enforced; existing overdue cases are retained.",
+        "Twenty tests exercise policy/helper behavior with a real child CLI and loopback API, including preserved caller files and legacy aliases; no assigned staff or guaranteed SLA is claimed."
+      ],
+      "source_commit": "92a9d151dc57d85cc5f1eb614f9980e808b36b59"
     }
   }
 }
