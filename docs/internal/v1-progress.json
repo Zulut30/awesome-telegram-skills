@@ -804,10 +804,16 @@
       "id": 33,
       "title": "Добавить корректный webhook-приемник",
       "requirement": "Проверять секрет, размер тела и входной Update, быстро отвечать после надежного приема; пример не меняет webhook/polling настройки незаметно.",
-      "status": "pending",
-      "commit_subject": null,
-      "artifacts": [],
-      "evidence": []
+      "status": "done",
+      "commit_subject": "roadmap(033): accept authenticated durable webhook admission",
+      "artifacts": [
+        "docs/internal/delivery-025-acceptance.md",
+        "docs/internal/delivery-025-acceptance.json"
+      ],
+      "evidence": [
+        "0.25.0 immutable source ab1a432:90 stages PASS;715 Python (3 environment skips),61 TypeScript,Chrome; exact hashes in summary.",
+        "test_webhook; installed stage webhook-loopback; Real HTTP secret/body/content boundaries, receipt committed before success, duplicate/conflict, storage503 and decode quarantine."
+      ]
     },
     {
       "id": 34,
