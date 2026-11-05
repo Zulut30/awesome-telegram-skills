@@ -1092,10 +1092,16 @@
       "id": 52,
       "title": "Расширить базовые UI-компоненты",
       "requirement": "Добавить кнопки, поля, карточки, списки, бейджи, skeleton, empty/error/success; проверить композицию и взаимодействие состояний.",
-      "status": "pending",
-      "commit_subject": null,
-      "artifacts": [],
-      "evidence": []
+      "status": "done",
+      "commit_subject": "roadmap(052): accept composable UI controls and states",
+      "artifacts": [
+        "docs/internal/local-026-acceptance.json",
+        "docs/internal/local-026-acceptance.md"
+      ],
+      "evidence": [
+        "Exact d6109aa 0.26 artifacts: 92 stages, 816 Python tests (3 environment skips), 88 TypeScript tests, installed UI and public API Chrome consumers passed. No live Telegram/provider/device/screen-reader/pilot proof is inferred.",
+        "Buttons, fields, cards, lists, badges, skeleton and empty/error/success states compose through public DOM APIs; repeated actions, safe text and disposal verified."
+      ]
     },
     {
       "id": 53,
