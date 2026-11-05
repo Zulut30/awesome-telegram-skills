@@ -849,10 +849,16 @@
       "id": 36,
       "title": "Описать безопасные повторные попытки",
       "requirement": "Разделить чтение, идемпотентную запись и запись с неизвестным исходом; денежные и другие опасные операции сначала сверяются по устойчивому ID.",
-      "status": "pending",
-      "commit_subject": null,
-      "artifacts": [],
-      "evidence": []
+      "status": "done",
+      "commit_subject": "roadmap(036): accept conservative retry and reconciliation policy",
+      "artifacts": [
+        "docs/internal/delivery-025-acceptance.md",
+        "docs/internal/delivery-025-acceptance.json"
+      ],
+      "evidence": [
+        "0.25.0 immutable source ab1a432:90 stages PASS;715 Python (3 environment skips),61 TypeScript,Chrome; exact hashes in summary.",
+        "test_errors/test_outbox/test_jobs; installed stage durable-outbox; Read/write outcomes separated; lost write and lease loss require reconcile; confirmed flood refusal has persisted bounded retry."
+      ]
     },
     {
       "id": 37,
