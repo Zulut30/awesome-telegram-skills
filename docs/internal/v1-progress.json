@@ -1137,10 +1137,16 @@
       "id": 55,
       "title": "Подготовить шаблоны основных экранов",
       "requirement": "Каталог, карточка товара, корзина, профиль, настройки и запись используют общие компоненты и содержат нормальные loading/empty/error состояния.",
-      "status": "pending",
-      "commit_subject": null,
-      "artifacts": [],
-      "evidence": []
+      "status": "done",
+      "commit_subject": "roadmap(055): accept six shared UI screen compositions",
+      "artifacts": [
+        "docs/internal/local-026-acceptance.json",
+        "docs/internal/local-026-acceptance.md"
+      ],
+      "evidence": [
+        "Exact d6109aa 0.26 artifacts: 92 stages, 816 Python tests (3 environment skips), 88 TypeScript tests, installed UI and public API Chrome consumers passed. No live Telegram/provider/device/screen-reader/pilot proof is inferred.",
+        "Catalog, product, cart, profile, settings and booking use common controls and injected domain services; loading/empty/error/ready states and rejected settings save verified."
+      ]
     },
     {
       "id": 56,
