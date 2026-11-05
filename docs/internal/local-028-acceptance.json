@@ -64,7 +64,7 @@
     }
   },
   "ci": {
-    "state": "pending-on-followup-source",
+    "state": "passed",
     "source_commit": "4b9518350f9fa0a6b2f9b43c4cc570a5955ad4a3",
     "repository": "https://github.com/Zulut30/awesome-telegram-skills/actions/runs/42112297705",
     "full": "https://github.com/Zulut30/awesome-telegram-skills/actions/runs/42112303600",
@@ -74,6 +74,31 @@
       "Original Linux full acceptance passed; macOS failed the recovery reference fixture.",
       "Original quality job and its single retry failed before measurements while waiting for Chrome debugging port.",
       "Followup resolves the owned temporary path and preserves nested fixture/Chrome stderr; library package source is unchanged."
+    ],
+    "repository_jobs": 38,
+    "concrete_dependencies_checked": 37,
+    "required_job_id": 127550895084,
+    "full_linux_job_id": 127542737075,
+    "full_macos_job_id": 127542736564,
+    "full_each_python": 879,
+    "full_each_typescript": 89,
+    "concrete_job_audit": {
+      "passed": true,
+      "head_sha": "4b9518350f9fa0a6b2f9b43c4cc570a5955ad4a3",
+      "checked": 37,
+      "failed": [],
+      "scope": "Latest attempt of each concrete job; a matrix cancellation cannot be hidden by needs.result.",
+      "tested_sha": "4b9518350f9fa0a6b2f9b43c4cc570a5955ad4a3"
+    },
+    "evidence_path": "output/pattern-library-0.28.0/source-evidence/ci-jobs.json",
+    "evidence_sha256": "dff0d41ec8c4e0a39ce6ff4bb4d2b86f1a8e43c8ae90657ad26da626895b88cb",
+    "followup_source_delta": [
+      ".agents/skills/telegram-code-patterns/references/api-reference-core.md",
+      "catalog/api-reference-index.json",
+      "docs/api-reference-core.md",
+      "examples/api-reference/python/core_sqlite_recovery.py",
+      "scripts/verify_api_reference.py",
+      "tools/mini-app-quality/check.mjs"
     ]
   },
   "limits": [
