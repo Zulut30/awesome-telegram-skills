@@ -834,10 +834,16 @@
       "id": 35,
       "title": "Реализовать transactional outbox",
       "requirement": "Связать запись бизнес-состояния и намерение отправки одной транзакцией; явно описать возможность дубля внешней отправки при потерянном ответе.",
-      "status": "pending",
-      "commit_subject": null,
-      "artifacts": [],
-      "evidence": []
+      "status": "done",
+      "commit_subject": "roadmap(035): accept transactional outbox and unknown reconciliation",
+      "artifacts": [
+        "docs/internal/delivery-025-acceptance.md",
+        "docs/internal/delivery-025-acceptance.json"
+      ],
+      "evidence": [
+        "0.25.0 immutable source ab1a432:90 stages PASS;715 Python (3 environment skips),61 TypeScript,Chrome; exact hashes in summary.",
+        "test_outbox; installed stage durable-outbox; Same-connection business+intent transaction, real process crashes, lost fake-provider response, unknown without resend and CAS reconciliation."
+      ]
     },
     {
       "id": 36,
