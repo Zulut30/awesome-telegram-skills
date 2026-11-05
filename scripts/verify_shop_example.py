@@ -99,8 +99,16 @@ def main() -> int:
                     'test_lost_positive_answer_is_unknown_and_replay_restart_never_resends_true',
                     'test_legacy_zero_lane_query_is_never_promoted_or_given_fresh_deadline',
                     'test_actual_process_crash_before_storage_refuses_unknown_first_admission',
-                    'test_actual_process_crash_after_positive_rpc_never_resends_on_restart')
-    if unit_tests < 53 or not test_log.rstrip().endswith('OK') or any(name not in test_log for name in required_tests):
+                    'test_actual_process_crash_after_positive_rpc_never_resends_on_restart',
+                    'test_prepare_default_shop_needs_no_optional_outbox_and_preserves_paid_facts',
+                    'test_post_checkpoint_effect_does_not_make_restored_pending_safely_retryable',
+                    'test_real_http_and_sdk_requests_stay_closed_for_old_and_new_actors',
+                    'test_runtime_maintenance_opens_readiness_without_recover_polling_or_sdk',
+                    'test_actual_old_or_candidate_owner_refuses_before_restoration',
+                    'test_process_crashes_leave_final_absent_or_already_guarded',
+                    'test_bad_digest_existing_target_wrong_context_and_unknown_marker_fail_closed',
+                    'test_operator_cli_prepare_inspect_and_no_activation_or_secret_echo')
+    if unit_tests < 61 or not test_log.rstrip().endswith('OK') or any(name not in test_log for name in required_tests):
         raise RuntimeError('Shop acceptance requires all existing tests and durable session/ACL/restart scenarios')
     frontend=consumer/'frontend';shutil.copytree(ROOT/'examples/shop/frontend',frontend,ignore=shutil.ignore_patterns('node_modules','dist'))
     supplied=consumer/'provided artifacts';supplied.mkdir();tarball=supplied/sources[1].name;shutil.copyfile(sources[1],tarball)
