@@ -15,7 +15,7 @@ from unittest.mock import patch
 
 from _support import integration
 
-from telegram_patterns.errors import UnsupportedCapability, ValidationFailure
+from telegram_patterns.errors import UnsupportedCapability, ValidationFailure, safe_error_report
 from telegram_patterns.inbox import InboxConflict, InboxLeaseLost, SQLiteInbox
 from telegram_patterns.sqlite_once import SQLiteOnce
 
@@ -188,6 +188,15 @@ class InboxTests(unittest.TestCase):
         self.assertEqual((receipt.state, receipt.reason), ('quarantined', 'attempts-exhausted'))
         self.assertEqual(reopened.get(100, 1).max_attempts, 2)
         self.assertIsNone(reopened.claim(100, 'worker', now=1000))
+
+    def test_expired_processing_claim_reports_unknown_business_outcome(self):
+        self.receive()
+        claim = self.store.claim(100, 'worker', lease_seconds=10, now=100)
+        with self.assertRaises(InboxLeaseLost) as raised:
+            self.store.complete(claim, now=110)
+        report = safe_error_report(raised.exception, operation='write')
+        self.assertEqual((report.code, report.outcome, report.recovery), ('unknown-outcome', 'unknown', 'reconcile'))
+        self.assertEqual(self.store.get(100, 1).state, 'processing')
 
     def test_expired_last_attempt_is_quarantined_without_dropping_payload(self):
         store = SQLiteInbox(self.database, max_attempts=1)
