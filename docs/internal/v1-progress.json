@@ -1254,10 +1254,16 @@
       "id": 64,
       "title": "Сделать запросы контакта и геолокации понятными",
       "requirement": "Запрашивать разрешения в контексте пользовательского действия, поддержать отказ и недоступность; полученные данные не использовать как самостоятельную авторизацию.",
-      "status": "pending",
-      "commit_subject": null,
-      "artifacts": [],
-      "evidence": []
+      "status": "done",
+      "commit_subject": "roadmap(064): accept contextual contact and location consent",
+      "artifacts": [
+        "docs/internal/local-026-acceptance.json",
+        "docs/internal/local-026-acceptance.md"
+      ],
+      "evidence": [
+        "Exact d6109aa 0.26 artifacts: 92 stages, 816 Python tests (3 environment skips), 88 TypeScript tests, installed UI and public API Chrome consumers passed. No live Telegram/provider/device/screen-reader/pilot proof is inferred.",
+        "Contact and initialized location require an explicit user-action purpose, handle refusal/unavailable states and return no independent server authorization."
+      ]
     },
     {
       "id": 65,
