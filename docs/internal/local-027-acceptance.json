@@ -170,11 +170,6 @@
       "result": "only the owned real-timeout test fixture adds its required catalog input; library and consumer code unchanged"
     }
   ],
-  "pending_ci": {
-    "repository": "https://github.com/Zulut30/awesome-telegram-skills/actions/runs/42097483339",
-    "full": "https://github.com/Zulut30/awesome-telegram-skills/actions/runs/42097488640",
-    "scope": "Local acceptance does not assert pending GitHub job results."
-  },
   "items": {
     "79": {
       "requirement": "Проверить выдачу, продление, истечение, отмену и последствия возврата; поддерживаемые типы подписок определяются выбранным платежным маршрутом.",
@@ -209,5 +204,230 @@
     "All components remain experimental; source 0.28 work is outside this acceptance.",
     "No live Telegram or payment cabinet, physical device, screen reader, independent human study or production pilot is proven.",
     "The shop local eight-second budget begins at receipt; Telegram ten-second server-send deadline remains item 74 acceptance."
-  ]
+  ],
+  "ci": {
+    "repository_run": "https://github.com/Zulut30/awesome-telegram-skills/actions/runs/42097483339",
+    "full_run": "https://github.com/Zulut30/awesome-telegram-skills/actions/runs/42097488640",
+    "source_commit": "ee3d4f3ffe44615a55a5b78d907466a429a5f922",
+    "concrete_repository_jobs": 38,
+    "required_output": {
+      "passed": true,
+      "head_sha": "ee3d4f3ffe44615a55a5b78d907466a429a5f922",
+      "checked": 37,
+      "failed": [],
+      "scope": "Latest attempt of each concrete job; a matrix cancellation cannot be hidden by needs.result.",
+      "tested_sha": "ee3d4f3ffe44615a55a5b78d907466a429a5f922"
+    },
+    "full_acceptance_jobs": [
+      {
+        "id": 127491252441,
+        "name": "Full acceptance (ubuntu-latest)",
+        "head_sha": "ee3d4f3ffe44615a55a5b78d907466a429a5f922",
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "id": 127491252959,
+        "name": "Full acceptance (macos-latest)",
+        "head_sha": "ee3d4f3ffe44615a55a5b78d907466a429a5f922",
+        "status": "completed",
+        "conclusion": "success"
+      }
+    ],
+    "jobs_report_path": "output/pattern-library-0.27.0/source-evidence/ci-jobs.json",
+    "jobs_report_sha256": "c1dfb399b4f802a20671a85ab606f34355002058cbbd132b5075420380b2bc5e",
+    "repository_jobs": [
+      {
+        "id": 127491234679,
+        "name": "Generated files are current (every --check on the real tree)",
+        "conclusion": "success"
+      },
+      {
+        "id": 127491234847,
+        "name": "Installed Python package, every test (Python 3.14, ubuntu-latest)",
+        "conclusion": "success"
+      },
+      {
+        "id": 127491234865,
+        "name": "Python library unit tests (aiogram 3.29.1, 30 s budget)",
+        "conclusion": "success"
+      },
+      {
+        "id": 127491234915,
+        "name": "Optional service-bot container",
+        "conclusion": "success"
+      },
+      {
+        "id": 127491234968,
+        "name": "Python library style (ruff)",
+        "conclusion": "success"
+      },
+      {
+        "id": 127491234996,
+        "name": "Documented quickstart (ubuntu-latest, docs/quickstart.md)",
+        "conclusion": "success"
+      },
+      {
+        "id": 127491235012,
+        "name": "Python library coverage (90% statements, full branches of guarded modules)",
+        "conclusion": "success"
+      },
+      {
+        "id": 127491235026,
+        "name": "Skills and repository tests",
+        "conclusion": "success"
+      },
+      {
+        "id": 127491235048,
+        "name": "Installed Python package, every test (Python 3.14, windows-latest)",
+        "conclusion": "success"
+      },
+      {
+        "id": 127491235053,
+        "name": "Public API compatibility and CHANGELOG",
+        "conclusion": "success"
+      },
+      {
+        "id": 127491235055,
+        "name": "Installed Python package, every test (Python 3.14, macos-latest)",
+        "conclusion": "success"
+      },
+      {
+        "id": 127491235064,
+        "name": "Python library unit tests (aiogram 3.31.0, 30 s budget)",
+        "conclusion": "success"
+      },
+      {
+        "id": 127491235069,
+        "name": "Documented quickstart (macos-latest, docs/quickstart.md)",
+        "conclusion": "success"
+      },
+      {
+        "id": 127491235073,
+        "name": "Mini App performance, accessibility and bundle budgets",
+        "conclusion": "success"
+      },
+      {
+        "id": 127491235098,
+        "name": "Python library unit tests (aiogram 3.30.0, 30 s budget)",
+        "conclusion": "success"
+      },
+      {
+        "id": 127491235108,
+        "name": "Documented quickstart (ubuntu-latest, docs/en/quickstart.md)",
+        "conclusion": "success"
+      },
+      {
+        "id": 127491235115,
+        "name": "Documented quickstart (windows-latest, docs/en/quickstart.md)",
+        "conclusion": "success"
+      },
+      {
+        "id": 127491235124,
+        "name": "TypeScript tests and Mini App build (Node.js 22, ubuntu-latest)",
+        "conclusion": "success"
+      },
+      {
+        "id": 127491235135,
+        "name": "Install from scratch, wheel to offline bot (macos-latest, Python 3.11)",
+        "conclusion": "success"
+      },
+      {
+        "id": 127491235159,
+        "name": "Documented quickstart (macos-latest, docs/en/quickstart.md)",
+        "conclusion": "success"
+      },
+      {
+        "id": 127491235167,
+        "name": "Installed Python package, every test (Python 3.12, ubuntu-latest)",
+        "conclusion": "success"
+      },
+      {
+        "id": 127491235175,
+        "name": "Python library types (mypy --strict)",
+        "conclusion": "success"
+      },
+      {
+        "id": 127491235188,
+        "name": "Example applications on the current library",
+        "conclusion": "success"
+      },
+      {
+        "id": 127491235189,
+        "name": "Installed Python package, every test (Python 3.11, ubuntu-latest)",
+        "conclusion": "success"
+      },
+      {
+        "id": 127491235200,
+        "name": "TypeScript tests and Mini App build (Node.js 24, windows-latest)",
+        "conclusion": "success"
+      },
+      {
+        "id": 127491235216,
+        "name": "Browser tests (patterns, gallery, starters) in Playwright Chromium",
+        "conclusion": "success"
+      },
+      {
+        "id": 127491235243,
+        "name": "TypeScript tests and Mini App build (Node.js 24, ubuntu-latest)",
+        "conclusion": "success"
+      },
+      {
+        "id": 127491235262,
+        "name": "Install from scratch, wheel to offline bot (windows-latest, Python 3.11)",
+        "conclusion": "success"
+      },
+      {
+        "id": 127491235285,
+        "name": "Installed Python package, every test (Python 3.13, ubuntu-latest)",
+        "conclusion": "success"
+      },
+      {
+        "id": 127491235311,
+        "name": "Commit messages and CHANGELOG against tags",
+        "conclusion": "success"
+      },
+      {
+        "id": 127491235340,
+        "name": "Documented quickstart (windows-latest, docs/quickstart.md)",
+        "conclusion": "success"
+      },
+      {
+        "id": 127491235394,
+        "name": "Installed Python package, every test (Python 3.11, windows-latest)",
+        "conclusion": "success"
+      },
+      {
+        "id": 127491235426,
+        "name": "TypeScript tests and Mini App build (Node.js 20, ubuntu-latest)",
+        "conclusion": "success"
+      },
+      {
+        "id": 127491235467,
+        "name": "Install from scratch, wheel to offline bot (ubuntu-latest, Python 3.11)",
+        "conclusion": "success"
+      },
+      {
+        "id": 127491235530,
+        "name": "Installed Python package, every test (Python 3.11, macos-latest)",
+        "conclusion": "success"
+      },
+      {
+        "id": 127491235556,
+        "name": "TypeScript tests and Mini App build (Node.js 24, macos-latest)",
+        "conclusion": "success"
+      },
+      {
+        "id": 127491235558,
+        "name": "Documentation site / Build and verify the documentation site",
+        "conclusion": "success"
+      },
+      {
+        "id": 127502328450,
+        "name": "Required checks passed",
+        "conclusion": "success"
+      }
+    ],
+    "limits": "Manual dispatch intentionally skipped release attachment and failure messaging. No tag, registry publication, live Telegram or physical-device proof."
+  }
 }
