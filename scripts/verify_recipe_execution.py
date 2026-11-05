@@ -20,7 +20,8 @@ def main() -> int:
     before={p.name:hashlib.sha256(p.read_bytes()).hexdigest() for p in project.iterdir()}
     stages=[]
     def run(label,python,arguments,*,expected=0,cwd=project):
-        done=subprocess.run([str(python),'-I','-B',*map(str,arguments)],cwd=cwd,env=environment,
+        # -I ignores PYTHONUTF8: make the pipe encoding explicit on Windows.
+        done=subprocess.run([str(python),'-I','-B','-X','utf8',*map(str,arguments)],cwd=cwd,env=environment,
                             capture_output=True,text=True,encoding='utf-8',timeout=120)
         assert 'PRIVATE_CANARY' not in done.stdout+done.stderr
         (args.output/(label+'.log')).write_text(done.stdout+done.stderr,encoding='utf-8')

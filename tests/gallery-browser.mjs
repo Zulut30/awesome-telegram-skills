@@ -61,7 +61,10 @@ try{
         const box=await copy.boundingBox();verify(box.width>=44&&box.height>=44&&box.x>=0&&box.x+box.width<=width,`${name}/${theme}: copy target fits`);
         await copy.click();await page.waitForFunction(()=>document.querySelector('#copy-status').textContent!=='',null,{timeout:5000});
         verify((await page.locator('#copy-status').textContent())==='Код скопирован.',`${name}/${theme}: copy confirmed`);
-        verify((await page.evaluate(()=>navigator.clipboard.readText()))===(await page.locator('#code').textContent()),`${name}/${theme}: clipboard holds the shown code`);
+        const copiedText=await page.evaluate(()=>navigator.clipboard.readText()),shownText=await page.locator('#code').textContent();
+        // Native Windows clipboard text uses CRLF; compare the code without changing any other character.
+        // https://w3c.github.io/clipboard-apis/#write-content-to-the-clipboard
+        verify(copiedText.replace(/\r\n/g,'\n')===shownText?.replace(/\r\n/g,'\n'),`${name}/${theme}: clipboard holds the shown code`);
         await page.screenshot({path:path.join(output,`phone-360-${theme}-copied.png`),fullPage:false});
       }
       await page.getByLabel('Что хотите сделать?').fill('три кнопки');

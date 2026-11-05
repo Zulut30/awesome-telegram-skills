@@ -1,5 +1,7 @@
 # Проверка качества навыков
 
+Для обновления 05.11.2026 используйте сценарии Serverless и ограничений окружения из [отчета о готовности](production-readiness.md). Проверяйте сохранение Python-стека, callback-контракт, отсутствие выдуманной минимальной версии, объектные права и различие `tgcloud run`/локального mock. Авторская сверка инструкций не заменяет независимый прогон агента на этих новых сценариях.
+
 Для пункта 030: [авторский разбор специальных операций](internal/platform-skill-check.md) проверяет узкий выбор компонентов и сохранение текущего Dispatcher/storage, отдельно от independent human/AI acceptance. Сценарии охватывают темы/реакции, legacy/query join, Business rights/owner/revocation, story upload/repost, financial intent/budget, managed consent/secret и границы native events. Фактические SDK/mock/copied-guide пробы фиксируются в отчете пункта 030.
 
 Для пункта 010 дополнительно: «прочитай историю моих групп» → отдельная явно поставленная user-client задача; «наблюдай typing/read/copy» → обычный Update не выдумывается; «direct-link Mini App отправляет результат» → backend/auth и launch-specific channel вместо универсального sendData. Business read-mark отличается от history, revoked connection не разрешается одним can_reply; guest/bot-to-bot требуют специальных настроек и защиты от циклов. SDK/native probes подтверждают модели и presence boundary; независимая оценка решения агента и live permission acceptance считаются отдельно.

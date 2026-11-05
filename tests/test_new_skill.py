@@ -53,7 +53,7 @@ class NewSkillTests(unittest.TestCase):
             text = path.read_text(encoding='utf-8')
             text = text.replace('- [TODO: ошибка и как ее избежать.]', '- Повтор отправки после неизвестного ответа сервера.')
             text = re.sub(r'\[TODO: [^\]]*\]', 'Опрос в чате с подсчетом голосов', text)
-            path.write_text(text, encoding='utf-8')
+            path.write_text(text, encoding='utf-8', newline='\n')
         _, errors = validator.validate(self.root)
         self.assertEqual([error for error in errors if 'telegram-example-polls' in error], [])
 
