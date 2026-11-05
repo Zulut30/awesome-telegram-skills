@@ -1,4 +1,8 @@
 <p align="center">
+  <img src="assets/branding/awesome-telegram-skills-logo-white.png" alt="Awesome Telegram Skills logo" width="160" height="160">
+</p>
+
+<p align="center">
   <img src="assets/readme/cover.png" alt="Awesome Telegram Skills — Python bots. TypeScript Mini Apps." width="100%">
 </p>
 
