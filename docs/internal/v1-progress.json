@@ -894,10 +894,16 @@
       "id": 39,
       "title": "Проверить жизненный цикл процессов",
       "requirement": "Обработать graceful shutdown, закрытие сессий, незавершенные операции и ошибки декодирования Updates; восстановление не должно молча пропускать неизвестные входящие события.",
-      "status": "pending",
-      "commit_subject": null,
-      "artifacts": [],
-      "evidence": []
+      "status": "done",
+      "commit_subject": "roadmap(039): accept worker drain and cancellation settlement",
+      "artifacts": [
+        "docs/internal/delivery-025-acceptance.md",
+        "docs/internal/delivery-025-acceptance.json"
+      ],
+      "evidence": [
+        "0.25.0 immutable source ab1a432:90 stages PASS;715 Python (3 environment skips),61 TypeScript,Chrome; exact hashes in summary.",
+        "test_worker; installed stage api-reference-consumer; Stop admission then drain, session closure after owned work, repeated cancellation joins SQLite thread, decode/handler failures retained."
+      ]
     },
     {
       "id": 40,
