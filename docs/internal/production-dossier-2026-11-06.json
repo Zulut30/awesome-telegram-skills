@@ -1,0 +1,299 @@
+{
+  "schema_version": 1,
+  "kind": "production-release-dossier",
+  "created_utc": "2026-11-06T00:13:25.116161+00:00",
+  "ready_for_v1": false,
+  "release_accepted": false,
+  "publication_performed": false,
+  "branch": "codex/production-v1",
+  "tested_source_commit": "67246d203bcaf0ac460ad0b0cf05c3c9d01f2d9e",
+  "completed_requirements": 84,
+  "original_requirement_count": 100,
+  "original_triples_unchanged": true,
+  "versions": {
+    "library": "0.28.0",
+    "shop": "0.1.0",
+    "v1_or_rc_artifact": null
+  },
+  "artifacts": [
+    {
+      "name": "awesome_telegram_patterns-0.28.0-py3-none-any.whl",
+      "bytes": 524352,
+      "sha256": "e0b42b53f1228fc804ab37b73675641fada1c148aa9eebffd11b05af1859fb7d",
+      "local_path": "output/pattern-library-0.28.0/dist/awesome_telegram_patterns-0.28.0-py3-none-any.whl"
+    },
+    {
+      "name": "awesome-telegram-patterns-0.28.0.tgz",
+      "bytes": 52074,
+      "sha256": "dd24c7db27d9f1dd1f2dcc36a49bd67d14577eec1c7a15216632f92615ca3931",
+      "local_path": "output/pattern-library-0.28.0/dist/awesome-telegram-patterns-0.28.0.tgz"
+    },
+    {
+      "name": "awesome_telegram_shop_example-0.1.0-py3-none-any.whl",
+      "bytes": 54673,
+      "sha256": "d46e68e1e58b7ba36fd07d7c34977951b7b26bb9576d59d507861c5ceb1e4295",
+      "local_path": "output/shop-recovery-source524b2ead/dist/awesome_telegram_shop_example-0.1.0-py3-none-any.whl"
+    }
+  ],
+  "api_snapshot": {
+    "path": "catalog/api-reference-index.json",
+    "sha256": "707f0084f91a6a3892acff3aebdd8fe381e4757dbbd8284d948d7cc77472811d",
+    "symbols": 420,
+    "stable_scope_status": "not-frozen/not-accepted",
+    "limitation": "Snapshot of accepted development0.28, not a stable1.0 API freeze."
+  },
+  "runtime_source_unchanged": {
+    "library_since": "92a9d151dc57d85cc5f1eb614f9980e808b36b59",
+    "shop_since": "524b2ead9a1e25901f24f74e46f5523f247b0e7b"
+  },
+  "ci": {
+    "run_id": 42133385983,
+    "url": "https://github.com/Zulut30/awesome-telegram-skills/actions/runs/42133385983",
+    "head": "67246d203bcaf0ac460ad0b0cf05c3c9d01f2d9e",
+    "conclusion": "success",
+    "jobs": 38,
+    "job_conclusions": {
+      "success": 38
+    },
+    "required_job": {
+      "id": 127620683953,
+      "name": "Required checks passed",
+      "conclusion": "success"
+    },
+    "report_path": "output/production-run-2026-11-05/ci-local-quality-42133385983.json",
+    "report_sha256": "ca083c2f7950335c4bc14e4ee858709c33b3686cd4376c9a89b46ccb921bae8f"
+  },
+  "local_repository": {
+    "tests": 309,
+    "skipped": 3,
+    "passed": true,
+    "command": [
+      "C:\\Users\\zulut\\Documents\\awesome-telegram-skills\\output\\production-run-2026-11-05\\root-env\\Scripts\\python.exe",
+      "-m",
+      "unittest",
+      "discover",
+      "-s",
+      "tests",
+      "-v"
+    ],
+    "exit_code": 0,
+    "seconds": 87.71,
+    "log_sha256": "675f87751e2f1b3adf8104a06488f693e083ddc58723561b36edb3d922622111",
+    "head": "67246d203bcaf0ac460ad0b0cf05c3c9d01f2d9e",
+    "scope": "Source repository tests; does not replace installed artifact acceptance"
+  },
+  "site": {
+    "passed": true,
+    "version": "0.28.0",
+    "skills": 42,
+    "components": 68,
+    "api_symbols": 420,
+    "recipes": 341,
+    "pages": 583,
+    "local_links_checked": 25170,
+    "search_entries": 965,
+    "artifact_files": 2440,
+    "errors": []
+  },
+  "site_operations": {
+    "tests": 14,
+    "passed": true,
+    "seconds": 309.04,
+    "command": "docs-quality-env/Scripts/python.exe -m unittest discover -s site/tests -v",
+    "provenance": "Observed successful unified-exec96673 completion; full stdout not separately archived."
+  },
+  "ci_quality_artifact": {
+    "verification": {
+      "passed": true,
+      "artifact_id": 13462969968,
+      "run_id": 42133385983,
+      "source_commit": "67246d203bcaf0ac460ad0b0cf05c3c9d01f2d9e",
+      "job_id": 127615352662,
+      "artifact_sha256": "87a84fcdb2dea9ab14f920a888cc0a11c920c8b7a296bdae56e6563742d9c0fa",
+      "report_sha256": "9c39b29fc07e7ae726eb899263a30b576c6618b219de28785288ca706c782c7c",
+      "states": 8,
+      "incomplete_counts": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "manual_review_required": false,
+      "wcag_conformance": "not-assessed",
+      "scope": "Local demo server without compression; Lighthouse mobile profile with simulated throttling; not a real device or Telegram WebView"
+    },
+    "verification_sha256": "5d1d0e90bd0d81282f545742c36e08183f1a8b24754057a4bba4997f07ca7dfe"
+  },
+  "evidence_sha256": {
+    "docs/internal/local-028-acceptance.json": "c87a6f4d66a407134a6b7f10ed2f5cb00f21b005777083e2d37f638576e49821",
+    "docs/internal/shop-recovery-acceptance.json": "c1290a7496822861fc7c5c5d5aa12029aa68f00f5f81eb831f0f1bac161a8925",
+    "docs/internal/skill-evaluation-088-acceptance.json": "f3d5864b11a460200b7a35117c6cf95664f5e74596aca6113b5eb8f8f4f0d0cf",
+    "docs/internal/migration-098-acceptance.json": "2573ba3d17efa0439172ba2cc28c14c11914f2eac426985d0fe8096206be2fb5",
+    "docs/internal/operations-096-acceptance.json": "98b56184cf43e30cb94c318dc889420f9a745f306d4488180429a39c7e16514b",
+    "docs/internal/responsive-056-acceptance.json": "5a91d784fca360a46b71e26268029b74fc0b74a729b05d8b38a5e05c8ddc9ffa",
+    "docs/internal/stars-074-acceptance.json": "c15c8067372a44aa0d346bddf1d6603c703e60a1678cd4e6ef6d421f856e2e99",
+    "docs/internal/platega-076-acceptance.json": "29966722b1cab440b8655461cb98398526b6b4f5e2179144ae7a1a51ac5482fa",
+    "docs/internal/first-use-020-ai-baseline.json": "f93aa4f0c0b3649996019b0d75d59460fece55debd3797455ea2a3597117b7c0",
+    "docs/internal/local-quality-060-068-070.json": "3ed7897d2bd57a74fbc4040ba1e48b363ea761ea2286bbfa91b88d9f6a1ba79f"
+  },
+  "pending": [
+    {
+      "id": 20,
+      "title": "Проверить удобство первого использования",
+      "requirement": "Измерить запуск и интеграцию на задачах людей и ИИ; целевое время и допустимое число затруднений задать после исходного замера.",
+      "remaining": "Нужны наблюдения первого использования людьми; один AI baseline уже измерен.",
+      "partial_artifacts": [
+        "docs/internal/first-use-020-ai-baseline.json"
+      ]
+    },
+    {
+      "id": 45,
+      "title": "Согласовать запуск и deep links",
+      "requirement": "Проверить Menu Button, Main Mini App, inline/reply launches и `start_param`; входные параметры валидируются и не дают обходить права.",
+      "remaining": "Нет настоящего бота и выполненных Telegram entry-point запусков.",
+      "partial_artifacts": []
+    },
+    {
+      "id": 58,
+      "title": "Обработать экранную клавиатуру",
+      "requirement": "Проверить первый focus, холодный старт, resume, стороннюю клавиатуру и нижние действия; доступ к полю/подтверждению сохраняется, клиентские ограничения отмечены явно.",
+      "remaining": "Не наблюдались системная клавиатура, cold start и resume настоящего WebView.",
+      "partial_artifacts": []
+    },
+    {
+      "id": 60,
+      "title": "Пройти проверку доступности",
+      "requirement": "Проверить применимые WCAG 2.2 AA: labels, contrast, focus, keyboard navigation, reflow и screen readers; собственные критерии touch targets указать отдельно от стандарта.",
+      "remaining": "Нет screen reader, полного ручного разбора и оценки всех применимых критериев.",
+      "partial_artifacts": [
+        "docs/accessibility-evidence.md",
+        "tools/mini-app-quality/accessibility-evidence.json",
+        "docs/internal/local-quality-060-068-070.json"
+      ]
+    },
+    {
+      "id": 66,
+      "title": "Добавить адаптеры sharing, файлов и загрузок",
+      "requirement": "Проверять официальную поддержку и реальные клиентские ограничения, включая camera/file picker; при недоступности давать работоспособный альтернативный путь.",
+      "remaining": "Нет фактических file/camera/picker наблюдений Telegram-клиента.",
+      "partial_artifacts": []
+    },
+    {
+      "id": 67,
+      "title": "Провести реальную device-приемку",
+      "requirement": "Зафиксировать модели и версии Android/iOS/Desktop, хотя бы один планшет и touch/keyboard сценарии; browser emulation хранить как отдельное доказательство.",
+      "remaining": "Нет предусмотренных реальных моделей/версий, включая планшет.",
+      "partial_artifacts": []
+    },
+    {
+      "id": 68,
+      "title": "Ввести visual regression",
+      "requirement": "Сравнивать основные экраны и состояния в темах и размерах; эталоны и изменения просматривает человек, а нестабильные области объяснены.",
+      "remaining": "144 кандидата и comparator готовы, человеческое одобрение отсутствует.",
+      "partial_artifacts": [
+        "docs/visual-regression.md",
+        "tools/visual-regression/compare.py",
+        "tools/visual-regression/capture.mjs",
+        "docs/internal/local-quality-060-068-070.json"
+      ]
+    },
+    {
+      "id": 69,
+      "title": "Измерять пользовательскую скорость",
+      "requirement": "Снять baseline загрузки, взаимодействий, крупных списков и сетевых путей; бюджеты установить по данным и проверять на целевых устройствах.",
+      "remaining": "Baseline/holdout измерены локально; бюджеты на целевых устройствах не проверены.",
+      "partial_artifacts": [
+        "docs/local-performance.md",
+        "tools/local-performance/run.mjs",
+        "docs/internal/local-quality-060-068-070.json"
+      ]
+    },
+    {
+      "id": 70,
+      "title": "Проверить слабые устройства и плохую сеть",
+      "requirement": "Измерить память, утечки listeners, повторные входы, background/resume и потерянные ответы; отказ сети не превращается в бесконечный spinner.",
+      "remaining": "Heap/listeners/сеть/Chrome lifecycle измерены; слабое устройство и Telegram lifecycle не подтверждены.",
+      "partial_artifacts": [
+        "docs/local-performance.md",
+        "tools/local-performance/lifecycle.mjs",
+        "docs/internal/local-quality-060-068-070.json"
+      ]
+    },
+    {
+      "id": 75,
+      "title": "Сделать адаптер Crypto Pay",
+      "requirement": "Проверить действующий первичный контракт, создание счета, webhook, сверку статуса и дубли; документировать sandbox evidence и ограничения отдельно.",
+      "remaining": "Direct primary docs403; индексированный API1.5.2 старше проверки. Свежесть всего контракта не доказана, sandbox отсутствует.",
+      "partial_artifacts": [
+        "packages/python/tests/test_provider_cryptopay_durable.py",
+        "docs/payment-providers.md"
+      ]
+    },
+    {
+      "id": 77,
+      "title": "Сделать адаптер ЮКассы",
+      "requirement": "Реализовать поддерживаемые магазином создание, capture, уведомления, идемпотентность и возвраты; подтвердить поведение в доступном тестовом контуре.",
+      "remaining": "Подставные create/capture/refund/crash проверки есть; настоящий тестовый магазин ЮKassa и merchant/receipt scope отсутствуют.",
+      "partial_artifacts": []
+    },
+    {
+      "id": 80,
+      "title": "Описать подключение других платежек",
+      "requirement": "Дать контракт адаптера и набор проверок на одном дополнительном востребованном провайдере; новый сервис не становится обязательной зависимостью ядра.",
+      "remaining": "Владелец не выбрал и не требует дополнительного провайдера; исходное требование сохранено открытым.",
+      "partial_artifacts": []
+    },
+    {
+      "id": 89,
+      "title": "Провести usability-проверки",
+      "requirement": "Набрать 5–8 разработчиков разных уровней для первого запуска, поиска рецепта и подключения; проблемы фиксировать по наблюдениям, отдельно от пожеланий и гипотез.",
+      "remaining": "Нет 5–8 независимых разработчиков и их наблюдений.",
+      "partial_artifacts": []
+    },
+    {
+      "id": 90,
+      "title": "Провести ограниченные production-пилоты",
+      "requirement": "Проверить хотя бы бот и Mini App в реальных проектах с согласованными правами/данными; заранее задать период наблюдения и критерии отказов, восстановления и поддержки.",
+      "remaining": "Протокол готов, реальные проекты бота/Mini App и согласованные пилоты отсутствуют.",
+      "partial_artifacts": [
+        "docs/pilot-protocol.md"
+      ]
+    },
+    {
+      "id": 99,
+      "title": "Выпустить и проверить 1.0 release candidate",
+      "requirement": "Заморозить стабильный API, пройти обязательную матрицу и пилоты; закрыть известные критические/высокие дефекты в stable scope, остальные явно классифицировать.",
+      "remaining": "Stable scope не заморожен и не принят; обязательная матрица/пилоты и severity review не завершены.",
+      "partial_artifacts": []
+    },
+    {
+      "id": 100,
+      "title": "Принять и выпустить 1.0",
+      "requirement": "Сопоставить критерии с доказательствами, зафиксировать версии/артефакты и план поддержки; публикация в PyPI/npm или внешнем репозитории выполняется после отдельного решения владельца.",
+      "remaining": "Досье подготовлено, приемка и выпуск1.0 не выполнены; публикация требует отдельного решения владельца.",
+      "partial_artifacts": []
+    }
+  ],
+  "support": {
+    "policy": "SUPPORT.md",
+    "security": "SECURITY.md",
+    "license": "docs/licensing.md",
+    "operations": "docs/production-operations.md",
+    "pilot": "docs/pilot-protocol.md",
+    "limitation": "Accepted policies and local commands do not prove staffing, live response SLA or real host operation."
+  },
+  "severity_review": {
+    "status": "not-accepted-for-future-stable-scope",
+    "limitation": "No critical/high-free stable claim is inferred from passing development tests or an empty stable scope."
+  },
+  "limits": [
+    "No registry publication, main merge, tag, release upload or real user/provider message.",
+    "Fresh CI bytes belong to its own run. Earlier accepted e0 wheel/dd tarball/d46 shop bytes remain distinct immutable artifacts.",
+    "Four provider-reference copies received validation notes after immutable088; no new blind all-skill result is inferred.",
+    "Models, humans, physical devices, live providers and production pilots have separate evidence."
+  ]
+}

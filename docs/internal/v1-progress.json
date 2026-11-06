@@ -1798,8 +1798,13 @@
       "requirement": "Заморозить стабильный API, пройти обязательную матрицу и пилоты; закрыть известные критические/высокие дефекты в stable scope, остальные явно классифицировать.",
       "status": "pending",
       "commit_subject": null,
-      "artifacts": [],
-      "evidence": []
+      "artifacts": [
+        "docs/internal/production-dossier-2026-11-06.json",
+        "docs/internal/production-dossier-2026-11-06.md"
+      ],
+      "evidence": [
+        "Partial:420-symbol development API snapshot, exact accepted artifacts, completed38-job CI, local309 tests and criteria-to-evidence dossier. No stable freeze, required pilot acceptance or1.0 release."
+      ]
     },
     {
       "id": 100,
@@ -1807,8 +1812,13 @@
       "requirement": "Сопоставить критерии с доказательствами, зафиксировать версии/артефакты и план поддержки; публикация в PyPI/npm или внешнем репозитории выполняется после отдельного решения владельца.",
       "status": "pending",
       "commit_subject": null,
-      "artifacts": [],
-      "evidence": []
+      "artifacts": [
+        "docs/internal/production-dossier-2026-11-06.json",
+        "docs/internal/production-dossier-2026-11-06.md"
+      ],
+      "evidence": [
+        "Partial:420-symbol development API snapshot, exact accepted artifacts, completed38-job CI, local309 tests and criteria-to-evidence dossier. No stable freeze, required pilot acceptance or1.0 release."
+      ]
     }
   ]
 }
